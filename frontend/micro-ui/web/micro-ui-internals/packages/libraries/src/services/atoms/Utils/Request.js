@@ -17,18 +17,18 @@ Axios.interceptors.response.use(
           localStorage.clear();
           sessionStorage.clear();
           window.location.href =
-            (isEmployee ? "/digit-ui/employee/user/login" : "/digit-ui/citizen/login") +
+            (isEmployee ? `/${window?.contextPath}/employee/user/login` : `/${window?.contextPath}/citizen/login`) +
             `?from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         } else if (
           error?.message?.toLowerCase()?.includes("internal server error") ||
           error?.message?.toLowerCase()?.includes("some error occured")
         ) {
           window.location.href =
-            (isEmployee ? "/digit-ui/employee/user/error" : "/digit-ui/citizen/error") +
+            (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
             `?type=maintenance&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         } else if (error.message.includes("ZuulRuntimeException")) {
           window.location.href =
-            (isEmployee ? "/digit-ui/employee/user/error" : "/digit-ui/citizen/error") +
+            (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
             `?type=notfound&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         }
       }
