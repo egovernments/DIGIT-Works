@@ -41,9 +41,16 @@ const CreateEstimate = (props) => {
 
     const onFormSubmit = (_data) => {
         debugger
+        console.log(errors)
         console.log(_data);
     }
 
+    const getDate = () => {
+        const today = new Date();
+
+        const date = today.getDate() + '/' + (today.getMonth() + 1) +'/'+today.getFullYear();
+        return date
+    }
 
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
@@ -52,12 +59,12 @@ const CreateEstimate = (props) => {
                 <CardSectionHeader >{t(`WORKS_ESTIMATE_DETAILS`)}</CardSectionHeader>
                 {/* TEXT INPUT ROW */}
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_DATE_PROPOSAL`)}</CardLabel>
-                    <TextInput className={"field"} name="reasonDocumentNumber" inputRef={register()} />
+                    <CardLabel style={{"fontSize":"16px","fontStyle":"bold","fontWeight":"600"}} >{t(`WORKS_DATE_PROPOSAL`)}</CardLabel>
+                    <TextInput className={"field"} name="reasonDocumentNumber" inputRef={register()} value={getDate()} disabled/>
                 </LabelFieldPair>
                 {/* DROPDOWN ROW */}
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_EXECUTING_DEPT`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_EXECUTING_DEPT`)}:*`}</CardLabel>
                     <Controller
                         name="amendmentReason"
                         control={control}
@@ -77,13 +84,13 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_LOR`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_LOR`)}:`}</CardLabel>
                     <TextInput className={"field"} name="lor" inputRef={register()} />
                 </LabelFieldPair>
 
                 <CardSectionHeader >{t(`WORKS_LOCATION_DETAILS`)}</CardSectionHeader>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_WARD`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_WARD`)}:*`}</CardLabel>
                     <Controller
                         name="ward"
                         control={control}
@@ -103,7 +110,7 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_LOCATION`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_LOCATION`)}:`}</CardLabel>
                     <Controller
                         name="location"
                         control={control}
@@ -125,7 +132,7 @@ const CreateEstimate = (props) => {
 
                 <CardSectionHeader >{t(`WORKS_WORK_DETAILS`)}</CardSectionHeader>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_BENEFICIERY`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_BENEFICIERY`)}:`}</CardLabel>
                     <Controller
                         name="beneficiery"
                         control={control}
@@ -144,7 +151,7 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_WORK_NATURE`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_WORK_NATURE`)}:*`}</CardLabel>
                     <Controller
                         name="natureofwork"
                         control={control}
@@ -163,7 +170,7 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_WORK_TYPE`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_WORK_TYPE`)}:*`}</CardLabel>
                     <Controller
                         name="workType"
                         control={control}
@@ -182,7 +189,7 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_SUB_TYPE_WORK`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_SUB_TYPE_WORK`)}:`}</CardLabel>
                     <Controller
                         name="subtypework"
                         control={control}
@@ -201,7 +208,7 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_MODE_OF_INS`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_MODE_OF_INS`)}:`}</CardLabel>
                     <Controller
                         name="modeofens"
                         control={control}
@@ -222,7 +229,7 @@ const CreateEstimate = (props) => {
 
                 <CardSectionHeader >{t(`WORKS_FINANCIAL_DETAILS`)}</CardSectionHeader>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_FUND`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FUND`)}:*`}</CardLabel>
                     <Controller
                         name="fund"
                         control={control}
@@ -241,7 +248,7 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_FUNCTION`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FUNCTION`)}:*`}</CardLabel>
                     <Controller
                         name="function"
                         control={control}
@@ -260,7 +267,7 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_BUDGET_HEAD`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_BUDGET_HEAD`)}:*`}</CardLabel>
                     <Controller
                         name="budgetHead"
                         control={control}
@@ -279,7 +286,7 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_SCHEME`)}</CardLabel>
+                    <CardLabel style={{"fontSize":"16px","fontStyle":"bold","fontWeight":"600"}}>{`${t(`WORKS_SCHEME`)}:*`}</CardLabel>
                     <Controller
                         name="scheme"
                         control={control}
@@ -298,7 +305,7 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_SUB_SCHEME`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{`${t(`WORKS_SUB_SCHEME`)}:*`}</CardLabel>
                     <Controller
                         name="subScheme"
                         control={control}
@@ -322,7 +329,7 @@ const CreateEstimate = (props) => {
 
                 <CardSectionHeader >{t(`WORKS_RELEVANT_DOCS`)}</CardSectionHeader>
                 <LabelFieldPair>
-                    <CardLabel >{t(`WORKS_UPLOAD_FILES`)}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600 " }}>{t(`WORKS_UPLOAD_FILES`)}</CardLabel>
                     {/* <Controller
                       name={`uploads`}
                       control={control}
