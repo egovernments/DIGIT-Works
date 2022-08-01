@@ -3,6 +3,7 @@ import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import WorksCard from "./components/WorksCard";
 import EmployeeApp from "./pages/employee";
+import SearchEstimateApplication from "./components/SearchEstimate";
 
 const WorksModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["works"];
@@ -24,6 +25,7 @@ const WorksModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
   WorksCard,
   WorksModule,
+  SearchEstimateApplication
 };
 
 export const initWorksComponents = () => {
