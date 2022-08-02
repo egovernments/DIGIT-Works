@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar,DatePicker } from '@egovernments/digit-ui-react-components';
+import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar,DatePicker,Row,StatusTable } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
 
 //import SubWork from '../../components/CreateEstimate/SubWork';
@@ -53,26 +53,33 @@ const CreateLOI = () => {
 
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
-            <Header>{t("WORKS_CREATE_LOI")}</Header>
+            <Header style={{"marginLeft":"14px"}}>{t("WORKS_CREATE_LOI")}</Header>
             <Card >
                 <CardSectionHeader >{t(`WORKS_LOI_DETAILS`)}</CardSectionHeader>
-                <LabelFieldPair>
+                <StatusTable>
+                    <Row label={t("WORKS_ESTIMATE_NO")} text={"NA"} textStyle={{ whiteSpace: "pre" }} />
+                    <Row
+                        label={t("WORKS_NAME_OF_WORK")}
+                        text={"NA"}
+                        textStyle={{ whiteSpace: "pre" }}
+                    />
+                    <Row label={t("WORKS_SUB_ESTIMATE_NO")} text={ "NA"} />
+                    </StatusTable>
+                
+                {/* <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_ESTIMATE_NO`)}</CardLabel>
-                    {/* <TextInput className={"field"} name="reasonDocumentNumber" inputRef={register()} value={getDate()} disabled /> */}
                     <p>{"estimateIdPlaceholder"}</p>
                 </LabelFieldPair>
                 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_NAME_OF_WORK`)}</CardLabel>
-                    {/* <TextInput className={"field"} name="reasonDocumentNumber" inputRef={register()} value={getDate()} disabled /> */}
                     <p>{"nameofworkplaceholder"}</p>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_SUB_ESTIMATE_NO`)}</CardLabel>
-                    {/* <TextInput className={"field"} name="reasonDocumentNumber" inputRef={register()} value={getDate()} disabled /> */}
                     <p>{"subestimatenoplaceholder"}</p>
-                </LabelFieldPair>
+                </LabelFieldPair> */}
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_ABSTRACT_ESTIMATE_NO`)}:`}</CardLabel>
@@ -94,12 +101,13 @@ const CreateLOI = () => {
                 </LabelFieldPair>
 
                 <CardSectionHeader >{t(`WORKS_FINANCIAL_DETAILS`)}</CardSectionHeader>
-                
-                <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_SUB_ESTIMATE_NO`)}</CardLabel>
-                    {/* <TextInput className={"field"} name="reasonDocumentNumber" inputRef={register()} value={getDate()} disabled /> */}
+                <StatusTable>
+                <Row label={t("WORKS_ESTIMATED_AMT")} text={"NA"} />
+                </StatusTable>
+                {/* <LabelFieldPair>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_ESTIMATED_AMT`)}</CardLabel>
                     <p>{"ESTIMATE AMT"}</p>
-                </LabelFieldPair>
+                </LabelFieldPair> */}
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FINALIZED_PER`)}:`}</CardLabel>
@@ -248,7 +256,7 @@ const CreateLOI = () => {
                                     setuploadedstate={value}
                                     allowedFileTypesRegex={allowedFileTypes}
                                     allowedMaxSizeInMB={5}
-                                    hintText={t("DOCUMENTS_ATTACH_RESTRICTIONS_SIZE")}
+                                    hintText={t("WORKS_DOC_UPLOAD_HINT")}
                                 />
                             }
                             }
