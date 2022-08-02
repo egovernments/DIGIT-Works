@@ -1,10 +1,10 @@
 import React, { useReducer } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper,ActionBar,SubmitBar } from '@egovernments/digit-ui-react-components';
+import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, CardLabelError } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
 import SubWorkTable from '../../components/CreateEstimate/SubWorkTable/SubWorkTable';
 //import SubWork from '../../components/CreateEstimate/SubWork';
-const allowedFileTypes = /(.*?)(jpg|jpeg|png|image|pdf|msword|openxmlformats-officedocument)$/i;
+const allowedFileTypes = /(.*?)(pdf|msword|openxmlformats-officedocument)$/i;
 
 
 const CreateEstimate = (props) => {
@@ -41,73 +41,87 @@ const CreateEstimate = (props) => {
 
     const onFormSubmit = (_data) => {
         debugger
-        console.log(errors)
+
         console.log(_data);
     }
-
+    console.log(errors)
     const getDate = () => {
         const today = new Date();
 
-        const date = today.getDate() + '/' + (today.getMonth() + 1) +'/'+today.getFullYear();
+        const date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
         return date
     }
-
+    let validation = {}
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
-            <Header>{t("WORKS_CREATE_ESTIMATE")}</Header>
+            <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_ESTIMATE")}</Header>
             <Card >
-                <CardSectionHeader >{t(`WORKS_ESTIMATE_DETAILS`)}</CardSectionHeader>
+                <CardSectionHeader style={{ "marginTop": "14px" }} >{t(`WORKS_ESTIMATE_DETAILS`)}</CardSectionHeader>
                 {/* TEXT INPUT ROW */}
                 <LabelFieldPair>
-                    <CardLabel style={{"fontSize":"16px","fontStyle":"bold","fontWeight":"600"}} >{t(`WORKS_DATE_PROPOSAL`)}</CardLabel>
-                    <TextInput className={"field"} name="reasonDocumentNumber" inputRef={register()} value={getDate()} disabled/>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{`${t(`WORKS_DATE_PROPOSAL`)}:*`}</CardLabel>
+                    <TextInput className={"field"} name="reasonDocumentNumber" inputRef={register()} value={getDate()} disabled />
                 </LabelFieldPair>
                 {/* DROPDOWN ROW */}
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_EXECUTING_DEPT`)}:*`}</CardLabel>
-                    <Controller
-                        name="amendmentReason"
-                        control={control}
-                        //rules={{ required: true }}
-                        render={(props) => {
-                            return (
-                                <Dropdown
-                                    className={`field`}
-                                    option={dummyData}
-                                    //selected={props?.value}
-                                    optionKey={"name"}
-                                    t={t}
-                                    select={props?.onChange}
-                                />
-                            );
-                        }}
-                    />
-                </LabelFieldPair>
-                <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_LOR`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="lor" inputRef={register()} />
+                    <div className='field'>
+                        <Controller
+                            name="edept"
+                            control={control}
+                            rules={{ required: true }}
+                            render={(props) => {
+                                return (
+                                    <Dropdown
+                                        option={dummyData}
+                                        //selected={props?.value}
+                                        optionKey={"name"}
+                                        t={t}
+                                        select={props?.onChange}
+                                    />
+                                );
+                            }}
+                        />
+                        {errors && errors?.edept?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    </div>
                 </LabelFieldPair>
 
-                <CardSectionHeader >{t(`WORKS_LOCATION_DETAILS`)}</CardSectionHeader>
+                <LabelFieldPair>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_LOR`)}:`}</CardLabel>
+                    <TextInput className={"field"} name="lor" inputRef={register()} 
+                        {...(validation = {
+                            isRequired: false,
+                            pattern: "^[a-zA-Z0-9_.$@#\/]*$",
+                            type: "text",
+                            title: t("WORKS_INVALID_INPUT"),
+                        })}
+                    />
+                </LabelFieldPair>
+
+                <CardSectionHeader style={{ "marginTop": "14px" }}>{t(`WORKS_LOCATION_DETAILS`)}</CardSectionHeader>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_WARD`)}:*`}</CardLabel>
-                    <Controller
-                        name="ward"
-                        control={control}
-                        //rules={{ required: true }}
-                        render={(props) => {
-                            return (
-                                <Dropdown
-                                    className={`field`}
-                                    option={dummyData}
-                                    //selected={props?.value}
-                                    optionKey={"name"}
-                                    t={t}
-                                    select={props?.onChange}
-                                />
-                            );
-                        }}
-                    />
+                    <div className='field'>
+                        <Controller
+                            name="ward"
+                            control={control}
+                            rules={{ required: true }}
+                            render={(props) => {
+                                return (
+                                    <Dropdown
+                                        option={dummyData}
+                                        //selected={props?.value}
+                                        optionKey={"name"}
+                                        t={t}
+                                        select={props?.onChange}
+                                    />
+                                );
+                            }}
+                        />
+                        {errors && errors?.ward?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_LOCATION`)}:`}</CardLabel>
@@ -130,16 +144,18 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
 
-                <CardSectionHeader >{t(`WORKS_WORK_DETAILS`)}</CardSectionHeader>
+                <CardSectionHeader style={{ "marginTop": "14px" }}>{t(`WORKS_WORK_DETAILS`)}</CardSectionHeader>
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_BENEFICIERY`)}:`}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_BENEFICIERY`)}:*`}</CardLabel>
+                    <div className='field'>
                     <Controller
                         name="beneficiery"
                         control={control}
+                        rules={{required:true}}
                         render={(props) => {
                             return (
                                 <Dropdown
-                                    className={`field`}
+                                    
                                     option={dummyData}
                                     //selected={props?.value}
                                     optionKey={"name"}
@@ -149,44 +165,54 @@ const CreateEstimate = (props) => {
                             );
                         }}
                     />
+                        {errors && errors?.beneficiery?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_WORK_NATURE`)}:*`}</CardLabel>
-                    <Controller
-                        name="natureofwork"
-                        control={control}
-                        render={(props) => {
-                            return (
-                                <Dropdown
-                                    className={`field`}
-                                    option={dummyData}
-                                    //selected={props?.value}
-                                    optionKey={"name"}
-                                    t={t}
-                                    select={props?.onChange}
-                                />
-                            );
-                        }}
-                    />
+                    <div className='field'>
+                        <Controller
+                            name="natureofwork"
+                            control={control}
+                            rules={{ required: true }}
+                            render={(props) => {
+                                return (
+                                    <Dropdown
+
+                                        option={dummyData}
+                                        //selected={props?.value}
+                                        optionKey={"name"}
+                                        t={t}
+                                        select={props?.onChange}
+                                    />
+                                );
+                            }}
+                        />
+                        {errors && errors?.natureofwork?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_WORK_TYPE`)}:*`}</CardLabel>
-                    <Controller
-                        name="workType"
-                        control={control}
-                        render={(props) => {
-                            return (
-                                <Dropdown
-                                    className={`field`}
-                                    option={dummyData}
-                                    //selected={props?.value}
-                                    optionKey={"name"}
-                                    t={t}
-                                    select={props?.onChange}
-                                />
-                            );
-                        }}
-                    />
+                    <div className='field'>
+                        <Controller
+                            name="workType"
+                            control={control}
+                            rules={{required:true}}
+                            render={(props) => {
+                                return (
+                                    <Dropdown
+                                        option={dummyData}
+                                        //selected={props?.value}
+                                        optionKey={"name"}
+                                        t={t}
+                                        select={props?.onChange}
+                                    />
+                                );
+                            }}
+                        />
+                        {errors && errors?.workType?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_SUB_TYPE_WORK`)}:`}</CardLabel>
@@ -208,14 +234,15 @@ const CreateEstimate = (props) => {
                     />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_MODE_OF_INS`)}:`}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_MODE_OF_INS`)}:*`}</CardLabel>
+                    <div className='field'> 
                     <Controller
                         name="modeofens"
                         control={control}
+                        rules={{required:true}}
                         render={(props) => {
                             return (
                                 <Dropdown
-                                    className={`field`}
                                     option={dummyData}
                                     //selected={props?.value}
                                     optionKey={"name"}
@@ -225,133 +252,139 @@ const CreateEstimate = (props) => {
                             );
                         }}
                     />
+                        {errors && errors?.modeofens?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    </div>
                 </LabelFieldPair>
 
-                <CardSectionHeader >{t(`WORKS_FINANCIAL_DETAILS`)}</CardSectionHeader>
+                <CardSectionHeader style={{ "marginTop": "14px" }}>{t(`WORKS_FINANCIAL_DETAILS`)}</CardSectionHeader>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FUND`)}:*`}</CardLabel>
-                    <Controller
-                        name="fund"
-                        control={control}
-                        render={(props) => {
-                            return (
-                                <Dropdown
-                                    className={`field`}
-                                    option={dummyData}
-                                    //selected={props?.value}
-                                    optionKey={"name"}
-                                    t={t}
-                                    select={props?.onChange}
-                                />
-                            );
-                        }}
-                    />
+                    <div className='field'>
+                        <Controller
+                            name="fund"
+                            control={control}
+                            rules={{ required: true }}
+                            render={(props) => {
+                                return (
+                                    <Dropdown
+
+                                        option={dummyData}
+                                        //selected={props?.value}
+                                        optionKey={"name"}
+                                        t={t}
+                                        select={props?.onChange}
+                                    />
+                                );
+                            }}
+                        />
+                        {errors && errors?.fund?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FUNCTION`)}:*`}</CardLabel>
-                    <Controller
-                        name="function"
-                        control={control}
-                        render={(props) => {
-                            return (
-                                <Dropdown
-                                    className={`field`}
-                                    option={dummyData}
-                                    //selected={props?.value}
-                                    optionKey={"name"}
-                                    t={t}
-                                    select={props?.onChange}
-                                />
-                            );
-                        }}
-                    />
+                    <div className='field'>
+                        <Controller
+                            name="function"
+                            control={control}
+                            rules={{ required: true }}
+                            render={(props) => {
+                                return (
+                                    <Dropdown
+
+                                        option={dummyData}
+                                        //selected={props?.value}
+                                        optionKey={"name"}
+                                        t={t}
+                                        select={props?.onChange}
+                                    />
+                                );
+                            }}
+                        />
+                        {errors && errors?.function?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_BUDGET_HEAD`)}:*`}</CardLabel>
-                    <Controller
-                        name="budgetHead"
-                        control={control}
-                        render={(props) => {
-                            return (
-                                <Dropdown
-                                    className={`field`}
-                                    option={dummyData}
-                                    //selected={props?.value}
-                                    optionKey={"name"}
-                                    t={t}
-                                    select={props?.onChange}
-                                />
-                            );
-                        }}
-                    />
+                    <div className='field'>
+                        <Controller
+                            name="budgetHead"
+                            control={control}
+                            rules={{ required: true }}
+                            render={(props) => {
+                                return (
+                                    <Dropdown
+
+                                        option={dummyData}
+                                        //selected={props?.value}
+                                        optionKey={"name"}
+                                        t={t}
+                                        select={props?.onChange}
+                                    />
+                                );
+                            }}
+                        />
+                        {errors && errors?.budgetHead?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel style={{"fontSize":"16px","fontStyle":"bold","fontWeight":"600"}}>{`${t(`WORKS_SCHEME`)}:*`}</CardLabel>
-                    <Controller
-                        name="scheme"
-                        control={control}
-                        render={(props) => {
-                            return (
-                                <Dropdown
-                                    className={`field`}
-                                    option={dummyData}
-                                    //selected={props?.value}
-                                    optionKey={"name"}
-                                    t={t}
-                                    select={props?.onChange}
-                                />
-                            );
-                        }}
-                    />
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_SCHEME`)}:`}</CardLabel>
+                    <div className='field'>
+                        <Controller
+                            name="scheme"
+                            control={control}
+                            rules={{ required: false }}
+                            render={(props) => {
+                                return (
+                                    <Dropdown
+
+                                        option={dummyData}
+                                        //selected={props?.value}
+                                        optionKey={"name"}
+                                        t={t}
+                                        select={props?.onChange}
+                                    />
+                                );
+                            }}
+                        />
+                        {errors && errors?.scheme?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
+
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{`${t(`WORKS_SUB_SCHEME`)}:*`}</CardLabel>
-                    <Controller
-                        name="subScheme"
-                        control={control}
-                        render={(props) => {
-                            return (
-                                <Dropdown
-                                    className={`field`}
-                                    option={dummyData}
-                                    //selected={props?.value}
-                                    optionKey={"name"}
-                                    t={t}
-                                    select={props?.onChange}
-                                />
-                            );
-                        }}
-                    />
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{`${t(`WORKS_SUB_SCHEME`)}:`}</CardLabel>
+                    <div className='field'>
+                        <Controller
+                            name="subScheme"
+                            control={control}
+                            rules={{ required: false }}
+                            render={(props) => {
+                                return (
+                                    <Dropdown
+
+                                        option={dummyData}
+                                        //selected={props?.value}
+                                        optionKey={"name"}
+                                        t={t}
+                                        select={props?.onChange}
+                                    />
+                                );
+                            }}
+                        />
+                        {errors && errors?.subScheme?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
 
                 {/* Render the sub work table here */}
                 <SubWorkTable register={register} />
 
-                <CardSectionHeader >{t(`WORKS_RELEVANT_DOCS`)}</CardSectionHeader>
+                <CardSectionHeader style={{ "marginTop": "20px" }} >{t(`WORKS_RELEVANT_DOCS`)}</CardSectionHeader>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600 " }}>{t(`WORKS_UPLOAD_FILES`)}</CardLabel>
-                    {/* <Controller
-                      name={`uploads`}
-                      control={control}
-                      //rules={e?.required ? { required: true } : {}}
-                      render={(props) => (
-                        <div className='field'>
-                          <UploadFile
-                              multiple={true}
-                              id={`doc`}
-                              onUpload={(d) => functionToHandleFileUpload(d, 'documentType', props)}
-                              onDelete={() => dispatch({ type: "remove", payload: { id: 'documentType' } })}
-                              message={functionToDisplayTheMessage}
-                              accept="image/*, .pdf, .png, .jpeg, .doc"
-                          />
-                          </div>
-                      )}
-                  /> */}
                     <div className='field'>
                         <Controller
                             name="uploads"
                             control={control}
-                            // defaultValue={formData?.category ? data?.mseva?.EventCategories.filter(category => category.code === formData?.category)?.[0] : null}
                             rules={{ required: false }}
                             render={({ onChange, ref, value = [] }) => {
                                 function getFileStoreData(filesData) {
@@ -377,7 +410,7 @@ const CreateEstimate = (props) => {
                                     setuploadedstate={value}
                                     allowedFileTypesRegex={allowedFileTypes}
                                     allowedMaxSizeInMB={5}
-                                    hintText={t("DOCUMENTS_ATTACH_RESTRICTIONS_SIZE")}
+                                    hintText={t("WORKS_DOC_UPLOAD_HINT")}
                                 />
                             }
                             }
