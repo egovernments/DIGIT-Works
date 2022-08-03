@@ -44,7 +44,7 @@ const SubWorkTable = ({t,register}) => {
        return rows.map(key=>{
            return <tr style={{"height":"50%"}}>
                <td style={getStyles(1)}>{key}</td>
-               <td style={getStyles(2)} ><TextInput style={{"marginBottom":"0px"}} className={"field"} name="name" inputRef={register()}
+               <td style={getStyles(2)} ><TextInput style={{"marginBottom":"0px"}} className={"field"} name={`work.${key}.name`} inputRef={register()}
                    {...(validation = {
                        isRequired: true,
                        pattern: "^[a-zA-Z0-9_.$@#\/]*$",
@@ -53,7 +53,7 @@ const SubWorkTable = ({t,register}) => {
                        maxlength:140
                    })}
                /></td>
-               <td style={getStyles(3)}><TextInput style={{ "marginBottom": "0px" }} className={"field"} name="amt" inputRef={register()}
+               <td style={getStyles(3)}><TextInput style={{ "marginBottom": "0px" }} className={"field"} name={`work.${key}.amount`} inputRef={register()}
                    {...(validation = {
                        isRequired: true,
                        type: "number",
