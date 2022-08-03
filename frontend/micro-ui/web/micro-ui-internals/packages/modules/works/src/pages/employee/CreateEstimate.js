@@ -1,9 +1,10 @@
-import React, { useReducer } from 'react'
+import React, { Fragment,useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, CardLabelError } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
 //import SubWorkTable from '../../components/CreateEstimate/SubWorkTable/SubWorkTable';
 import SubWorkTable from '../../components/CreateEstimate/SubWorkTablev2/SubWorkTable';
+import ProcessingModal from '../../components/Modal/ProcessingModal';
 //import SubWork from '../../components/CreateEstimate/SubWork';
 const allowedFileTypes = /(.*?)(pdf|msword|openxmlformats-officedocument)$/i;
 
@@ -28,7 +29,7 @@ const CreateEstimate = (props) => {
                 {
                     "name": "sadflkj",
                     "amount": "123"
-                },
+                }
             ],
             "edept": {
                 "name": "Nipun"
@@ -69,7 +70,17 @@ const CreateEstimate = (props) => {
             "subScheme": {
                 "name": "Nipun"
             },
-            "uploads": []
+            "uploads": [],
+            "appDept": {
+                "name": "Nipun"
+            },
+            "appDesig": {
+                "name": "Vipul"
+            },
+            "app": {
+                "name": "Shaifali"
+            },
+            "comments": "SLJDKAFLKSDF"
         }
     });
 
@@ -104,6 +115,8 @@ const CreateEstimate = (props) => {
         return date
     }
     let validation = {}
+
+    const [showModal,setShowModal] = useState(false)
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
             <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_ESTIMATE")}</Header>
@@ -114,6 +127,25 @@ const CreateEstimate = (props) => {
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{`${t(`WORKS_DATE_PROPOSAL`)}:*`}</CardLabel>
                     <TextInput className={"field"} name="reasonDocumentNumber" inputRef={register()} value={getDate()} disabled />
                 </LabelFieldPair>
+
+
+                {/* Modal */}
+                {showModal && <ProcessingModal
+                    t={t}
+                    heading={"WORKS_PROCESSINGMODAL_HEADER"}
+                    closeModal={() => setShowModal(false)}
+                    actionCancelLabel={"WORKS_CANCEL"}
+                    actionCancelOnSubmit={() => setShowModal(false)}
+                    actionSaveLabel={"WORKS_FORWARD"}
+                    actionSaveOnSubmit={onFormSubmit}
+                    onSubmit={onFormSubmit}
+                    control={control}
+                    register={register}
+                    handleSubmit={handleSubmit}
+                    errors={errors}
+                    
+                />}
+
                 {/* DROPDOWN ROW */}
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_EXECUTING_DEPT`)}:*`}</CardLabel>
@@ -472,7 +504,7 @@ const CreateEstimate = (props) => {
                 </LabelFieldPair>
 
                 <ActionBar>
-                    <SubmitBar submit={true} label={t("WORKS_CREATE_ESTIMATE")} />
+                    <SubmitBar onSubmit={()=>setShowModal(true)} label={t("WORKS_CREATE_ESTIMATE")} />
                 </ActionBar>
             </Card>
         </form>

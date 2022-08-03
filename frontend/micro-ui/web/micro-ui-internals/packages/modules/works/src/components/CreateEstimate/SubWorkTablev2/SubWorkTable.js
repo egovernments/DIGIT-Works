@@ -4,7 +4,7 @@ import { AddIcon,DeleteIcon,RemoveIcon,TextInput } from '@egovernments/digit-ui-
 const SubWorkTable = ({t,register}) => {
     let validation = {}
     const [rows,setRows] = useState([1])
-    console.log(rows)
+    
     const getStyles = (index) => {
         let obj = {}
         switch (index) {

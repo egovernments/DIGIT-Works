@@ -1,13 +1,16 @@
-import React, { useReducer } from 'react'
+import React, { useReducer,useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, DatePicker, Row, StatusTable,CardLabelError } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
+import ProcessingModal from '../../../components/Modal/ProcessingModal';
+
 
 //import SubWork from '../../components/CreateEstimate/SubWork';
 const allowedFileTypes = /(.*?)(jpg|jpeg|png|image|pdf|msword|openxmlformats-officedocument)$/i;
 
 const CreateLOI = () => {
     const { t } = useTranslation()
+    const [showModal,setShowModal] = useState(false)
     const {
         register,
         control,
@@ -18,7 +21,35 @@ const CreateLOI = () => {
         formState: { errors, ...rest },
         reset,
         ...methods
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            "lor": "12",
+            "fileno": "3242",
+            "dlperiod": "12",
+            "fromDate": "2022-08-04",
+            "aggDate": "2022-08-04",
+            "agencyname": {
+                "name": "Nipun"
+            },
+            "officerInChargedesig": {
+                "name": "Nipun"
+            },
+            "officerIncharge": {
+                "name": "Vipul"
+            },
+            "uploads": [],
+            "comments": "sdfs",
+            "appDept": {
+                "name": "Nipun"
+            },
+            "appDesig": {
+                "name": "Vipul"
+            },
+            "app": {
+                "name": "Vipul"
+            }
+        }
+    });
 
     const dummyData = [
         {
@@ -67,6 +98,21 @@ const CreateLOI = () => {
                     />
                     <Row label={`${t("WORKS_SUB_ESTIMATE_NO")}:`} text={"NA"} />
                 </StatusTable>
+                {showModal && <ProcessingModal
+                    t={t}
+                    heading={"WORKS_PROCESSINGMODAL_HEADER"}
+                    closeModal={() => setShowModal(false)}
+                    actionCancelLabel={"WORKS_CANCEL"}
+                    actionCancelOnSubmit={() => setShowModal(false)}
+                    actionSaveLabel={"WORKS_FORWARD"}
+                    actionSaveOnSubmit={onFormSubmit}
+                    onSubmit={onFormSubmit}
+                    control={control}
+                    register={register}
+                    handleSubmit={handleSubmit}
+                    errors={errors}
+
+                />}
 
                 {/* <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_ESTIMATE_NO`)}</CardLabel>
@@ -167,7 +213,7 @@ const CreateLOI = () => {
                             return (
                                 <Dropdown
                                     option={dummyData}
-                                    //selected={props?.value}
+                                    selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
                                     select={props?.onChange}
@@ -255,7 +301,7 @@ const CreateLOI = () => {
                             return (
                                 <Dropdown
                                     option={dummyData}
-                                    //selected={props?.value}
+                                    selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
                                     select={props?.onChange}
@@ -280,7 +326,7 @@ const CreateLOI = () => {
                                 <Dropdown
                                    
                                     option={dummyData}
-                                    //selected={props?.value}
+                                    selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
                                     select={props?.onChange}
@@ -336,7 +382,7 @@ const CreateLOI = () => {
                 </LabelFieldPair>
 
                 <ActionBar>
-                    <SubmitBar submit={true} label={t("WORKS_CREATE_ESTIMATE")} />
+                    <SubmitBar onSubmit={() => setShowModal(true)} label={t("WORKS_CREATE_ESTIMATE")} />
                 </ActionBar>
             </Card>
         </form>
