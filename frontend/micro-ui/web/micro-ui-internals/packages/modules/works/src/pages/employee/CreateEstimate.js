@@ -2,7 +2,8 @@ import React, { useReducer } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, CardLabelError } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
-import SubWorkTable from '../../components/CreateEstimate/SubWorkTable/SubWorkTable';
+//import SubWorkTable from '../../components/CreateEstimate/SubWorkTable/SubWorkTable';
+import SubWorkTable from '../../components/CreateEstimate/SubWorkTablev2/SubWorkTable';
 //import SubWork from '../../components/CreateEstimate/SubWork';
 const allowedFileTypes = /(.*?)(pdf|msword|openxmlformats-officedocument)$/i;
 
@@ -376,7 +377,8 @@ const CreateEstimate = (props) => {
                 </LabelFieldPair>
 
                 {/* Render the sub work table here */}
-                <SubWorkTable register={register} />
+                <CardSectionHeader >{`${t(`WORKS_SUB_WORK_DETAILS`)}*`}</CardSectionHeader>
+                <SubWorkTable register={register} t={t}/>
 
                 <CardSectionHeader style={{ "marginTop": "20px" }} >{t(`WORKS_RELEVANT_DOCS`)}</CardSectionHeader>
                 <LabelFieldPair>
