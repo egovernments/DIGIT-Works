@@ -29,14 +29,6 @@ const CreateEstimate = (props) => {
                     "name": "sadflkj",
                     "amount": "123"
                 },
-                {
-                    "name": "sadfklj",
-                    "amount": "12"
-                },
-                {
-                    "name": "sdafjl",
-                    "amount": "234"
-                }
             ],
             "edept": {
                 "name": "Nipun"
