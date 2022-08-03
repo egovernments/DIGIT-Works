@@ -176,3 +176,33 @@
     }
   }
 }
+
+.sub-work-table {
+  
+  justify-content: center;
+  padding: 0;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  td,th{
+    color: #0B0C0C;
+    border: 1px solid #ddd;
+    padding: 12px;
+  }
+  tr:hover {
+      background-color: #EFEFEF;
+  }
+    th {
+      padding: 10px;
+      text-align: center;
+      background-color: #EFEFEF;
+      color: #0B0C0C;;
+    }
+
+  tr{
+    td{
+      span:hover{
+        cursor: pointer;
+      }
+    }
+  }
+}
