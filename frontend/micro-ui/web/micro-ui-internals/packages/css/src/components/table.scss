@@ -197,4 +197,12 @@
       background-color: #EFEFEF;
       color: #0B0C0C;;
     }
+
+  tr{
+    td{
+      span:hover{
+        cursor: pointer;
+      }
+    }
+  }
 }
