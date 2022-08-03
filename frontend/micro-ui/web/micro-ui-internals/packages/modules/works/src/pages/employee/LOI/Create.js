@@ -86,7 +86,7 @@ const CreateLOI = () => {
 
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
-            <Header style={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_LOI")}</Header>
+            <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_LOI")}</Header>
             <Card >
                 <CardSectionHeader >{t(`WORKS_LOI_DETAILS`)}</CardSectionHeader>
                 <StatusTable>
