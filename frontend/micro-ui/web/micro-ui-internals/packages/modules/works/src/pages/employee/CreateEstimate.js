@@ -20,7 +20,66 @@ const CreateEstimate = (props) => {
         formState: { errors, ...rest },
         reset,
         ...methods
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            "lor": "abcd",
+            "work": [
+                null,
+                {
+                    "name": "sadflkj",
+                    "amount": "123"
+                },
+                {
+                    "name": "sadfklj",
+                    "amount": "12"
+                },
+                {
+                    "name": "sdafjl",
+                    "amount": "234"
+                }
+            ],
+            "edept": {
+                "name": "Nipun"
+            },
+            "ward": {
+                "name": "Nipun"
+            },
+            "location": {
+                "name": "Vipul"
+            },
+            "beneficiery": {
+                "name": "Vipul"
+            },
+            "natureofwork": {
+                "name": "Nipun"
+            },
+            "workType": {
+                "name": "Vipul"
+            },
+            "subtypework": {
+                "name": "Vipul"
+            },
+            "modeofens": {
+                "name": "Nipun"
+            },
+            "fund": {
+                "name": "Shaifali"
+            },
+            "function": {
+                "name": "Vipul"
+            },
+            "budgetHead": {
+                "name": "Nipun"
+            },
+            "scheme": {
+                "name": "Vipul"
+            },
+            "subScheme": {
+                "name": "Nipun"
+            },
+            "uploads": []
+        }
+    });
 
     const dummyData = [
         {
@@ -75,7 +134,7 @@ const CreateEstimate = (props) => {
                                 return (
                                     <Dropdown
                                         option={dummyData}
-                                        //selected={props?.value}
+                                        selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
@@ -112,7 +171,7 @@ const CreateEstimate = (props) => {
                                 return (
                                     <Dropdown
                                         option={dummyData}
-                                        //selected={props?.value}
+                                        selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
@@ -135,7 +194,7 @@ const CreateEstimate = (props) => {
                                 <Dropdown
                                     className={`field`}
                                     option={dummyData}
-                                    //selected={props?.value}
+                                    selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
                                     select={props?.onChange}
@@ -158,7 +217,7 @@ const CreateEstimate = (props) => {
                                 <Dropdown
                                     
                                     option={dummyData}
-                                    //selected={props?.value}
+                                    selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
                                     select={props?.onChange}
@@ -182,7 +241,7 @@ const CreateEstimate = (props) => {
                                     <Dropdown
 
                                         option={dummyData}
-                                        //selected={props?.value}
+                                        selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
@@ -204,7 +263,7 @@ const CreateEstimate = (props) => {
                                 return (
                                     <Dropdown
                                         option={dummyData}
-                                        //selected={props?.value}
+                                        selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
@@ -225,7 +284,7 @@ const CreateEstimate = (props) => {
                                 <Dropdown
                                     className={`field`}
                                     option={dummyData}
-                                    //selected={props?.value}
+                                    selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
                                     select={props?.onChange}
@@ -245,7 +304,7 @@ const CreateEstimate = (props) => {
                             return (
                                 <Dropdown
                                     option={dummyData}
-                                    //selected={props?.value}
+                                    selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
                                     select={props?.onChange}
@@ -271,7 +330,7 @@ const CreateEstimate = (props) => {
                                     <Dropdown
 
                                         option={dummyData}
-                                        //selected={props?.value}
+                                        selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
@@ -294,7 +353,7 @@ const CreateEstimate = (props) => {
                                     <Dropdown
 
                                         option={dummyData}
-                                        //selected={props?.value}
+                                        selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
@@ -317,7 +376,7 @@ const CreateEstimate = (props) => {
                                     <Dropdown
 
                                         option={dummyData}
-                                        //selected={props?.value}
+                                        selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
@@ -340,7 +399,7 @@ const CreateEstimate = (props) => {
                                     <Dropdown
 
                                         option={dummyData}
-                                        //selected={props?.value}
+                                        selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
@@ -364,7 +423,7 @@ const CreateEstimate = (props) => {
                                     <Dropdown
 
                                         option={dummyData}
-                                        //selected={props?.value}
+                                        selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
