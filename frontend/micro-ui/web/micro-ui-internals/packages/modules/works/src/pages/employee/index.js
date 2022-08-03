@@ -11,7 +11,7 @@ const App = ({ path }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          <PrivateRoute path={`${path}/create-loi`} component={() => <CreateLOI />} />
+          <PrivateRoute path={`${path}/create-loi`} component={() => <CreateLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/create-application`} component={() => <CreateEstimate {...{path}}/>} />
         </div>
       </React.Fragment>
