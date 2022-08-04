@@ -1,4 +1,4 @@
-import React, { Fragment,useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, CardLabelError } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,66 @@ const allowedFileTypes = /(.*?)(pdf|msword|openxmlformats-officedocument)$/i;
 
 
 const CreateEstimate = (props) => {
+    const dummyDefatult = {
+        "lor": "123",
+        "work": [
+            null,
+            {
+                "name": "sadfsdf",
+                "amount": "123121221"
+            }
+        ],
+        "edept": {
+            "name": "Nipun"
+        },
+        "ward": {
+            "name": "Vipul"
+        },
+        "location": {
+            "name": "Vipul"
+        },
+        "beneficiery": {
+            "name": "Shaifali"
+        },
+        "natureofwork": {
+            "name": "Nipun"
+        },
+        "workType": {
+            "name": "Vipul"
+        },
+        "subtypework": {
+            "name": "Shaifali"
+        },
+        "modeofens": {
+            "name": "Shaifali"
+        },
+        "fund": {
+            "name": "Shaifali"
+        },
+        "function": {
+            "name": "Vipul"
+        },
+        "budgetHead": {
+            "name": "Shaifali"
+        },
+        "scheme": {
+            "name": "Sumit"
+        },
+        "subScheme": {
+            "name": "Shaifali"
+        },
+        "uploads": [],
+        "comments": "asdfjsladkfjasldfkajsld",
+        "appDept": {
+            "name": "Vipul"
+        },
+        "appDesig": {
+            "name": "Shaifali"
+        },
+        "app": {
+            "name": "Shaifali"
+        }
+    }
     const { t } = useTranslation()
     const {
         register,
@@ -20,68 +80,11 @@ const CreateEstimate = (props) => {
         handleSubmit,
         formState: { errors, ...rest },
         reset,
+        trigger,
         ...methods
     } = useForm({
-        defaultValues: {
-            "lor": "abcd",
-            "work": [
-                null,
-                {
-                    "name": "sadflkj",
-                    "amount": "123"
-                }
-            ],
-            "edept": {
-                "name": "Nipun"
-            },
-            "ward": {
-                "name": "Nipun"
-            },
-            "location": {
-                "name": "Vipul"
-            },
-            "beneficiery": {
-                "name": "Vipul"
-            },
-            "natureofwork": {
-                "name": "Nipun"
-            },
-            "workType": {
-                "name": "Vipul"
-            },
-            "subtypework": {
-                "name": "Vipul"
-            },
-            "modeofens": {
-                "name": "Nipun"
-            },
-            "fund": {
-                "name": "Shaifali"
-            },
-            "function": {
-                "name": "Vipul"
-            },
-            "budgetHead": {
-                "name": "Nipun"
-            },
-            "scheme": {
-                "name": "Vipul"
-            },
-            "subScheme": {
-                "name": "Nipun"
-            },
-            "uploads": [],
-            "appDept": {
-                "name": "Nipun"
-            },
-            "appDesig": {
-                "name": "Vipul"
-            },
-            "app": {
-                "name": "Shaifali"
-            },
-            "comments": "SLJDKAFLKSDF"
-        }
+        defaultValues: {},
+        mode: "onBlur"
     });
 
     const dummyData = [
@@ -102,9 +105,10 @@ const CreateEstimate = (props) => {
         },
     ]
 
+
     const onFormSubmit = (_data) => {
         debugger
-
+        console.log(errors)
         console.log(_data);
     }
     console.log(errors)
@@ -114,9 +118,8 @@ const CreateEstimate = (props) => {
         const date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
         return date
     }
-    let validation = {}
 
-    const [showModal,setShowModal] = useState(false)
+    const [showModal, setShowModal] = useState(false)
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
             <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_ESTIMATE")}</Header>
@@ -143,7 +146,7 @@ const CreateEstimate = (props) => {
                     register={register}
                     handleSubmit={handleSubmit}
                     errors={errors}
-                    
+
                 />}
 
                 {/* DROPDOWN ROW */}
@@ -162,6 +165,7 @@ const CreateEstimate = (props) => {
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
+                                        onBlur={props.onBlur}
                                     />
                                 );
                             }}
@@ -173,14 +177,16 @@ const CreateEstimate = (props) => {
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_LOR`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="lor" inputRef={register()} 
-                        {...(validation = {
-                            isRequired: false,
-                            pattern: "^[a-zA-Z0-9_.$@#\/]*$",
-                            type: "text",
-                            title: t("WORKS_INVALID_INPUT"),
+                    <div className='field'>
+                        <TextInput name="lor" inputRef={register({
+                            pattern: /^[a-zA-Z0-9_.$@#\/]*$/
                         })}
-                    />
+                        />
+
+
+                        {errors && errors?.lor?.type === "pattern" && (
+                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                    </div>
                 </LabelFieldPair>
 
                 <CardSectionHeader style={{ "marginTop": "14px" }}>{t(`WORKS_LOCATION_DETAILS`)}</CardSectionHeader>
@@ -199,6 +205,7 @@ const CreateEstimate = (props) => {
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
+                                        onBlur={props.onBlur}
                                     />
                                 );
                             }}
@@ -222,6 +229,7 @@ const CreateEstimate = (props) => {
                                     optionKey={"name"}
                                     t={t}
                                     select={props?.onChange}
+                                    onBlur={props.onBlur}
                                 />
                             );
                         }}
@@ -232,23 +240,24 @@ const CreateEstimate = (props) => {
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_BENEFICIERY`)}:*`}</CardLabel>
                     <div className='field'>
-                    <Controller
-                        name="beneficiery"
-                        control={control}
-                        rules={{required:true}}
-                        render={(props) => {
-                            return (
-                                <Dropdown
-                                    
-                                    option={dummyData}
-                                    selected={props?.value}
-                                    optionKey={"name"}
-                                    t={t}
-                                    select={props?.onChange}
-                                />
-                            );
-                        }}
-                    />
+                        <Controller
+                            name="beneficiery"
+                            control={control}
+                            rules={{ required: true }}
+                            render={(props) => {
+                                return (
+                                    <Dropdown
+
+                                        option={dummyData}
+                                        selected={props?.value}
+                                        optionKey={"name"}
+                                        t={t}
+                                        select={props?.onChange}
+                                        onBlur={props.onBlur}
+                                    />
+                                );
+                            }}
+                        />
                         {errors && errors?.beneficiery?.type === "required" && (
                             <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
@@ -269,6 +278,7 @@ const CreateEstimate = (props) => {
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
+                                        onBlur={props.onBlur}
                                     />
                                 );
                             }}
@@ -282,7 +292,7 @@ const CreateEstimate = (props) => {
                         <Controller
                             name="workType"
                             control={control}
-                            rules={{required:true}}
+                            rules={{ required: true }}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -291,6 +301,7 @@ const CreateEstimate = (props) => {
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
+                                        onBlur={props.onBlur}
                                     />
                                 );
                             }}
@@ -312,6 +323,7 @@ const CreateEstimate = (props) => {
                                     optionKey={"name"}
                                     t={t}
                                     select={props?.onChange}
+                                    onBlur={props.onBlur}
                                 />
                             );
                         }}
@@ -319,23 +331,24 @@ const CreateEstimate = (props) => {
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_MODE_OF_INS`)}:*`}</CardLabel>
-                    <div className='field'> 
-                    <Controller
-                        name="modeofens"
-                        control={control}
-                        rules={{required:true}}
-                        render={(props) => {
-                            return (
-                                <Dropdown
-                                    option={dummyData}
-                                    selected={props?.value}
-                                    optionKey={"name"}
-                                    t={t}
-                                    select={props?.onChange}
-                                />
-                            );
-                        }}
-                    />
+                    <div className='field'>
+                        <Controller
+                            name="modeofens"
+                            control={control}
+                            rules={{ required: true }}
+                            render={(props) => {
+                                return (
+                                    <Dropdown
+                                        option={dummyData}
+                                        selected={props?.value}
+                                        optionKey={"name"}
+                                        t={t}
+                                        select={props?.onChange}
+                                        onBlur={props.onBlur}
+                                    />
+                                );
+                            }}
+                        />
                         {errors && errors?.modeofens?.type === "required" && (
                             <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
@@ -358,6 +371,7 @@ const CreateEstimate = (props) => {
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
+                                        onBlur={props.onBlur}
                                     />
                                 );
                             }}
@@ -381,6 +395,7 @@ const CreateEstimate = (props) => {
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
+                                        onBlur={props.onBlur}
                                     />
                                 );
                             }}
@@ -404,6 +419,7 @@ const CreateEstimate = (props) => {
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
+                                        onBlur={props.onBlur}
                                     />
                                 );
                             }}
@@ -427,6 +443,7 @@ const CreateEstimate = (props) => {
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
+                                        onBlur={props.onBlur}
                                     />
                                 );
                             }}
@@ -451,6 +468,7 @@ const CreateEstimate = (props) => {
                                         optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
+                                        onBlur={props.onBlur}
                                     />
                                 );
                             }}
@@ -461,7 +479,7 @@ const CreateEstimate = (props) => {
 
                 {/* Render the sub work table here */}
                 <CardSectionHeader >{`${t(`WORKS_SUB_WORK_DETAILS`)}*`}</CardSectionHeader>
-                <SubWorkTable register={register} t={t}/>
+                <SubWorkTable register={register} t={t} errors={errors} />
 
                 <CardSectionHeader style={{ "marginTop": "20px" }} >{t(`WORKS_RELEVANT_DOCS`)}</CardSectionHeader>
                 <LabelFieldPair>
@@ -504,7 +522,7 @@ const CreateEstimate = (props) => {
                 </LabelFieldPair>
 
                 <ActionBar>
-                    <SubmitBar onSubmit={()=>setShowModal(true)} label={t("WORKS_CREATE_ESTIMATE")} />
+                    <SubmitBar onSubmit={() => setShowModal(true)} label={t("WORKS_CREATE_ESTIMATE")} />
                 </ActionBar>
             </Card>
         </form>

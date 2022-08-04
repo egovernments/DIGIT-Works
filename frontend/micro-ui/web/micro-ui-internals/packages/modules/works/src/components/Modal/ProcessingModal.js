@@ -79,6 +79,7 @@ const ProcessingModal = ({
                         render={(props) => {
                             return (
                                 <Dropdown
+                                    onBlur={props.onBlur}
                                     option={dummyData}
                                     selected={props?.value}
                                     optionKey={"name"}
@@ -88,9 +89,9 @@ const ProcessingModal = ({
                             );
                         }}
                     />
-                        {/* {formErrors && formErrors?.fromDate && formErrors?.fromDate?.type === "required" && (
-                            <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>
-                        )} */}
+                        {formErrors && formErrors?.appDept && formErrors?.appDept?.type === "required" && (
+                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
+                        )}
                         
                     </span>
                 <span className="surveyformfield">
@@ -102,6 +103,7 @@ const ProcessingModal = ({
                         render={(props) => {
                             return (
                                 <Dropdown
+                                    onBlur={props.onBlur}
                                     option={dummyData}
                                     selected={props?.value}
                                     optionKey={"name"}
@@ -111,9 +113,9 @@ const ProcessingModal = ({
                             );
                         }}
                     />
-                    {/* {formErrors && formErrors?.fromDate && formErrors?.fromDate?.type === "required" && (
-                            <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>
-                        )} */}
+                    {formErrors && formErrors?.appDesig && formErrors?.appDesig?.type === "required" && (
+                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
+                        )}
 
                 </span>
                 <span className="surveyformfield">
@@ -125,6 +127,7 @@ const ProcessingModal = ({
                         render={(props) => {
                             return (
                                 <Dropdown
+                                    onBlur={props.onBlur}
                                     option={dummyData}
                                     selected={props?.value}
                                     optionKey={"name"}
@@ -134,9 +137,9 @@ const ProcessingModal = ({
                             );
                         }}
                     />
-                    {/* {formErrors && formErrors?.fromDate && formErrors?.fromDate?.type === "required" && (
-                            <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>
-                        )} */}
+                    {formErrors && formErrors?.app && formErrors?.app?.type === "required" && (
+                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
+                        )}
 
                 </span>
                 <span className="surveyformfield">
@@ -144,9 +147,11 @@ const ProcessingModal = ({
                         <TextArea
                             style={{"marginTop":"3px"}}
                             name={"comments"}
-                            inputRef={register()}
+                            inputRef={register({
+                                maxLength:140
+                            })}
                         />
-                        {/* {errors?.description?.type && <CardLabelError>{t(`ERROR_${errors?.description?.type?.toUpperCase()}_140`)}</CardLabelError>} */}
+                    {formErrors?.comments?.type && <CardLabelError>{t(`ERROR_${formErrors?.comments?.type?.toUpperCase()}_140`)}</CardLabelError>}
                     
                 </span>
 
