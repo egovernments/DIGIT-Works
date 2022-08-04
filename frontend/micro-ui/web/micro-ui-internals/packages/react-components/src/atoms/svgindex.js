@@ -1041,6 +1041,12 @@ const AddIcon = ({ styles, className, fill = "white" }) => (
   </svg>
 );
 
+const SubtractIcon = ({ styles, className, fill = "white" }) => (
+  <svg width="12" height="14" className={className} style={{...styles}} viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.24609 0.783203V3.45508H0.667969V0.783203H9.24609Z" fill={fill} />
+  </svg>
+);
+
 const AddNewIcon = () => (
   <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -1182,6 +1188,7 @@ export {
   RupeeSymbol,
   ValidityTimeIcon,
   AddIcon,
+  SubtractIcon,
   AddNewIcon,
   ViewReportIcon,
   InboxIcon,

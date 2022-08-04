@@ -1,6 +1,6 @@
 import React, { useReducer,useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, DatePicker, Row, StatusTable,CardLabelError } from '@egovernments/digit-ui-react-components';
+import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, DatePicker, Row, StatusTable,CardLabelError,AddIcon,SubtractIcon } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
 import ProcessingModal from '../../../components/Modal/ProcessingModal';
 
@@ -85,6 +85,7 @@ const CreateLOI = () => {
         <form onSubmit={handleSubmit(onFormSubmit)}>
             <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_LOI")}</Header>
             <Card >
+                
                 <CardSectionHeader >{t(`WORKS_LOI_DETAILS`)}</CardSectionHeader>
                 <StatusTable>
                     <Row label={`${t("WORKS_ESTIMATE_NO")}:`} text={"NA"} textStyle={{ whiteSpace: "pre" }} />
@@ -111,21 +112,7 @@ const CreateLOI = () => {
 
                 />}
 
-                {/* <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_ESTIMATE_NO`)}</CardLabel>
-                    <p>{"estimateIdPlaceholder"}</p>
-                </LabelFieldPair>
                 
-                <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_NAME_OF_WORK`)}</CardLabel>
-                    <p>{"nameofworkplaceholder"}</p>
-                </LabelFieldPair>
-
-                <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_SUB_ESTIMATE_NO`)}</CardLabel>
-                    <p>{"subestimatenoplaceholder"}</p>
-                </LabelFieldPair> */}
-
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_ABSTRACT_ESTIMATE_NO`)}:`}</CardLabel>
                     <div className='field'>
@@ -168,18 +155,24 @@ const CreateLOI = () => {
                 <StatusTable>
                     <Row label={`${t("WORKS_ESTIMATED_AMT")}:`} text={"NA"} />
                 </StatusTable>
-                {/* <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_ESTIMATED_AMT`)}</CardLabel>
-                    <p>{"ESTIMATE AMT"}</p>
-                </LabelFieldPair> */}
-
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FINALIZED_PER`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="lor" inputRef={register()} />
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FINALIZED_PER`)}:*`}</CardLabel>
+                    <div className='field'>
+                    <div className='percent-input'>
+                        <button style={{"height":"40px","width":"40px"}}><AddIcon fill={"#F47738"} styles={{"display":"revert"}}/></button>
+                            <button style={{ "height": "40px", "width": "40px" }}><SubtractIcon fill={"#AFA8A4"} styles={{ "display": "revert","marginTop":"7px" }} /></button>
+                            <TextInput name="percent" type="number" inputRef={register({validate:value=>parseInt(value)>=-100 && parseInt(value)<=100,required:true})} />
+                    {errors && errors?.percent?.type === "required" && (
+                        <CardLabelError >{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            {errors && errors?.percent?.type === "validate" && (
+                                <CardLabelError>{t(`WORKS_LIMIT_ERR`)}</CardLabelError>)}
+                            
+                    </div>
+                    </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_AGREEMENT_AMT`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="lor" inputRef={register()} />
+                    <TextInput className={"field"} name="lor" disabled={true} inputRef={register()} />
                 </LabelFieldPair>
 
                 <CardSectionHeader >{t(`WORKS_AGGREEMENT_DETAILS`)}</CardSectionHeader>
@@ -344,7 +337,6 @@ const CreateLOI = () => {
                         <Controller
                             name="uploads"
                             control={control}
-                            // defaultValue={formData?.category ? data?.mseva?.EventCategories.filter(category => category.code === formData?.category)?.[0] : null}
                             rules={{ required: false }}
                             render={({ onChange, ref, value = [] }) => {
                                 function getFileStoreData(filesData) {
