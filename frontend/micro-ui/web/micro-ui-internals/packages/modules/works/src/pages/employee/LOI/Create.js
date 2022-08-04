@@ -9,6 +9,33 @@ import ProcessingModal from '../../../components/Modal/ProcessingModal';
 const allowedFileTypes = /(.*?)(jpg|jpeg|png|image|pdf|msword|openxmlformats-officedocument)$/i;
 
 const CreateLOI = () => {
+    const dummyDefault = {
+        "lor": "12",
+        "fileno": "3242",
+        "dlperiod": "12",
+        "fromDate": "2022-08-04",
+        "aggDate": "2022-08-04",
+        "agencyname": {
+            "name": "Nipun"
+        },
+        "officerInChargedesig": {
+            "name": "Nipun"
+        },
+        "officerIncharge": {
+            "name": "Vipul"
+        },
+        "uploads": [],
+        "comments": "sdfs",
+        "appDept": {
+            "name": "Nipun"
+        },
+        "appDesig": {
+            "name": "Vipul"
+        },
+        "app": {
+            "name": "Vipul"
+        }
+    }
     const { t } = useTranslation()
     const [showModal,setShowModal] = useState(false)
     const {
@@ -22,33 +49,8 @@ const CreateLOI = () => {
         reset,
         ...methods
     } = useForm({
-        defaultValues: {
-            "lor": "12",
-            "fileno": "3242",
-            "dlperiod": "12",
-            "fromDate": "2022-08-04",
-            "aggDate": "2022-08-04",
-            "agencyname": {
-                "name": "Nipun"
-            },
-            "officerInChargedesig": {
-                "name": "Nipun"
-            },
-            "officerIncharge": {
-                "name": "Vipul"
-            },
-            "uploads": [],
-            "comments": "sdfs",
-            "appDept": {
-                "name": "Nipun"
-            },
-            "appDesig": {
-                "name": "Vipul"
-            },
-            "app": {
-                "name": "Vipul"
-            }
-        }
+        defaultValues: {...dummyDefault},
+        mode:"onBlur"
     });
 
     const dummyData = [
@@ -75,12 +77,7 @@ const CreateLOI = () => {
         console.log(_data);
     }
     console.log(errors)
-    const getDate = () => {
-        const today = new Date();
-
-        const date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
-        return date
-    }
+    
 
     let validation = {}
 
@@ -131,26 +128,24 @@ const CreateLOI = () => {
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_ABSTRACT_ESTIMATE_NO`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="lor" inputRef={register()}
-                        {...(validation = {
-                            isRequired: false,
-                            pattern: "^[a-zA-Z0-9_.$@#\/]*$",
-                            type: "text",
-                            title: t("WORKS_INVALID_INPUT"),
-                        })} />
+                    <div className='field'>
+                    <TextInput name="absEstimateNo" inputRef={register({
+                        required:false,
+                        pattern: /^[a-zA-Z0-9_.$@#\/]*$/
+                    })} />
+                        {errors && errors?.absEstimateNo?.type === "pattern" && (
+                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                    </div>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FILE_NO`)}:*`}</CardLabel>
                     <div className='field'>
-                    <TextInput  name="fileno" inputRef={register({required:true})} {...(validation = {
-                        isRequired: false,
-                        pattern: "^[a-zA-Z0-9_.$@#\/]*$",
-                        type: "text",
-                        title: t("WORKS_INVALID_INPUT"),
-                    })} />
+                        <TextInput name="fileno" inputRef={register({ required: true, pattern: /^[a-zA-Z0-9_.$@#\/]*$/ })}  />
                         {errors && errors?.fileno?.type === "required" && (
                             <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                        {errors && errors?.fileno?.type === "pattern" && (
+                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
@@ -158,10 +153,11 @@ const CreateLOI = () => {
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FILE_DATE`)}:*`}</CardLabel>
                     <div className='field'>
                     <Controller
-                        render={(props) => <DatePicker style={{ "width": "100%" }} date={props.value} onChange={props.onChange} />}
-                        name="fromDate"
-                        control={control}
-                        rules={{required:true}}
+                            name="fromDate"
+                            control={control}
+                            rules={{ required: true }}
+                        render={(props) => <DatePicker 
+                                style={{ "width": "100%" }} date={props.value} onChange={props.onChange} onBlur={props.onBlur} />}
                     />
                     {errors && errors?.fromDate?.type === "required" && (
                         <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
@@ -192,7 +188,7 @@ const CreateLOI = () => {
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_DATE_OF_AGG`)}:*`}</CardLabel>
                     <div className='field'>
                     <Controller
-                        render={(props) => <DatePicker style={{ "width": "100%" }} date={props.value} onChange={props.onChange} />}
+                        render={(props) => <DatePicker style={{ "width": "100%" }} date={props.value} onChange={props.onChange} onBlur={props.onBlur} />}
                         name="aggDate"
                         control={control}
                         rules={{required:true}}
@@ -217,6 +213,7 @@ const CreateLOI = () => {
                                     optionKey={"name"}
                                     t={t}
                                     select={props?.onChange}
+                                    onBlur={props.onBlur}
                                 />
                             );
                         }}
@@ -233,60 +230,59 @@ const CreateLOI = () => {
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_ADD_SECURITY_DP`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="lor" inputRef={register()} 
-                        {...(validation = {
-                            isRequired: false,
-                            pattern: "^[0-9]*$",
-                            type: "number",
-                            title: t("WORKS_INVALID_INPUT"),
-                        })} />
+                    <div className='field'>
+                    <TextInput name="securitydeposit" inputRef={register({
+                        pattern: /^[0-9]*$/
+                    })} 
+                       />
+                        {errors && errors?.securitydeposit?.type === "pattern" && (
+                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                    </div>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_BANK_G`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="lor" inputRef={register()} {...(validation = {
-                        isRequired: false,
-                        pattern: "^[a-zA-Z0-9_.$@#\/]*$",
-                        type: "text",
-                        title: t("WORKS_INVALID_INPUT"),
+                    <div className='field'>
+                    <TextInput name="bankG" inputRef={register({
+                        pattern: /^[a-zA-Z0-9_.$@#\/]*$/
                     })} />
+                    {errors && errors?.bankG?.type === "pattern" && (
+                        <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                    </div>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_EMD`)}:*`}</CardLabel>
                     <div className='field'>
-                    <TextInput  name="lor" inputRef={register({required:true})}  {...(validation = {
-                        isRequired: false,
-                        pattern: "^[0-9]*$",
-                        type: "number",
-                        title: t("WORKS_INVALID_INPUT"),
-                    })} />
-                    {errors && errors?.fileno?.type === "required" && (
+                    <TextInput  name="emd" inputRef={register({required:true,
+                        pattern: /^[0-9]*$/
+})}   />
+                    {errors && errors?.emd?.type === "required" && (
                         <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                        {errors && errors?.emd?.type === "pattern" && (
+                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONT_PERIOD`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="lor" inputRef={register()} {...(validation = {
-                        isRequired: false,
-                        pattern: "^[0-9]*$",
-                        type: "number",
-                        title: t("WORKS_INVALID_INPUT"),
-                    })} />
+                    <div className='field'>
+                    <TextInput name="contperiod" inputRef={register({
+                        pattern: /^[0-9]*$/
+                    })}/>
+                        {errors && errors?.contperiod?.type === "pattern" && (
+                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                    </div>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_DEFECT_LIA`)}:*`}</CardLabel>
                     <div className='field'>
-                    <TextInput name="dlperiod" inputRef={register({required:true})} {...(validation = {
-                        isRequired: false,
-                        pattern: "^[0-9]*$",
-                        type: "number",
-                        title: t("WORKS_INVALID_INPUT"),
-                    })} />
+                        <TextInput name="dlperiod" inputRef={register({ required: true, pattern: /^[0-9]*$/ })} />
                         {errors && errors?.dlperiod?.type === "required" && (
                             <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                        {errors && errors?.dlperiod?.type === "pattern" && (
+                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
@@ -305,6 +301,7 @@ const CreateLOI = () => {
                                     optionKey={"name"}
                                     t={t}
                                     select={props?.onChange}
+                                    onBlur={props.onBlur}
                                 />
                             );
                         }}
@@ -324,7 +321,7 @@ const CreateLOI = () => {
                         render={(props) => {
                             return (
                                 <Dropdown
-                                   
+                                   onBlur={props.onBlur}
                                     option={dummyData}
                                     selected={props?.value}
                                     optionKey={"name"}
