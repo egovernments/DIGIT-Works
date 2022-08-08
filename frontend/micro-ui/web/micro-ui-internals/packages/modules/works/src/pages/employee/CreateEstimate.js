@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import SubWorkTable from '../../components/CreateEstimate/SubWorkTablev2/SubWorkTable';
 import ProcessingModal from '../../components/Modal/ProcessingModal';
 //import SubWork from '../../components/CreateEstimate/SubWork';
-const allowedFileTypes = /(.*?)(pdf|msword|openxmlformats-officedocument)$/i;
+const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
 
 const CreateEstimate = (props) => {
@@ -523,6 +523,7 @@ const CreateEstimate = (props) => {
                                     allowedFileTypesRegex={allowedFileTypes}
                                     allowedMaxSizeInMB={5}
                                     hintText={t("WORKS_DOC_UPLOAD_HINT")}
+                                    maxFilesAllowed={5}
                                 />
                             }
                             }

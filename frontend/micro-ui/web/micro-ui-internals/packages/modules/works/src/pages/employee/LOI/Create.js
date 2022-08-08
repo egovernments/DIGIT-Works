@@ -6,7 +6,7 @@ import ProcessingModal from '../../../components/Modal/ProcessingModal';
 
 
 //import SubWork from '../../components/CreateEstimate/SubWork';
-const allowedFileTypes = /(.*?)(jpg|jpeg|png|image|pdf|msword|openxmlformats-officedocument)$/i;
+const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
 const CreateLOI = () => {
 
@@ -390,6 +390,7 @@ const CreateLOI = () => {
                                     allowedFileTypesRegex={allowedFileTypes}
                                     allowedMaxSizeInMB={5}
                                     hintText={t("WORKS_DOC_UPLOAD_HINT")}
+                                    maxFilesAllowed={5}
                                 />
                             }
                             }
