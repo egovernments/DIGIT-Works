@@ -10,15 +10,24 @@ const allowedFileTypes = /(.*?)(pdf|msword|openxmlformats-officedocument)$/i;
 
 
 const CreateEstimate = (props) => {
+    const handleCreateClick = async () => {
+        debugger
+        // const result = await trigger(["lor", "fileno", "dlperiod", "fromDate", "aggDate", "agencyname", "officerInChargedesig","officerIncharge","work"])
+        const arr = Object.keys(dummyDefatult)
+        const result = await trigger(arr)
+        if (result) {
+            setShowModal(true)
+        }
+    }
     const dummyDefatult = {
         "lor": "123",
-        "work": [
-            null,
-            {
-                "name": "sadfsdf",
-                "amount": "123121221"
-            }
-        ],
+        // "work": [
+        //     null,
+        //     {
+        //         "name": "sadfsdf",
+        //         "amount": "123121221"
+        //     }
+        // ],
         "edept": {
             "name": "Nipun"
         },
@@ -59,16 +68,16 @@ const CreateEstimate = (props) => {
             "name": "Shaifali"
         },
         "uploads": [],
-        "comments": "asdfjsladkfjasldfkajsld",
-        "appDept": {
-            "name": "Vipul"
-        },
-        "appDesig": {
-            "name": "Shaifali"
-        },
-        "app": {
-            "name": "Shaifali"
-        }
+        // "comments": "asdfjsladkfjasldfkajsld",
+        // "appDept": {
+        //     "name": "Vipul"
+        // },
+        // "appDesig": {
+        //     "name": "Shaifali"
+        // },
+        // "app": {
+        //     "name": "Shaifali"
+        // }
     }
     const { t } = useTranslation()
     const {
@@ -84,7 +93,7 @@ const CreateEstimate = (props) => {
         ...methods
     } = useForm({
         defaultValues: {},
-        mode: "onBlur"
+        mode: "onSubmit"
     });
 
     const dummyData = [
@@ -522,7 +531,7 @@ const CreateEstimate = (props) => {
                 </LabelFieldPair>
 
                 <ActionBar>
-                    <SubmitBar onSubmit={() => setShowModal(true)} label={t("WORKS_CREATE_ESTIMATE")} />
+                    <SubmitBar onSubmit={handleCreateClick} label={t("WORKS_CREATE_ESTIMATE")} />
                 </ActionBar>
             </Card>
         </form>

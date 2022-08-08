@@ -71,7 +71,7 @@ const ProcessingModal = ({
             <Card style={{ boxShadow: "none" }}>
                 
                     <span className="surveyformfield">
-                        <label>{t("WORKS_APPROVER_DEPT")}</label>
+                        <label>{`${t("WORKS_APPROVER_DEPT")}*`}</label>
                     <Controller
                         name="appDept"
                         control={control}
@@ -95,7 +95,7 @@ const ProcessingModal = ({
                         
                     </span>
                 <span className="surveyformfield">
-                    <label>{t("WORKS_APPROVER_DESIGNATION")}</label>
+                    <label>{`${t("WORKS_APPROVER_DESIGNATION")}*`}</label>
                     <Controller
                         name="appDesig"
                         control={control}
@@ -119,7 +119,7 @@ const ProcessingModal = ({
 
                 </span>
                 <span className="surveyformfield">
-                    <label>{t("WORKS_APPROVER")}</label>
+                    <label>{`${t("WORKS_APPROVER")}*`}</label>
                     <Controller
                         name="app"
                         control={control}

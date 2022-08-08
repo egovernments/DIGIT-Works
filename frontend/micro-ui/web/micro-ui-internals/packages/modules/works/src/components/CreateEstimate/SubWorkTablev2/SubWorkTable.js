@@ -2,10 +2,16 @@ import React, { Fragment, useState } from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError } from '@egovernments/digit-ui-react-components'
 
 const SubWorkTable = ({ t, register, errors }) => {
-
-
-    const [rows, setRows] = useState([1])
-
+    
+    const initialState= [
+        {
+            key:1,
+            isShow:true
+        }
+    ]
+    const [rows, setRows] = useState(initialState)
+    console.log("formErrorssss", errors)
+    console.log("rowState",rows)
     const getStyles = (index) => {
         let obj = {}
         switch (index) {
@@ -34,38 +40,63 @@ const SubWorkTable = ({ t, register, errors }) => {
         })
     }
 
-    const removeRow = (key) => {
+    const showDelete = () => {
+        let countIsShow = 0
+        rows.map(row=>row.isShow && countIsShow++)
+        if(countIsShow===1){
+            return false
+        }
+        return true
+    }
+    const removeRow = (row) => {
         //make a new state here which doesn't have this key
-        setRows(prev => rows.filter(e => e !== key))
+        const updatedState = rows.map(e => {
+            if(e.key===row.key){
+                return {
+                    key:e.key,
+                    isShow:false
+                }
+            }
+            return e
+        })
+        console.log(updatedState)
+        setRows(prev=> updatedState)
     }
     const addRow = () => {
-        setRows(prev => [...prev, prev[prev.length - 1] + 1])
+        const obj = {
+            key:null,
+            isShow:true
+        }
+        obj.key = rows[rows.length - 1].key + 1
+        setRows(prev => [...prev, obj])
     }
     const renderBody = () => {
-        return rows.map(key => {
-            return <tr style={{ "height": "50%" }}>
-                <td style={getStyles(1)}>{key}</td>
-                <td style={getStyles(2)} ><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`work.${key}.name`} inputRef={register({
+        let i=0
+        return rows.map((row,index) => {
+            if(row.isShow) i++
+            return row.isShow && <tr style={{ "height": "50%" }}>
+                <td style={getStyles(1)}>{i}</td>
+                <td style={getStyles(2)} ><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`work.${row.key}.name`} inputRef={register({
                     required: true,
                     pattern: /^[a-zA-Z0-9_.$@#\/]*$/
                 })
                 }
 
-                />{errors && errors?.work?.[key]?.name?.type === "pattern" && (
+                />{errors && errors?.work?.[row.key]?.name?.type === "pattern" && (
                     <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-                    {errors && errors?.work?.[key]?.name?.type === "required" && (
+                    {errors && errors?.work?.[row.key]?.name?.type === "required" && (
                         <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
-                <td style={getStyles(3)}><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`work.${key}.amount`} inputRef={register({
+                <td style={getStyles(3)}><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`work.${row.key}.amount`} inputRef={register({
                     required: true,
                     pattern: /^[0-9]*$/
                 })}
-                />{errors && errors?.work?.[key]?.amount?.type === "pattern" && (
+                />{errors && errors?.work?.[row.key]?.amount?.type === "pattern" && (
                     <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-                    {errors && errors?.work?.[key]?.amount?.type === "required" && (
+                    {errors && errors?.work?.[row.key]?.amount?.type === "required" && (
                         <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
-                <td style={getStyles(4)} >{key !== 1 && <span onClick={() => removeRow(key)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
+                <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
             </tr>
-        })
+    })
     }
 
 

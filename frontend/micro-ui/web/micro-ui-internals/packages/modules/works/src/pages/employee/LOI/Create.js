@@ -1,6 +1,6 @@
 import React, { useReducer,useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, DatePicker, Row, StatusTable,CardLabelError,AddIcon,SubtractIcon } from '@egovernments/digit-ui-react-components';
+import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, DatePicker, Row, StatusTable, CardLabelError, AddIcon, SubtractIcon, InfoBannerIcon } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
 import ProcessingModal from '../../../components/Modal/ProcessingModal';
 
@@ -9,12 +9,29 @@ import ProcessingModal from '../../../components/Modal/ProcessingModal';
 const allowedFileTypes = /(.*?)(jpg|jpeg|png|image|pdf|msword|openxmlformats-officedocument)$/i;
 
 const CreateLOI = () => {
+
+    const handleCreateClick = async () => {
+        debugger
+        // const result = await trigger(["lor", "fileno", "dlperiod", "fromDate", "aggDate", "agencyname", "officerInChargedesig","officerIncharge","work"])
+        const arr = Object.keys(dummyDefault)
+        const result = await trigger(arr)
+        if (result) {
+            setShowModal(true)
+        }
+    }
+
     const dummyDefault = {
-        "lor": "12",
-        "fileno": "3242",
-        "dlperiod": "12",
-        "fromDate": "2022-08-04",
-        "aggDate": "2022-08-04",
+        "absEstimateNo": "1223",
+        "fileno": "111",
+        "percent": "12",
+        "contId": "12",
+        "securitydeposit": "21",
+        "bankG": "33",
+        "emd": "11",
+        "contperiod": "12",
+        "dlperiod": "1",
+        "fromDate": "2022-12-31",
+        "aggDate": "0011-02-12",
         "agencyname": {
             "name": "Nipun"
         },
@@ -25,16 +42,16 @@ const CreateLOI = () => {
             "name": "Vipul"
         },
         "uploads": [],
-        "comments": "sdfs",
-        "appDept": {
-            "name": "Nipun"
-        },
-        "appDesig": {
-            "name": "Vipul"
-        },
-        "app": {
-            "name": "Vipul"
-        }
+        // "comments": "sadfskldfjwel",
+        // "appDept": {
+        //     "name": "Vipul"
+        // },
+        // "appDesig": {
+        //     "name": "Shaifali"
+        // },
+        // "app": {
+        //     "name": "Nipun"
+        // }
     }
     const { t } = useTranslation()
     const [showModal,setShowModal] = useState(false)
@@ -47,10 +64,11 @@ const CreateLOI = () => {
         handleSubmit,
         formState: { errors, ...rest },
         reset,
+        trigger,
         ...methods
     } = useForm({
         defaultValues: {...dummyDefault},
-        mode:"onBlur"
+        mode:"onSubmit"
     });
 
     const dummyData = [
@@ -77,6 +95,7 @@ const CreateLOI = () => {
         console.log(_data);
     }
     console.log(errors)
+    
     
 
     let validation = {}
@@ -162,17 +181,25 @@ const CreateLOI = () => {
                         <button style={{"height":"40px","width":"40px"}}><AddIcon fill={"#F47738"} styles={{"display":"revert"}}/></button>
                             <button style={{ "height": "40px", "width": "40px" }}><SubtractIcon fill={"#AFA8A4"} styles={{ "display": "revert","marginTop":"7px" }} /></button>
                             <TextInput name="percent" type="number" inputRef={register({validate:value=>parseInt(value)>=-100 && parseInt(value)<=100,required:true})} />
-                    {errors && errors?.percent?.type === "required" && (
-                        <CardLabelError >{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
-                            {errors && errors?.percent?.type === "validate" && (
-                                <CardLabelError>{t(`WORKS_LIMIT_ERR`)}</CardLabelError>)}
-                            
+                            <div className="tooltip" style={{ "margin": "8px -30px 10px 10px" }}>
+                                <InfoBannerIcon fill="#0b0c0c"  />
+                                <span className="tooltiptext" style={{
+                                    whiteSpace: "nowrap",
+                                    fontSize: "medium"
+                                }}>
+                                    {`${t(`WORKS_PERCENT_TOOLTIP`)}`}
+                                </span>
+                            </div>        
                     </div>
+                        {errors && errors?.percent?.type === "required" && (
+                            <CardLabelError >{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                        {errors && errors?.percent?.type === "validate" && (
+                            <CardLabelError>{t(`WORKS_LIMIT_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_AGREEMENT_AMT`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="lor" disabled={true} inputRef={register()} />
+                    <TextInput className={"field"} name="aggrementAmount" disabled={true} inputRef={register()} />
                 </LabelFieldPair>
 
                 <CardSectionHeader >{t(`WORKS_AGGREEMENT_DETAILS`)}</CardSectionHeader>
@@ -218,7 +245,7 @@ const CreateLOI = () => {
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONT_ID`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="lor" inputRef={register()} />
+                    <TextInput className={"field"} name="contId" inputRef={register()} />
                 </LabelFieldPair>
 
                 <LabelFieldPair>
@@ -371,7 +398,7 @@ const CreateLOI = () => {
                 </LabelFieldPair>
 
                 <ActionBar>
-                    <SubmitBar onSubmit={() => setShowModal(true)} label={t("WORKS_CREATE_ESTIMATE")} />
+                    <SubmitBar onSubmit={handleCreateClick} label={t("WORKS_CREATE_ESTIMATE")} />
                 </ActionBar>
             </Card>
         </form>
