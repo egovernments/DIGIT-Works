@@ -31,8 +31,13 @@ const WorksCard = () => {
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {
-        label: t("LOA"),
-        link: `/digit-ui/employee/ws/water/bill-amendment/inbox`,
+        label: t("INBOX"),
+        link: `/digit-ui/employee/works/inbox`,
+        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+      },
+      {
+        label: t("LOI INBOX"),
+        link: `/digit-ui/employee/works/LOIInbox`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {
