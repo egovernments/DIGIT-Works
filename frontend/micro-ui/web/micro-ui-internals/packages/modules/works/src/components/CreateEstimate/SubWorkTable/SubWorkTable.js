@@ -1,63 +1,121 @@
-import TableRows from "./TableRows"
-import React,{useState,Fragment} from "react";
-import { useTranslation } from 'react-i18next'
-import { CardSectionHeader } from "@egovernments/digit-ui-react-components";
+import React, { Fragment, useState } from 'react'
+import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError } from '@egovernments/digit-ui-react-components'
 
-const SubWorkTable=({register}) =>{
-
-    const { t } = useTranslation()
-    const [rowsData, setRowsData] = useState([]);
-
-    const addTableRows = () => {
-
-        const rowsInput = {
-            fullName: '',
-            emailAddress: '',
-            salary: ''
+const SubWorkTable = ({ t, register, errors }) => {
+    
+    const initialState= [
+        {
+            key:1,
+            isShow:true
         }
-        setRowsData([...rowsData, rowsInput])
-
+    ]
+    const [rows, setRows] = useState(initialState)
+    console.log("formErrorssss", errors)
+    console.log("rowState",rows)
+    const getStyles = (index) => {
+        let obj = {}
+        switch (index) {
+            case 1:
+                obj = { "width": "1vw" }
+                break;
+            case 2:
+                obj = { "width": "60vw" }
+                break;
+            case 3:
+                obj = { "width": "20vw" }
+                break;
+            case 4:
+                obj = { "width": "10vw" }
+                break;
+            default:
+                obj = { "width": "1vw" }
+                break;
+        }
+        return obj
     }
-    const deleteTableRows = (index) => {
-        const rows = [...rowsData];
-        rows.splice(index, 1);
-        setRowsData(rows);
+    const columns = [t('WORKS_SNO'), t('WORKS_NAME_OF_WORK'), t('WORKS_ESTIMATED_AMT'), '']
+    const renderHeader = () => {
+        return columns?.map((key, index) => {
+            return <th key={index} style={getStyles(key)} > {key} </th>
+        })
     }
 
-    const handleChange = (index, evnt) => {
-
-        const { name, value } = evnt.target;
-        const rowsInput = [...rowsData];
-        rowsInput[index][name] = value;
-        setRowsData(rowsInput);
-
-
-
+    const showDelete = () => {
+        let countIsShow = 0
+        rows.map(row=>row.isShow && countIsShow++)
+        if(countIsShow===1){
+            return false
+        }
+        return true
     }
+    const removeRow = (row) => {
+        //make a new state here which doesn't have this key
+        const updatedState = rows.map(e => {
+            if(e.key===row.key){
+                return {
+                    key:e.key,
+                    isShow:false
+                }
+            }
+            return e
+        })
+        console.log(updatedState)
+        setRows(prev=> updatedState)
+    }
+    const addRow = () => {
+        const obj = {
+            key:null,
+            isShow:true
+        }
+        obj.key = rows[rows.length - 1].key + 1
+        setRows(prev => [...prev, obj])
+    }
+    const renderBody = () => {
+        let i=0
+        return rows.map((row,index) => {
+            if(row.isShow) i++
+            return row.isShow && <tr style={{ "height": "50%" }}>
+                <td style={getStyles(1)}>{i}</td>
+                <td style={getStyles(2)} ><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`work.${row.key}.name`} inputRef={register({
+                    required: true,
+                    pattern: /^[a-zA-Z0-9_.$@#\/]*$/
+                })
+                }
+
+                />{errors && errors?.work?.[row.key]?.name?.type === "pattern" && (
+                    <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                    {errors && errors?.work?.[row.key]?.name?.type === "required" && (
+                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+                <td style={getStyles(3)}><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`work.${row.key}.amount`} inputRef={register({
+                    required: true,
+                    pattern: /^[0-9]*$/
+                })}
+                />{errors && errors?.work?.[row.key]?.amount?.type === "pattern" && (
+                    <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                    {errors && errors?.work?.[row.key]?.amount?.type === "required" && (
+                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+                <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
+            </tr>
+    })
+    }
+
+
     return (
-        <>
-            <CardSectionHeader >{t(`WORKS_SUB_WORK_DETAILS`)}</CardSectionHeader>
-                    <table style={{"border":"1px solid grey"}}>
-                        <thead>
-                            <tr>
-                                <th style={{"width":"1%"}}>{t("S.NO.")}</th>
-                                <th colSpan={4} style={{"textAlign":"left"}}>{t("NAME_WORK")}</th>
-                                <th>{t("ESTIMATED_AMT")}</th>
-                                {/* <th><button onClick={addTableRows} >+</button></th> */}
-                            </tr>
-
-                        </thead>
-                        <tbody>
-
-                    <TableRows register={register} rowsData={rowsData} deleteTableRows={deleteTableRows} handleChange={handleChange} />
+        <table className='table reports-table sub-work-table'>
+            <thead>
+                <tr>{renderHeader()}</tr>
+            </thead>
+            <tbody>
+                {renderBody()}
                 <tr>
-                    <td colSpan={6} style={{ "textAlign": "center" }}><button type="button" onClick={addTableRows}>{t("ADD_LINE_ITEM")}</button></td>
+                    <td style={getStyles(1)}></td>
+                    <td style={{ ...getStyles(2), "textAlign": "center" }} onClick={addRow}><span><AddIcon fill={"#F47738"} styles={{ "margin": "auto", "display": "inline", "marginTop": "-2px" }} /><label style={{ "marginLeft": "10px" }}>{t("WORKS_ADD_ITEM")}</label></span></td>
+                    <td style={getStyles(3)}></td>
+                    <td style={getStyles(4)}></td>
                 </tr>
-                        </tbody>
-                    </table>
-        </>
-              
+            </tbody>
+        </table>
     )
-
 }
+
 export default SubWorkTable

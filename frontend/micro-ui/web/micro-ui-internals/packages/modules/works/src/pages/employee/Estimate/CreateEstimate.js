@@ -3,8 +3,9 @@ import { Controller, useForm } from 'react-hook-form'
 import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, CardLabelError } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
 //import SubWorkTable from '../../components/CreateEstimate/SubWorkTable/SubWorkTable';
-import SubWorkTable from '../../components/CreateEstimate/SubWorkTablev2/SubWorkTable';
-import ProcessingModal from '../../components/Modal/ProcessingModal';
+import SubWorkTable from '../../../components/CreateEstimate/SubWorkTable/SubWorkTable'
+import ProcessingModal from '../../../components/Modal/ProcessingModal';
+
 //import SubWork from '../../components/CreateEstimate/SubWork';
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
