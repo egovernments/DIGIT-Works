@@ -18,22 +18,16 @@ const App = ({ path }) => {
       <React.Fragment>
         <div className="ground-container">
           <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
-          <PrivateRoute path={`${path}/inbox`} component={() => <Inbox
-                useNewInboxAPI={true}
-                parentRoute={path}
-                // businessService="PT"
-                filterComponent="PT_INBOX_FILTER"
-                initialStates={inboxInitialState}
-                isInbox={true}
-              />} />
-          {/* <PrivateRoute path={`${path}/LOIInbox`} component={() => <LOIInbox
-                useNewInboxAPI={true}
-                parentRoute={path}
-                businessService="WORKS"
-                filterComponent="WORKS_LOI_INBOX_FILTER"
-                initialStates={inboxInitialState}
-                isInbox={true}
-              />} /> */}
+          <PrivateRoute path={`${path}/inbox`} 
+                component={() => (
+                  <Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />
+                )} 
+            />
+          <PrivateRoute path={`${path}/LOIInbox`} 
+                component={() => (
+                  <LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />
+                )} 
+            />
         </div>
       </React.Fragment>
     </Switch>

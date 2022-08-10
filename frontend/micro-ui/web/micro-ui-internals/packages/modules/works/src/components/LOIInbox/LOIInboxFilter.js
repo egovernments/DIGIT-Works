@@ -1,17 +1,16 @@
-import React, { useState } from "react";
-import { Dropdown, DatePicker, CloseSvg, SubmitBar } from "@egovernments/digit-ui-react-components";
+import React, { useEffect, useState } from "react";
+import { Dropdown, RadioButtons, ActionBar,TextInput, DatePicker, RemoveableTag, CloseSvg, CheckBox, Localities, SubmitBar } from "@egovernments/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 
-const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, moduleCode, ...props }) => {
+const LOIInboxFilter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, moduleCode, ...props }) => {
   const { t } = useTranslation();
   const [_searchParams, setSearchParams] = useState(() => ({ ...searchParams, services: [] }));
   const [createdFromDate, setCreatedFromDate] = useState("");
   const [createdToDate, setCreatedToDate] = useState("");
-  const [inboxFunction, setInboxFucntion] = useState();
-  const [inboxFund, setInboxFund] = useState();
-  const [inboxBudget, setInboxBudget] = useState();
+  const [estimateId, setEstimateId] = useState();
+  const [fileNumber, setFileNumber] = useState();
 
   const localParamChange = (filterParam) => {
     let keys_to_delete = filterParam.delete;
@@ -58,7 +57,6 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                     fill="#505A5F"
                   />
                 </svg>
-                {/* {t("ES_COMMON_CLEAR_ALL")} */}
               </span>
             )}
             {props.type === "mobile" && (
@@ -67,10 +65,10 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
               </span>
             )}
           </div>
-          <div style={{marginTop:"20px"}}>
+          <div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_CREATED_FROM_DATE")}:
+                {t("LOI_CREATED_FROM_DATE")}:
               </div>
               <DatePicker
                 date={createdFromDate}
@@ -81,7 +79,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_CREATED_TO_DATE")}:
+                {t("LOI_CREATED_TO_DATE")}:
               </div>
               <DatePicker
                 date={createdToDate}
@@ -92,45 +90,15 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_INBOX_FUND")}:
+                {t("ESTIMATE_ID")}:
               </div>
-              <Dropdown 
-                // option={userUlbs} 
-                optionKey={"name"} 
-                value={inboxFund} 
-                selected={inboxFund} 
-                select={setInboxFund} 
-                t={t} 
-                // disable={userUlbs} 
-              />              
+              <TextInput onChange={(e)=>setEstimateId(e.target.value)} value={estimateId} />              
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_INBOX_FUNCTION")}:
+                {t("FILE_NUMBER")}:
               </div>
-              <Dropdown 
-                // option={userUlbs} 
-                optionKey={"name"} 
-                value={inboxFunction} 
-                selected={inboxFunction} 
-                select={setInboxFucntion} 
-                t={t} 
-                // disable={userUlbs} 
-              />
-            </div>
-            <div>
-              <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_INBOX_BUDGET_HEAD")}:
-              </div>
-              <Dropdown 
-                // option={userUlbs} 
-                optionKey={"name"} 
-                value={inboxBudget} 
-                selected={inboxBudget} 
-                select={setInboxBudget} 
-                t={t} 
-                // disable={userUlbs} 
-              />
+              <TextInput onChange={(e)=>setFileNumber(e.target.value)} value={fileNumber} />
             </div>
             <div>
               <SubmitBar onSubmit={() => applyLocalFilters()} label={t("ES_COMMON_APPLY")} />
@@ -142,4 +110,4 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
   );
 };
 
-export default Filter;
+export default LOIInboxFilter;

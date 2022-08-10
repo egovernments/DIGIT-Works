@@ -2,127 +2,130 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Header } from "@egovernments/digit-ui-react-components";
 
-import DesktopInbox from "../../components/DesktopInbox";
-import MobileInbox from "../../components/MobileInbox";
+import LOIDesktopInbox from "../../components/LOIDesktopInbox";
+import LOIMobileInbox from "../../components/LOIMobileInbox";
 
 const LOIInbox = ({
-  useNewInboxAPI,//true
   parentRoute,//digit-ui/employee/works
-  moduleCode = "PT",
-  initialStates = {},
-  filterComponent,//PT_INBOX_FILTER
-  isInbox,
-  rawWfHandler,
-  rawSearchHandler,
-  combineResponse,
-  wfConfig,
-  searchConfig,
-  middlewaresWf,
-  middlewareSearch,
-  EmptyResultInboxComp,
+  businessService="LOI",
+  initialStates={},
+  filterComponent,
+  isInbox
 }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const [enableSarch, setEnableSearch] = useState(() => (isInbox ? {} : { enabled: false }));
-  const [TableConfig, setTableConfig] = useState(() => Digit.ComponentRegistryService?.getComponent("PTInboxTableConfig"));
-  const [pageOffset, setPageOffset] = useState(initialStates.pageOffset || 0);
-  const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
-  const [sortParams, setSortParams] = useState(initialStates.sortParams || [{ id: "createdTime", desc: false }]);
-  const [searchParams, setSearchParams] = useState(initialStates.searchParams || {});
-    console.log("searchParams",searchParams,initialStates,TableConfig)
+  const [pageOffset, setPageOffset] = useState(initialStates?.pageOffset || 0);
+  const [pageSize, setPageSize] = useState(initialStates?.pageSize || 10);
+  const [sortParams, setSortParams] = useState(initialStates?.sortParams || [{ id: "applicationDate", desc: false }]);
+  const [setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState] = useState(false);
+  const [searchParams, setSearchParams] = useState(() => {
+    return initialStates?.searchParams || {};
+  });
   let isMobile = window.Digit.Utils.browser.isMobile();
   let paginationParams = isMobile
     ? { limit: 100, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
     : { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
 
-  const { isFetching, isLoading: hookLoading, searchResponseKey, data, searchFields, ...rest } = useNewInboxAPI
-    ? Digit.Hooks.useNewInboxGeneral({
-        tenantId,
-        ModuleCode: moduleCode,
-        filters: { ...searchParams, ...paginationParams, sortParams },
-      })
-    : Digit.Hooks.useInboxGeneral({
-        tenantId,
-        businessService: moduleCode,
-        isInbox,
-        filters: { ...searchParams, ...paginationParams, sortParams },
-        rawWfHandler,
-        rawSearchHandler,
-        combineResponse,
-        wfConfig,
-        searchConfig: { ...enableSarch, ...searchConfig },
-        middlewaresWf,
-        middlewareSearch,
-      });
-      console.log("rest",rest)
+    const { isFetching, isLoading: hookLoading, searchResponseKey, searchFields, ...rest } = Digit.Hooks.tl.useInbox({
+      tenantId,
+      filters: { ...searchParams, ...paginationParams, sortParams },
+      config: {},
+    });
+  const data=[{LOIId:"1136/TO/DB/FLOOD/10-11",LOIDate:"08/09/2010",EstimateNumber:"EST/KRPN/1136",NameOfWork:"Providing CC Drain in Birla Gaddah",ContractorName:"S.A.Basha",AgrementAmount:"3553600.00",SLA:"15Days"},
+      {LOIId:"1136/TO/DB/FLOOD/10-11",LOIDate:"08/09/2010",EstimateNumber:"EST/KRPN/1136",NameOfWork:"Providing CC Drain in Birla Gaddah",ContractorName:"S.A.Basha",AgrementAmount:"3553600.00",SLA:"15Days", },
+      {LOIId:"1136/TO/DB/FLOOD/10-11",LOIDate:"08/09/2010",EstimateNumber:"EST/KRPN/1136",NameOfWork:"Providing CC Drain in Birla Gaddah",ContractorName:"S.A.Basha",AgrementAmount:"3553600.00",SLA:"15Days", },
+      {LOIId:"1136/TO/DB/FLOOD/10-11",LOIDate:"08/09/2010",EstimateNumber:"EST/KRPN/1136",NameOfWork:"Providing CC Drain in Birla Gaddah",ContractorName:"S.A.Basha",AgrementAmount:"3553600.00",SLA:"15Days", }]
+      
+      useEffect(() => {
+        setPageOffset(0);
+      }, [searchParams]);
+    
+      const fetchNextPage = () => {
+        setPageOffset((prevState) => prevState + pageSize);
+      };
+    
+      const fetchPrevPage = () => {
+        setPageOffset((prevState) => prevState - pageSize);
+      };
+    
+      const handleFilterChange = (filterParam) => {
+        let keys_to_delete = filterParam?.delete;
+        let _new = {};
+        if (isMobile) {
+          _new = { ...filterParam };
+        } else {
+          _new = { ...searchParams, ...filterParam };
+        }
+        // let _new = { ...searchParams, ...filterParam };
+        // if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
+        // delete filterParam.delete;
+        if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
+        delete _new?.delete;
+        delete filterParam?.delete;
+        setSetSearchFieldsBackToOriginalState(true);
+        setSearchParams({ ..._new });
+        setEnableSearch({ enabled: true });
+      };
+      const handleSort = useCallback((args) => {
+        if (args.length === 0) return;
+        setSortParams(args);
+      }, []);
+    
+      const handlePageSizeChange = (e) => {
+        setPageSize(Number(e.target.value));
+      };
+      const getSearchFields = () => {
+        return [
+          {
+            label: t("TL_HOME_SEARCH_RESULTS_APP_NO_LABEL"),
+            name: "applicationNumber",
+          },
+          {
+            label: t("CORE_COMMON_MOBILE_NUMBER"),
+            name: "mobileNumber",
+            maxlength: 10,
+    
+            pattern: Digit.Utils.getPattern("MobileNo"),
+    
+            type: "mobileNumber",
+    
+            title: t("ES_SEARCH_APPLICATION_MOBILE_INVALID"),
+            componentInFront: "+91",
+          },
+        ];
+      };    
 
-  useEffect(() => {
-    setPageOffset(0);
-  }, [searchParams]);
-
-  const fetchNextPage = () => {
-    setPageOffset((prevState) => prevState + pageSize);
-  };
-
-  const fetchPrevPage = () => {
-    setPageOffset((prevState) => prevState - pageSize);
-  };
-
-  const handleFilterChange = (filterParam) => {
-    let keys_to_delete = filterParam.delete;
-    let _new = { ...searchParams, ...filterParam };
-    if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
-    delete filterParam.delete;
-    setSearchParams({ ..._new });
-    setEnableSearch({ enabled: true });
-  };
-
-  const handleSort = useCallback((args) => {
-    if (args.length === 0) return;
-    setSortParams(args);
-  }, []);
-
-  const handlePageSizeChange = (e) => {
-    setPageSize(Number(e.target.value));
-  };
-
-//   if (rest?.data?.length !== null) {
-  console.log("check",filterComponent)
-    if (isMobile) {
+      if (isMobile) {
       return (
-        <MobileInbox
-          data={data}
-          isLoading={hookLoading}
-          isSearch={!isInbox}
-          searchFields={searchFields}
-          onFilterChange={handleFilterChange}
-          onSearch={handleFilterChange}
-          onSort={handleSort}
-          parentRoute={parentRoute}
-          searchParams={searchParams}
-          sortParams={sortParams}
-          linkPrefix={`${parentRoute}/application-details/`}
-        //   tableConfig={rest?.tableConfig?res?.tableConfig:TableConfig(t)["PT"]}
-          filterComponent={filterComponent}
-          EmptyResultInboxComp={EmptyResultInboxComp}
-          useNewInboxAPI={useNewInboxAPI}
+        <LOIMobileInbox
+        data={data}
+        isLoading={hookLoading}
+        searchFields={getSearchFields()}
+        onFilterChange={handleFilterChange}
+        onSearch={handleFilterChange}
+        onSort={handleSort}
+        parentRoute={parentRoute}
+        searchParams={searchParams}
+        sortParams={sortParams}
         />
       );
     } else {
       return (
         <div>
-          {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
-          {!isInbox && <Header>{t("SEARCH_PROPERTY")}</Header>}
-          
-          <DesktopInbox
-            moduleCode={moduleCode}
+         {isInbox && <Header>{t("ES_COMMON_INBOX")}{data?.totalCount ? <p className="inbox-count">{data?.totalCount}</p> : null}</Header>}
+ 
+          <LOIDesktopInbox
+            businessService={businessService}
             data={data}
-            // tableConfig={rest?.tableConfig?res?.tableConfig:TableConfig(t)["PT"]}
+            tableConfig={rest?.tableConfig}
             isLoading={hookLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={!isInbox}
             onFilterChange={handleFilterChange}
-            searchFields={searchFields}
+            searchFields={getSearchFields()}
+            setSearchFieldsBackToOriginalState={setSearchFieldsBackToOriginalState}
+            setSetSearchFieldsBackToOriginalState={setSetSearchFieldsBackToOriginalState}
             onSearch={handleFilterChange}
             onSort={handleSort}
             onNextPage={fetchNextPage}
@@ -134,10 +137,8 @@ const LOIInbox = ({
             parentRoute={parentRoute}
             searchParams={searchParams}
             sortParams={sortParams}
-            totalRecords={Number(data?.[0]?.totalCount)}//NaN
+            totalRecords={Number(data?.totalCount)}
             filterComponent={filterComponent}
-            EmptyResultInboxComp={EmptyResultInboxComp}
-            useNewInboxAPI={useNewInboxAPI}
           />
         </div>
       );
