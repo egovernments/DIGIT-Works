@@ -1,6 +1,6 @@
 {
   "name": "egovernments",
-  "version": "1.5.0",
+  "version": "0.0.1",
   "main": "index.js",
   "workspaces": [
     "packages/libraries",
@@ -9,11 +9,11 @@
     "packages/react-components",
     "packages/modules/*"
   ],
-  "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
+  "author": "Jagankumar <jagan.kumar@egov.org.in>",
   "license": "MIT",
   "private": true,
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "scripts": {
     "start": "SKIP_PREFLIGHT_CHECK=true run-s build start:dev",
