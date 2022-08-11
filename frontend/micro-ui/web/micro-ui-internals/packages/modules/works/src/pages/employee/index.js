@@ -4,7 +4,8 @@ import { Switch } from "react-router-dom";
 
 import CreateLOI from "./LOI/CreateLOI";
 import CreateEstimate from "./Estimate/CreateEstimate";
-
+import ViewEstimate from "./Estimate/ViewEstimate";
+import ViewLOI from "./LOI/ViewLOI";
 
 const App = ({ path }) => {
   return (
@@ -13,6 +14,8 @@ const App = ({ path }) => {
         <div className="ground-container">
           <PrivateRoute path={`${path}/create-loi`} component={() => <CreateLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{path}}/>} />
+          <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
+          <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
         </div>
       </React.Fragment>
     </Switch>
