@@ -1,7 +1,6 @@
 import { PrivateRoute } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Switch } from "react-router-dom";
-import NewApplication from "./CreateContractor";
 import Inbox from "./Inbox";
 import LOIInbox from "./LOIInbox";
 
@@ -28,9 +27,6 @@ const App = ({ path }) => {
                 component={() => (
                   <LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />
                 )} 
-            />
-          <PrivateRoute path={`${path}/create-contractor`}
-                component={NewApplication}
             />
         </div>
       </React.Fragment>

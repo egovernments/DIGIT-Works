@@ -51,11 +51,6 @@ const WorksCard = () => {
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {
-        label: t("CREATE CONTRACTOR"),
-        link: `/digit-ui/employee/works/create-contractor`,
-        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
-      },
-      {
         label: t("WORKS_ORDER"),
         link: `/digit-ui/employee/ws/water/search-application`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
