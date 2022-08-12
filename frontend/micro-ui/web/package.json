@@ -1,7 +1,12 @@
 {
   "name": "micro-ui",
-  "version":"1.5.0",
+  "version":"0.0.1",
+  "author": "Jagankumar <jagan.kumar@egov.org.in>",
+  "license": "MIT",
   "private": true,
+  "engines": {
+    "node": ">=14"
+  },
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
