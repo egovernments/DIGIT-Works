@@ -1,0 +1,28 @@
+#
+# config:
+# -   name: < Name of the job, foo/bar would create job named bar inside folder foo >
+#     build:
+#     - work-dir: < Working directory of the app to be built >
+#       dockerfile: < Path to the dockerfile, optional, assumes dockerfile in working directory if not provided >
+#       image-name: < Docker image name  >
+# -
+# -
+#
+# config:
+# -   name: < Name of the job, foo/bar would create job named bar inside folder foo >
+#     build:
+#     - work-dir: < Working directory of the app to be built >
+#       dockerfile: < Path to the dockerfile, optional, assumes dockerfile in working directory if not provided >
+#       image-name: < Docker image name  >
+# -
+# -
+config:
+
+# backend
+  - name: "builds/digit-works/backend/estimate-service"
+    build:
+      - work-dir: "backend/estimate-service"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "estimate-service"
+
+# frontend
