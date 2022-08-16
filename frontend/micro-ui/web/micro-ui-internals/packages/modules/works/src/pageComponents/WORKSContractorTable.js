@@ -1,8 +1,8 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import { Table } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Dropdown, TextInput, LinkButton, DatePicker, Loader ,DeleteIcon} from "@egovernments/digit-ui-react-components";
+import { Dropdown, TextInput, LinkButton, DatePicker, Loader ,DeleteIcon,AddIcon} from "@egovernments/digit-ui-react-components";
 
 const WORKSContractorTable = () => {
   const { t } = useTranslation();
@@ -124,6 +124,13 @@ const WORKSContractorTable = () => {
       mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
     },
   ];
+  useEffect(()=>{
+    
+  },[data])
+  const addNewRow=()=>{
+    data.push({SerialNumber:2})
+    console.log("data",data)
+  }
   return (
     <div>
       <Table
@@ -152,6 +159,11 @@ const WORKSContractorTable = () => {
       // totalRecords={props.totalRecords}
       manualPagination={false}
     />
+    <div style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
+    <span style={{display:"flex",cursor: "pointer"}}onClick={addNewRow}>
+      <AddIcon fill="#fff" styles={{ width: "24px", height: "24px", background:"black",borderRadius:"50%" }} /> Add Line Item
+    </span>
+    </div>
     </div>
   )
 }

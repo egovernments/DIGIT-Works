@@ -180,7 +180,12 @@
 .contractor-table{
   border-collapse: collapse;
   width: 100%;
-  th{
-    background-color: #505a5f;
-  }
+  table,
+    th,
+    td {
+        border: 1.5px solid black;
+    }
+    th {
+      background-color: grey;
+    }
 }
