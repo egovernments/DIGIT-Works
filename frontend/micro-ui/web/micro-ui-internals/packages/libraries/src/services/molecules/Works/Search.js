@@ -1,22 +1,18 @@
 import cloneDeep from "lodash/cloneDeep";
 import _ from "lodash";
 
-
-
 const convertEpochToDate = (dateEpoch) => {
-    if (dateEpoch) {
-        const dateFromApi = new Date(dateEpoch);
-        let month = dateFromApi.getMonth() + 1;
-        let day = dateFromApi.getDate();
-        let year = dateFromApi.getFullYear();
-        month = (month > 9 ? "" : "0") + month;
-        day = (day > 9 ? "" : "0") + day;
-        return `${day}/${month}/${year}`;
-    } else {
-        return null;
+    if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
+        return "NA";
     }
+    const dateFromApi = new Date(dateEpoch);
+    let month = dateFromApi.getMonth() + 1;
+    let day = dateFromApi.getDate();
+    let year = dateFromApi.getFullYear();
+    month = (month > 9 ? "" : "0") + month;
+    day = (day > 9 ? "" : "0") + day;
+    return `${day}/${month}/${year}`;
 };
-
 
 const sampleEstimateSearchResponse = {
     "responseInfo": {
@@ -185,7 +181,7 @@ const sampleLOISearchResponse = {
             "auditDetails": {
                 "createdBy": "string",
                 "lastModifiedBy": "string",
-                "createdTime": 0,
+                "createdTime": 1660206057000,
                 "lastModifiedTime": 0
             }
         }
@@ -206,7 +202,7 @@ export const WorksSearch = {
             asSectionHeader: true,
             values: [
                 { title: "WORKS_LOI_NUMBER", value: loi?.letterOfIndentNumber || t("NA") },
-                { title: "WORKS_DATE_CREATED", value: loi?.auditDetails?.createdTime || t("NA") },
+                { title: "WORKS_DATE_CREATED", value: convertEpochToDate(loi?.auditDetails?.createdTime) || t("NA") },
                 { title: "WORKS_ESTIMATE_NO", value: estimate?.estimateNumber || t("NA") },
                 { title: "WORKS_SUB_ESTIMATE_NO", value:estimate?.estimateDetails?.estimateDetailNumber || t("NA") },
                 { title: "WORKS_NAME_OF_WORK", value: estimate?.natureOfWork || t("NA") },
