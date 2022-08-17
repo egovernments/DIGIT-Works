@@ -26,8 +26,8 @@ config:
         image-name: "estimate-service"
 
 # frontend
-  - name: builds/digit-works/frontend/micro-ui/works
+  - name: builds/digit-works/frontend/micro-ui/works-ui
     build:
       - work-dir: frontend/micro-ui/
         dockerfile: frontend/micro-ui/web/docker/Dockerfile
-        image-name: works
+        image-name: works-ui
