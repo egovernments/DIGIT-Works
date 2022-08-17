@@ -7,14 +7,15 @@ import CreateLOI from "./LOI/CreateLOI";
 import CreateEstimate from "./Estimate/CreateEstimate";
 import ViewEstimate from "./Estimate/ViewEstimate";
 import ViewLOI from "./LOI/ViewLOI";
-
+import SearchApprovedSubEstimate from "../employee/SearchApprovedSubEstimate"
 const App = ({ path }) => {
   console.log(path)
   return (
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          <PrivateRoute path={`${path}/search-application`} component={() => <SearchEstimate/>} />
+          <PrivateRoute path={`${path}/search-estimate`} component={() => <SearchEstimate/>} />
+          <PrivateRoute path={`${path}/search-approved-estimate`} component={() => <SearchApprovedSubEstimate />} />
           <PrivateRoute path={`${path}/create-loi`} component={() => <CreateLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{path}}/>} />
           <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />

@@ -4,7 +4,7 @@ import { useRouteMatch } from "react-router-dom";
 import WorksCard from "./components/WorksCard";
 import EmployeeApp from "./pages/employee";
 import SearchEstimateApplication from "./components/SearchEstimate";
-
+import SearchApprovedSubEs from "./components/SearchApprovedSubEstimate";
 const WorksModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["works"];
   const { path, url } = useRouteMatch();
@@ -25,7 +25,8 @@ const WorksModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
   WorksCard,
   WorksModule,
-  SearchEstimateApplication
+  SearchEstimateApplication,
+  SearchApprovedSubEs
 };
 
 export const initWorksComponents = () => {
