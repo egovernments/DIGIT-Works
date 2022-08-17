@@ -26,12 +26,13 @@ import SubOccupancyTable from "./SubOccupancyTable";
 import TLCaption from "./TLCaption";
 import TLTradeAccessories from "./TLTradeAccessories";
 import TLTradeUnits from "./TLTradeUnits";
-import WSAdditonalDetails from "./WSAdditonalDetails";
+//import WSAdditonalDetails from "./WSAdditonalDetails";
 import WSFeeEstimation from "./WSFeeEstimation";
-import WSInfoLabel from "../../../ws/src/pageComponents/WSInfoLabel";
+//import WSInfoLabel from "../../../ws/src/pageComponents/WSInfoLabel";
 import DocumentsPreview from "./DocumentsPreview";
 import InfoDetails from "./InfoDetails";
 import ViewBreakup from"./ViewBreakup";
+import SubWorkTableDetails from "./SubWorkTableDetails";
 
 function ApplicationDetailsContent({
   applicationDetails,
@@ -189,7 +190,7 @@ function ApplicationDetailsContent({
             )}
             {/* TODO, Later will move to classes */}
             {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
-            {detail?.isTable && (
+            {/* {detail?.isTable && (
               <table style={{ tableLayout: "fixed", width: "100%", borderCollapse: "collapse" }}>
                 <tr style={{ textAlign: "left" }}>
                   {detail?.headers.map((header) => (
@@ -210,7 +211,9 @@ function ApplicationDetailsContent({
                   {row.map(element => <td style={{ paddingTop:"20px",textAlign:"left" }}>{t(element)}</td>)}
                 </tr>})}
               </table>
-            )}
+            )} */}
+            {detail?.isTable && <SubWorkTableDetails data={detail} />}
+
             <StatusTable style={getTableStyles()}>
               {detail?.title &&
                 !detail?.title.includes("NOC") &&
@@ -324,8 +327,8 @@ function ApplicationDetailsContent({
           {detail?.additionalDetails?.taxHeadEstimatesCalculation && (
             <PropertyEstimates taxHeadEstimatesCalculation={detail?.additionalDetails?.taxHeadEstimatesCalculation} />
           )}
-          {detail?.isWaterConnectionDetails && <WSAdditonalDetails wsAdditionalDetails={detail} oldValue={oldValue} />}
-          {detail?.isLabelShow ? <WSInfoLabel t={t} /> : null}
+          {/* {detail?.isWaterConnectionDetails && <WSAdditonalDetails wsAdditionalDetails={detail} oldValue={oldValue} />} */}
+         
           {detail?.additionalDetails?.redirectUrl && (
             <div style={{ fontSize: "16px", lineHeight: "24px", fontWeight: "400", padding: "10px 0px" }}>
               <Link to={detail?.additionalDetails?.redirectUrl?.url}>

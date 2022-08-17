@@ -238,6 +238,13 @@ import useStaticData from "./useStaticData";
 import useBillAmendmentInbox from "./billAmendment/useInbox";
 import { usePrivacyContext } from "./usePrivacyContext";
 
+import useViewEstimateDetails from "./works/useViewEstimateDetails"
+import useViewLOIDetails from "./works/useViewLOIDetails"
+const works = {
+  useViewEstimateDetails,
+  useViewLOIDetails
+}
+
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -530,6 +537,7 @@ const Hooks = {
   useDynamicData,
   useBulkPdfDetails,
   useBillAmendmentInbox,
+  works
 };
 
 export default Hooks;
