@@ -85,6 +85,28 @@ const CreateEstimateForm = ({onFormSubmit}) => {
         //     "name": "Nipun"
         // }
     }
+
+    const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
+        "pb",
+        "works",
+        [
+            {
+                "name": "BeneficiaryType"
+            },
+            {
+                "name": "EntrustmentMode"
+            },
+            {
+                "name": "NatureOfWork"
+            },
+            {
+                "name": "TypeOfWork"
+            }
+        ]
+    );
+
+    debugger
+
     const { t } = useTranslation()
     const {
         register,
