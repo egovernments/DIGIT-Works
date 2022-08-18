@@ -2,7 +2,6 @@ import React, { useReducer,useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, DatePicker, Row, StatusTable, CardLabelError, AddIcon, SubtractIcon, InfoBannerIcon } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
-import ProcessingModal from '../../../components/Modal/ProcessingModal';
 import CreateLoiForm from '../../../components/CreateLOI/CreateLoiForm';
 
 
