@@ -8,8 +8,9 @@ import CreateEstimate from "./Estimate/CreateEstimate";
 import ViewEstimate from "./Estimate/ViewEstimate";
 import ViewLOI from "./LOI/ViewLOI";
 import SearchApprovedSubEstimate from "../employee/SearchApprovedSubEstimate"
+
 const App = ({ path }) => {
-  console.log(path)
+  
   return (
     <Switch>
       <React.Fragment>
