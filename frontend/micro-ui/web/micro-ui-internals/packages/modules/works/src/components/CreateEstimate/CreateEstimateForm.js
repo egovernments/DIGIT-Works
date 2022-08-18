@@ -18,9 +18,9 @@ const CreateEstimateForm = ({onFormSubmit}) => {
         //         "amount": "12312"
         //     }
         // ],
-        // "department": {
-        //     "name": "Nipun"
-        // },
+        "department": {
+            "name": "Nipun"
+        },
         "ward": {
             "name": "Nipun"
         },
@@ -128,6 +128,13 @@ const CreateEstimateForm = ({onFormSubmit}) => {
         return date
     }
 
+    const initialState = [
+        {
+            key: 1,
+            isShow: true
+        }
+    ]
+    const [rows, setRows] = useState(initialState)
     const handleCreateClick = async () => {
         debugger
         const obj = {
@@ -196,7 +203,9 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                 }
             ],
         }
-        const fieldsToValidate = ['requirementNumber', 'department', 'ward', 'location', 'beneficiaryType', 'natureOfWork', 'typeOfWork', 'subTypeOfWork', 'entrustmentMode', 'fund', 'function', 'budgetHead', 'scheme', 'subScheme']
+        const subWorkFieldsToValidate = []
+        rows.map(row => row.isShow && subWorkFieldsToValidate.push(...[`estimateDetails.${row.key}.name`, `estimateDetails.${row.key}.amount`]))
+        const fieldsToValidate = ['requirementNumber', 'department', 'ward', 'location', 'beneficiaryType', 'natureOfWork', 'typeOfWork', 'subTypeOfWork', 'entrustmentMode', 'fund', 'function', 'budgetHead', 'scheme', 'subScheme',...subWorkFieldsToValidate]
         
 
         const result = await trigger(fieldsToValidate)
@@ -566,7 +575,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
 
               {/* Render the sub work table here */}
               <CardSectionHeader >{`${t(`WORKS_SUB_WORK_DETAILS`)}*`}</CardSectionHeader>
-              <SubWorkTable register={register} t={t} errors={errors} />
+              <SubWorkTable register={register} t={t} errors={errors} rows={rows} setRows={setRows}/>
 
               <CardSectionHeader style={{ "marginTop": "20px" }} >{t(`WORKS_RELEVANT_DOCS`)}</CardSectionHeader>
               <LabelFieldPair>

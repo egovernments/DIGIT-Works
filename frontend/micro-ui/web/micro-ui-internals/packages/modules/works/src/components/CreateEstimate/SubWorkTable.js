@@ -1,17 +1,17 @@
 import React, { Fragment, useState } from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError } from '@egovernments/digit-ui-react-components'
 
-const SubWorkTable = ({ t, register, errors }) => {
-    
-    const initialState= [
-        {
-            key:1,
-            isShow:true
-        }
-    ]
-    const [rows, setRows] = useState(initialState)
+const SubWorkTable = ({ t, register, errors, rows, setRows }) => {
+
+    // const initialState = [
+    //     {
+    //         key: 1,
+    //         isShow: true
+    //     }
+    // ]
+    // const [rows, setRows] = useState(initialState)
     console.log("formErrorssss", errors)
-    console.log("rowState",rows)
+    console.log("rowState", rows)
     const getStyles = (index) => {
         let obj = {}
         switch (index) {
@@ -42,8 +42,8 @@ const SubWorkTable = ({ t, register, errors }) => {
 
     const showDelete = () => {
         let countIsShow = 0
-        rows.map(row=>row.isShow && countIsShow++)
-        if(countIsShow===1){
+        rows.map(row => row.isShow && countIsShow++)
+        if (countIsShow === 1) {
             return false
         }
         return true
@@ -51,29 +51,29 @@ const SubWorkTable = ({ t, register, errors }) => {
     const removeRow = (row) => {
         //make a new state here which doesn't have this key
         const updatedState = rows.map(e => {
-            if(e.key===row.key){
+            if (e.key === row.key) {
                 return {
-                    key:e.key,
-                    isShow:false
+                    key: e.key,
+                    isShow: false
                 }
             }
             return e
         })
         console.log(updatedState)
-        setRows(prev=> updatedState)
+        setRows(prev => updatedState)
     }
     const addRow = () => {
         const obj = {
-            key:null,
-            isShow:true
+            key: null,
+            isShow: true
         }
         obj.key = rows[rows.length - 1].key + 1
         setRows(prev => [...prev, obj])
     }
     const renderBody = () => {
-        let i=0
-        return rows.map((row,index) => {
-            if(row.isShow) i++
+        let i = 0
+        return rows.map((row, index) => {
+            if (row.isShow) i++
             return row.isShow && <tr key={index} style={{ "height": "50%" }}>
                 <td style={getStyles(1)}>{i}</td>
                 <td style={getStyles(2)} ><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`estimateDetails.${row.key}.name`} inputRef={register({
@@ -96,7 +96,7 @@ const SubWorkTable = ({ t, register, errors }) => {
                         <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
                 <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
             </tr>
-    })
+        })
     }
 
 
