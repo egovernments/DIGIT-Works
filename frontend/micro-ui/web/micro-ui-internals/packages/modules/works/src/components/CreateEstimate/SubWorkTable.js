@@ -74,25 +74,25 @@ const SubWorkTable = ({ t, register, errors }) => {
         let i=0
         return rows.map((row,index) => {
             if(row.isShow) i++
-            return row.isShow && <tr style={{ "height": "50%" }}>
+            return row.isShow && <tr key={index} style={{ "height": "50%" }}>
                 <td style={getStyles(1)}>{i}</td>
-                <td style={getStyles(2)} ><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`work.${row.key}.name`} inputRef={register({
+                <td style={getStyles(2)} ><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`estimateDetails.${row.key}.name`} inputRef={register({
                     required: true,
                     pattern: /^[a-zA-Z0-9_.$@#\/]*$/
                 })
                 }
 
-                />{errors && errors?.work?.[row.key]?.name?.type === "pattern" && (
+                />{errors && errors?.estimateDetails?.[row.key]?.name?.type === "pattern" && (
                     <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-                    {errors && errors?.work?.[row.key]?.name?.type === "required" && (
+                    {errors && errors?.estimateDetails?.[row.key]?.name?.type === "required" && (
                         <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
-                <td style={getStyles(3)}><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`work.${row.key}.amount`} inputRef={register({
+                <td style={getStyles(3)}><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`estimateDetails.${row.key}.amount`} inputRef={register({
                     required: true,
                     pattern: /^[0-9]*$/
                 })}
-                />{errors && errors?.work?.[row.key]?.amount?.type === "pattern" && (
+                />{errors && errors?.estimateDetails?.[row.key]?.amount?.type === "pattern" && (
                     <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-                    {errors && errors?.work?.[row.key]?.amount?.type === "required" && (
+                    {errors && errors?.estimateDetails?.[row.key]?.amount?.type === "required" && (
                         <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
                 <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
             </tr>

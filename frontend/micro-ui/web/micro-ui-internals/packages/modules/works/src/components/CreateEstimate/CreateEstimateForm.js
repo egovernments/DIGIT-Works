@@ -9,64 +9,80 @@ const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wo
 
 
 const CreateEstimateForm = ({onFormSubmit}) => {
-    const dummyDefatult = {
-        "lor": "123",
-        // "work": [
+    const dummyDefault = {
+        "requirementNumber": "123123",
+        // "estimateDetails": [
         //     null,
         //     {
-        //         "name": "sadfsdf",
-        //         "amount": "123121221"
+        //         "name": "work",
+        //         "amount": "12312"
         //     }
         // ],
-        "edept": {
-            "name": "Nipun"
-        },
+        // "department": {
+        //     "name": "Nipun"
+        // },
         "ward": {
-            "name": "Vipul"
+            "name": "Nipun"
         },
         "location": {
             "name": "Vipul"
         },
-        "beneficiery": {
-            "name": "Shaifali"
-        },
-        "natureofwork": {
-            "name": "Nipun"
-        },
-        "workType": {
+        "beneficiaryType": {
             "name": "Vipul"
         },
-        "subtypework": {
+        "natureOfWork": {
             "name": "Shaifali"
         },
-        "modeofens": {
+        "typeOfWork": {
+            "name": "Nipun"
+        },
+        "subTypeOfWork": {
+            "name": "Vipul"
+        },
+        "entrustmentMode": {
             "name": "Shaifali"
         },
         "fund": {
-            "name": "Shaifali"
-        },
-        "function": {
             "name": "Vipul"
         },
-        "budgetHead": {
+        "function": {
             "name": "Shaifali"
+        },
+        "budgetHead": {
+            "name": "Vipul"
         },
         "scheme": {
-            "name": "Sumit"
-        },
-        "subScheme": {
             "name": "Shaifali"
         },
-        "uploads": [],
-        // "comments": "asdfjsladkfjasldfkajsld",
+        "subScheme": {
+            "name": "Vipul"
+        },
+        // "uploads": [
+        //     {
+        //         "fileName": "consumer-WS_107_2021-22_226507.pdf",
+        //         "fileStoreId": "4a28b85e-63af-402e-bc8f-9bb0c148e47b",
+        //         "documentType": "application/pdf"
+        //     },
+        //     {
+        //         "fileName": "consumer-PB-CH-2022-07-27-001010.pdf",
+        //         "fileStoreId": "8cf5da0b-42a0-41ff-b98a-22cf84619d28",
+        //         "documentType": "application/pdf"
+        //     },
+        //     {
+        //         "fileName": "consumerCode-WS_107_2020-21_218051.pdf",
+        //         "fileStoreId": "6d8962ec-9d34-4dfc-b7c2-90fe9cf0b0e2",
+        //         "documentType": "application/pdf"
+        //     }
+        // ],
+        // "comments": "asb",
         // "appDept": {
-        //     "name": "Vipul"
+        //     "name": "Nipun"
         // },
         // "appDesig": {
         //     "name": "Shaifali"
         // },
         // "app": {
-        //     "name": "Shaifali"
+        //     "name": "Nipun"
         // }
     }
     const { t } = useTranslation()
@@ -82,7 +98,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
         trigger,
         ...methods
     } = useForm({
-        defaultValues: {...dummyDefatult},
+        defaultValues: { ...dummyDefault },
         mode: "onSubmit"
     });
 
@@ -114,9 +130,76 @@ const CreateEstimateForm = ({onFormSubmit}) => {
 
     const handleCreateClick = async () => {
         debugger
-        // const result = await trigger(["lor", "fileno", "dlperiod", "fromDate", "aggDate", "agencyname", "officerInChargedesig","officerIncharge","work"])
-        const arr = Object.keys(dummyDefatult)
-        const result = await trigger(arr)
+        const obj = {
+            "requirementNumber": "123123",
+            "estimateDetails": [
+                null,
+                {
+                    "name": "work",
+                    "amount": "12312"
+                }
+            ],
+            "department": {
+                "name": "Nipun"
+            },
+            "ward": {
+                "name": "Nipun"
+            },
+            "location": {
+                "name": "Vipul"
+            },
+            "beneficiaryType": {
+                "name": "Vipul"
+            },
+            "natureOfWork": {
+                "name": "Shaifali"
+            },
+            "typeOfWork": {
+                "name": "Nipun"
+            },
+            "subTypeOfWork": {
+                "name": "Vipul"
+            },
+            "entrustmentMode": {
+                "name": "Shaifali"
+            },
+            "fund": {
+                "name": "Vipul"
+            },
+            "function": {
+                "name": "Shaifali"
+            },
+            "budgetHead": {
+                "name": "Vipul"
+            },
+            "scheme": {
+                "name": "Shaifali"
+            },
+            "subScheme": {
+                "name": "Vipul"
+            },
+            "uploads": [
+                {
+                    "fileName": "consumer-WS_107_2021-22_226507.pdf",
+                    "fileStoreId": "4a28b85e-63af-402e-bc8f-9bb0c148e47b",
+                    "documentType": "application/pdf"
+                },
+                {
+                    "fileName": "consumer-PB-CH-2022-07-27-001010.pdf",
+                    "fileStoreId": "8cf5da0b-42a0-41ff-b98a-22cf84619d28",
+                    "documentType": "application/pdf"
+                },
+                {
+                    "fileName": "consumerCode-WS_107_2020-21_218051.pdf",
+                    "fileStoreId": "6d8962ec-9d34-4dfc-b7c2-90fe9cf0b0e2",
+                    "documentType": "application/pdf"
+                }
+            ],
+        }
+        const fieldsToValidate = ['requirementNumber', 'department', 'ward', 'location', 'beneficiaryType', 'natureOfWork', 'typeOfWork', 'subTypeOfWork', 'entrustmentMode', 'fund', 'function', 'budgetHead', 'scheme', 'subScheme']
+        
+
+        const result = await trigger(fieldsToValidate)
         if (result) {
             setShowModal(true)
         }
@@ -132,7 +215,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
               {/* TEXT INPUT ROW */}
               <LabelFieldPair>
                   <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{`${t(`WORKS_DATE_PROPOSAL`)}:*`}</CardLabel>
-                  <TextInput className={"field"} name="reasonDocumentNumber" inputRef={register()} value={getDate()} disabled />
+                  <TextInput className={"field"} name="proposalDate" inputRef={register()} value={getDate()} disabled />
               </LabelFieldPair>
 
 
@@ -158,7 +241,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                   <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_EXECUTING_DEPT`)}:*`}</CardLabel>
                   <div className='field'>
                       <Controller
-                          name="edept"
+                          name="department"
                           control={control}
                           rules={{ required: true }}
                           render={(props) => {
@@ -174,7 +257,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               );
                           }}
                       />
-                      {errors && errors?.edept?.type === "required" && (
+                      {errors && errors?.department?.type === "required" && (
                           <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                   </div>
               </LabelFieldPair>
@@ -182,13 +265,13 @@ const CreateEstimateForm = ({onFormSubmit}) => {
               <LabelFieldPair>
                   <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_LOR`)}:`}</CardLabel>
                   <div className='field'>
-                      <TextInput name="lor" inputRef={register({
+                      <TextInput name="requirementNumber" inputRef={register({
                           pattern: /^[a-zA-Z0-9_.$@#\/]*$/
                       })}
                       />
 
 
-                      {errors && errors?.lor?.type === "pattern" && (
+                      {errors && errors?.requirementNumber?.type === "pattern" && (
                           <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                   </div>
               </LabelFieldPair>
@@ -245,7 +328,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                   <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_BENEFICIERY`)}:*`}</CardLabel>
                   <div className='field'>
                       <Controller
-                          name="beneficiery"
+                          name="beneficiaryType"
                           control={control}
                           rules={{ required: true }}
                           render={(props) => {
@@ -262,7 +345,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               );
                           }}
                       />
-                      {errors && errors?.beneficiery?.type === "required" && (
+                      {errors && errors?.beneficiaryType?.type === "required" && (
                           <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                   </div>
               </LabelFieldPair>
@@ -270,7 +353,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                   <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_WORK_NATURE`)}:*`}</CardLabel>
                   <div className='field'>
                       <Controller
-                          name="natureofwork"
+                          name="natureOfWork"
                           control={control}
                           rules={{ required: true }}
                           render={(props) => {
@@ -287,14 +370,14 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               );
                           }}
                       />
-                      {errors && errors?.natureofwork?.type === "required" && (
+                      {errors && errors?.natureOfWork?.type === "required" && (
                           <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
               </LabelFieldPair>
               <LabelFieldPair>
                   <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_WORK_TYPE`)}:*`}</CardLabel>
                   <div className='field'>
                       <Controller
-                          name="workType"
+                          name="typeOfWork"
                           control={control}
                           rules={{ required: true }}
                           render={(props) => {
@@ -310,13 +393,13 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               );
                           }}
                       />
-                      {errors && errors?.workType?.type === "required" && (
+                      {errors && errors?.typeOfWork?.type === "required" && (
                           <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
               </LabelFieldPair>
               <LabelFieldPair>
                   <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_SUB_TYPE_WORK`)}:`}</CardLabel>
                   <Controller
-                      name="subtypework"
+                      name="subTypeOfWork"
                       control={control}
                       render={(props) => {
                           return (
@@ -337,7 +420,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                   <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_MODE_OF_INS`)}:*`}</CardLabel>
                   <div className='field'>
                       <Controller
-                          name="modeofens"
+                          name="entrustmentMode"
                           control={control}
                           rules={{ required: true }}
                           render={(props) => {
@@ -353,7 +436,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               );
                           }}
                       />
-                      {errors && errors?.modeofens?.type === "required" && (
+                      {errors && errors?.entrustmentMode?.type === "required" && (
                           <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                   </div>
               </LabelFieldPair>
