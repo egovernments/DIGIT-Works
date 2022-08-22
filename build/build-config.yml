@@ -27,7 +27,7 @@ config:
       - work-dir: "estimate-service/src/main/resources/db"
         image-name: "estimate-service-db"
 
-  - name: "builds/digit-works/backend/LOI-Service"
+  - name: "builds/digit-works/backend/loi"
     build:
       - work-dir: "backend/loi"
         dockerfile: "build/maven/Dockerfile"
