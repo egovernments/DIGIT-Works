@@ -29,10 +29,10 @@ config:
 
   - name: "builds/digit-works/backend/LOI-Service"
     build:
-      - work-dir: "backend/LOI-Service"
+      - work-dir: "backend/loi"
         dockerfile: "build/maven/Dockerfile"
         image-name: "LOI-Service"
-      - work-dir: "LOI-Service/src/main/resources/db"
+      - work-dir: "loi/src/main/resources/db"
         image-name: "LOI-Service-db"
 
 # frontend
