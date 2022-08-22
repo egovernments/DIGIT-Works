@@ -31,9 +31,9 @@ config:
     build:
       - work-dir: "backend/loi"
         dockerfile: "build/maven/Dockerfile"
-        image-name: "LOI-Service"
+        image-name: "loi-Service"
       - work-dir: "loi/src/main/resources/db"
-        image-name: "LOI-Service-db"
+        image-name: "loi-Service-db"
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
