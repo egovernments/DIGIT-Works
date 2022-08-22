@@ -9,7 +9,7 @@
     "packages/react-components",
     "packages/modules/*"
   ],
-  "author": "Jagankumar <jagan.kumar@egov.org.in>",
+  "author": "JaganKumar <jagan.kumar@egov.org.in>",
   "license": "MIT",
   "private": true,
   "engines": {
