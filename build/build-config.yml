@@ -27,6 +27,14 @@ config:
       - work-dir: "estimate-service/src/main/resources/db"
         image-name: "estimate-service-db"
 
+  - name: "builds/digit-works/backend/letter-of-indent-service"
+    build:
+      - work-dir: "backend/letter-of-indent-service"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "letter-of-indent-service"
+      - work-dir: "letter-of-indent-service/src/main/resources/db"
+        image-name: "letter-of-indent-service-db"
+
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
     build:
