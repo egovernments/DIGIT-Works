@@ -24,7 +24,7 @@ config:
       - work-dir: "backend/estimate-service"
         dockerfile: "build/maven/Dockerfile"
         image-name: "estimate-service"
-      - work-dir: "estimate-service/src/main/resources/db"
+      - work-dir: "backend/estimate-service/src/main/resources/db"
         image-name: "estimate-service-db"
 
   - name: "builds/digit-works/backend/loi-service"
@@ -32,7 +32,7 @@ config:
       - work-dir: "backend/loi-service"
         dockerfile: "build/maven/Dockerfile"
         image-name: "loi-service"
-      - work-dir: "loi/src/main/resources/db"
+      - work-dir: "backend/loi-service/src/main/resources/db"
         image-name: "loi-service-db"
 
 # frontend
