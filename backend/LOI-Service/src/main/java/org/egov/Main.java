@@ -7,11 +7,11 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "org.egov", "org.egov.web.controllers" , "org.egov.config"})
-public class org.egov.codegen.Main {
+public class Main {
 
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(org.egov.codegen.Main.class, args);
+        SpringApplication.run(Main.class, args);
     }
 
 }
