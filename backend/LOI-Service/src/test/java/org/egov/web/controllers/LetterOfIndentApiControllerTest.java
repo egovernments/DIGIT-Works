@@ -20,9 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 */
 @Ignore
 @RunWith(SpringRunner.class)
-@WebMvcTest(LOIApiController.class)
+@WebMvcTest(LetterOfIndentApiControllerTest.class)
 @Import(TestConfiguration.class)
-public class LOIApiControllerTest {
+public class LetterOfIndentApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

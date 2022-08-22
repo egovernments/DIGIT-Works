@@ -26,14 +26,14 @@ import java.util.*;
 
 @Controller
     @RequestMapping("/eGovTrial/LOI-Service/1.0.0")
-    public class LOIApiController{
+    public class LetterOfIndentApiController{
 
         private final ObjectMapper objectMapper;
 
         private final HttpServletRequest request;
 
         @Autowired
-        public LOIApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+        public LetterOfIndentApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
         }
