@@ -24,5 +24,12 @@ config:
       - work-dir: "backend/estimate-service"
         dockerfile: "build/maven/Dockerfile"
         image-name: "estimate-service"
+      - work-dir: "estimate-service/src/main/resources/db"
+        image-name: "estimate-service-db"
 
 # frontend
+  - name: builds/digit-works/frontend/micro-ui/works-ui
+    build:
+      - work-dir: frontend/micro-ui/
+        dockerfile: frontend/micro-ui/web/docker/Dockerfile
+        image-name: works-ui
