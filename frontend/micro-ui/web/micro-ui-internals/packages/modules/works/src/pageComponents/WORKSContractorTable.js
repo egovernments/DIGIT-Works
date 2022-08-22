@@ -2,27 +2,54 @@ import React,{useEffect, useState} from 'react'
 import { Table } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Dropdown, TextInput, LinkButton, DatePicker, Loader ,DeleteIcon,AddIcon} from "@egovernments/digit-ui-react-components";
+import { Dropdown, TextInput, LinkButton, DatePicker, Loader,CardLabelError ,DeleteIcon,AddIcon} from "@egovernments/digit-ui-react-components";
+import { useForm, Controller } from "react-hook-form";
+
+const createContractorDetails = () => ({
+  contractorCode: "",
+  contractorName: "",
+  correspondanceAddress: "",
+  permenantAddress: "",
+  contactPerson: "",
+  email: "",
+  narration: "",
+  mobileNumber: "",
+  panNo:"",
+  tinNo:"",
+  gstNo:"",
+  bankName:"",
+  IFSCCode:"",
+  bankAccountNumber:"",
+  PWDApprovalCode:"",
+  key: Date.now()
+});
 
 const WORKSContractorTable = () => {
   const { t } = useTranslation();
   const GetCell = (value) => <span className="cell-text">{value}</span>;
+  const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
+  const formValue = watch();
+  const { errors } = localFormState;
+  const [isErrors, setIsErrors] = useState(false);
+  const [contractorDetails,setContractorDetails]=useState(createContractorDetails());
+  const userUlbs=[{label:"active",value:1},{label:"Inactive",value:2},{label:"Black listed",value:3}]
   const [createdFromDate, setCreatedFromDate] = useState("");
   const [createdToDate, setCreatedToDate] = useState("");
   const [status,setStatus]=useState("");
   const [department,setDepartment]=useState("")
   const [contractorClass,setContractorClass]=useState("")
   const [registrationNumber,setRegistrationNumber]= useState("");
+  const [data,setData]=useState([{SerialNumber:1,
+    Department:"ENGINEERING",
+    RegNo:"123",
+    Category:"Supply",
+    contractorClass:"Purification",
+    Status:"Created",
+    FromDate:"",
+    ToDate:""}])
+    const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
-  const data=[{SerialNumber:1,
-  Department:"ENGINEERING",
-  Fund:"Municipal Fund",
-  Function:"Water Supply",
-  BudgetHead:"Water Purification",
-  CreatedBy:"A.P.Sreenivasulu",
-  Owner:"A.P.Sreenivasulu",
-  Status:"Craeted",
-  TotalAmount:"Rs,10000" }]
   const inboxColumns = () => [
     {
       Header: t("WORKS_S.NO"),
@@ -34,11 +61,15 @@ const WORKSContractorTable = () => {
     {
       Header: t("DEPARTMENT"),
       Cell: () => <Dropdown 
-      // option={userUlbs} 
+      option={userUlbs} 
       optionKey={"department"} 
       value={department} 
       selected={department} 
-      select={setDepartment} 
+      select={(e) => {
+        // onChange(value);
+        setDepartment(e);
+      }}
+      // select={setDepartment} 
       t={t} 
       // disable={userUlbs} 
     />,
@@ -46,12 +77,41 @@ const WORKSContractorTable = () => {
     },
     {
       Header: t("REGISTRATION_NO"),
-      Cell: () => (
+      Cell: ({row}) => (
+        // <div className="field">
+        //       <Controller
+        //         control={control}
+        //         name={"RegNo"}
+                  //  defaultValue={""}
+        //         rules={{ validate: {
+        //           pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+        //         } }}
+        //         render={(props) => (
+        //           <TextInput
+        //             value={props.value}
+        //             autoFocus={focusIndex.index === row.id && focusIndex.type === "RegNo"}
+        //             errorStyle={(localFormState.touched.RegNo && errors?.RegNo?.message) ? true : false}
+        //             onChange={(e) => {
+        //               console.log(focusIndex,errors)
+        //               props.onChange(e.target.value);
+        //               setFocusIndex({ index: row.id, type: "RegNo" });
+        //             }}
+        //             onBlur={(e) => {
+        //               setFocusIndex({ index: -1 });
+        //               props.onBlur(e);
+        //             }}
+        //             // disable={isRenewal}
+        //           />
+        //         )}
+        //       />
+        //     </div>
+        <div>
          <TextInput
         value={registrationNumber}
         onChange={(e) =>setRegistrationNumber(e.target.value)}
-        // disable={isRenewal}
       />
+        <CardLabelError style={errorStyle}>{!registrationNumber ? "Field Required":""}</CardLabelError>
+      </div>
       ),
       mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
     },
@@ -116,24 +176,42 @@ const WORKSContractorTable = () => {
     },
     {
       Header: t("ACTION"),
-      Cell: () => <LinkButton
+      Cell: ({row}) => <LinkButton
       label={<DeleteIcon fill={"#494848"} />}
       style={{ margin: "10px" }}
-      onClick={(e) =>console.log(e) } 
+      onClick={() => deleteRow(row.id)} 
     />,
       mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
     },
   ];
-  useEffect(()=>{
-    
-  },[data])
-  const addNewRow=()=>{
-    data.push({SerialNumber:2})
-    console.log("data",data)
+  
+  useEffect(() => {
+    trigger();
+  }, []);
+
+  const addNewRow=(e)=>{
+    e.preventDefault();
+    let idx=data.length+1
+    let tableData={SerialNumber:idx++,
+      Department:"ENGINEERING",
+      RegNo:"123",
+      Category:"Supply",
+      contractorClass:"Purification",
+      Status:"Created",
+      FromDate:"",
+      ToDate:""};
+    let newData=[...data,tableData];
+    setData(newData)
   }
-  return (
-    <div>
-      <Table
+
+  const deleteRow=(recordId)=>{
+    let row=[...data];
+    row.splice(recordId,1);
+    setData(row)
+  }
+  const result=()=>{
+  return  (
+    <Table
       className="contractor-table"
       t={t}
       data={data}
@@ -159,6 +237,10 @@ const WORKSContractorTable = () => {
       // totalRecords={props.totalRecords}
       manualPagination={false}
     />
+  )}
+  return (
+    <div>
+      {result()}
     <div style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
     <span style={{display:"flex",cursor: "pointer"}}onClick={addNewRow}>
       <AddIcon fill="#fff" styles={{ width: "24px", height: "24px", background:"black",borderRadius:"50%" }} /> Add Line Item

@@ -2,34 +2,93 @@ import React, { useState, useEffect} from "react";
 import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber, DatePicker, Loader } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
+import _ from "lodash";
 
-const WORKSContractorDetails = () => {
+const createContractorDetails = () => ({
+  contractorCode: "",
+  contractorName: "",
+  correspondanceAddress: "",
+  permenantAddress: "",
+  contactPerson: "",
+  email: "",
+  narration: "",
+  mobileNumber: "",
+  panNo:"",
+  tinNo:"",
+  gstNo:"",
+  bankName:"",
+  IFSCCode:"",
+  bankAccountNumber:"",
+  PWDApprovalCode:"",
+  key: Date.now()
+});
+
+const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
   const { t } = useTranslation();
+  const [contractorDetails,setContractorDetails]=useState(createContractorDetails());
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
+  const [isErrors, setIsErrors] = useState(false);
+
+  useEffect(() => {
+    if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) {
+      setError(config.key, { type: errors });
+    }
+    else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
+      clearErrors(config.key);
+    }
+  }, [errors]);
+
+  useEffect(() => {
+    trigger();
+  }, []);
+
+  useEffect(() => {
+    const keys = Object.keys(formValue);
+    const part = {};
+    keys.forEach((key) => (part[key] = contractorDetails[key]));
+    let _ownerType = {};
+    if (!_.isEqual(formValue, part)) {
+      Object.keys(formValue).map(data => {
+        if (data != "key" && formValue[data] != undefined && formValue[data] != "" && formValue[data] != null && !isErrors) {
+          setIsErrors(true);
+        }
+      });
+      setContractorDetails((prev) =>
+         (prev.key && prev.key === contractorDetails.key ? { ...prev, ...formValue, ..._ownerType } : { ...prev })
+      );
+      // setContractorDetails((prev) => prev.map((o) => {
+      //   return (o.key && o.key === contractorDetails.key ? { ...o, ...formValue, ..._ownerType } : { ...o })
+      // }));
+      trigger();
+    }
+  }, [formValue]);
 
   const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
   const CardLabelStyle={marginTop: "-5px", fontWeight: "700" }
   return (
     <div>
+          <React.Fragment>
           <LabelFieldPair>
             <CardLabel style={CardLabelStyle}>{`${t("WORKS_CONTRACTOR_CODE")}`}</CardLabel>
             <div className="field">
               <Controller
                 control={control}
                 name={"ContractorCode"}
-                defaultValue={""}
-                rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[-@.\/#&+\w\s]*$/.test(val) ? true : t("INVALID_NAME")) } }}
+                defaultValue={contractorDetails.contractorCode}
+                rules={{ validate: {
+                  pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                } }}
                 render={(props) => (
                   <TextInput
                     value={props.value}
-                    autoFocus={focusIndex.index === "" && focusIndex.type === "name"}
-                    errorStyle={(localFormState.touched.tradeName && errors?.tradeName?.message) ? true : false}
+                    autoFocus={focusIndex.index === contractorDetails.key && focusIndex.type === "ContractorCode"}
+                    errorStyle={(localFormState.touched.ContractorCode && errors?.ContractorCode?.message) ? true : false}
                     onChange={(e) => {
                       props.onChange(e.target.value);
-                      setFocusIndex({ index: "", type: "ContractorCode" });
+                      setFocusIndex({ index: contractorDetails.key, type: "ContractorCode" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
@@ -47,17 +106,19 @@ const WORKSContractorDetails = () => {
             <div className="field">
               <Controller
                 control={control}
-                name={"Name"}
-                defaultValue={""}
-                rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[-@.\/#&+\w\s]*$/.test(val) ? true : t("INVALID_NAME")) } }}
+                name="Name"
+                defaultValue={contractorDetails.contractorName}
+                rules={{ required: t("REQUIRED_FIELD"), validate: {
+                  pattern: (v) => (/^[a-zA-Z\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                } }}
                 render={(props) => (
                   <TextInput
                     value={props.value}
-                    autoFocus={focusIndex.index === "" && focusIndex.type === "name"}
-                    errorStyle={(localFormState.touched.tradeName && errors?.tradeName?.message) ? true : false}
+                    autoFocus={focusIndex.index === contractorDetails.key && focusIndex.type === "Name"}
+                    errorStyle={(localFormState.touched.Name && errors?.Name?.message) ? true : false}
                     onChange={(e) => {
                       props.onChange(e.target.value);
-                      setFocusIndex({ index: "", type: "Name" });
+                      setFocusIndex({ index: contractorDetails.key, type: "Name" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
@@ -76,8 +137,8 @@ const WORKSContractorDetails = () => {
             <Controller
               control={control}
               name="CorrespondanceAddress"
-              defaultValue={""}
-              rules={{ validate: (e) => ((e && getPattern("CorrespondanceAddress").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), required: t("REQUIRED_FIELD") }}
+              defaultValue={contractorDetails.correspondanceAddress}
+              rules={{ validate: { pattern: (val) => (/^[ A-Za-z0-9/._$@#]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) } }}
               isMandatory={true}
               render={(props) => (
                 <TextInput
@@ -102,8 +163,8 @@ const WORKSContractorDetails = () => {
             <Controller
               control={control}
               name="permenantAddress"
-              defaultValue={""}
-              rules={{ validate: (e) => ((e && getPattern("permenantAddress").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), required: t("REQUIRED_FIELD") }}
+              defaultValue={contractorDetails.permenantAddress}
+              rules={{ validate: { pattern: (val) => (/^[ A-Za-z0-9/._$@#]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) } }}
               isMandatory={true}
               render={(props) => (
                 <TextInput
@@ -128,10 +189,8 @@ const WORKSContractorDetails = () => {
                   <Controller
                     control={control}
                     name={"contactPerson"}
-                    defaultValue={""}
-                    rules={{
-                      required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                      validate: {
+                    defaultValue={contractorDetails.contactPerson}
+                    rules={{validate: {
                         pattern: (v) => (/^[a-zA-Z\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                       },
                     }}
@@ -156,13 +215,15 @@ const WORKSContractorDetails = () => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched?.contactPerson ? errors?.contactPerson?.message : ""}</CardLabelError>
           <LabelFieldPair>
-          <CardLabel style={CardLabelStyle} className="card-label-smaller">{`${t("CORE_COMMON_EMAIL")}`}</CardLabel>
+          <CardLabel style={CardLabelStyle} className="card-label-smaller">{t("CORE_COMMON_EMAIL")}</CardLabel>
           <div className="field">
             <Controller
               control={control}
               name="email"
-              defaultValue={""}
-              rules={{ validate: (e) => ((e && getPattern("email").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), required: t("REQUIRED_FIELD") }}
+              defaultValue={contractorDetails.email}
+              rules={{ validate: {
+                pattern: (v) => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+              } }}
               isMandatory={true}
               render={(props) => (
                 <TextInput
@@ -187,13 +248,10 @@ const WORKSContractorDetails = () => {
                   <Controller
                     control={control}
                     name={"narration"}
-                    defaultValue={""}
-                    rules={{
-                      required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                      validate: {
-                        pattern: (v) => (/^[a-zA-Z\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
-                      },
-                    }}
+                    defaultValue={contractorDetails.narration}
+                    rules={{ validate: {
+                      pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                    } }}
                     render={(props) => (
                       <TextInput
                         value={props.value}
@@ -220,9 +278,10 @@ const WORKSContractorDetails = () => {
             <Controller
               control={control}
               name="mobileNumber"
-              defaultValue={""}
-              rules={{ validate: (e) => ((e && getPattern("MobileNo").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), required: t("REQUIRED_FIELD") }}
-              //type="number"
+              defaultValue={contractorDetails.mobileNumber}
+              rules={{ validate: {
+                pattern: (v) => (/^[0-9]{10}/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+              } }}
               isMandatory={true}
               render={(props) => (
                 <TextInput
@@ -248,8 +307,10 @@ const WORKSContractorDetails = () => {
               <Controller
                 control={control}
                 name="panNo"
-                defaultValue={""}
-                rules={{ validate: (e) => ((e && getPattern("panNo").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                defaultValue={contractorDetails.panNo}
+                rules={{ validate: {
+                  pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                } }}
                 render={(props) => (
                   <TextInput
                     value={props.value}
@@ -274,8 +335,10 @@ const WORKSContractorDetails = () => {
               <Controller
                 control={control}
                 name="tinNo"
-                defaultValue={""}
-                rules={{ validate: (e) => ((e && getPattern("tinNo").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                defaultValue={contractorDetails.tinNo}
+                rules={{ validate: {
+                  pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                } }}
                 render={(props) => (
                   <TextInput
                     value={props.value}
@@ -300,8 +363,10 @@ const WORKSContractorDetails = () => {
               <Controller
                 control={control}
                 name="gstNo"
-                defaultValue={""}
-                rules={{ validate: (e) => ((e && getPattern("GSTNo").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                defaultValue={contractorDetails.gstNo}
+                rules={{ validate: {
+                  pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                } }}
                 render={(props) => (
                   <TextInput
                     value={props.value}
@@ -325,7 +390,7 @@ const WORKSContractorDetails = () => {
           <Controller
             control={control}
             name={"Bank"}
-            defaultValue={""}
+            defaultValue={contractorDetails.bankName}
             rules={{ required: t("REQUIRED_FIELD") }}
             isMandatory={true}
             render={(props) => (
@@ -333,7 +398,7 @@ const WORKSContractorDetails = () => {
                 className="form-field"
                 selected={getValues("Bank")}
                 disable={false}
-                option={[]}
+                option={[{label:"active",value:1},{label:"Inactive",value:2},{label:"Black listed",value:3}]}
                 errorStyle={(localFormState.touched.Bank && errors?.Bank?.message) ? true : false}
                 select={(e) => {
                   props.onChange(e);
@@ -351,7 +416,7 @@ const WORKSContractorDetails = () => {
           <Controller
             control={control}
             name={"IFSCCode"}
-            defaultValue={""}
+            defaultValue={contractorDetails.IFSCCode}
             rules={{ required: t("REQUIRED_FIELD") }}
             isMandatory={true}
             render={(props) => (
@@ -378,8 +443,10 @@ const WORKSContractorDetails = () => {
               <Controller
                 control={control}
                 name="bankAccountNumber"
-                defaultValue={""}
-                rules={{ validate: (e) => ((e && getPattern("bankAccountNumber").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                defaultValue={contractorDetails.bankAccountNumber}
+                rules={{ validate: {
+                  pattern: (v) => (/^[0-9]{9,18}/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                } }}
                 render={(props) => (
                   <TextInput
                     value={props.value}
@@ -404,8 +471,8 @@ const WORKSContractorDetails = () => {
               <Controller
                 control={control}
                 name="PWDApprovalCode"
-                defaultValue={""}
-                rules={{ validate: (e) => ((e && getPattern("PWDApprovalCode").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                defaultValue={contractorDetails.PWDApprovalCode}
+                rules={{ validate: { pattern: (val) => (/^[ A-Za-z0-9/._$@#]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) } }}
                 render={(props) => (
                   <TextInput
                     value={props.value}
@@ -429,8 +496,8 @@ const WORKSContractorDetails = () => {
           <Controller
             control={control}
             name={"exemptedFrom"}
-            defaultValue={""}
-            rules={{ required: t("REQUIRED_FIELD") }}
+            defaultValue={contractorDetails.exemptedFrom}
+            // rules={{ required: t("REQUIRED_FIELD") }}
             isMandatory={true}
             render={(props) => (
               <Dropdown
@@ -450,6 +517,7 @@ const WORKSContractorDetails = () => {
           />
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.exemptedFrom ? errors?.exemptedFrom?.message : ""}</CardLabelError>
+          </React.Fragment>
     </div>
   )
 }

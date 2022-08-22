@@ -56,7 +56,9 @@ const NewApplication = () => {
   ]
  });
 
-  const sessionFormData = [123,123,123]
+  // const sessionFormData = [123,123,123]
+  const [sessionFormData, setSessionFormData, clearSessionFormData] = Digit.Hooks.useSessionStorage("PT_CREATE_EMP_TRADE_NEW_FORM", {});
+
 
   useEffect(() => {
     const config = newConfigLocal.find((conf) => conf.hideInCitizen && conf.isCreate);
@@ -76,7 +78,22 @@ const NewApplication = () => {
   //   else setSubmitValve(!(Object.keys(formState.errors).length));
   //   // if(!formData?.cpt?.details?.propertyId) setSubmitValve(false);
   // };
+  const onFormValueChange = (setValue, formData, formState) => {
+    if (!_.isEqual(sessionFormData, formData)) {
+      setSessionFormData({ ...sessionFormData, ...formData });
+    }
 
+    // if (
+    //   Object.keys(formState.errors).length > 0 &&
+    //   Object.keys(formState.errors).length == 1 &&
+    //   formState.errors["owners"] &&
+    //   Object.entries(formState.errors["owners"].type).filter((ob) => ob?.[1].type === "required").length == 0
+    // ) {
+    //   setSubmitValve(true);
+    // } else {
+    //   setSubmitValve(!Object.keys(formState.errors).length);
+    // }
+  };
   const closeToastOfError = () => { setShowToast(null); };
 
 
@@ -91,7 +108,6 @@ const NewApplication = () => {
   if (isEnableLoader) {
     return <Loader />;
   }
-  console.log("config",config)
 
   return (
     <React.Fragment>
@@ -101,10 +117,10 @@ const NewApplication = () => {
       <FormComposer
         config={config.body}
         userType={"employee"}
-        // onFormValueChange={onFormValueChange}
+        onFormValueChange={onFormValueChange}
         isDisabled={!canSubmit}
         label={t("CS_CREATE_CONTRACTOR_RECORD")}
-        onSubmit={onSubmit}
+        onSubmit={!onSubmit}
         defaultValues={sessionFormData}
       ></FormComposer>
       {showToast && <Toast isDleteBtn={true} error={showToast?.key === "error" ? true : false} label={t(showToast?.message)} onClose={closeToast} />}
