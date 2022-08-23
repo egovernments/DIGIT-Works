@@ -3,8 +3,11 @@ package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import org.egov.service.EstimateService;
+import org.egov.util.ResponseHeaderCreator;
 import org.egov.web.models.EstimateRequest;
 import org.egov.web.models.EstimateResponse;
+import org.egov.web.models.ResponseHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-07-27T14:01:35.043+05:30")
@@ -31,24 +35,26 @@ public class EstimateApiController {
 
     private final HttpServletRequest request;
 
+    private ResponseHeaderCreator responseHeaderCreator;
+
+    private EstimateService estimateService;
+
     @Autowired
-    public EstimateApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public EstimateApiController(ObjectMapper objectMapper, HttpServletRequest request
+            , ResponseHeaderCreator responseHeaderCreator
+            , EstimateService estimateService) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.estimateService = estimateService;
+        this.responseHeaderCreator = responseHeaderCreator;
     }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<EstimateResponse> estimateV1CreatePost(@ApiParam(value = "Request object to create estimate in the system", required = true) @Valid @RequestBody EstimateRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("")) {
-            try {
-                return new ResponseEntity<EstimateResponse>(objectMapper.readValue("", EstimateResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<EstimateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<EstimateResponse>(HttpStatus.NOT_IMPLEMENTED);
+        EstimateRequest enrichedRequest = estimateService.createEstimate(body);
+        ResponseHeader responseHeader = responseHeaderCreator.createResponseHeaderFromRequestHeader(body.getRequestInfo(), true);
+        EstimateResponse estimateResponse = EstimateResponse.builder().responseInfo(responseHeader).estimates(Collections.singletonList(enrichedRequest.getEstimate())).build();
+        return new ResponseEntity<EstimateResponse>(estimateResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)

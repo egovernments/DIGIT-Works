@@ -24,7 +24,7 @@ import java.util.List;
 public class EstimateResponse {
 
     @JsonProperty("responseInfo")
-    private RequestHeader responseInfo = null;
+    private ResponseHeader responseInfo = null;
 
     @JsonProperty("estimates")
     @Valid
