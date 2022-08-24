@@ -109,6 +109,16 @@ const CreateLoiForm = ({onFormSubmit}) => {
         },
     ]
 
+    const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
+        "pb",
+        "works",
+        [
+            {"name":"AgencyName"},
+            { "name": "OfficerInChange" },
+        ]
+    );
+    debugger
+
 
     console.log(errors)
 

@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, CardLabelError } from '@egovernments/digit-ui-react-components';
+import { Controller, useForm, useWatch } from 'react-hook-form'
+import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, CardLabelError, Loader } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
 import SubWorkTable from './SubWorkTable';
 import ProcessingModal from '../Modal/ProcessingModal';
@@ -9,104 +9,7 @@ const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wo
 
 
 const CreateEstimateForm = ({onFormSubmit}) => {
-    const dummyDefault = {
-        "requirementNumber": "123123",
-        // "estimateDetails": [
-        //     null,
-        //     {
-        //         "name": "work",
-        //         "amount": "12312"
-        //     }
-        // ],
-        "department": {
-            "name": "Nipun"
-        },
-        "ward": {
-            "name": "Nipun"
-        },
-        "location": {
-            "name": "Vipul"
-        },
-        "beneficiaryType": {
-            "name": "Vipul"
-        },
-        "natureOfWork": {
-            "name": "Shaifali"
-        },
-        "typeOfWork": {
-            "name": "Nipun"
-        },
-        "subTypeOfWork": {
-            "name": "Vipul"
-        },
-        "entrustmentMode": {
-            "name": "Shaifali"
-        },
-        "fund": {
-            "name": "Vipul"
-        },
-        "function": {
-            "name": "Shaifali"
-        },
-        "budgetHead": {
-            "name": "Vipul"
-        },
-        "scheme": {
-            "name": "Shaifali"
-        },
-        "subScheme": {
-            "name": "Vipul"
-        },
-        // "uploads": [
-        //     {
-        //         "fileName": "consumer-WS_107_2021-22_226507.pdf",
-        //         "fileStoreId": "4a28b85e-63af-402e-bc8f-9bb0c148e47b",
-        //         "documentType": "application/pdf"
-        //     },
-        //     {
-        //         "fileName": "consumer-PB-CH-2022-07-27-001010.pdf",
-        //         "fileStoreId": "8cf5da0b-42a0-41ff-b98a-22cf84619d28",
-        //         "documentType": "application/pdf"
-        //     },
-        //     {
-        //         "fileName": "consumerCode-WS_107_2020-21_218051.pdf",
-        //         "fileStoreId": "6d8962ec-9d34-4dfc-b7c2-90fe9cf0b0e2",
-        //         "documentType": "application/pdf"
-        //     }
-        // ],
-        // "comments": "asb",
-        // "appDept": {
-        //     "name": "Nipun"
-        // },
-        // "appDesig": {
-        //     "name": "Shaifali"
-        // },
-        // "app": {
-        //     "name": "Nipun"
-        // }
-    }
-
-    const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-        "pb",
-        "works",
-        [
-            {
-                "name": "BeneficiaryType"
-            },
-            {
-                "name": "EntrustmentMode"
-            },
-            {
-                "name": "NatureOfWork"
-            },
-            {
-                "name": "TypeOfWork"
-            }
-        ]
-    );
-
-    debugger
-
+    
     const { t } = useTranslation()
     const {
         register,
@@ -120,11 +23,11 @@ const CreateEstimateForm = ({onFormSubmit}) => {
         trigger,
         ...methods
     } = useForm({
-        defaultValues: { ...dummyDefault },
+        defaultValues: {},
         mode: "onSubmit"
     });
 
-    const dummyData = [
+    const DummyData = [
         {
             name: "Nipun"
         },
@@ -157,6 +60,49 @@ const CreateEstimateForm = ({onFormSubmit}) => {
         }
     ]
     const [rows, setRows] = useState(initialState)
+
+    const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
+        "pb",
+        "works",
+        [
+            {
+                "name": "BeneficiaryType"
+            },
+            {
+                "name": "EntrustmentMode"
+            },
+            {
+                "name": "NatureOfWork"
+            },
+            {
+                "name": "TypeOfWork"
+            },
+            {
+                "name": "Department"
+            },
+            {
+                "name": "Fund"
+            },
+            {
+                "name": "Function"
+            },
+            {
+                "name": "BudgetHead"
+            },
+            {
+                "name": "Scheme"
+            }
+        ]
+        );
+    debugger
+    const {subTypes:SubTypeOfWork} = useWatch({ control: control, name: "typeOfWork", defaultValue: [] });
+
+    if(data?.works){
+        var { EntrustmentMode, BeneficiaryType, NatureOfWork, TypeOfWork,Department } = data?.works
+    }
+    
+
+
     const handleCreateClick = async () => {
         debugger
         const obj = {
@@ -238,8 +184,12 @@ const CreateEstimateForm = ({onFormSubmit}) => {
 
     const [showModal, setShowModal] = useState(false)
 
+    if(isLoading) {
+        return <Loader />
+    }
+
   return (
-      <form onSubmit={handleSubmit(onFormSubmit)}>
+      isFetched && <form onSubmit={handleSubmit(onFormSubmit)}>
           <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_ESTIMATE")}</Header>
           <Card >
               <CardSectionHeader style={{ "marginTop": "14px" }} >{t(`WORKS_ESTIMATE_DETAILS`)}</CardSectionHeader>
@@ -278,7 +228,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                           render={(props) => {
                               return (
                                   <Dropdown
-                                      option={dummyData}
+                                      option={Department}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -318,7 +268,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                           render={(props) => {
                               return (
                                   <Dropdown
-                                      option={dummyData}
+                                      option={BeneficiaryType}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -342,7 +292,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                           return (
                               <Dropdown
                                   className={`field`}
-                                  option={dummyData}
+                                  option={BeneficiaryType}
                                   selected={props?.value}
                                   optionKey={"name"}
                                   t={t}
@@ -366,7 +316,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               return (
                                   <Dropdown
 
-                                      option={dummyData}
+                                      option={BeneficiaryType}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -391,7 +341,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               return (
                                   <Dropdown
 
-                                      option={dummyData}
+                                      option={NatureOfWork}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -414,7 +364,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                           render={(props) => {
                               return (
                                   <Dropdown
-                                      option={dummyData}
+                                      option={TypeOfWork}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -436,7 +386,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                           return (
                               <Dropdown
                                   className={`field`}
-                                  option={dummyData}
+                                  option={SubTypeOfWork}
                                   selected={props?.value}
                                   optionKey={"name"}
                                   t={t}
@@ -457,7 +407,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                           render={(props) => {
                               return (
                                   <Dropdown
-                                      option={dummyData}
+                                      option={EntrustmentMode}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -484,7 +434,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               return (
                                   <Dropdown
 
-                                      option={dummyData}
+                                      option={BeneficiaryType}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -508,7 +458,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               return (
                                   <Dropdown
 
-                                      option={dummyData}
+                                      option={BeneficiaryType}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -532,7 +482,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               return (
                                   <Dropdown
 
-                                      option={dummyData}
+                                      option={BeneficiaryType}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -556,7 +506,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               return (
                                   <Dropdown
 
-                                      option={dummyData}
+                                      option={BeneficiaryType}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -581,7 +531,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               return (
                                   <Dropdown
 
-                                      option={dummyData}
+                                      option={BeneficiaryType}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
