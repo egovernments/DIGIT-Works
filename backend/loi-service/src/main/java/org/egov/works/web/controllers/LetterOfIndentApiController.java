@@ -3,8 +3,11 @@ package org.egov.works.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import org.egov.works.service.LetterOfIndentService;
+import org.egov.works.util.ResponseInfo;
 import org.egov.works.web.models.LetterOfIndentRequest;
 import org.egov.works.web.models.LetterOfIndentResponse;
+import org.egov.works.web.models.ResponseHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-08-04T15:05:28.525+05:30")
 
@@ -31,9 +35,16 @@ import java.util.List;
         private final HttpServletRequest request;
 
         @Autowired
-        public LetterOfIndentApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+        private  ResponseInfo responseInfo;
+
+        @Autowired
+        private  LetterOfIndentService letterOfIndentService;
+
+        @Autowired
+        public LetterOfIndentApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfo responseInfo) {
         this.objectMapper = objectMapper;
         this.request = request;
+            this.responseInfo = responseInfo;
         }
 
                 @RequestMapping(value="/letter-of-indent/v1/_create", method = RequestMethod.POST)
@@ -41,6 +52,9 @@ import java.util.List;
                         String accept = request.getHeader("Accept");
                             if (accept != null && accept.contains("")) {
                             try {
+                                LetterOfIndentRequest letterOfIndentRequest = letterOfIndentService.createLOI(body);
+                                ResponseHeader responseHeader = responseInfo.createResponseHeaderFromRequestHeader(body.getRequestInfo(), true);
+                                LetterOfIndentResponse letterOfIndentResponse = LetterOfIndentResponse.builder().responseInfo(responseHeader).letterOfIndents(Collections.singletonList(letterOfIndentRequest.getLetterOfIndent())).build();
                             return new ResponseEntity<LetterOfIndentResponse>(objectMapper.readValue("", LetterOfIndentResponse.class), HttpStatus.NOT_IMPLEMENTED);
                             } catch (IOException e) {
                             return new ResponseEntity<LetterOfIndentResponse>(HttpStatus.INTERNAL_SERVER_ERROR);

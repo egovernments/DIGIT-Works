@@ -32,7 +32,7 @@ import lombok.Builder;
 @Builder
 public class LetterOfIndentResponse   {
         @JsonProperty("responseInfo")
-        private RequestHeader responseInfo = null;
+        private ResponseHeader responseInfo = null;
 
         @JsonProperty("letterOfIndents")
         @Valid
