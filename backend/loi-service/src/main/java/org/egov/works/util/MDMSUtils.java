@@ -32,7 +32,7 @@ public class MDMSUtils {
     }
 
     /**
-     * Calls MDMS service to fetch pgr master data
+     * Calls MDMS service to fetch loi master data
      *
      * @param request
      * @return
