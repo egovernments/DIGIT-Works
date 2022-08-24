@@ -56,7 +56,7 @@ public class MDMSUtils {
      * @return
      */
     public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
-        List<ModuleDetail> pgrModuleRequest = getPGRModuleRequest();
+        List<ModuleDetail> pgrModuleRequest = getLOIModuleRequest();
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.addAll(pgrModuleRequest);
@@ -75,21 +75,21 @@ public class MDMSUtils {
      *
      * @return request to search UOM from MDMS
      */
-    private List<ModuleDetail> getPGRModuleRequest() {
+    private List<ModuleDetail> getLOIModuleRequest() {
 
         // master details for TL module
-        List<MasterDetail> pgrMasterDetails = new ArrayList<>();
+        List<MasterDetail> loiMasterDetails = new ArrayList<>();
 
         // filter to only get code field from master data
         final String filterCode = "$.*.code";
 
-        pgrMasterDetails.add(MasterDetail.builder().name(MDMS_MASTER).filter(filterCode).build());
+        loiMasterDetails.add(MasterDetail.builder().name(MDMS_MASTER).filter(filterCode).build());
 
-        ModuleDetail pgrModuleDtls = ModuleDetail.builder().masterDetails(pgrMasterDetails)
+        ModuleDetail loiModuleDtls = ModuleDetail.builder().masterDetails(loiMasterDetails)
                 .moduleName(MDMS_MODULE_NAME).build();
 
 
-        return Collections.singletonList(pgrModuleDtls);
+        return Collections.singletonList(loiModuleDtls);
 
     }
 
