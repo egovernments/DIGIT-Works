@@ -79,7 +79,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                 name={"ContractorCode"}
                 defaultValue={contractorDetails.contractorCode}
                 rules={{ validate: {
-                  pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                  pattern: (v) => (/^[ A-Za-z0-9]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                 } }}
                 render={(props) => (
                   <TextInput
@@ -170,7 +170,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                 <TextInput
                   value={props.value}
                   autoFocus={focusIndex.index === 1 && focusIndex.type === "permenantAddress"}
-                  errorStyle={(localFormState.touched.address && errors?.address?.message) ? true : false}
+                  errorStyle={(localFormState.touched.permenantAddress && errors?.permenantAddress?.message) ? true : false}
                   onChange={(e) => {
                     props.onChange(e.target.value);
                     setFocusIndex({ index: 1, type: "permenantAddress" });

@@ -28,7 +28,7 @@ const WORKSContractorTable = () => {
   const { t } = useTranslation();
   const GetCell = (value) => <span className="cell-text">{value}</span>;
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
-  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
+  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues,register } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
   const [isErrors, setIsErrors] = useState(false);
@@ -48,139 +48,231 @@ const WORKSContractorTable = () => {
     Status:"Created",
     FromDate:"",
     ToDate:""}])
-    const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
+  const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
   const inboxColumns = () => [
     {
       Header: t("WORKS_S.NO"),
       Cell: ({ row }) => (
-              <Link>{row.original?.SerialNumber}</Link>
+              <Link to={"/digit-ui/employee"}>{row.original?.SerialNumber}</Link>
         ),
       mobileCell: (original) => GetMobCell(original?.SerialNumber),
     },
     {
       Header: t("DEPARTMENT"),
-      Cell: () => <Dropdown 
-      option={userUlbs} 
-      optionKey={"department"} 
-      value={department} 
-      selected={department} 
-      select={(e) => {
-        // onChange(value);
-        setDepartment(e);
-      }}
-      // select={setDepartment} 
-      t={t} 
-      // disable={userUlbs} 
-    />,
+      Cell: () => 
+      <div className='field'>
+        {/* <Controller
+            name="department"
+            control={control}
+            rules={{ required: true }}
+            render={(props) => {
+              return (
+                  <Dropdown
+                      option={userUlbs}
+                      // selected={props?.value}
+                      optionKey={"name"}
+                      t={t}
+                      select={props?.onChange}
+                      onBlur={props.onBlur}
+                  />
+              );
+            }}
+        /> */}
+        <Dropdown
+          option={userUlbs} 
+          optionKey={"department"} 
+          value={department} 
+          selected={department} 
+          select={(e) => {
+            onChange(e);
+            setDepartment(e);
+          }}
+        {...register("Department", { required: true})}/>
+        {errors && errors?.Department &&(
+        <CardLabelError>{t("REQUIRED_FIELD")}</CardLabelError>)}
+    </div>,
+
+    //   <Dropdown 
+    //   option={userUlbs} 
+    //   optionKey={"department"} 
+    //   value={department} 
+    //   selected={department} 
+    //   select={(e) => {
+    //     // onChange(value);
+    //     setDepartment(e);
+    //   }}
+    //   // select={setDepartment} 
+    //   t={t} 
+    //   // disable={userUlbs} 
+    // />,
       mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
     },
     {
       Header: t("REGISTRATION_NO"),
       Cell: ({row}) => (
-        // <div className="field">
-        //       <Controller
-        //         control={control}
-        //         name={"RegNo"}
-                  //  defaultValue={""}
-        //         rules={{ validate: {
-        //           pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
-        //         } }}
-        //         render={(props) => (
-        //           <TextInput
-        //             value={props.value}
-        //             autoFocus={focusIndex.index === row.id && focusIndex.type === "RegNo"}
-        //             errorStyle={(localFormState.touched.RegNo && errors?.RegNo?.message) ? true : false}
-        //             onChange={(e) => {
-        //               console.log(focusIndex,errors)
-        //               props.onChange(e.target.value);
-        //               setFocusIndex({ index: row.id, type: "RegNo" });
-        //             }}
-        //             onBlur={(e) => {
-        //               setFocusIndex({ index: -1 });
-        //               props.onBlur(e);
-        //             }}
-        //             // disable={isRenewal}
-        //           />
-        //         )}
-        //       />
-        //     </div>
-        <div>
-         <TextInput
-        value={registrationNumber}
-        onChange={(e) =>setRegistrationNumber(e.target.value)}
-      />
-        <CardLabelError style={errorStyle}>{!registrationNumber ? "Field Required":""}</CardLabelError>
+    // <div className="field">
+    //       <Controller
+    //         control={control}
+    //         name={"RegNo"}
+              //  defaultValue={""}
+    //         rules={{ validate: {
+    //           pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+    //         } }}
+    //         render={(props) => (
+    //           <TextInput
+    //             value={props.value}
+    //             autoFocus={focusIndex.index === row.id && focusIndex.type === "RegNo"}
+    //             errorStyle={(localFormState.touched.RegNo && errors?.RegNo?.message) ? true : false}
+    //             onChange={(e) => {
+    //               console.log(focusIndex,errors)
+    //               props.onChange(e.target.value);
+    //               setFocusIndex({ index: row.id, type: "RegNo" });
+    //             }}
+    //             onBlur={(e) => {
+    //               setFocusIndex({ index: -1 });
+    //               props.onBlur(e);
+    //             }}
+    //             // disable={isRenewal}
+    //           />
+    //         )}
+    //       />
+    //     </div>
+    //   <div>
+    //    <TextInput
+    //   value={registrationNumber}
+    //   onChange={(e) =>setRegistrationNumber(e.target.value)}
+    // />
+    //   <CardLabelError style={errorStyle}>{!registrationNumber ? "Field Required":""}</CardLabelError>
+    // </div>
+      <div className='field'>
+        <TextInput name="requirementNumber" inputRef={register({
+          pattern: /^[a-zA-Z0-9_.$@#\/]*$/
+          })}
+        />
+        {errors && errors?.requirementNumber?.type === "pattern" && (
+        <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
       </div>
       ),
       mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
     },
     {
       Header: t("CATEGORY"),
-      Cell: () => <Dropdown 
-      // option={userUlbs} 
-      optionKey={"status"} 
-      value={status} 
-      selected={status} 
-      select={setStatus} 
-      t={t} 
-      // disable={userUlbs} 
-    />,
+      Cell: () => 
+    //   <Dropdown 
+    //   // option={userUlbs} 
+    //   optionKey={"status"} 
+    //   value={status} 
+    //   selected={status} 
+    //   select={setStatus} 
+    //   t={t} 
+    //   // disable={userUlbs} 
+    // />
+    <div>
+      <Dropdown
+        option={userUlbs} 
+        optionKey={"Category"} 
+        value={status} 
+        selected={status} 
+        select={(e) => {
+        onChange(e);
+        setStatus(e);
+        }}
+        {...register("Category")}/>
+    </div>
+    ,
       mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
     },
     {
       Header: t("CONTRACTOR_CLASS"),
-      Cell: () => <Dropdown 
-      // option={userUlbs} 
-      optionKey={"contractorClass"} 
-      value={contractorClass} 
-      selected={contractorClass} 
-      select={setContractorClass} 
-      t={t} 
-      // disable={userUlbs} 
-    />,
+      Cell: () => 
+    //   <Dropdown 
+    //   // option={userUlbs} 
+    //   optionKey={"contractorClass"} 
+    //   value={contractorClass} 
+    //   selected={contractorClass} 
+    //   select={setContractorClass} 
+    //   t={t} 
+    //   // disable={userUlbs} 
+    // />
+    <div>
+      <Dropdown
+        option={userUlbs} 
+        optionKey={"contractorClass"} 
+        value={contractorClass} 
+        selected={contractorClass} 
+        select={(e) => {
+        onChange(e);
+        setContractorClass(e);
+        }}
+        {...register("contractorClass")}/>
+    </div>,
       mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
     },
     {
       Header: t("STATUS"),
-      Cell: () => <Dropdown 
-      // option={userUlbs} 
-      optionKey={"name"} 
-      value={status} 
-      selected={status} 
-      select={setStatus} 
-      t={t} 
-      // disable={userUlbs} 
-    />,
+      Cell: () => 
+    //   <Dropdown 
+    //   // option={userUlbs} 
+    //   optionKey={"name"} 
+    //   value={status} 
+    //   selected={status} 
+    //   select={setStatus} 
+    //   t={t} 
+    //   // disable={userUlbs} 
+    // />
+    <div>
+      <Dropdown
+        option={userUlbs} 
+        optionKey={"status"} 
+        value={status} 
+        selected={status} 
+        select={(e) => {
+        onChange(e);
+        setStatus(e);
+        }}
+        {...register("status", { required: true})}/>
+      {errors && errors?.status &&(
+      <CardLabelError>{t(`REQUIRED_FIELD`)}</CardLabelError>)}
+    </div>,
       mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
     },
     {
       Header: t("FROM_DATE"),
-      Cell: () =><DatePicker
-                date={createdFromDate}
-                onChange={(d) => {
-                setCreatedFromDate(d);
-                }}
-              />,
+      Cell: () =>
+      <div>
+        <DatePicker
+          date={createdFromDate}
+          onChange={(d) => {
+          setCreatedFromDate(d);
+          }}
+          {...register("fromDate", { required: true})}
+        />
+        {errors && errors?.fromDate &&(
+          <CardLabelError>{t(`REQUIRED_FIELD`)}</CardLabelError>)}
+      </div>,
       mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
     },
     {
       Header: t("TO_DATE"),
-      Cell: () => <DatePicker
-                date={createdToDate}
-                onChange={(d) => {
-                  setCreatedToDate(d);
-                }}
-              />,
+      Cell: () => 
+      <DatePicker
+        date={createdToDate}
+        onChange={(d) => {
+          setCreatedToDate(d);
+        }}
+        {...register("toDate", { required: true})}
+      />,
       mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
     },
     {
       Header: t("ACTION"),
-      Cell: ({row}) => <LinkButton
-      label={<DeleteIcon fill={"#494848"} />}
-      style={{ margin: "10px" }}
-      onClick={() => deleteRow(row.id)} 
-    />,
+      Cell: ({row}) => 
+      <LinkButton
+        label={<DeleteIcon fill={"#494848"} />}
+        style={{ margin: "10px" }}
+        onClick={() => deleteRow(row.id)} 
+      />,
       mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
     },
   ];
