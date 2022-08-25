@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
+import org.egov.tracer.model.Error;
 import org.springframework.validation.annotation.Validated;
 
 /**

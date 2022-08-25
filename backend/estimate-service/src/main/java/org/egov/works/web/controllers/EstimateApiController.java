@@ -4,7 +4,7 @@ package org.egov.works.web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import org.egov.works.service.EstimateService;
-import org.egov.works.util.ResponseHeaderCreator;
+import org.egov.works.util.ResponseInfoCreator;
 import org.egov.works.web.models.EstimateRequest;
 import org.egov.works.web.models.EstimateResponse;
 import org.egov.works.web.models.ResponseHeader;
@@ -35,24 +35,24 @@ public class EstimateApiController {
 
     private final HttpServletRequest request;
 
-    private ResponseHeaderCreator responseHeaderCreator;
+    private ResponseInfoCreator responseInfoCreator;
 
     private EstimateService estimateService;
 
     @Autowired
     public EstimateApiController(ObjectMapper objectMapper, HttpServletRequest request
-            , ResponseHeaderCreator responseHeaderCreator
+            , ResponseInfoCreator responseInfoCreator
             , EstimateService estimateService) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.estimateService = estimateService;
-        this.responseHeaderCreator = responseHeaderCreator;
+        this.responseInfoCreator = responseInfoCreator;
     }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<EstimateResponse> estimateV1CreatePost(@ApiParam(value = "Request object to create estimate in the system", required = true) @Valid @RequestBody EstimateRequest body) {
         EstimateRequest enrichedRequest = estimateService.createEstimate(body);
-        ResponseHeader responseHeader = responseHeaderCreator.createResponseHeaderFromRequestHeader(body.getRequestInfo(), true);
+        ResponseHeader responseHeader = responseInfoCreator.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         EstimateResponse estimateResponse = EstimateResponse.builder().responseInfo(responseHeader).estimates(Collections.singletonList(enrichedRequest.getEstimate())).build();
         return new ResponseEntity<EstimateResponse>(estimateResponse, HttpStatus.OK);
     }
