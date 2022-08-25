@@ -188,8 +188,12 @@ const CreateEstimateForm = ({onFormSubmit}) => {
         return <Loader />
     }
 
+    const checkKeyDown = (e) => {
+        if (e.code === 'Enter') e.preventDefault();
+    };
+
   return (
-      isFetched && <form onSubmit={handleSubmit(onFormSubmit)}>
+      isFetched && <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
           <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_ESTIMATE")}</Header>
           <Card >
               <CardSectionHeader style={{ "marginTop": "14px" }} >{t(`WORKS_ESTIMATE_DETAILS`)}</CardSectionHeader>

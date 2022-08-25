@@ -32,6 +32,10 @@ const Urls = {
 
   Shortener: "/egov-url-shortening/shortener",
 
+  works: {
+    create:"/letter-of-indent/v1/_create"
+  },
+
   fsm: {
     search: "/fsm/v1/_search",
     create: "/fsm/v1/_create",

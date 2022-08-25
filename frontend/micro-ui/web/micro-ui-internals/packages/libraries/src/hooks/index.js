@@ -240,9 +240,11 @@ import { usePrivacyContext } from "./usePrivacyContext";
 
 import useViewEstimateDetails from "./works/useViewEstimateDetails"
 import useViewLOIDetails from "./works/useViewLOIDetails"
+import useCreateLOI from "./works/useCreateLOI";
 const works = {
   useViewEstimateDetails,
-  useViewLOIDetails
+  useViewLOIDetails,
+  useCreateLOI,
 }
 
 const pgr = {

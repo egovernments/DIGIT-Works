@@ -7,7 +7,8 @@ import ProcessingModal from '../Modal/ProcessingModal';
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
 const CreateLoiForm = ({onFormSubmit}) => {
-    const handleCreateClick = async () => {
+    const handleCreateClick = async (e) => {
+        e.preventDefault()
         debugger
         // const result = await trigger(["lor", "fileno", "dlperiod", "fromDate", "aggDate", "agencyname", "officerInChargedesig","officerIncharge","work"])
         const obj = {
@@ -109,15 +110,15 @@ const CreateLoiForm = ({onFormSubmit}) => {
         },
     ]
 
-    const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-        "pb",
-        "works",
-        [
-            {"name":"AgencyName"},
-            { "name": "OfficerInChange" },
-        ]
-    );
-    debugger
+    // const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
+    //     "pb",
+    //     "works",
+    //     [
+    //         {"name":"AgencyName"},
+    //         { "name": "OfficerInChange" },
+    //     ]
+    // );
+    // debugger
 
 
     console.log(errors)
@@ -125,9 +126,11 @@ const CreateLoiForm = ({onFormSubmit}) => {
 
 
     let validation = {}
-
+    const checkKeyDown = (e) => {
+        if (e.code === 'Enter') e.preventDefault();
+    };
     return (
-        <form onSubmit={handleSubmit(onFormSubmit)}>
+        <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
             <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_LOI")}</Header>
             <Card >
 
