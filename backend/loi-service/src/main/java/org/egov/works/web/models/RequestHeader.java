@@ -4,7 +4,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import org.egov.works.web.models.APIInfo;
 import org.egov.works.web.models.DeviceDetail;
 import org.egov.works.web.models.UserInfo;

@@ -53,7 +53,7 @@ import java.util.List;
                             if (accept != null && accept.contains("")) {
                             try {
                                 LetterOfIndentRequest letterOfIndentRequest = letterOfIndentService.createLOI(body);
-                                ResponseHeader responseHeader = responseInfo.createResponseHeaderFromRequestHeader(body.getRequestInfo(), true);
+                                ResponseHeader responseHeader = responseInfo.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
                                 LetterOfIndentResponse letterOfIndentResponse = LetterOfIndentResponse.builder().responseInfo(responseHeader).letterOfIndents(Collections.singletonList(letterOfIndentRequest.getLetterOfIndent())).build();
                             return new ResponseEntity<LetterOfIndentResponse>(objectMapper.readValue("", LetterOfIndentResponse.class), HttpStatus.NOT_IMPLEMENTED);
                             } catch (IOException e) {

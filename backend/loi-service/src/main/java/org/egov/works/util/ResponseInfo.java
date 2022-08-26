@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ResponseInfo {
 
-    public ResponseHeader createResponseHeaderFromRequestHeader(final RequestHeader requestHeader, final Boolean success) {
+    public ResponseHeader createResponseInfoFromRequestInfo(final RequestHeader requestHeader, final Boolean success) {
 
         final String correlationId = requestHeader != null ? requestHeader.getCorrelationId() : "";
         final String ver = requestHeader != null && requestHeader.getApiInfo().getVersion() != null ? requestHeader.getApiInfo().getVersion() : "";
