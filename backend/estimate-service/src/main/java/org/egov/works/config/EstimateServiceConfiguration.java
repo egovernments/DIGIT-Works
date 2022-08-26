@@ -41,10 +41,10 @@ public class EstimateServiceConfiguration {
     private String mdmsEndPoint;
 
     //Topic
-    @Value("${es.kafka.create.topic}")
+    @Value("${estimate.kafka.create.topic}")
     private String saveEstimateTopic;
 
-    @Value("${es.kafka.update.topic}")
+    @Value("${estimate.kafka.update.topic}")
     private String updateEstimateTopic;
 }
 
