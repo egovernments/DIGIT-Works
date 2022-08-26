@@ -39,5 +39,12 @@ public class EstimateServiceConfiguration {
 
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+
+    //Topic
+    @Value("${es.kafka.create.topic}")
+    private String saveEstimateTopic;
+
+    @Value("${es.kafka.update.topic}")
+    private String updateEstimateTopic;
 }
 
