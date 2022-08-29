@@ -6,13 +6,27 @@ import CreateLoiForm from '../../../components/CreateLOI/CreateLoiForm';
 
 
 const CreateLOI = () => {
+    const { mutate: LOIMutation } = Digit.Hooks.works.useCreateLOI();
 
-    const onFormSubmit = (_data) => {
+    const onFormSubmit = async (_data) => {
         debugger
-
+        const letterOfIndent = {letterOfIndent:_data}
         console.log(_data);
+
+        await LOIMutation(letterOfIndent,{
+            onError:(error,variables)=>{
+                debugger
+            },
+            onSuccess:async (responseData,variables)=>{
+                debugger
+            }
+        })
+        
+
     }
 
+
+    
 
     return (
 //         <form onSubmit={handleSubmit(onFormSubmit)}>

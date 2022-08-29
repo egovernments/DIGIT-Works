@@ -79,26 +79,39 @@ const CreateEstimateForm = ({onFormSubmit}) => {
             },
             {
                 "name": "Department"
-            },
+            }
+        ]
+        );
+
+    const { isLoading:isFinanceDataLoading, data:financeData, isFetched:isFinanceDataFetched } = Digit.Hooks.useCustomMDMS(
+        "pb",
+        "finance",
+        [
             {
-                "name": "Fund"
-            },
-            {
-                "name": "Function"
+                "name": "Scheme"
             },
             {
                 "name": "BudgetHead"
             },
             {
-                "name": "Scheme"
+                "name": "Functions"
+            },
+            {
+                "name": "Fund"
             }
         ]
-        );
+    );
+
     debugger
     const {subTypes:SubTypeOfWork} = useWatch({ control: control, name: "typeOfWork", defaultValue: [] });
 
     if(data?.works){
         var { EntrustmentMode, BeneficiaryType, NatureOfWork, TypeOfWork,Department } = data?.works
+    }
+
+    const { subScheme:subScheme  } = useWatch({ control: control, name: "scheme", defaultValue: [] });
+    if(financeData?.finance){
+        var { Scheme, BudgetHead, Functions, Fund } = financeData?.finance
     }
     
 
@@ -438,7 +451,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               return (
                                   <Dropdown
 
-                                      option={BeneficiaryType}
+                                      option={Fund}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -462,7 +475,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               return (
                                   <Dropdown
 
-                                      option={BeneficiaryType}
+                                      option={Functions}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -486,7 +499,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               return (
                                   <Dropdown
 
-                                      option={BeneficiaryType}
+                                      option={BudgetHead}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}
@@ -509,10 +522,9 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                           render={(props) => {
                               return (
                                   <Dropdown
-
-                                      option={BeneficiaryType}
+                                      option={Scheme}
                                       selected={props?.value}
-                                      optionKey={"name"}
+                                      optionKey={"schemeName"}
                                       t={t}
                                       select={props?.onChange}
                                       onBlur={props.onBlur}
@@ -535,7 +547,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                               return (
                                   <Dropdown
 
-                                      option={BeneficiaryType}
+                                      option={subScheme}
                                       selected={props?.value}
                                       optionKey={"name"}
                                       t={t}

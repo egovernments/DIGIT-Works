@@ -8,7 +8,6 @@ const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wo
 
 const CreateLoiForm = ({onFormSubmit}) => {
     const handleCreateClick = async (e) => {
-        e.preventDefault()
         debugger
         // const result = await trigger(["lor", "fileno", "dlperiod", "fromDate", "aggDate", "agencyname", "officerInChargedesig","officerIncharge","work"])
         const obj = {
@@ -88,7 +87,7 @@ const CreateLoiForm = ({onFormSubmit}) => {
         trigger,
         ...methods
     } = useForm({
-        defaultValues: {  },
+        defaultValues: { ...dummyDefault },
         mode: "onSubmit"
     });
 

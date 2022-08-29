@@ -8,6 +8,7 @@ import CreateEstimate from "./Estimate/CreateEstimate";
 import ViewEstimate from "./Estimate/ViewEstimate";
 import ViewLOI from "./LOI/ViewLOI";
 import SearchApprovedSubEstimate from "../employee/SearchApprovedSubEstimate"
+import Response from "../../components/response";
 
 const App = ({ path }) => {
   
@@ -21,6 +22,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{path}}/>} />
           <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
           <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
+          <PrivateRoute path={`${path}/response`} component={() => <Response {...{ path }} />} />
         </div>
       </React.Fragment>
     </Switch>
