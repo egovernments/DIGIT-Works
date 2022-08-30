@@ -1,18 +1,9 @@
 package org.egov.works.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * Info of the API being called
@@ -26,15 +17,15 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class APIInfo   {
-        @JsonProperty("id")
-        private String id = null;
+public class APIInfo {
+    @JsonProperty("id")
+    private String id = null;
 
-        @JsonProperty("version")
-        private String version = null;
+    @JsonProperty("version")
+    private String version = null;
 
-        @JsonProperty("path")
-        private String path = null;
+    @JsonProperty("path")
+    private String path = null;
 
 
 }

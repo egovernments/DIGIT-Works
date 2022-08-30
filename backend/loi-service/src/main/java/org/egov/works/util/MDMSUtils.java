@@ -23,9 +23,9 @@ import static org.egov.works.util.LOIConstants.MDMS_MODULE_NAME;
 public class MDMSUtils {
 
 
-    private LOIConfiguration config;
+    private final LOIConfiguration config;
 
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
     public MDMSUtils(LOIConfiguration config, ServiceRequestRepository serviceRequestRepository) {

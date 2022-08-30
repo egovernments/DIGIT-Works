@@ -1,21 +1,9 @@
 package org.egov.works.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import  org.egov.works.web.models.LetterOfIndent;
-import  org.egov.works.web.models.LetterOfIndentRequestWorkflow;
-import  org.egov.works.web.models.RequestHeader;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * Request for LetterOfIndent _create and _update api&#39;s
@@ -29,15 +17,15 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LetterOfIndentRequest   {
-        @JsonProperty("requestInfo")
-        private RequestHeader requestInfo = null;
+public class LetterOfIndentRequest {
+    @JsonProperty("requestInfo")
+    private RequestHeader requestInfo = null;
 
-        @JsonProperty("letterOfIndent")
-        private LetterOfIndent letterOfIndent = null;
+    @JsonProperty("letterOfIndent")
+    private LetterOfIndent letterOfIndent = null;
 
-        @JsonProperty("workflow")
-        private LetterOfIndentRequestWorkflow workflow = null;
+    @JsonProperty("workflow")
+    private LetterOfIndentRequestWorkflow workflow = null;
 
 
 }

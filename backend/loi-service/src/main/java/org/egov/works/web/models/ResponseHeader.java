@@ -1,20 +1,12 @@
 package org.egov.works.web.models;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import org.egov.works.web.models.Error;
+import lombok.*;
+import org.egov.tracer.model.Error;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * ResponseHeader should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseHeader should always correspond to the same values in respective request&#39;s RequestHeader.
@@ -28,66 +20,60 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ResponseHeader   {
-        @JsonProperty("ts")
-        private Long ts = null;
+public class ResponseHeader {
+    @JsonProperty("ts")
+    private Long ts = null;
 
-        @JsonProperty("resMsgId")
-        private String resMsgId = null;
+    @JsonProperty("resMsgId")
+    private String resMsgId = null;
 
-        @JsonProperty("msgId")
-        private String msgId = null;
+    @JsonProperty("msgId")
+    private String msgId = null;
+    @JsonProperty("status")
+    private StatusEnum status = null;
+    @JsonProperty("signature")
+    private String signature = null;
+    @JsonProperty("error")
+    private Error error = null;
+    @JsonProperty("information")
+    private Object information = null;
+    @JsonProperty("debug")
+    private Object debug = null;
+    @JsonProperty("additionalInfo")
+    private Object additionalInfo = null;
 
-              /**
-   * status of request processing
-   */
-  public enum StatusEnum {
-    COMPLETED("COMPLETED"),
-    
-    ACCEPTED("ACCEPTED"),
-    
-    FAILED("FAILED");
+    /**
+     * status of request processing
+     */
+    public enum StatusEnum {
+        COMPLETED("COMPLETED"),
 
-    private String value;
+        ACCEPTED("ACCEPTED"),
 
-    StatusEnum(String value) {
-      this.value = value;
-    }
+        FAILED("FAILED");
 
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
+        private String value;
 
-    @JsonCreator
-    public static StatusEnum fromValue(String text) {
-      for (StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
+        StatusEnum(String value) {
+            this.value = value;
         }
-      }
-      return null;
+
+        @JsonCreator
+        public static StatusEnum fromValue(String text) {
+            for (StatusEnum b : StatusEnum.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
-  }
-
-        @JsonProperty("status")
-        private StatusEnum status = null;
-
-        @JsonProperty("signature")
-        private String signature = null;
-
-        @JsonProperty("error")
-        private Error error = null;
-
-        @JsonProperty("information")
-        private Object information = null;
-
-        @JsonProperty("debug")
-        private Object debug = null;
-
-        @JsonProperty("additionalInfo")
-        private Object additionalInfo = null;
 
 
 }

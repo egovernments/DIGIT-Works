@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class LetterOfIndentService {
-    public LetterOfIndentRequest createLOI(LetterOfIndentRequest request){
+    public LetterOfIndentRequest createLOI(LetterOfIndentRequest request) {
         return request;
     }
 }
