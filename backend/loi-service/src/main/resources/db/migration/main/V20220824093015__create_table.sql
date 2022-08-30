@@ -24,5 +24,5 @@
   createdtime bigint,
   lastmodifiedtime bigint,
   CONSTRAINT uk_eg_wms_loi UNIQUE (loi_number),
-   CONSTRAINT pk_eg_wms_loi PRIMARY KEY (id)
+  CONSTRAINT pk_eg_wms_loi PRIMARY KEY (id)
 );
