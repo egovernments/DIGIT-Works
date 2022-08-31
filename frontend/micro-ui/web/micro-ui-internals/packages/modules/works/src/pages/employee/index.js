@@ -5,7 +5,7 @@ import { Switch ,useLocation} from "react-router-dom";
 import NewApplication from "./CreateContractor";
 import Inbox from "./Inbox";
 import LOIInbox from "./LOIInbox";
-
+import Search from "./search";
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
 
@@ -15,7 +15,7 @@ const BILLSBreadCrumbs = ({ location }) => {
   const crumbs = [
     {
       path: "/digit-ui/employee",
-      content: t("ES_COMMON_HOME"),
+      content: t("WORKS_COMMON_WMS"),
       show: true,
     },
     {
@@ -26,7 +26,7 @@ const BILLSBreadCrumbs = ({ location }) => {
     },
     {
       path: "/digit-ui/employee/works/LOIInbox",
-      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_LOIInbox")}` : t("WORKS_LOIInbox"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_LOI")}` : t("WORKS_LOIInbox"),
       show: location.pathname.includes("/works/LOIInbox") ? true : false,
       isBack: fromScreen && true,
     },
@@ -73,7 +73,7 @@ const App = ({ path }) => {
                 component={NewApplication}
             />
           <PrivateRoute path={`${path}/search-Estimate`}
-                component={()=><div>Search</div>}
+                component={(props)=><Search {...props} parentRoute={path}/>}
             />
         </div>
       </React.Fragment>

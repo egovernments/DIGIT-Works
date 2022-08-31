@@ -7,7 +7,7 @@ import WORKS_INBOX_FILTER from './components/inbox/NewInboxFilter'
 import LOI_INBOX_FILTER from "./components/LOIInbox/LOIInboxFilter";
 import WORKSContractorDetails from "./pageComponents/WORKSContractorDetails";
 import WORKSContractorTable from "./pageComponents/WORKSContractorTable";
-// import SearchEstimate from './components/SearchEstimate'
+import SearchEstimate from './components/SearchEstimate'
 const WorksModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["works"];
   const { path, url } = useRouteMatch();
@@ -32,7 +32,7 @@ const componentsToRegister = {
   WORKS_INBOX_FILTER,
   WORKSContractorTable,
   WORKSContractorDetails,
-  // SearchEstimate,
+  SearchEstimate,
 };
 
 export const initWorksComponents = () => {

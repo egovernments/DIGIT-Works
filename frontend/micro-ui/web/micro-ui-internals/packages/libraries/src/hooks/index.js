@@ -238,6 +238,8 @@ import useStaticData from "./useStaticData";
 import useBillAmendmentInbox from "./billAmendment/useInbox";
 import { usePrivacyContext } from "./usePrivacyContext";
 
+import useSearchWORKS from "./works/useSearchWORKS";
+
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -467,6 +469,9 @@ const ws = {
   useDisConnectionDetails,
 };
 
+const works={
+  useSearchWORKS,
+}
 const reports = {
   useReportMeta,
 };
@@ -520,6 +525,7 @@ const Hooks = {
   survey,
   noc,
   ws,
+  works,
   useCustomMDMS,
   reports,
   useGetHowItWorksJSON,

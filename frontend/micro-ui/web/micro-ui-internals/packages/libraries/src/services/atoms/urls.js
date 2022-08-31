@@ -170,6 +170,10 @@ const Urls = {
     getSearchDetails: "/inbox/v1/dss/_search",
   },
 
+  works:{
+    estimate_search:"/estimate/v1/_search"
+  },
+
   engagement: {
     document: {
       search: "/egov-document-uploader/egov-du/document/_search",
