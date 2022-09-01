@@ -9,6 +9,7 @@ import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
+import { HRMSModule ,initHRMSComponents  } from "@egovernments/digit-ui-module-hrms";
 import "@egovernments/digit-ui-css/example/index.css";
 
 // import * as comps from "@egovernments/digit-ui-react-components";
@@ -21,12 +22,12 @@ var Digit = window.Digit || {};
 
 const enabledModules = [
   "Works",
+  "HRMS",
   // "Engagement"
 ];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
-
   const token = window.localStorage.getItem("token")|| process.env[`REACT_APP_${userType}_TOKEN`];
  
   const citizenInfo = window.localStorage.getItem("Citizen.user-info")
@@ -52,6 +53,8 @@ const initTokens = (stateCode) => {
 };
 
 const initDigitUI = () => {
+  window.contextPath=window?.globalConfigs?.getConfig("CONTEXT_PATH");
+
   window?.Digit.ComponentRegistryService.setupRegistry({
     // ...pgrComponents,
   });
@@ -60,6 +63,7 @@ const initDigitUI = () => {
   initDSSComponents();
   initEngagementComponents();
   initWorksComponents();
+  initHRMSComponents();
   const moduleReducers = (initData) => (
     initData
   );
