@@ -8,14 +8,22 @@ const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wo
 
 
 const CreateEstimate = (props) => {
-    
+    const {mutate:EstimateMutation}=Digit.Hooks.works.useCreateEstimate("WORKS");
 
-    const onFormSubmit = (_data) => {
+    const onFormSubmit = async(_data) => {
         debugger
-        //console.log(errors)
-        console.log(_data);
+        const estimate={estimate:_data}
+        console.log("_data",_data);
+
+        await EstimateMutation(estimate,{
+            onError:(error,variables)=>{
+                debugger
+            },
+            onSuccess:async (responseData,variables)=>{
+                debugger
+            }   
+        })
     }
-    
     
     return (
 
