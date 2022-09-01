@@ -77,7 +77,8 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
             <label>{t("WORKS_ADMIN_SANCTION_NUMBER")}</label>
             <TextInput name="adminSanctionNumber" inputRef={register({})} {...propsForMobileNumber}/>
         </SearchField>
-        {applicationTypesLoading ? <Loader /> : <SearchField>
+        {/* {applicationTypesLoading ? <Loader /> :  */}
+        <SearchField>
             <label>{t("WORKS_DEPARTMENT")}</label>
             <Controller
                 control={control}
@@ -87,13 +88,14 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
                         selected={props.value}
                         select={props.onChange}
                         onBlur={props.onBlur}
-                        option={filteredApplicationTypes}
+                        option={""}
                         optionKey="i18nKey"
                         t={t}
                     />
                 )}
             />
-        </SearchField>}
+        </SearchField>
+        {/* } */}
         <SearchField>
             <label>{t("WORKS_ADMIN_SANCTION_FROM_DATE")}</label>
             <Controller

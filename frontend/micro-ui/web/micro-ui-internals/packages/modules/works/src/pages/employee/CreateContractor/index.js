@@ -118,8 +118,8 @@ const NewApplication = () => {
         config={config.body}
         userType={"employee"}
         onFormValueChange={onFormValueChange}
-        isDisabled={!canSubmit}
-        label={t("CS_CREATE_CONTRACTOR_RECORD")}
+        // isDisabled={!canSubmit}
+        label={t("CREATE_CONTRACTOR_RECORD")}
         onSubmit={!onSubmit}
         defaultValues={sessionFormData}
       ></FormComposer>

@@ -81,7 +81,7 @@ const WORKSContractorTable = () => {
                 name={`contractorDetails.${row.key}.registrationNumber`}
                 defaultValue={""}
                 rules={{ validate: {
-                  pattern: (v) => (/^[ A-Za-z0-9]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                  pattern: (v) => (/^$|^[ A-Za-z0-9]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                 } }}
                 render={(props) => (
                   <TextInput
@@ -196,7 +196,7 @@ const WORKSContractorTable = () => {
               <Controller
                 name={`contractorDetails.${row.key}.fromDate`}
                 control={control}
-                defaultValue={null}
+                defaultValue={""}
                 rules={{ required: t("REQUIRED_FIELD") }}
                 isMandatory={true}
                 render={(props) =>

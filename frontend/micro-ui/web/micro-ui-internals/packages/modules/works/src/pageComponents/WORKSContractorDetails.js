@@ -79,7 +79,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                 name={"ContractorCode"}
                 defaultValue={contractorDetails.contractorCode}
                 rules={{ validate: {
-                  pattern: (v) => (/^[ A-Za-z0-9]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                  pattern: (v) => (/^$|^[a-zA-Z0-9]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                 } }}
                 render={(props) => (
                   <TextInput
@@ -138,7 +138,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
               control={control}
               name="CorrespondanceAddress"
               defaultValue={contractorDetails.correspondanceAddress}
-              rules={{ validate: { pattern: (val) => (/^[ A-Za-z0-9/._$@#]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) } }}
+              rules={{ validate: { pattern: (val) => (/^$|^[ A-Za-z0-9/._$@#]+$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) } }}
               isMandatory={true}
               render={(props) => (
                 <TextInput
@@ -164,7 +164,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
               control={control}
               name="permenantAddress"
               defaultValue={contractorDetails.permenantAddress}
-              rules={{ validate: { pattern: (val) => (/^[ A-Za-z0-9/._$@#]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) } }}
+              rules={{ validate: { pattern: (val) => (/^$|^[A-Za-z0-9/._$@#]+$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) } }}
               isMandatory={true}
               render={(props) => (
                 <TextInput
@@ -191,7 +191,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                     name={"contactPerson"}
                     defaultValue={contractorDetails.contactPerson}
                     rules={{validate: {
-                        pattern: (v) => (/^[a-zA-Z\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                        pattern: (v) => (/^$|^[a-zA-Z\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                       },
                     }}
                     render={(props) => (
@@ -250,7 +250,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                     name={"narration"}
                     defaultValue={contractorDetails.narration}
                     rules={{ validate: {
-                      pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                      pattern: (v) => (/^$|^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                     } }}
                     render={(props) => (
                       <TextInput
@@ -280,7 +280,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
               name="mobileNumber"
               defaultValue={contractorDetails.mobileNumber}
               rules={{ validate: {
-                pattern: (v) => (/^[0-9]{10}/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                pattern: (v) => (/^$|^[0-9]{10}/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
               } }}
               isMandatory={true}
               render={(props) => (
@@ -309,7 +309,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                 name="panNo"
                 defaultValue={contractorDetails.panNo}
                 rules={{ validate: {
-                  pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                  pattern: (v) => (/^$|^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                 } }}
                 render={(props) => (
                   <TextInput
@@ -337,7 +337,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                 name="tinNo"
                 defaultValue={contractorDetails.tinNo}
                 rules={{ validate: {
-                  pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                  pattern: (v) => (/^$|^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                 } }}
                 render={(props) => (
                   <TextInput
@@ -365,7 +365,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                 name="gstNo"
                 defaultValue={contractorDetails.gstNo}
                 rules={{ validate: {
-                  pattern: (v) => (/^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                  pattern: (v) => (/^$|^[a-zA-Z0-9\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                 } }}
                 render={(props) => (
                   <TextInput
@@ -445,7 +445,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                 name="bankAccountNumber"
                 defaultValue={contractorDetails.bankAccountNumber}
                 rules={{ validate: {
-                  pattern: (v) => (/^[0-9]{9,18}/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                  pattern: (v) => (/^$|^[0-9]{9,18}/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                 } }}
                 render={(props) => (
                   <TextInput
@@ -472,7 +472,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                 control={control}
                 name="PWDApprovalCode"
                 defaultValue={contractorDetails.PWDApprovalCode}
-                rules={{ validate: { pattern: (val) => (/^[ A-Za-z0-9/._$@#]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) } }}
+                rules={{ validate: { pattern: (val) => (/^$|^[ A-Za-z0-9/._$@#]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) } }}
                 render={(props) => (
                   <TextInput
                     value={props.value}

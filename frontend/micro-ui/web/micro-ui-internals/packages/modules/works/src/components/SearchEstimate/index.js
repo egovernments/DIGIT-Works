@@ -73,7 +73,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
   const columns = useMemo(
     () => [
       {
-        Header: t("WORKS_WIN_SUB_ESTIMATE_NUMBER"),
+        Header: t("WORKS_SUB_ESTIMATE_NO"),
         disableSortBy: true,
         accessor: "connectionNo",
         Cell: ({ row }) =>{
@@ -97,7 +97,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
             </div>)}
       },
       {
-        Header: t("WORKS_NAME_OF_THE_WORK"),
+        Header: t("WORKS_NAME_OF_WORK"),
         disableSortBy: true,
         accessor: (row) => (GetCell(row?.nameOfWork)),
       },

@@ -42,21 +42,21 @@ const Search = ({ path }) => {
     enabled: !!(payload && Object.keys(payload).length > 0),
   };
   //API Call
-  const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config, bussinessService: businessServ, t ,shortAddress:true });
-//   const result={data:[{subEstimateNumber:"LE/ENG/00002/10/2017-18",
-//                         nameOfWork:"Providing CC Drain in Birla Gaddah (Tungabhaqdra workers colony) in 27th ward",
-//                         department:"ENGINEERING",
-//                         administrativeSanctionNo:29,
-//                         adminApprovedDate:"29/05/2022",
-//                         fund:"Municipal Fund",
-//                         function:'City and Town Planning',
-//                         budgetHead:"4123001-CWIP-Concrete Road",
-//                         createdBy:"A.P.Sreenivasulu",
-//                         owner:"A.P.Sreenivasulu",
-//                         status:"Created",
-//                         totalAmount:"Rs 10,000",
-//                         actions:"Create LOI"
-//                       },123]}
+  // const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config, bussinessService: businessServ, t ,shortAddress:true });
+  const result={data:[{subEstimateNumber:"LE/ENG/00002/10/2017-18",
+                        nameOfWork:"Providing CC Drain in Birla Gaddah (Tungabhaqdra workers colony) in 27th ward",
+                        department:"ENGINEERING",
+                        administrativeSanctionNo:29,
+                        adminApprovedDate:"29/05/2022",
+                        fund:"Municipal Fund",
+                        function:'City and Town Planning',
+                        budgetHead:"4123001-CWIP-Concrete Road",
+                        createdBy:"A.P.Sreenivasulu",
+                        owner:"A.P.Sreenivasulu",
+                        status:"Created",
+                        totalAmount:"Rs 10,000",
+                        actions:"Create LOI"
+                      }]}
   return (
     <Fragment>
       <Search
