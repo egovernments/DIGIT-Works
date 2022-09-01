@@ -28,21 +28,21 @@ public class LetterOfIndentApiControllerTest {
 
     @Test
     public void letterOfIndentV1CreatePostSuccess() throws Exception {
-        mockMvc.perform(post("/eGovTrial/Letter-Of-Indent-Service/1.0.0/letter-of-indent/v1/_create").contentType(MediaType
+        mockMvc.perform(post("/loi-service/v1/_create").contentType(MediaType
                         .APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void letterOfIndentV1CreatePostFailure() throws Exception {
-        mockMvc.perform(post("/eGovTrial/Letter-Of-Indent-Service/1.0.0/letter-of-indent/v1/_create").contentType(MediaType
+        mockMvc.perform(post("/loi-service/v1/_create").contentType(MediaType
                         .APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void letterOfIndentV1SearchPostSuccess() throws Exception {
-        mockMvc.perform(post("/eGovTrial/Letter-Of-Indent-Service/1.0.0/letter-of-indent/v1/_search").contentType(MediaType
+        mockMvc.perform(post("/loi-service/v1/_search").contentType(MediaType
                         .APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
     }
