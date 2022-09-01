@@ -182,7 +182,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
             />
           </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.permenantAddress ? errors?.address?.permenantAddress : ""}</CardLabelError>
+          <CardLabelError style={errorStyle}>{localFormState.touched.permenantAddress ? errors?.permenantAddress?.message : ""}</CardLabelError>
           <LabelFieldPair>
                 <CardLabel style={CardLabelStyle}>{t("WORKS_CONTACT_PERSON")}</CardLabel>
                 <div className="field">
@@ -222,14 +222,14 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
               name="email"
               defaultValue={contractorDetails.email}
               rules={{ validate: {
-                pattern: (v) => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                pattern: (v) => (/^$|^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
               } }}
               isMandatory={true}
               render={(props) => (
                 <TextInput
                   value={props.value}
                   autoFocus={focusIndex.index === 1 && focusIndex.type === "email"}
-                  errorStyle={(localFormState.touched.address && errors?.address?.message) ? true : false}
+                  errorStyle={(localFormState.touched.address && errors?.email?.message) ? true : false}
                   onChange={(e) => {
                     props.onChange(e.target.value);
                     setFocusIndex({ index: 1, type: "email" });
@@ -241,7 +241,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
             />
           </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.email ? errors?.address?.email : ""}</CardLabelError>
+          <CardLabelError style={errorStyle}>{localFormState.touched.email ? errors?.email?.message : ""}</CardLabelError>
           <LabelFieldPair>
                 <CardLabel style={CardLabelStyle}>{t("WORKS_NARRATION")}</CardLabel>
                 <div className="field">
