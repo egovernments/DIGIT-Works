@@ -29,7 +29,7 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
     const GetMobCell = (value) => <span className="sla-cell">{value}</span>;
     const inboxColumns = () => [
       {
-        Header: t("ES_LETTER_OF_INTENT_ID"),
+        Header: t("WORKS_LOI_ID"),
         Cell: ({ row }) => {
           return (
             <div>
@@ -44,7 +44,7 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
         mobileCell: (original) => GetMobCell(original?.searchData?.["propertyId"]),
       },
       {
-        Header: t("ES_LOI_DATE"),
+        Header: t("WORKS_LOI_DATE"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.LOIDate}`);
           // const date = convertEpochToDateDMY(row.original.date);
@@ -53,7 +53,7 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
         mobileCell: (original) => GetMobCell(original?.searchData?.["owners"]?.[0].name),
       },
       {
-        Header: t("ES_ABSTRACT_ESTIMATE_NUMBER"),
+        Header: t("WORKS_ABSTRACT_ESTIMATE_NO"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.EstimateNumber}`);
         },
@@ -68,28 +68,28 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
         },
       },
       {
-        Header: t("ES_NAME_OF_THE_WORK"),
+        Header: t("WORKS_NAME_OF_WORK"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.NameOfWork}`);
         },
         mobileCell: (original) => GetMobCell(`${original?.NameOfWork}`),
       },
       {
-        Header: t("ES_CONTRACTOR_NAME"),
+        Header: t("WORKS_CONTRACTOR_NAME"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.ContractorName}`);
         },
         mobileCell: (original) => GetMobCell(`${original?.ContractorName}`),
       },
       {
-        Header: t("ES_AGREEMENT_AMOUNT_(RS)"),
+        Header: t("WORKS_AGREEMENT_AMT"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.AgrementAmount}`);
         },
         mobileCell: (original) => GetMobCell(`${original?.AgrementAmount}`),
       },
       {
-        Header: t("ES_SLA"),
+        Header: t("WORKS_SLA"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.SLA}`);
         },
@@ -121,7 +121,7 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
       getCellProps={(cellInfo) => {
         return {
           style: {
-            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+            minWidth: cellInfo.column.Header === t("WORKS_INBOX_APPLICATION_NO") ? "240px" : "",
             padding: "20px 18px",
             fontSize: "16px",
           },
@@ -159,7 +159,7 @@ return (
           </div>
         </div>
        )}
-      <div style={{flex: 1 }}>
+      <div style={{overflowX:"hidden"}}>
       <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}
@@ -169,7 +169,7 @@ return (
           searchParams={props.searchParams}
           {...{setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState}}
         />
-        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "",flex: 1}}>
+        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "",overflowX:"scroll"}}>
           {result}
         </div>
       </div>

@@ -36,7 +36,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   const { handleSubmit, reset, watch, control, setError, clearErrors, formState, setValue } = useForm({
     defaultValues: isInboxPage ? searchParams : { locality: null, city: null, ...searchParams },
   });
-  const [estimateId, setEstimateId] = useState();
+  const [estimateId, setEstimateId] = useState("");
   const [department, setDepartment] = useState();
   const [typeOfWork, setTypeOfWork] = useState();
   const form = watch();
@@ -124,7 +124,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
-                <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
+                <h2>{t("WORKS_COMMON_SEARCH_BY")}</h2>
                 <span onClick={onClose}>
                   <CloseSvg />
                 </span>
@@ -133,9 +133,9 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
             <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%" }}>
             <div style={{margin:"5px"}}>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-              {t("ES_ESTIMATE_ID")}
+              {t("WORKS_ESTIMATE_ID")}
               </div>
-            <TextInput onChange={setEstimateId} value={estimateId} />
+            <TextInput onChange={(e)=>setEstimateId(e.target.value)} value={estimateId} />
             </div>
                         {/* <Controller
                           render={(props) => {
@@ -147,7 +147,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         /> */}
             <div style={{margin:"5px"}}>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_DEPARTMENT")}:
+                {t("WORKS_DEPARTMENT")}:
               </div>
               <Dropdown 
                 // option={userUlbs} 
@@ -161,7 +161,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
             </div>
             <div style={{margin:"5px"}}>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_TYPE_OF_WORK")}:
+                {t("WORKS_TYPE_OF_WORK")}:
               </div>
               <Dropdown 
                 // option={userUlbs} 
@@ -223,7 +223,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                   <SubmitBar
                     className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")}
-                    disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
+                    // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
                   {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}

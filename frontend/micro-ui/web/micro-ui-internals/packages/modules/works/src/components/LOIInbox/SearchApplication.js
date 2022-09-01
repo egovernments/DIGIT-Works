@@ -133,7 +133,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
             <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%" }}>
             <div style={{margin:"5px"}}>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-              {t("ES_LOI_ID")}
+              {t("WORKS_LOI_ID")}
               </div>
             <TextInput onChange={(e)=>setEstimateId(e.target.value)} value={estimateId} />
             </div>
@@ -147,7 +147,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         /> */}
             <div style={{margin:"5px"}}>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_CONTRACTER_ID")}:
+                {t("WORKS_CONT_ID")}:
               </div>
               <Dropdown 
                 // option={userUlbs} 
@@ -161,7 +161,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
             </div>
             <div style={{margin:"5px"}}>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_DEPARTMENT")}:
+                {t("WORKS_DEPARTMENT")}:
               </div>
               <Dropdown 
                 // option={userUlbs} 
@@ -223,7 +223,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                   <SubmitBar
                     className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")}
-                    disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
+                    // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
                   {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}

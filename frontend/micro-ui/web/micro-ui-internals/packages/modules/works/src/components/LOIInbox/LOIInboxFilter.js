@@ -68,7 +68,7 @@ const LOIInboxFilter = ({ searchParams, onFilterChange, defaultSearchParams, sta
           <div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("LOI_CREATED_FROM_DATE")}:
+                {t("WORKS_CREATED_FROM_DATE")}:
               </div>
               <DatePicker
                 date={createdFromDate}
@@ -79,7 +79,7 @@ const LOIInboxFilter = ({ searchParams, onFilterChange, defaultSearchParams, sta
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("LOI_CREATED_TO_DATE")}:
+                {t("WORKS_CREATED_TO_DATE")}:
               </div>
               <DatePicker
                 date={createdToDate}
@@ -90,13 +90,13 @@ const LOIInboxFilter = ({ searchParams, onFilterChange, defaultSearchParams, sta
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ESTIMATE_ID")}:
+                {t("WORKS_ESTIMATE_ID")}:
               </div>
               <TextInput onChange={(e)=>setEstimateId(e.target.value)} value={estimateId} />              
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("FILE_NUMBER")}:
+                {t("WORKS_FILE_NO")}:
               </div>
               <TextInput onChange={(e)=>setFileNumber(e.target.value)} value={fileNumber} />
             </div>

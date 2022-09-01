@@ -70,7 +70,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
           <div style={{marginTop:"20px"}}>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_CREATED_FROM_DATE")}:
+                {t("WORKS_CREATED_FROM_DATE")}:
               </div>
               <DatePicker
                 date={createdFromDate}
@@ -81,7 +81,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_CREATED_TO_DATE")}:
+                {t("WORKS_CREATED_TO_DATE")}:
               </div>
               <DatePicker
                 date={createdToDate}
@@ -92,7 +92,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_INBOX_FUND")}:
+                {t("WORKS_FUND")}:
               </div>
               <Dropdown 
                 // option={userUlbs} 
@@ -106,7 +106,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_INBOX_FUNCTION")}:
+                {t("WORKS_FUNCTION")}:
               </div>
               <Dropdown 
                 // option={userUlbs} 
@@ -120,7 +120,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_INBOX_BUDGET_HEAD")}:
+                {t("WORKS_BUDGET_HEAD")}:
               </div>
               <Dropdown 
                 // option={userUlbs} 

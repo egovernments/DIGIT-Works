@@ -8,14 +8,14 @@ const InboxLinks = ({ parentRoute, businessService }) => {
 
   const allLinks = [
     {
-      text: "CREATE_NEW_LOI",
-      link: `/digit-ui/employee/works/search`,
+      text: t("WORKS_CREATE_LOI"),
+      link: `/digit-ui/employee/works/create-loi`,
       businessService: "WORKS",
       roles: [],
     },
     {
-      text: "SEARCH_LOI",
-      link: `/digit-ui/employee/works/application-search`,
+      text: "WORKS_SEARCH_LOI",
+      link: `/digit-ui/employee/works/search-loi`,
       businessService: "WORKS",
       roles: [],
     },

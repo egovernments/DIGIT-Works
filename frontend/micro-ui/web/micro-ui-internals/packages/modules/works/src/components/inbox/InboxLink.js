@@ -14,14 +14,14 @@ const InboxLinks = ({ parentRoute, businessService }) => {
     //   roles: ["PT_CEMP"],
     // },
     {
-      text: "CREATE_NEW_ESTIMATE",
-      link: `/digit-ui/employee/pt/search`,
+      text: t("WORKS_CREATE_ESTIMATE"),
+      link: `/digit-ui/employee/works/create-estimate`,
       businessService: "WORKS",
       roles: [],
     },
     {
-      text: "SEARCH_ESTIMATE",
-      link: `/digit-ui/employee/pt/application-search`,
+      text: "WORKS_SEARCH_EST",
+      link: `/digit-ui/employee/works/search-Estimate`,
       businessService: "WORKS",
       roles: [],
     },

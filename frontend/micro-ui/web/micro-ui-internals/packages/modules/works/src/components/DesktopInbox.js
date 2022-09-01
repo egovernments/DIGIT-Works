@@ -28,7 +28,7 @@ const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearc
   const GetMobCell = (value) => <span className="sla-cell">{value}</span>;
     const inboxColumns = () => [
       {
-        Header: t("ES_ESTIMATE_NUMBER"),
+        Header: t("WORKS_ESTIMATE_NO"),
         Cell: ({ row }) => {
           return (
             <div>
@@ -43,7 +43,7 @@ const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearc
         mobileCell: (original) => GetMobCell(original?.searchData?.["propertyId"]),
       },
       {
-        Header: t("ES_DEPARTMENT"),
+        Header: t("WORKS_DEPARTMENT"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.Department}`);
         },
@@ -70,7 +70,7 @@ const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearc
       //   },
       // },
       {
-        Header: t("ES_FUND"),
+        Header: t("WORKS_FUND"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.Fund}`);
           // const wf = row.original?.workflowData;
@@ -79,42 +79,42 @@ const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearc
         mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
       },
       {
-        Header: t("ES_FUNCTION"),
+        Header: t("WORKS_FUNCTION"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.Function}`);
         },
         mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
       },
       {
-        Header: t("ES_BUDGET_HEAD"),
+        Header: t("WORKS_BUDGET_HEAD"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.BudgetHead}`);
         },
         mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
       },
       {
-        Header: t("ES_CREATED_BY"),
+        Header: t("WORKS_CREATED_BY"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.CreatedBy}`);
         },
         mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
       },
       {
-        Header: t("ES_OWNER"),
+        Header: t("WORKS_OWNER"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.Owner}`);
         },
         mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
       },
       {
-        Header: t("ES_STATUS"),
+        Header: t("WORKS_STATUS"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.Status}`);
         },
         mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
       },
       {
-        Header: t("ES_TOTAL_AMOUNT"),
+        Header: t("WORKS_TOTAL_AMOUNT"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.TotalAmount}`);
         },
@@ -145,7 +145,7 @@ const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearc
       getCellProps={(cellInfo) => {
         return {
           style: {
-            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+            minWidth: cellInfo.column.Header === t("WORKS_INBOX_APPLICATION_NO") ? "240px" : "",
             padding: "20px 18px",
             fontSize: "16px",
           },
@@ -193,7 +193,7 @@ return (
           searchParams={props.searchParams}
           {...{setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState}}
         />
-        <div style={{ marginLeft: !props?.isSearch ? "24px" : ""}}>
+        <div style={{ marginLeft: !props?.isSearch ? "24px" : "",overflowX:"scroll"}}>
           {result}
         </div>
       </div>
