@@ -9,6 +9,7 @@ import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import {   initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 
 initLibraries();
+window.contextPath=window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
 const enabledModules = [
   "PGR",
