@@ -48,7 +48,7 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
     let validation = {}
     return <>
         <SearchField>
-            <label>{t("WORKS_ESTIMATE_NUMBER")}</label>
+            <label>{t("WORKS_ESTIMATE_NO")}</label>
             <TextInput 
                 name="estimateNumber" 
                 inputRef={register()} 
@@ -61,7 +61,7 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
             />
         </SearchField>
         <SearchField>
-            <label>{t("WORKS_SUB_ESTIMATE_NUMBER")}</label>
+            <label>{t("WORKS_SUB_ESTIMATE_NO")}</label>
             <TextInput 
                 name="subEstimateNumber" 
                 inputRef={register()} 
