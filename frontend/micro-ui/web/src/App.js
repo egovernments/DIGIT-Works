@@ -7,9 +7,9 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import {   initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
+window.contextPath=window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
 initLibraries();
-window.contextPath=window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
 const enabledModules = [
   "PGR",
