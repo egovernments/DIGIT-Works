@@ -165,7 +165,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
                     };
                 }}
                 onPageSizeChange={onPageSizeChange}
-                currentPage={getValues("offset") / getValues("limit")}
+                currentPage={parseInt((getValues("offset") / getValues("limit")))}
                 onNextPage={nextPage}
                 onPrevPage={previousPage}
                 pageSizeLimit={getValues("limit")}
