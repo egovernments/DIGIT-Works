@@ -42,7 +42,7 @@ const Search = ({ path }) => {
     enabled: !!(payload && Object.keys(payload).length > 0),
   };
   //API Call
-  const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config, bussinessService: businessServ, t ,shortAddress:true });
+  const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config, bussinessService: businessServ, t });
   // const result={data:[{subEstimateNumber:"LE/ENG/00002/10/2017-18",
   //                       nameOfWork:"Providing CC Drain in Birla Gaddah (Tungabhaqdra workers colony) in 27th ward",
   //                       department:"ENGINEERING",

@@ -58,7 +58,7 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
                     type: "text",
                     title: t("ERR_INVALID_ESTIMATE_NO"),
                 })}
-            />
+            /> 
         </SearchField>
         <SearchField>
             <label>{t("WORKS_SUB_ESTIMATE_NO")}</label>
