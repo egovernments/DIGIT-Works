@@ -12,7 +12,7 @@ const useWSInbox = ({ tenantId, filters, config = {} }) => {
     offset = 0;
   }
 
-  if (!window.location.href.includes("digit-ui/employee/")) {
+  if (!window.location.href.includes(`${window?.contextPath}/employee/`)) {
     moduleName = moduleName;
   } else {
     if (window.location.href.includes("water/inbox")) moduleName = "ws-services";
