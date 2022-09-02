@@ -20,14 +20,60 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
             name: "Sumit"
         },
     ]
+
+    
+
+    const { isLoading, data:departmentOptions, isFetched } = Digit.Hooks.useCustomMDMS(
+        "pb",
+        "works",
+        [
+            {
+                "name": "BeneficiaryType"
+            },
+            {
+                "name": "EntrustmentMode"
+            },
+            {
+                "name": "NatureOfWork"
+            },
+            {
+                "name": "TypeOfWork"
+            },
+            {
+                "name": "Department"
+            }
+        ],
+        {
+            select:(data) => {
+                debugger
+                return data?.works?.Department
+            }
+        }
+    );
+
+    const deptOptions = [
+        {
+            "name":"Engg"
+        },
+        {
+            "name": "R&D"
+        }, {
+            "name": "Civil"
+        },
+    ]
     console.log("stat",formState?.errors)
     let validation = {}
+
+    if (isLoading) {
+        return <Loader />
+    }
+
     return (
         <>
             <SearchField>
                 <label>{t("WORKS_ESTIMATE_NO")}</label>
                 <TextInput
-                    name="estimateId"
+                    name="estimateNumber"
                     inputRef={register()}
                 // {...(validation = {
                 //     isRequired: false,
@@ -40,7 +86,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
             <SearchField>
                 <label>{t("WORKS_SUB_ESTIMATE_NO")}</label>
                 <TextInput
-                    name="subEstimateNo"
+                    name="estiamteDetailNumber"
                     inputRef={register()}
                 // {...(validation = {
                 //     isRequired: false,
@@ -53,7 +99,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
             <SearchField>
                 <label>{t("WORKS_ADMIN_SANC_NO")}</label>
                 <TextInput
-                    name="adminSanc"
+                    name="adminSanctionNumber"
                     inputRef={register()}
                 // {...(validation = {
                 //     isRequired: false,
@@ -67,13 +113,13 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
                 <label>{t("WORKS_DEPT")}</label>
                 <Controller
                     control={control}
-                    name="deptx"
+                    name="department"
                     render={(props) => (
                         <Dropdown
                             selected={props.value}
                             select={props.onChange}
                             //onBlur={props.onBlur}
-                            option={dummyData}
+                            option={deptOptions}
                             optionKey="name"
                             t={t}
                         />
@@ -84,7 +130,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
                 <label>{t("WORKS_ADMIN_FROM_DATE_LABEL")}</label>
                 <Controller
                     render={(props) => <DatePicker date={props.value} onChange={props.onChange} />}
-                    name="fromDate"
+                    name="fromProposalDate"
                     control={control}
                 />
             </SearchField>
@@ -92,7 +138,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
                 <label>{t("WORKS_ADMIN_TO_DATE_LABEL")}</label>
                 <Controller
                     render={(props) => <DatePicker date={props.value} onChange={props.onChange} />}
-                    name="toDate"
+                    name="toProposalDate"
                     control={control}
                 />
             </SearchField>

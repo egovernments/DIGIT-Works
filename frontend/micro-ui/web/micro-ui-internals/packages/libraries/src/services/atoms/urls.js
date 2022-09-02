@@ -33,7 +33,8 @@ const Urls = {
   Shortener: "/egov-url-shortening/shortener",
 
   works: {
-    create:"/letter-of-indent/v1/_create"
+    create:"/letter-of-indent/v1/_create",
+    estimateSearch:"/estimate/v1/_search"
   },
 
   fsm: {

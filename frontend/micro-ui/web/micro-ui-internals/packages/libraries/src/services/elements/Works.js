@@ -13,4 +13,13 @@ export const WorksService = {
             params: {},
             auth: true,
         }),
+    estimateSearch: ({ tenantId, filters }) =>
+         Request({
+            url: Urls.works.estimateSearch,
+            useCache: false,
+            method: "POST",
+            auth: true,
+            userService: false,
+            params: { tenantId, ...filters },
+        }),
 }
