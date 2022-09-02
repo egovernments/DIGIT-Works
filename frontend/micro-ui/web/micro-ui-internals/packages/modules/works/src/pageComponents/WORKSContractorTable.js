@@ -60,7 +60,7 @@ const WORKSContractorTable = () => {
                     className="form-field"
                     selected={getValues(`contractorDetails.${row.key}.Department`)}
                     disable={false}
-                    // option={[{label:"active",value:1},{label:"Inactive",value:2},{label:"Black listed",value:3}]}
+                    // option={}
                     errorStyle={(localFormState.touched?.contractorDetails?.[row.key]?.Department && errors?.contractorDetails?.[row.key]?.Department?.message) ? true : false}
                     select={(e) => {
                       props.onChange(e);

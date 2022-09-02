@@ -1,4 +1,4 @@
-import React, { Fragment } from "react"
+import React from "react"
 import { Controller, useWatch } from "react-hook-form";
 import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader } from "@egovernments/digit-ui-react-components";
 
@@ -42,7 +42,7 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
     const propsForMobileNumber = {
         maxlength: 10,
         pattern: "[6-9][0-9]{9}",
-        title: t("ES_SEARCH_APPLICATION_MOBILE_INVALID"),
+        title: t("WORKS_SEARCH_APPLICATION_MOBILE_INVALID"),
         componentInFront: "+91"
     }
     let validation = {}

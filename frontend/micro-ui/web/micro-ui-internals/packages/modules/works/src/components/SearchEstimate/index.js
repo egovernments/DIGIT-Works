@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useCallback, useMemo } from "react";
+import React, { useEffect, useCallback, useMemo } from "react";
 import { SearchForm, Table, Card, Loader, Header,EditIcon } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
@@ -9,30 +9,21 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
 
   const [sessionFormData, setSessionFormData, clearSessionFormData] = Digit.Hooks.useSessionStorage("ADHOC_ADD_REBATE_DATA", {});
   const [sessionBillFormData, setSessionBillFormData, clearBillSessionFormData] = Digit.Hooks.useSessionStorage("ADHOC_BILL_ADD_REBATE_DATA", {});
-
-  const replaceUnderscore = (str) => {
-    str = str.replace(/_/g, " ");
-    return str;
-  };
-
   const { t } = useTranslation();
   const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
     defaultValues: {
       offset: 0,
       limit: 10,
-      sortBy: "commencementDate",
+      sortBy: "department",
       sortOrder: "DESC",
-      isConnectionSearch: true,
     },
   });
 
   useEffect(() => {
     register("offset", 0);
     register("limit", 10);
-    register("sortBy", "commencementDate");
+    register("sortBy", "department");
     register("sortOrder", "DESC");
-    register("sortOrder", "DESC");
-    register("isConnectionSearch", true);
   }, [register]);
 
   useEffect(() => {
@@ -204,7 +195,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
           getCellProps={(cellInfo) => {
             return {
               style: {
-                minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+                minWidth: cellInfo.column.Header === t("WORKS_INBOX_APPLICATION_NO") ? "240px" : "",
                 padding: "20px 18px",
                 fontSize: "16px"
               },

@@ -15,7 +15,7 @@ const Search = ({ path }) => {
 
   function onSubmit(_data) {
     console.log("search Data",_data)
-    if(_data.applicationNumber==="" && _data.connectionNumber==="" && _data.mobileNumber==="" && !_data.applicationType && !_data.applicationStatus && !_data.fromDate && !_data.toDate ){
+    if(_data.adminSanctionNumber==="" && _data.estimateNumber==="" && _data.subEstimateNumber==="" && !_data.department && !_data.fromDate && !_data.toDate ){
       setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
       setTimeout(() => {
         setShowToast(false);
