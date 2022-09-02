@@ -21,7 +21,7 @@ public class EstimateService {
 
     @Autowired
     public EstimateService(EstimateServiceConfiguration serviceConfiguration, Producer producer
-            , EstimateServiceValidator serviceValidator, MDMSUtils mdmsUtils,EnrichmentService enrichmentService) {
+            , EstimateServiceValidator serviceValidator, MDMSUtils mdmsUtils, EnrichmentService enrichmentService) {
         this.producer = producer;
         this.serviceConfiguration = serviceConfiguration;
         this.serviceValidator = serviceValidator;
@@ -35,7 +35,7 @@ public class EstimateService {
         Object mdmsData = mdmsUtils.mDMSCall(request);
         serviceValidator.validateCreateEstimate(request, mdmsData);
         enrichmentService.enrichCreateEstimate(request);
-        //producer.push(serviceConfiguration.getSaveEstimateTopic(), request);
+        producer.push(serviceConfiguration.getSaveEstimateTopic(), request);
         return request;
     }
 }
