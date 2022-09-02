@@ -20,9 +20,9 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
     defaultValues: {
       offset: 0,
       limit: 10,
-      sortBy: "commencementDate",
+      sortBy: "department",
       sortOrder: "DESC",
-      isConnectionSearch: true,
+      // isConnectionSearch: true,
     },
   });
 

@@ -100,7 +100,7 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
             <label>{t("WORKS_ADMIN_SANCTION_FROM_DATE")}</label>
             <Controller
                 render={(props) => <DatePicker date={props.value} onChange={props.onChange} />}
-                name="fromDate"
+                name="fromProposalDate"
                 control={control}
             />
         </SearchField>
@@ -108,7 +108,7 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
             <label>{t("WORKS_ADMIN_SANCTION_TO_DATE")}</label>
             <Controller
                 render={(props) => <DatePicker date={props.value} onChange={props.onChange} />}
-                name="toDate"
+                name="toProposalDate"
                 control={control}
             />
         </SearchField>
