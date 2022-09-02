@@ -3,8 +3,6 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute ,BreadCrumb} from "@egovernments/digit-ui-react-components";
 import { Switch ,useLocation} from "react-router-dom";
 import NewApplication from "./CreateContractor";
-import Inbox from "./Inbox";
-import LOIInbox from "./LOIInbox";
 import Search from "./search";
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -17,18 +15,6 @@ const BILLSBreadCrumbs = ({ location }) => {
       path: "/digit-ui/employee",
       content: t("WORKS_COMMON_WMS"),
       show: true,
-    },
-    {
-      path: "/digit-ui/employee/works/inbox",
-      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_INBOX")}` : t("WORKS_INBOX"),
-      show: location.pathname.includes("/works/inbox") ? true : false,
-      isBack: fromScreen && true,
-    },
-    {
-      path: "/digit-ui/employee/works/LOIInbox",
-      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_LOI")}` : t("WORKS_LOIInbox"),
-      show: location.pathname.includes("/works/LOIInbox") ? true : false,
-      isBack: fromScreen && true,
     },
     {
       path: "/digit-ui/employee/works/create-contractor",
@@ -59,16 +45,6 @@ const App = ({ path }) => {
             <BILLSBreadCrumbs location={location} />
           </div>
           <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
-          <PrivateRoute path={`${path}/inbox`} 
-                component={() => (
-                  <Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />
-                )} 
-            />
-          <PrivateRoute path={`${path}/LOIInbox`} 
-                component={() => (
-                  <LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />
-                )} 
-            />
           <PrivateRoute path={`${path}/create-contractor`}
                 component={NewApplication}
             />
