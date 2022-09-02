@@ -39,12 +39,7 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
 
     //Sorting the statuses alphabetically
     applicationStatuses?.sort((a, b) => (t(a.i18nKey) > t(b.i18nKey))? 1 :((t(b.i18nKey)>t(a.i18nKey))? -1 :0))
-    const propsForMobileNumber = {
-        maxlength: 10,
-        pattern: "[6-9][0-9]{9}",
-        title: t("ES_SEARCH_APPLICATION_MOBILE_INVALID"),
-        componentInFront: "+91"
-    }
+    
     let validation = {}
     return <>
         <SearchField>
@@ -75,7 +70,15 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
         </SearchField>
         <SearchField>
             <label>{t("WORKS_ADMIN_SANCTION_NUMBER")}</label>
-            <TextInput name="adminSanctionNumber" inputRef={register({})} {...propsForMobileNumber}/>
+            <TextInput 
+                name="adminSanctionNumber" 
+                inputRef={register({})} 
+                {...(validation = {
+                    isRequired: false,
+                    pattern:"^[a-zA-Z0-9\/-]*$",
+                    type: "text",
+                    title: t("ERR_INVALID_ADMIN_SANCTION_NUMBER"),
+                })}/>
         </SearchField>
         {/* {applicationTypesLoading ? <Loader /> :  */}
         <SearchField>
@@ -125,7 +128,7 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
                     tradeName: "",
                     offset: 0,
                     limit: 10,
-                    sortBy: "commencementDate",
+                    sortBy: "department",
                     sortOrder: "DESC"
                 });
             }}>{t(`CS_COMMON_CLEAR_SEARCH`)}</p>

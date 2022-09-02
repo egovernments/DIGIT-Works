@@ -123,7 +123,7 @@ const WORKSContractorTable = () => {
                   className="form-field"
                   selected={getValues(`contractorDetails.${row.key}.category`)}
                   disable={false}
-                  // option={[{label:"active",value:1},{label:"Inactive",value:2},{label:"Black listed",value:3}]}
+                  // option={}
                   errorStyle={(localFormState.touched.contractorDetails?.[row.key]?.category && errors?.contractorDetails?.[row.key]?.category?.message) ? true : false}
                   select={(e) => {
                     props.onChange(e);
@@ -150,7 +150,7 @@ const WORKSContractorTable = () => {
                       className="form-field"
                       selected={getValues(`contractorDetails.${row.key}.contractorClass`)}
                       disable={false}
-                      // option={[{label:"active",value:1},{label:"Inactive",value:2},{label:"Black listed",value:3}]}
+                      // option={}
                       errorStyle={(localFormState.touched.contractorDetails?.[row.key]?.contractorClass && errors?.contractorDetails?.[row.key]?.contractorClass?.message) ? true : false}
                       select={(e) => {
                         props.onChange(e);
@@ -177,7 +177,7 @@ const WORKSContractorTable = () => {
                       className="form-field"
                       selected={getValues(`contractorDetails.${row.key}.status`)}
                       disable={false}
-                      // option={[{label:"active",value:1},{label:"Inactive",value:2},{label:"Black listed",value:3}]}
+                      // option={}
                       errorStyle={(localFormState.touched.contractorDetails?.[row.key]?.status && errors?.status?.contractorDetails?.[row.key]?.message) ? true : false}
                       select={(e) => {
                         props.onChange(e);

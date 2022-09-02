@@ -1,7 +1,7 @@
 export const newConfig = [
     {
       head: "WORKS_APP_FOR_CREATE_CONTRACTOR",
-      key: "ConnectionHolderDetails",
+      key: "ContractorsDetail",
       isCreate: true,
       hideInCitizen: true,
       body: [

@@ -71,7 +71,7 @@ const ApplicationDetails = (props) => {
           history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
         }
         else {
-          window.location.assign(`${window.location.origin}/digit-ui/employee/payment/collect/${action?.redirectionUrll?.pathname}`);
+          window.location.assign(`${window.location.origin}/${window?.contextPath}/employee/payment/collect/${action?.redirectionUrll?.pathname}`);
         }
       } else if (!action?.redirectionUrl) {
         setShowModal(true);
@@ -136,19 +136,19 @@ const ApplicationDetails = (props) => {
           setIsEnableLoader(false);
           if (isOBPS?.bpa) {
             data.selectedAction = selectedAction;
-            history.replace(`/digit-ui/employee/obps/response`, { data: data });
+            history.replace(`/${window?.contextPath}/employee/obps/response`, { data: data });
           }
           if (isOBPS?.isStakeholder) {
             data.selectedAction = selectedAction;
-            history.push(`/digit-ui/employee/obps/stakeholder-response`, { data: data });
+            history.push(`/${window?.contextPath}/employee/obps/stakeholder-response`, { data: data });
           }
           if (isOBPS?.isNoc) {
-            history.push(`/digit-ui/employee/noc/response`, { data: data });
+            history.push(`/${window?.contextPath}/employee/noc/response`, { data: data });
           }
           if (data?.Amendments?.length > 0 ){
             //RAIN-6981 instead just show a toast here with appropriate message
           //show toast here and return 
-            //history.push("/digit-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
+            //history.push("/${window?.contextPath}/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
             
             if(variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")){
               setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS")})

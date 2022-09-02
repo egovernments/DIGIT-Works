@@ -29,10 +29,8 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
   useEffect(() => {
     register("offset", 0);
     register("limit", 10);
-    register("sortBy", "commencementDate");
+    register("sortBy", "department");
     register("sortOrder", "DESC");
-    register("sortOrder", "DESC");
-    register("isConnectionSearch", true);
   }, [register]);
 
   useEffect(() => {
@@ -84,7 +82,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
               {row.original?.subEstimateNumber ? (
                 <span className={"link"}>
                   <Link
-                    to={`/digit-ui/employee/works/connection-details?applicationNumber=${
+                    to={`/digit-ui/employee/works/estimate-details?applicationNumber=${
                       row.original["connectionNo"]
                       }&tenantId=${tenantId}&service=${service}&due=${row.original?.due || 0}&from=WS_SEWERAGE_APPLICATION_SEARCH`}
                   >
@@ -204,7 +202,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
           getCellProps={(cellInfo) => {
             return {
               style: {
-                minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+                minWidth: cellInfo.column.Header === t("WORKS_INBOX_APPLICATION_NO") ? "240px" : "",
                 padding: "20px 18px",
                 fontSize: "16px"
               },
