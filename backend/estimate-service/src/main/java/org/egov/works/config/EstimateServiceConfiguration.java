@@ -55,10 +55,10 @@ public class EstimateServiceConfiguration {
     @Value("${egov.idgen.estimate.number.format}")
     private String idgenEstimateNumberFormat;
 
-    @Value("${egov.idgen.sub.estimate.number.name}")
+    @Value("${egov.idgen.estimate.detail.number.name}")
     private String idgenSubEstimateNumberName;
 
-    @Value("${egov.idgen.sub.estimate.number.format}")
+    @Value("${egov.idgen.estimate.detail.number.format}")
     private String idgenSubEstimateNumberFormat;
 }
 
