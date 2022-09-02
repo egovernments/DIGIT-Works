@@ -39,8 +39,11 @@ if (!user || !user.access_token || !user.info) {
   const employeeToken = getFromStorage("Employee.token")
   const employeeInfo = getFromStorage("Employee.user-info")
   const employeeTenantId = getFromStorage("Employee.tenant-id")
-
+  /* 
+  Currently for works 1.0 we enable only employee side 
   const userType = token === citizenToken ? "citizen" : "employee";
+  */
+  const userType =  "employee";
   window.Digit.SessionStorage.set("user_type", userType);
   window.Digit.SessionStorage.set("userType", userType);
 

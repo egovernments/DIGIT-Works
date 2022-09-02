@@ -1,0 +1,43 @@
+#
+# config:
+# -   name: < Name of the job, foo/bar would create job named bar inside folder foo >
+#     build:
+#     - work-dir: < Working directory of the app to be built >
+#       dockerfile: < Path to the dockerfile, optional, assumes dockerfile in working directory if not provided >
+#       image-name: < Docker image name  >
+# -
+# -
+#
+# config:
+# -   name: < Name of the job, foo/bar would create job named bar inside folder foo >
+#     build:
+#     - work-dir: < Working directory of the app to be built >
+#       dockerfile: < Path to the dockerfile, optional, assumes dockerfile in working directory if not provided >
+#       image-name: < Docker image name  >
+# -
+# -
+config:
+
+# backend
+  - name: "builds/digit-works/backend/estimate-service"
+    build:
+      - work-dir: "backend/estimate-service"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "estimate-service"
+      - work-dir: "backend/estimate-service/src/main/resources/db"
+        image-name: "estimate-service-db"
+
+  - name: "builds/digit-works/backend/loi-service"
+    build:
+      - work-dir: "backend/loi-service"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "loi-service"
+      - work-dir: "backend/loi-service/src/main/resources/db"
+        image-name: "loi-service-db"
+
+# frontend
+  - name: builds/digit-works/frontend/micro-ui/works-ui
+    build:
+      - work-dir: frontend/micro-ui/
+        dockerfile: frontend/micro-ui/web/docker/Dockerfile
+        image-name: works-ui
