@@ -46,5 +46,19 @@ public class EstimateServiceConfiguration {
 
     @Value("${estimate.kafka.update.topic}")
     private String updateEstimateTopic;
+
+
+    //id format
+    @Value("${egov.idgen.estimate.number.name}")
+    private String idgenEstimateNumberName;
+
+    @Value("${egov.idgen.estimate.number.format}")
+    private String idgenEstimateNumberFormat;
+
+    @Value("${egov.idgen.sub.estimate.number.name}")
+    private String idgenSubEstimateNumberName;
+
+    @Value("${egov.idgen.sub.estimate.number.format}")
+    private String idgenSubEstimateNumberFormat;
 }
 
