@@ -3,6 +3,7 @@ package org.egov.works.web.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -20,7 +21,7 @@ import org.springframework.validation.annotation.Validated;
 public class EstimateRequest {
 
     @JsonProperty("requestInfo")
-    private RequestHeader requestInfo = null;
+    private RequestInfo requestInfo = null;
 
     @JsonProperty("estimate")
     private Estimate estimate = null;

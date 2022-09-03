@@ -3,11 +3,11 @@ package org.egov.works.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.service.EstimateService;
 import org.egov.works.util.ResponseInfoCreator;
 import org.egov.works.web.models.EstimateRequest;
 import org.egov.works.web.models.EstimateResponse;
-import org.egov.works.web.models.ResponseHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,8 +52,8 @@ public class EstimateApiController {
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<EstimateResponse> estimateV1CreatePost(@ApiParam(value = "Request object to create estimate in the system", required = true) @Valid @RequestBody EstimateRequest body) {
         EstimateRequest enrichedRequest = estimateService.createEstimate(body);
-        ResponseHeader responseHeader = responseInfoCreator.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        EstimateResponse estimateResponse = EstimateResponse.builder().responseInfo(responseHeader).estimates(Collections.singletonList(enrichedRequest.getEstimate())).build();
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        EstimateResponse estimateResponse = EstimateResponse.builder().responseInfo(responseInfo).estimates(Collections.singletonList(enrichedRequest.getEstimate())).build();
         return new ResponseEntity<EstimateResponse>(estimateResponse, HttpStatus.OK);
     }
 
