@@ -19,16 +19,15 @@ import java.util.stream.Collectors;
 @Service
 public class EnrichmentService {
 
+    @Autowired
     private EstimateServiceUtil estimateServiceUtil;
-    private IdGenRepository idGenRepository;
-    private EstimateServiceConfiguration config;
 
     @Autowired
-    public EnrichmentService(EstimateServiceUtil estimateServiceUtil, IdGenRepository idGenRepository, EstimateServiceConfiguration config) {
-        this.estimateServiceUtil = estimateServiceUtil;
-        this.idGenRepository = idGenRepository;
-        this.config = config;
-    }
+    private IdGenRepository idGenRepository;
+
+    @Autowired
+    private EstimateServiceConfiguration config;
+
 
     public void enrichCreateEstimate(EstimateRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
