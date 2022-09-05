@@ -45,7 +45,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
         },
     ]
 
-    console.log(errors)
+    //console.log(errors)
     const getDate = () => {
         const today = new Date();
 
@@ -102,7 +102,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
         ]
     );
 
-    debugger
+    //debugger
     const {subTypes:SubTypeOfWork} = useWatch({ control: control, name: "typeOfWork", defaultValue: [] });
 
     if(data?.works){
@@ -117,7 +117,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
 
 
     const handleCreateClick = async () => {
-        debugger
+        //debugger
         const obj = {
             "requirementNumber": "123123",
             "estimateDetails": [

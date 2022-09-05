@@ -54,12 +54,12 @@ const Response = (props) => {
                   : null} */}
                   {t(state.message)}
           </CardText>
-          <div style={{"display":"flex"}}>
+          <div style={{"display":"flex","justifyContent":"flex-end"}}>
                   {state.links.map(link => (
                       <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={()=> {
                         history.push(link.redirectUrl)
                       }}>
-                          <CreateEstimateIcon /> {t(link.name)}
+                          <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
                     </div>
                   ))}
           </div>

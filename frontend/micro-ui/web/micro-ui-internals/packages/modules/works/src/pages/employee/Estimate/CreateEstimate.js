@@ -11,16 +11,16 @@ const CreateEstimate = (props) => {
     const {mutate:EstimateMutation}=Digit.Hooks.works.useCreateEstimate("WORKS");
 
     const onFormSubmit = async(_data) => {
-        debugger
-        const estimate={estimate:_data}
-        console.log("_data",_data);
+        // debugger
+        // const estimate={estimate:_data}
+        // console.log("_data",_data);
 
         await EstimateMutation(estimate,{
             onError:(error,variables)=>{
-                debugger
+                //debugger
             },
             onSuccess:async (responseData,variables)=>{
-                debugger
+        //        debugger
             }   
         })
     }
