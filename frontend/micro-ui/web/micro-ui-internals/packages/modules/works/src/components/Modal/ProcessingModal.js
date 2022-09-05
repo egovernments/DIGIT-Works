@@ -36,7 +36,7 @@ const ProcessingModal = ({
     register,
     errors:formErrors
 }) => {
-    console.log("formErrors",formErrors)
+    //console.log("formErrors",formErrors)
 
     const dummyData = [
         {

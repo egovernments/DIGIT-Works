@@ -9,16 +9,16 @@ const CreateLOI = () => {
     const { mutate: LOIMutation } = Digit.Hooks.works.useCreateLOI();
 
     const onFormSubmit = async (_data) => {
-        debugger
+        //debugger
         const letterOfIndent = {letterOfIndent:_data}
-        console.log(_data);
+        //console.log(_data);
 
         await LOIMutation(letterOfIndent,{
             onError:(error,variables)=>{
-                debugger
+                //debugger
             },
             onSuccess:async (responseData,variables)=>{
-                debugger
+                //debugger
             }
         })
         

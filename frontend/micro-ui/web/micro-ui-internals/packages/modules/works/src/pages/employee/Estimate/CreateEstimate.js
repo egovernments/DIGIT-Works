@@ -11,9 +11,9 @@ const CreateEstimate = (props) => {
     
 
     const onFormSubmit = (_data) => {
-        debugger
+        //debugger
         //console.log(errors)
-        console.log(_data);
+        //console.log(_data);
     }
     
     
