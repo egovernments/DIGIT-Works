@@ -4,11 +4,10 @@ import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.config.EstimateServiceConfiguration;
 import org.egov.works.repository.IdGenRepository;
 import org.egov.works.util.EstimateServiceUtil;
-import org.egov.works.web.models.Estimate;
-import org.egov.works.web.models.EstimateDetail;
-import org.egov.works.web.models.EstimateRequest;
+import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,11 +21,13 @@ public class EnrichmentService {
 
     private EstimateServiceUtil estimateServiceUtil;
     private IdGenRepository idGenRepository;
+    private EstimateServiceConfiguration config;
 
     @Autowired
-    public EnrichmentService(EstimateServiceUtil estimateServiceUtil,IdGenRepository idGenRepository) {
+    public EnrichmentService(EstimateServiceUtil estimateServiceUtil, IdGenRepository idGenRepository, EstimateServiceConfiguration config) {
         this.estimateServiceUtil = estimateServiceUtil;
         this.idGenRepository = idGenRepository;
+        this.config = config;
     }
 
     public void enrichCreateEstimate(EstimateRequest request) {
@@ -38,9 +39,19 @@ public class EnrichmentService {
         estimate.setAuditDetails(auditDetails);
         estimate.setId(UUID.randomUUID());
 
+        List<String> estimateNumbers = getIdList(requestInfo, estimate.getTenantId()
+                , config.getIdgenEstimateNumberName(), config.getIdgenEstimateNumberFormat(), 1);
+
+        if (estimateNumbers != null && !estimateDetails.isEmpty()) {
+            estimate.setEstimateNumber(estimateNumbers.get(0));
+        }
+
         if (estimateDetails != null && !estimateDetails.isEmpty()) {
-            for (EstimateDetail estimateDetail : estimateDetails) {
-                estimateDetail.setId(UUID.randomUUID());
+            List<String> estimateDetailNumbers = getIdList(requestInfo, estimate.getTenantId()
+                    , config.getIdgenSubEstimateNumberName(), config.getIdgenSubEstimateNumberFormat(), estimateDetails.size());
+            for (int i = 0; i < estimateDetails.size(); i++) {
+                estimateDetails.get(0).setId(UUID.randomUUID());
+                estimateDetails.get(0).setEstimateDetailNumber(estimateDetailNumbers.get(0));
             }
         }
     }
@@ -66,4 +77,19 @@ public class EnrichmentService {
                 .map(IdResponse::getId).collect(Collectors.toList());
     }
 
+    /**
+     * @param searchRequest
+     */
+    public void enrichSearchEstimate(EstimateSearchRequest searchRequest) {
+        EstimateSearchCriteria searchCriteria = searchRequest.getSearchCriteria();
+
+        if (searchCriteria.getLimit() == null)
+            searchCriteria.setLimit(config.getDefaultLimit());
+
+        if (searchCriteria.getOffset() == null)
+            searchCriteria.setOffset(config.getDefaultOffset());
+
+        if (searchCriteria.getLimit() != null && searchCriteria.getLimit() > config.getMaxLimit())
+            searchCriteria.setLimit(config.getMaxLimit());
+    }
 }
