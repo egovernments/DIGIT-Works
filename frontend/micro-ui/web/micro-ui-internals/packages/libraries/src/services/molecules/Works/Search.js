@@ -1,5 +1,7 @@
 import cloneDeep from "lodash/cloneDeep";
 import _ from "lodash";
+import { WorksService } from "../../elements/Works";
+
 
 const convertEpochToDate = (dateEpoch) => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
@@ -190,9 +192,96 @@ const sampleLOISearchResponse = {
 
 
 export const WorksSearch = {
-    searchEstimate: async (tenantId, filters = {}, serviceType ) => {
+    searchEstimate: async ( filters = {} ) => {
+        debugger
         const response = sampleEstimateSearchResponse?.estimates
+
+        //
         return response
+    },
+    viewEstimateScreen: async (t, tenantId, estimateNumber) => {
+        const estimate = sampleEstimateSearchResponse?.estimates?.[0]
+        let details = []
+        const estimateDetails = {
+            title: "WORKS_ESTIMATE_DETAILS",
+            asSectionHeader: true,
+            values: [
+                { title: "WORKS_DATE_PROPOSAL", value: estimate?.proposalDate || t("NA") },
+                { title: "WORKS_DEPT", value: estimate?.department || t("NA") },
+                { title: "WORKS_LOR", value: estimate?.requirementNumber || t("NA") },
+                { title: "WORKS_ELECTION_WARD", value: t("NA") },
+                { title: "WORKS_LOCATION", value: estimate?.location || t("NA") },
+                { title: "WORKS_WORK_CATEGORY", value: estimate?.workCategory || t("NA") },
+                { title: "WORKS_BENEFICIERY", value: estimate?.beneficiaryType || t("NA") },
+                { title: "WORKS_WORK_NATURE", value: estimate?.natureOfWork || t("NA") },
+                { title: "WORKS_WORK_TYPE", value: estimate?.typeOfWork || t("NA") },
+                { title: "WORKS_SUB_TYPE_WORK", value: estimate?.subTypeOfWork || t("NA") },
+                { title: "WORKS_MODE_OF_INS", value: estimate?.entrustmentMode || t("NA") },
+            ]
+        };
+
+        const financialDetails = {
+            title: "WORKS_FINANCIAL_DETAILS",
+            asSectionHeader: true,
+            values: [
+                { title: "WORKS_FUND", value: estimate?.fund || t("NA") },
+                { title: "WORKS_FUNCTION", value: estimate?.function || t("NA") },
+                { title: "WORKS_BUDGET_HEAD", value: estimate?.budgetHead || t("NA") },
+                { title: "WORKS_SCHEME", value: estimate?.scheme || t("NA") },
+                { title: "WORKS_SUB_SCHEME", value: estimate?.subScheme || t("NA") },
+            ]
+        };
+
+        const tableHeader = [t("WORKS_SNO"), t("WORKS_NAME_OF_WORK"), t("WORKS_ESTIMATED_AMT")]
+        const tableRows = [["1", "Construction of CC drain from D No 45-142-A-58-A to 45-142-472-A at Venkateramana Colony in Ward No 43", "640000"], ["", "Total Amount", "640000"]]
+
+        const workDetails = {
+            title: "WORKS_WORK_DETAILS",
+            asSectionHeader: true,
+            isTable: true,
+            headers: tableHeader,
+            tableRows
+        }
+
+        const files = [
+            {
+                "fileStoreId": "81d1bce2-7513-4231-b1ab-8f7c3df37c9b",
+                "tenantId": "pb"
+            },
+            {
+                "fileStoreId": "954952fe-6d3e-484c-a773-77f20da639dc",
+                "tenantId": "pb"
+            },
+            {
+                "fileStoreId": "eb68a8ca-59bf-4e7f-b604-1c1197bb91c3",
+                "tenantId": "pb"
+            }
+        ]
+        const documentDetails = {
+            title: "",
+            asSectionHeader: true,
+            additionalDetails: {
+                documents: [{
+                    title: "WORKS_RELEVANT_DOCS",
+                    BS: 'Works',
+                    values: files?.map((document) => {
+                        return {
+                            title: `Same`,
+                            documentType: "type",
+                            documentUid: "id",
+                            fileStoreId: document?.fileStoreId,
+                        };
+                    }),
+                },
+                ]
+            }
+        }
+
+
+        details = [...details, estimateDetails, financialDetails, workDetails, documentDetails]
+        return {
+            applicationDetails: details,
+        }
     },
     viewLOIScreen: async (t, tenantId, loiNumber) => {
         const loi = sampleLOISearchResponse?.letterOfIndents?.[0]
@@ -268,90 +357,6 @@ export const WorksSearch = {
         }
 
         let details = [loiDetails,financialDetails,agreementDetails,documentDetails]
-        return {
-            applicationDetails: details,
-        }
-    },
-    viewEstimateScreen: async(t, tenantId, estimateNumber ) => {
-        const estimate = sampleEstimateSearchResponse?.estimates?.[0]
-        let details = []
-        const estimateDetails = {
-            title: "WORKS_ESTIMATE_DETAILS",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_DATE_PROPOSAL", value: estimate?.proposalDate || t("NA") },
-                { title: "WORKS_DEPT", value: estimate?.department || t("NA") },
-                { title: "WORKS_LOR", value: estimate?.requirementNumber || t("NA") },
-                { title: "WORKS_ELECTION_WARD", value:  t("NA") },
-                { title: "WORKS_LOCATION", value: estimate?.location || t("NA") },
-                { title: "WORKS_WORK_CATEGORY", value: estimate?.workCategory || t("NA") },
-                { title: "WORKS_BENEFICIERY", value: estimate?.beneficiaryType || t("NA") },
-                { title: "WORKS_WORK_NATURE", value: estimate?.natureOfWork || t("NA") },
-                { title: "WORKS_WORK_TYPE", value: estimate?.typeOfWork || t("NA") },
-                { title: "WORKS_SUB_TYPE_WORK", value: estimate?.subTypeOfWork || t("NA") },
-                { title: "WORKS_MODE_OF_INS", value: estimate?.entrustmentMode || t("NA") },
-            ]
-        };
-
-        const financialDetails = {
-            title: "WORKS_FINANCIAL_DETAILS",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_FUND", value: estimate?.fund || t("NA") },
-                { title: "WORKS_FUNCTION", value: estimate?.function || t("NA") },
-                { title: "WORKS_BUDGET_HEAD", value: estimate?.budgetHead || t("NA") },
-                { title: "WORKS_SCHEME", value: estimate?.scheme || t("NA") },
-                { title: "WORKS_SUB_SCHEME", value: estimate?.subScheme || t("NA") },
-            ]
-        };
-
-        const tableHeader = [t("WORKS_SNO"), t("WORKS_NAME_OF_WORK"), t("WORKS_ESTIMATED_AMT")]
-        const tableRows = [["1", "Construction of CC drain from D No 45-142-A-58-A to 45-142-472-A at Venkateramana Colony in Ward No 43","640000"],["","Total Amount","640000"]]
-
-        const workDetails = {
-            title: "WORKS_WORK_DETAILS",
-            asSectionHeader: true,
-            isTable: true,
-            headers: tableHeader,
-            tableRows
-        }
-
-        const files = [
-            {
-                "fileStoreId": "81d1bce2-7513-4231-b1ab-8f7c3df37c9b",
-                "tenantId": "pb"
-            },
-            {
-                "fileStoreId": "954952fe-6d3e-484c-a773-77f20da639dc",
-                "tenantId": "pb"
-            },
-            {
-                "fileStoreId": "eb68a8ca-59bf-4e7f-b604-1c1197bb91c3",
-                "tenantId": "pb"
-            }
-        ]
-        const documentDetails = {
-            title: "",
-            asSectionHeader: true,
-            additionalDetails: {
-                documents: [{
-                    title: "WORKS_RELEVANT_DOCS",
-                    BS: 'Works',
-                    values: files?.map((document) => {
-                        return {
-                            title: `Same`,
-                            documentType: "type",
-                            documentUid: "id",
-                            fileStoreId: document?.fileStoreId,
-                        };
-                    }),
-                },
-                ]
-            }
-        }
-
-
-        details = [...details, estimateDetails, financialDetails,workDetails,documentDetails]
         return {
             applicationDetails: details,
         }
