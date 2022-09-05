@@ -12,14 +12,14 @@ import Inbox from "./Inbox";
 import LOIInbox from "./LOIInbox";
 
 const App = ({ path }) => {
-  const inboxInitialState = {
-    searchParams: {
-      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
-      services: ["PT.CREATE", "PT.MUTATION", "PT.UPDATE"],
-      applicationStatus: [],
-      locality: [],
-    },
-  };
+  // const inboxInitialState = {
+  //   searchParams: {
+  //     uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
+  //     services: ["PT.CREATE", "PT.MUTATION", "PT.UPDATE"],
+  //     applicationStatus: [],
+  //     locality: [],
+  //   },
+  // };
 
   return (
     <Switch>
