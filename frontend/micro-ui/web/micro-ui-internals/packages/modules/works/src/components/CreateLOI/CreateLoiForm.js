@@ -8,7 +8,7 @@ const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wo
 
 const CreateLoiForm = ({onFormSubmit}) => {
     const handleCreateClick = async (e) => {
-        debugger
+        //debugger
         // const result = await trigger(["lor", "fileno", "dlperiod", "fromDate", "aggDate", "agencyname", "officerInChargedesig","officerIncharge","work"])
         const obj = {
             "workIdentificationNumber": "123423",
@@ -120,7 +120,7 @@ const CreateLoiForm = ({onFormSubmit}) => {
     // debugger
 
 
-    console.log(errors)
+    //console.log(errors)
 
 
 

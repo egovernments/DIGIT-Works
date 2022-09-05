@@ -61,7 +61,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
             "name": "Civil"
         },
     ]
-    console.log("stat",formState?.errors)
+    //console.log("stat",formState?.errors)
     let validation = {}
 
     if (isLoading) {
