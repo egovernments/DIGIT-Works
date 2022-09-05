@@ -164,6 +164,7 @@ import {
   RupeeSymbol,
   ValidityTimeIcon,
   AddIcon,
+  SubtractIcon,
   AddNewIcon,
   InboxIcon,
   ViewReportIcon,
@@ -171,6 +172,7 @@ import {
   DeathIcon,
   BirthIcon,
   FirenocIcon,
+  CreateEstimateIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -438,6 +440,7 @@ export {
   RupeeSymbol,
   ValidityTimeIcon,
   AddIcon,
+  SubtractIcon,
   AddNewIcon,
   ViewReportIcon,
   InboxIcon,
@@ -446,4 +449,5 @@ export {
   DeathIcon,
   BirthIcon,
   FirenocIcon,
+  CreateEstimateIcon
 };
