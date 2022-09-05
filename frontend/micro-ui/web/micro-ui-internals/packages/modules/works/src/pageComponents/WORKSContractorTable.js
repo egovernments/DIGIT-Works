@@ -48,7 +48,6 @@ const WORKSContractorTable = () => {
         return  row.isShow && <tr key={index} style={{height:"50%"}}>
           <td style={getStyles(1)}>{i}</td>
           <td style={getStyles(2)}>
-            <div>
               <Controller
                 control={control}
                 name={`contractorDetails.${row.key}.Department`}
@@ -57,6 +56,7 @@ const WORKSContractorTable = () => {
                 isMandatory={true}
                 render={(props) => {console.log("errors",errors);return(
                   <Dropdown
+                    style={{margin:"5px",width:"90%"}}
                     className="form-field"
                     selected={getValues(`contractorDetails.${row.key}.Department`)}
                     disable={false}
@@ -72,10 +72,8 @@ const WORKSContractorTable = () => {
                 )}}
               />
               <CardLabelError>{localFormState.touched?.contractorDetails?.[row.key]?.Department ? errors?.contractorDetails?.[row.key]?.Department?.message : ""}</CardLabelError>
-            </div>
           </td>
           <td style={getStyles(3)}>
-            <div className='field'>
             <Controller
                 control={control}
                 name={`contractorDetails.${row.key}.registrationNumber`}
@@ -85,6 +83,7 @@ const WORKSContractorTable = () => {
                 } }}
                 render={(props) => (
                   <TextInput
+                    style={{margin:"5px",width:"90%"}}
                     value={props.value}
                     autoFocus={focusIndex.index === 1 && focusIndex.type === `contractorDetails.${row.key}.registrationNumber`}
                     errorStyle={(localFormState.touched?.contractorDetails?.[row.key]?.registrationNumber && errors?.contractorDetails?.[row.key]?.registrationNumber?.message) ? true : false}
@@ -100,18 +99,9 @@ const WORKSContractorTable = () => {
                   />
                 )}
               />
-              {/* <TextInput name="registrationNumber" inputRef={register({
-                  pattern: /^[a-zA-Z0-9_.$@#\/]*$/
-                  })}
-                /> */}
               <CardLabelError>{localFormState.touched.contractorDetails?.[row.key]?.registrationNumber ? errors?.contractorDetails?.[row.key]?.registrationNumber?.message : ""}</CardLabelError>
-
-              {/* {errors && errors?.registrationNumber?.type === "pattern" && (
-              <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)} */}
-            </div>
           </td>
           <td style={getStyles(4)}>
-            <div className="field">
             <Controller
               control={control}
               name={`contractorDetails.${row.key}.category`}
@@ -120,10 +110,10 @@ const WORKSContractorTable = () => {
               isMandatory={true}
               render={(props) => (
                 <Dropdown
-                  className="form-field"
+                  style={{margin:"5px",width:"90%"}}
                   selected={getValues(`contractorDetails.${row.key}.category`)}
                   disable={false}
-                  // option={[{label:"active",value:1},{label:"Inactive",value:2},{label:"Black listed",value:3}]}
+                  // option={}
                   errorStyle={(localFormState.touched.contractorDetails?.[row.key]?.category && errors?.contractorDetails?.[row.key]?.category?.message) ? true : false}
                   select={(e) => {
                     props.onChange(e);
@@ -135,10 +125,8 @@ const WORKSContractorTable = () => {
             )}
           />
           <CardLabelError>{localFormState.touched.contractorDetails?.[row.key]?.category ? errors?.contractorDetails?.[row.key]?.category?.message : ""}</CardLabelError>
-            </div>
           </td>
           <td style={getStyles(2)}>
-            <div>
               <Controller
                   control={control}
                   name={`contractorDetails.${row.key}.contractorClass`}
@@ -147,7 +135,7 @@ const WORKSContractorTable = () => {
                   isMandatory={true}
                   render={(props) => (
                     <Dropdown
-                      className="form-field"
+                      style={{margin:"5px",width:"90%"}}
                       selected={getValues(`contractorDetails.${row.key}.contractorClass`)}
                       disable={false}
                       // option={[{label:"active",value:1},{label:"Inactive",value:2},{label:"Black listed",value:3}]}
@@ -161,11 +149,9 @@ const WORKSContractorTable = () => {
                     />
                   )}
               />
-              <CardLabelError>{localFormState.touched.contractorDetails?.[row.key]?.contractorClass ? errors?.contractorDetails?.[row.key]?.contractorClass?.message : ""}</CardLabelError>
-            </div>
+            <CardLabelError>{localFormState.touched.contractorDetails?.[row.key]?.contractorClass ? errors?.contractorDetails?.[row.key]?.contractorClass?.message : ""}</CardLabelError>
           </td>
           <td style={getStyles(2)}>
-            <div>
               <Controller
                   control={control}
                   name={`contractorDetails.${row.key}.status`}
@@ -174,7 +160,7 @@ const WORKSContractorTable = () => {
                   isMandatory={true}
                   render={(props) => (
                     <Dropdown
-                      className="form-field"
+                      style={{margin:"5px",width:"90%"}}
                       selected={getValues(`contractorDetails.${row.key}.status`)}
                       disable={false}
                       // option={[{label:"active",value:1},{label:"Inactive",value:2},{label:"Black listed",value:3}]}
@@ -189,10 +175,8 @@ const WORKSContractorTable = () => {
                   )}
                 />
               <CardLabelError>{localFormState.touched.contractorDetails?.[row.key]?.status ? errors?.contractorDetails?.[row.key]?.status?.message : ""}</CardLabelError>
-            </div>
           </td>
           <td>
-            <div>
               <Controller
                 name={`contractorDetails.${row.key}.fromDate`}
                 control={control}
@@ -201,16 +185,15 @@ const WORKSContractorTable = () => {
                 isMandatory={true}
                 render={(props) =>
                    <DatePicker 
+                   style={{margin:"5px",width:"90%"}}
                     date={props.value} 
                     onChange={props.onChange} 
                     errorStyle={(localFormState.touched.contractorDetails?.[row.key]?.fromDate && errors?.contractorDetails?.[row.key]?.fromDate?.message) ? true : false}
                     />}
               />
               <CardLabelError>{localFormState.touched.contractorDetails?.[row.key]?.fromDate ? errors?.contractorDetails?.[row.key]?.fromDate?.message : ""}</CardLabelError>
-            </div>
           </td>
           <td>
-            <div>
             <Controller
                 name={`contractorDetails.${row.key}.toDate`}
                 rules={{ required: t("REQUIRED_FIELD") }}
@@ -219,6 +202,7 @@ const WORKSContractorTable = () => {
                 control={control}
                 render={(props) => (
                   <DatePicker
+                    style={{margin:"5px",width:"90%"}}
                     date={props.value}
                     // date={CommencementDate} 
                     onChange={props.onChange}
@@ -227,12 +211,11 @@ const WORKSContractorTable = () => {
                 )}
               />
               <CardLabelError>{localFormState.touched.toDate ? errors?.toDate?.message : ""}</CardLabelError>
-            </div>
           </td>
           <td>
           <LinkButton
               label={<DeleteIcon fill={"#494848"} />}
-              style={{ margin: "10px" }}
+              style={{ margin: "10px",cursor:"pointer" }}
               onClick={() => removeRow(row)} 
             />
           </td>
@@ -297,7 +280,7 @@ const WORKSContractorTable = () => {
   return (
     <div>
       <table className="contractor-table">
-        <thead>
+        <thead style={{height:"40px"}}>
           <tr>{renderHeader()}</tr>
         </thead>
         <tbody>
