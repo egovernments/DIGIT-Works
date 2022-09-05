@@ -23,7 +23,7 @@ const BILLSBreadCrumbs = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
-      path: "/digit-ui/employee/works/search-Estimate",
+      path: "/digit-ui/employee/works/search-Estimate-approved",
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_SEARCH_APPLICATIONS")}` : t("WORKS_SEARCH_APPLICATIONS"),
       show: location.pathname.includes("/works/search-Estimate") ? true : false,
       isBack: fromScreen && true,
@@ -48,7 +48,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/create-contractor`}
                 component={NewApplication}
             />
-          <PrivateRoute path={`${path}/search-Estimate`}
+          <PrivateRoute path={`${path}/search-Estimate-approved`}
                 component={(props)=><Search {...props} parentRoute={path}/>}
             />
         </div>

@@ -1,4 +1,11 @@
 import React from "react";
+
+const CreateEstimateIcon = ({className,style={}}) => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className={className} style={style} xmlns="http://www.w3.org/2000/svg">
+    <path d="M14 8.75C14.6125 8.75 15.1987 8.86375 15.75 9.05625V5.25L10.5 0H1.75C0.77875 0 0 0.77875 0 1.75V14C0 14.9712 0.7875 15.75 1.75 15.75H9.05625C8.86375 15.1987 8.75 14.6125 8.75 14C8.75 11.1037 11.1037 8.75 14 8.75ZM9.625 1.3125L14.4375 6.125H9.625V1.3125ZM17.5 13.125V14.875H14.875V17.5H13.125V14.875H10.5V13.125H13.125V10.5H14.875V13.125H17.5Z" fill="#F47738" />
+  </svg>
+);
+
 const ArrowLeft = ({ className }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" className={className} width="19px">
     <path d="M24 0v24H0V0h24z" fill="none" opacity=".87" />
@@ -1041,6 +1048,12 @@ const AddIcon = ({ styles, className, fill = "white" }) => (
   </svg>
 );
 
+const SubtractIcon = ({ styles, className, fill = "white" }) => (
+  <svg width="12" height="14" className={className} style={{...styles}} viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.24609 0.783203V3.45508H0.667969V0.783203H9.24609Z" fill={fill} />
+  </svg>
+);
+
 const AddNewIcon = () => (
   <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -1071,6 +1084,7 @@ const InboxIcon = () => (
 export {
   AnnouncementIcon,
   ReceiptIcon,
+  CreateEstimateIcon,
   ArrowLeft,
   ArrowDown,
   CameraSvg,
@@ -1182,6 +1196,7 @@ export {
   RupeeSymbol,
   ValidityTimeIcon,
   AddIcon,
+  SubtractIcon,
   AddNewIcon,
   ViewReportIcon,
   InboxIcon,

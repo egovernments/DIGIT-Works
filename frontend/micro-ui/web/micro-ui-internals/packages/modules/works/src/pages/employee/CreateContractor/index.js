@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useHistory } from "react-router-dom";
 import _ from "lodash";
 import { newConfig as newConfigLocal } from "../../../config/ContractorCreateConfig";
-// import {  createPayloadOfWS,updatePayloadOfWS} from "../../../utils";
 
 const NewApplication = () => {
   const { t } = useTranslation();
@@ -15,7 +14,7 @@ const NewApplication = () => {
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [showToast, setShowToast] = useState(null);
   const [config, setConfig] = useState({head: "WORKS_APP_FOR_CREATE_CONTRACTOR",
-  key: "ConnectionHolderDetails",
+  key: "ContractorDetails",
   isCreate: true,
   hideInCitizen: true,
   body: [

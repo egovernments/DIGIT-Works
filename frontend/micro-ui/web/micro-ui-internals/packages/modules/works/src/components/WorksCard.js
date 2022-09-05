@@ -27,7 +27,7 @@ const WorksCard = () => {
     links: [
       {
         label: t("ESTIMATE"),
-        link: `/${window?.contextPath}/employee/works/create-application`,
+        link: `/${window?.contextPath}/employee/works/create-estimate`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {

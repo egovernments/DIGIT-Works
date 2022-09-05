@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useMemo, useReducer } from "react";
 import { Link } from "react-router-dom";
 import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@egovernments/digit-ui-react-components";
 
-import SearchFormFields from "./SearchFields";
+import SearchFormFields from "./SearchFieldsApprovedEstimate";
 import { convertEpochToDateDMY } from "../../utils/index";
 
 const MobileSearchApplication = ({ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }) => {
