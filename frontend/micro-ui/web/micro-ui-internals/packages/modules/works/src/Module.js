@@ -5,6 +5,8 @@ import WorksCard from "./components/WorksCard";
 import EmployeeApp from "./pages/employee";
 import SearchEstimateApplication from "./components/SearchEstimate";
 import SearchApprovedSubEs from "./components/SearchApprovedSubEstimate";
+import WORKS_INBOX_FILTER from './components/inbox/NewInboxFilter'
+import LOI_INBOX_FILTER from "./components/LOIInbox/LOIInboxFilter";
 const WorksModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["works"];
   const { path, url } = useRouteMatch();
@@ -26,7 +28,9 @@ const componentsToRegister = {
   WorksCard,
   WorksModule,
   SearchEstimateApplication,
-  SearchApprovedSubEs
+  SearchApprovedSubEs,
+  LOI_INBOX_FILTER,
+  WORKS_INBOX_FILTER,
 };
 
 export const initWorksComponents = () => {
