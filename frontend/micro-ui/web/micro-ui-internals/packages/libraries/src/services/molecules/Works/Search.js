@@ -199,8 +199,16 @@ export const WorksSearch = {
         //const response = await WorksService?.estimateSearch({tenantId,filters})
         return response?.estimates
     },
+    searchLOI: async (tenantId,filters={}) => {
+        //dymmy response
+        const response = sampleLOISearchResponse
+        //actual response
+        //const response = await WorksService?.loiSearch({tenantId,filters})
+        return response?.letterOfIndents
+    },
     viewEstimateScreen: async (t, tenantId, estimateNumber) => {
-        const estimate = WorksSearch?.searchEstimate(tenantId,{estimateNumber})
+        const estimateArr = await WorksSearch?.searchEstimate(tenantId, { estimateNumber })
+        const estimate = estimateArr?.[0]
         
         //const estimate = sampleEstimateSearchResponse?.estimates?.[0] 
         let details = []
@@ -285,9 +293,14 @@ export const WorksSearch = {
             applicationDetails: details,
         }
     },
-    viewLOIScreen: async (t, tenantId, loiNumber) => {
-        const loi = sampleLOISearchResponse?.letterOfIndents?.[0]
-        const estimate = sampleEstimateSearchResponse?.estimates?.[0]
+    viewLOIScreen: async (t, tenantId, loiNumber,estimateNumber="") => {
+        debugger
+         const loiArr = await WorksSearch.searchLOI(tenantId,{loiNumber})
+         const loi = loiArr?.[0]
+        //const loi = sampleLOISearchResponse?.letterOfIndents?.[0]
+        //const estimate = sampleEstimateSearchResponse?.estimates?.[0]
+        const estimateArr = await WorksSearch?.searchEstimate(tenantId, { estimateNumber })
+        const estimate = estimateArr?.[0]
         const loiDetails = {
             title: "WORKS_LOI_DETAILS",
             asSectionHeader: true,

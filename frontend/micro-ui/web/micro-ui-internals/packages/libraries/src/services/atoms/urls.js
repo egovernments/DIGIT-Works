@@ -34,7 +34,8 @@ const Urls = {
 
   works: {
     create:"/letter-of-indent/v1/_create",
-    estimateSearch:"/estimate/v1/_search"
+    estimateSearch:"/estimate/v1/_search",
+    loiSearch:"/letter-of-indent/v1/_search"
   },
 
   fsm: {
