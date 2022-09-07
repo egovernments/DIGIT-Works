@@ -199,8 +199,16 @@ export const WorksSearch = {
         //const response = await WorksService?.estimateSearch({tenantId,filters})
         return response?.estimates
     },
+    searchLOI: async (tenantId,filters={}) => {
+        //dymmy response
+        const response = sampleLOISearchResponse
+        //actual response
+        //const response = await WorksService?.loiSearch({tenantId,filters})
+        return response?.letterOfIndents
+    },
     viewEstimateScreen: async (t, tenantId, estimateNumber) => {
-        const estimate = WorksSearch?.searchEstimate(tenantId,{estimateNumber})
+        const estimateArr = await WorksSearch?.searchEstimate(tenantId, { estimateNumber })
+        const estimate = estimateArr?.[0]
         
         //const estimate = sampleEstimateSearchResponse?.estimates?.[0] 
         let details = []
@@ -209,7 +217,7 @@ export const WorksSearch = {
             asSectionHeader: true,
             values: [
                 { title: "WORKS_DATE_PROPOSAL", value: estimate?.proposalDate || t("NA") },
-                { title: "WORKS_DEPT", value: estimate?.department || t("NA") },
+                { title: "WORKS_DEPARTMENT", value: estimate?.department || t("NA") },
                 { title: "WORKS_LOR", value: estimate?.requirementNumber || t("NA") },
                 { title: "WORKS_ELECTION_WARD", value: t("NA") },
                 { title: "WORKS_LOCATION", value: estimate?.location || t("NA") },
@@ -285,9 +293,14 @@ export const WorksSearch = {
             applicationDetails: details,
         }
     },
-    viewLOIScreen: async (t, tenantId, loiNumber) => {
-        const loi = sampleLOISearchResponse?.letterOfIndents?.[0]
-        const estimate = sampleEstimateSearchResponse?.estimates?.[0]
+    viewLOIScreen: async (t, tenantId, loiNumber,estimateNumber="") => {
+        // debugger
+         const loiArr = await WorksSearch.searchLOI(tenantId,{loiNumber})
+         const loi = loiArr?.[0]
+        //const loi = sampleLOISearchResponse?.letterOfIndents?.[0]
+        //const estimate = sampleEstimateSearchResponse?.estimates?.[0]
+        const estimateArr = await WorksSearch?.searchEstimate(tenantId, { estimateNumber })
+        const estimate = estimateArr?.[0]
         const loiDetails = {
             title: "WORKS_LOI_DETAILS",
             asSectionHeader: true,
@@ -297,7 +310,7 @@ export const WorksSearch = {
                 { title: "WORKS_ESTIMATE_NO", value: estimate?.estimateNumber || t("NA") },
                 { title: "WORKS_SUB_ESTIMATE_NO", value:estimate?.estimateDetails?.estimateDetailNumber || t("NA") },
                 { title: "WORKS_NAME_OF_WORK", value: estimate?.natureOfWork || t("NA") },
-                { title: "WORKS_DEPT", value: estimate?.department || t("NA") },
+                { title: "WORKS_DEPARTMENT", value: estimate?.department || t("NA") },
                 { title: "WORKS_FILE_NO", value: loi?.fileNumber || t("NA") },
                 { title: "WORKS_FILE_DATE", value: estimate?.natureOfWork || t("NA") },
             ]

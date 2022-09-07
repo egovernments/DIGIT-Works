@@ -8,6 +8,8 @@ import SearchApprovedSubEs from "./components/SearchApprovedSubEstimate";
 import WORKSContractorDetails from "./pageComponents/WORKSContractorDetails";
 import WORKSContractorTable from "./pageComponents/WORKSContractorTable";
 import SearchEstimate from './components/SearchApprovedEstimate'
+import WORKS_INBOX_FILTER from './components/inbox/NewInboxFilter'	
+import LOI_INBOX_FILTER from "./components/LOIInbox/LOIInboxFilter";
 const WorksModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["works"];
   const { path, url } = useRouteMatch();
@@ -33,6 +35,8 @@ const componentsToRegister = {
   WORKSContractorTable,
   WORKSContractorDetails,
   SearchEstimate,
+  LOI_INBOX_FILTER,	
+  WORKS_INBOX_FILTER,
 };
 
 export const initWorksComponents = () => {

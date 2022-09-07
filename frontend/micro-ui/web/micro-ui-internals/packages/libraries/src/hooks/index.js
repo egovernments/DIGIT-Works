@@ -242,12 +242,14 @@ import useViewEstimateDetails from "./works/useViewEstimateDetails"
 import useViewLOIDetails from "./works/useViewLOIDetails"
 import useCreateLOI from "./works/useCreateLOI";
 import useEstimateSearch from "./works/useSearch"
+import useCreateEstimate from "./works/useCreateEstimate";
 const works = {
   useViewEstimateDetails,
   useViewLOIDetails,
   useCreateLOI,
   useEstimateSearch,
   useSearchWORKS,
+  useCreateEstimate
 }
 
 const pgr = {

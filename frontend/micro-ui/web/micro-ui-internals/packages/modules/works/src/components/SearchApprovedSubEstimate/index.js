@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, Loader, Header } from "@egovernments/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header, CreateLoiIcon } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
@@ -86,7 +86,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
             disableSortBy: true,
         },
         {
-            Header: t("COMMON_CREATED_BY"),
+            Header: t("WORKS_CREATED_BY"),
             accessor: (row) => GetCell(row.auditDetails.createdBy),
             disableSortBy: true,
         },
@@ -112,7 +112,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
                     <div>
                         <span className="link">
                             <Link to={`/digit-ui/employee/`}>
-                                {"Create LOI"}
+                                <span onClick={() => console.log("Create LOI")}><CreateLoiIcon  style={{ "margin": "auto" }} /> {"Create LOI"} </span>
                             </Link>
                         </span>
                     </div>
@@ -145,11 +145,11 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
 
     return (
         <>
-            <Header styles={{ fontSize: "32px" }}>{t("WORKS_SEARCH_ESTIMATES")}</Header>
+            <Header styles={{ fontSize: "32px" }}>{t("WORKS_SEARCH_APPROVED_ESTIMATES")}</Header>
             <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} >
                 <SearchFields {...{ register, control, reset, t,formState }} />
             </SearchForm>
-
+            <div style={{"overflow-x":"scroll"}}>
             <Table
                 t={t}
                 data={data}
@@ -173,7 +173,9 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
                 disableSort={false}
                 sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
             />
+            </div>
         </>
+        
     )
 }
 
