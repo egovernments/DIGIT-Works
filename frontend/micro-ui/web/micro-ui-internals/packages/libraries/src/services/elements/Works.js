@@ -22,4 +22,13 @@ export const WorksService = {
             userService: false,
             params: { tenantId, ...filters },
         }),
+    loiSearch: ({tenantId,filters}) => 
+        Request({
+            url: Urls.works.loiSearch,
+            useCache: false,
+            method: "POST",
+            auth: true,
+            userService: false,
+            params: { tenantId, ...filters },
+        })
 }

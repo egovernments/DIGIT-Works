@@ -428,7 +428,7 @@ const CreateLoiForm = ({onFormSubmit}) => {
                 </LabelFieldPair>
 
                 <ActionBar>
-                    <SubmitBar onSubmit={handleCreateClick} label={t("WORKS_CREATE_ESTIMATE")} />
+                    <SubmitBar onSubmit={handleCreateClick} label={t("WORKS_CREATE_LOI")} />
                 </ActionBar>
             </Card>
         </form>
