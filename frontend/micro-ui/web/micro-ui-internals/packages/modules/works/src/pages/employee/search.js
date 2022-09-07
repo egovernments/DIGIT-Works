@@ -15,7 +15,7 @@ const Search = ({ path }) => {
 
   function onSubmit(_data) {
     console.log("search Data",_data)
-    if(_data.adminSanctionNumber==="" && _data.estimateNumber==="" && _data.subEstimateNumber==="" && !_data.department && !_data.fromDate && !_data.toDate ){
+    if(_data.adminSanctionNumber==="" && _data.estimateNumber==="" && _data.subEstimateNumber==="" && !_data.department && !_data.fromProposalDate && !_data.toProposalDate ){
       setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
       setTimeout(() => {
         setShowToast(false);
@@ -42,21 +42,21 @@ const Search = ({ path }) => {
     enabled: !!(payload && Object.keys(payload).length > 0),
   };
   //API Call
-  // const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config, bussinessService: businessServ, t ,shortAddress:true });
-  const result={data:[{subEstimateNumber:"LE/ENG/00002/10/2017-18",
-                        nameOfWork:"Providing CC Drain in Birla Gaddah (Tungabhaqdra workers colony) in 27th ward",
-                        department:"ENGINEERING",
-                        administrativeSanctionNo:29,
-                        adminApprovedDate:"29/05/2022",
-                        fund:"Municipal Fund",
-                        function:'City and Town Planning',
-                        budgetHead:"4123001-CWIP-Concrete Road",
-                        createdBy:"A.P.Sreenivasulu",
-                        owner:"A.P.Sreenivasulu",
-                        status:"Created",
-                        totalAmount:"Rs 10,000",
-                        actions:"Create LOI"
-                      }]}
+  const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config, bussinessService: businessServ, t });
+  // const result={data:[{subEstimateNumber:"LE/ENG/00002/10/2017-18",
+  //                       nameOfWork:"Providing CC Drain in Birla Gaddah (Tungabhaqdra workers colony) in 27th ward",
+  //                       department:"ENGINEERING",
+  //                       administrativeSanctionNo:29,
+  //                       adminApprovedDate:"29/05/2022",
+  //                       fund:"Municipal Fund",
+  //                       function:'City and Town Planning',
+  //                       budgetHead:"4123001-CWIP-Concrete Road",
+  //                       createdBy:"A.P.Sreenivasulu",
+  //                       owner:"A.P.Sreenivasulu",
+  //                       status:"Created",
+  //                       totalAmount:"Rs 10,000",
+  //                       actions:"Create LOI"
+  //                     }]}
   return (
     <Fragment>
       <Search

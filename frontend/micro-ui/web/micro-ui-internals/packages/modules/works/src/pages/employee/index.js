@@ -29,18 +29,18 @@ const BILLSBreadCrumbs = ({ location }) => {
   // };
   const crumbs = [
     {
-      path: "/digit-ui/employee",
+      path: "/works-ui/employee",
       content: t("WORKS_COMMON_WMS"),
       show: true,
     },
     {
-      path: "/digit-ui/employee/works/create-contractor",
+      path: "/works-ui/employee/works/create-contractor",
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_CONTRACTOR")}` : t("WORKS_CREATE_CONTRACTOR"),
       show: location.pathname.includes("/works/create-contractor") ? true : false,
       isBack: fromScreen && true,
     },
     {
-      path: "/digit-ui/employee/works/search-Estimate-approved",
+      path: "/works-ui/employee/works/search-Estimate-approved",
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_SEARCH_APPLICATIONS")}` : t("WORKS_SEARCH_APPLICATIONS"),
       show: location.pathname.includes("/works/search-Estimate") ? true : false,
       isBack: fromScreen && true,

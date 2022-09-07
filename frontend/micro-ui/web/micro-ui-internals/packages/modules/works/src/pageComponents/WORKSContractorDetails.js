@@ -398,7 +398,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                 className="form-field"
                 selected={getValues("Bank")}
                 disable={false}
-                option={[{label:"active",value:1},{label:"Inactive",value:2},{label:"Black listed",value:3}]}
+                option={[]}
                 errorStyle={(localFormState.touched.Bank && errors?.Bank?.message) ? true : false}
                 select={(e) => {
                   props.onChange(e);
