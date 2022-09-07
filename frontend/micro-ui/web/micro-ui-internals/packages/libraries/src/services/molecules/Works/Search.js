@@ -217,7 +217,7 @@ export const WorksSearch = {
             asSectionHeader: true,
             values: [
                 { title: "WORKS_DATE_PROPOSAL", value: estimate?.proposalDate || t("NA") },
-                { title: "WORKS_DEPT", value: estimate?.department || t("NA") },
+                { title: "WORKS_DEPARTMENT", value: estimate?.department || t("NA") },
                 { title: "WORKS_LOR", value: estimate?.requirementNumber || t("NA") },
                 { title: "WORKS_ELECTION_WARD", value: t("NA") },
                 { title: "WORKS_LOCATION", value: estimate?.location || t("NA") },
@@ -310,7 +310,7 @@ export const WorksSearch = {
                 { title: "WORKS_ESTIMATE_NO", value: estimate?.estimateNumber || t("NA") },
                 { title: "WORKS_SUB_ESTIMATE_NO", value:estimate?.estimateDetails?.estimateDetailNumber || t("NA") },
                 { title: "WORKS_NAME_OF_WORK", value: estimate?.natureOfWork || t("NA") },
-                { title: "WORKS_DEPT", value: estimate?.department || t("NA") },
+                { title: "WORKS_DEPARTMENT", value: estimate?.department || t("NA") },
                 { title: "WORKS_FILE_NO", value: loi?.fileNumber || t("NA") },
                 { title: "WORKS_FILE_DATE", value: estimate?.natureOfWork || t("NA") },
             ]

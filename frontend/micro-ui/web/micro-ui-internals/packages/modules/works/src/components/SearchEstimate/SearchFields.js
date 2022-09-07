@@ -37,7 +37,7 @@ const SearchFields = ({ register, control, reset, t }) => {
                 />
             </SearchField>
             <SearchField>
-                <label>{t("WORKS_DEPT")}</label>
+                <label>{t("WORKS_DEPARTMENT")}</label>
                 <Controller
                     control={control}
                     name="dept"
@@ -102,7 +102,7 @@ const SearchFields = ({ register, control, reset, t }) => {
                         // sortBy: "commencementDate",
                         // sortOrder: "DESC"
                     });
-                }}>{t(`WORKS_COMMON_CLEAR_SEARCH`)}</p>
+                }}>{t(`CLEAR_SEARCH_LINk`)}</p>
             </SearchField>
         </>
     )

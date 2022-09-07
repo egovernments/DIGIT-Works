@@ -110,7 +110,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
                 />
             </SearchField>
             <SearchField>
-                <label>{t("WORKS_DEPT")}</label>
+                <label>{t("WORKS_DEPARTMENT")}</label>
                 <Controller
                     control={control}
                     name="department"
