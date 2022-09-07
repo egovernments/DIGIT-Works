@@ -294,7 +294,7 @@ export const WorksSearch = {
         }
     },
     viewLOIScreen: async (t, tenantId, loiNumber,estimateNumber="") => {
-        debugger
+        // debugger
          const loiArr = await WorksSearch.searchLOI(tenantId,{loiNumber})
          const loi = loiArr?.[0]
         //const loi = sampleLOISearchResponse?.letterOfIndents?.[0]
