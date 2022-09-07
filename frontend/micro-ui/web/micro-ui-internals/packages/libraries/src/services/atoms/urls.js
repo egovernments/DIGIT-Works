@@ -35,6 +35,7 @@ const Urls = {
   works: {
     create:"/letter-of-indent/v1/_create",
     estimateSearch:"/estimate/v1/_search",
+    loiSearch:"/letter-of-indent/v1/_search",
     createEstimate:"/estimate/v1/_create"
   },
 
@@ -174,6 +175,10 @@ const Urls = {
     water_applyAdhocTax : "/ws-calculator/waterCalculator/_applyAdhocTax",
     sewerage_applyAdhocTax: "/sw-calculator/sewerageCalculator/_applyAdhocTax",
     getSearchDetails: "/inbox/v1/dss/_search",
+  },
+
+  works:{
+    estimate_search:"/estimate/v1/_search"
   },
 
   engagement: {

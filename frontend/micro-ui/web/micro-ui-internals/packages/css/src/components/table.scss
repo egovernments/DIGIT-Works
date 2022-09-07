@@ -234,3 +234,16 @@
             align-items: flex-start;
         }
 }
+
+.contractor-table{
+  border-collapse: collapse;
+  width: 100%;
+  table,
+    th,
+    td {
+        border: 1.5px solid black;
+    }
+    th {
+      background-color: #ECECEC;
+    }
+}
