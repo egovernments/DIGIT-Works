@@ -29,5 +29,17 @@ export const WorksService = {
             auth: true,
             userService: false,
             params: { tenantId, ...filters },
+        }),
+    createEstimate:(details)=>
+        Request({
+            url: Urls.works.createEstimate,
+            data:details,
+            useCache:false,
+            setTimeParam:false,
+            userService:true,
+            method:"POST",
+            params:{},
+            auth:true,
+
         })
 }
