@@ -9,13 +9,13 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   const allLinks = [
     {
       text: t("WORKS_CREATE_LOI"),
-      link: `/digit-ui/employee/works/create-loi`,
+      link: `/works-ui/employee/works/create-loi`,
       businessService: "WORKS",
       roles: [],
     },
     {
       text: "WORKS_SEARCH_LOI",
-      link: `/digit-ui/employee/works/search-loi`,
+      link: `/works-ui/employee/works/search-loi`,
       businessService: "WORKS",
       roles: [],
     },

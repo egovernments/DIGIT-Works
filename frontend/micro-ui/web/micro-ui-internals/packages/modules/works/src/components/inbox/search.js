@@ -137,14 +137,6 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
               </div>
             <TextInput onChange={(e)=>setEstimateId(e.target.value)} value={estimateId} />
             </div>
-                        {/* <Controller
-                          render={(props) => {
-                            return <TextInput onChange={props.onChange} value={props.value} />;
-                          }}
-                          // name={input.name}
-                          control={control}
-                          defaultValue={""}
-                        /> */}
             <div style={{margin:"5px"}}>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
                 {t("WORKS_DEPARTMENT")}:
@@ -161,7 +153,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
             </div>
             <div style={{margin:"5px"}}>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("WORKS_TYPE_OF_WORK")}:
+                {t("WORKS_WORK_TYPE")}:
               </div>
               <Dropdown 
                 // option={userUlbs} 
