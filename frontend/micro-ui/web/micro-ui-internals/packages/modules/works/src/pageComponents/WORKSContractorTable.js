@@ -241,7 +241,6 @@ const WORKSContractorTable = () => {
           }
           return e
       })
-    console.log(updatedState)
     setRows(prev => updatedState)
     }
     // useEffect(() => {

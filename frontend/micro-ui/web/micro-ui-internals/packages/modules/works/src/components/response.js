@@ -3,8 +3,9 @@ import { useQueryClient } from "react-query";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { CreateEstimateIcon } from "@egovernments/digit-ui-react-components";
+import { CreateEstimateIcon,DownloadIcon } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
+import getPDFData from "../utils/getWorksAcknowledgementData"
 
 // state = {
 //     header,idText,id,message,links
@@ -28,6 +29,15 @@ const state = {
 const Response = (props) => {
     const history = useHistory()
     const {t} = useTranslation()
+    const tenantInfo = Digit.ULBService.getCurrentTenantId();
+    let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t);
+
+    const handleDownloadPdf=()=>{
+      let result = applicationDetails;
+      const PDFdata = getPDFData({...result },tenantInfo, t);
+      PDFdata.then((ress) => Digit.Utils.pdf.generatev1(ress));
+    };
+  
     
     //get all the required data from the state while doing history.push
   return (
@@ -54,14 +64,21 @@ const Response = (props) => {
                   : null} */}
                   {t(state.message)}
           </CardText>
-          <div style={{"display":"flex","justifyContent":"flex-end"}}>
-                  {state.links.map(link => (
-                      <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={()=> {
-                        history.push(link.redirectUrl)
-                      }}>
-                          <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
-                    </div>
-                  ))}
+          <div style={{"display":"flex","justifyContent":"space-between"}}>
+
+              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} 
+                    onClick={handleDownloadPdf}>
+                    <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t("Download")}</p>
+              </div>
+
+              {state.links.map(link => (
+                <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={()=> {
+                    history.push(link.redirectUrl)
+                  }}>
+                      <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
+                </div>
+              ))}
+              
           </div>
           <ActionBar>
               <Link to={"/digit-ui/employee"}>

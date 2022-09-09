@@ -15,13 +15,13 @@ const InboxLinks = ({ parentRoute, businessService }) => {
     // },
     {
       text: t("WORKS_CREATE_ESTIMATE"),
-      link: `/digit-ui/employee/works/create-estimate`,
+      link: `/works-ui/employee/works/create-estimate`,
       businessService: "WORKS",
       roles: [],
     },
     {
       text: "WORKS_SEARCH_EST",
-      link: `/digit-ui/employee/works/search-Estimate`,
+      link: `/works-ui/employee/works/search-Estimate`,
       businessService: "WORKS",
       roles: [],
     },

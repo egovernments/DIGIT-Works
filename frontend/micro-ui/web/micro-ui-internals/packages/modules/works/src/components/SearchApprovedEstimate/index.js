@@ -71,7 +71,6 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
         accessor: "connectionNo",
         Cell: ({ row }) =>{
           let service = "WORKS";
-          console.log(row)
           return(
             <div>
               {row.original?.subEstimateNumber ? (
@@ -149,7 +148,6 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
         disableSortBy: true,
         Cell: ({ row }) =>{
           let service = "WORKS";
-          console.log(row)
           return(
             <div>
               {row.original?.actions ? (
