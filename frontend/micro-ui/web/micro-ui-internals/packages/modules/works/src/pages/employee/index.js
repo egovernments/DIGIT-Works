@@ -30,7 +30,7 @@ const BILLSBreadCrumbs = ({ location }) => {
   const crumbs = [
     {
       path: "/works-ui/employee",
-      content: t("WORKS_COMMON_WMS"),
+      content: t("WORKS_WMS"),
       show: true,
     },
     {

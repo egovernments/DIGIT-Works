@@ -31,7 +31,40 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
   const formValue = watch();
   const { errors } = localFormState;
   const [isErrors, setIsErrors] = useState(false);
-
+  const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
+    "pb",
+    "finance",
+    [
+        {
+            "name": "Bank"
+        }
+    ]
+    );
+    if(data?.finance){
+      var { Bank } = data?.finance
+    }
+  const exemptedFromULB=[
+      {
+        name:"Income tax", code:'Income tax', active:true
+      },
+      {
+        name:"Earnest money deposit (EMD)", code:'Earnest money deposit (EMD)', active:true
+      },
+      {
+        name:"VAT", code:'VAT', active:true
+      },
+  ]  
+  const dummyData=[
+    {
+      name: 'Burhan', code: 'Burhan', active: true
+    },
+    {
+      name: 'Jagan', code: 'Jagan', active: true
+    },
+    {
+      name: 'Nipun', code: 'Nipun', active: true
+    }
+  ]
   useEffect(() => {
     if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) {
       setError(config.key, { type: errors });
@@ -108,7 +141,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
                 control={control}
                 name="Name"
                 defaultValue={contractorDetails.contractorName}
-                rules={{ required: t("REQUIRED_FIELD"), validate: {
+                rules={{ required: t("WORKS_REQUIRED_ERR"), validate: {
                   pattern: (v) => (/^[a-zA-Z\s]+$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                 } }}
                 render={(props) => (
@@ -215,7 +248,7 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched?.contactPerson ? errors?.contactPerson?.message : ""}</CardLabelError>
           <LabelFieldPair>
-          <CardLabel style={CardLabelStyle} className="card-label-smaller">{t("CORE_COMMON_EMAIL")}</CardLabel>
+          <CardLabel style={CardLabelStyle} className="card-label-smaller">{t("WORKS_EMAIL")}</CardLabel>
           <div className="field">
             <Controller
               control={control}
@@ -391,22 +424,18 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
             control={control}
             name={"Bank"}
             defaultValue={contractorDetails.bankName}
-            rules={{ required: t("REQUIRED_FIELD") }}
+            rules={{ required: t("WORKS_REQUIRED_ERR") }}
             isMandatory={true}
             render={(props) => (
               <Dropdown
-                className="form-field"
-                selected={getValues("Bank")}
-                disable={false}
-                option={[]}
-                errorStyle={(localFormState.touched.Bank && errors?.Bank?.message) ? true : false}
-                select={(e) => {
-                  props.onChange(e);
-                }}
-                optionKey="i18nKey"
-                onBlur={props.onBlur}
-                t={t}
-              />
+                  className="form-field"
+                  option={Bank}
+                  selected={props?.value}
+                  optionKey={"name"}
+                  t={t}
+                  select={props?.onChange}
+                  onBlur={props.onBlur}
+                />
             )}
           />
           </LabelFieldPair>
@@ -417,22 +446,18 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
             control={control}
             name={"IFSCCode"}
             defaultValue={contractorDetails.IFSCCode}
-            rules={{ required: t("REQUIRED_FIELD") }}
+            rules={{ required: t("WORKS_REQUIRED_ERR") }}
             isMandatory={true}
             render={(props) => (
               <Dropdown
-                className="form-field"
-                selected={getValues("IFSCCode")}
-                disable={false}
-                option={[]}
-                errorStyle={(localFormState.touched.IFSCCode && errors?.relationship?.IFSCCode) ? true : false}
-                select={(e) => {
-                  props.onChange(e);
-                }}
-                optionKey="i18nKey"
-                onBlur={props.onBlur}
-                t={t}
-              />
+                  className="form-field"
+                  option={dummyData}
+                  selected={props?.value}
+                  optionKey={"name"}
+                  t={t}
+                  select={props?.onChange}
+                  onBlur={props.onBlur}
+                />
             )}
           />
           </LabelFieldPair>
@@ -502,16 +527,12 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
             render={(props) => (
               <Dropdown
                 className="form-field"
-                selected={getValues("exemptedFrom")}
-                disable={false}
-                option={[]}
-                errorStyle={(localFormState.touched.exemptedFrom && errors?.exemptedFrom?.message) ? true : false}
-                select={(e) => {
-                  props.onChange(e);
-                }}
-                optionKey="i18nKey"
-                onBlur={props.onBlur}
+                option={exemptedFromULB}
+                selected={props?.value}
+                optionKey={"name"}
                 t={t}
+                select={props?.onChange}
+                onBlur={props.onBlur}
               />
             )}
           />

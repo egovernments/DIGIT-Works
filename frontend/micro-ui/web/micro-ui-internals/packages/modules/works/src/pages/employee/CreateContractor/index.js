@@ -13,13 +13,13 @@ const NewApplication = () => {
   const [canSubmit, setSubmitValve] = useState(false);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [showToast, setShowToast] = useState(null);
-  const [config, setConfig] = useState({head: "WORKS_APP_FOR_CREATE_CONTRACTOR",
+  const [config, setConfig] = useState({head: "WORKS_CREATE_CONTRACTOR",
   key: "ContractorDetails",
   isCreate: true,
   hideInCitizen: true,
   body: [
     {
-      head: "WORKS_APP_FOR_CREATE_CONTRACTOR",
+      head: "WORKS_CREATE_CONTRACTOR",
       key: "CreateContractor",
       isCreate: true,
       hideInCitizen: true,
@@ -61,7 +61,7 @@ const NewApplication = () => {
 
   useEffect(() => {
     const config = newConfigLocal.find((conf) => conf.hideInCitizen && conf.isCreate);
-    config.head = "WORKS_APP_FOR_CREATE_CONTRACTOR";
+    config.head = "WORKS_CREATE_CONTRACTOR";
     let bodyDetails = [];
     config?.body?.forEach(data => { if(data?.isCreateContracte) bodyDetails.push(data); })
     config.body = bodyDetails;
@@ -118,7 +118,7 @@ const NewApplication = () => {
         userType={"employee"}
         onFormValueChange={onFormValueChange}
         // isDisabled={!canSubmit}
-        label={t("CREATE_CONTRACTOR_RECORD")}
+        label={t("WORKS_CREATE_CONTRACTOR")}
         onSubmit={!onSubmit}
         defaultValues={sessionFormData}
       ></FormComposer>
