@@ -1,6 +1,7 @@
 package org.egov.works.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
@@ -68,7 +69,7 @@ public class MDMSUtils {
 
         ModuleDetail estimateWorksModuleDetail = getWorksModuleRequestData(request);
         ModuleDetail estimateFinanceModuleDetail = getFinanceModuleRequestData(request);
-        // ModuleDetail estimateLocationModuleDetail = getLocationModuleRequestData(request);
+        //ModuleDetail estimateLocationModuleDetail = getLocationModuleRequestData(request);
         ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(request);
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
@@ -76,6 +77,11 @@ public class MDMSUtils {
         moduleDetails.add(estimateFinanceModuleDetail);
         //moduleDetails.add(estimateLocationModuleDetail);
         moduleDetails.add(estimateTenantModuleDetail);
+
+        //split the tenantId
+        if(StringUtils.isNotBlank(tenantId)){
+            tenantId = tenantId.split("\\.")[0];
+        }
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
