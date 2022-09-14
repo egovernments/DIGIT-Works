@@ -216,8 +216,8 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FINALIZED_PER`)}:*`}</CardLabel>
                     <div className='field'>
                         <div className='percent-input'>
-                            <button onClick={convertToPositive} style={{ "height": "40px", "width": "40px" }}><AddIcon fill={"#F47738"} styles={{ "display": "revert" }} /></button>
-                            <button onClick={convertToNegative} style={{ "height": "40px", "width": "40px" }}><SubtractIcon fill={"#AFA8A4"} styles={{ "display": "revert", "marginTop": "7px" }} /></button>
+                            <button type="button" onClick={convertToPositive} style={{ "height": "40px", "width": "40px" }}><AddIcon fill={"#F47738"} styles={{ "display": "revert" }} /></button>
+                            <button type="button" onClick={convertToNegative} style={{ "height": "40px", "width": "40px" }}><SubtractIcon fill={"#AFA8A4"} styles={{ "display": "revert", "marginTop": "7px" }} /></button>
                             <TextInput name="negotiatedPercentage" type="number" inputRef={register({ validate: value => parseInt(value) >= -100 && parseInt(value) <= 100, required: true })} />
                             <div className="tooltip" style={{ "margin": "8px -30px 10px 10px" }}>
                                 <InfoBannerIcon fill="#0b0c0c" />
