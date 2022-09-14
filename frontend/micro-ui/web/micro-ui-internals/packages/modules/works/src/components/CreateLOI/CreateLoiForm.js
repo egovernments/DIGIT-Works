@@ -6,7 +6,7 @@ import ProcessingModal from '../Modal/ProcessingModal';
 
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
-const CreateLoiForm = ({onFormSubmit}) => {
+const CreateLoiForm = ({ onFormSubmit }) => {
     const handleCreateClick = async (e) => {
         //debugger
         // const result = await trigger(["lor", "fileno", "dlperiod", "fromDate", "aggDate", "agencyname", "officerInChargedesig","officerIncharge","work"])
@@ -53,24 +53,24 @@ const CreateLoiForm = ({onFormSubmit}) => {
         "fileDate": "2022-12-31",
         "agreementDate": "2021-12-31",
         "agencyName": {
-            "name": "Vipul"
+            "name": "agency1"
         },
         "officerInChargedesig": {
-            "name": "Shaifali"
+            "name": "d1"
         },
         "officerIncharge": {
-            "name": "Nipun"
+            "name": "officer2"
         },
         "uploads": [],
         "comments": "jksdf",
         "appDept": {
-            "name": "Nipun"
+            "name": "deptOfEngg"
         },
         "appDesig": {
-            "name": "Shaifali"
+            "name": "junior engg"
         },
         "app": {
-            "name": "Nipun"
+            "name": "officer2"
         }
     }
     const { t } = useTranslation()
@@ -80,6 +80,7 @@ const CreateLoiForm = ({onFormSubmit}) => {
         control,
         watch,
         setValue,
+        getValues,
         unregister,
         handleSubmit,
         formState: { errors, ...rest },
@@ -91,23 +92,16 @@ const CreateLoiForm = ({onFormSubmit}) => {
         mode: "onSubmit"
     });
 
-    const dummyData = [
-        {
-            name: "Nipun"
-        },
-        {
-            name: "Vipul"
-        },
-        {
-            name: "Shaifali"
-        },
-        {
-            name: "Amit"
-        },
-        {
-            name: "Sumit"
-        },
-    ]
+    const dummyData = {
+        agencyName: [
+            { name: "agency1" }, { name: "agency2" }, { name: "agency3" }
+        ],
+        designation: [{ name: "d1" }, { name: "d2" }, { name: "d3" }],
+        nameOfOfficer: [{ name: "officer1" }, { name: "officer2" }, { name: "officer3" }, {
+            name: "officer4"
+        }],
+
+    }
 
     // const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
     //     "pb",
@@ -128,6 +122,22 @@ const CreateLoiForm = ({onFormSubmit}) => {
     const checkKeyDown = (e) => {
         if (e.code === 'Enter') e.preventDefault();
     };
+    const convertToNegative = (e) => {
+        
+        const aggrementAmount = 100
+        const value = getValues("negotiatedPercentage")
+        const result =  aggrementAmount - ((Math.abs(parseInt(value))*aggrementAmount)/100)
+        setValue('negotiatedPercentage', `-${Math.abs(value)}`, { shouldValidate: true })
+        setValue('aggrementAmount', result, { shouldValidate: true })
+    }
+    const convertToPositive = (e) => {
+        
+        const aggrementAmount = 100
+        const value = getValues("negotiatedPercentage")
+        const result = aggrementAmount + ((Math.abs(parseInt(value)) * aggrementAmount) / 100)
+        setValue('negotiatedPercentage', Math.abs(value) , { shouldValidate: true })
+        setValue('aggrementAmount', result, { shouldValidate: true })
+    }
     return (
         <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
             <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_LOI")}</Header>
@@ -200,14 +210,14 @@ const CreateLoiForm = ({onFormSubmit}) => {
 
                 <CardSectionHeader >{t(`WORKS_FINANCIAL_DETAILS`)}</CardSectionHeader>
                 <StatusTable>
-                    <Row label={`${t("WORKS_ESTIMATED_AMT")}:`} text={"NA"} />
+                    <Row label={`${t("WORKS_ESTIMATED_AMT")}:`} text={"100"} />
                 </StatusTable>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FINALIZED_PER`)}:*`}</CardLabel>
                     <div className='field'>
                         <div className='percent-input'>
-                            <button style={{ "height": "40px", "width": "40px" }}><AddIcon fill={"#F47738"} styles={{ "display": "revert" }} /></button>
-                            <button style={{ "height": "40px", "width": "40px" }}><SubtractIcon fill={"#AFA8A4"} styles={{ "display": "revert", "marginTop": "7px" }} /></button>
+                            <button onClick={convertToPositive} style={{ "height": "40px", "width": "40px" }}><AddIcon fill={"#F47738"} styles={{ "display": "revert" }} /></button>
+                            <button onClick={convertToNegative} style={{ "height": "40px", "width": "40px" }}><SubtractIcon fill={"#AFA8A4"} styles={{ "display": "revert", "marginTop": "7px" }} /></button>
                             <TextInput name="negotiatedPercentage" type="number" inputRef={register({ validate: value => parseInt(value) >= -100 && parseInt(value) <= 100, required: true })} />
                             <div className="tooltip" style={{ "margin": "8px -30px 10px 10px" }}>
                                 <InfoBannerIcon fill="#0b0c0c" />
@@ -256,7 +266,7 @@ const CreateLoiForm = ({onFormSubmit}) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-                                        option={dummyData}
+                                        option={dummyData.agencyName}
                                         selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
@@ -345,7 +355,7 @@ const CreateLoiForm = ({onFormSubmit}) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-                                        option={dummyData}
+                                        option={dummyData.designation}
                                         selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
@@ -371,7 +381,7 @@ const CreateLoiForm = ({onFormSubmit}) => {
                                 return (
                                     <Dropdown
                                         onBlur={props.onBlur}
-                                        option={dummyData}
+                                        option={dummyData.nameOfOfficer}
                                         selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
