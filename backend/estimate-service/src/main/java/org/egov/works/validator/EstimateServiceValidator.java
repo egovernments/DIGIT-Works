@@ -6,10 +6,9 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.egov.works.web.models.Estimate;
-import org.egov.works.web.models.EstimateDetail;
-import org.egov.works.web.models.EstimateRequest;
-import org.egov.works.web.models.EstimateRequestWorkflow;
+import org.egov.works.util.MDMSUtils;
+import org.egov.works.web.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -23,12 +22,23 @@ import static org.egov.works.util.EstimateServiceConstant.*;
 @Slf4j
 public class EstimateServiceValidator {
 
-    public void validateCreateEstimate(EstimateRequest request, Object mdmsData) {
+    @Autowired
+    private MDMSUtils mdmsUtils;
+
+    public void validateCreateEstimate(EstimateRequest request) {
         Map<String, String> errorMap = new HashMap<>();
         validateRequestInfo(request.getRequestInfo(), errorMap);
         validateEstimate(request.getEstimate(), errorMap);
         validateWorkFlow(request.getWorkflow(), errorMap);
+
+        String tenantId = request.getEstimate().getTenantId();
+        //split the tenantId
+        tenantId = tenantId.split("\\.")[0];
+
+        Object mdmsData = mdmsUtils.mDMSCall(request, tenantId);
+
         validateMDMSData(request.getEstimate(), mdmsData, errorMap);
+        //validateLocationData(request.getEstimate(), errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -69,7 +79,7 @@ public class EstimateServiceValidator {
             errorMap.put("WORK_CATEGORY", "Work category is mandatory");
         }
 
-        if (StringUtils.isBlank(estimate.getBeneficiary())) {
+        if (StringUtils.isBlank(estimate.getBeneficiaryType())) {
             errorMap.put("BENEFICIARY", "Beneficiary is mandatory");
         }
         if (StringUtils.isBlank(estimate.getNatureOfWork())) {
@@ -94,10 +104,10 @@ public class EstimateServiceValidator {
         if (estimateDetails != null && !estimateDetails.isEmpty()) {
             for (EstimateDetail estimateDetail : estimateDetails) {
                 if (StringUtils.isBlank(estimateDetail.getName())) {
-                    errorMap.put("ESTIMATEDETAIL.NAME", "Estimate detail's name is mandatory");
+                    errorMap.put("ESTIMATE.DETAIL.NAME", "Estimate detail's name is mandatory");
                 }
                 if (estimateDetail.getAmount() == null) {
-                    errorMap.put("ESTIMATEDETAIL.AMOUNT", "Estimate detail's amount is mandatory");
+                    errorMap.put("ESTIMATE.DETAIL.AMOUNT", "Estimate detail's amount is mandatory");
                 }
             }
         }
@@ -168,16 +178,15 @@ public class EstimateServiceValidator {
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
             subTypeOfWorkRes = JsonPath.read(mdmsData, jsonPathForWorksSubTypeOfWork);
             financeBudgetHeadRes = JsonPath.read(mdmsData, jsonPathForFinanceBudgetHead);
-
-
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
         }
 
         if (CollectionUtils.isEmpty(deptRes))
             errorMap.put("INVALID_DEPARTMENT_CODE", "The department code: " + estimate.getDepartment() + " is not present in MDMS");
         if (CollectionUtils.isEmpty(beneficiaryTypeRes))
-            errorMap.put("INVALID_BENEFICIARY_TYPE", "The beneficiary Type: " + estimate.getBeneficiary() + " is not present in MDMS");
+            errorMap.put("INVALID_BENEFICIARY_TYPE", "The beneficiary Type: " + estimate.getBeneficiaryType() + " is not present in MDMS");
         if (CollectionUtils.isEmpty(entrustmentModeRes))
             errorMap.put("INVALID_ENTRUSTMENT_MODE", "The entrustment mode: " + estimate.getEntrustmentMode() + " is not present in MDMS");
         if (CollectionUtils.isEmpty(typeOfWorkRes))
@@ -201,5 +210,14 @@ public class EstimateServiceValidator {
 
         if (CollectionUtils.isEmpty(tenantRes))
             errorMap.put("INVALID_TENANT", "The tenant: " + estimate.getTenantId() + " is not present in MDMS");
+    }
+
+    public void validateSearchEstimate(EstimateSearchRequest searchRequest) {
+        if (searchRequest == null && searchRequest.getSearchCriteria() == null) {
+            throw new CustomException("ESTIMATE", "Estimate is mandatory");
+        }
+        if (StringUtils.isBlank(searchRequest.getSearchCriteria().getTenantId())) {
+            throw new CustomException("TENANT_ID", "Tenant is is mandatory");
+        }
     }
 }

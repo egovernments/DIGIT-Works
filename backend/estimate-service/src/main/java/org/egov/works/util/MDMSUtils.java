@@ -1,7 +1,6 @@
 package org.egov.works.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
@@ -46,11 +45,11 @@ public class MDMSUtils {
      * Calls MDMS service to fetch works master data
      *
      * @param request
+     * @param tenantId
      * @return
      */
-    public Object mDMSCall(EstimateRequest request) {
+    public Object mDMSCall(EstimateRequest request, String tenantId) {
         RequestInfo requestInfo = request.getRequestInfo();
-        String tenantId = request.getEstimate().getTenantId();
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId, request);
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
         return result;
@@ -69,19 +68,12 @@ public class MDMSUtils {
 
         ModuleDetail estimateWorksModuleDetail = getWorksModuleRequestData(request);
         ModuleDetail estimateFinanceModuleDetail = getFinanceModuleRequestData(request);
-        //ModuleDetail estimateLocationModuleDetail = getLocationModuleRequestData(request);
         ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(request);
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(estimateWorksModuleDetail);
         moduleDetails.add(estimateFinanceModuleDetail);
-        //moduleDetails.add(estimateLocationModuleDetail);
         moduleDetails.add(estimateTenantModuleDetail);
-
-        //split the tenantId
-        if(StringUtils.isNotBlank(tenantId)){
-            tenantId = tenantId.split("\\.")[0];
-        }
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
@@ -104,11 +96,6 @@ public class MDMSUtils {
                 .moduleName(MDMS_TENANT_MODULE_NAME).build();
 
         return estimateTenantModuleDetail;
-    }
-
-    //TODO
-    private ModuleDetail getLocationModuleRequestData(EstimateRequest request) {
-        return null;
     }
 
     private ModuleDetail getFinanceModuleRequestData(EstimateRequest request) {
@@ -148,7 +135,7 @@ public class MDMSUtils {
         List<MasterDetail> estimateWorksMasterDetails = new ArrayList<>();
 
         MasterDetail beneficiaryMasterDetails = MasterDetail.builder().name(MASTER_BENEFICIART_TYPE)
-                .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getBeneficiary())).build();
+                .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getBeneficiaryType())).build();
 
         MasterDetail departmentMasterDetails = MasterDetail.builder().name(MASTER_DEPARTMENT)
                 .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getDepartment())).build();

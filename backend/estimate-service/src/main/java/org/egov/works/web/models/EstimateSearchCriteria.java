@@ -28,8 +28,8 @@ public class EstimateSearchCriteria {
     @JsonProperty("estimateNumber")//called as 'applicationNumber'
     private String estimateNumber = null;
 
-    @JsonProperty("applicationStatus")
-    private String applicationStatus = null;
+    @JsonProperty("estimateStatus")
+    private String estimateStatus = null;
 
     @JsonProperty("fromProposalDate")
     private BigDecimal fromProposalDate = null;
@@ -43,8 +43,8 @@ public class EstimateSearchCriteria {
     @JsonProperty("typeOfWork")
     private String typeOfWork = null;
 
-    @JsonProperty("estimateType")
-    private String estimateType = null;//what is the estimate type
+//    @JsonProperty("estimateType")
+//    private String estimateType = null;//what is the estimate type
 
     @JsonProperty("sortBy")
     private SortBy sortBy;
@@ -62,7 +62,7 @@ public class EstimateSearchCriteria {
         typeOfWork,
         department,
         proposalDate,
-        applicationStatus,
+        estimateStatus,
         createdTime
     }
 
