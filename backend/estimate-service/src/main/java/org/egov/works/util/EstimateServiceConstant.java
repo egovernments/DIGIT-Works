@@ -6,6 +6,8 @@ public class EstimateServiceConstant {
     public static final String MDMS_WORKS_MODULE_NAME = "works";
     public static final String MDMS_TENANT_MODULE_NAME = "tenant";
     public static final String MDMS_FINANCE_MODULE_NAME = "finance";
+    public static final String MDMS_LOCATION_MODULE_NAME = "egov-location";
+
 
     //Masters
     public static final String MASTER_BENEFICIART_TYPE = "BeneficiaryType";
@@ -19,4 +21,11 @@ public class EstimateServiceConstant {
     public static final String MASTER_FUNCTIONS = "Functions";
     public static final String MASTER_BUDGET_HEAD = "BudgetHead";
     public static final String MASTER_SCHEME = "Scheme";
+
+    public static final String MASTER_LOCATION = "TenantBoundary";
+
+    //
+    public static final String ESTIMATE_BUSINESSSERVICE = "estimate";
+    public static final String ESTIMATE_MODULE_NAME = "estimate";
+
 }
