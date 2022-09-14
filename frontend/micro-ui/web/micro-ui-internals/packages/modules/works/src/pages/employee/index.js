@@ -10,7 +10,7 @@ import CreateEstimate from "./Estimate/CreateEstimate";
 import ViewEstimate from "./Estimate/ViewEstimate";
 import ViewLOI from "./LOI/ViewLOI";
 import SearchApprovedSubEstimate from "../employee/SearchApprovedSubEstimate"
-import Response from "../../components/Response";
+import Response from "../../components/response";
 import Inbox from "./Inbox";
 import LOIInbox from "./LOIInbox";
 
