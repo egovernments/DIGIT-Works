@@ -4,39 +4,40 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { CreateEstimateIcon,DownloadIcon } from "@egovernments/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+import { useHistory,useLocation } from "react-router-dom";
 import getPDFData from "../utils/getWorksAcknowledgementData"
 
 // state = {
 //     header,idText,id,message,links
 // }
 
-const state = {
-    header:"Estimate Created and Forwarded Successfully",
-    id:"EP/ENG/00001/07/2021-22",
-    info:"Estimate ID",
-    message:"A new Estimate has been created successfully and forwarded to Designation or the <Department>  Department for processing.",
-    links:[
-        {
-            name:"Create new Estimate",
-            redirectUrl:"/digit-ui/employee/works/create-estimate",
-            code:"",
-            svg:"CreateEstimateIcon"
-        }
-    ]
-
-}
+// const state = {
+//     header:"Estimate Created and Forwarded Successfully",
+//     id:"EP/ENG/00001/07/2021-22",
+//     info:"Estimate ID",
+//     message:"A new Estimate has been created successfully and forwarded to Designation or the <Department>  Department for processing.",
+//     links:[
+//         {
+//             name:"Create new Estimate",
+//             redirectUrl:"/digit-ui/employee/works/create-estimate",
+//             code:"",
+//             svg:"CreateEstimateIcon"
+//         }
+//     ]
+// }
 const Response = (props) => {
+    debugger
+    const {state}  = useLocation()
     const history = useHistory()
     const {t} = useTranslation()
     const tenantInfo = Digit.ULBService.getCurrentTenantId();
     let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t);
 
-    const handleDownloadPdf=()=>{
-      let result = applicationDetails;
-      const PDFdata = getPDFData({...result },tenantInfo, t);
-      PDFdata.then((ress) => Digit.Utils.pdf.generatev1(ress));
-    };
+    // const handleDownloadPdf=()=>{
+    //   let result = applicationDetails;
+    //   const PDFdata = getPDFData({...result },tenantInfo, t);
+    //   PDFdata.then((ress) => Digit.Utils.pdf.generatev1(ress));
+    // };
   
     
     //get all the required data from the state while doing history.push
@@ -64,12 +65,12 @@ const Response = (props) => {
                   : null} */}
                   {t(state.message)}
           </CardText>
-          <div style={{"display":"flex","justifyContent":"space-between"}}>
+          <div style={{"display":"flex","justifyContent":"space-between","flexDirection":"column","alignItems":"flex-end"}}>
 
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} 
+              {/* <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} 
                     onClick={handleDownloadPdf}>
                     <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t("Download")}</p>
-              </div>
+              </div> */}
 
               {state.links.map(link => (
                 <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={()=> {
@@ -81,7 +82,7 @@ const Response = (props) => {
               
           </div>
           <ActionBar>
-              <Link to={"/digit-ui/employee"}>
+              <Link to={`/${window.contextPath}/employee`}>
                   <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
               </Link>
           </ActionBar>
