@@ -39,18 +39,20 @@ export const WorksService = {
             setTimeParam:false,
             userService:true,
             method:"POST",
-            params:{},
+            // params:{},
             auth:true,
 
         }),
-    approvedEstimateSearch:({ tenantId, filters })=>
+    approvedEstimateSearch:(details)=>
          Request({
             //update URL for Approved Estimate Search
             url: Urls.works.approvedEstimateSearch,
-            useCache: false,
-            method: "POST",
-            auth: true,
-            userService: false,
-            params: { tenantId, ...filters }
+            data:details,
+            useCache:false,
+            setTimeParam:false,
+            userService:true,
+            method:"POST",
+            // params:{},
+            auth:true,
         })
 }

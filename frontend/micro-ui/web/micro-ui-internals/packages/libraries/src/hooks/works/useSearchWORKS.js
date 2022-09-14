@@ -1,11 +1,9 @@
-import { useQuery } from "react-query";
+import { useQuery,useMutation } from "react-query";
 import { WorksService } from "../../services/elements/Works";
 
-const useSearchWORKS=({ tenantId, filters, config = {} })=>
-    useQuery(["WORKS_ESTIMATE_SEARCH", tenantId, ...Object.keys(filters)?.map((e) => filters?.[e])],
-    async()=>await WorksService.approvedEstimateSearch({tenantId,filters}),
-    {
-        ...config
-    })
+const useSearchWORKS=(businessService = "WORKS")=>{
+    return useMutation((data)=>WorksService.approvedEstimateSearch(data,businessService));
+}
+
 
 export default useSearchWORKS; 

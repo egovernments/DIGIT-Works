@@ -9,7 +9,7 @@ export const createEstimatePayload =(data)=>{
         "department": data?.department?.code,
         "location": data?.location.code,
         "workCategory": "Engineering",
-        "beneficiary": data?.beneficiaryType.code,
+        "beneficiaryType": data?.beneficiaryType.code,
         "natureOfWork": data?.natureOfWork.code,
         "typeOfWork": data?.typeOfWork?.code,
         "subTypeOfWork": data?.subTypeOfWork?.code,

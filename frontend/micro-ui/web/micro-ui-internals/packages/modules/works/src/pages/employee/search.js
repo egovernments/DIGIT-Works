@@ -1,48 +1,51 @@
 import React, { useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Toast } from "@egovernments/digit-ui-react-components";
+import { searchEstimatePayload } from "../../utils/searchEstimatePayload";
 
 const Search = ({ path }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const [payload, setPayload] = useState({});
   const Search = Digit.ComponentRegistryService.getComponent("SearchEstimate");
-  // const [businessServ, setBusinessServ] = useState("");
-  const getUrlPathName = window.location.pathname;
-  const checkPathName = getUrlPathName.includes("works/search-Estimate");
-  const businessServ = checkPathName ? "WORKS" : "";
   const [showToast, setShowToast] = useState(null);
+  const [result,setResult]=useState({})
 
-  function onSubmit(_data) {
-    console.log("search Data",_data)
-    if(_data.adminSanctionNumber==="" && _data.estimateNumber==="" && _data.subEstimateNumber==="" && !_data.department && !_data.fromProposalDate && !_data.toProposalDate ){
+  const {mutate:searchEstimateMutation}=Digit.Hooks.works.useSearchWORKS();
+  
+  const onSubmit=async(_data)=> {
+    var fromProposalDate = new Date(_data?.fromProposalDate);
+        fromProposalDate?.setSeconds(fromProposalDate?.getSeconds() - 19800);
+    var toProposalDate = new Date(_data?.toProposalDate);
+        toProposalDate?.setSeconds(toProposalDate?.getSeconds() + 86399 - 19800);
+    const data = {
+      ..._data,
+      ...(_data.toDate ? { toDate: toDate?.getTime() } : {}),
+      ...(_data.fromProposalDate ? { fromProposalDate: fromProposalDate?.getTime() } : {}),
+    };
+
+    if(data.adminSanctionNumber==="" && data.estimateNumber==="" && data.subEstimateNumber==="" && !data.department && !data.fromProposalDate && !data.toProposalDate ){
       setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
       setTimeout(() => {
         setShowToast(false);
       }, 3000);
       return
     }
-    var fromDate = new Date(_data?.fromDate);
-    fromDate?.setSeconds(fromDate?.getSeconds() - 19800);
-    var toDate = new Date(_data?.toDate);
-    toDate?.setSeconds(toDate?.getSeconds() + 86399 - 19800);
-    const data = {
-      ..._data,
-      ...(_data.toDate ? { toDate: toDate?.getTime() } : {}),
-      ...(_data.fromDate ? { fromDate: fromDate?.getTime() } : {}),
-    };
-    setPayload(
-      Object.keys(data)
-        .filter((k) => data[k])
-        .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {})
-    );
-  }
 
-  const config = {
-    enabled: !!(payload && Object.keys(payload).length > 0),
-  };
-  //API Call
-  const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
+    const payload=searchEstimatePayload(data)
+    const searchCriteria={searchCriteria:payload}
+      await searchEstimateMutation(searchCriteria,{
+        onError:(error,variables)=>{
+          console.log(error)
+            setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+            setTimeout(() => {
+              setShowToast(false);
+            }, 5000);
+          },
+        onSuccess:async (responseData,variables)=>{
+          setResult(responseData)
+          }   
+        })
+    }  
   // const result={data:[{subEstimateNumber:"LE/ENG/00002/10/2017-18",
   //                       nameOfWork:"Providing CC Drain in Birla Gaddah (Tungabhaqdra workers colony) in 27th ward",
   //                       department:"ENGINEERING",
@@ -63,10 +66,9 @@ const Search = ({ path }) => {
         t={t}
         tenantId={tenantId}
         onSubmit={onSubmit}
-        data={result?.data ? result?.data : { display: "ES_COMMON_NO_DATA" }}
+        data={result?.estimates ? result?.estimates : { display: "ES_COMMON_NO_DATA" }}
         count={result?.count}
         resultOk={!result?.isLoading}
-        businessService={businessServ}
       />
       {showToast && (
         <Toast
