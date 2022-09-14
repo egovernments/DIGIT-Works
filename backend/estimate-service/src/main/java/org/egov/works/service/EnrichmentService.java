@@ -38,15 +38,17 @@ public class EnrichmentService {
         estimate.setAuditDetails(auditDetails);
         estimate.setId(UUID.randomUUID());
 
-        List<String> estimateNumbers = getIdList(requestInfo, estimate.getTenantId()
+        String tenantId = estimate.getTenantId().split("\\.")[0];
+
+        List<String> estimateNumbers = getIdList(requestInfo, tenantId
                 , config.getIdgenEstimateNumberName(), config.getIdgenEstimateNumberFormat(), 1);
 
-        if (estimateNumbers != null && !estimateDetails.isEmpty()) {
+        if (estimateNumbers != null && !estimateNumbers.isEmpty()) {
             estimate.setEstimateNumber(estimateNumbers.get(0));
         }
 
         if (estimateDetails != null && !estimateDetails.isEmpty()) {
-            List<String> estimateDetailNumbers = getIdList(requestInfo, estimate.getTenantId()
+            List<String> estimateDetailNumbers = getIdList(requestInfo, tenantId
                     , config.getIdgenSubEstimateNumberName(), config.getIdgenSubEstimateNumberFormat(), estimateDetails.size());
             for (int i = 0; i < estimateDetails.size(); i++) {
                 estimateDetails.get(0).setId(UUID.randomUUID());
