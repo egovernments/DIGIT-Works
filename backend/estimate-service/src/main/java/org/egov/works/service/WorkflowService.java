@@ -11,7 +11,6 @@ import org.egov.works.repository.ServiceRequestRepository;
 import org.egov.works.web.models.Estimate;
 import org.egov.works.web.models.EstimateRequest;
 import org.egov.works.web.models.EstimateRequestWorkflow;
-import org.egov.works.web.models.EstimateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -41,7 +40,8 @@ public class WorkflowService {
      */
     public BusinessService getBusinessService(EstimateRequest estimateRequest) {
         String tenantId = estimateRequest.getEstimate().getTenantId();
-        StringBuilder url = getSearchURLWithParams(tenantId, ESTIMATE_BUSINESSSERVICE);
+        String rootTenantId = tenantId.split("\\.")[0];
+        StringBuilder url = getSearchURLWithParams(rootTenantId, ESTIMATE_BUSINESSSERVICE);
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
         Object result = repository.fetchResult(url, requestInfo);
         BusinessServiceResponse response = null;
@@ -99,26 +99,18 @@ public class WorkflowService {
         return url;
     }
 
-
-    public void enrichmentForSendBackToCititzen() {
-
-        /* If send bac to citizen action is taken assignes should be set to accountId
-         */
-    }
-
-
-    public List<EstimateWrapper> enrichWorkflow(RequestInfo requestInfo, List<EstimateWrapper> estimateWrappers) {
+    public List<EstimateRequest> enrichWorkflow(RequestInfo requestInfo, List<EstimateRequest> estimateRequestList) {
 
         //
-        Map<String, List<EstimateWrapper>> tenantIdToServiceWrapperMap = getTenantIdToServiceWrapperMap(estimateWrappers);
+        Map<String, List<EstimateRequest>> tenantIdToServiceWrapperMap = getTenantIdToServiceWrapperMap(estimateRequestList);
 
-        List<EstimateWrapper> enrichedServiceWrappers = new ArrayList<>();
+        List<EstimateRequest> enrichedServiceWrappers = new ArrayList<>();
 
         for (String tenantId : tenantIdToServiceWrapperMap.keySet()) {
 
             List<String> estimateNumbers = new ArrayList<>();
 
-            List<EstimateWrapper> tenantSpecificWrappers = tenantIdToServiceWrapperMap.get(tenantId);
+            List<EstimateRequest> tenantSpecificWrappers = tenantIdToServiceWrapperMap.get(tenantId);
 
             tenantSpecificWrappers.forEach(estimateWrapper -> {
                 estimateNumbers.add(estimateWrapper.getEstimate().getEstimateNumber());
@@ -153,15 +145,15 @@ public class WorkflowService {
 
     }
 
-    private Map<String, List<EstimateWrapper>> getTenantIdToServiceWrapperMap(List<EstimateWrapper> estimateWrappers) {
-        Map<String, List<EstimateWrapper>> resultMap = new HashMap<>();
-        for (EstimateWrapper estimateWrapper : estimateWrappers) {
-            if (resultMap.containsKey(estimateWrapper.getEstimate().getTenantId())) {
-                resultMap.get(estimateWrapper.getEstimate().getTenantId()).add(estimateWrapper);
+    private Map<String, List<EstimateRequest>> getTenantIdToServiceWrapperMap(List<EstimateRequest> estimateRequestList) {
+        Map<String, List<EstimateRequest>> resultMap = new HashMap<>();
+        for (EstimateRequest estimateRequest : estimateRequestList) {
+            if (resultMap.containsKey(estimateRequest.getEstimate().getTenantId())) {
+                resultMap.get(estimateRequest.getEstimate().getTenantId()).add(estimateRequest);
             } else {
-                List<EstimateWrapper> estimateWrapperList = new ArrayList<>();
-                estimateWrapperList.add(estimateWrapper);
-                resultMap.put(estimateWrapper.getEstimate().getTenantId(), estimateWrapperList);
+                List<EstimateRequest> estimateWrapperList = new ArrayList<>();
+                estimateWrapperList.add(estimateRequest);
+                resultMap.put(estimateRequest.getEstimate().getTenantId(), estimateWrapperList);
             }
         }
         return resultMap;
@@ -182,7 +174,7 @@ public class WorkflowService {
         processInstance.setBusinessId(estimate.getEstimateNumber());
         processInstance.setAction(request.getWorkflow().getAction());
         processInstance.setModuleName(ESTIMATE_MODULE_NAME);
-        processInstance.setTenantId(estimate.getTenantId());
+        processInstance.setTenantId(estimate.getTenantId().split("\\.")[0]);
         processInstance.setBusinessService(getBusinessService(request).getBusinessService());
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
