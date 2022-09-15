@@ -7,9 +7,6 @@ import { Link } from "react-router-dom";
 import MobileSearchApplication from "./MobileSearchApplication";
 const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, businessService }) => {
 
-  const [sessionFormData, setSessionFormData, clearSessionFormData] = Digit.Hooks.useSessionStorage("ADHOC_ADD_REBATE_DATA", {});
-  const [sessionBillFormData, setSessionBillFormData, clearBillSessionFormData] = Digit.Hooks.useSessionStorage("ADHOC_BILL_ADD_REBATE_DATA", {});
-
   const { t } = useTranslation();
   const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
     defaultValues: {
@@ -27,13 +24,6 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
     register("sortBy", "department");
     register("sortOrder", "DESC");
   }, [register]);
-
-  useEffect(() => {
-    clearSessionFormData();
-    setSessionFormData({});
-    setSessionBillFormData({});
-    clearBillSessionFormData()
-  }, []);
 
   const onSort = useCallback((args) => {
     if (args.length === 0) return;
@@ -99,7 +89,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
         accessor: (row) => (GetCell(row?.department)),
       },
       {
-        Header: t("WORKS_ADMINISTRATIVE_SANCTION_NO"),
+        Header: t("WORKS_ADMIN_SANCTION_NUMBER"),
         disableSortBy: true,
         accessor: (row) => (GetCell(row?.administrativeSanctionNo)),
       },
