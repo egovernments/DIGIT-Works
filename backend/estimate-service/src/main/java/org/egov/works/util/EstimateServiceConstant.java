@@ -25,7 +25,7 @@ public class EstimateServiceConstant {
     public static final String MASTER_LOCATION = "TenantBoundary";
 
     //
-    public static final String ESTIMATE_BUSINESSSERVICE = "estimate";
+    public static final String ESTIMATE_BUSINESSSERVICE = "estimate-approval";
     public static final String ESTIMATE_MODULE_NAME = "estimate";
 
 }
