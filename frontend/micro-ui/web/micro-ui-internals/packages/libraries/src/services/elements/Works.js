@@ -1,6 +1,5 @@
 import { Request } from "../atoms/Utils/Request";
 import Urls from "../atoms/urls";
-
 export const WorksService = {
     createLOI: (details) =>
         Request({

@@ -1,5 +1,5 @@
 import React,{Fragment,useState} from "react";
-import { Modal, Card, CardText, TextInput, CardLabelError,Dropdown,TextArea } from "@egovernments/digit-ui-react-components";
+import { Modal, Card, CardText, TextInput, CardLabelError,Dropdown,TextArea,Loader } from "@egovernments/digit-ui-react-components";
 import { Controller, useForm } from 'react-hook-form'
 
 
@@ -55,7 +55,33 @@ const ProcessingModal = ({
             name: "Sumit"
         },
     ]
+    const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
+        "pb",
+        "works",
+        [
+            {
+                "name": "BeneficiaryType"
+            },
+            {
+                "name": "EntrustmentMode"
+            },
+            {
+                "name": "NatureOfWork"
+            },
+            {
+                "name": "TypeOfWork"
+            },
+            {
+                "name": "Department"
+            }
+        ]
+    );
 
+    if (data?.works) {
+        var { EntrustmentMode, BeneficiaryType, NatureOfWork, TypeOfWork, Department } = data?.works
+    }
+    if(isLoading) return <Loader/>
+    
     return (
         <Modal
             headerBarMain={<Heading t={t} heading={heading} />}
@@ -80,7 +106,7 @@ const ProcessingModal = ({
                             return (
                                 <Dropdown
                                     onBlur={props.onBlur}
-                                    option={dummyData}
+                                    option={Department}
                                     selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
