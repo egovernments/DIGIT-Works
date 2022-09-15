@@ -12,15 +12,14 @@ export const WorksService = {
             params: {},
             auth: true,
         }),
-    estimateSearch: (details) =>
+    estimateSearch: ({ tenantId, filters }) =>
         Request({
-            url: Urls.works.approvedEstimateSearch,
-            data:details,
-            useCache:false,
-            setTimeParam:false,
-            userService:true,
-            method:"POST",
-            auth:true,
+            url: Urls.works.estimateSearch,
+            useCache: false,
+            method: "POST",
+            auth: true,
+            userService: false,
+            params: { tenantId, ...filters },
         }),
     loiSearch: ({ tenantId, filters }) =>
         Request({
@@ -31,7 +30,7 @@ export const WorksService = {
             userService: false,
             params: { tenantId, ...filters },
         }),
-    createEstimate:(details)=>
+    createEstimate:({ tenantId, filters })=>
         Request({
             url: Urls.works.createEstimate,
             data:details,
@@ -46,13 +45,21 @@ export const WorksService = {
     approvedEstimateSearch:(details)=>
          Request({
             //update URL for Approved Estimate Search
-            url: Urls.works.approvedEstimateSearch,
-            data:details,
-            useCache:false,
-            setTimeParam:false,
-            userService:true,
-            method:"POST",
-            // params:{},
-            auth:true,
-        })
+            url: Urls.works.estimateSearch,
+            useCache: false,
+            method: "POST",
+            auth: true,
+            userService: false,
+            params: { tenantId, ...filters },
+        }),
+    SearchEstimate:(details)=>
+        Request({
+           url: Urls.works.searchEstimate,
+           data:details,
+           useCache:false,
+           setTimeParam:false,
+           userService:true,
+           method:"POST",
+           auth:true,
+       })
 }

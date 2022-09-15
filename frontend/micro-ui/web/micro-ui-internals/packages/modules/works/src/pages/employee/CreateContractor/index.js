@@ -7,7 +7,6 @@ import { newConfig as newConfigLocal } from "../../../config/ContractorCreateCon
 import CreateContractorForm from '../../../components/CreateContractor/CreateContractorForm'
 const NewApplication = () => {
   const onFormSubmit = async(_data) => {
-    debugger
   }
 //   const { t } = useTranslation();
 //   const { state } = useLocation();

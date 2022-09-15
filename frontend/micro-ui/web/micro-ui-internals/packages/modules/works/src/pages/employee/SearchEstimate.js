@@ -9,7 +9,7 @@ const SearchEstimate = () => {
     const SearchApplication = Digit.ComponentRegistryService.getComponent("SearchEstimateApplication");
     const [showToast, setShowToast] = useState(null);
     const [result,setResult]=useState({})
-    const {mutate:searchEstimateMutation}=Digit.Hooks.works.useEstimateSearch();
+    const {mutate:searchEstimateMutation}=Digit.Hooks.works.useSearchEstimate();
 
     const onSubmit = async(_data) => {
     var fromProposalDate = new Date(_data?.fromProposalDate);
