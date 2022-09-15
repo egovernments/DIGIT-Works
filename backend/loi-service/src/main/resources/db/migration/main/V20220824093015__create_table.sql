@@ -1,6 +1,5 @@
-
- CREATE  Table eg_wms_loi(
-  id varchar(256) ,
+CREATE  Table eg_wms_loi(
+  id varchar(256),
   tenantId varchar(64) NOT NULL,
   loi_number varchar(128) NOT NULL,
   work_pkg_number varchar(128) ,
@@ -11,7 +10,7 @@
   agreement_date bigint NOT NULL,
   contractor_id varchar(256) NOT NULL,
   security_deposit numeric,
-  bank_gaurante varchar(256),
+  bank_guarantee varchar(256),
   emd_amount numeric NOT NULL,
   contract_period numeric,
   defect_liability_period numeric NOT NULL,
