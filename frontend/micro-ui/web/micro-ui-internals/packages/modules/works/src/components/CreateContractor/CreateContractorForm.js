@@ -74,16 +74,16 @@ const CreateContractorForm = ({onFormSubmit}) => {
 
     const { subScheme:subScheme  } = useWatch({ control: control, name: "scheme", defaultValue: [] });
 
-    const handleCreateClick = async () => {
+    const handleCreateClick = async (data) => {
         const subWorkFieldsToValidate = []
         rows.map(row => row.isShow && subWorkFieldsToValidate.push(...[`contractorDetails.${row.key}.Department`, `contractorDetails.${row.key}.registrationNumber`,`contractorDetails.${row.key}.category`,`contractorDetails.${row.key}.contractorClass`,`contractorDetails.${row.key}.status`,`contractorDetails.${row.key}.fromDate`,`contractorDetails.${row.key}.toDate`]))
         const fieldsToValidate = ['Name','CorrespondanceAddress','permenantAddress','contactPerson','email','narration','mobileNumber','panNo','tinNo','gstNo','Bank','IFSCCode','bankAccountNumber','PWDApprovalCode','exemptedFrom',...subWorkFieldsToValidate]
         
         const result = await trigger(fieldsToValidate)
         if (result) {
-            debugger
-            setShowModal(true)
-            handleSubmit(onFormSubmit)
+            // debugger
+            // setShowModal(true)
+            onFormSubmit(data);
         }
     }
 

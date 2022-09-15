@@ -9,8 +9,19 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
     const applicationType = useWatch({ control, name: "applicationType" });
     let businessServices = ["WORKS"];
     let selectedService = "WORKS"
-    const { data: statusData, isLoading } = Digit.Hooks.useApplicationStatusGeneral({ businessServices, tenantId }, {});
-
+    const { data: statusData } = Digit.Hooks.useApplicationStatusGeneral({ businessServices, tenantId }, {});
+    const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
+        "pb",
+        "works",
+        [
+            {
+                "name": "Department"
+            }
+        ]
+        );
+        if(data?.works){
+          var { Department } = data?.works
+        }
     let applicationStatuses = []
 
     statusData && statusData?.otherRoleStates?.map((status) => {
@@ -88,12 +99,12 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
                 name="department"
                 render={(props) => (
                     <Dropdown
-                        selected={props.value}
-                        select={props.onChange}
-                        onBlur={props.onBlur}
-                        option={""}
-                        optionKey="i18nKey"
+                        option={Department}
+                        selected={props?.value}
+                        optionKey={"name"}
                         t={t}
+                        select={props?.onChange}
+                        onBlur={props.onBlur}
                     />
                 )}
             />
