@@ -1,0 +1,39 @@
+{
+	"info": {
+		"_postman_id": "00a2714b-063c-4afe-afc7-216d549dafe0",
+		"name": "Letter-Of-Indent (LOI)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4973513"
+	},
+	"item": [
+		{
+			"name": "Create LOI",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"requestInfo\": {\n    \"apiInfo\": {\n      \"id\": \"string\",\n      \"version\": \"string\",\n      \"path\": \"string\"\n    },\n    \"deviceDetail\": {\n      \"id\": \"string\",\n      \"signature\": \"string\"\n    },\n    \"ts\": 0,\n    \"action\": \"string\",\n    \"key\": \"string\",\n    \"msgId\": \"string\",\n    \"requesterId\": \"string\",\n    \"authToken\": \"string\",\n    \"signature\": \"string\"\n  },\n  \"letterOfIndent\": {\n    \"tenantId\": \"pb.jalandhar\",\n    \"workIdentificationNumber\": \"string\",\n    \"fileNumber\": \"string\",\n    \"fileDate\": 1658397420000,\n    \"negotiatedPercentage\": 40,\n    \"agreementDate\": 1658397420000,\n    \"contractorId\": \"251c51eb-e970-4e01-a99a-70136c47a934\",\n    \"securityDeposit\": 100000,\n    \"bankGuarantee\": \"string\",\n    \"emdAmount\": 0,\n    \"contractPeriod\": 0,\n    \"defectLiabilityPeriod\": 0,\n    \"oicId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n    \"status\": \"DRAFT\",\n    \"letterStatus\": \"CREATED\",\n    \"additionalDetails\": {}\n  },\n  \"workflow\": {\n    \"action\": \"string\",\n    \"comment\": \"string\",\n    \"assignees\": [\n      \"string\"\n    ]\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8023/loi-service/v1/_create",
+					"host": [
+						"localhost"
+					],
+					"port": "8023",
+					"path": [
+						"loi-service",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
