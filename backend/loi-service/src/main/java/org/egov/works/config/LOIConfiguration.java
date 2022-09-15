@@ -16,11 +16,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class LOIConfiguration {
 
-
     //MDMS
     @Value("${egov.mdms.host}")
     private String mdmsHost;
 
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+
+    @Value("${loi.kafka.create.topic}")
+    private String loiSaveTopic;
+
+    @Value("${loi.kafka.update.topic}")
+    private String loiUpdateTopic;
+
 }
