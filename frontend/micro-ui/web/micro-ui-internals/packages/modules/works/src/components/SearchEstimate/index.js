@@ -7,9 +7,24 @@ import { Link } from "react-router-dom";
 
 const SearchEstimateApplication = ({onSubmit}) => {
 
-    const { t } = useTranslation();
-
-    const { register, control, handleSubmit, setValue, getValues, reset } = useForm();
+    const { t } = useTranslation(); 
+    const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
+      defaultValues: {
+        offset: 0,
+        limit: 10,
+        sortBy: "department",
+        sortOrder: "DESC",
+        // isConnectionSearch: true,
+      },
+    });
+  
+    useEffect(() => {
+      register("offset", 0);
+      register("limit", 10);
+      register("sortBy", "department");
+      register("sortOrder", "DESC");
+    }, [register]);
+  
   return (
     <>
           <Header styles={{ fontSize: "32px" }}>{t("WORKS_SEARCH_ESTIMATES")}</Header>

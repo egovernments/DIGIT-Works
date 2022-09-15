@@ -13,14 +13,15 @@ export const WorksService = {
             params: {},
             auth: true,
         }),
-    estimateSearch: ({ tenantId, filters }) =>
+    estimateSearch: (details) =>
         Request({
-            url: Urls.works.estimateSearch,
-            useCache: false,
-            method: "POST",
-            auth: true,
-            userService: false,
-            params: { tenantId, ...filters },
+            url: Urls.works.approvedEstimateSearch,
+            data:details,
+            useCache:false,
+            setTimeParam:false,
+            userService:true,
+            method:"POST",
+            auth:true,
         }),
     loiSearch: ({ tenantId, filters }) =>
         Request({
