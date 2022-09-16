@@ -2,7 +2,6 @@ package org.egov.works.config;
 
 import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
