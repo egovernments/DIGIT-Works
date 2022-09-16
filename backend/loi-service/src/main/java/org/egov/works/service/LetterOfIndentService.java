@@ -24,6 +24,7 @@ public class LetterOfIndentService {
     public LetterOfIndentRequest createLOI(LetterOfIndentRequest request) {
         loiValidator.validateCreateLOI(request);
         loiEnrichmentService.enrichLOI(request);
+        // TODO: Workflow status update
         producer.push(loiConfiguration.getLoiSaveTopic(), request);
         return request;
     }
