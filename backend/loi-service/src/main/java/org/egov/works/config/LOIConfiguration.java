@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Builder
@@ -23,4 +25,13 @@ public class LOIConfiguration {
 
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+
+    @Value("${loi.default.limit}")
+    private Integer defaultLimit;
+
+    @Value("${loi.default.offset}")
+    private Integer defaultOffset;
+
+    @Value("${loi.search.max.limit}")
+    private Integer maxLimit;
 }
