@@ -22,7 +22,6 @@ import static org.egov.works.util.LOIConstants.MDMS_MODULE_NAME;
 @Component
 public class MDMSUtils {
 
-
     private final LOIConfiguration config;
 
     private final ServiceRequestRepository serviceRequestRepository;
