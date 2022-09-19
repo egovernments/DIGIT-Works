@@ -46,7 +46,7 @@ public class EstimateServiceValidator {
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
 
         validateMDMSData(estimate, mdmsData, errorMap);
-       // locationUtil.getLocation(estimate,requestInfo,BOUNDARY_ADMIN_HEIRARCHY_CODE);
+        // locationUtil.getLocation(estimate,requestInfo,BOUNDARY_ADMIN_HEIRARCHY_CODE);
         //validateLocationData(request.getEstimate(), errorMap);
 
         if (!errorMap.isEmpty())
@@ -89,7 +89,7 @@ public class EstimateServiceValidator {
         }
 
         if (StringUtils.isBlank(estimate.getBeneficiaryType())) {
-            errorMap.put("BENEFICIARY", "Beneficiary is mandatory");
+            errorMap.put("BENEFICIARY_TYPE", "Beneficiary type is mandatory");
         }
         if (StringUtils.isBlank(estimate.getNatureOfWork())) {
             errorMap.put("NATURE_OF_WORK", "Nature of work is mandatory");
@@ -110,7 +110,9 @@ public class EstimateServiceValidator {
             errorMap.put("BUDGET_HEAD", "Budget head is mandatory");
         }
         List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
-        if (estimateDetails != null && !estimateDetails.isEmpty()) {
+        if (estimateDetails == null || estimateDetails.isEmpty()) {
+            errorMap.put("ESTIMATE_DETAILS", "Estimate detail is mandatory");
+        } else {
             for (EstimateDetail estimateDetail : estimateDetails) {
                 if (StringUtils.isBlank(estimateDetail.getName())) {
                     errorMap.put("ESTIMATE.DETAIL.NAME", "Estimate detail's name is mandatory");
