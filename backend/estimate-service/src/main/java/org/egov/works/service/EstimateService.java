@@ -41,7 +41,7 @@ public class EstimateService {
     public EstimateRequest createEstimate(EstimateRequest request) {
         serviceValidator.validateCreateEstimate(request);
         enrichmentService.enrichCreateEstimate(request);
-       // workflowService.updateWorkflowStatus(request);
+        workflowService.updateWorkflowStatus(request);
         producer.push(serviceConfiguration.getSaveEstimateTopic(), request);
         return request;
     }
@@ -52,7 +52,6 @@ public class EstimateService {
 
         List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
 
-        //TODO
         List<EstimateRequest> estimateRequestList = new LinkedList<>();
         for (Estimate estimate : estimateList) {
             EstimateRequest estimateRequest = EstimateRequest.builder().estimate(estimate).build();
