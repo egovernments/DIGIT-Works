@@ -18,7 +18,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.works.util.EstimateServiceConstant.ESTIMATE_BUSINESSSERVICE;
 import static org.egov.works.util.EstimateServiceConstant.ESTIMATE_MODULE_NAME;
 
 @Service
@@ -41,7 +40,7 @@ public class WorkflowService {
     public BusinessService getBusinessService(EstimateRequest estimateRequest) {
         String tenantId = estimateRequest.getEstimate().getTenantId();
         String rootTenantId = tenantId.split("\\.")[0];
-        StringBuilder url = getSearchURLWithParams(rootTenantId, ESTIMATE_BUSINESSSERVICE);
+        StringBuilder url = getSearchURLWithParams(rootTenantId, serviceConfiguration.getEstimateWFBusinessService());
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
         Object result = repository.fetchResult(url, requestInfo);
         BusinessServiceResponse response = null;
@@ -52,7 +51,7 @@ public class WorkflowService {
         }
 
         if (CollectionUtils.isEmpty(response.getBusinessServices()))
-            throw new CustomException("BUSINESSSERVICE_NOT_FOUND", "The businessService " + ESTIMATE_BUSINESSSERVICE + " is not found");
+            throw new CustomException("BUSINESSSERVICE_DOESN'T_EXIST", "The businessService : " + serviceConfiguration.getEstimateWFBusinessService() + " doesn't exist");
 
         return response.getBusinessServices().get(0);
     }

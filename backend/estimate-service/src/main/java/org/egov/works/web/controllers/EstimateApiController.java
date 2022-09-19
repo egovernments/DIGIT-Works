@@ -3,21 +3,16 @@ package org.egov.works.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.service.EstimateService;
 import org.egov.works.util.ResponseInfoCreator;
-import org.egov.works.web.models.Estimate;
-import org.egov.works.web.models.EstimateRequest;
-import org.egov.works.web.models.EstimateResponse;
-import org.egov.works.web.models.EstimateSearchRequest;
+import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -60,9 +55,9 @@ public class EstimateApiController {
     }
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
-    public ResponseEntity<EstimateResponse> estimateV1SearchPost(@ApiParam(value = "Request object to search estimate in the system", required = true) @Valid @RequestBody EstimateSearchRequest body) {
-        List<Estimate> estimateList = estimateService.searchEstimate(body);
-        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+    public ResponseEntity<EstimateResponse> estimateV1SearchPost(@Valid @RequestBody RequestInfo requestInfo, @Valid @ModelAttribute EstimateSearchCriteria searchCriteria) {
+        List<Estimate> estimateList = estimateService.searchEstimate(requestInfo,searchCriteria);
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfo, true);
         EstimateResponse estimateResponse = EstimateResponse.builder().responseInfo(responseInfo).estimates(estimateList).build();
         return new ResponseEntity<EstimateResponse>(estimateResponse, HttpStatus.OK);
     }

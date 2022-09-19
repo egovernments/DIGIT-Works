@@ -1,6 +1,7 @@
 package org.egov.works.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.EstimateServiceConfiguration;
 import org.egov.works.producer.Producer;
 import org.egov.works.repository.EstimateRepository;
@@ -8,11 +9,10 @@ import org.egov.works.validator.EstimateServiceValidator;
 import org.egov.works.web.models.Estimate;
 import org.egov.works.web.models.EstimateRequest;
 import org.egov.works.web.models.EstimateSearchCriteria;
-import org.egov.works.web.models.EstimateSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -41,20 +41,24 @@ public class EstimateService {
     public EstimateRequest createEstimate(EstimateRequest request) {
         serviceValidator.validateCreateEstimate(request);
         enrichmentService.enrichCreateEstimate(request);
-        workflowService.updateWorkflowStatus(request);
+       // workflowService.updateWorkflowStatus(request);
         producer.push(serviceConfiguration.getSaveEstimateTopic(), request);
         return request;
     }
 
-    public List<Estimate> searchEstimate(EstimateSearchRequest searchRequest) {
-        serviceValidator.validateSearchEstimate(searchRequest);
-//        enrichmentService.enrichSearchEstimate(searchRequest);
-//
-//        EstimateSearchCriteria searchCriteria = searchRequest.getSearchCriteria();
-//
-//        List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
+    public List<Estimate> searchEstimate(RequestInfo requestInfo, EstimateSearchCriteria searchCriteria) {
+        serviceValidator.validateSearchEstimate(requestInfo, searchCriteria);
+        enrichmentService.enrichSearchEstimate(requestInfo, searchCriteria);
 
-//        return estimateList;
-        return Collections.emptyList();
+        List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
+
+        //TODO
+        List<EstimateRequest> estimateRequestList = new LinkedList<>();
+        for (Estimate estimate : estimateList) {
+            EstimateRequest estimateRequest = EstimateRequest.builder().estimate(estimate).build();
+            estimateRequestList.add(estimateRequest);
+        }
+
+        return estimateList;
     }
 }

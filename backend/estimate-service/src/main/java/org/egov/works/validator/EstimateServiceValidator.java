@@ -6,6 +6,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.util.LocationUtil;
 import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +26,27 @@ public class EstimateServiceValidator {
     @Autowired
     private MDMSUtils mdmsUtils;
 
+    @Autowired
+    private LocationUtil locationUtil;
+
     public void validateCreateEstimate(EstimateRequest request) {
         Map<String, String> errorMap = new HashMap<>();
-        validateRequestInfo(request.getRequestInfo(), errorMap);
-        validateEstimate(request.getEstimate(), errorMap);
-        validateWorkFlow(request.getWorkflow(), errorMap);
+        Estimate estimate = request.getEstimate();
+        RequestInfo requestInfo = request.getRequestInfo();
+        EstimateRequestWorkflow workflow = request.getWorkflow();
 
-        String tenantId = request.getEstimate().getTenantId();
+        validateRequestInfo(requestInfo, errorMap);
+        validateEstimate(estimate, errorMap);
+        validateWorkFlow(workflow, errorMap);
+
+        String rootTenantId = estimate.getTenantId();
         //split the tenantId
-        tenantId = tenantId.split("\\.")[0];
+        rootTenantId = rootTenantId.split("\\.")[0];
 
-        Object mdmsData = mdmsUtils.mDMSCall(request, tenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
 
-        validateMDMSData(request.getEstimate(), mdmsData, errorMap);
+        validateMDMSData(estimate, mdmsData, errorMap);
+       // locationUtil.getLocation(estimate,requestInfo,BOUNDARY_ADMIN_HEIRARCHY_CODE);
         //validateLocationData(request.getEstimate(), errorMap);
 
         if (!errorMap.isEmpty())
@@ -212,12 +221,12 @@ public class EstimateServiceValidator {
             errorMap.put("INVALID_TENANT", "The tenant: " + estimate.getTenantId() + " is not present in MDMS");
     }
 
-    public void validateSearchEstimate(EstimateSearchRequest searchRequest) {
-        if (searchRequest == null && searchRequest.getSearchCriteria() == null) {
-            throw new CustomException("ESTIMATE", "Estimate is mandatory");
+    public void validateSearchEstimate(RequestInfo requestInfo, EstimateSearchCriteria searchCriteria) {
+        if (searchCriteria == null /*&& requestInfo == null*/) {
+            throw new CustomException("ESTIMATE_SEARCH_CRITERIA", "Estimate search criteria is mandatory");
         }
-        if (StringUtils.isBlank(searchRequest.getSearchCriteria().getTenantId())) {
-            throw new CustomException("TENANT_ID", "Tenant is is mandatory");
+        if (StringUtils.isBlank(searchCriteria.getTenantId())) {
+            throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
     }
 }

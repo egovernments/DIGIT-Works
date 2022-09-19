@@ -24,8 +24,10 @@ public class EstimateServiceConstant {
 
     public static final String MASTER_LOCATION = "TenantBoundary";
 
-    //
-    public static final String ESTIMATE_BUSINESSSERVICE = "estimate-approval";
+    //work flow
     public static final String ESTIMATE_MODULE_NAME = "estimate";
+
+    //location
+    public static final String BOUNDARY_ADMIN_HEIRARCHY_CODE = "ADMIN";
 
 }

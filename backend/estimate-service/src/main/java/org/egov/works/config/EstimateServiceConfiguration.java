@@ -73,7 +73,7 @@ public class EstimateServiceConfiguration {
     private Integer maxLimit;
 
     //Workflow Config
-    @Value("${pgr.business.codes}")
+    @Value("${estimate.business.codes}")
     private List<String> businessServiceList;
 
     @Value("${egov.workflow.host}")
@@ -88,7 +88,18 @@ public class EstimateServiceConfiguration {
     @Value("${egov.workflow.processinstance.search.path}")
     private String wfProcessInstanceSearchPath;
 
-    @Value("${is.workflow.enabled}")
-    private Boolean isWorkflowEnabled;
+    @Value("${estimate.workflow.business.service}")
+    private String estimateWFBusinessService;
+
+    //Location Config
+    @Value("${egov.location.host}")
+    private String locationHost;
+
+    @Value("${egov.location.context.path}")
+    private String locationContextPath;
+
+    @Value("${egov.location.endpoint}")
+    private String locationEndpoint;
+
 }
 
