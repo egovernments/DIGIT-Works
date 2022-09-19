@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 import java.util.TimeZone;
 
 @Component
@@ -73,9 +72,6 @@ public class EstimateServiceConfiguration {
     private Integer maxLimit;
 
     //Workflow Config
-    @Value("${estimate.business.codes}")
-    private List<String> businessServiceList;
-
     @Value("${egov.workflow.host}")
     private String wfHost;
 
@@ -90,6 +86,10 @@ public class EstimateServiceConfiguration {
 
     @Value("${estimate.workflow.business.service}")
     private String estimateWFBusinessService;
+
+    @Value("${estimate.workflow.module.name}")
+    private String estimateWFModuleName;
+
 
     //Location Config
     @Value("${egov.location.host}")

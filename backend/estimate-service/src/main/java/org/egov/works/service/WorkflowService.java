@@ -172,7 +172,7 @@ public class WorkflowService {
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(estimate.getEstimateNumber());
         processInstance.setAction(request.getWorkflow().getAction());
-        processInstance.setModuleName(ESTIMATE_MODULE_NAME);
+        processInstance.setModuleName(serviceConfiguration.getEstimateWFModuleName());
         processInstance.setTenantId(estimate.getTenantId().split("\\.")[0]);
         processInstance.setBusinessService(getBusinessService(request).getBusinessService());
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/

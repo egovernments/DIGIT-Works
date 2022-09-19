@@ -64,10 +64,10 @@ public class EnrichmentService {
             List<String> estimateDetailNumbers = getIdList(requestInfo, rootTenantId
                     , config.getIdgenSubEstimateNumberName(), config.getIdgenSubEstimateNumberFormat(), estimateDetails.size());
             for (int i = 0; i < estimateDetails.size(); i++) {
-                estimateDetails.get(0).setId(UUID.randomUUID());
-                String estimateDetailNum = estimateDetailNumbers.get(0);
+                estimateDetails.get(i).setId(UUID.randomUUID());
+                String estimateDetailNum = estimateDetailNumbers.get(i);
                 estimateDetailNum = estimateDetailNum.replace("ESTIMATE_NUM", estimateNumSeq);
-                estimateDetails.get(0).setEstimateDetailNumber(estimateDetailNum);
+                estimateDetails.get(i).setEstimateDetailNumber(estimateDetailNum);
             }
         }
     }
