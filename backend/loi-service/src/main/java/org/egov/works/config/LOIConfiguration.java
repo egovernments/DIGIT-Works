@@ -19,28 +19,36 @@ public class LOIConfiguration {
     //MDMS
     @Value("${egov.mdms.host}")
     private String mdmsHost;
-
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
 
     //Idgen Config
     @Value("${egov.idgen.host}")
     private String idGenHost;
-
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
     //Id Format
     @Value("${egov.idgen.loi.number.name}")
     private String idGenLOINumberName;
-
     @Value("${egov.idgen.loi.number.format}")
     private String idGenLOINumberFormat;
 
     @Value("${loi.kafka.create.topic}")
     private String loiSaveTopic;
-
     @Value("${loi.kafka.update.topic}")
     private String loiUpdateTopic;
+
+    @Value("${egov.workflow.host}")
+    private String workflowHost;
+    @Value("${egov.workflow.transition.path}")
+    private String workflowTransitionPath;
+    @Value("${egov.workflow.search.path}")
+    private String workflowSearchPath;
+
+    @Value("${workflow.loi.business.service.name}")
+    private String workflowLOIBusinessServiceName;
+    @Value("${workflow.loi.module.name}")
+    private String workflowLOIModuleName;
 
 }
