@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,6 +43,9 @@ public class EnrichmentService {
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, true);
         estimate.setAuditDetails(auditDetails);
         estimate.setId(UUID.randomUUID());
+        Date currentDT = new Date();
+        BigDecimal proposalDate = new BigDecimal(currentDT.getTime());
+        estimate.setProposalDate(proposalDate);
 
         String rootTenantId = estimate.getTenantId().split("\\.")[0];
 
@@ -89,7 +94,6 @@ public class EnrichmentService {
     }
 
     /**
-     *
      * @param requestInfo
      * @param searchCriteria
      */
