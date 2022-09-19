@@ -1,30 +1,34 @@
 package org.egov.works.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.works.config.LOIConfiguration;
 import org.egov.works.repository.ServiceRequestRepository;
-import org.egov.works.web.models.LetterOfIndent;
+import org.egov.works.web.models.LetterOfIndentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.egov.works.util.LOIConstants.MDMS_MASTER;
-import static org.egov.works.util.LOIConstants.MDMS_MODULE_NAME;
-
 @Component
+@Slf4j
 public class MDMSUtils {
 
-    private final LOIConfiguration config;
+    private LOIConfiguration config;
 
-    private final ServiceRequestRepository serviceRequestRepository;
+    private ServiceRequestRepository serviceRequestRepository;
+
+    public static final String PLACEHOLDER_CODE = "{code}";
+    public final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
+
+    public static final String filterCode = "$.*.code";
+    public final String filterSubSchemeModuleCode = "$.[?(@.active==true)].subSchemes.[?(@.active==true && @.code=='{code}')]]";
+    public final String filterSubTypeModuleCode = "$.[?(@.active==true)].subTypes.[?(@.active==true && @.code=='{code}')]]";
+
 
     @Autowired
     public MDMSUtils(LOIConfiguration config, ServiceRequestRepository serviceRequestRepository) {
@@ -33,18 +37,20 @@ public class MDMSUtils {
     }
 
     /**
-     * Calls MDMS service to fetch loi master data
+     * Calls MDMS service to fetch works master data
      *
      * @param request
+     * @param tenantId
      * @return
      */
-    public Object mDMSCall(LetterOfIndent request) {
-        RequestInfo requestInfo = new RequestInfo();
-        String tenantId = request.getTenantId();
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
+    public Object mDMSCall(LetterOfIndentRequest request, String tenantId) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId, request);
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
         return result;
     }
+
+
 
 
     /**
@@ -52,13 +58,19 @@ public class MDMSUtils {
      *
      * @param requestInfo
      * @param tenantId
+     * @param request
      * @return
      */
-    public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
-        List<ModuleDetail> pgrModuleRequest = getLOIModuleRequest();
+    public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId, LetterOfIndentRequest request) {
+
+        ModuleDetail estimateWorksModuleDetail = getWorksModuleRequestData(request);
+        ModuleDetail estimateFinanceModuleDetail = getFinanceModuleRequestData(request);
+        ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(request);
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
-        moduleDetails.addAll(pgrModuleRequest);
+        moduleDetails.add(estimateWorksModuleDetail);
+        moduleDetails.add(estimateFinanceModuleDetail);
+        moduleDetails.add(estimateTenantModuleDetail);
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
@@ -68,30 +80,30 @@ public class MDMSUtils {
         return mdmsCriteriaReq;
     }
 
-
-    /**
-     * Creates request to search serviceDef from MDMS
-     *
-     * @return request to search UOM from MDMS
-     */
-    private List<ModuleDetail> getLOIModuleRequest() {
-
-        // master details for TL module
-        List<MasterDetail> loiMasterDetails = new ArrayList<>();
-
-        // filter to only get code field from master data
-        final String filterCode = "$.*.code";
-
-        loiMasterDetails.add(MasterDetail.builder().name(MDMS_MASTER).filter(filterCode).build());
-
-        ModuleDetail loiModuleDtls = ModuleDetail.builder().masterDetails(loiMasterDetails)
-                .moduleName(MDMS_MODULE_NAME).build();
+    private ModuleDetail getTenantModuleRequestData(LetterOfIndentRequest request) {
 
 
-        return Collections.singletonList(loiModuleDtls);
 
+        ModuleDetail estimateTenantModuleDetail = null;
+
+        return estimateTenantModuleDetail;
     }
 
+    private ModuleDetail getFinanceModuleRequestData(LetterOfIndentRequest request) {
+
+
+        ModuleDetail estimateFinanceModuleDetail = null;
+
+        return estimateFinanceModuleDetail;
+    }
+
+    private ModuleDetail getWorksModuleRequestData(LetterOfIndentRequest request) {
+
+
+        ModuleDetail estimateWorksModuleDetail = null;
+
+        return estimateWorksModuleDetail;
+    }
 
     /**
      * Returns the url for mdms search endpoint
@@ -101,4 +113,5 @@ public class MDMSUtils {
     public StringBuilder getMdmsSearchUrl() {
         return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
     }
+
 }

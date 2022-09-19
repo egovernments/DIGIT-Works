@@ -1,10 +1,21 @@
 package org.egov.works.validator;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.util.MDMSUtils;
+import org.egov.works.web.models.LOISearchCriteria;
+import org.egov.works.web.models.LetterOfIndent;
 import org.egov.works.web.models.LetterOfIndentRequest;
+import org.egov.works.web.models.LetterOfIndentRequestWorkflow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -14,12 +25,152 @@ public class LOIValidator {
     private MDMSUtils mdmsUtils;
 
     public void validateCreateLOI(LetterOfIndentRequest request) {
-//       TODO:  1. Format Validations
-//       TODO:  2. Master Data Validation
+        Map<String, String> errorMap = new HashMap<>();
+        LetterOfIndent letterOfIndent = request.getLetterOfIndent();
+        RequestInfo requestInfo = request.getRequestInfo();
+        LetterOfIndentRequestWorkflow workflow = request.getWorkflow();
+        validateRequestInfo(requestInfo, errorMap);
+        validateLetterOfIndent(letterOfIndent, errorMap);
+
+        validateWorkFlow(workflow, errorMap);
+
 //       TODO:  3. Check workPackageNumber
 //       TODO:  4. Check contractorId
 //       TODO:  5. (If present) validate oicId
-//       TODO:  6. Throw custom error map
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+
     }
+
+    public void validateUpdateLOI(LetterOfIndentRequest request) {
+        Map<String, String> errorMap = new HashMap<>();
+        LetterOfIndent letterOfIndent = request.getLetterOfIndent();
+        RequestInfo requestInfo = request.getRequestInfo();
+        LetterOfIndentRequestWorkflow workflow = request.getWorkflow();
+        validateRequestInfo(requestInfo, errorMap);
+        validateUpdateLetterOfIndent(letterOfIndent, errorMap);
+
+        validateWorkFlow(workflow, errorMap);
+
+//       TODO:  3. Check workPackageNumber
+//       TODO:  4. Check contractorId
+//       TODO:  5. (If present) validate oicId
+         if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
+
+    private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
+        if (requestInfo == null) {
+            throw new CustomException("REQUEST_INFO", "Request info is mandatory");
+        }
+        if (requestInfo.getTs() == null || requestInfo.getTs() == 0) {
+            errorMap.put("TIMESTAMP", "Ts is mandatory");
+        }
+        if (StringUtils.isBlank(requestInfo.getMsgId())) {
+            errorMap.put("MESSAGE_ID", "MsgIf is mandatory");
+        }
+        if (StringUtils.isBlank(requestInfo.getAction())) {
+            errorMap.put("ACTION", "Action is mandatory");
+        }
+        if (requestInfo.getUserInfo() == null) {
+            errorMap.put("USERINFO", "UserInfo is mandatory");
+        }
+        if (requestInfo.getUserInfo() != null && StringUtils.isBlank(requestInfo.getUserInfo().getUuid())) {
+            errorMap.put("USERINFO_UUID", "UUID is mandatory");
+        }
+    }
+
+    private void validateLetterOfIndent(LetterOfIndent letterOfIndent, Map<String, String> errorMap) {
+        if (letterOfIndent == null) {
+            throw new CustomException("LOI", "Letter of Indent is mandatory");
+        }
+        if (StringUtils.isBlank(letterOfIndent.getTenantId())) {
+            errorMap.put("TENANT_ID", "Tenant is is mandatory");
+        }
+        if (letterOfIndent.getFileNumber() == null || StringUtils.isBlank(letterOfIndent.getFileNumber())) {
+            errorMap.put("STATUS", "File Number is mandatory");
+        }
+        if (letterOfIndent.getFileDate() == null) {
+            errorMap.put("STATUS", "File Date is mandatory");
+        }
+        if (letterOfIndent.getNegotiatedPercentage() == null) {
+            errorMap.put("STATUS", "Percentage Negotiated is mandatory");
+        }
+        if (letterOfIndent.getNegotiatedPercentage().compareTo(new BigDecimal(-100)) == -1 || letterOfIndent.getNegotiatedPercentage().compareTo(new BigDecimal(100)) == 1) {
+            errorMap.put("STATUS", "Percentage Negotiated value is incorrect.");
+        }
+        if (letterOfIndent.getAgreementDate() == null) {
+            errorMap.put("STATUS", "Agreement Date is mandatory");
+        }
+        if (letterOfIndent.getEmdAmount() == null) {
+            errorMap.put("STATUS", "EMD Amount is mandatory");
+        }
+        if (letterOfIndent.getDefectLiabilityPeriod() == null) {
+            errorMap.put("STATUS", "Defect Liability Period is mandatory");
+        }
+        if (letterOfIndent.getOicId() == null) {
+            errorMap.put("STATUS", "OIC Id is mandatory");
+        }
+        if (letterOfIndent.getStatus() == null || !EnumUtils.isValidEnum(LetterOfIndent.StatusEnum.class, letterOfIndent.getStatus().toString())) {
+            errorMap.put("STATUS", "Status is mandatory");
+        }
+    }
+
+    private void validateUpdateLetterOfIndent(LetterOfIndent letterOfIndent, Map<String, String> errorMap) {
+        if (letterOfIndent == null) {
+            throw new CustomException("LOI", "Letter of Indent is mandatory");
+        }
+        if (StringUtils.isBlank(letterOfIndent.getTenantId())) {
+            errorMap.put("TENANT_ID", "Tenant is is mandatory");
+        }
+        if (letterOfIndent.getFileNumber() == null || StringUtils.isBlank(letterOfIndent.getFileNumber())) {
+            errorMap.put("STATUS", "File Number is mandatory");
+        }
+        if (letterOfIndent.getFileDate() == null) {
+            errorMap.put("STATUS", "File Date is mandatory");
+        }
+        if (letterOfIndent.getNegotiatedPercentage() == null) {
+            errorMap.put("STATUS", "Percentage Negotiated is mandatory");
+        }
+        if (letterOfIndent.getNegotiatedPercentage().compareTo(new BigDecimal(-100)) == -1 || letterOfIndent.getNegotiatedPercentage().compareTo(new BigDecimal(100)) == 1) {
+            errorMap.put("STATUS", "Percentage Negotiated value is incorrect.");
+        }
+        if (letterOfIndent.getAgreementDate() == null) {
+            errorMap.put("STATUS", "Agreement Date is mandatory");
+        }
+        if (letterOfIndent.getEmdAmount() == null) {
+            errorMap.put("STATUS", "EMD Amount is mandatory");
+        }
+        if (letterOfIndent.getDefectLiabilityPeriod() == null) {
+            errorMap.put("STATUS", "Defect Liability Period is mandatory");
+        }
+        if (letterOfIndent.getOicId() == null) {
+            errorMap.put("STATUS", "OIC Id is mandatory");
+        }
+        if (letterOfIndent.getStatus() == null || !EnumUtils.isValidEnum(LetterOfIndent.StatusEnum.class, letterOfIndent.getStatus().toString())) {
+            errorMap.put("STATUS", "Status is mandatory");
+        }
+    }
+
+    private void validateWorkFlow(LetterOfIndentRequestWorkflow workflow, Map<String, String> errorMap) {
+        if (workflow == null) {
+            throw new CustomException("WORK_FLOW", "Work flow is mandatory");
+        }
+        if (StringUtils.isBlank(workflow.getAction())) {
+            errorMap.put("WORK_FLOW.ACTION", "Work flow's action is mandatory");
+        }
+    }
+
+    public void validateSearchLOI(LOISearchCriteria searchCriteria) {
+        if (searchCriteria == null) {
+            throw new CustomException("LOI", "LOI is mandatory");
+        }
+
+        if (StringUtils.isBlank(searchCriteria.getTenantId())) {
+            throw new CustomException("TENANT_ID", "Tenant Id is mandatory");
+        }
+    }
+
 
 }
