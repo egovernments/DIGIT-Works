@@ -18,7 +18,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class LOIEnrichmentService {
+public class EnrichmentService {
 
     @Autowired
     private LOIUtil loiUtil;

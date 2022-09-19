@@ -19,11 +19,11 @@ public class LetterOfIndentService {
     @Autowired
     private LOIValidator loiValidator;
     @Autowired
-    private LOIEnrichmentService loiEnrichmentService;
+    private EnrichmentService enrichmentService;
 
     public LetterOfIndentRequest createLOI(LetterOfIndentRequest request) {
         loiValidator.validateCreateLOI(request);
-        loiEnrichmentService.enrichLOI(request);
+        enrichmentService.enrichLOI(request);
         // TODO: Workflow status update
         producer.push(loiConfiguration.getLoiSaveTopic(), request);
         return request;
