@@ -1,7 +1,9 @@
 package org.egov.works.repository.rowmapper;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.LetterOfIndent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -35,18 +37,19 @@ public class LOIRowMapper implements ResultSetExtractor<List<LetterOfIndent>> {
             BigDecimal agreementDate = rs.getBigDecimal("agreement_date");
             String contractorId = rs.getString("contractor_id");
             BigDecimal securityDeposit = rs.getBigDecimal("security_deposit");
-            String bankGaurante = rs.getString("bank_gaurante");
+            String bankGuarantee = rs.getString("bank_guarantee");
             BigDecimal emdAmount = rs.getBigDecimal("emd_amount");
             BigDecimal contractPeriod = rs.getBigDecimal("contract_period");
             BigDecimal defectLiabilityPeriod = rs.getBigDecimal("defect_liability_period");
             String oicId = rs.getString("oic_id");
             String status = rs.getString("status");
             String letterStatus = rs.getString("letter_status");
-            String additionalDetails = rs.getString("additionaldetails");
             String createdby = rs.getString("createdby");
             String lastmodifiedby = rs.getString("lastmodifiedby");
             Long createdtime = rs.getLong("createdtime");
             Long lastmodifiedtime = rs.getLong("lastmodifiedtime");
+
+            JsonNode additionalDetails = getAdditionalDetail("additionaldetails",rs);
 
 
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
@@ -54,7 +57,7 @@ public class LOIRowMapper implements ResultSetExtractor<List<LetterOfIndent>> {
                     .build();
 
 
-            LetterOfIndent estimate = LetterOfIndent.builder().id(UUID.nameUUIDFromBytes(id.getBytes(StandardCharsets.UTF_8)))
+            LetterOfIndent letterOfIndent = LetterOfIndent.builder().id(UUID.nameUUIDFromBytes(id.getBytes(StandardCharsets.UTF_8)))
                     .tenantId(tenantId)
                     .letterOfIndentNumber(loiNumber)
                     .workPackageNumber(workPkgNumber)
@@ -65,7 +68,7 @@ public class LOIRowMapper implements ResultSetExtractor<List<LetterOfIndent>> {
                     .agreementDate(agreementDate)
                     .contractorId(contractorId)
                     .securityDeposit(securityDeposit)
-                    .bankGaurante(bankGaurante)
+                    .bankGuarantee(bankGuarantee)
                     .emdAmount(emdAmount)
                     .contractPeriod(contractPeriod)
                     .defectLiabilityPeriod(defectLiabilityPeriod)
@@ -74,9 +77,22 @@ public class LOIRowMapper implements ResultSetExtractor<List<LetterOfIndent>> {
                     .additionalDetails(additionalDetails)
                     .auditDetails(auditDetails)
                     .build();
-            loiMap.put(id, estimate);
+            loiMap.put(id, letterOfIndent);
         }
         return new ArrayList<>(loiMap.values());
+    }
+
+    private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {
+        JsonNode additionalDetail = null;
+        try {
+            Object jsonData = rs.getObject(columnName);
+            if (jsonData != null) {
+                additionalDetail = mapper.convertValue(jsonData, JsonNode.class);
+            }
+        } catch (SQLException e) {
+            throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
+        }
+        return additionalDetail;
     }
 
 

@@ -84,9 +84,6 @@ public class LetterOfIndent {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
-    @JsonProperty("bankGaurante")
-    private Object bankGaurante = null;
-
     /**
      * It stores the status of the letter.
      */

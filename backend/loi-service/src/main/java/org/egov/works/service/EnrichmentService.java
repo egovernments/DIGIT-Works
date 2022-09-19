@@ -2,7 +2,6 @@ package org.egov.works.service;
 
 import org.egov.works.config.LOIConfiguration;
 import org.egov.works.web.models.LOISearchCriteria;
-import org.egov.works.web.models.LOISearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

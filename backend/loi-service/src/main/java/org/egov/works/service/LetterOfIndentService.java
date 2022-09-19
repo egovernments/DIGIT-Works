@@ -6,13 +6,11 @@ import org.egov.works.producer.Producer;
 import org.egov.works.repository.LOIRepository;
 import org.egov.works.validator.LOIServiceValidator;
 import org.egov.works.web.models.LOISearchCriteria;
-import org.egov.works.web.models.LOISearchRequest;
 import org.egov.works.web.models.LetterOfIndent;
 import org.egov.works.web.models.LetterOfIndentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
