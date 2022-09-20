@@ -1,6 +1,6 @@
 export const newConfig = [
     {
-      head: "WORKS_APP_FOR_CREATE_CONTRACTOR",
+      head: "WORKS_CREATE_CONTRACTOR",
       key: "ContractorsDetail",
       isCreate: true,
       hideInCitizen: true,
@@ -19,7 +19,7 @@ export const newConfig = [
         }]
       },
       {
-        head: "WORKS_CONTRACTOR_TABLE",
+        head: "WORKS_CONTRACTOR_DETAILS",
         // isEditConnection: true,
         isCreateContracte: true,
         // isModifyConnection: true,

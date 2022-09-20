@@ -19,18 +19,10 @@ const BILLSBreadCrumbs = ({ location }) => {
 
   const search = useLocation().search;
   const fromScreen = new URLSearchParams(search).get("from") || null;
-  // const inboxInitialState = {
-  //   searchParams: {
-  //     uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
-  //     services: ["PT.CREATE", "PT.MUTATION", "PT.UPDATE"],
-  //     applicationStatus: [],
-  //     locality: [],
-  //   },
-  // };
   const crumbs = [
     {
       path: "/works-ui/employee",
-      content: t("WORKS_COMMON_WMS"),
+      content: t("WORKS_WMS"),
       show: true,
     },
     {
@@ -136,7 +128,7 @@ const App = ({ path }) => {
             <BILLSBreadCrumbs location={location} />
           </div>
           <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
-          <PrivateRoute path={`${path}/create-contractor`} component={NewApplication}/>
+          <PrivateRoute path={`${path}/create-contractor`} component={()=><NewApplication {...path}/>}/>
           <PrivateRoute path={`${path}/search-Estimate-approved`} component={(props)=><Search {...props} parentRoute={path}/>}/>
           <PrivateRoute path={`${path}/inbox`} component={() => (<Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />)}/>
           <PrivateRoute path={`${path}/LOIInbox`} component={() => (<LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />)}/>
