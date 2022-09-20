@@ -70,5 +70,36 @@ public class EstimateServiceConfiguration {
 
     @Value("${estimate.search.max.limit}")
     private Integer maxLimit;
+
+    //Workflow Config
+    @Value("${egov.workflow.host}")
+    private String wfHost;
+
+    @Value("${egov.workflow.transition.path}")
+    private String wfTransitionPath;
+
+    @Value("${egov.workflow.businessservice.search.path}")
+    private String wfBusinessServiceSearchPath;
+
+    @Value("${egov.workflow.processinstance.search.path}")
+    private String wfProcessInstanceSearchPath;
+
+    @Value("${estimate.workflow.business.service}")
+    private String estimateWFBusinessService;
+
+    @Value("${estimate.workflow.module.name}")
+    private String estimateWFModuleName;
+
+
+    //Location Config
+    @Value("${egov.location.host}")
+    private String locationHost;
+
+    @Value("${egov.location.context.path}")
+    private String locationContextPath;
+
+    @Value("${egov.location.endpoint}")
+    private String locationEndpoint;
+
 }
 

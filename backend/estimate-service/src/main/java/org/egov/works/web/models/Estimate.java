@@ -77,8 +77,8 @@ public class Estimate {
     @JsonProperty("status")
     private StatusEnum status = null;
 
-    @JsonProperty("applicationStatus")
-    private String applicationStatus = null;
+    @JsonProperty("estimateStatus")
+    private String estimateStatus = null;
 
     @JsonProperty("subject")
     private String subject = null;
@@ -98,8 +98,8 @@ public class Estimate {
     @JsonProperty("workCategory")
     private String workCategory = null;
 
-    @JsonProperty("beneficiary")
-    private String beneficiary = null;
+    @JsonProperty("beneficiaryType")
+    private String beneficiaryType = null;
 
     @JsonProperty("natureOfWork")
     private String natureOfWork = null;

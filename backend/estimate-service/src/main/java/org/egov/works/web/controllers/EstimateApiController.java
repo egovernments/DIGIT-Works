@@ -3,19 +3,16 @@ package org.egov.works.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.service.EstimateService;
 import org.egov.works.util.ResponseInfoCreator;
-import org.egov.works.web.models.EstimateRequest;
-import org.egov.works.web.models.EstimateResponse;
+import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -58,17 +55,11 @@ public class EstimateApiController {
     }
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
-    public ResponseEntity<EstimateResponse> estimateV1SearchPost(@NotNull @ApiParam(value = "Unique id for a tenant.", required = true) @Valid @RequestParam(value = "tenantId", required = true) String tenantId, @ApiParam(value = "formatted unique identifier of the estimateDetail") @Valid @RequestParam(value = "estiamteDetailNumber", required = false) String estiamteDetailNumber, @ApiParam(value = "formmated unqiue identier of the sanction of Estimate Proposal") @Valid @RequestParam(value = "adminSanctionNumber", required = false) String adminSanctionNumber, @ApiParam(value = "Search by list of UUID") @Valid @RequestParam(value = "ids", required = false) List<String> ids, @ApiParam(value = "Search by Application Number i.e Estiamte Number") @Valid @RequestParam(value = "applicationNumber", required = false) String applicationNumber, @ApiParam(value = "Search by Application Status i.e by status of the estimate") @Valid @RequestParam(value = "applicationStatus", required = false) String applicationStatus, @ApiParam(value = "search by proposal date between the from date and todate") @Valid @RequestParam(value = "fromProposalDate", required = false) BigDecimal fromProposalDate, @ApiParam(value = "search by proposal date between the from date and todate") @Valid @RequestParam(value = "toProposalDate", required = false) BigDecimal toProposalDate, @ApiParam(value = "Search by EstimateType") @Valid @RequestParam(value = "estimateType", required = false) String estimateType, @ApiParam(value = "Search by department") @Valid @RequestParam(value = "department", required = false) String department, @ApiParam(value = "Search by type of work") @Valid @RequestParam(value = "tyepOfWork", required = false) String tyepOfWork, @ApiParam(value = "sort the search results by fields", allowableValues = "totalAmount, typeOfWork, department, proposalDate, applicationStatus, createdTime") @Valid @RequestParam(value = "sortBy", required = false) String sortBy, @ApiParam(value = "sorting order of the search resulsts", allowableValues = "asc, desc") @Valid @RequestParam(value = "sortOrder", required = false) String sortOrder, @ApiParam(value = "limit on the resulsts") @Valid @RequestParam(value = "limit", required = false) BigDecimal limit, @ApiParam(value = "offset index of the overall search resulsts") @Valid @RequestParam(value = "offset", required = false) BigDecimal offset) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("")) {
-            try {
-                return new ResponseEntity<EstimateResponse>(objectMapper.readValue("", EstimateResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<EstimateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<EstimateResponse>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<EstimateResponse> estimateV1SearchPost(@Valid @RequestBody RequestInfo requestInfo, @Valid @ModelAttribute EstimateSearchCriteria searchCriteria) {
+        List<Estimate> estimateList = estimateService.searchEstimate(requestInfo,searchCriteria);
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfo, true);
+        EstimateResponse estimateResponse = EstimateResponse.builder().responseInfo(responseInfo).estimates(estimateList).build();
+        return new ResponseEntity<EstimateResponse>(estimateResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_update", method = RequestMethod.POST)

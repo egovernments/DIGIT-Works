@@ -2,16 +2,22 @@ package org.egov.works.service;
 
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.EstimateServiceConfiguration;
 import org.egov.works.repository.IdGenRepository;
 import org.egov.works.util.EstimateServiceUtil;
-import org.egov.works.web.models.*;
+import org.egov.works.web.models.Estimate;
+import org.egov.works.web.models.EstimateDetail;
+import org.egov.works.web.models.EstimateRequest;
+import org.egov.works.web.models.EstimateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,20 +43,31 @@ public class EnrichmentService {
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, true);
         estimate.setAuditDetails(auditDetails);
         estimate.setId(UUID.randomUUID());
+        Date currentDT = new Date();
+        BigDecimal proposalDate = new BigDecimal(currentDT.getTime());
+        estimate.setProposalDate(proposalDate);
 
-        List<String> estimateNumbers = getIdList(requestInfo, estimate.getTenantId()
+        String rootTenantId = estimate.getTenantId().split("\\.")[0];
+
+        List<String> estimateNumbers = getIdList(requestInfo, rootTenantId
                 , config.getIdgenEstimateNumberName(), config.getIdgenEstimateNumberFormat(), 1);
 
-        if (estimateNumbers != null && !estimateDetails.isEmpty()) {
-            estimate.setEstimateNumber(estimateNumbers.get(0));
+        String estimateNumSeq = "";
+        if (estimateNumbers != null && !estimateNumbers.isEmpty()) {
+            String estimateNumber = estimateNumbers.get(0);
+            estimate.setEstimateNumber(estimateNumber);
+            String[] estimateNumberArr = estimateNumber.split("/");
+            estimateNumSeq = estimateNumberArr[estimateNumberArr.length - 1];
         }
 
-        if (estimateDetails != null && !estimateDetails.isEmpty()) {
-            List<String> estimateDetailNumbers = getIdList(requestInfo, estimate.getTenantId()
+        if (estimateDetails != null && !estimateDetails.isEmpty() && StringUtils.isNotBlank(estimateNumSeq)) {
+            List<String> estimateDetailNumbers = getIdList(requestInfo, rootTenantId
                     , config.getIdgenSubEstimateNumberName(), config.getIdgenSubEstimateNumberFormat(), estimateDetails.size());
             for (int i = 0; i < estimateDetails.size(); i++) {
-                estimateDetails.get(0).setId(UUID.randomUUID());
-                estimateDetails.get(0).setEstimateDetailNumber(estimateDetailNumbers.get(0));
+                estimateDetails.get(i).setId(UUID.randomUUID());
+                String estimateDetailNum = estimateDetailNumbers.get(i);
+                estimateDetailNum = estimateDetailNum.replace("ESTIMATE_NUM", estimateNumSeq);
+                estimateDetails.get(i).setEstimateDetailNumber(estimateDetailNum);
             }
         }
     }
@@ -77,11 +94,10 @@ public class EnrichmentService {
     }
 
     /**
-     * @param searchRequest
+     * @param requestInfo
+     * @param searchCriteria
      */
-    public void enrichSearchEstimate(EstimateSearchRequest searchRequest) {
-        EstimateSearchCriteria searchCriteria = searchRequest.getSearchCriteria();
-
+    public void enrichSearchEstimate(RequestInfo requestInfo, EstimateSearchCriteria searchCriteria) {
         if (searchCriteria.getLimit() == null)
             searchCriteria.setLimit(config.getDefaultLimit());
 
