@@ -135,21 +135,21 @@ public class LocationUtil {
         String tenantId = locArr[0];
         String hierarchyType = locArr[1];
 
-        StringBuilder finalLocFilter = new StringBuilder();
-        finalLocFilter.append(filterHierarchyType.replace(PLACEHOLDER_CODE, hierarchyType));
+        StringBuilder filterBuilder = new StringBuilder();
+        filterBuilder.append(filterHierarchyType.replace(PLACEHOLDER_CODE, hierarchyType));
 
         for (int i = 2; i < locArr.length; i++) {
-            finalLocFilter.append(DOT);
-            finalLocFilter.append(filterChildrenCode.replace(PLACEHOLDER_CODE, locArr[i]));
+            filterBuilder.append(DOT);
+            filterBuilder.append(filterChildrenCode.replace(PLACEHOLDER_CODE, locArr[i]));
         }
-        finalLocFilter.append(DOT);
-        finalLocFilter.append(CODE);
+        String finalFilter = filterBuilder.substring(0,filterBuilder.lastIndexOf(".children"));
+        finalFilter = finalFilter.concat(DOT).concat(CODE);
 
 
         List<MasterDetail> locationMasterDetails = new ArrayList<>();
 
         MasterDetail locationMasterDetail = MasterDetail.builder().name(MASTER_BOUNDARY_LOCATION)
-                .filter(finalLocFilter.toString()).build();
+                .filter(finalFilter).build();
 
         locationMasterDetails.add(locationMasterDetail);
 
