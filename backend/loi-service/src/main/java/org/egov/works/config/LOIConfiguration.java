@@ -51,4 +51,13 @@ public class LOIConfiguration {
     @Value("${workflow.loi.module.name}")
     private String workflowLOIModuleName;
 
+    @Value("${loi.default.limit}")
+    private Integer defaultLimit;
+
+    @Value("${loi.default.offset}")
+    private Integer defaultOffset;
+
+    @Value("${loi.search.max.limit}")
+    private Integer maxLimit;
+
 }

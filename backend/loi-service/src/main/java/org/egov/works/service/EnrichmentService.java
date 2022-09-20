@@ -7,6 +7,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.config.LOIConfiguration;
 import org.egov.works.repository.IdGenRepository;
 import org.egov.works.util.LOIUtil;
+import org.egov.works.web.models.LOISearchCriteria;
 import org.egov.works.web.models.LetterOfIndent;
 import org.egov.works.web.models.LetterOfIndentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,18 @@ public class EnrichmentService {
         if (CollectionUtils.isEmpty(idResponses))
             throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
         return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+    }
+
+    public void enrichSearchLOI(LOISearchCriteria searchCriteria) {
+
+        if (searchCriteria.getLimit() == null)
+            searchCriteria.setLimit(config.getDefaultLimit());
+
+        if (searchCriteria.getOffset() == null)
+            searchCriteria.setOffset(config.getDefaultOffset());
+
+        if (searchCriteria.getLimit() != null && searchCriteria.getLimit() > config.getMaxLimit())
+            searchCriteria.setLimit(config.getMaxLimit());
     }
 
 }

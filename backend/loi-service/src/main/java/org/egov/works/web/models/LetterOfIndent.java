@@ -71,12 +71,16 @@ public class LetterOfIndent {
 
     @JsonProperty("oicId")
     private UUID oicId = null;
+
     @JsonProperty("status")
     private StatusEnum status = null;
+
     @JsonProperty("letterStatus")
     private String letterStatus = null;
+
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
