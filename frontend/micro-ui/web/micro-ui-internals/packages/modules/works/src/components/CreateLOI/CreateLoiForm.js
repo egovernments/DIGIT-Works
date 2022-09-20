@@ -237,7 +237,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_AGREEMENT_AMT`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="aggrementAmount" disabled={true} inputRef={register()} />
+                    <TextInput className={"field"} name="aggrementAmount" disabled={true} inputRef={register()} style={{ backgroundColor:"#E5E5E5"}} />
                 </LabelFieldPair>
 
                 <CardSectionHeader >{t(`WORKS_AGGREEMENT_DETAILS`)}</CardSectionHeader>
@@ -292,6 +292,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                         <TextInput name="securityDeposit" inputRef={register({
                             pattern: /^[0-9]*$/
                         })}
+                            style={{ backgroundColor:"#E5E5E5"}}
                         />
                         {errors && errors?.securityDeposit?.type === "pattern" && (
                             <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
