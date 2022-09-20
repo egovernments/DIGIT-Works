@@ -213,7 +213,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
               {/* TEXT INPUT ROW */}
               <LabelFieldPair>
                   <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{`${t(`WORKS_DATE_PROPOSAL`)}:*`}</CardLabel>
-                  <TextInput className={"field"} name="proposalDate" inputRef={register()} value={getDate()} disabled />
+                  <TextInput className={"field"} name="proposalDate" inputRef={register()} value={getDate()} disabled style={{ backgroundColor:"#E5E5E5"}} />
               </LabelFieldPair>
 
 
@@ -599,6 +599,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
                                   allowedMaxSizeInMB={5}
                                   hintText={t("WORKS_DOC_UPLOAD_HINT")}
                                   maxFilesAllowed={5}
+                                  extraStyleName={{padding:"0.5rem"}}
                               />
                           }
                           }

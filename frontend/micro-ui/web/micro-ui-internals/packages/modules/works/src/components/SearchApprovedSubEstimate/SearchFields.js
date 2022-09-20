@@ -142,6 +142,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
                     control={control}
                 />
             </SearchField>
+            <SearchField />
             <SearchField className="submit">
                 <SubmitBar label={t("ACTION_TEST_SEARCH")} submit />
                 <p onClick={() => {
