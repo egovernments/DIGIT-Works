@@ -12,5 +12,4 @@ const useSearch = ({ tenantId, filters, config = {} }) => useQuery(
     }
 )
 
-
 export default useSearch

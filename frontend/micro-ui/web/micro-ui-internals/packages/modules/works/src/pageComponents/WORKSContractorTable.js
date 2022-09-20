@@ -12,8 +12,47 @@ const WORKSContractorTable = () => {
   const { errors } = localFormState;
   const [isErrors, setIsErrors] = useState(false);
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
-  const userUlbs=[{label:"active",value:1,code:"active"},{label:"Inactive",value:2},{label:"Black listed",value:3}]
-  console.log("localFormState",localFormState,formValue)
+  const dummyData=[
+      {
+        name: 'Burhan', code: 'Burhan', active: true
+      },
+      {
+        name: 'Jagan', code: 'Jagan', active: true
+      },
+      {
+        name: 'Nipun', code: 'Nipun', active: true
+      }
+    ]
+  const statusULB=[
+      {
+        name:"Active", code:'Active', active:true
+      },
+      {
+        name:"Inactive", code:'Inactive', active:true
+      },
+      {
+        name:"Black listed", code:'Black listed', active:true
+      },
+      {
+        name:"Debarred", code:'Debarred', active:true
+      }
+    ]
+  
+  const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
+    "pb",
+    "works",
+    [
+        {
+            "name": "Department"
+        },
+        {
+            "name":"ContractorClass"
+        }
+    ]
+    );
+    if(data?.works){
+      var { Department,ContractorClass } = data?.works
+    }
   const getStyles = (index) => {
     let obj = {}
     switch (index) {
@@ -52,22 +91,16 @@ const WORKSContractorTable = () => {
                 control={control}
                 name={`contractorDetails.${row.key}.Department`}
                 // defaultValue={contractorDetails.bankName}
-                rules={{ required: t("REQUIRED_FIELD") }}
+                rules={{ required: t("WORKS_REQUIRED_ERR") }}
                 isMandatory={true}
                 render={(props) => {console.log("errors",errors);return(
                   <Dropdown
-                    style={{margin:"5px",width:"90%"}}
-                    className="form-field"
-                    selected={getValues(`contractorDetails.${row.key}.Department`)}
-                    disable={false}
-                    // option={}
-                    errorStyle={(localFormState.touched?.contractorDetails?.[row.key]?.Department && errors?.contractorDetails?.[row.key]?.Department?.message) ? true : false}
-                    select={(e) => {
-                      props.onChange(e);
-                    }}
-                    optionKey="i18nKey"
-                    onBlur={props.onBlur}
+                    option={Department}
+                    selected={props?.value}
+                    optionKey={"name"}
                     t={t}
+                    select={props?.onChange}
+                    onBlur={props.onBlur}
                   />
                 )}}
               />
@@ -83,7 +116,6 @@ const WORKSContractorTable = () => {
                 } }}
                 render={(props) => (
                   <TextInput
-                    style={{margin:"5px",width:"90%"}}
                     value={props.value}
                     autoFocus={focusIndex.index === 1 && focusIndex.type === `contractorDetails.${row.key}.registrationNumber`}
                     errorStyle={(localFormState.touched?.contractorDetails?.[row.key]?.registrationNumber && errors?.contractorDetails?.[row.key]?.registrationNumber?.message) ? true : false}
@@ -95,7 +127,6 @@ const WORKSContractorTable = () => {
                       setFocusIndex({ index: -1 });
                       props.onBlur(e);
                     }}
-                    // disable={isRenewal}
                   />
                 )}
               />
@@ -106,21 +137,16 @@ const WORKSContractorTable = () => {
               control={control}
               name={`contractorDetails.${row.key}.category`}
               // defaultValue={contractorDetails.bankName}
-              rules={{ required: t("REQUIRED_FIELD") }}
+              rules={{ required: t("WORKS_REQUIRED_ERR") }}
               isMandatory={true}
               render={(props) => (
                 <Dropdown
-                  style={{margin:"5px",width:"90%"}}
-                  selected={getValues(`contractorDetails.${row.key}.category`)}
-                  disable={false}
-                  // option={}
-                  errorStyle={(localFormState.touched.contractorDetails?.[row.key]?.category && errors?.contractorDetails?.[row.key]?.category?.message) ? true : false}
-                  select={(e) => {
-                    props.onChange(e);
-                  }}
-                  optionKey="i18nKey"
-                  onBlur={props.onBlur}
+                  option={dummyData}
+                  selected={props?.value}
+                  optionKey={"name"}
                   t={t}
+                  select={props?.onChange}
+                  onBlur={props.onBlur}
                 />
             )}
           />
@@ -131,22 +157,17 @@ const WORKSContractorTable = () => {
                   control={control}
                   name={`contractorDetails.${row.key}.contractorClass`}
                   // defaultValue={contractorDetails.bankName}
-                  rules={{ required: t("REQUIRED_FIELD") }}
+                  rules={{ required: t("WORKS_REQUIRED_ERR") }}
                   isMandatory={true}
                   render={(props) => (
-                    <Dropdown
-                      style={{margin:"5px",width:"90%"}}
-                      selected={getValues(`contractorDetails.${row.key}.contractorClass`)}
-                      disable={false}
-                      // option={}
-                      errorStyle={(localFormState.touched.contractorDetails?.[row.key]?.contractorClass && errors?.contractorDetails?.[row.key]?.contractorClass?.message) ? true : false}
-                      select={(e) => {
-                        props.onChange(e);
-                      }}
-                      optionKey="i18nKey"
-                      onBlur={props.onBlur}
-                      t={t}
-                    />
+                  <Dropdown
+                    option={ContractorClass}
+                    selected={props?.value}
+                    optionKey={"grade"}
+                    t={t}
+                    select={props?.onChange}
+                    onBlur={props.onBlur}
+                  />
                   )}
               />
             <CardLabelError>{localFormState.touched.contractorDetails?.[row.key]?.contractorClass ? errors?.contractorDetails?.[row.key]?.contractorClass?.message : ""}</CardLabelError>
@@ -156,22 +177,17 @@ const WORKSContractorTable = () => {
                   control={control}
                   name={`contractorDetails.${row.key}.status`}
                   // defaultValue={contractorDetails.bankName}
-                  rules={{ required: t("REQUIRED_FIELD") }}
+                  rules={{ required: t("WORKS_REQUIRED_ERR") }}
                   isMandatory={true}
                   render={(props) => (
                     <Dropdown
-                      style={{margin:"5px",width:"90%"}}
-                      selected={getValues(`contractorDetails.${row.key}.status`)}
-                      disable={false}
-                      // option={}
-                      errorStyle={(localFormState.touched.contractorDetails?.[row.key]?.status && errors?.status?.contractorDetails?.[row.key]?.message) ? true : false}
-                      select={(e) => {
-                        props.onChange(e);
-                      }}
-                      optionKey="i18nKey"
-                      onBlur={props.onBlur}
-                      t={t}
-                    />
+                    option={statusULB}
+                    selected={props?.value}
+                    optionKey={"name"}
+                    t={t}
+                    select={props?.onChange}
+                    onBlur={props.onBlur}
+                  />
                   )}
                 />
               <CardLabelError>{localFormState.touched.contractorDetails?.[row.key]?.status ? errors?.contractorDetails?.[row.key]?.status?.message : ""}</CardLabelError>
@@ -181,7 +197,7 @@ const WORKSContractorTable = () => {
                 name={`contractorDetails.${row.key}.fromDate`}
                 control={control}
                 defaultValue={""}
-                rules={{ required: t("REQUIRED_FIELD") }}
+                rules={{ required: t("WORKS_REQUIRED_ERR") }}
                 isMandatory={true}
                 render={(props) =>
                    <DatePicker 
@@ -196,7 +212,7 @@ const WORKSContractorTable = () => {
           <td>
             <Controller
                 name={`contractorDetails.${row.key}.toDate`}
-                rules={{ required: t("REQUIRED_FIELD") }}
+                rules={{ required: t("WORKS_REQUIRED_ERR") }}
                 isMandatory={true}
                 defaultValue={""}
                 control={control}
@@ -213,11 +229,7 @@ const WORKSContractorTable = () => {
               <CardLabelError>{localFormState.touched.toDate ? errors?.toDate?.message : ""}</CardLabelError>
           </td>
           <td>
-          <LinkButton
-              label={<DeleteIcon fill={"#494848"} />}
-              style={{ margin: "10px",cursor:"pointer" }}
-              onClick={() => removeRow(row)} 
-            />
+          {showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}
           </td>
         </tr>
       })
@@ -229,6 +241,14 @@ const WORKSContractorTable = () => {
       }
       obj.key = rows[rows.length - 1].key + 1
       setRows(prev => [...prev, obj])
+    }
+    const showDelete = () => {
+      let countIsShow = 0
+      rows.map(row => row.isShow && countIsShow++)
+      if (countIsShow === 1) {
+          return false
+      }
+      return true
     }
     const removeRow = (row) => {
     //make a new state here which doesn't have this key
@@ -278,15 +298,22 @@ const WORKSContractorTable = () => {
       }, [formValue]);
   return (
     <div>
-      <table className="contractor-table">
+      <table className='table reports-table sub-work-table'>
         <thead style={{height:"40px"}}>
           <tr>{renderHeader()}</tr>
         </thead>
         <tbody>
           {renderBody()}
+          <tr>
+              <td style={getStyles(1)}></td>
+              <td style={getStyles(2)}></td>
+              <td style={getStyles(3)}></td>
+              <td style={getStyles(4)}></td>
+              <td style={{ ...getStyles(2), "textAlign": "center" }} onClick={addRow}><span><AddIcon fill={"#F47738"} styles={{ "margin": "auto", "display": "inline", "marginTop": "-2px" }} /><label style={{ "marginLeft": "10px" }}>{t("WORKS_ADD_ITEM")}</label></span></td>
+              <td></td><td></td><td></td><td></td>
+          </tr>
         </tbody>
       </table>
-      <div onClick={addRow} style={{cursor:"pointer",display:"flex",justifyContent:"center",alignItems:"center"}}><AddIcon fill={"#F47738"}/>{t("WORKS_ADD_ITEM")}</div>
     </div>
   )
 }
