@@ -88,7 +88,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
         trigger,
         ...methods
     } = useForm({
-        defaultValues: { ...dummyDefault },
+        //defaultValues: { ...dummyDefault },
         mode: "onSubmit"
     });
 
