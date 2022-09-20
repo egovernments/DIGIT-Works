@@ -1,6 +1,7 @@
 package org.egov.works.validator;
 
 import com.jayway.jsonpath.JsonPath;
+import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,11 +47,24 @@ public class EstimateServiceValidator {
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
 
         validateMDMSData(estimate, mdmsData, errorMap);
-        // locationUtil.getLocation(estimate,requestInfo,BOUNDARY_ADMIN_HEIRARCHY_CODE);
-        //validateLocationData(request.getEstimate(), errorMap);
+        validateLocation(estimate, requestInfo, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
+    }
+
+    private void validateLocation(Estimate estimate, RequestInfo requestInfo, Map<String, String> errorMap) {
+        final String jsonPathForBoundryLocation = "$.MdmsRes." + MDMS_LOCATION_MODULE_NAME + "." + MASTER_BOUNDARY_LOCATION + ".*";
+        String location = estimate.getLocation();
+
+        if (StringUtils.isNotBlank(location)) {
+            Object locResult = locationUtil.getLocationFromMDMS(location, requestInfo, errorMap);
+            if (locResult != null) {
+                List<Object> locRes = JsonPath.read(locResult, jsonPathForBoundryLocation);
+                if (CollectionUtils.isEmpty(locRes))
+                    errorMap.put("LOCATION_NOT_FOUND", "Location doesn't exist in the system");
+            }
+        }
     }
 
     private void validateWorkFlow(EstimateRequestWorkflow workflow, Map<String, String> errorMap) {
@@ -223,9 +237,9 @@ public class EstimateServiceValidator {
             errorMap.put("INVALID_TENANT", "The tenant: " + estimate.getTenantId() + " is not present in MDMS");
     }
 
-    public void validateSearchEstimate(RequestInfo requestInfo, EstimateSearchCriteria searchCriteria) {
-        if (searchCriteria == null /*&& requestInfo == null*/) {
-            throw new CustomException("ESTIMATE_SEARCH_CRITERIA", "Estimate search criteria is mandatory");
+    public void validateSearchEstimate(RequestInfoWrapper requestInfoWrapper, EstimateSearchCriteria searchCriteria) {
+        if (searchCriteria == null || requestInfoWrapper == null || requestInfoWrapper.getRequestInfo() == null) {
+            throw new CustomException("ESTIMATE_SEARCH_CRITERIA_REQUEST", "Estimate search criteria request is mandatory");
         }
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");

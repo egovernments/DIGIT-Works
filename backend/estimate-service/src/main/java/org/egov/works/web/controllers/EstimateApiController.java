@@ -2,6 +2,7 @@ package org.egov.works.web.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -55,9 +56,9 @@ public class EstimateApiController {
     }
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
-    public ResponseEntity<EstimateResponse> estimateV1SearchPost(@Valid @RequestBody RequestInfo requestInfo, @Valid @ModelAttribute EstimateSearchCriteria searchCriteria) {
-        List<Estimate> estimateList = estimateService.searchEstimate(requestInfo,searchCriteria);
-        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfo, true);
+    public ResponseEntity<EstimateResponse> estimateV1SearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute EstimateSearchCriteria searchCriteria) {
+        List<Estimate> estimateList = estimateService.searchEstimate(requestInfoWrapper,searchCriteria);
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         EstimateResponse estimateResponse = EstimateResponse.builder().responseInfo(responseInfo).estimates(estimateList).build();
         return new ResponseEntity<EstimateResponse>(estimateResponse, HttpStatus.OK);
     }

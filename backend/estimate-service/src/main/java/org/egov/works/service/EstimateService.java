@@ -1,5 +1,6 @@
 package org.egov.works.service;
 
+import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.EstimateServiceConfiguration;
@@ -46,9 +47,9 @@ public class EstimateService {
         return request;
     }
 
-    public List<Estimate> searchEstimate(RequestInfo requestInfo, EstimateSearchCriteria searchCriteria) {
-        serviceValidator.validateSearchEstimate(requestInfo, searchCriteria);
-        enrichmentService.enrichSearchEstimate(requestInfo, searchCriteria);
+    public List<Estimate> searchEstimate(RequestInfoWrapper requestInfoWrapper, EstimateSearchCriteria searchCriteria) {
+        serviceValidator.validateSearchEstimate(requestInfoWrapper, searchCriteria);
+        enrichmentService.enrichSearchEstimate(requestInfoWrapper.getRequestInfo(), searchCriteria);
 
         List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
 
