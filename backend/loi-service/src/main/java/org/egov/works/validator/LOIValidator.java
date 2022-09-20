@@ -5,12 +5,10 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.LOISearchCriteria;
 import org.egov.works.web.models.LetterOfIndent;
 import org.egov.works.web.models.LetterOfIndentRequest;
 import org.egov.works.web.models.LetterOfIndentRequestWorkflow;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -21,8 +19,7 @@ import java.util.Map;
 @Slf4j
 public class LOIValidator {
 
-    @Autowired
-    private MDMSUtils mdmsUtils;
+
 
     public void validateCreateLOI(LetterOfIndentRequest request) {
         Map<String, String> errorMap = new HashMap<>();
@@ -89,28 +86,28 @@ public class LOIValidator {
             errorMap.put("TENANT_ID", "Tenant is is mandatory");
         }
         if (letterOfIndent.getFileNumber() == null || StringUtils.isBlank(letterOfIndent.getFileNumber())) {
-            errorMap.put("STATUS", "File Number is mandatory");
+            errorMap.put("FILE_NUMBER", "File Number is mandatory");
         }
         if (letterOfIndent.getFileDate() == null) {
-            errorMap.put("STATUS", "File Date is mandatory");
+            errorMap.put("FILE_DATE", "File Date is mandatory");
         }
         if (letterOfIndent.getNegotiatedPercentage() == null) {
-            errorMap.put("STATUS", "Percentage Negotiated is mandatory");
+            errorMap.put("PERCENTAGE_NEGOTIATED", "Percentage Negotiated is mandatory");
         }
         if (letterOfIndent.getNegotiatedPercentage().compareTo(new BigDecimal(-100)) == -1 || letterOfIndent.getNegotiatedPercentage().compareTo(new BigDecimal(100)) == 1) {
-            errorMap.put("STATUS", "Percentage Negotiated value is incorrect.");
+            errorMap.put("PERCENTAGE_NEGOTIATED", "Percentage Negotiated value is incorrect.");
         }
         if (letterOfIndent.getAgreementDate() == null) {
-            errorMap.put("STATUS", "Agreement Date is mandatory");
+            errorMap.put("AGREEMENT_DATE", "Agreement Date is mandatory");
         }
         if (letterOfIndent.getEmdAmount() == null) {
-            errorMap.put("STATUS", "EMD Amount is mandatory");
+            errorMap.put("EMO_AMOUNT", "EMD Amount is mandatory");
         }
         if (letterOfIndent.getDefectLiabilityPeriod() == null) {
-            errorMap.put("STATUS", "Defect Liability Period is mandatory");
+            errorMap.put("DEFECT_LIABILITY_PERIOD", "Defect Liability Period is mandatory");
         }
         if (letterOfIndent.getOicId() == null) {
-            errorMap.put("STATUS", "OIC Id is mandatory");
+            errorMap.put("OIC_ID", "OIC Id is mandatory");
         }
         if (letterOfIndent.getStatus() == null || !EnumUtils.isValidEnum(LetterOfIndent.StatusEnum.class, letterOfIndent.getStatus().toString())) {
             errorMap.put("STATUS", "Status is mandatory");
@@ -125,28 +122,28 @@ public class LOIValidator {
             errorMap.put("TENANT_ID", "Tenant is is mandatory");
         }
         if (letterOfIndent.getFileNumber() == null || StringUtils.isBlank(letterOfIndent.getFileNumber())) {
-            errorMap.put("STATUS", "File Number is mandatory");
+            errorMap.put("FILE_NUMBER", "File Number is mandatory");
         }
         if (letterOfIndent.getFileDate() == null) {
-            errorMap.put("STATUS", "File Date is mandatory");
+            errorMap.put("FILE_DATE", "File Date is mandatory");
         }
         if (letterOfIndent.getNegotiatedPercentage() == null) {
-            errorMap.put("STATUS", "Percentage Negotiated is mandatory");
+            errorMap.put("PERCENTAGE_NEGOTIATED", "Percentage Negotiated is mandatory");
         }
         if (letterOfIndent.getNegotiatedPercentage().compareTo(new BigDecimal(-100)) == -1 || letterOfIndent.getNegotiatedPercentage().compareTo(new BigDecimal(100)) == 1) {
-            errorMap.put("STATUS", "Percentage Negotiated value is incorrect.");
+            errorMap.put("PERCENTAGE_NEGOTIATED", "Percentage Negotiated value is incorrect.");
         }
         if (letterOfIndent.getAgreementDate() == null) {
-            errorMap.put("STATUS", "Agreement Date is mandatory");
+            errorMap.put("AGREEMENT_DATE", "Agreement Date is mandatory");
         }
         if (letterOfIndent.getEmdAmount() == null) {
-            errorMap.put("STATUS", "EMD Amount is mandatory");
+            errorMap.put("EMD_AMOUNT", "EMD Amount is mandatory");
         }
         if (letterOfIndent.getDefectLiabilityPeriod() == null) {
-            errorMap.put("STATUS", "Defect Liability Period is mandatory");
+            errorMap.put("DEFECT_LIABILITY_PERIOD", "Defect Liability Period is mandatory");
         }
         if (letterOfIndent.getOicId() == null) {
-            errorMap.put("STATUS", "OIC Id is mandatory");
+            errorMap.put("OIC_ID", "OIC Id is mandatory");
         }
         if (letterOfIndent.getStatus() == null || !EnumUtils.isValidEnum(LetterOfIndent.StatusEnum.class, letterOfIndent.getStatus().toString())) {
             errorMap.put("STATUS", "Status is mandatory");
