@@ -25,6 +25,12 @@ import getPDFData from "../utils/getWorksAcknowledgementData"
 //         }
 //     ]
 // }
+
+/**
+ * 
+// A common reusable component to use for the response screen
+// Pass the state object to it while doing history.push  
+ */
 const Response = (props) => {
   
     const {state}  = useLocation()

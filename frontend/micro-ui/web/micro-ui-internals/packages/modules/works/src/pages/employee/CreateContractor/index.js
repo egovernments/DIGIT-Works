@@ -80,7 +80,7 @@ const NewApplication = () => {
   //   // if(!formData?.cpt?.details?.propertyId) setSubmitValve(false);
   // };
   // const onFormValueChange = (setValue, formData, formState) => {
-  //   console.log("sessionFormData",sessionFormData,formData)
+
   //   if (!_.isEqual(sessionFormData, formData)) {
   //     setSessionFormData({ ...sessionFormData, ...formData });
   //   }
@@ -100,7 +100,7 @@ const NewApplication = () => {
 
 
   // const onSubmit = (data) => {
-  //   console.log("contractor Data",data)
+ 
   // };
 
   // const closeToast = () => {

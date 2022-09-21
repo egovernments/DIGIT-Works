@@ -8,7 +8,7 @@ const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wo
 
 const CreateLoiForm = ({ onFormSubmit }) => {
     const handleCreateClick = async (e) => {
-        
+
         // const result = await trigger(["lor", "fileno", "dlperiod", "fromDate", "aggDate", "agencyname", "officerInChargedesig","officerIncharge","work"])
         const obj = {
             "workIdentificationNumber": "123423",
@@ -111,10 +111,10 @@ const CreateLoiForm = ({ onFormSubmit }) => {
     //         { "name": "OfficerInChange" },
     //     ]
     // );
-    
 
 
-    //console.log(errors)
+
+
 
 
 
@@ -123,19 +123,19 @@ const CreateLoiForm = ({ onFormSubmit }) => {
         if (e.code === 'Enter') e.preventDefault();
     };
     const convertToNegative = (e) => {
-        
+
         const aggrementAmount = 100
         const value = getValues("negotiatedPercentage")
-        const result =  aggrementAmount - ((Math.abs(parseInt(value))*aggrementAmount)/100)
+        const result = aggrementAmount - ((Math.abs(parseInt(value)) * aggrementAmount) / 100)
         setValue('negotiatedPercentage', `-${Math.abs(value)}`, { shouldValidate: true })
         setValue('aggrementAmount', result, { shouldValidate: true })
     }
     const convertToPositive = (e) => {
-        
+
         const aggrementAmount = 100
         const value = getValues("negotiatedPercentage")
         const result = aggrementAmount + ((Math.abs(parseInt(value)) * aggrementAmount) / 100)
-        setValue('negotiatedPercentage', Math.abs(value) , { shouldValidate: true })
+        setValue('negotiatedPercentage', Math.abs(value), { shouldValidate: true })
         setValue('aggrementAmount', result, { shouldValidate: true })
     }
     return (
@@ -237,7 +237,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_AGREEMENT_AMT`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="aggrementAmount" disabled={true} inputRef={register()} style={{ backgroundColor:"#E5E5E5"}} />
+                    <TextInput className={"field"} name="aggrementAmount" disabled={true} inputRef={register()} style={{ backgroundColor: "#E5E5E5" }} />
                 </LabelFieldPair>
 
                 <CardSectionHeader >{t(`WORKS_AGGREEMENT_DETAILS`)}</CardSectionHeader>
@@ -292,7 +292,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                         <TextInput name="securityDeposit" inputRef={register({
                             pattern: /^[0-9]*$/
                         })}
-                            style={{ backgroundColor:"#E5E5E5"}}
+                            style={{ backgroundColor: "#E5E5E5" }}
                         />
                         {errors && errors?.securityDeposit?.type === "pattern" && (
                             <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}

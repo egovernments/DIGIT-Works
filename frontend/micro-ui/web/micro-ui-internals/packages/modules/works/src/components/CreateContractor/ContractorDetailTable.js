@@ -10,8 +10,7 @@ const WORKSContractorTable = ({ t, register, errors, rows, setRows,Controller,co
     //     }
     // ]
     // const [rows, setRows] = useState(initialState)
-    //console.log("formErrorssss", errors)
-    //console.log("rowState", rows)
+    
     const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
       "pb",
       "works",
@@ -88,7 +87,7 @@ const WORKSContractorTable = ({ t, register, errors, rows, setRows,Controller,co
             }
             return e
         })
-        //console.log(updatedState)
+        
         setRows(prev => updatedState)
     }
     const addRow = () => {

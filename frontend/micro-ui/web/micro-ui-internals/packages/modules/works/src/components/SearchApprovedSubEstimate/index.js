@@ -112,7 +112,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
                     <div>
                         <span className="link">
                             <Link to={`/digit-ui/employee/`}>
-                                <span onClick={() => console.log("Create LOI")}><CreateLoiIcon  style={{ "margin": "auto" }} /> {"Create LOI"} </span>
+                                <span ><CreateLoiIcon  style={{ "margin": "auto" }} /> {"Create LOI"} </span>
                             </Link>
                         </span>
                     </div>
