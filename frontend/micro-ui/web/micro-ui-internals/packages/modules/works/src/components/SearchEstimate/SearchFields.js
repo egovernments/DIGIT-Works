@@ -103,17 +103,16 @@ const SearchFields = ({ register, control, reset, t }) => {
                 <SubmitBar label={t("WORKS_COMMON_SEARCH")} submit />
                 <p onClick={() => {
                     reset({
-                        // applicationType: "",
-                        // fromDate: "",
-                        // toDate: "",
-                        // connectionNumber: "",
-                        // applicationStatus: "",
-                        // applicationNumber: "",
-                        // tradeName: "",
-                        // offset: 0,
-                        // limit: 10,
-                        // sortBy: "commencementDate",
-                        // sortOrder: "DESC"
+                        estimateNumber: "",
+                        fromProposalDate: "",
+                        toProposalDate: "",
+                        typeofwork: "",
+                        department: "",
+                        adminSanctionNumber: "",
+                        offset: 0,
+                        limit: 10,
+                        sortBy: "department",
+                        sortOrder: "DESC"
                     });
                 }}>{t(`CLEAR_SEARCH_LINk`)}</p>
             </SearchField>

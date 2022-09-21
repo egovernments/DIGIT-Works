@@ -31,16 +31,24 @@ const fieldComponents = {
   ),
 };
 
-const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams, isInboxPage, defaultSearchParams, clearSearch: _clearSearch }) => {
+const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams, isInboxPage, onSubmitt,defaultSearchParams, clearSearch: _clearSearch }) => {
   const { t } = useTranslation();
-  const { handleSubmit, reset, watch, control, setError, clearErrors, formState, setValue } = useForm({
+  const { handleSubmit, reset, watch, register,control, setError, clearErrors, formState, setValue } = useForm({
     defaultValues: isInboxPage ? searchParams : { locality: null, city: null, ...searchParams },
   });
-  const [estimateId, setEstimateId] = useState();
-  const [department, setDepartment] = useState();
-  const [typeOfWork, setTypeOfWork] = useState();
   const form = watch();
-
+  const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
+    "pb",
+    "works",
+    [
+        {
+            "name": "Department"
+        }
+    ]
+    );
+  if(data?.works){
+    var { Department } = data?.works
+  }
   const formValueEmpty = () => {
     let isEmpty = true;
     Object.keys(form).forEach((key) => {
@@ -76,17 +84,11 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   // }, [form, formState, setError, clearErrors]);
 
 
-  const onSubmitInput = (data) => {
-    if (!data.mobileNumber) {
-      delete data.mobileNumber;
-    }
-
-    data.delete = [];
-
-    searchFields.forEach((field) => {
-      if (!data[field.name]) data.delete.push(field.name);
-    });
-
+  const onSubmitInput = (data) => {    
+    // searchFields.forEach((field) => {
+    //   if (!data[field.name]) data.delete.push(field.name);
+    // });
+    // onSubmitt(data)
     onSearch(data);
     if (type === "mobile") {
       onClose();
@@ -116,7 +118,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
       </LinkLabel>
     );
   };
-
+  let validation = {}
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
@@ -135,43 +137,55 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
               <div className="filter-label" style={{ fontWeight: "normal" }}>
               {t("WORKS_LOI_ID")}
               </div>
-            <TextInput onChange={(e)=>setEstimateId(e.target.value)} value={estimateId} />
+            <TextInput 
+                name="estimateNumber" 
+                inputRef={register()} 
+                {...(validation = {
+                    isRequired: false,
+                    pattern: "^[a-zA-Z0-9-_\/]*$",
+                    type: "text",
+                    title: t("ERR_INVALID_ESTIMATE_NO"),
+                })}
+            /> 
             </div>
-                        {/* <Controller
-                          render={(props) => {
-                            return <TextInput onChange={props.onChange} value={props.value} />;
-                          }}
-                          // name={input.name}
-                          control={control}
-                          defaultValue={""}
-                        /> */}
+              
             <div style={{margin:"5px"}}>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
                 {t("WORKS_CONT_ID")}:
               </div>
-              <Dropdown 
-                // option={userUlbs} 
-                optionKey={"name"} 
-                value={department} 
-                selected={department} 
-                select={setDepartment} 
-                t={t} 
-                // disable={userUlbs} 
-              />              
+              <Controller
+                control={control}
+                name="contractorId"
+                render={(props) => (
+                    <Dropdown
+                        option={Department}
+                        selected={props?.value}
+                        optionKey={"name"}
+                        t={t}
+                        select={props?.onChange}
+                        onBlur={props.onBlur}
+                    />
+                )}
+            />
             </div>
             <div style={{margin:"5px"}}>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
                 {t("WORKS_DEPARTMENT")}:
               </div>
-              <Dropdown 
-                // option={userUlbs} 
-                optionKey={"name"} 
-                value={typeOfWork} 
-                selected={typeOfWork} 
-                select={setTypeOfWork} 
-                t={t} 
-                // disable={userUlbs} 
-              />              
+              <Controller
+                control={control}
+                name="department"
+                render={(props) => (
+                    <Dropdown
+                        option={Department}
+                        selected={props?.value}
+                        optionKey={"name"}
+                        t={t}
+                        select={props?.onChange}
+                        onBlur={props.onBlur}
+                    />
+                )}
+            />
             </div>
               {/* {searchFields */}
                 {/* ?.filter((e) => true) */}
@@ -223,7 +237,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                   <SubmitBar
                     className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")}
-                    // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
+                    disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
                   {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
