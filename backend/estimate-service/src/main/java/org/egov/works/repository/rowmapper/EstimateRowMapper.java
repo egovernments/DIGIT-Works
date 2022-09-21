@@ -110,7 +110,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {
         JsonNode additionalDetail = null;
         try {
-            Object jsonData = rs.getObject("additionaldetails");
+            Object jsonData = rs.getObject(columnName);
             if (jsonData != null) {
                 additionalDetail = mapper.convertValue(jsonData, JsonNode.class);
             }
