@@ -11,7 +11,7 @@ const CreateLOI = () => {
     const history = useHistory();
     const {t} = useTranslation()
     const onFormSubmit = async (_data) => {
-        //debugger
+        
         const data = Object.keys(_data)
             .filter((k) => _data[k])
             .reduce((acc, key) => ({ ...acc, [key]: typeof _data[key] === "object" && key!=="uploads" ? _data[key].name : _data[key] }), {})
@@ -23,10 +23,10 @@ const CreateLOI = () => {
 
         await LOIMutation(letterOfIndent,{
             onError:(error,variables)=>{
-                //debugger
+                
             },
             onSuccess:async (responseData,requestData)=>{
-                //debugger
+                
                 //console.log(window.contextPath);
                 //take us to the response page on succesfull create
                 // const state = {

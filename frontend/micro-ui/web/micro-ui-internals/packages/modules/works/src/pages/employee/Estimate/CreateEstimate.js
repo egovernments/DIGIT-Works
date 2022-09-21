@@ -11,7 +11,7 @@ const CreateEstimate = (props) => {
     const {mutate:EstimateMutation}=Digit.Hooks.works.useCreateEstimate("WORKS");
 
     const onFormSubmit = async(_data) => {
-        // debugger
+        
         const payload = await createEstimatePayload(_data);
         const estimate={estimate:payload,workflow:{
             "action": "string",
@@ -23,10 +23,10 @@ const CreateEstimate = (props) => {
 
         await EstimateMutation(estimate,{
             onError:(error,variables)=>{
-                debugger
+            
             },
             onSuccess:async (responseData,variables)=>{
-               debugger
+               
             }   
         })
     }

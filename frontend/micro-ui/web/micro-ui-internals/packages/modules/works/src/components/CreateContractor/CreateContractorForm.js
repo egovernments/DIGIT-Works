@@ -65,7 +65,7 @@ const CreateContractorForm = ({onFormSubmit}) => {
             name:"VAT", code:'VAT', active:true
           },
       ]
-    //debugger
+    
     const {subTypes:SubTypeOfWork} = useWatch({ control: control, name: "typeOfWork", defaultValue: [] });
 
     if(data?.works){
@@ -81,7 +81,7 @@ const CreateContractorForm = ({onFormSubmit}) => {
         
         const result = await trigger(fieldsToValidate)
         if (result) {
-            // debugger
+            
             // setShowModal(true)
             onFormSubmit(data);
         }

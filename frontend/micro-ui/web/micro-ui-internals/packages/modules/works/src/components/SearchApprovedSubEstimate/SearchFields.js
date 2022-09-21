@@ -45,7 +45,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
         ],
         {
             select:(data) => {
-                // debugger
+                
                 return data?.works?.Department
             }
         }

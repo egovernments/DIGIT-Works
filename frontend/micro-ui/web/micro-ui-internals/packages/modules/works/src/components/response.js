@@ -26,7 +26,7 @@ import getPDFData from "../utils/getWorksAcknowledgementData"
 //     ]
 // }
 const Response = (props) => {
-    //debugger
+  
     const {state}  = useLocation()
     const history = useHistory()
     const {t} = useTranslation()

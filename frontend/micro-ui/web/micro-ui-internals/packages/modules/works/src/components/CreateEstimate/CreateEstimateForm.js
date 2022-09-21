@@ -102,7 +102,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
         ]
     );
 
-    //debugger
+    
     const {subTypes:SubTypeOfWork} = useWatch({ control: control, name: "typeOfWork", defaultValue: [] });
 
     if(data?.works){
@@ -117,7 +117,7 @@ const CreateEstimateForm = ({onFormSubmit}) => {
 
 
     const handleCreateClick = async () => {
-        //debugger
+        
         const obj = {
             "requirementNumber": "123123",
             "estimateDetails": [
