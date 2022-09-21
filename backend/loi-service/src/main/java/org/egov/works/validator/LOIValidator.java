@@ -61,15 +61,6 @@ public class LOIValidator {
         if (requestInfo == null) {
             throw new CustomException("REQUEST_INFO", "Request info is mandatory");
         }
-        if (requestInfo.getTs() == null || requestInfo.getTs() == 0) {
-            errorMap.put("TIMESTAMP", "Ts is mandatory");
-        }
-        if (StringUtils.isBlank(requestInfo.getMsgId())) {
-            errorMap.put("MESSAGE_ID", "MsgIf is mandatory");
-        }
-        if (StringUtils.isBlank(requestInfo.getAction())) {
-            errorMap.put("ACTION", "Action is mandatory");
-        }
         if (requestInfo.getUserInfo() == null) {
             errorMap.put("USERINFO", "UserInfo is mandatory");
         }

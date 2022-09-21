@@ -3,6 +3,7 @@ package org.egov.works.web.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -59,9 +60,9 @@ public class LetterOfIndentApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
 
-    public ResponseEntity<LetterOfIndentResponse> letterOfIndentV1SearchPost(@Valid @RequestBody RequestInfo requestInfo, @ApiParam(value = "Request object to search LOI in the system", required = true) @Valid @ModelAttribute LOISearchCriteria criteria) {
+    public ResponseEntity<LetterOfIndentResponse> letterOfIndentV1SearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @ApiParam(value = "Request object to search LOI in the system", required = true) @Valid @ModelAttribute LOISearchCriteria criteria) {
         List<LetterOfIndent> loiList = letterOfIndentService.searchLOI(criteria);
-        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfo, true);
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         LetterOfIndentResponse loiResponse = LetterOfIndentResponse.builder().responseInfo(responseInfo).letterOfIndents(loiList).build();
         return new ResponseEntity<LetterOfIndentResponse>(loiResponse, HttpStatus.OK);
     }
