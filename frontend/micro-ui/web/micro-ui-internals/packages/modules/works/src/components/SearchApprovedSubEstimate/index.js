@@ -112,7 +112,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
                     <div>
                         <span className="link">
                             <Link to={`/digit-ui/employee/`}>
-                                <span onClick={() => console.log("Create LOI")}><CreateLoiIcon  style={{ "margin": "auto" }} /> {"Create LOI"} </span>
+                                <span ><CreateLoiIcon  style={{ "margin": "auto" }} /> {"Create LOI"} </span>
                             </Link>
                         </span>
                     </div>
@@ -145,7 +145,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
 
     return (
         <>
-            <Header styles={{ fontSize: "32px" }}>{t("WORKS_SEARCH_APPROVED_ESTIMATES")}</Header>
+            <Header styles={{ fontSize: "32px" }}>{t("WORKS_SEARCH_APPROVED_ESTIMATE")}</Header>
             <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} >
                 <SearchFields {...{ register, control, reset, t,formState }} />
             </SearchForm>

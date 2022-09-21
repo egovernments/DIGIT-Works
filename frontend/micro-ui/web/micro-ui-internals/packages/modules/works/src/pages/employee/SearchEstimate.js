@@ -1,4 +1,4 @@
-import React,{Fragment, useState} from 'react'
+import React, { Fragment, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import { Toast } from "@egovernments/digit-ui-react-components";
 import { searchEstimatePayload } from "../../utils/searchEstimatePayload";
@@ -11,11 +11,11 @@ const SearchEstimate = () => {
     const [payload, setPayload] = useState({});
 
 
-    const onSubmit = async(_data) => {
+  const onSubmit = async (_data) => {
     var fromProposalDate = new Date(_data?.fromProposalDate);
-        fromProposalDate?.setSeconds(fromProposalDate?.getSeconds() - 19800);
+    fromProposalDate?.setSeconds(fromProposalDate?.getSeconds() - 19800);
     var toProposalDate = new Date(_data?.toProposalDate);
-        toProposalDate?.setSeconds(toProposalDate?.getSeconds() + 86399 - 19800);
+    toProposalDate?.setSeconds(toProposalDate?.getSeconds() + 86399 - 19800);
     const data = {
       ..._data,
       ...(_data.toDate ? { toDate: toDate?.getTime() } : {}),
@@ -60,7 +60,7 @@ const SearchEstimate = () => {
           }}
         />
       )}
-      </Fragment>
+    </Fragment>
   )
 }
 

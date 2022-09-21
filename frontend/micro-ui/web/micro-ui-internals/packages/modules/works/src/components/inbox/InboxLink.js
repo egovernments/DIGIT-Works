@@ -7,12 +7,6 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   const { t } = useTranslation();
 
   const allLinks = [
-    // {
-    //   text: "ES_TITLE_NEW_REGISTRATION",
-    //   link: "/digit-ui/employee/pt/new-application",
-    //   businessService: "PT",
-    //   roles: ["PT_CEMP"],
-    // },
     {
       text: t("WORKS_CREATE_ESTIMATE"),
       link: `/works-ui/employee/works/create-estimate`,
@@ -25,8 +19,6 @@ const InboxLinks = ({ parentRoute, businessService }) => {
       businessService: "WORKS",
       roles: [],
     },
-    // { text: "PT_REPORTS", hyperLink: true, link: "/digit-ui/employee/integration/dss/propertytax", roles: [], businessService: "PT" },
-    // { text: "PT_DASHBOARD", link: "/digit-ui/employee/", roles: [], businessService: "PT" },
   ];
 
   const [links, setLinks] = useState([]);

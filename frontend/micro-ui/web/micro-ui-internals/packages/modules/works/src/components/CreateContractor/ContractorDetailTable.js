@@ -2,16 +2,7 @@ import React, { Fragment, useState } from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon,Dropdown,TextInput, CardLabelError,DatePicker } from '@egovernments/digit-ui-react-components'
 
 const WORKSContractorTable = ({ t, register, errors, rows, setRows,Controller,control }) => {
-
-    // const initialState = [
-    //     { 
-    //         key: 1,
-    //         isShow: true
-    //     }
-    // ]
-    // const [rows, setRows] = useState(initialState)
-    //console.log("formErrorssss", errors)
-    //console.log("rowState", rows)
+    
     const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
       "pb",
       "works",
@@ -88,7 +79,7 @@ const WORKSContractorTable = ({ t, register, errors, rows, setRows,Controller,co
             }
             return e
         })
-        //console.log(updatedState)
+        
         setRows(prev => updatedState)
     }
     const addRow = () => {
@@ -108,24 +99,24 @@ const WORKSContractorTable = ({ t, register, errors, rows, setRows,Controller,co
                 <td style={getStyles(2)} >
                   <div className='field'>
                   <Controller
-                          name={`contractorDetails.${row.key}.Department`}
-                          control={control}
-                          rules={{ required: true }}
-                          render={(props) => {
-                              return (
-                                  <Dropdown
-                                      option={Department}
-                                      selected={props?.value}
-                                      optionKey={"name"}
-                                      t={t}
-                                      select={props?.onChange}
-                                      onBlur={props.onBlur}
-                                  />
-                              );
-                          }}
+                    name={`contractorDetails.${row.key}.Department`}
+                    control={control}
+                    rules={{ required: true }}
+                    render={(props) => {
+                        return (
+                            <Dropdown
+                                option={Department}
+                                selected={props?.value}
+                                optionKey={"name"}
+                                t={t}
+                                select={props?.onChange}
+                                onBlur={props.onBlur}
+                            />
+                        );
+                    }}
                       />
-                      {errors && errors?.contractorDetails?.[row.key]?.Department?.type === "required" && (
-                          <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    {errors && errors?.contractorDetails?.[row.key]?.Department?.type === "required" && (
+                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                   </div>
                 </td>
                 <td style={getStyles(3)}>
@@ -141,104 +132,104 @@ const WORKSContractorTable = ({ t, register, errors, rows, setRows,Controller,co
                 <td style={getStyles(2)} >
                   <div className='field'>
                   <Controller
-                          name={`contractorDetails.${row.key}.category`}
-                          control={control}
-                          render={(props) => {
-                              return (
-                                  <Dropdown
-                                      option={Department}
-                                      selected={props?.value}
-                                      optionKey={"name"}
-                                      t={t}
-                                      select={props?.onChange}
-                                      onBlur={props.onBlur}
-                                  />
-                              );
-                          }}
+                    name={`contractorDetails.${row.key}.category`}
+                    control={control}
+                    render={(props) => {
+                        return (
+                            <Dropdown
+                                option={Department}
+                                selected={props?.value}
+                                optionKey={"name"}
+                                t={t}
+                                select={props?.onChange}
+                                onBlur={props.onBlur}
+                            />
+                        );
+                    }}
                       />
                   </div>
                 </td>
                 <td style={getStyles(2)} >
                   <div className='field'>
                   <Controller
-                          name={`contractorDetails.${row.key}.contractorClass`}
-                          control={control}
-                          rules={{ required: true }}
-                          render={(props) => {
-                              return (
-                                  <Dropdown
-                                      option={ContractorClass}
-                                      selected={props?.value}
-                                      optionKey={"grade"}
-                                      t={t}
-                                      select={props?.onChange}
-                                      onBlur={props.onBlur}
-                                  />
-                              );
-                          }}
+                    name={`contractorDetails.${row.key}.contractorClass`}
+                    control={control}
+                    rules={{ required: true }}
+                    render={(props) => {
+                        return (
+                            <Dropdown
+                                option={ContractorClass}
+                                selected={props?.value}
+                                optionKey={"grade"}
+                                t={t}
+                                select={props?.onChange}
+                                onBlur={props.onBlur}
+                            />
+                        );
+                    }}
                       />
-                      {errors && errors?.contractorDetails?.[row.key]?.contractorClass?.type === "required" && (
-                          <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    {errors && errors?.contractorDetails?.[row.key]?.contractorClass?.type === "required" && (
+                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                   </div>
                 </td>
                 <td style={getStyles(2)} >
                   <div className='field'>
                   <Controller
-                          name={`contractorDetails.${row.key}.status`}
-                          control={control}
-                          rules={{ required: true }}
-                          render={(props) => {
-                              return (
-                                  <Dropdown
-                                      option={statusULB}
-                                      selected={props?.value}
-                                      optionKey={"name"}
-                                      t={t}
-                                      select={props?.onChange}
-                                      onBlur={props.onBlur}
-                                  />
-                              );
-                          }}
+                    name={`contractorDetails.${row.key}.status`}
+                    control={control}
+                    rules={{ required: true }}
+                    render={(props) => {
+                        return (
+                            <Dropdown
+                                option={statusULB}
+                                selected={props?.value}
+                                optionKey={"name"}
+                                t={t}
+                                select={props?.onChange}
+                                onBlur={props.onBlur}
+                            />
+                        );
+                    }}
                       />
-                      {errors && errors?.contractorDetails?.[row.key]?.status?.type === "required" && (
-                          <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    {errors && errors?.contractorDetails?.[row.key]?.status?.type === "required" && (
+                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                   </div>
                 </td>
                 <td style={getStyles(2)} >
                   <div className='field'>
                   <Controller
-                          name={`contractorDetails.${row.key}.fromDate`}
-                          control={control}
-                          rules={{ required: true }}
-                          render={(props) => {
-                              return (
-                                <DatePicker 
-                                 date={props.value} 
-                                 onChange={props.onChange}       
-                                />);
-                          }}
-                      />
-                      {errors && errors?.contractorDetails?.[row.key]?.fromDate?.type === "required" && (
-                          <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    name={`contractorDetails.${row.key}.fromDate`}
+                    control={control}
+                    rules={{ required: true }}
+                    render={(props) => {
+                        return (
+                        <DatePicker 
+                            date={props.value} 
+                            onChange={props.onChange}       
+                        />);
+                    }}
+                    />
+                    {errors && errors?.contractorDetails?.[row.key]?.fromDate?.type === "required" && (
+                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                   </div>
                 </td>
                 <td style={getStyles(2)} >
                   <div className='field'>
                   <Controller
-                          name={`contractorDetails.${row.key}.toDate`}
-                          control={control}
-                          rules={{ required: true }}
-                          render={(props) => {
-                              return (
-                                <DatePicker 
-                                date={props.value} 
-                                onChange={props.onChange}       
-                               />
-                              );
-                          }}
-                      />
-                      {errors && errors?.contractorDetails?.[row.key]?.toDate?.type === "required" && (
-                          <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    name={`contractorDetails.${row.key}.toDate`}
+                    control={control}
+                    rules={{ required: true }}
+                    render={(props) => {
+                        return (
+                        <DatePicker 
+                        date={props.value} 
+                        onChange={props.onChange}       
+                        />
+                        );
+                    }}
+                    />
+                    {errors && errors?.contractorDetails?.[row.key]?.toDate?.type === "required" && (
+                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                   </div>
                 </td>
                 <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>

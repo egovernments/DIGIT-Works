@@ -192,11 +192,12 @@ const sampleLOISearchResponse = {
 
 
 export const WorksSearch = {
-    searchEstimate: async (tenantId, filters = {} ) => {
+    searchEstimate: async (tenantId="pb.jalandhar", filters = {} ) => {
+        
         //dymmy response
         const response = sampleEstimateSearchResponse
         //actual response
-        //const response = await WorksService?.estimateSearch({tenantId,filters})
+        const responseStatic = await WorksService?.estimateSearch({tenantId,filters})
         return response?.estimates
     },
     searchLOI: async (tenantId,filters={}) => {
@@ -294,7 +295,7 @@ export const WorksSearch = {
         }
     },
     viewLOIScreen: async (t, tenantId, loiNumber,estimateNumber="") => {
-        // debugger
+        
          const loiArr = await WorksSearch.searchLOI(tenantId,{loiNumber})
          const loi = loiArr?.[0]
         //const loi = sampleLOISearchResponse?.letterOfIndents?.[0]

@@ -5,11 +5,11 @@ import { useTranslation } from "react-i18next";
 
 const SearchApprovedSubEstimate = () => {
 
-    const [payload,setPayload] = useState({})
+    const [payload, setPayload] = useState({})
 
     const onSubmit = (_data) => {
-       // debugger
-        //console.log(_data)
+
+
         var fromDate = new Date(_data?.fromProposalDate);
         fromDate?.setSeconds(fromDate?.getSeconds() - 19800);
         var toDate = new Date(_data?.toProposalDate);
@@ -27,7 +27,7 @@ const SearchApprovedSubEstimate = () => {
         //make the payload according to the swagger
     }
 
-    //console.log(payload)
+
     //call API here and write the corresponding service and hook code 
     const config = {
         enabled: !!(payload && Object.keys(payload).length > 0),
@@ -126,7 +126,7 @@ const SearchApprovedSubEstimate = () => {
 
     const SearchApplicationApproved = Digit.ComponentRegistryService.getComponent("SearchApprovedSubEs");
     return (
-        <SearchApplicationApproved onSubmit={onSubmit} data={dummyResult.estimates} tenantId={"pb.jalandhar"} count={dummyResult.estimates.length}/>
+        <SearchApplicationApproved onSubmit={onSubmit} data={dummyResult.estimates} tenantId={"pb.jalandhar"} count={dummyResult.estimates.length} />
     )
 }
 

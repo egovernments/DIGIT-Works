@@ -12,9 +12,9 @@ const Search = ({ path }) => {
   
   const onSubmit=async(_data)=> {
     var fromProposalDate = new Date(_data?.fromProposalDate);
-        fromProposalDate?.setSeconds(fromProposalDate?.getSeconds() - 19800);
+    fromProposalDate?.setSeconds(fromProposalDate?.getSeconds() - 19800);
     var toProposalDate = new Date(_data?.toProposalDate);
-        toProposalDate?.setSeconds(toProposalDate?.getSeconds() + 86399 - 19800);
+    toProposalDate?.setSeconds(toProposalDate?.getSeconds() + 86399 - 19800);
     const data = {
       ..._data,
       ...(_data.toProposalDate ? { toProposalDate: toProposalDate?.getTime() } : {}),

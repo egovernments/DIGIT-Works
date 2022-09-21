@@ -45,7 +45,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
         ],
         {
             select:(data) => {
-                // debugger
+                
                 return data?.works?.Department
             }
         }
@@ -61,7 +61,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
             "name": "Civil"
         },
     ]
-    //console.log("stat",formState?.errors)
+    
     let validation = {}
 
     if (isLoading) {
@@ -142,6 +142,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
                     control={control}
                 />
             </SearchField>
+            <SearchField />
             <SearchField className="submit">
                 <SubmitBar label={t("ACTION_TEST_SEARCH")} submit />
                 <p onClick={() => {

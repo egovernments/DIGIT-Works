@@ -6,9 +6,9 @@ import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 
 const Inbox = ({
-  parentRoute,//digit-ui/employee/works
-  businessService="WORKS",
-  initialStates={},
+  parentRoute,
+  businessService = "WORKS",
+  initialStates = {},
   filterComponent,
   isInbox
 }) => {
@@ -27,21 +27,23 @@ const Inbox = ({
     ? { limit: 100, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
     : { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
 
-    const { isFetching, isLoading: hookLoading, searchResponseKey, searchFields, ...rest } = Digit.Hooks.tl.useInbox({
-      tenantId,
-      filters: { ...searchParams, ...paginationParams, sortParams },
-      config: {},
-    });
-    const data=[{EstimateNumber:"LE/ENG/00002/10/2017-18",
-                Department:"ENGINEERING",
-                Fund:"Municipal Fund",
-                Function:"Water Supply",
-                BudgetHead:"Water Purification",
-                CreatedBy:"A.P.Sreenivasulu",
-                Owner:"A.P.Sreenivasulu",
-                Status:"Craeted",
-                TotalAmount:"Rs,10000" }]
-                
+  const { isFetching, isLoading: hookLoading, searchResponseKey, searchFields, ...rest } = Digit.Hooks.tl.useInbox({
+    tenantId,
+    filters: { ...searchParams, ...paginationParams, sortParams },
+    config: {},
+  });
+  const data = [{
+    EstimateNumber: "LE/ENG/00002/10/2017-18",
+    Department: "ENGINEERING",
+    Fund: "Municipal Fund",
+    Function: "Water Supply",
+    BudgetHead: "Water Purification",
+    CreatedBy: "A.P.Sreenivasulu",
+    Owner: "A.P.Sreenivasulu",
+    Status: "Craeted",
+    TotalAmount: "Rs,10000"
+  }]
+
   useEffect(() => {
     setPageOffset(0);
   }, [searchParams]);
@@ -105,15 +107,15 @@ const Inbox = ({
     if (isMobile) {
       return (
         <MobileInbox
-        data={data}
-        isLoading={hookLoading}
-        searchFields={getSearchFields()}
-        onFilterChange={handleFilterChange}
-        onSearch={handleFilterChange}
-        onSort={handleSort}
-        parentRoute={parentRoute}
-        searchParams={searchParams}
-        sortParams={sortParams}
+          data={data}
+          isLoading={hookLoading}
+          searchFields={getSearchFields()}
+          onFilterChange={handleFilterChange}
+          onSearch={handleFilterChange}
+          onSort={handleSort}
+          parentRoute={parentRoute}
+          searchParams={searchParams}
+          sortParams={sortParams}
         />
       );
     } else {

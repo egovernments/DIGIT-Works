@@ -93,7 +93,7 @@ const WORKSContractorTable = () => {
                 // defaultValue={contractorDetails.bankName}
                 rules={{ required: t("WORKS_REQUIRED_ERR") }}
                 isMandatory={true}
-                render={(props) => {console.log("errors",errors);return(
+                render={(props) => {return(
                   <Dropdown
                     option={Department}
                     selected={props?.value}

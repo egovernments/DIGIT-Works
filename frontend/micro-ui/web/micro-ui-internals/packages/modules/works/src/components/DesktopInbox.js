@@ -49,32 +49,10 @@ const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearc
         },
         mobileCell: (original) => GetMobCell(original?.searchData?.["owners"]?.[0].name),
       },
-      // {
-      //   Header: t("ES_INBOX_APPLICATION_TYPE"),
-      //   Cell: ({ row }) => {
-      //     const map = {
-      //       "PT.CREATE": "ES_PT_NEW_PROPERTY",
-      //       "PT.MUTATION": "ES_PT_TRANSFER_OWNERSHIP",
-      //       "PT.UPDATE": "ES_PT_UPDATE_PROPERTY",
-      //     };
-      //     return GetCell(t(`${map[row.original?.workflowData?.businessService]}`));
-      //   },
-      //   mobileCell: (original) => {
-      //     const map = {
-      //       "PT.CREATE": "ES_PT_NEW_PROPERTY",
-      //       "PT.MUTATION": "ES_PT_TRANSFER_OWNERSHIP",
-      //       "PT.UPDATE": "ES_PT_UPDATE_PROPERTY",
-      //     };
-
-      //     return GetMobCell(t(map[original?.workflowData?.businessService]));
-      //   },
-      // },
       {
         Header: t("WORKS_FUND"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.Fund}`);
-          // const wf = row.original?.workflowData;
-          // return GetCell(t(`ES_PT_COMMON_STATUS_${wf?.state?.["state"]}`));
         },
         mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
       },

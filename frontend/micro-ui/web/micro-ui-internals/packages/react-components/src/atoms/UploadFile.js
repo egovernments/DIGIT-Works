@@ -150,6 +150,7 @@ const UploadFile = (props) => {
 
   // for common aligmnent issues added common styles
   extraStyles = getCitizenStyles("OBPS");
+  
 
   // if (window.location.href.includes("/obps") || window.location.href.includes("/noc")) {
   //   extraStyles = getCitizenStyles("OBPS");
@@ -194,7 +195,7 @@ const UploadFile = (props) => {
   return (
     <Fragment>
       {showHint && <p className="cell-text">{t(props?.hintText)}</p>}
-      <div className={`upload-file ${user_type === "employee" ? "":"upload-file-max-width"} ${props.disabled ? " disabled" : ""}`} style={extraStyles?.uploadFile ? extraStyles?.uploadFile : {}}>
+      <div className={`upload-file ${user_type === "employee" ? "":"upload-file-max-width"} ${props.disabled ? " disabled" : ""}`} style={extraStyles?.uploadFile ? {...extraStyles?.uploadFile,padding:"0.5rem"}  : {}}>
         <div style= {extraStyles ? extraStyles?.containerStyles : null}>
           <ButtonSelector
             theme="border"

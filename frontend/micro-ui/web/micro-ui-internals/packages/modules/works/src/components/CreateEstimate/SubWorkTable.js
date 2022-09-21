@@ -10,8 +10,7 @@ const SubWorkTable = ({ t, register, errors, rows, setRows }) => {
     //     }
     // ]
     // const [rows, setRows] = useState(initialState)
-    //console.log("formErrorssss", errors)
-    //console.log("rowState", rows)
+
     const getStyles = (index) => {
         let obj = {}
         switch (index) {
@@ -59,7 +58,7 @@ const SubWorkTable = ({ t, register, errors, rows, setRows }) => {
             }
             return e
         })
-        //console.log(updatedState)
+
         setRows(prev => updatedState)
     }
     const addRow = () => {
