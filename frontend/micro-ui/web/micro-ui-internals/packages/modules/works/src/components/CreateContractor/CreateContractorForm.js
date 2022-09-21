@@ -81,9 +81,7 @@ const CreateContractorForm = ({onFormSubmit}) => {
         
         const result = await trigger(fieldsToValidate)
         if (result) {
-            
-            // setShowModal(true)
-            onFormSubmit(data);
+         onFormSubmit(data);
         }
     }
 
@@ -274,21 +272,21 @@ const CreateContractorForm = ({onFormSubmit}) => {
                   <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_BANK`)}:`}</CardLabel>
                   <div className='field'>
                       <Controller
-                          name="Bank"
-                          control={control}
-                          rules={{ required: true }}
-                          render={(props) => {
-                              return (
-                                  <Dropdown
-                                      option={Bank}
-                                      selected={props?.value}
-                                      optionKey={"name"}
-                                      t={t}
-                                      select={props?.onChange}
-                                      onBlur={props.onBlur}
-                                  />
-                              );
-                          }}
+                        name="Bank"
+                        control={control}
+                        rules={{ required: true }}
+                        render={(props) => {
+                            return (
+                                <Dropdown
+                                    option={Bank}
+                                    selected={props?.value}
+                                    optionKey={"name"}
+                                    t={t}
+                                    select={props?.onChange}
+                                    onBlur={props.onBlur}
+                                />
+                            );
+                        }}
                       />
                       {errors && errors?.Bank?.type === "required" && (
                           <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
@@ -336,21 +334,21 @@ const CreateContractorForm = ({onFormSubmit}) => {
                   <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_EXEMPTED_FROM`)}:`}</CardLabel>
                   <div className='field'>
                       <Controller
-                          name="exemptedFrom"
-                          control={control}
-                          rules={{ required: true }}
-                          render={(props) => {
-                              return (
-                                  <Dropdown
-                                      option={exemptedFromULB}
-                                      selected={props?.value}
-                                      optionKey={"name"}
-                                      t={t}
-                                      select={props?.onChange}
-                                      onBlur={props.onBlur}
-                                  />
-                              );
-                          }}
+                        name="exemptedFrom"
+                        control={control}
+                        rules={{ required: true }}
+                        render={(props) => {
+                            return (
+                                <Dropdown
+                                    option={exemptedFromULB}
+                                    selected={props?.value}
+                                    optionKey={"name"}
+                                    t={t}
+                                    select={props?.onChange}
+                                    onBlur={props.onBlur}
+                                />
+                            );
+                        }}
                       />
                       {errors && errors?.natureOfWork?.type === "required" && (
                           <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>

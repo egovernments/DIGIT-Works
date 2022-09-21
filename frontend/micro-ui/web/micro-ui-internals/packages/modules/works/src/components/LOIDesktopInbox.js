@@ -47,8 +47,6 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
         Header: t("WORKS_LOI_DATE"),
         Cell: ({ row }) => {
           return GetCell(`${row.original?.LOIDate}`);
-          // const date = convertEpochToDateDMY(row.original.date);
-          // return GetCell(date)
         },
         mobileCell: (original) => GetMobCell(original?.searchData?.["owners"]?.[0].name),
       },

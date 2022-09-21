@@ -6,7 +6,7 @@ import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 
 const Inbox = ({
-  parentRoute,//digit-ui/employee/works
+  parentRoute,
   businessService = "WORKS",
   initialStates = {},
   filterComponent,

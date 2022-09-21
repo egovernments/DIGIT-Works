@@ -6,7 +6,7 @@ import LOIDesktopInbox from "../../components/LOIDesktopInbox";
 import LOIMobileInbox from "../../components/LOIMobileInbox";
 
 const LOIInbox = ({
-  parentRoute,//digit-ui/employee/works
+  parentRoute,
   businessService = "LOI",
   initialStates = {},
   filterComponent,
