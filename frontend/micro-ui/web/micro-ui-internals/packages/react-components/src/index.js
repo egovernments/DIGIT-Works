@@ -129,6 +129,7 @@ import {
   EditIcon,
   SearchIcon,
   DeleteIcon,
+  CreateLoiIcon,
   OBPSIconSolidBg,
   DocumentIconSolid,
   PMBIconSolid,
@@ -164,6 +165,7 @@ import {
   RupeeSymbol,
   ValidityTimeIcon,
   AddIcon,
+  SubtractIcon,
   AddNewIcon,
   InboxIcon,
   ViewReportIcon,
@@ -171,6 +173,7 @@ import {
   DeathIcon,
   BirthIcon,
   FirenocIcon,
+  CreateEstimateIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -407,6 +410,7 @@ export {
   EditIcon,
   SearchIcon,
   DeleteIcon,
+  CreateLoiIcon,
   WSICon,
   CameraIcon,
   EditPencilIcon,
@@ -438,6 +442,7 @@ export {
   RupeeSymbol,
   ValidityTimeIcon,
   AddIcon,
+  SubtractIcon,
   AddNewIcon,
   ViewReportIcon,
   InboxIcon,
@@ -446,4 +451,5 @@ export {
   DeathIcon,
   BirthIcon,
   FirenocIcon,
+  CreateEstimateIcon
 };

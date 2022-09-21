@@ -237,6 +237,22 @@ import useGetDSSAboutJSON from "./useGetDSSAboutJSON";
 import useStaticData from "./useStaticData";
 import useBillAmendmentInbox from "./billAmendment/useInbox";
 import { usePrivacyContext } from "./usePrivacyContext";
+import useSearchWORKS from "./works/useSearchWORKS";
+import useViewEstimateDetails from "./works/useViewEstimateDetails"
+import useViewLOIDetails from "./works/useViewLOIDetails"
+import useCreateLOI from "./works/useCreateLOI";
+import useEstimateSearch from "./works/useSearch"
+import useCreateEstimate from "./works/useCreateEstimate";
+import useSearchEstimate from "./works/userSearchEstimate";
+const works = {
+  useViewEstimateDetails,
+  useViewLOIDetails,
+  useCreateLOI,
+  useEstimateSearch,
+  useSearchWORKS,
+  useCreateEstimate,
+  useSearchEstimate
+}
 
 const pgr = {
   useComplaintDetails,
@@ -520,6 +536,7 @@ const Hooks = {
   survey,
   noc,
   ws,
+  works,
   useCustomMDMS,
   reports,
   useGetHowItWorksJSON,
@@ -530,6 +547,7 @@ const Hooks = {
   useDynamicData,
   useBulkPdfDetails,
   useBillAmendmentInbox,
+  works
 };
 
 export default Hooks;

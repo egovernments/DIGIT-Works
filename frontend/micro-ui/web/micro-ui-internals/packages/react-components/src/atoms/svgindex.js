@@ -1,4 +1,11 @@
 import React from "react";
+
+const CreateEstimateIcon = ({className,style={}}) => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className={className} style={style} xmlns="http://www.w3.org/2000/svg">
+    <path d="M14 8.75C14.6125 8.75 15.1987 8.86375 15.75 9.05625V5.25L10.5 0H1.75C0.77875 0 0 0.77875 0 1.75V14C0 14.9712 0.7875 15.75 1.75 15.75H9.05625C8.86375 15.1987 8.75 14.6125 8.75 14C8.75 11.1037 11.1037 8.75 14 8.75ZM9.625 1.3125L14.4375 6.125H9.625V1.3125ZM17.5 13.125V14.875H14.875V17.5H13.125V14.875H10.5V13.125H13.125V10.5H14.875V13.125H17.5Z" fill="#F47738" />
+  </svg>
+);
+
 const ArrowLeft = ({ className }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" className={className} width="19px">
     <path d="M24 0v24H0V0h24z" fill="none" opacity=".87" />
@@ -823,6 +830,13 @@ const DeleteIcon = ({ style, fill }) => (
   </svg>
 );
 
+const CreateLoiIcon = ({ style, fill="#F47738" }) => (
+  <svg style= {style} width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.126 5.12506L11.063 3.18806L14.81 6.93506L12.873 8.87306L9.126 5.12506ZM17.71 2.63006L15.37 0.29006C15.1826 0.103809 14.9292 -0.000732422 14.665 -0.000732422C14.4008 -0.000732422 14.1474 0.103809 13.96 0.29006L12.13 2.12006L15.88 5.87006L17.71 4.00006C17.8844 3.8146 17.9815 3.56962 17.9815 3.31506C17.9815 3.0605 17.8844 2.81552 17.71 2.63006ZM5.63 8.63006L0 14.2501V18.0001H3.75L9.38 12.3801L12.873 8.87306L9.126 5.12506L5.63 8.63006Z" fill={fill} />
+  </svg>
+
+)
+
 const WSICon = ({ className, styles }) => (
   <svg width="28" height="34" viewBox="0 0 28 34" fill="#ffffff" style={{ ...styles }} className={className} xmlns="http://www.w3.org/2000/svg">
     <path d="M23.4332 10.3337L13.9998 0.916992L4.5665 10.3337C1.9665 12.9337 0.666504 16.4003 0.666504 19.7337C0.666504 23.067 1.9665 26.5837 4.5665 29.1837C7.1665 31.7837 10.5832 33.1003 13.9998 33.1003C17.4165 33.1003 20.8332 31.7837 23.4332 29.1837C26.0332 26.5837 27.3332 23.067 27.3332 19.7337C27.3332 16.4003 26.0332 12.9337 23.4332 10.3337ZM3.99984 20.3337C4.0165 17.0003 5.03317 14.8837 6.93317 13.0003L13.9998 5.78366L21.0665 13.0837C22.9665 14.9503 23.9832 17.0003 23.9998 20.3337H3.99984Z" />
@@ -1041,6 +1055,12 @@ const AddIcon = ({ styles, className, fill = "white" }) => (
   </svg>
 );
 
+const SubtractIcon = ({ styles, className, fill = "white" }) => (
+  <svg width="12" height="14" className={className} style={{...styles}} viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.24609 0.783203V3.45508H0.667969V0.783203H9.24609Z" fill={fill} />
+  </svg>
+);
+
 const AddNewIcon = () => (
   <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -1071,6 +1091,7 @@ const InboxIcon = () => (
 export {
   AnnouncementIcon,
   ReceiptIcon,
+  CreateEstimateIcon,
   ArrowLeft,
   ArrowDown,
   CameraSvg,
@@ -1153,6 +1174,7 @@ export {
   EditIcon,
   SearchIcon,
   DeleteIcon,
+  CreateLoiIcon,
   PMBIcon,
   GenericFileIcon,
   ArrowLeftWhite,
@@ -1182,6 +1204,7 @@ export {
   RupeeSymbol,
   ValidityTimeIcon,
   AddIcon,
+  SubtractIcon,
   AddNewIcon,
   ViewReportIcon,
   InboxIcon,

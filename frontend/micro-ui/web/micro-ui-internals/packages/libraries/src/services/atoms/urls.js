@@ -32,6 +32,15 @@ const Urls = {
 
   Shortener: "/egov-url-shortening/shortener",
 
+  works: {
+    create:"/loi-service/loi/v1/_create",
+    estimateSearch:"/estimate-service/estimate/v1/_search",
+    loiSearch:"/letter-of-indent/v1/_search",
+    createEstimate:"/estimate-service/estimate/v1/_create",
+    approvedEstimateSearch:"/estimate-service/estimate/v1/_search",
+    searchEstimate:"/estimate-service/estimate/v1/_search"
+  },
+
   fsm: {
     search: "/fsm/v1/_search",
     create: "/fsm/v1/_create",
