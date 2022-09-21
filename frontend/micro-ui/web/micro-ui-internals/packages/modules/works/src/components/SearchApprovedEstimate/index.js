@@ -5,7 +5,7 @@ import SearchFields from "./SearchFieldsApprovedEstimate";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import MobileSearchApplication from "./MobileSearchApplication";
-const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, businessService }) => {
+const SearchApplication = ({ tenantId, onSubmit, count, resultOk, businessService }) => {
 
   const { t } = useTranslation();
   const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
@@ -17,6 +17,18 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
       // isConnectionSearch: true,
     },
   });
+  const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
+        "pb",
+        "works",
+        [
+            {
+                "name": "Department"
+            }
+        ]
+        );
+        if(data?.works){
+          var { Department } = data?.works
+        }
 
   useEffect(() => {
     register("offset", 0);
@@ -89,7 +101,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
         accessor: (row) => (GetCell(row?.department)),
       },
       {
-        Header: t("WORKS_ADMIN_SANCTION_NUMBER"),
+        Header: t("WORKS_ADMINISTRATIVE_SANCTION_NO"),
         disableSortBy: true,
         accessor: (row) => (GetCell(row?.administrativeSanctionNo)),
       },
@@ -163,7 +175,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
     <>
       <Header styles={{ fontSize: "32px" }}>{businessService === "WORKS" ? t("WORKS_SEARCH_APPROVED_ESTIMATE") : t("WORKS_SEARCH_APPROVED_ESTIMATE")}</Header>
       <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} >
-        <SearchFields {...{ register, control, reset, tenantId, t,businessService }} />
+        <SearchFields {...{ register, control, reset, tenantId, t,businessService ,Department}} />
       </SearchForm>
       {data?.display && resultOk ? (
         <Card style={{ marginTop: 20 }}>

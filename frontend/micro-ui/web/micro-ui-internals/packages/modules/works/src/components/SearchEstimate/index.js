@@ -5,7 +5,7 @@ import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-const SearchEstimateApplication = ({onSubmit}) => {
+const SearchEstimateApplication = ({onSubmit,data,resultOk,}) => {
 
     const { t } = useTranslation(); 
     const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
@@ -31,6 +31,17 @@ const SearchEstimateApplication = ({onSubmit}) => {
           <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} >
               <SearchFields {...{ register, control, reset, t }} />
           </SearchForm>
+          {data?.display && resultOk ? 
+            <Card style={{ marginTop: 20 }} >
+              {t(data?.display)
+                .split("\\n")
+                .map((text, index) => (
+                  <p key={index} style={{ textAlign: "center" }}>
+                    {text}
+                  </p>
+                ))}
+            </Card>:<Loader/>}
+
     </>
   )
 }

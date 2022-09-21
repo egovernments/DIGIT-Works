@@ -42,10 +42,10 @@ export const WorksService = {
             auth:true,
 
         }),
-    approvedEstimateSearch:(details)=>
+    approvedEstimateSearch:({ tenantId, filters })=>
          Request({
             //update URL for Approved Estimate Search
-            url: Urls.works.estimateSearch,
+            url: Urls.works.approvedEstimateSearch,
             useCache: false,
             method: "POST",
             auth: true,

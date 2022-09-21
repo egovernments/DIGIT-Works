@@ -13,7 +13,7 @@ import SearchApprovedSubEstimate from "../employee/SearchApprovedSubEstimate"
 import Response from "../../components/response";
 import Inbox from "./Inbox";
 import LOIInbox from "./LOIInbox";
-
+import HandleDownloadPdf from "../../components/HandleDownloadPdf";
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
 
@@ -65,6 +65,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
           <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/response`} component={() => <Response {...{ path }} />} />
+          <PrivateRoute path={`${path}/download`} component={()=> <HandleDownloadPdf {...{path}}/>}/>
         </div>
       </React.Fragment>
     </Switch>
