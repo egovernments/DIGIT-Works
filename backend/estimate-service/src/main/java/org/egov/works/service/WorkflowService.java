@@ -18,8 +18,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.works.util.EstimateServiceConstant.ESTIMATE_MODULE_NAME;
-
 @Service
 public class WorkflowService {
 
@@ -39,8 +37,7 @@ public class WorkflowService {
      */
     public BusinessService getBusinessService(EstimateRequest estimateRequest) {
         String tenantId = estimateRequest.getEstimate().getTenantId();
-        String rootTenantId = tenantId.split("\\.")[0];
-        StringBuilder url = getSearchURLWithParams(rootTenantId, serviceConfiguration.getEstimateWFBusinessService());
+        StringBuilder url = getSearchURLWithParams(tenantId, serviceConfiguration.getEstimateWFBusinessService());
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
         Object result = repository.fetchResult(url, requestInfo);
         BusinessServiceResponse response = null;
@@ -173,7 +170,7 @@ public class WorkflowService {
         processInstance.setBusinessId(estimate.getEstimateNumber());
         processInstance.setAction(request.getWorkflow().getAction());
         processInstance.setModuleName(serviceConfiguration.getEstimateWFModuleName());
-        processInstance.setTenantId(estimate.getTenantId().split("\\.")[0]);
+        processInstance.setTenantId(estimate.getTenantId());
         processInstance.setBusinessService(getBusinessService(request).getBusinessService());
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
