@@ -113,6 +113,9 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             Object jsonData = rs.getObject(columnName);
             if (jsonData != null) {
                 additionalDetail = mapper.convertValue(jsonData, JsonNode.class);
+                if(additionalDetail != null){
+                    additionalDetail =  additionalDetail.get("value");
+                }
             }
         } catch (SQLException e) {
             throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
