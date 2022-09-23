@@ -27,24 +27,27 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
         mode: "onSubmit"
     });
 
-    const DummyData = [
-        {
-            name: "Nipun"
-        },
-        {
-            name: "Vipul"
-        },
-        {
-            name: "Shaifali"
-        },
-        {
-            name: "Amit"
-        },
-        {
-            name: "Sumit"
-        },
-    ]
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
+    const { isLoading: hookLoading, isError, error, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
+        null,
+        tenantId,
+        paginationParams,
+        null
+    );
+    const { isLoading:desgLoading, data:designationData } = Digit.Hooks.useCustomMDMS(
+        "pb",
+        "common-masters",
+        [
+            {
+                "name": "Designation"
+            }
+        ]
+        );
 
+    if (designationData?.[`common-masters`]) {
+        var { Designation } = designationData?.[`common-masters`]
+    }
 
     const getDate = () => {
         const today = new Date();
@@ -231,6 +234,9 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                     register={register}
                     handleSubmit={handleSubmit}
                     errors={errors}
+                    employeeData={employeeData}
+                    Department={Department}
+                    Designation={Designation}
 
                 />}
 

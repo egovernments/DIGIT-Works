@@ -7,24 +7,11 @@ import SearchApplication from "./LOIInbox/SearchApplication";
 import { Link } from "react-router-dom";
 import { convertEpochToDateDMY } from "../utils";
 
-
 const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState, ...props }) => {
     const { data } = props;
     const { t } = useTranslation();
     const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));
-    const GetCell = (value) => <span className="cell-text">{value}</span>;
-    const GetSlaCell = (value) => {
-      if(value === "CS_NA") return t(value)
-      if (isNaN(value)) return <span className="sla-cell-success">0</span>;
-      return value < 0 ? <span className="sla-cell-error">{value}</span> : <span className="sla-cell-success">{value}</span>;
-    };
-    const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
-      if (searcher == "") return str;
-      while (str.includes(searcher)) {
-        str = str.replace(searcher, replaceWith);
-      }
-      return str;
-    };
+    const GetCell = (value) => <span className="cell-text">{value}</span>
   
     const GetMobCell = (value) => <span className="sla-cell">{value}</span>;
     const inboxColumns = () => [
@@ -34,14 +21,14 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
           return (
             <div>
               <span className="link">
-                <Link to={`${props.parentRoute}/application-details/` + row.original?.searchData?.["propertyId"]}>
+                <Link to={`${props.parentRoute}/view-loi/` + row.original?.searchData?.["LOIId"]}>
                   {row.original?.LOIId}
                 </Link>
               </span>
             </div>
           );
         },
-        mobileCell: (original) => GetMobCell(original?.searchData?.["propertyId"]),
+        mobileCell: (original) => GetMobCell(original?.searchData?.["LOIId"]),
       },
       {
         Header: t("WORKS_LOI_DATE"),
@@ -55,15 +42,7 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
         Cell: ({ row }) => {
           return GetCell(`${row.original?.EstimateNumber}`);
         },
-        mobileCell: (original) => {
-          const map = {
-            "PT.CREATE": "ES_PT_NEW_PROPERTY",
-            "PT.MUTATION": "ES_PT_TRANSFER_OWNERSHIP",
-            "PT.UPDATE": "ES_PT_UPDATE_PROPERTY",
-          };
-
-          return GetCell(`${row.original?.CreatedBy}`);
-        },
+        mobileCell: (original) => GetCell(`${original?.EstimateNumber}`)
       },
       {
         Header: t("WORKS_NAME_OF_WORK"),
@@ -111,8 +90,8 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
   //     </Card>
   //   );
   // } else if (data?.table?.length > 0) {
-    result = (
-      <ApplicationTable
+  result = (
+    <ApplicationTable
       t={t}
       data={data}
       columns={inboxColumns(data)}
@@ -134,26 +113,23 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
       disableSort={props.disableSort}
       sortParams={props.sortParams}
       totalRecords={props.totalRecords}
-      />
-                   );
+    />
+  );
   // }
 
 return (
     <div className="inbox-container">
       {!props.isSearch && (
-          <div className="filters-container">
+        <div className="filters-container">
           <InboxLinks />
           <div>
-            {
-            // isLoading ? <Loader /> :
-              <FilterComponent
-                defaultSearchParams={props.defaultSearchParams}
-                statuses={data?.statuses}
-                onFilterChange={props.onFilterChange}
-                searchParams={props.searchParams}
-                type="desktop"
-              />
-            }
+            <FilterComponent
+              defaultSearchParams={props.defaultSearchParams}
+              statuses={data?.statuses}
+              onFilterChange={props.onFilterChange}
+              searchParams={props.searchParams}
+              type="desktop"
+            />
           </div>
         </div>
        )}

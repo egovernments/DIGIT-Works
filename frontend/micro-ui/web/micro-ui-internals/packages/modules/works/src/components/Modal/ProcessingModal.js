@@ -34,55 +34,12 @@ const ProcessingModal = ({
     handleSubmit,
     control,
     register,
-    errors:formErrors
+    errors:formErrors,
+    employeeData,
+    Department,
+    Designation
 }) => {
-    
-
-    const dummyData = [
-        {
-            name: "Nipun"
-        },
-        {
-            name: "Vipul"
-        },
-        {
-            name: "Shaifali"
-        },
-        {
-            name: "Amit"
-        },
-        {
-            name: "Sumit"
-        },
-    ]
-    const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-        "pb",
-        "works",
-        [
-            {
-                "name": "BeneficiaryType"
-            },
-            {
-                "name": "EntrustmentMode"
-            },
-            {
-                "name": "NatureOfWork"
-            },
-            {
-                "name": "TypeOfWork"
-            },
-            {
-                "name": "Department"
-            }
-        ]
-    );
-
-    if (data?.works) {
-        var { EntrustmentMode, BeneficiaryType, NatureOfWork, TypeOfWork, Department } = data?.works
-    }
-    if(isLoading) return <Loader/>
-    
-    return (
+      return (
         <Modal
             headerBarMain={<Heading t={t} heading={heading} />}
             headerBarEnd={<CloseBtn onClick={closeModal} />}
@@ -130,7 +87,7 @@ const ProcessingModal = ({
                             return (
                                 <Dropdown
                                     onBlur={props.onBlur}
-                                    option={dummyData}
+                                    option={Designation}
                                     selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
@@ -154,9 +111,9 @@ const ProcessingModal = ({
                             return (
                                 <Dropdown
                                     onBlur={props.onBlur}
-                                    option={dummyData}
+                                    option={employeeData?.Employees}
                                     selected={props?.value}
-                                    optionKey={"name"}
+                                    optionKey={"code"}
                                     t={t}
                                     select={props?.onChange}
                                 />
