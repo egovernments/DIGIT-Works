@@ -20,7 +20,7 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 public class EstimateRequest {
 
-    @JsonProperty("requestInfo")
+    @JsonProperty("RequestInfo")
     private RequestInfo requestInfo = null;
 
     @JsonProperty("estimate")
