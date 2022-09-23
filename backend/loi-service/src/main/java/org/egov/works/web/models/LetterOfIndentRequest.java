@@ -19,7 +19,7 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class LetterOfIndentRequest {
-    @JsonProperty("requestInfo")
+    @JsonProperty("RequestInfo")
     private RequestInfo requestInfo = null;
 
     @JsonProperty("letterOfIndent")
