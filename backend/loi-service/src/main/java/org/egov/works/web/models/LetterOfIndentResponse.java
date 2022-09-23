@@ -23,7 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class LetterOfIndentResponse {
-    @JsonProperty("responseInfo")
+    @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo = null;
 
     @JsonProperty("letterOfIndents")

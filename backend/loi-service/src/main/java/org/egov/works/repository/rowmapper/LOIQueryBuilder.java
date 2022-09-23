@@ -14,8 +14,8 @@ import java.util.List;
 public class LOIQueryBuilder {
 
 
-    private static final String FETCH_LOI_QUERY = "SELECT wms_loi.*," +
-            "FROM eg_wms_loi AS wms_loi ";
+    private static final String FETCH_LOI_QUERY = "SELECT wms_loi.* " +
+            " FROM eg_wms_loi AS wms_loi ";
 
     public String getLOIQuery(LOISearchCriteria searchCriteria, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = new StringBuilder(FETCH_LOI_QUERY);
