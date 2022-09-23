@@ -66,7 +66,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
             Estimate estimate = Estimate.builder().estimateNumber(estimateNumber).id(UUID.nameUUIDFromBytes(id.getBytes(StandardCharsets.UTF_8)))
                     .estimateStatus(estimateStatus).status(Estimate.StatusEnum.fromValue(status)).adminSanctionNumber(adminSanctionNumber)
-                    .totalAmount(totalAmount).additionalDetails(additionalDetails).beneficiaryType(beneficiaryType).budgetHead(budgetHead)
+                    .totalAmount(totalAmount).additionalDetails(additionalDetails.asText()).beneficiaryType(beneficiaryType).budgetHead(budgetHead)
                     .description(description).entrustmentMode(entrustmentMode).function(function).fund(fund).location(location)
                     .natureOfWork(natureOfWork).requirementNumber(requirementNumber).proposalDate(proposalDate).scheme(scheme).subject(subject)
                     .subScheme(subScheme).subTypeOfWork(subtypeOfWork).typeOfWork(typeOfWork).tenantId(tenantId).department(department)
