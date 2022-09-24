@@ -29,10 +29,13 @@ public class LetterOfIndentService {
     @Autowired
     private LetterOfIndentRepository loiRepository;
 
+    @Autowired
+    private WorkflowService workflowService;
+
     public LetterOfIndentRequest createLOI(LetterOfIndentRequest request) {
         loiValidator.validateCreateLOI(request);
         enrichmentService.enrichLOI(request);
-        // TODO: Workflow status update
+        workflowService.updateWorkflowStatus(request);
         producer.push(loiConfiguration.getLoiSaveTopic(), request);
         return request;
     }
@@ -40,7 +43,7 @@ public class LetterOfIndentService {
     public LetterOfIndentRequest updateLOI(LetterOfIndentRequest request) {
         loiValidator.validateUpdateLOI(request);
         enrichmentService.enrichLOI(request);
-        // TODO: Workflow status update
+        workflowService.updateWorkflowStatus(request);
         producer.push(loiConfiguration.getLoiUpdateTopic(), request);
         return request;
     }
