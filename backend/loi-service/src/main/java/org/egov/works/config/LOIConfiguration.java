@@ -60,4 +60,23 @@ public class LOIConfiguration {
     @Value("${loi.search.max.limit}")
     private Integer maxLimit;
 
+    @Value("${loi.workflow.module.name}")
+    private String loiWFModuleName;
+
+    @Value("${loi.workflow.business.service}")
+    private String loiWFBusinessService;
+
+    @Value("${egov.workflow.businessservice.search.path}")
+    private String wfBusinessServiceSearchPath;
+
+    //Workflow Config
+    @Value("${egov.workflow.host}")
+    private String wfHost;
+
+    @Value("${egov.workflow.processinstance.search.path}")
+    private String wfProcessInstanceSearchPath;
+
+    @Value("${egov.workflow.transition.path}")
+    private String wfTransitionPath;
+
 }
