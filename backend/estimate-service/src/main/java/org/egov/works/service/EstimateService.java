@@ -2,7 +2,6 @@ package org.egov.works.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.EstimateServiceConfiguration;
 import org.egov.works.producer.Producer;
 import org.egov.works.repository.EstimateRepository;
@@ -60,5 +59,11 @@ public class EstimateService {
         }
 
         return estimateList;
+    }
+
+    //TODO
+    public EstimateRequest updateEstimate(EstimateRequest estimateRequest) {
+        workflowService.updateWorkflowStatus(estimateRequest);
+        return estimateRequest;
     }
 }

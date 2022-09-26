@@ -65,16 +65,10 @@ public class EstimateApiController {
 
     @RequestMapping(value = "/_update", method = RequestMethod.POST)
     public ResponseEntity<EstimateResponse> estimateV1UpdatePost(@ApiParam(value = "Request object to update estimate in the system", required = true) @Valid @RequestBody EstimateRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("")) {
-            try {
-                return new ResponseEntity<EstimateResponse>(objectMapper.readValue("", EstimateResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<EstimateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<EstimateResponse>(HttpStatus.NOT_IMPLEMENTED);
+        EstimateRequest enrichedRequest = estimateService.updateEstimate(body);
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        EstimateResponse estimateResponse = EstimateResponse.builder().responseInfo(responseInfo).estimates(Collections.singletonList(enrichedRequest.getEstimate())).build();
+        return new ResponseEntity<EstimateResponse>(estimateResponse, HttpStatus.OK);
     }
 
 }
