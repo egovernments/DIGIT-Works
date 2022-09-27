@@ -37,7 +37,7 @@ public class WorkflowService {
      */
     public BusinessService getBusinessService(LetterOfIndentRequest loiRequest) {
         String tenantId = loiRequest.getLetterOfIndent().getTenantId();
-        StringBuilder url = getSearchURLWithParams(tenantId, serviceConfiguration.getLoiWFBusinessService());
+        StringBuilder url = getSearchURLWithParams(tenantId, serviceConfiguration.getWorkflowLOIBusinessServiceName());
         RequestInfo requestInfo = loiRequest.getRequestInfo();
         Object result = repository.fetchResult(url, requestInfo);
         BusinessServiceResponse response = null;
@@ -48,7 +48,7 @@ public class WorkflowService {
         }
 
         if (CollectionUtils.isEmpty(response.getBusinessServices()))
-            throw new CustomException("BUSINESSSERVICE_DOESN'T_EXIST", "The businessService : " + serviceConfiguration.getLoiWFBusinessService() + " doesn't exist");
+            throw new CustomException("BUSINESSSERVICE_DOESN'T_EXIST", "The businessService : " + serviceConfiguration.getWorkflowLOIBusinessServiceName() + " doesn't exist");
 
         return response.getBusinessServices().get(0);
     }
@@ -86,7 +86,7 @@ public class WorkflowService {
 
     private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
 
-        StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
+        StringBuilder url = new StringBuilder(serviceConfiguration.getWorkflowHost());
         url.append(serviceConfiguration.getWfBusinessServiceSearchPath());
         url.append("?tenantId=");
         url.append(tenantId);
@@ -169,7 +169,7 @@ public class WorkflowService {
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(letterOfIndent.getLetterOfIndentNumber());
         processInstance.setAction(request.getWorkflow().getAction());
-        processInstance.setModuleName(serviceConfiguration.getLoiWFModuleName());
+        processInstance.setModuleName(serviceConfiguration.getWorkflowLOIModuleName());
         processInstance.setTenantId(letterOfIndent.getTenantId());
         processInstance.setBusinessService(getBusinessService(request).getBusinessService());
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
@@ -228,7 +228,7 @@ public class WorkflowService {
     private State callWorkFlow(ProcessInstanceRequest workflowReq) {
 
         ProcessInstanceResponse response = null;
-        StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost().concat(serviceConfiguration.getWfTransitionPath()));
+        StringBuilder url = new StringBuilder(serviceConfiguration.getWorkflowHost().concat(serviceConfiguration.getWorkflowTransitionPath()));
         Object optional = repository.fetchResult(url, workflowReq);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0).getState();
@@ -237,7 +237,7 @@ public class WorkflowService {
 
     public StringBuilder getprocessInstanceSearchURL(String tenantId, String loiNumber) {
 
-        StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
+        StringBuilder url = new StringBuilder(serviceConfiguration.getWorkflowHost());
         url.append(serviceConfiguration.getWfProcessInstanceSearchPath());
         url.append("?tenantId=");
         url.append(tenantId);
