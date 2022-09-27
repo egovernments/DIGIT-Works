@@ -33,9 +33,9 @@ const CreateContractorForm = ({onFormSubmit}) => {
         }
     ]
     const [rows, setRows] = useState(initialState)
-
+    const tenant = Digit.ULBService.getStateId()
     const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-        "pb",
+        tenant,
         "finance",
         [
             {

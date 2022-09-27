@@ -2,9 +2,9 @@ import React, { Fragment, useState } from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon,Dropdown,TextInput, CardLabelError,DatePicker } from '@egovernments/digit-ui-react-components'
 
 const WORKSContractorTable = ({ t, register, errors, rows, setRows,Controller,control }) => {
-    
+    const tenant = Digit.ULBService.getStateId()
     const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-      "pb",
+      tenant,
       "works",
       [
           {

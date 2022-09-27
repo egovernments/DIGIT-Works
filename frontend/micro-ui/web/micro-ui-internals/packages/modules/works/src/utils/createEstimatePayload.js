@@ -1,13 +1,16 @@
 export const createEstimatePayload =(data)=>{
+    let estimateDetails= data?.estimateDetails.filter((item)=>item!==null)
+    const tenantId = Digit.ULBService.getCurrentTenantId()
     let payload={  
-        "tenantId": "pb.amritsar",
+        "tenantId": tenantId,
         "status": "ACTIVE",
-        "estimateStatus": "CREATED",
+        "estimateStatus": "ACTIVE",
         "subject": "Construct new schools",
         "requirementNumber": data?.requirementNumber,
         "description": "Construct new schools",
         "department": data?.department?.code,
-        "location": data?.location.code,
+        // "location": data?.location.code,
+        "location":"pb.amritsar:ADMIN:pb.amritsar:Z1:B1:SUN04",
         "workCategory": "Engineering",
         "beneficiaryType": data?.beneficiaryType.code,
         "natureOfWork": data?.natureOfWork.code,
@@ -19,7 +22,7 @@ export const createEstimatePayload =(data)=>{
         "budgetHead": data?.budgetHead?.code,
         "scheme": data?.scheme?.code,
         "subScheme": data?.scheme?.subSchemes[0]?.code,
-        "estimateDetails": data?.estimateDetails,
+        "estimateDetails": estimateDetails,
         "additionalDetails": {}
       }
       return payload;

@@ -31,8 +31,9 @@ const WORKSContractorDetails = ({ config, onSelect, userType, formData, setError
   const formValue = watch();
   const { errors } = localFormState;
   const [isErrors, setIsErrors] = useState(false);
+  const tenant = Digit.ULBService.getStateId();
   const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-    "pb",
+    tenant,
     "finance",
     [
         {

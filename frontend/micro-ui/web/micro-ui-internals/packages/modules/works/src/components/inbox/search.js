@@ -6,9 +6,9 @@ import { useTranslation } from "react-i18next";
 const SearchApplication = ({ onSearch }) => {
   const { t } = useTranslation();
   const { handleSubmit, reset, watch, control, register, formState } = useForm();
-
+  const tenant = Digit.ULBService.getStateId();
   const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-    "pb",
+    tenant,
     "works",
     [
         {

@@ -13,7 +13,7 @@ const ViewLOI = (props) => {
     const menuRef = useRef();
     const [displayMenu, setDisplayMenu] = useState(false);
     let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t);
-    
+    const tenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
     const { isLoading: hookLoading, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
@@ -23,7 +23,7 @@ const ViewLOI = (props) => {
         null
     );
     const { isLoading:desgLoading, data:designationData } = Digit.Hooks.useCustomMDMS(
-        "pb",
+        tenant,
         "common-masters",
         [
             {
@@ -37,7 +37,7 @@ const ViewLOI = (props) => {
     }
     
     const {  data, isFetched } = Digit.Hooks.useCustomMDMS(
-        "pb",
+        tenant,
         "works",
         [
             {

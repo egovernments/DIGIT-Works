@@ -7,8 +7,9 @@ const SearchApplication = ({ onSearch }) => {
   const { t } = useTranslation();
   const { handleSubmit, reset, watch, register,control, formState } = useForm();
   const form = watch();
+  const tenant = Digit.ULBService.getStateId();
   const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-    "pb",
+    tenant,
     "works",
     [
         {

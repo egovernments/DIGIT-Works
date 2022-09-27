@@ -7,9 +7,9 @@ import { Controller, useForm} from 'react-hook-form'
 const Filter = ({ onFilterChange, ...props }) => {
   const { t } = useTranslation();
   const {register,control,watch,getValues,reset} = useForm()
-
+  const tenant = Digit.ULBService.getStateId();
   const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-  "pb",
+  tenant,
   "finance",
   [
       {
