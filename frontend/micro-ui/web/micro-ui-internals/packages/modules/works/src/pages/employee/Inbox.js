@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Header } from "@egovernments/digit-ui-react-components";
-
 import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 
@@ -27,11 +26,11 @@ const Inbox = ({
     ? { limit: 100, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
     : { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
 
-  const { isFetching, isLoading: hookLoading, searchResponseKey, searchFields, ...rest } = Digit.Hooks.tl.useInbox({
-    tenantId,
-    filters: { ...searchParams, ...paginationParams, sortParams },
-    config: {},
-  });
+  // const { isFetching, isLoading: hookLoading, searchResponseKey, searchFields, ...rest } = Digit.Hooks.works.useInbox({
+  //   tenantId,
+  //   filters: { ...searchParams, ...paginationParams, sortParams },
+  //   config: {},
+  // });
   const data = [{
     EstimateNumber: "LE/ENG/00002/10/2017-18",
     Department: "ENGINEERING",
@@ -57,14 +56,7 @@ const Inbox = ({
   };
 
   const handleFilterChange = (filterParam) => {
-    let keys_to_delete = filterParam?.delete;
-    let _new = {};
-    if (isMobile) {
-      _new = { ...filterParam };
-    } else {
-      _new = { ...searchParams, ...filterParam };
-    }
-    // let _new = { ...searchParams, ...filterParam };
+    let _new = { ...searchParams, ...filterParam };
     // if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
     // delete filterParam.delete;
     if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
@@ -82,75 +74,53 @@ const Inbox = ({
   const handlePageSizeChange = (e) => {
     setPageSize(Number(e.target.value));
   };
-  const getSearchFields = () => {
-    return [
-      {
-        label: t("TL_HOME_SEARCH_RESULTS_APP_NO_LABEL"),
-        name: "applicationNumber",
-      },
-      {
-        label: t("CORE_COMMON_MOBILE_NUMBER"),
-        name: "mobileNumber",
-        maxlength: 10,
 
-        pattern: Digit.Utils.getPattern("MobileNo"),
+  if (isMobile) {
+    return (
+      <MobileInbox
+        data={data}
+        // isLoading={hookLoading}
+        // searchFields={getSearchFields()}
+        onFilterChange={handleFilterChange}
+        onSearch={handleFilterChange}
+        onSort={handleSort}
+        parentRoute={parentRoute}
+        searchParams={searchParams}
+        sortParams={sortParams}
+      />
+    );
+  } else {
+    return (
+      <div>
+        {isInbox && <Header>{t("ES_COMMON_INBOX")}{data?.totalCount ? <p className="inbox-count">{data?.totalCount}</p> : null}</Header>}
 
-        type: "mobileNumber",
-
-        title: t("ES_SEARCH_APPLICATION_MOBILE_INVALID"),
-        componentInFront: "+91",
-      },
-    ];
-  };
-
-  if (rest?.data?.length !== null) {
-    if (isMobile) {
-      return (
-        <MobileInbox
+        <DesktopInbox
+          businessService={businessService}
           data={data}
-          isLoading={hookLoading}
-          searchFields={getSearchFields()}
+          // tableConfig={tableConfig}
+          // isLoading={hookLoading}
+          defaultSearchParams={initialStates.searchParams}
+          isSearch={!isInbox}
           onFilterChange={handleFilterChange}
+          // searchFields={getSearchFields()}
+          setSearchFieldsBackToOriginalState={setSearchFieldsBackToOriginalState}
+          setSetSearchFieldsBackToOriginalState={setSetSearchFieldsBackToOriginalState}
           onSearch={handleFilterChange}
           onSort={handleSort}
+          onNextPage={fetchNextPage}
+          onPrevPage={fetchPrevPage}
+          currentPage={Math.floor(pageOffset / pageSize)}
+          pageSizeLimit={pageSize}
+          disableSort={false}
+          onPageSizeChange={handlePageSizeChange}
           parentRoute={parentRoute}
           searchParams={searchParams}
           sortParams={sortParams}
+          totalRecords={Number(data?.totalCount)}
+          filterComponent={filterComponent}
         />
-      );
-    } else {
-      return (
-        <div>
-          {isInbox && <Header>{t("ES_COMMON_INBOX")}{data?.totalCount ? <p className="inbox-count">{data?.totalCount}</p> : null}</Header>}
-
-          <DesktopInbox
-            businessService={businessService}
-            data={data}
-            tableConfig={rest?.tableConfig}
-            isLoading={hookLoading}
-            defaultSearchParams={initialStates.searchParams}
-            isSearch={!isInbox}
-            onFilterChange={handleFilterChange}
-            searchFields={getSearchFields()}
-            setSearchFieldsBackToOriginalState={setSearchFieldsBackToOriginalState}
-            setSetSearchFieldsBackToOriginalState={setSetSearchFieldsBackToOriginalState}
-            onSearch={handleFilterChange}
-            onSort={handleSort}
-            onNextPage={fetchNextPage}
-            onPrevPage={fetchPrevPage}
-            currentPage={Math.floor(pageOffset / pageSize)}
-            pageSizeLimit={pageSize}
-            disableSort={false}
-            onPageSizeChange={handlePageSizeChange}
-            parentRoute={parentRoute}
-            searchParams={searchParams}
-            sortParams={sortParams}
-            totalRecords={Number(data?.totalCount)}
-            filterComponent={filterComponent}
-          />
-        </div>
-      );
-    }
+      </div>
+    );
   }
 };
 

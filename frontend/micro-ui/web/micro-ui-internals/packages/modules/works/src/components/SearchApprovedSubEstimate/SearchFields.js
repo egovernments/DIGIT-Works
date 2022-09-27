@@ -22,9 +22,9 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
     ]
 
     
-
+    const tenant = Digit.ULBService.getStateId();
     const { isLoading, data:departmentOptions, isFetched } = Digit.Hooks.useCustomMDMS(
-        "pb",
+        tenant,
         "works",
         [
             {

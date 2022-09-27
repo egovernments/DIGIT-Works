@@ -17,8 +17,9 @@ const SearchApplication = ({ tenantId, onSubmit, count, resultOk, businessServic
       // isConnectionSearch: true,
     },
   });
+  const tenant = Digit.ULBService.getStateId();
   const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-        "pb",
+        tenant,
         "works",
         [
             {

@@ -37,9 +37,9 @@ const WORKSContractorTable = () => {
         name:"Debarred", code:'Debarred', active:true
       }
     ]
-  
+  const tenant = Digit.ULBService.getStateId();
   const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-    "pb",
+    tenant,
     "works",
     [
         {

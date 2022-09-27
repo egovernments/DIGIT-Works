@@ -12,18 +12,6 @@ const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearc
   const { t } = useTranslation();
   const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));
   const GetCell = (value) => <span className="cell-text">{value}</span>;
-  const GetSlaCell = (value) => {
-    if(value === "CS_NA") return t(value)
-    if (isNaN(value)) return <span className="sla-cell-success">0</span>;
-    return value < 0 ? <span className="sla-cell-error">{value}</span> : <span className="sla-cell-success">{value}</span>;
-  };
-  const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
-    if (searcher == "") return str;
-    while (str.includes(searcher)) {
-      str = str.replace(searcher, replaceWith);
-    }
-    return str;
-  };
 
   const GetMobCell = (value) => <span className="sla-cell">{value}</span>;
     const inboxColumns = () => [
@@ -33,14 +21,14 @@ const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearc
           return (
             <div>
               <span className="link">
-                <Link to={`${props.parentRoute}/application-details/` + row.original?.searchData?.["propertyId"]}>
+                <Link to={`${props.parentRoute}/view-estimate/` + row.original?.searchData?.["estimateNumber"]}>
                   {row.original?.EstimateNumber}
                 </Link>
               </span>
             </div>
           );
         },
-        mobileCell: (original) => GetMobCell(original?.searchData?.["propertyId"]),
+        mobileCell: (original) => GetMobCell(original?.searchData?.["estimateNumber"]),
       },
       {
         Header: t("WORKS_DEPARTMENT"),
@@ -101,22 +89,22 @@ const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearc
     ];
     let result;
     // if (props.isLoading) {
-  //   result = <Loader />;
-  // } else if (data?.table?.length === 0) {
-  //   result = (
-  //     <Card style={{ marginTop: 20 }}>
-  //       {t("CS_MYAPPLICATIONS_NO_APPLICATION")
-  //         .split("\\n")
-  //         .map((text, index) => (
-  //           <p key={index} style={{ textAlign: "center" }}>
-  //             {text}
-  //           </p>
-  //         ))}
-  //     </Card>
-  //   );
-  // } else if (data?.table?.length > 0) {
-    result = (
-      <ApplicationTable
+    //   result = <Loader />;
+    // } else if (data?.table?.length === 0) {
+    //   result = (
+    //     <Card style={{ marginTop: 20 }}>
+    //       {t("CS_MYAPPLICATIONS_NO_APPLICATION")
+    //         .split("\\n")
+    //         .map((text, index) => (
+    //           <p key={index} style={{ textAlign: "center" }}>
+    //             {text}
+    //           </p>
+    //         ))}
+    //     </Card>
+    //   );
+    // } else if (data?.table?.length > 0) {
+  result = (
+    <ApplicationTable
       t={t}
       data={data}
       columns={inboxColumns(data)}
@@ -138,26 +126,23 @@ const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearc
       disableSort={props.disableSort}
       sortParams={props.sortParams}
       totalRecords={props.totalRecords}
-      />
-                   );
+    />
+  );
   // }
 
 return (
     <div className="inbox-container">
       {!props.isSearch && (
-          <div className="filters-container">
-          <InboxLinks />
+        <div className="filters-container">
+        <InboxLinks />
           <div>
-            {
-            // isLoading ? <Loader /> :
-              <FilterComponent
-                defaultSearchParams={props.defaultSearchParams}
-                statuses={data?.statuses}
-                onFilterChange={props.onFilterChange}
-                searchParams={props.searchParams}
-                type="desktop"
-              />
-            }
+            <FilterComponent
+              defaultSearchParams={props.defaultSearchParams}
+              statuses={data?.statuses}
+              onFilterChange={props.onFilterChange}
+              searchParams={props.searchParams}
+              type="desktop"
+            />
           </div>
         </div>
        )}

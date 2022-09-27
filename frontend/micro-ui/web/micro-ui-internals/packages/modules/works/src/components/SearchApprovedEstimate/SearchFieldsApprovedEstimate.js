@@ -10,8 +10,9 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
     let businessServices = ["WORKS"];
     let selectedService = "WORKS"
     const { data: statusData } = Digit.Hooks.useApplicationStatusGeneral({ businessServices, tenantId }, {});
+    const tenant = Digit.ULBService.getStateId();
     const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-        "pb",
+        tenant,
         "works",
         [
             {

@@ -3,8 +3,9 @@ import { Controller, useWatch } from "react-hook-form";
 import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader } from "@egovernments/digit-ui-react-components";
 
 const SearchFields = ({ register, control, reset, t }) => {
+    const tenant = Digit.ULBService.getStateId()
     const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-        "pb",
+        tenant,
         "works",
         [
             {

@@ -27,24 +27,28 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
         mode: "onSubmit"
     });
 
-    const DummyData = [
-        {
-            name: "Nipun"
-        },
-        {
-            name: "Vipul"
-        },
-        {
-            name: "Shaifali"
-        },
-        {
-            name: "Amit"
-        },
-        {
-            name: "Sumit"
-        },
-    ]
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
+    const { isLoading: hookLoading, isError, error, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
+        null,
+        tenantId,
+        paginationParams,
+        null
+    );
+    const tenant = Digit.ULBService.getStateId()
+    const { isLoading:desgLoading, data:designationData } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        "common-masters",
+        [
+            {
+                "name": "Designation"
+            }
+        ]
+        );
 
+    if (designationData?.[`common-masters`]) {
+        var { Designation } = designationData?.[`common-masters`]
+    }
 
     const getDate = () => {
         const today = new Date();
@@ -62,7 +66,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
     const [rows, setRows] = useState(initialState)
 
     const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-        "pb",
+        tenant,
         "works",
         [
             {
@@ -84,7 +88,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
     );
 
     const { isLoading: isFinanceDataLoading, data: financeData, isFetched: isFinanceDataFetched } = Digit.Hooks.useCustomMDMS(
-        "pb",
+        tenant,
         "finance",
         [
             {
@@ -117,77 +121,9 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
 
 
     const handleCreateClick = async () => {
-
-        const obj = {
-            "requirementNumber": "123123",
-            "estimateDetails": [
-                null,
-                {
-                    "name": "work",
-                    "amount": "12312"
-                }
-            ],
-            "department": {
-                "name": "Nipun"
-            },
-            "ward": {
-                "name": "Nipun"
-            },
-            "location": {
-                "name": "Vipul"
-            },
-            "beneficiaryType": {
-                "name": "Vipul"
-            },
-            "natureOfWork": {
-                "name": "Shaifali"
-            },
-            "typeOfWork": {
-                "name": "Nipun"
-            },
-            "subTypeOfWork": {
-                "name": "Vipul"
-            },
-            "entrustmentMode": {
-                "name": "Shaifali"
-            },
-            "fund": {
-                "name": "Vipul"
-            },
-            "function": {
-                "name": "Shaifali"
-            },
-            "budgetHead": {
-                "name": "Vipul"
-            },
-            "scheme": {
-                "name": "Shaifali"
-            },
-            "subScheme": {
-                "name": "Vipul"
-            },
-            "uploads": [
-                {
-                    "fileName": "consumer-WS_107_2021-22_226507.pdf",
-                    "fileStoreId": "4a28b85e-63af-402e-bc8f-9bb0c148e47b",
-                    "documentType": "application/pdf"
-                },
-                {
-                    "fileName": "consumer-PB-CH-2022-07-27-001010.pdf",
-                    "fileStoreId": "8cf5da0b-42a0-41ff-b98a-22cf84619d28",
-                    "documentType": "application/pdf"
-                },
-                {
-                    "fileName": "consumerCode-WS_107_2020-21_218051.pdf",
-                    "fileStoreId": "6d8962ec-9d34-4dfc-b7c2-90fe9cf0b0e2",
-                    "documentType": "application/pdf"
-                }
-            ],
-        }
         const subWorkFieldsToValidate = []
         rows.map(row => row.isShow && subWorkFieldsToValidate.push(...[`estimateDetails.${row.key}.name`, `estimateDetails.${row.key}.amount`]))
         const fieldsToValidate = ['requirementNumber', 'department', 'ward', 'location', 'beneficiaryType', 'natureOfWork', 'typeOfWork', 'subTypeOfWork', 'entrustmentMode', 'fund', 'function', 'budgetHead', 'scheme', 'subScheme', ...subWorkFieldsToValidate]
-
 
         const result = await trigger(fieldsToValidate)
         if (result) {
@@ -231,6 +167,9 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                     register={register}
                     handleSubmit={handleSubmit}
                     errors={errors}
+                    employeeData={employeeData}
+                    Department={Department}
+                    Designation={Designation}
 
                 />}
 
@@ -261,16 +200,17 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                 </LabelFieldPair>
 
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_LOR`)}:`}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_LOR`)}:*`}</CardLabel>
                     <div className='field'>
                         <TextInput name="requirementNumber" inputRef={register({
-                            pattern: /^[a-zA-Z0-9_.$@#\/]*$/
+                            pattern: /^[a-zA-Z0-9_.$@#\/]*$/, required:true
+
                         })}
                         />
-
-
                         {errors && errors?.requirementNumber?.type === "pattern" && (
                             <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                        {errors && errors?.requirementNumber?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
@@ -591,7 +531,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                 return <MultiUploadWrapper
                                     t={t}
                                     module="works"
-                                    tenantId={"pb"}
+                                    tenantId={tenant}
                                     getFormState={getFileStoreData}
                                     showHintBelow={true}
                                     setuploadedstate={value}

@@ -30,7 +30,7 @@ export const WorksService = {
             userService: false,
             params: { tenantId, ...filters },
         }),
-    createEstimate:({ tenantId, filters })=>
+    createEstimate:(details)=>
         Request({
             url: Urls.works.createEstimate,
             data:details,
