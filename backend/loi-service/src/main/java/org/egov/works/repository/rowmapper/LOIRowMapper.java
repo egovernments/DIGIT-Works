@@ -48,6 +48,8 @@ public class LOIRowMapper implements ResultSetExtractor<List<LetterOfIndent>> {
             String lastmodifiedby = rs.getString("lastmodifiedby");
             Long createdtime = rs.getLong("createdtime");
             Long lastmodifiedtime = rs.getLong("lastmodifiedtime");
+            BigDecimal fileDate = rs.getBigDecimal("file_date");
+
 
             JsonNode additionalDetails = getAdditionalDetail("additionaldetails",rs);
 
@@ -76,6 +78,7 @@ public class LOIRowMapper implements ResultSetExtractor<List<LetterOfIndent>> {
                     .letterStatus(letterStatus)
                     .additionalDetails(additionalDetails)
                     .auditDetails(auditDetails)
+                    .fileDate(fileDate)
                     .build();
             loiMap.put(id, letterOfIndent);
         }
