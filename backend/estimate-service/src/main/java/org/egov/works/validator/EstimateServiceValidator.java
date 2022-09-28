@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.egov.works.util.EstimateServiceConstant.*;
 
@@ -291,8 +292,11 @@ public class EstimateServiceValidator {
                 return updateRoles.contains(role.getCode());
             });
 
+            List<String> roleCodes = roles.stream().map(role -> {
+                return role.getCode();
+            }).collect(Collectors.toList());
             if (!rolePresent) {
-                errorMap.put("UNAUTHORIZED_ROLE", "User role(s) : " + roles + " are not authorized to update estimate.");
+                errorMap.put("UNAUTHORIZED_ROLE", "User role(s) : " + roleCodes + " are not authorized to update estimate.");
             }
         }
     }
