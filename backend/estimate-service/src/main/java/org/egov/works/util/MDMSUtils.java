@@ -67,6 +67,7 @@ public class MDMSUtils {
     public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId, EstimateRequest request) {
 
         ModuleDetail estimateWorksModuleDetail = getWorksModuleRequestData(request);
+        ModuleDetail estimateDepartmentModuleDetail = getDepartmentModuleRequestData(request);
         ModuleDetail estimateFinanceModuleDetail = getFinanceModuleRequestData(request);
         ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(request);
 
@@ -74,6 +75,7 @@ public class MDMSUtils {
         moduleDetails.add(estimateWorksModuleDetail);
         moduleDetails.add(estimateFinanceModuleDetail);
         moduleDetails.add(estimateTenantModuleDetail);
+        moduleDetails.add(estimateDepartmentModuleDetail);
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
@@ -81,6 +83,22 @@ public class MDMSUtils {
         MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
                 .requestInfo(requestInfo).build();
         return mdmsCriteriaReq;
+    }
+
+    private ModuleDetail getDepartmentModuleRequestData(EstimateRequest request) {
+
+        Estimate estimate = request.getEstimate();
+        List<MasterDetail> estimateDepartmentMasterDetails = new ArrayList<>();
+
+        MasterDetail departmentMasterDetails = MasterDetail.builder().name(MASTER_DEPARTMENT)
+                .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getDepartment())).build();
+
+        estimateDepartmentMasterDetails.add(departmentMasterDetails);
+
+        ModuleDetail estimateDepartmentModuleDetail = ModuleDetail.builder().masterDetails(estimateDepartmentMasterDetails)
+                .moduleName(MDMS_COMMON_MASTERS_MODULE_NAME).build();
+
+        return estimateDepartmentModuleDetail;
     }
 
     private ModuleDetail getTenantModuleRequestData(EstimateRequest request) {
@@ -137,9 +155,6 @@ public class MDMSUtils {
         MasterDetail beneficiaryMasterDetails = MasterDetail.builder().name(MASTER_BENEFICIART_TYPE)
                 .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getBeneficiaryType())).build();
 
-        MasterDetail departmentMasterDetails = MasterDetail.builder().name(MASTER_DEPARTMENT)
-                .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getDepartment())).build();
-
         MasterDetail entrustmentMasterDetails = MasterDetail.builder().name(MASTER_ENTRUSTMENTMODE)
                 .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getEntrustmentMode())).build();
 
@@ -153,7 +168,6 @@ public class MDMSUtils {
                 .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getNatureOfWork())).build();
 
         estimateWorksMasterDetails.add(beneficiaryMasterDetails);
-        estimateWorksMasterDetails.add(departmentMasterDetails);
         estimateWorksMasterDetails.add(entrustmentMasterDetails);
         estimateWorksMasterDetails.add(typeOfWorkMasterDetails);
         estimateWorksMasterDetails.add(subTypeOfWorkMasterDetails);

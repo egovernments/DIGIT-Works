@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.EstimateServiceConfiguration;
+import org.egov.works.repository.EstimateRepository;
 import org.egov.works.repository.IdGenRepository;
 import org.egov.works.util.EstimateServiceUtil;
 import org.egov.works.web.models.Estimate;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +35,9 @@ public class EnrichmentService {
 
     @Autowired
     private EstimateServiceConfiguration config;
+
+    @Autowired
+    private EstimateRepository estimateRepository;
 
 
     public void enrichCreateEstimate(EstimateRequest request) {
@@ -111,6 +116,15 @@ public class EnrichmentService {
     public void enrichUpdateEstimate(EstimateRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         Estimate estimate = request.getEstimate();
+
+        //set the audit details from DB
+        List<String> ids = new ArrayList<>();
+        ids.add(estimate.getId().toString());
+        EstimateSearchCriteria searchCriteria = EstimateSearchCriteria.builder().ids(ids).tenantId(estimate.getTenantId()).build();
+        List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
+
+        estimate.setAuditDetails(estimateList.get(0).getAuditDetails());
+
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, false);
 
         estimate.setAuditDetails(auditDetails);
