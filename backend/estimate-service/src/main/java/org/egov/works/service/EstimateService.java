@@ -38,6 +38,12 @@ public class EstimateService {
     private WorkflowService workflowService;
 
 
+    /**
+     * Create Estimate by validating the details, enriched , update the workflow
+     * and finally pushed to kafka to persist in postgres DB.
+     * @param request
+     * @return
+     */
     public EstimateRequest createEstimate(EstimateRequest request) {
         serviceValidator.validateCreateEstimate(request);
         enrichmentService.enrichCreateEstimate(request);
@@ -46,6 +52,12 @@ public class EstimateService {
         return request;
     }
 
+    /**
+     * Search Estimate based on given search criteria
+     * @param requestInfoWrapper
+     * @param searchCriteria
+     * @return
+     */
     public List<Estimate> searchEstimate(RequestInfoWrapper requestInfoWrapper, EstimateSearchCriteria searchCriteria) {
         serviceValidator.validateSearchEstimate(requestInfoWrapper, searchCriteria);
         enrichmentService.enrichSearchEstimate(requestInfoWrapper.getRequestInfo(), searchCriteria);
@@ -61,9 +73,16 @@ public class EstimateService {
         return estimateList;
     }
 
-    //TODO
-    public EstimateRequest updateEstimate(EstimateRequest estimateRequest) {
-        workflowService.updateWorkflowStatus(estimateRequest);
-        return estimateRequest;
+    /**
+     * Except Date of Proposal, everything will be editable.
+     * @param request
+     * @return
+     */
+    public EstimateRequest updateEstimate(EstimateRequest request) {
+        serviceValidator.validateUpdateEstimate(request);
+        enrichmentService.enrichUpdateEstimate(request);
+        workflowService.updateWorkflowStatus(request);
+        producer.push(serviceConfiguration.getUpdateEstimateTopic(), request);
+        return request;
     }
 }

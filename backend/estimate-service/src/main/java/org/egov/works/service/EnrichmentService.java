@@ -107,4 +107,12 @@ public class EnrichmentService {
         if (searchCriteria.getLimit() != null && searchCriteria.getLimit() > config.getMaxLimit())
             searchCriteria.setLimit(config.getMaxLimit());
     }
+
+    public void enrichUpdateEstimate(EstimateRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        Estimate estimate = request.getEstimate();
+        AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, false);
+
+        estimate.setAuditDetails(auditDetails);
+    }
 }
