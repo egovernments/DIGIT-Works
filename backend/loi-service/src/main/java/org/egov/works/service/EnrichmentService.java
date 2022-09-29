@@ -51,17 +51,9 @@ public class EnrichmentService {
         LetterOfIndent letterOfIndent = request.getLetterOfIndent();
         String rootTenantId = letterOfIndent.getTenantId().split("\\.")[0];
 
-        letterOfIndent.setId(UUID.randomUUID());
-
         AuditDetails auditDetails = loiUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), letterOfIndent, false);
         letterOfIndent.setAuditDetails(auditDetails);
 
-        List<String> loiNumbers = getIdList(requestInfo, rootTenantId, config.getIdGenLOINumberName(),
-                config.getIdGenLOINumberFormat(), 1);
-
-        if (loiNumbers != null && !loiNumbers.isEmpty()) {
-            letterOfIndent.setLetterOfIndentNumber(loiNumbers.get(0));
-        }
     }
 
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey, String idformat, int count) {
