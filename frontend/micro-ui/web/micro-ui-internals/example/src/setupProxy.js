@@ -61,7 +61,8 @@ module.exports = function (app) {
     "/report",
     "/inbox/v1/dss/_search",
     "/loi-service",
-    "/estimate-service"
+    "/estimate-service",
+    "/loi-service",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

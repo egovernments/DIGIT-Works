@@ -1,6 +1,6 @@
 import React,{Fragment,useState} from "react";
 import { Modal, Card, CardText, TextInput, CardLabelError,Dropdown,TextArea,Loader } from "@egovernments/digit-ui-react-components";
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm,useWatch } from 'react-hook-form'
 
 
 const Heading = (props) => {
@@ -39,7 +39,34 @@ const ProcessingModal = ({
     Department,
     Designation
 }) => {
+
+    const { isLoading: desLoading, data: designationData } = Digit.Hooks.useCustomMDMS(
+        Digit.ULBService.getCurrentTenantId(),
+        "common-masters",
+        [
+            {
+                "name": "Designation"
+            },
+            {
+                "name": "Department"
+            }
+        ]
+    );
+
+    const selectedDepartment = useWatch({ control: control, name: "appDesig", defaultValue: "" });
+    const selectedDesignation = useWatch({ control: control, name: "appDept", defaultValue: "" });
+
+    //based on these two make an hrms search for approver dropdown
+    let Approvers = []
+
+    const { isLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ Designation: selectedDesignation?.code, Department: selectedDepartment?.code }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDepartment && selectedDesignation) });
+    employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp.user.name)
+    Approvers = employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees: []
+
+    
+
       return (
+        desLoading?<Loader/> :
         <Modal
             headerBarMain={<Heading t={t} heading={heading} />}
             headerBarEnd={<CloseBtn onClick={closeModal} />}
@@ -63,7 +90,7 @@ const ProcessingModal = ({
                             return (
                                 <Dropdown
                                     onBlur={props.onBlur}
-                                    option={Department}
+                                    option={designationData?.["common-masters"]?.Department}
                                     selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
@@ -87,7 +114,7 @@ const ProcessingModal = ({
                             return (
                                 <Dropdown
                                     onBlur={props.onBlur}
-                                    option={Designation}
+                                    option={designationData?.["common-masters"]?.Designation}
                                     selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
@@ -111,9 +138,9 @@ const ProcessingModal = ({
                             return (
                                 <Dropdown
                                     onBlur={props.onBlur}
-                                    option={employeeData?.Employees}
+                                    option={Approvers}
                                     selected={props?.value}
-                                    optionKey={"code"}
+                                    optionKey={"nameOfEmp"}
                                     t={t}
                                     select={props?.onChange}
                                 />
