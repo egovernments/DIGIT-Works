@@ -80,12 +80,13 @@ public class LOIRowMapper implements ResultSetExtractor<List<LetterOfIndent>> {
                     .auditDetails(auditDetails)
                     .fileDate(fileDate)
                     .build();
+
             loiMap.put(id, letterOfIndent);
         }
         return new ArrayList<>(loiMap.values());
     }
 
-    private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {
+        private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {
         JsonNode additionalDetail = null;
         try {
             Object jsonData = rs.getObject(columnName);
