@@ -1,8 +1,9 @@
 import React, { useReducer, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, DatePicker, Row, StatusTable, CardLabelError, AddIcon, SubtractIcon, InfoBannerIcon } from '@egovernments/digit-ui-react-components';
+import { Controller, useForm,useWatch } from 'react-hook-form'
+import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, DatePicker, Row, StatusTable, CardLabelError, AddIcon, SubtractIcon, InfoBannerIcon,Loader } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
 import ProcessingModal from '../Modal/ProcessingModal';
+
 
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
@@ -41,36 +42,252 @@ const CreateLoiForm = ({ onFormSubmit }) => {
     }
 
     const dummyDefault = {
-        "workIdentificationNumber": "123423",
-        "fileNumber": "32423",
-        "negotiatedPercentage": "2",
-        "contractorId": "324",
-        "securityDeposit": "324",
-        "bankGuarantee": "432",
+        "workIdentificationNumber": "12312321",
+        "fileNumber": "2131",
+        "negotiatedPercentage": "90",
+        "contractorId": "12321",
+        "securityDeposit": "123",
+        "bankGuarantee": "123",
         "emdAmount": "123",
-        "contractPeriod": "32",
+        "contractPeriod": "12",
         "defectLiabilityPeriod": "12",
         "fileDate": "2022-12-31",
-        "agreementDate": "2021-12-31",
+        "agreementDate": "2022-09-29",
         "agencyName": {
             "name": "agency1"
         },
-        "officerInChargedesig": {
-            "name": "d1"
-        },
         "officerIncharge": {
-            "name": "officer2"
+            "id": 111,
+            "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
+            "code": "EMP-107-000011",
+            "employeeStatus": "EMPLOYED",
+            "employeeType": "PERMANENT",
+            "dateOfAppointment": 1663200000000,
+            "jurisdictions": [
+                {
+                    "id": "e4486069-8275-4191-bb26-33dc7d177e6d",
+                    "hierarchy": "ADMIN",
+                    "boundary": "pb.amritsar",
+                    "boundaryType": "City",
+                    "tenantId": "pb.amritsar",
+                    "auditDetails": {
+                        "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
+                        "createdDate": 1663826773203,
+                        "lastModifiedBy": null,
+                        "lastModifiedDate": 0
+                    },
+                    "isActive": true
+                }
+            ],
+            "assignments": [
+                {
+                    "id": "740b9561-0a7b-4bdf-af3a-7e4138aeb2a8",
+                    "position": 14,
+                    "designation": "DESIG_01",
+                    "department": "DEPT_1",
+                    "fromDate": 1663804800000,
+                    "toDate": null,
+                    "govtOrderNumber": null,
+                    "tenantid": "pb.amritsar",
+                    "reportingTo": null,
+                    "auditDetails": {
+                        "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
+                        "createdDate": 1663826773203,
+                        "lastModifiedBy": null,
+                        "lastModifiedDate": 0
+                    },
+                    "isHOD": false,
+                    "isCurrentAssignment": true
+                }
+            ],
+            "serviceHistory": [],
+            "education": [],
+            "tests": [],
+            "tenantId": "pb.amritsar",
+            "documents": [],
+            "deactivationDetails": [],
+            "reactivationDetails": [],
+            "auditDetails": {
+                "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
+                "createdDate": 1663826773203,
+                "lastModifiedBy": null,
+                "lastModifiedDate": 0
+            },
+            "reActivateEmployee": false,
+            "user": {
+                "id": 111,
+                "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
+                "userName": "EMP-107-000011",
+                "password": null,
+                "salutation": null,
+                "name": "Estimate Checker",
+                "gender": "MALE",
+                "mobileNumber": "8877665544",
+                "emailId": null,
+                "altContactNumber": null,
+                "pan": null,
+                "aadhaarNumber": null,
+                "permanentAddress": null,
+                "permanentCity": null,
+                "permanentPinCode": null,
+                "correspondenceCity": null,
+                "correspondencePinCode": null,
+                "correspondenceAddress": "None",
+                "active": true,
+                "dob": 778444200000,
+                "pwdExpiryDate": 1671602773000,
+                "locale": null,
+                "type": "EMPLOYEE",
+                "signature": null,
+                "accountLocked": false,
+                "roles": [
+                    {
+                        "name": "EST_CHECKER",
+                        "code": "EST_CHECKER",
+                        "description": null,
+                        "tenantId": "pb.amritsar"
+                    }
+                ],
+                "fatherOrHusbandName": null,
+                "relationship": null,
+                "bloodGroup": null,
+                "identificationMark": null,
+                "photo": null,
+                "createdBy": "93",
+                "createdDate": 1663826773000,
+                "lastModifiedBy": "93",
+                "lastModifiedDate": 1663826773000,
+                "otpReference": null,
+                "tenantId": "pb.amritsar"
+            },
+            "isActive": true,
+            "nameOfEmp": "Estimate Checker"
         },
         "uploads": [],
-        "comments": "jksdf",
+        "officerInChargedesig": {
+            "code": "DESIG_01",
+            "name": "Superintending Engineer ( B&R)",
+            "description": "Superintending Engineer ( B&R)",
+            "active": true
+        },
+        "comments": "sdljkf",
         "appDept": {
-            "name": "deptOfEngg"
+            "name": "Street Lights",
+            "code": "DEPT_1",
+            "active": true
         },
         "appDesig": {
-            "name": "junior engg"
+            "code": "DESIG_02",
+            "name": "Corporation Engineer (B&R)",
+            "description": "Corporation Engineer (B&R)",
+            "active": true
         },
         "app": {
-            "name": "officer2"
+            "id": 111,
+            "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
+            "code": "EMP-107-000011",
+            "employeeStatus": "EMPLOYED",
+            "employeeType": "PERMANENT",
+            "dateOfAppointment": 1663200000000,
+            "jurisdictions": [
+                {
+                    "id": "e4486069-8275-4191-bb26-33dc7d177e6d",
+                    "hierarchy": "ADMIN",
+                    "boundary": "pb.amritsar",
+                    "boundaryType": "City",
+                    "tenantId": "pb.amritsar",
+                    "auditDetails": {
+                        "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
+                        "createdDate": 1663826773203,
+                        "lastModifiedBy": null,
+                        "lastModifiedDate": 0
+                    },
+                    "isActive": true
+                }
+            ],
+            "assignments": [
+                {
+                    "id": "740b9561-0a7b-4bdf-af3a-7e4138aeb2a8",
+                    "position": 14,
+                    "designation": "DESIG_01",
+                    "department": "DEPT_1",
+                    "fromDate": 1663804800000,
+                    "toDate": null,
+                    "govtOrderNumber": null,
+                    "tenantid": "pb.amritsar",
+                    "reportingTo": null,
+                    "auditDetails": {
+                        "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
+                        "createdDate": 1663826773203,
+                        "lastModifiedBy": null,
+                        "lastModifiedDate": 0
+                    },
+                    "isHOD": false,
+                    "isCurrentAssignment": true
+                }
+            ],
+            "serviceHistory": [],
+            "education": [],
+            "tests": [],
+            "tenantId": "pb.amritsar",
+            "documents": [],
+            "deactivationDetails": [],
+            "reactivationDetails": [],
+            "auditDetails": {
+                "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
+                "createdDate": 1663826773203,
+                "lastModifiedBy": null,
+                "lastModifiedDate": 0
+            },
+            "reActivateEmployee": false,
+            "user": {
+                "id": 111,
+                "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
+                "userName": "EMP-107-000011",
+                "password": null,
+                "salutation": null,
+                "name": "Estimate Checker",
+                "gender": "MALE",
+                "mobileNumber": "8877665544",
+                "emailId": null,
+                "altContactNumber": null,
+                "pan": null,
+                "aadhaarNumber": null,
+                "permanentAddress": null,
+                "permanentCity": null,
+                "permanentPinCode": null,
+                "correspondenceCity": null,
+                "correspondencePinCode": null,
+                "correspondenceAddress": "None",
+                "active": true,
+                "dob": 778444200000,
+                "pwdExpiryDate": 1671602773000,
+                "locale": null,
+                "type": "EMPLOYEE",
+                "signature": null,
+                "accountLocked": false,
+                "roles": [
+                    {
+                        "name": "EST_CHECKER",
+                        "code": "EST_CHECKER",
+                        "description": null,
+                        "tenantId": "pb.amritsar"
+                    }
+                ],
+                "fatherOrHusbandName": null,
+                "relationship": null,
+                "bloodGroup": null,
+                "identificationMark": null,
+                "photo": null,
+                "createdBy": "93",
+                "createdDate": 1663826773000,
+                "lastModifiedBy": "93",
+                "lastModifiedDate": 1663826773000,
+                "otpReference": null,
+                "tenantId": "pb.amritsar"
+            },
+            "isActive": true,
+            "nameOfEmp": "Estimate Checker"
         }
     }
     const { t } = useTranslation()
@@ -84,11 +301,11 @@ const CreateLoiForm = ({ onFormSubmit }) => {
         unregister,
         handleSubmit,
         formState: { errors, ...rest },
-        reset,
+        reset, 
         trigger,
         ...methods
     } = useForm({
-        //defaultValues: { ...dummyDefault },
+        defaultValues: { ...dummyDefault },
         mode: "onSubmit"
     });
 
@@ -103,20 +320,32 @@ const CreateLoiForm = ({ onFormSubmit }) => {
 
     }
 
-    // const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
-    //     "pb",
-    //     "works",
-    //     [
-    //         {"name":"AgencyName"},
-    //         { "name": "OfficerInChange" },
-    //     ]
-    // );
+    const { isLoading: desLoading, data: designationData } = Digit.Hooks.useCustomMDMS(
+        Digit.ULBService.getCurrentTenantId(),
+        "common-masters",
+        [
+            {
+                "name": "Designation"
+            }
+        ]
+    );
 
+    
 
+    const { estimateNumber,subEstimateNumber } = Digit.Hooks.useQueryParams();
+    //search this estimate here
+    const { isLoading: isLoadingEstimateSearch, isError: isErrorEstimateSearch, data: estimateSearchResponse, isSuccess: estimateSearchSuccess } = Digit.Hooks.works.useSearchWORKS({ tenantId: Digit.ULBService.getCurrentTenantId(), filters: { subEstimateNumber }, config: { enabled: subEstimateNumber ? true:false } });
+        
+    const estimate = estimateSearchResponse?.estimates?.[0]
+    const subEstimateDetails = estimate?.estimateDetails?.filter(subEs => subEs?.estimateDetailNumber===subEstimateNumber)?.[0]
+    const selectedDesignation = useWatch({ control: control, name: "officerInChargedesig", defaultValue: "" });
+    //use this designation to make an hrms search and get the options for officer in charge from there
 
+    const { isLoading, isError, error, data: employeeData } = Digit.Hooks.hrms.useHRMSSearch({ Designation: selectedDesignation?.code }, Digit.ULBService.getCurrentTenantId(), null, null,{enabled:!!selectedDesignation});
 
-
-
+    const Employees = employeeData? employeeData.Employees : []
+    Employees.map(emp => emp.nameOfEmp = emp.user.name)
+    
 
     let validation = {}
     const checkKeyDown = (e) => {
@@ -124,35 +353,35 @@ const CreateLoiForm = ({ onFormSubmit }) => {
     };
     const convertToNegative = (e) => {
 
-        const aggrementAmount = 100
+        const aggrementAmount = subEstimateDetails?.amount
         const value = getValues("negotiatedPercentage")
         const result = aggrementAmount - ((Math.abs(parseInt(value)) * aggrementAmount) / 100)
         setValue('negotiatedPercentage', `-${Math.abs(value)}`, { shouldValidate: true })
-        setValue('aggrementAmount', result, { shouldValidate: true })
+        setValue('aggrementAmount', result.toString(), { shouldValidate: true })
     }
     const convertToPositive = (e) => {
-
-        const aggrementAmount = 100
+        
+        const aggrementAmount = subEstimateDetails?.amount
         const value = getValues("negotiatedPercentage")
         const result = aggrementAmount + ((Math.abs(parseInt(value)) * aggrementAmount) / 100)
         setValue('negotiatedPercentage', Math.abs(value), { shouldValidate: true })
-        setValue('aggrementAmount', result, { shouldValidate: true })
+        setValue('aggrementAmount', result.toString(), { shouldValidate: true })
     }
     return (
         <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
             <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_LOI")}</Header>
             <Card >
-
                 <CardSectionHeader >{t(`WORKS_LOI_DETAILS`)}</CardSectionHeader>
-                <StatusTable>
-                    <Row label={`${t("WORKS_ESTIMATE_NO")}:`} text={"NA"} textStyle={{ whiteSpace: "pre" }} />
+                {isLoadingEstimateSearch && <Loader /> }
+                {estimateSearchSuccess  && <StatusTable>
+                    <Row label={`${t("WORKS_ESTIMATE_NO")}:`} text={estimateNumber} textStyle={{ whiteSpace: "pre" }} />
                     <Row
                         label={`${t("WORKS_NAME_OF_WORK")}:`}
-                        text={"NA"}
+                        text={estimate?.estimateDetails?.[0]?.name}
                         textStyle={{ whiteSpace: "pre" }}
                     />
-                    <Row label={`${t("WORKS_SUB_ESTIMATE_NO")}:`} text={"NA"} />
-                </StatusTable>
+                    <Row label={`${t("WORKS_SUB_ESTIMATE_NO")}:`} text={estimate?.estimateDetails?.[0]?.estimateDetailNumber} />
+                </StatusTable>}
                 {showModal && <ProcessingModal
                     t={t}
                     heading={"WORKS_PROCESSINGMODAL_HEADER"}
@@ -166,7 +395,6 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                     register={register}
                     handleSubmit={handleSubmit}
                     errors={errors}
-
                 />}
 
 
@@ -210,7 +438,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
 
                 <CardSectionHeader >{t(`WORKS_FINANCIAL_DETAILS`)}</CardSectionHeader>
                 <StatusTable>
-                    <Row label={`${t("WORKS_ESTIMATED_AMT")}:`} text={"100"} />
+                    <Row label={`${t("WORKS_ESTIMATED_AMT")}:`} text={subEstimateDetails?.amount} />
                 </StatusTable>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FINALIZED_PER`)}:*`}</CardLabel>
@@ -237,7 +465,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_AGREEMENT_AMT`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="aggrementAmount" disabled={true} inputRef={register()} style={{ backgroundColor: "#E5E5E5" }} />
+                    <TextInput className={"field"} name="aggrementAmount" type="number" disabled={true} inputRef={register()} style={{ backgroundColor: "#E5E5E5" }} />
                 </LabelFieldPair>
 
                 <CardSectionHeader >{t(`WORKS_AGGREEMENT_DETAILS`)}</CardSectionHeader>
@@ -346,7 +574,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                     </div>
                 </LabelFieldPair>
 
-                <LabelFieldPair>
+                {desLoading?<Loader />: <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_OFFICER_INCHARGE_DES`)}:*`}</CardLabel>
                     <div className='field'>
                         <Controller
@@ -356,7 +584,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-                                        option={dummyData.designation}
+                                        option={designationData?.["common-masters"]?.Designation}
                                         selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
@@ -369,7 +597,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                         {errors && errors?.officerInChargedesig?.type === "required" && (
                             <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
-                </LabelFieldPair>
+                </LabelFieldPair>}
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_OFFICER_INCHARGE_NAME`)}:*`}</CardLabel>
@@ -382,9 +610,9 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                                 return (
                                     <Dropdown
                                         onBlur={props.onBlur}
-                                        option={dummyData.nameOfOfficer}
+                                        option={selectedDesignation? Employees : []}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"nameOfEmp"}
                                         t={t}
                                         select={props?.onChange}
                                     />

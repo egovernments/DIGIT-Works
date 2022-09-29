@@ -1,6 +1,7 @@
 import cloneDeep from "lodash/cloneDeep";
 import _ from "lodash";
 import { WorksService } from "../../elements/Works";
+import { UserService } from "../../elements/User";
 
 
 const convertEpochToDate = (dateEpoch) => {
@@ -195,16 +196,17 @@ export const WorksSearch = {
     searchEstimate: async (tenantId="pb.jalandhar", filters = {} ) => {
         
         //dymmy response
-        const response = sampleEstimateSearchResponse
+        //const response = sampleEstimateSearchResponse
         //actual response
-        const responseStatic = await WorksService?.estimateSearch({tenantId,filters})
+        const response = await WorksService?.estimateSearch({tenantId,filters})
         return response?.estimates
     },
     searchLOI: async (tenantId,filters={}) => {
         //dymmy response
-        const response = sampleLOISearchResponse
+        
+        //const response = sampleLOISearchResponse
         //actual response
-        //const response = await WorksService?.loiSearch({tenantId,filters})
+        const response = await WorksService?.loiSearch({tenantId,filters})
         return response?.letterOfIndents
     },
     viewEstimateScreen: async (t, tenantId, estimateNumber) => {
@@ -294,14 +296,18 @@ export const WorksSearch = {
             applicationDetails: details,
         }
     },
-    viewLOIScreen: async (t, tenantId, loiNumber,estimateNumber="") => {
+    viewLOIScreen: async (t, tenantId, LOINumber,subEstimateNumber) => {
         
-         const loiArr = await WorksSearch.searchLOI(tenantId,{loiNumber})
+        const loiArr = await WorksSearch.searchLOI(tenantId, {letterOfIndentNumber:LOINumber})
          const loi = loiArr?.[0]
         //const loi = sampleLOISearchResponse?.letterOfIndents?.[0]
         //const estimate = sampleEstimateSearchResponse?.estimates?.[0]
-        const estimateArr = await WorksSearch?.searchEstimate(tenantId, { estimateNumber })
+        const estimateArr = await WorksSearch?.searchEstimate(tenantId, { estimateDetailNumber:subEstimateNumber })
         const estimate = estimateArr?.[0]
+        const tenant = tenantId
+         //const usersResponse = await UserService.UserSearch(tenant,{uuid: [loi?.oicId] }, {});
+         //console.log(usersResponse);
+        
         const loiDetails = {
             title: "WORKS_LOI_DETAILS",
             asSectionHeader: true,
@@ -309,19 +315,19 @@ export const WorksSearch = {
                 { title: "WORKS_LOI_NUMBER", value: loi?.letterOfIndentNumber || t("NA") },
                 { title: "WORKS_DATE_CREATED", value: convertEpochToDate(loi?.auditDetails?.createdTime) || t("NA") },
                 { title: "WORKS_ESTIMATE_NO", value: estimate?.estimateNumber || t("NA") },
-                { title: "WORKS_SUB_ESTIMATE_NO", value:estimate?.estimateDetails?.estimateDetailNumber || t("NA") },
-                { title: "WORKS_NAME_OF_WORK", value: estimate?.natureOfWork || t("NA") },
+                { title: "WORKS_SUB_ESTIMATE_NO", value: estimate?.estimateDetails?.filter(subEs => subEs?.estimateDetailNumber===subEstimateNumber)?.estimateDetailNumber || t("NA") },
+                { title: "WORKS_NAME_OF_WORK", value: estimate?.estimateDetails?.filter(subEs => subEs?.estimateDetailNumber === subEstimateNumber)?.name || t("NA") },
                 { title: "WORKS_DEPARTMENT", value: estimate?.department || t("NA") },
                 { title: "WORKS_FILE_NO", value: loi?.fileNumber || t("NA") },
-                { title: "WORKS_FILE_DATE", value: estimate?.natureOfWork || t("NA") },
+                { title: "WORKS_FILE_DATE", value: convertEpochToDate(loi?.fileDate) || t("NA") },
             ]
         };
         const financialDetails = {
             title: "WORKS_FINANCIAL_DETAILS",
             asSectionHeader: true,
             values: [
-                { title: "WORKS_ESTIMATED_AMT", value: estimate?.proposalDate || t("NA") },
-                { title: "WORKS_FINALIZED_PER", value: estimate?.department || t("NA") },
+                { title: "WORKS_ESTIMATED_AMT", value: estimate?.estimateDetails?.filter(subEs => subEs?.estimateDetailNumber === subEstimateNumber)?.amount || t("NA") },
+                { title: "WORKS_FINALIZED_PER", value: loi?.negotiatedPercentage || t("NA") },
                 { title: "WORKS_AGREEMENT_AMT", value: estimate?.requirementNumber || t("NA") },
             ]
         }

@@ -12,9 +12,12 @@ const ViewLOI = (props) => {
     const { register, control, watch, handleSubmit, formState: { errors, ...rest }, reset, trigger, getValues} = useForm({defaultValues: {}, mode: "onSubmit"});
     const menuRef = useRef();
     const [displayMenu, setDisplayMenu] = useState(false);
-    let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t);
+    const { LOINumber, subEstimateNumber } = Digit.Hooks.useQueryParams();
     const tenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
+    
+    let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t,tenantId,LOINumber,subEstimateNumber,{enabled:!!(LOINumber && subEstimateNumber)});
+    
     let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
     const { isLoading: hookLoading, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
         null,
