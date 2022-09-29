@@ -98,8 +98,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-            <version>${postgresql.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
