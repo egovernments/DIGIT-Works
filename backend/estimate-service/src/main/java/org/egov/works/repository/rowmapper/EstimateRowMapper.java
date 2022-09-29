@@ -72,7 +72,6 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                     .subScheme(subScheme).subTypeOfWork(subtypeOfWork).typeOfWork(typeOfWork).tenantId(tenantId).department(department)
                     .workCategory(workCategory).auditDetails(auditDetails).build();
 
-            estimate.setAdditionalDetails(additionalDetails);
 
             addEstimateDetails(rs, estimate, estimateMap);
 
