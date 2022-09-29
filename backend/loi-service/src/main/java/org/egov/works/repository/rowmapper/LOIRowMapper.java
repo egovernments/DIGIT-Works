@@ -76,7 +76,7 @@ public class LOIRowMapper implements ResultSetExtractor<List<LetterOfIndent>> {
                     .defectLiabilityPeriod(defectLiabilityPeriod)
                     .oicId(UUID.nameUUIDFromBytes(oicId.getBytes(StandardCharsets.UTF_8)))
                     .letterStatus(letterStatus)
-                    .additionalDetails(additionalDetails.asText())
+                    .additionalDetails(additionalDetails)
                     .auditDetails(auditDetails)
                     .fileDate(fileDate)
                     .build();
