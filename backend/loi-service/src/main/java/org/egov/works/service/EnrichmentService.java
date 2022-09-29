@@ -50,7 +50,6 @@ public class EnrichmentService {
         RequestInfo requestInfo = request.getRequestInfo();
         LetterOfIndent letterOfIndent = request.getLetterOfIndent();
         String rootTenantId = letterOfIndent.getTenantId().split("\\.")[0];
-
         AuditDetails auditDetails = loiUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), letterOfIndent, false);
         letterOfIndent.setAuditDetails(auditDetails);
 
