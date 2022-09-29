@@ -7,11 +7,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.Estimate;
 import org.egov.works.web.models.EstimateDetail;
+import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
@@ -66,7 +68,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
             Estimate estimate = Estimate.builder().estimateNumber(estimateNumber).id(UUID.nameUUIDFromBytes(id.getBytes(StandardCharsets.UTF_8)))
                     .estimateStatus(estimateStatus).status(Estimate.StatusEnum.fromValue(status)).adminSanctionNumber(adminSanctionNumber)
-                    .totalAmount(totalAmount).additionalDetails(additionalDetails.asText()).beneficiaryType(beneficiaryType).budgetHead(budgetHead)
+                    .totalAmount(totalAmount).additionalDetails(additionalDetails).beneficiaryType(beneficiaryType).budgetHead(budgetHead)
                     .description(description).entrustmentMode(entrustmentMode).function(function).fund(fund).location(location)
                     .natureOfWork(natureOfWork).requirementNumber(requirementNumber).proposalDate(proposalDate).scheme(scheme).subject(subject)
                     .subScheme(subScheme).subTypeOfWork(subtypeOfWork).typeOfWork(typeOfWork).tenantId(tenantId).department(department)
@@ -74,7 +76,6 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
 
             addEstimateDetails(rs, estimate, estimateMap);
-
             estimateMap.put(id, estimate);
         }
         return new ArrayList<>(estimateMap.values());
@@ -106,19 +107,18 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
     }
 
 
-    private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {
-        JsonNode additionalDetail = null;
+    private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {
+        JsonNode propertyAdditionalDetails = null;
         try {
-            Object jsonData = rs.getObject(columnName);
-            if (jsonData != null) {
-                additionalDetail = mapper.convertValue(jsonData, JsonNode.class);
-                if(additionalDetail != null){
-                    additionalDetail =  additionalDetail.get("value");
-                }
+            PGobject obj = (PGobject) rs.getObject(columnName);
+            if (obj != null) {
+                propertyAdditionalDetails = mapper.readTree(obj.getValue());
             }
-        } catch (SQLException e) {
-            throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
+        } catch (IOException e) {
+            throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object");
         }
-        return additionalDetail;
+        if (propertyAdditionalDetails.isEmpty())
+            propertyAdditionalDetails = null;
+        return propertyAdditionalDetails;
     }
 }
