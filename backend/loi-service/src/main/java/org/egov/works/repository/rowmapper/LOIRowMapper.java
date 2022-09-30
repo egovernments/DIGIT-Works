@@ -88,8 +88,8 @@ public class LOIRowMapper implements ResultSetExtractor<List<LetterOfIndent>> {
         return new ArrayList<>(loiMap.values());
     }
 
-        private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException{
-        JsonNode propertyAdditionalDetails  = null;
+    private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {
+        JsonNode propertyAdditionalDetails = null;
         try {
             PGobject obj = (PGobject) rs.getObject(columnName);
             if (obj != null) {

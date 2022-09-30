@@ -43,13 +43,13 @@ public class LOIConfiguration {
     private String workflowHost;
     @Value("${egov.workflow.transition.path}")
     private String workflowTransitionPath;
-    @Value("${egov.workflow.search.path}")
-    private String workflowSearchPath;
+   // @Value("${egov.workflow.search.path}")
+    //private String workflowSearchPath;
 
-    @Value("${workflow.loi.business.service.name}")
-    private String workflowLOIBusinessServiceName;
-    @Value("${workflow.loi.module.name}")
-    private String workflowLOIModuleName;
+    //@Value("${workflow.loi.business.service.name}")
+    //private String workflowLOIBusinessServiceName;
+   // @Value("${workflow.loi.module.name}")
+    //private String workflowLOIModuleName;
 
     @Value("${loi.default.limit}")
     private Integer defaultLimit;
