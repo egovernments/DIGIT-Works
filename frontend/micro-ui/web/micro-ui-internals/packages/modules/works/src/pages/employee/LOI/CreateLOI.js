@@ -23,13 +23,17 @@ const CreateLOI = () => {
         data.agreementDate = Digit.Utils.pt.convertDateToEpoch(data.agreementDate)
         data.status="DRAFT"
         data.tenantId =  Digit.ULBService.getCurrentTenantId();
-        
+        data.additionalDetails = {}
+        data.additionalDetails.filesAttached = _data?.uploads
+        data.additionalDetails.oic = _data?.officerIncharge
+        data.additionalDetails.formData = _data
         data.oicId = _data?.officerIncharge?.uuid
         Object.keys(data).forEach(key => {
             if (data[key] === undefined) {
                 delete data[key];
             }
         });
+        delete data.uploads
         const letterOfIndent = { letterOfIndent: data,workflow:{
             action:"CREATE"
         } }
@@ -66,7 +70,7 @@ const CreateLOI = () => {
                     header: t("WORKS_LOI_RESPONSE_HEADER"),
                     id: responseData?.letterOfIndents?.[0]?.letterOfIndentNumber,
                     info: t("WORKS_LOI_ID"),
-                    message: t("WORKS_LOI_RESPONSE_MESSAGE"),
+                    message: t("WORKS_LOI_RESPONSE_MESSAGE", { loiNumber: responseData?.letterOfIndents?.[0]?.letterOfIndentNumber }),
                     links: [
                         {
                             name: t("WORKS_CREATE_NEW_LOI"),

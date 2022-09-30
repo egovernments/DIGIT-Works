@@ -32,12 +32,12 @@ import getPDFData from "../utils/getWorksAcknowledgementData"
 // Pass the state object to it while doing history.push  
  */
 const Response = (props) => {
-  
+ // debugger
     const {state}  = useLocation()
     const history = useHistory()
     const {t} = useTranslation()
     const tenantInfo = Digit.ULBService.getCurrentTenantId();
-    let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t);
+    //let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t);
 
     // const handleDownloadPdf=()=>{
     //   let result = applicationDetails;

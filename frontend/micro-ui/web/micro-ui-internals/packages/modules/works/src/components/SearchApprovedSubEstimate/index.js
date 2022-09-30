@@ -9,20 +9,20 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
     const { t } = useTranslation();
 
     const { register, control, handleSubmit, setValue, getValues, reset,formState } = useForm({
-        defaultValues: {
-            "offset": 0,
-            "limit": 10,
-            "sortBy": "commencementDate",
-            "sortOrder": "DESC",
-            "estimateNumber": "12123",
-            "estiamteDetailNumber": "213131221",
-            "adminSanctionNumber": "12121",
-            "department": {
-                "name": "Engg"
-            },
-            "fromProposalDate": "2022-09-01",
-            "toProposalDate": "2022-09-02"
-        }
+        // defaultValues: {
+        //     "offset": 0,
+        //     "limit": 10,
+        //     "sortBy": "commencementDate",
+        //     "sortOrder": "DESC",
+        //     "estimateNumber": "12123",
+        //     "estiamteDetailNumber": "213131221",
+        //     "adminSanctionNumber": "12121",
+        //     "department": {
+        //         "name": "Engg"
+        //     },
+        //     "fromProposalDate": "2022-09-01",
+        //     "toProposalDate": "2022-09-02"
+        // }
     });
 
     useEffect(() => {
