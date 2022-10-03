@@ -1,5 +1,5 @@
 import React, { useState, Fragment, useEffect, useRef } from "react";
-import { Header, SubmitBar, Menu, ActionBar } from "@egovernments/digit-ui-react-components";
+import { Header, SubmitBar, Menu, ActionBar,Loader } from "@egovernments/digit-ui-react-components";
 import { useParams, useHistory } from "react-router-dom";
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from "react-i18next";
@@ -12,9 +12,13 @@ const ViewLOI = (props) => {
     const { register, control, watch, handleSubmit, formState: { errors, ...rest }, reset, trigger, getValues} = useForm({defaultValues: {}, mode: "onSubmit"});
     const menuRef = useRef();
     const [displayMenu, setDisplayMenu] = useState(false);
-    let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t);
+    let { loiNumber, subEstimateNumber } = Digit.Hooks.useQueryParams();
+    subEstimateNumber = "EP/2022-23/09/000094/000070"
     const tenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
+    
+    let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t,tenantId,loiNumber,subEstimateNumber,{enabled:!!(loiNumber && subEstimateNumber)});
+    
     let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
     const { isLoading: hookLoading, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
         null,
@@ -82,6 +86,9 @@ const ViewLOI = (props) => {
         setDisplayMenu(false)
         setShowRejectModal(false)
     }
+
+    if (isLoading) return <Loader />
+
     return (
         <Fragment>
             <div className={"employee-main-application-details"}>

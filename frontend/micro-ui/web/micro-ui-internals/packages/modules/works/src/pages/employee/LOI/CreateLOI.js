@@ -1,33 +1,55 @@
-import React, { useReducer, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, CardSectionSubText, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, DatePicker, Row, StatusTable, CardLabelError, AddIcon, SubtractIcon, InfoBannerIcon } from '@egovernments/digit-ui-react-components';
+import React, { Fragment, useReducer, useState } from 'react'
+import { Toast } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
 import CreateLoiForm from '../../../components/CreateLOI/CreateLoiForm';
 import { useHistory } from 'react-router-dom';
 
 
 const CreateLOI = () => {
+
+    const [showToast, setShowToast] = useState(null);
+
     const { mutate: LOIMutation } = Digit.Hooks.works.useCreateLOI();
     const history = useHistory();
     const { t } = useTranslation()
-    const onFormSubmit = async (_data) => {
 
+    const onFormSubmit = async (_data) => {
+        
         const data = Object.keys(_data)
             .filter((k) => _data[k])
             .reduce((acc, key) => ({ ...acc, [key]: typeof _data[key] === "object" && key !== "uploads" ? _data[key].name : _data[key] }), {})
 
         data.fileDate = Digit.Utils.pt.convertDateToEpoch(data.fileDate)
         data.agreementDate = Digit.Utils.pt.convertDateToEpoch(data.agreementDate)
-        const letterOfIndent = { letterOfIndent: data }
+        data.status="DRAFT"
+        data.tenantId =  Digit.ULBService.getCurrentTenantId();
+        data.additionalDetails = {}
+        data.additionalDetails.filesAttached = _data?.uploads
+        data.additionalDetails.oic = _data?.officerIncharge
+        data.additionalDetails.formData = _data
+        data.oicId = _data?.officerIncharge?.uuid
+        Object.keys(data).forEach(key => {
+            if (data[key] === undefined) {
+                delete data[key];
+            }
+        });
+        delete data.uploads
+        const letterOfIndent = { letterOfIndent: data,workflow:{
+            action:"CREATE"
+        } }
 
 
         await LOIMutation(letterOfIndent, {
             onError: (error, variables) => {
-
+                //Show toast here with error message
+                setShowToast({ error: true, label: "CORE_SOMETHING_WENT_WRONG" });
+                setTimeout(() => {
+                    setShowToast(false);
+                }, 3000);
             },
             onSuccess: async (responseData, requestData) => {
 
-
+                
                 //take us to the response page on succesfull create
                 // const state = {
                 //     header: "Estimate Created and Forwarded Successfully",
@@ -46,9 +68,9 @@ const CreateLOI = () => {
                 //create a state obj in this format and push
                 const state = {
                     header: t("WORKS_LOI_RESPONSE_HEADER"),
-                    id: "LI/ENG/0001/07/2021-22",
+                    id: responseData?.letterOfIndents?.[0]?.letterOfIndentNumber,
                     info: t("WORKS_LOI_ID"),
-                    message: t("WORKS_LOI_RESPONSE_MESSAGE"),
+                    message: t("WORKS_LOI_RESPONSE_MESSAGE", { loiNumber: responseData?.letterOfIndents?.[0]?.letterOfIndentNumber }),
                     links: [
                         {
                             name: t("WORKS_CREATE_NEW_LOI"),
@@ -62,7 +84,9 @@ const CreateLOI = () => {
                             code: "",
                             svg: "CreateEstimateIcon"
                         },
-                    ]
+                    ],
+                    responseData,
+                    requestData
                 }
                 history.push(`/${window.contextPath}/employee/works/response`, state)
             }
@@ -75,8 +99,20 @@ const CreateLOI = () => {
 
 
     return (
-        <CreateLoiForm onFormSubmit={onFormSubmit} />
-
+        <Fragment>
+            <CreateLoiForm onFormSubmit={onFormSubmit} />
+            {showToast && (
+                <Toast
+                    style={{"zIndex":"9999999"}}
+                    error={showToast.error}
+                    warning={showToast.warning}
+                    label={t(showToast.label)}
+                    onClose={() => {
+                        setShowToast(null);
+                    }}
+                />
+            )}
+        </Fragment>
     )
 }
 
