@@ -108,17 +108,17 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {
-        JsonNode propertyAdditionalDetails = null;
+        JsonNode additionalDetails = null;
         try {
             PGobject obj = (PGobject) rs.getObject(columnName);
             if (obj != null) {
-                propertyAdditionalDetails = mapper.readTree(obj.getValue());
+                additionalDetails = mapper.readTree(obj.getValue());
             }
         } catch (IOException e) {
             throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object");
         }
-        if (propertyAdditionalDetails.isEmpty())
-            propertyAdditionalDetails = null;
-        return propertyAdditionalDetails;
+        if (additionalDetails.isEmpty())
+            additionalDetails = null;
+        return additionalDetails;
     }
 }
