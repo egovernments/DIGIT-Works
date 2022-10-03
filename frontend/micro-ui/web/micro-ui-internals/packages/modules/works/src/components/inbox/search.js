@@ -25,7 +25,7 @@ const SearchApplication = ({ onSearch }) => {
 
   const onSubmitInput = (data) => {
     for(var key in data){
-      if(data[key]=== undefined){
+      if(data[key]=== undefined || data[key]===""){
         delete data[key]
       }
     }

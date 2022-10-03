@@ -18,7 +18,7 @@ const SearchEstimate = () => {
     toProposalDate?.setSeconds(toProposalDate?.getSeconds() + 86399 - 19800);
     const data = {
       ..._data,
-      ...(_data.toDate ? { toDate: toDate?.getTime() } : {}),
+      ...(_data.toProposalDate ? { toProposalDate: toProposalDate?.getTime() } : {}),
       ...(_data.fromProposalDate ? { fromProposalDate: fromProposalDate?.getTime() } : {}),
     };
 
@@ -40,15 +40,28 @@ const SearchEstimate = () => {
       enabled: !!(payload && Object.keys(payload).length > 0),
     };
     const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
+    const getData = () => {
+      if (result?.data?.estimates?.length == 0 ) {
+        return { display: "ES_COMMON_NO_DATA" }
+      } else if (result?.data?.estimates?.length > 0) {
+        return result?.data?.estimates
+      } else {
+        return [];
+      }
+    }
 
+    const isResultsOk = () => {
+      return result?.data?.estimates?.length > 0 ? true : false;
+    }
   
   return (
     <Fragment>
       <SearchApplication 
         onSubmit={onSubmit}
-        data={result?.estimates ? result?.estimates : { display: "ES_COMMON_NO_DATA" }}
+        data={getData()}
         // count={result?.count}
-        resultOk={!result?.estimates}
+        resultOk={isResultsOk()}
+        isLoading={result?.isLoading}
       />
       {showToast && (
         <Toast

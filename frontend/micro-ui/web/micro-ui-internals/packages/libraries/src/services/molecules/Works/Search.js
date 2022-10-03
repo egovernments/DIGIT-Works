@@ -198,7 +198,7 @@ export const WorksSearch = {
         const response = sampleEstimateSearchResponse
         //actual response
         const responseStatic = await WorksService?.estimateSearch({tenantId,filters})
-        return response?.estimates
+        return responseStatic?.estimates
     },
     searchLOI: async (tenantId,filters={}) => {
         //dymmy response
@@ -213,12 +213,21 @@ export const WorksSearch = {
         
         //const estimate = sampleEstimateSearchResponse?.estimates?.[0] 
         let details = []
+        const estimateValues={
+            title: "WORKS_ESTIMATE_DETAILS",
+            asSectionHeader: true,
+            values: [
+                { title: "WORKS_ESTIMATE_ID", value: estimate?.estimateNumber},
+                { title: "WORKS_STATUS", value: estimate?.status}
+            ]
+        }
+
         const estimateDetails = {
             title: "WORKS_ESTIMATE_DETAILS",
             asSectionHeader: true,
             values: [
-                { title: "WORKS_DATE_PROPOSAL", value: estimate?.proposalDate || t("NA") },
-                { title: "WORKS_DEPARTMENT", value: estimate?.department || t("NA") },
+                { title: "WORKS_DATE_PROPOSAL", value: Digit.DateUtils.ConvertEpochToDate(estimate?.proposalDate) || t("NA") },
+                { title: "WORKS_DEPARTMENT", value: t(`ES_COMMON_${estimate?.department}`) || t("NA") },
                 { title: "WORKS_LOR", value: estimate?.requirementNumber || t("NA") },
                 { title: "WORKS_ELECTION_WARD", value: t("NA") },
                 { title: "WORKS_LOCATION", value: estimate?.location || t("NA") },
@@ -226,7 +235,7 @@ export const WorksSearch = {
                 { title: "WORKS_BENEFICIERY", value: estimate?.beneficiaryType || t("NA") },
                 { title: "WORKS_WORK_NATURE", value: estimate?.natureOfWork || t("NA") },
                 { title: "WORKS_WORK_TYPE", value: estimate?.typeOfWork || t("NA") },
-                { title: "WORKS_SUB_TYPE_WORK", value: estimate?.subTypeOfWork || t("NA") },
+                { title: "WORKS_SUB_TYPE_WORK", value: t(`ES_COMMON_${estimate?.subTypeOfWork}`) || t("NA") },
                 { title: "WORKS_MODE_OF_INS", value: estimate?.entrustmentMode || t("NA") },
             ]
         };
@@ -235,11 +244,11 @@ export const WorksSearch = {
             title: "WORKS_FINANCIAL_DETAILS",
             asSectionHeader: true,
             values: [
-                { title: "WORKS_FUND", value: estimate?.fund || t("NA") },
-                { title: "WORKS_FUNCTION", value: estimate?.function || t("NA") },
-                { title: "WORKS_BUDGET_HEAD", value: estimate?.budgetHead || t("NA") },
-                { title: "WORKS_SCHEME", value: estimate?.scheme || t("NA") },
-                { title: "WORKS_SUB_SCHEME", value: estimate?.subScheme || t("NA") },
+                { title: "WORKS_FUND", value: t(`ES_COMMON_FUND_${estimate?.fund}`) || t("NA") },
+                { title: "WORKS_FUNCTION", value: t(`ES_COMMON_${estimate?.function}`) || t("NA") },
+                { title: "WORKS_BUDGET_HEAD", value: t(`ES_COMMON_${estimate?.budgetHead}`) || t("NA") },
+                { title: "WORKS_SCHEME", value: t(`ES_COMMON_${estimate?.scheme}`) || t("NA") },
+                { title: "WORKS_SUB_SCHEME", value: t(`ES_COMMON_${estimate?.subScheme}`) || t("NA") },
             ]
         };
 
@@ -251,7 +260,11 @@ export const WorksSearch = {
             asSectionHeader: true,
             isTable: true,
             headers: tableHeader,
-            tableRows
+            tableRows:estimate?.estimateDetails.map((item,index)=>
+                    [index+1,
+                    item?.name,
+                    item?.amount]
+            )
         }
 
         const files = [
@@ -289,7 +302,7 @@ export const WorksSearch = {
         }
 
 
-        details = [...details, estimateDetails, financialDetails, workDetails, documentDetails]
+        details = [...details, estimateValues, estimateDetails, financialDetails, workDetails, documentDetails]
         return {
             applicationDetails: details,
         }

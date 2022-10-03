@@ -7,8 +7,7 @@ import ProcessingModal from '../Modal/ProcessingModal';
 
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
-
-const CreateEstimateForm = ({ onFormSubmit }) => {
+const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
 
     const { t } = useTranslation()
     const {
@@ -21,6 +20,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
         formState: { errors, ...rest },
         reset,
         trigger,
+        getValues,
         ...methods
     } = useForm({
         defaultValues: {},
@@ -50,23 +50,10 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
         );
 
     if (designationData?.[`common-masters`]) {
-        var { Designation,Department } = designationData?.[`common-masters`]
+        var { Designation, Department } = designationData?.[`common-masters`]
     }
 
-    const getDate = () => {
-        const today = new Date();
-
-        const date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
-        return date
-    }
-
-    const initialState = [
-        {
-            key: 1,
-            isShow: true
-        }
-    ]
-    const [rows, setRows] = useState(initialState)
+    const [rows, setRows] = useState(estimate?.estimateDetails)
 
     const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
         tenant,
@@ -83,7 +70,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
             },
             {
                 "name": "TypeOfWork"
-            },
+            }
         ]
     );
 
@@ -106,7 +93,6 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
         ]
     );
 
-
     const { subTypes: SubTypeOfWork } = useWatch({ control: control, name: "typeOfWork", defaultValue: [] });
 
     if (data?.works) {
@@ -120,34 +106,44 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
 
     const handleCreateClick = async () => {
         const subWorkFieldsToValidate = []
-        rows.map(row => row.isShow && subWorkFieldsToValidate.push(...[`estimateDetails.${row.key}.name`, `estimateDetails.${row.key}.amount`]))
+        rows.map(row => subWorkFieldsToValidate.push(...[`estimateDetails.${row.key}.name`, `estimateDetails.${row.key}.amount`]))
         const fieldsToValidate = ['requirementNumber', 'department', 'ward', 'location', 'beneficiaryType', 'natureOfWork', 'typeOfWork', 'subTypeOfWork', 'entrustmentMode', 'fund', 'function', 'budgetHead', 'scheme', 'subScheme', ...subWorkFieldsToValidate]
-
+        const abc=getValues()
         const result = await trigger(fieldsToValidate)
         if (result) {
-            setShowModal(true)
+            // setShowModal(true)
+            onFormSubmit(estimate?.id,abc)
         }
-    }
+    } 
 
     const [showModal, setShowModal] = useState(false)
 
     if (isLoading) {
         return <Loader />
     }
-
+    setValue("requirementNumber",estimate?.requirementNumber)
     const checkKeyDown = (e) => {
         if (e.code === 'Enter') e.preventDefault();
     };
+    const ulb={"name":t("WORKS_MODIFY_ESTIMATE"), "code":"health", "active":true}
 
     return (
         isFetched && <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
-            <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_ESTIMATE")}</Header>
+            <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_MODIFY_ESTIMATE")}</Header>
             <Card >
+                <LabelFieldPair>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_ESTIMATE_ID`)}</CardLabel>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{estimate?.estimateNumber}</CardLabel>
+                </LabelFieldPair>
+                <LabelFieldPair>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_STATUS`)}</CardLabel>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{estimate?.status}</CardLabel>
+                </LabelFieldPair>
                 <CardSectionHeader style={{ "marginTop": "14px" }} >{t(`WORKS_ESTIMATE_DETAILS`)}</CardSectionHeader>
                 {/* TEXT INPUT ROW */}
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{`${t(`WORKS_DATE_PROPOSAL`)}:*`}</CardLabel>
-                    <TextInput className={"field"} name="proposalDate" inputRef={register()} value={getDate()} disabled style={{ backgroundColor: "#E5E5E5" }} />
+                    <TextInput className={"field"} name="proposalDate" inputRef={register()} value={Digit.DateUtils.ConvertEpochToDate(estimate?.proposalDate)} disabled style={{ backgroundColor: "#E5E5E5" }} />
                 </LabelFieldPair>
 
 
@@ -168,7 +164,6 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                     employeeData={employeeData}
                     Department={Department}
                     Designation={Designation}
-
                 />}
 
                 {/* DROPDOWN ROW */}
@@ -179,8 +174,9 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             name="department"
                             control={control}
                             rules={{ required: true }}
+                            defaultValue={{name:t(`ES_COMMON_${estimate?.department}`), code:estimate?.department, active:true}}
                             render={(props) => {
-                                return (
+                                return ( 
                                     <Dropdown
                                         option={Department}
                                         selected={props?.value}
@@ -220,6 +216,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             name="ward"
                             control={control}
                             rules={{ required: true }}
+                            defaultValue={{name:estimate?.beneficiaryType, code:estimate?.beneficiaryType, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -243,6 +240,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                         name="location"
                         control={control}
                         //rules={{ required: true }}
+                        defaultValue={{name:estimate?.beneficiaryType, code:estimate?.beneficiaryType, active:true}}
                         render={(props) => {
                             return (
                                 <Dropdown
@@ -267,6 +265,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             name="beneficiaryType"
                             control={control}
                             rules={{ required: true }}
+                            defaultValue={{name:estimate?.beneficiaryType, code:estimate?.beneficiaryType, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -292,6 +291,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             name="natureOfWork"
                             control={control}
                             rules={{ required: true }}
+                            defaultValue={{name:estimate?.natureOfWork, code:estimate?.natureOfWork, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -316,6 +316,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             name="typeOfWork"
                             control={control}
                             rules={{ required: true }}
+                            defaultValue={{name:estimate?.typeOfWork, code:estimate?.typeOfWork, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -337,6 +338,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                     <Controller
                         name="subTypeOfWork"
                         control={control}
+                        defaultValue={{name:t(`ES_COMMON_${estimate?.subTypeOfWork}`), code:estimate?.subTypeOfWork, active:true}}
                         render={(props) => {
                             return (
                                 <Dropdown
@@ -359,6 +361,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             name="entrustmentMode"
                             control={control}
                             rules={{ required: true }}
+                            defaultValue={{name:estimate?.entrustmentMode, code:estimate?.entrustmentMode, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -385,10 +388,10 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             name="fund"
                             control={control}
                             rules={{ required: true }}
+                            defaultValue={{name:t(`ES_COMMON_${estimate?.fund}`), code:estimate?.fund, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
-
                                         option={Fund}
                                         selected={props?.value}
                                         optionKey={"name"}
@@ -409,6 +412,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             name="function"
                             control={control}
                             rules={{ required: true }}
+                            defaultValue={{name:t(`ES_COMMON_${estimate?.function}`), code:estimate?.function, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -433,6 +437,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             name="budgetHead"
                             control={control}
                             rules={{ required: true }}
+                            defaultValue={{name:t(`ES_COMMON_${estimate?.budgetHead}`), code:estimate?.budgetHead, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -457,6 +462,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             name="scheme"
                             control={control}
                             rules={{ required: false }}
+                            defaultValue={{name:t(`ES_COMMON_${estimate?.scheme}`), code:estimate?.scheme, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -481,6 +487,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             name="subScheme"
                             control={control}
                             rules={{ required: false }}
+                            defaultValue={{name:t(`ES_COMMON_${estimate?.subScheme}`), code:estimate?.subScheme, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -501,7 +508,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
 
                 {/* Render the sub work table here */}
                 <CardSectionHeader >{`${t(`WORKS_SUB_WORK_DETAILS`)}*`}</CardSectionHeader>
-                <SubWorkTable register={register} t={t} errors={errors} rows={rows} setRows={setRows} />
+                <SubWorkTable register={register} t={t} errors={errors} rows={rows} setRows={setRows} setValue={setValue} estimateDetails={estimate?.estimateDetails} />
 
                 <CardSectionHeader style={{ "marginTop": "20px" }} >{t(`WORKS_RELEVANT_DOCS`)}</CardSectionHeader>
                 <LabelFieldPair>
@@ -546,11 +553,11 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                 </LabelFieldPair>
 
                 <ActionBar>
-                    <SubmitBar onSubmit={handleCreateClick} label={t("WORKS_CREATE_ESTIMATE")} />
+                    <SubmitBar onSubmit={handleCreateClick} label={t("WORKS_MODIFY_ESTIMATE")} />
                 </ActionBar>
             </Card>
         </form>
     )
 }
 
-export default CreateEstimateForm
+export default ModifyEstimateForm
