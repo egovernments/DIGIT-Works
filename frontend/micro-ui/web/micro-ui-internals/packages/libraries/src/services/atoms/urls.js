@@ -38,7 +38,8 @@ const Urls = {
     loiSearch:"/loi-service/v1/_search",
     createEstimate:"/estimate-service/estimate/v1/_create",
     approvedEstimateSearch:"/estimate-service/estimate/v1/_search",
-    searchEstimate:"/estimate-service/estimate/v1/_search"
+    searchEstimate:"/estimate-service/estimate/v1/_search",
+    updateLOI:"/loi-service/v1/_update"
   },
 
   fsm: {

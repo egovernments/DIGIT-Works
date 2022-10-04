@@ -61,5 +61,16 @@ export const WorksService = {
            userService:true,
            method:"POST",
            auth:true,
-       })
+       }),
+    updateLOI: (details) =>
+        Request({
+            url: Urls.works.updateLOI,
+            data: details,
+            useCache: false,
+            setTimeParam: false,
+            userService: true,
+            method: "POST",
+            // params:{},
+            auth: true,
+        }),
 }

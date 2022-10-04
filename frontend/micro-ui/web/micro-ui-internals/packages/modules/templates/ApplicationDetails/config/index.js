@@ -11,8 +11,15 @@ import { configBPAApproverApplication } from "./BPAApproverApplication";
 import { configNOCApproverApplication } from "./NOCApproverApplication";
 import { configWSApproverApplication } from "./WSApproverApplication";
 import { configWSDisConnectApplication } from "./WSDisconnectApplication";
+import configCheckModal from "./configCheckModal"
+import configApproveModal from "./configApproveModal"
+import configRejectModal from "./configRejectModal"
+
 
 export {
+  configCheckModal,
+  configApproveModal,
+  configRejectModal,
   configAssignDso,
   configCompleteApplication,
   configReassignDSO,
