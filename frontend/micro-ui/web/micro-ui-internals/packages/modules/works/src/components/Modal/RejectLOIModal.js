@@ -34,7 +34,9 @@ const RejectLOIModal = ({
     handleSubmit,
     control,
     register,
-    errors:formErrors
+    errors:formErrors,
+    estimateNumber,
+    department
 }) => {
 
     const rejectReasons = [
@@ -72,12 +74,12 @@ const RejectLOIModal = ({
 
             <Card style={{ boxShadow: "none" }}>
                 <LabelFieldPair>
-                  <CardLabel style={{ "fontSize": "16px",fontWeight:"bold"}}>{t("WORKS_LOI_ID")}</CardLabel>
-                  <CardLabel >{"EST/001"}</CardLabel>
+                  <CardLabel style={{fontWeight:"bold"}}>{estimateNumber ? t("WORKS_ESTIMATE_NO") : t("WORKS_LOI_ID")}</CardLabel>
+                  <CardLabel style={{width:"100%",marginLeft:"35px"}}>{estimateNumber ? estimateNumber : "NA"}</CardLabel>
                 </LabelFieldPair>
                 <LabelFieldPair>
                   <CardLabel style={{ "fontSize": "16px",fontWeight:"bold"}}>{t("WORKS_DEPARTMENT")}</CardLabel>
-                  <CardLabel >{"Engineering"}</CardLabel>
+                  <CardLabel >{department ? department : department}</CardLabel>
                 </LabelFieldPair>
                 <LabelFieldPair>
                   <CardLabel style={{ "fontSize": "16px",fontWeight:"bold"}}>{t("WORKS_REJECT_REASON")}</CardLabel>
@@ -88,7 +90,7 @@ const RejectLOIModal = ({
                         render={(props) => {
                             return (
                                 <Dropdown
-                                    style={{width:"100%","marginTop":"3px"}}
+                                    style={{width:"100%","marginTop":"3px",marginLeft:"35px"}}
                                     onBlur={props.onBlur}
                                     option={rejectReasons}
                                     selected={props?.value}
@@ -99,9 +101,9 @@ const RejectLOIModal = ({
                             );
                         }}
                     />
-                      {formErrors && formErrors?.reason?.type === "required" && (
-                          <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                 </LabelFieldPair>
+                      {formErrors && formErrors?.reason?.type === "required" && (
+                          <CardLabelError style={{marginLeft:"135px"}}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                 <LabelFieldPair>
                   <CardLabel style={{ "fontSize": "16px",fontWeight:"bold"}}>{t("WORKS_COMMENTS")}</CardLabel>
                       <Controller
@@ -111,7 +113,7 @@ const RejectLOIModal = ({
                           render={(props) => {
                               return (
                                 <TextArea
-                                style={{width:"100%","marginTop":"3px",marginLeft:"35px"}}
+                                style={{width:"100%",marginLeft:"35px"}}
                                 name={"comments"}
                                 inputRef={register({
                                     maxLength:140
@@ -120,9 +122,9 @@ const RejectLOIModal = ({
                               );
                           }}
                       />
-                      {formErrors && formErrors?.comments?.type === "required" && (
-                          <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                 </LabelFieldPair>
+                      {formErrors && formErrors?.comments?.type === "required" && (
+                          <CardLabelError style={{marginLeft:"135px"}}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
             </Card>
         </Modal>
     );

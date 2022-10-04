@@ -1,5 +1,5 @@
 import { Card, Loader } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "./inbox/ApplicationTable";
 import InboxLinks from "./inbox/InboxLink";
@@ -7,107 +7,102 @@ import SearchApplication from "./inbox/search";
 import { Link } from "react-router-dom";
 import { convertEpochToDateDMY } from "../utils";
 
-const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState, ...props }) => {
+const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading, setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState, ...props }) => {
   const { data } = props;
   const { t } = useTranslation();
   const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));
   const GetCell = (value) => <span className="cell-text">{value}</span>;
 
   const GetMobCell = (value) => <span className="sla-cell">{value}</span>;
-    const inboxColumns = () => [
-      {
-        Header: t("WORKS_ESTIMATE_NO"),
-        Cell: ({ row }) => {
-          return (
-            <div>
-              <span className="link">
-                <Link to={`${props.parentRoute}/view-estimate/` + row.original?.searchData?.["estimateNumber"]}>
-                  {row.original?.EstimateNumber}
-                </Link>
-              </span>
-            </div>
-          );
+    const inboxColumns = useMemo(
+      () => [
+        {
+          Header: t("WORKS_ESTIMATE_NO"),
+          disableSortBy: true,
+          accessor: "connectionNo",
+          Cell: ({ row }) =>{
+            let service = "WORKS";
+            return( 
+              <div>
+                {row.original?.estimateNumber ? (
+                  <span className={"link"}>
+                    <Link
+                      to={`view-estimate?tenantId=${row.original?.tenantId}&estimateNumber=${row.original?.estimateNumber}`}>
+                      {row.original?.estimateNumber || "NA"}
+                    </Link>
+                  </span> 
+                ) : (
+                  <span>{t("NA")}</span>
+                )}
+              </div>)}
         },
-        mobileCell: (original) => GetMobCell(original?.searchData?.["estimateNumber"]),
-      },
-      {
-        Header: t("WORKS_DEPARTMENT"),
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.Department}`);
+        {
+          Header: t("WORKS_DEPARTMENT"),
+          disableSortBy: true,
+          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.department}`))),
         },
-        mobileCell: (original) => GetMobCell(original?.searchData?.["owners"]?.[0].name),
-      },
-      {
-        Header: t("WORKS_FUND"),
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.Fund}`);
+        {
+          Header: t("WORKS_ADMIN_SANCTION_NUMBER"),
+          disableSortBy: true,
+          accessor: (row) => (GetCell(row?.adminSanctionNumber)),
         },
-        mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
-      },
-      {
-        Header: t("WORKS_FUNCTION"),
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.Function}`);
+        {
+          Header: t("WORKS_FUND"),
+          disableSortBy: true,
+          accessor: (row) => (GetCell(t(`ES_COMMON_FUND_${row?.fund}`))),
         },
-        mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
-      },
-      {
-        Header: t("WORKS_BUDGET_HEAD"),
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.BudgetHead}`);
+        {
+          Header: t("WORKS_FUNCTION"),
+          disableSortBy: true,
+          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.function}`))),
         },
-        mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
-      },
-      {
-        Header: t("WORKS_CREATED_BY"),
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.CreatedBy}`);
+        {
+          Header: t("WORKS_BUDGET_HEAD"),
+          disableSortBy: true,
+          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.budgetHead}`))),
+        },        
+        {
+          Header: t("WORKS_CREATED_BY"),
+          disableSortBy: true,
+          accessor: (row) => (GetCell(row?.createdBy)),
         },
-        mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
-      },
-      {
-        Header: t("WORKS_OWNER"),
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.Owner}`);
+        {
+          Header: t("WORKS_OWNER"),
+          disableSortBy: true,
+          accessor: (row) => (GetCell(row?.owner)),
         },
-        mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
-      },
-      {
-        Header: t("WORKS_STATUS"),
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.Status}`);
+        {
+          Header: t("WORKS_STATUS"),
+          disableSortBy: true,
+          accessor: (row) => (GetCell(row?.status)),
         },
-        mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
-      },
-      {
-        Header: t("WORKS_TOTAL_AMOUNT"),
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.TotalAmount}`);
+        {
+          Header: t("WORKS_TOTAL_AMOUNT"),
+          disableSortBy: true,
+          accessor: (row) => (GetCell(row?.totalAmount)),
         },
-        mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
-      },
-    ];
+    ],[])
     let result;
-    // if (props.isLoading) {
-    //   result = <Loader />;
-    // } else if (data?.table?.length === 0) {
-    //   result = (
-    //     <Card style={{ marginTop: 20 }}>
-    //       {t("CS_MYAPPLICATIONS_NO_APPLICATION")
-    //         .split("\\n")
-    //         .map((text, index) => (
-    //           <p key={index} style={{ textAlign: "center" }}>
-    //             {text}
-    //           </p>
-    //         ))}
-    //     </Card>
-    //   );
-    // } else if (data?.table?.length > 0) {
-  result = (
+    if (isLoading) {
+      result = <Loader />;
+    } else if (data?.display && !resultOk) {
+      result = (
+        <Card style={{ marginTop: 20 }}>
+          {t(data?.display)
+            .split("\\n")
+            .map((text, index) => (
+              <p key={index} style={{ textAlign: "center" }}>
+                {text}
+              </p>
+            ))}
+        </Card>
+      );
+    } else if (resultOk) {
+    result= (
     <ApplicationTable
       t={t}
       data={data}
-      columns={inboxColumns(data)}
+      columns={inboxColumns}
       getCellProps={(cellInfo) => {
         return {
           style: {
@@ -127,8 +122,11 @@ const DesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearc
       sortParams={props.sortParams}
       totalRecords={props.totalRecords}
     />
-  );
-  // }
+  )
+  }else
+  {
+    result=null
+  }
 
 return (
     <div className="inbox-container">
@@ -146,7 +144,7 @@ return (
           </div>
         </div>
        )}
-      <div style={{overflowX:"hidden"}}>
+      <div style={{ flex: 1 }}>
       <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}
@@ -156,7 +154,7 @@ return (
           searchParams={props.searchParams}
           {...{setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState}}
         />
-        <div style={{ marginLeft: !props?.isSearch ? "24px" : "",overflowX:"scroll"}}>
+        <div style={{ marginLeft: !props?.isSearch ? "24px" : ""}}>
           {result}
         </div>
       </div>

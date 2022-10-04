@@ -14,6 +14,7 @@ import Response from "../../components/response";
 import Inbox from "./Inbox";
 import LOIInbox from "./LOIInbox";
 import HandleDownloadPdf from "../../components/HandleDownloadPdf";
+import ModifyEstimate from "../../components/ModifyEstimate";
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
 
@@ -41,6 +42,12 @@ const BILLSBreadCrumbs = ({ location }) => {
       path: `/${window.contextPath}/employee/works/create-estimate`,
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_ESTIMATE")}` : t("WORKS_CREATE_ESTIMATE"),
       show: location.pathname.includes("/works/create-estimate") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/works/modify-estimate`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_MODIFY_ESTIMATE")}` : t("WORKS_MODIFY_ESTIMATE"),
+      show: location.pathname.includes("/works/modify-estimate") ? true : false,
       isBack: fromScreen && true,
     },
     {
@@ -137,6 +144,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/search-approved-estimate`} component={() => <SearchApprovedSubEstimate />} />
           <PrivateRoute path={`${path}/create-loi`} component={() => <CreateLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{ path }} />} />
+          <PrivateRoute path={`${path}/modify-estimate`} component={() => <ModifyEstimate {...{ path }} />} />
           <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
           <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/response`} component={() => <Response {...{ path }} />} />
