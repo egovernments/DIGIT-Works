@@ -40,6 +40,60 @@ public class Estimate {
 
     @JsonProperty("proposalDate")
     private BigDecimal proposalDate = null;
+    @JsonProperty("status")
+    private StatusEnum status = null;
+    @JsonProperty("estimateStatus")
+    private String estimateStatus = null;
+    @JsonProperty("subject")
+    private String subject = null;
+    @JsonProperty("requirementNumber")
+    private String requirementNumber = null;
+    @JsonProperty("description")
+    private String description = null;
+    @JsonProperty("department")
+    private String department = null;
+    @JsonProperty("location")
+    private String location = null;
+    @JsonProperty("workCategory")
+    private String workCategory = null;
+    @JsonProperty("beneficiaryType")
+    private String beneficiaryType = null;
+    @JsonProperty("natureOfWork")
+    private String natureOfWork = null;
+    @JsonProperty("typeOfWork")
+    private String typeOfWork = null;
+    @JsonProperty("subTypeOfWork")
+    private String subTypeOfWork = null;
+    @JsonProperty("entrustmentMode")
+    private String entrustmentMode = null;
+    @JsonProperty("fund")
+    private String fund = null;
+    @JsonProperty("function")
+    private String function = null;
+    @JsonProperty("budgetHead")
+    private String budgetHead = null;
+    @JsonProperty("scheme")
+    private String scheme = null;
+    @JsonProperty("subScheme")
+    private String subScheme = null;
+    @JsonProperty("totalAmount")
+    private BigDecimal totalAmount = null;
+    @JsonProperty("estimateDetails")
+    @Valid
+    private List<EstimateDetail> estimateDetails = null;//sub-estimate
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
+
+    public Estimate addEstimateDetailsItem(EstimateDetail estimateDetailsItem) {
+        if (this.estimateDetails == null) {
+            this.estimateDetails = new ArrayList<>();
+        }
+        this.estimateDetails.add(estimateDetailsItem);
+        return this;
+    }
+
 
     /**
      * It stores the status of the estimate.
@@ -57,12 +111,6 @@ public class Estimate {
             this.value = value;
         }
 
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
-        }
-
         @JsonCreator
         public static StatusEnum fromValue(String text) {
             for (StatusEnum b : StatusEnum.values()) {
@@ -72,82 +120,12 @@ public class Estimate {
             }
             return null;
         }
-    }
 
-    @JsonProperty("status")
-    private StatusEnum status = null;
-
-    @JsonProperty("estimateStatus")
-    private String estimateStatus = null;
-
-    @JsonProperty("subject")
-    private String subject = null;
-
-    @JsonProperty("requirementNumber")
-    private String requirementNumber = null;
-
-    @JsonProperty("description")
-    private String description = null;
-
-    @JsonProperty("department")
-    private String department = null;
-
-    @JsonProperty("location")
-    private String location = null;
-
-    @JsonProperty("workCategory")
-    private String workCategory = null;
-
-    @JsonProperty("beneficiaryType")
-    private String beneficiaryType = null;
-
-    @JsonProperty("natureOfWork")
-    private String natureOfWork = null;
-
-    @JsonProperty("typeOfWork")
-    private String typeOfWork = null;
-
-    @JsonProperty("subTypeOfWork")
-    private String subTypeOfWork = null;
-
-    @JsonProperty("entrustmentMode")
-    private String entrustmentMode = null;
-
-    @JsonProperty("fund")
-    private String fund = null;
-
-    @JsonProperty("function")
-    private String function = null;
-
-    @JsonProperty("budgetHead")
-    private String budgetHead = null;
-
-    @JsonProperty("scheme")
-    private String scheme = null;
-
-    @JsonProperty("subScheme")
-    private String subScheme = null;
-
-    @JsonProperty("totalAmount")
-    private BigDecimal totalAmount = null;
-
-    @JsonProperty("estimateDetails")
-    @Valid
-    private List<EstimateDetail> estimateDetails = null;//sub-estimate
-
-    @JsonProperty("auditDetails")
-    private AuditDetails auditDetails = null;
-
-    @JsonProperty("additionalDetails")
-    private Object additionalDetails = null;
-
-
-    public Estimate addEstimateDetailsItem(EstimateDetail estimateDetailsItem) {
-        if (this.estimateDetails == null) {
-            this.estimateDetails = new ArrayList<>();
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
         }
-        this.estimateDetails.add(estimateDetailsItem);
-        return this;
     }
 
 }

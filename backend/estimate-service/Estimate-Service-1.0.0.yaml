@@ -4,7 +4,7 @@ info:
   title: Estimate-Service
   description: 'This service/registry will validate and store estimates.'
 
-paths: 
+paths:
   /estimate/v1/_create:
     post:
       summary: 'Create an estimate'
@@ -18,7 +18,7 @@ paths:
         required: true
       responses:
         '202':
-          description: Successful created Estimate 
+          description: Successful created Estimate
           content:
             '*/*':
               schema:
@@ -29,7 +29,7 @@ paths:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes'
-      
+
   /estimate/v1/_update:
     post:
       summary: 'Update an estimate'
@@ -43,7 +43,7 @@ paths:
         required: true
       responses:
         '202':
-          description: Successful updated Estimate 
+          description: Successful updated Estimate
           content:
             '*/*':
               schema:
@@ -54,7 +54,7 @@ paths:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes'
-      
+
   /estimate/v1/_search:
     post:
       summary: Fetch the Estimate(s) based on the search criteria used
@@ -65,7 +65,7 @@ paths:
         - name: estiamteDetailNumber
           description: formatted unique identifier of the estimateDetail
           in: query
-          schema: 
+          schema:
             type: string
         - name: adminSanctionNumber
           description: formmated unqiue identier of the sanction of Estimate Proposal
@@ -83,58 +83,58 @@ paths:
         - name: estimateNumber
           description: Search by Estiamte Number
           in: query
-          schema: 
+          schema:
             type: string
         - name: estimateStatus
           description: Search by status of the estimate
           in: query
-          schema: 
+          schema:
             type: string
         - name: fromProposalDate
-          description:  search by proposal date between the from date and todate
+          description: search by proposal date between the from date and todate
           in: query
-          schema: 
+          schema:
             type: number
         - name: toProposalDate
-          description:  search by proposal date between the from date and todate
+          description: search by proposal date between the from date and todate
           in: query
-          schema: 
+          schema:
             type: number
         - name: estimateType
           description: Search by EstimateType
           in: query
-          schema: 
+          schema:
             type: string
         - name: department
           description: Search by department
           in: query
-          schema: 
+          schema:
             type: string
         - name: tyepOfWork
           description: Search by type of work
           in: query
-          schema: 
+          schema:
             type: string
         - name: sortBy
           in: query
           description: sort the search results by fields
           schema:
-           type: string
-           enum:
-            - totalAmount
-            - typeOfWork
-            - department
-            - proposalDate
-            - estimateStatus
-            - createdTime
+            type: string
+            enum:
+              - totalAmount
+              - typeOfWork
+              - department
+              - proposalDate
+              - estimateStatus
+              - createdTime
         - name: sortOrder
           in: query
           description: sorting order of the search resulsts
           schema:
             type: string
             enum:
-            - asc
-            - desc
+              - asc
+              - desc
         - name: limit
           in: query
           description: limit on the resulsts
@@ -181,7 +181,7 @@ components:
           readOnly: true
         adminSanctionNumber:
           type: string
-          description:  ' The unique identifier of the admin saction of the estimate with custom formatting'
+          description: ' The unique identifier of the admin saction of the estimate with custom formatting'
           example: 'ASE/2022-23/110'
           readOnly: true
         proposalDate:
@@ -193,8 +193,8 @@ components:
           type: string
           description: 'It stores the status of the estimate. '
           enum:
-          - ACTIVE
-          - INACTIVE
+            - ACTIVE
+            - INACTIVE
         estimateStatus:
           type: string
           description: 'Status of the estimate according to the workflow stage.'
@@ -269,8 +269,8 @@ components:
         additionalDetails:
           type: object
           description: 'Any additional information that needs to be attached to the estimate. For attachments, fileStoreIds will also be stored here. '
-      required: [  status, department, subject, requirementNumber, description, zone, workCategory, beneficiaryType, natureOfWork, typeOfWork, entrustmentMode, fund, function, budgetHead, tenantId ]
-    
+      required: [ status, department, subject, requirementNumber, description, zone, workCategory, beneficiaryType, natureOfWork, typeOfWork, entrustmentMode, fund, function, budgetHead, tenantId ]
+
     EstimateDetail:
       type: object
       properties:
@@ -279,7 +279,7 @@ components:
           description: 'Unique identifier of the estimateDetails.'
           format: uuid
           example: '251c51eb-e970-4e01-a99a-70136c47a934'
-          readOnly: true 
+          readOnly: true
         estimateDetailNumber:
           type: string
           description: 'The unique identifier of the estimate detail the custom formatting.'
@@ -295,8 +295,8 @@ components:
         additionalDetails:
           type: object
           description: 'Any additional information that needs to be attached to the estimate. For attachments, fileStoreIds will also be stored here. '
-      required: [name,amount]
-    
+      required: [ name,amount ]
+
     EstimateRequest:
       type: object
       description: Request for Estimate _create and _update api's
@@ -325,7 +325,7 @@ components:
         - requestInfo
         - estimate
         - workflow
-    
+
     EstimateResponse:
       type: object
       description: Response for the Estimate _create, _update and _search api's
@@ -342,18 +342,10 @@ components:
 
     save-estimate:
       allOf:
-      - $ref: '#/components/schemas/EstimateRequest'
-      - description: 'All create events will be added to this topic. Persister and Indexer will read the events from it.'
-    
+        - $ref: '#/components/schemas/EstimateRequest'
+        - description: 'All create events will be added to this topic. Persister and Indexer will read the events from it.'
+
     update-estimate:
       allOf:
-      - $ref: '#/components/schemas/EstimateRequest'
-      - description: 'All create events will be added to this topic. Persister and Indexer will read the events from it.'
-    
-servers:
-  # Added by API Auto Mocking Plugin
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/eGovTrial/Estimate-Service/1.0.0
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/eGovTrial/Works-Estimate-Service/1.0.0
+        - $ref: '#/components/schemas/EstimateRequest'
+        - description: 'All create events will be added to this topic. Persister and Indexer will read the events from it.'

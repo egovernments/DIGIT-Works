@@ -20,21 +20,21 @@ public class EstimateRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public EstimateRepository(EstimateRowMapper rowMapper,EstimateQueryBuilder queryBuilder,JdbcTemplate jdbcTemplate){
+    public EstimateRepository(EstimateRowMapper rowMapper, EstimateQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
         this.rowMapper = rowMapper;
         this.queryBuilder = queryBuilder;
         this.jdbcTemplate = jdbcTemplate;
 
     }
+
     /**
-     *
      * @param searchCriteria
      * @return
      */
     public List<Estimate> getEstimate(EstimateSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getEstimateQuery(searchCriteria,preparedStmtList);
-        List<Estimate> estimateList = jdbcTemplate.query(query,rowMapper,preparedStmtList.toArray());
+        String query = queryBuilder.getEstimateQuery(searchCriteria, preparedStmtList);
+        List<Estimate> estimateList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return estimateList;
     }
 }

@@ -25,20 +25,16 @@ import static org.egov.works.util.EstimateServiceConstant.*;
 @Slf4j
 public class LocationUtil {
 
-    @Autowired
-    private EstimateServiceConfiguration serviceConfiguration;
-
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private ObjectMapper mapper;
-
     public static final String PLACEHOLDER_CODE = "{code}";
-
     public static final String filterHierarchyType = "$.[?(@.hierarchyType.code=='{code}')].boundary";
     public static final String filterChildrenCode = "[?(@.code=='{code}')].children";
     public static final String CODE = "code";
+    @Autowired
+    private EstimateServiceConfiguration serviceConfiguration;
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
+    @Autowired
+    private ObjectMapper mapper;
 
     /**
      * @param tenantId
@@ -142,7 +138,7 @@ public class LocationUtil {
             filterBuilder.append(DOT);
             filterBuilder.append(filterChildrenCode.replace(PLACEHOLDER_CODE, locArr[i]));
         }
-        String finalFilter = filterBuilder.substring(0,filterBuilder.lastIndexOf(".children"));
+        String finalFilter = filterBuilder.substring(0, filterBuilder.lastIndexOf(".children"));
         finalFilter = finalFilter.concat(DOT).concat(CODE);
 
 

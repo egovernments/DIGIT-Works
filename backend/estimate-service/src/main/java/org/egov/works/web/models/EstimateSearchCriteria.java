@@ -51,6 +51,11 @@ public class EstimateSearchCriteria {
 
     @JsonProperty("sortOrder")
     private SortOrder sortOrder;
+    @JsonProperty("limit")
+    private Integer limit;
+    @JsonProperty("offset")
+    private Integer offset;
+
 
     public enum SortOrder {
         ASC,
@@ -65,11 +70,4 @@ public class EstimateSearchCriteria {
         estimateStatus,
         createdTime
     }
-
-
-    @JsonProperty("limit")
-    private Integer limit;
-
-    @JsonProperty("offset")
-    private Integer offset;
 }

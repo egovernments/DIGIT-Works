@@ -23,16 +23,13 @@ import static org.egov.works.util.EstimateServiceConstant.*;
 @Slf4j
 public class MDMSUtils {
 
-    private EstimateServiceConfiguration config;
-
-    private ServiceRequestRepository serviceRequestRepository;
-
     public static final String PLACEHOLDER_CODE = "{code}";
-    public final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
-
     public static final String filterCode = "$.*.code";
+    public final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
     public final String filterSubSchemeModuleCode = "$.[?(@.active==true)].subSchemes.[?(@.active==true && @.code=='{code}')]]";
     public final String filterSubTypeModuleCode = "$.[?(@.active==true)].subTypes.[?(@.active==true && @.code=='{code}')]]";
+    private EstimateServiceConfiguration config;
+    private ServiceRequestRepository serviceRequestRepository;
 
 
     @Autowired

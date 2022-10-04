@@ -21,6 +21,13 @@ public class EstimateQueryBuilder {
             "eg_wms_estimate_detail AS estDetail " +
             "ON (est.id=estDetail.estimate_id) ";
 
+    private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
+        if (values.isEmpty())
+            queryString.append(" WHERE ");
+        else {
+            queryString.append(" AND");
+        }
+    }
 
     public String getEstimateQuery(EstimateSearchCriteria searchCriteria, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = new StringBuilder(FETCH_ESTIMATE_QUERY);
@@ -161,13 +168,5 @@ public class EstimateQueryBuilder {
         ids.forEach(id -> {
             preparedStmtList.add(id);
         });
-    }
-
-    private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
-        if (values.isEmpty())
-            queryString.append(" WHERE ");
-        else {
-            queryString.append(" AND");
-        }
     }
 }

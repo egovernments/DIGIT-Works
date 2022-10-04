@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
