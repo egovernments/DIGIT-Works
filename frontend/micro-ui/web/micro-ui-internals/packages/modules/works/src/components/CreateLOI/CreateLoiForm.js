@@ -171,124 +171,124 @@ const CreateLoiForm = ({ onFormSubmit }) => {
             "active": true
         },
         "comments": "sdljkf",
-        "appDept": {
-            "name": "Street Lights",
-            "code": "DEPT_1",
-            "active": true
-        },
-        "appDesig": {
-            "code": "DESIG_02",
-            "name": "Corporation Engineer (B&R)",
-            "description": "Corporation Engineer (B&R)",
-            "active": true
-        },
-        "app": {
-            "id": 111,
-            "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
-            "code": "EMP-107-000011",
-            "employeeStatus": "EMPLOYED",
-            "employeeType": "PERMANENT",
-            "dateOfAppointment": 1663200000000,
-            "jurisdictions": [
-                {
-                    "id": "e4486069-8275-4191-bb26-33dc7d177e6d",
-                    "hierarchy": "ADMIN",
-                    "boundary": "pb.amritsar",
-                    "boundaryType": "City",
-                    "tenantId": "pb.amritsar",
-                    "auditDetails": {
-                        "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
-                        "createdDate": 1663826773203,
-                        "lastModifiedBy": null,
-                        "lastModifiedDate": 0
-                    },
-                    "isActive": true
-                }
-            ],
-            "assignments": [
-                {
-                    "id": "740b9561-0a7b-4bdf-af3a-7e4138aeb2a8",
-                    "position": 14,
-                    "designation": "DESIG_01",
-                    "department": "DEPT_1",
-                    "fromDate": 1663804800000,
-                    "toDate": null,
-                    "govtOrderNumber": null,
-                    "tenantid": "pb.amritsar",
-                    "reportingTo": null,
-                    "auditDetails": {
-                        "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
-                        "createdDate": 1663826773203,
-                        "lastModifiedBy": null,
-                        "lastModifiedDate": 0
-                    },
-                    "isHOD": false,
-                    "isCurrentAssignment": true
-                }
-            ],
-            "serviceHistory": [],
-            "education": [],
-            "tests": [],
-            "tenantId": "pb.amritsar",
-            "documents": [],
-            "deactivationDetails": [],
-            "reactivationDetails": [],
-            "auditDetails": {
-                "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
-                "createdDate": 1663826773203,
-                "lastModifiedBy": null,
-                "lastModifiedDate": 0
-            },
-            "reActivateEmployee": false,
-            "user": {
-                "id": 111,
-                "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
-                "userName": "EMP-107-000011",
-                "password": null,
-                "salutation": null,
-                "name": "Estimate Checker",
-                "gender": "MALE",
-                "mobileNumber": "8877665544",
-                "emailId": null,
-                "altContactNumber": null,
-                "pan": null,
-                "aadhaarNumber": null,
-                "permanentAddress": null,
-                "permanentCity": null,
-                "permanentPinCode": null,
-                "correspondenceCity": null,
-                "correspondencePinCode": null,
-                "correspondenceAddress": "None",
-                "active": true,
-                "dob": 778444200000,
-                "pwdExpiryDate": 1671602773000,
-                "locale": null,
-                "type": "EMPLOYEE",
-                "signature": null,
-                "accountLocked": false,
-                "roles": [
-                    {
-                        "name": "EST_CHECKER",
-                        "code": "EST_CHECKER",
-                        "description": null,
-                        "tenantId": "pb.amritsar"
-                    }
-                ],
-                "fatherOrHusbandName": null,
-                "relationship": null,
-                "bloodGroup": null,
-                "identificationMark": null,
-                "photo": null,
-                "createdBy": "93",
-                "createdDate": 1663826773000,
-                "lastModifiedBy": "93",
-                "lastModifiedDate": 1663826773000,
-                "otpReference": null,
-                "tenantId": "pb.amritsar"
-            },
-            "isActive": true,
-            "nameOfEmp": "Estimate Checker"
-        }
+        // "appDept": {
+        //     "name": "Street Lights",
+        //     "code": "DEPT_1",
+        //     "active": true
+        // },
+        // "appDesig": {
+        //     "code": "DESIG_02",
+        //     "name": "Corporation Engineer (B&R)",
+        //     "description": "Corporation Engineer (B&R)",
+        //     "active": true
+        // },
+        // "app": {
+        //     "id": 111,
+        //     "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
+        //     "code": "EMP-107-000011",
+        //     "employeeStatus": "EMPLOYED",
+        //     "employeeType": "PERMANENT",
+        //     "dateOfAppointment": 1663200000000,
+        //     "jurisdictions": [
+        //         {
+        //             "id": "e4486069-8275-4191-bb26-33dc7d177e6d",
+        //             "hierarchy": "ADMIN",
+        //             "boundary": "pb.amritsar",
+        //             "boundaryType": "City",
+        //             "tenantId": "pb.amritsar",
+        //             "auditDetails": {
+        //                 "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
+        //                 "createdDate": 1663826773203,
+        //                 "lastModifiedBy": null,
+        //                 "lastModifiedDate": 0
+        //             },
+        //             "isActive": true
+        //         }
+        //     ],
+        //     "assignments": [
+        //         {
+        //             "id": "740b9561-0a7b-4bdf-af3a-7e4138aeb2a8",
+        //             "position": 14,
+        //             "designation": "DESIG_01",
+        //             "department": "DEPT_1",
+        //             "fromDate": 1663804800000,
+        //             "toDate": null,
+        //             "govtOrderNumber": null,
+        //             "tenantid": "pb.amritsar",
+        //             "reportingTo": null,
+        //             "auditDetails": {
+        //                 "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
+        //                 "createdDate": 1663826773203,
+        //                 "lastModifiedBy": null,
+        //                 "lastModifiedDate": 0
+        //             },
+        //             "isHOD": false,
+        //             "isCurrentAssignment": true
+        //         }
+        //     ],
+        //     "serviceHistory": [],
+        //     "education": [],
+        //     "tests": [],
+        //     "tenantId": "pb.amritsar",
+        //     "documents": [],
+        //     "deactivationDetails": [],
+        //     "reactivationDetails": [],
+        //     "auditDetails": {
+        //         "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
+        //         "createdDate": 1663826773203,
+        //         "lastModifiedBy": null,
+        //         "lastModifiedDate": 0
+        //     },
+        //     "reActivateEmployee": false,
+        //     "user": {
+        //         "id": 111,
+        //         "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
+        //         "userName": "EMP-107-000011",
+        //         "password": null,
+        //         "salutation": null,
+        //         "name": "Estimate Checker",
+        //         "gender": "MALE",
+        //         "mobileNumber": "8877665544",
+        //         "emailId": null,
+        //         "altContactNumber": null,
+        //         "pan": null,
+        //         "aadhaarNumber": null,
+        //         "permanentAddress": null,
+        //         "permanentCity": null,
+        //         "permanentPinCode": null,
+        //         "correspondenceCity": null,
+        //         "correspondencePinCode": null,
+        //         "correspondenceAddress": "None",
+        //         "active": true,
+        //         "dob": 778444200000,
+        //         "pwdExpiryDate": 1671602773000,
+        //         "locale": null,
+        //         "type": "EMPLOYEE",
+        //         "signature": null,
+        //         "accountLocked": false,
+        //         "roles": [
+        //             {
+        //                 "name": "EST_CHECKER",
+        //                 "code": "EST_CHECKER",
+        //                 "description": null,
+        //                 "tenantId": "pb.amritsar"
+        //             }
+        //         ],
+        //         "fatherOrHusbandName": null,
+        //         "relationship": null,
+        //         "bloodGroup": null,
+        //         "identificationMark": null,
+        //         "photo": null,
+        //         "createdBy": "93",
+        //         "createdDate": 1663826773000,
+        //         "lastModifiedBy": "93",
+        //         "lastModifiedDate": 1663826773000,
+        //         "otpReference": null,
+        //         "tenantId": "pb.amritsar"
+        //     },
+        //     "isActive": true,
+        //     "nameOfEmp": "Estimate Checker"
+        // }
     }
     const { t } = useTranslation()
     const [showModal, setShowModal] = useState(false)

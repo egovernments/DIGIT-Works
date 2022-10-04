@@ -98,12 +98,24 @@ const ApplicationDetails = (props) => {
   };
 
   const getResponseHeader = (action) => {
+
     if(action?.includes("CHECK")){
       return t("WORKS_LOI_RESPONSE_FORWARD_HEADER")
-    }else if(action?.includes("APPROVE")){
-      t("WORKS_LOI_RESPONSE_APPROVE_HEADER")
+    } else if (action?.includes("APPROVE")){
+     return  t("WORKS_LOI_RESPONSE_APPROVE_HEADER")
     }else if(action?.includes("REJECT")){
-      t("WORKS_LOI_RESPONSE_REJECT_HEADER")
+      return t("WORKS_LOI_RESPONSE_REJECT_HEADER")
+    }
+  }
+
+  const getResponseMessage = (action,updatedLOI) => {
+  
+    if (action?.includes("CHECK")) {
+      return t("WORKS_LOI_RESPONSE_MESSAGE_CHECK", { loiNumber: updatedLOI?.letterOfIndentNumber,name:"Nipun",designation:"SE" })
+    } else if (action?.includes("APPROVE")) {
+      return t("WORKS_LOI_RESPONSE_MESSAGE_APPROVE", { loiNumber: updatedLOI?.letterOfIndentNumber })
+    } else if (action?.includes("REJECT")) {
+      return t("WORKS_LOI_RESPONSE_MESSAGE_REJECT", { loiNumber: updatedLOI?.letterOfIndentNumber })
     }
   }
 
@@ -116,22 +128,22 @@ const ApplicationDetails = (props) => {
       setIsEnableLoader(true);
       mutate(data, {
         onError: (error, variables) => {
-          debugger
+          
           setIsEnableLoader(false);
           setShowToast({ key: "error", error });
           setTimeout(closeToast, 5000);
         },
         onSuccess: (data, variables) => {
-          debugger
+          
           setIsEnableLoader(false);
           //just history.push to the response component from here and show relevant details
           if(data?.letterOfIndents?.[0]){
             const updatedLOI = data?.letterOfIndents?.[0]
             const state = {
-              header:getResponseHeader(performedAction),
+              header:getResponseHeader(performedAction,updatedLOI),
               id: updatedLOI?.letterOfIndentNumber,
               info: t("WORKS_LOI_ID"),
-              message: t("WORKS_LOI_RESPONSE_MESSAGE", { loiNumber: updatedLOI?.letterOfIndentNumber }),
+              message: getResponseMessage(performedAction,updatedLOI),
               links: [
                 {
                   name: t("WORKS_CREATE_NEW_LOI"),

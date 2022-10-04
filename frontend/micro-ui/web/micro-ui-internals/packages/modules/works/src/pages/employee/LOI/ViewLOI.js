@@ -108,6 +108,11 @@ const ViewLOI = (props) => {
         mutate,
     } = Digit.Hooks.works.useApplicationActionsLOI();
 
+    const [showToast, setShowToast] = useState(null);
+
+    const closeToast = () => {
+        setShowToast(null);
+    };
 
     if (isLoading) return <Loader />
 
@@ -162,9 +167,9 @@ const ViewLOI = (props) => {
                     workflowDetails={workflowDetails}
                     businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}
                     moduleCode="works"
-                    // showToast={showToast}
-                    // setShowToast={setShowToast}
-                    // closeToast={closeToast}
+                    showToast={showToast}
+                    setShowToast={setShowToast}
+                    closeToast={closeToast}
                     timelineStatusPrefix={`WORKS_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`}
                     // oldValue={res}
                     // isInfoLabel={true}
