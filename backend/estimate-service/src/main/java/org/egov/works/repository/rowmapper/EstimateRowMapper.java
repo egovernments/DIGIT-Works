@@ -66,7 +66,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
             JsonNode additionalDetails = getAdditionalDetail("additionaldetails", rs);
 
-            Estimate estimate = Estimate.builder().estimateNumber(estimateNumber).id(UUID.nameUUIDFromBytes(id.getBytes(StandardCharsets.UTF_8)))
+            Estimate estimate = Estimate.builder().estimateNumber(estimateNumber).id(UUID.fromString(id))
                     .estimateStatus(estimateStatus).status(Estimate.StatusEnum.fromValue(status)).adminSanctionNumber(adminSanctionNumber)
                     .totalAmount(totalAmount).additionalDetails(additionalDetails).beneficiaryType(beneficiaryType).budgetHead(budgetHead)
                     .description(description).entrustmentMode(entrustmentMode).function(function).fund(fund).location(location)
@@ -86,7 +86,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
         if (StringUtils.isNotBlank(estDetailsId)) {
 
             EstimateDetail estimateDetail = EstimateDetail.builder()
-                    .id(UUID.nameUUIDFromBytes(estDetailsId.getBytes(StandardCharsets.UTF_8)))
+                    .id(UUID.fromString(estDetailsId))
                     .estimateDetailNumber(rs.getString("estimate_detail_number"))
                     .name(rs.getString("name"))
                     .amount(rs.getBigDecimal("amount"))
