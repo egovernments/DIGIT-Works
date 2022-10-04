@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.repository.EstimateRepository;
 import org.egov.works.util.LocationUtil;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.egov.works.util.EstimateServiceConstant.*;
 
@@ -263,9 +261,6 @@ public class EstimateServiceValidator {
                 throw new CustomException("INVALID_ESTIMATE_MODIFY", "The record that you are trying to update does not exists in the system");
             }
         }
-
-        validateRolesForUpdateEstimate(requestInfo, errorMap);
-
         String rootTenantId = estimate.getTenantId();
         //split the tenantId
         rootTenantId = rootTenantId.split("\\.")[0];
@@ -278,26 +273,5 @@ public class EstimateServiceValidator {
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
 
-    }
-
-    private void validateRolesForUpdateEstimate(RequestInfo requestInfo, Map<String, String> errorMap) {
-        User userInfo = requestInfo.getUserInfo();
-        if (userInfo.getRoles() == null || userInfo.getRoles().isEmpty()) {
-            errorMap.put("USER_ROLE", "User's role is missing");
-        } else {
-            List<org.egov.common.contract.request.Role> roles = userInfo.getRoles();
-            List<String> updateRoles = Arrays.asList(UPDATE_ROLES.split(","));
-
-            boolean rolePresent = roles.stream().anyMatch(role -> {
-                return updateRoles.contains(role.getCode());
-            });
-
-            List<String> roleCodes = roles.stream().map(role -> {
-                return role.getCode();
-            }).collect(Collectors.toList());
-            if (!rolePresent) {
-                errorMap.put("UNAUTHORIZED_ROLE", "User role(s) : " + roleCodes + " are not authorized to update estimate.");
-            }
-        }
     }
 }
