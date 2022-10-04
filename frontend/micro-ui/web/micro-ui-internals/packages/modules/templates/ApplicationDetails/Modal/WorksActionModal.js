@@ -54,7 +54,7 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
   //   },
   //   { enabled: !action?.isTerminateState }
   // );
-
+  let { loiNumber } = Digit.Hooks.useQueryParams();
    const [config, setConfig] = useState({});
    const [defaultValues, setDefaultValues] = useState({});
    const [approvers, setApprovers] = useState([]);
@@ -169,7 +169,9 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
           t,
           action,
           rejectReasons,
-          loiId,
+          selectedReason,
+          setSelectedReason,
+          loiNumber,
           department
         })
       )
@@ -177,8 +179,21 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
   }, [approvers,designation,department]);
 
   
-  const submit = (_data) => {
+  function submit (_data) {
+    //make the update object here and call submitAction 
+    const workflow = {
+      action: action?.action,
+      comments: _data?.comments,
+      assignee: [selectedApprover?.uuid]
+    }
 
+    Object.keys(workflow).forEach(key => {
+      if (workflow[key] === undefined) {
+        delete workflow[key];
+      }
+    });
+    submitAction({letterOfIndent:applicationData,workflow})
+    
   }
 
   // if(mdmsLoading || approverLoading ) {
@@ -206,7 +221,7 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
           inline
           childrenAtTheBottom
           onSubmit={submit}
-          //defaultValues={defaultValues}
+          defaultValues={{}}
           formId="modal-action"
         />
       )}

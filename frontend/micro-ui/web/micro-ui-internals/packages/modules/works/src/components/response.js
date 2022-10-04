@@ -79,7 +79,7 @@ const Response = (props) => {
               </div> */}
 
               {state.links.map(link => (
-                <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={()=> {
+                link.isVisible && <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={()=> {
                     history.push(link.redirectUrl)
                   }}>
                       <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p>

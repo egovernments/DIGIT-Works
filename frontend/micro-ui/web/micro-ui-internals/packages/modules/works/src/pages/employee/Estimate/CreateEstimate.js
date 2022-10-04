@@ -43,7 +43,8 @@ const CreateEstimate = (props) => {
                             name:"Create new Estimate",
                             redirectUrl:"/works-ui/employee/works/create-estimate",
                             code:"",
-                            svg:"CreateEstimateIcon"
+                            svg:"CreateEstimateIcon",
+                            isVisible:true,
                         }
                     ]
                 })

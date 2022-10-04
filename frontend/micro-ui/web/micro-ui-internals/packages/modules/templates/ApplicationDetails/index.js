@@ -97,43 +97,62 @@ const ApplicationDetails = (props) => {
     setWarningPopUp(false);
   };
 
+  const getResponseHeader = (action) => {
+    if(action?.includes("CHECK")){
+      return t("WORKS_LOI_RESPONSE_FORWARD_HEADER")
+    }else if(action?.includes("APPROVE")){
+      t("WORKS_LOI_RESPONSE_APPROVE_HEADER")
+    }else if(action?.includes("REJECT")){
+      t("WORKS_LOI_RESPONSE_REJECT_HEADER")
+    }
+  }
+
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
+    const performedAction = data?.workflow?.action
+    
     setIsEnableLoader(true);
-    if (typeof data?.customFunctionToExecute === "function") {
-      data?.customFunctionToExecute({ ...data });
-    }
-    if (nocData !== false && nocMutation) {
-      const nocPrmomises = nocData?.map((noc) => {
-        return nocMutation?.mutateAsync(noc);
-      });
-      try {
-        setIsEnableLoader(true);
-        const values = await Promise.all(nocPrmomises);
-        values &&
-          values.map((ob) => {
-            Digit.SessionStorage.del(ob?.Noc?.[0]?.nocType);
-          });
-      } catch (err) {
-        setIsEnableLoader(false);
-        let errorValue = err?.response?.data?.Errors?.[0]?.code
-          ? t(err?.response?.data?.Errors?.[0]?.code)
-          : err?.response?.data?.Errors?.[0]?.message || err;
-        closeModal();
-        setShowToast({ key: "error", error: { message: errorValue } });
-        setTimeout(closeToast, 5000);
-        return;
-      }
-    }
+    
     if (mutate) {
       setIsEnableLoader(true);
       mutate(data, {
         onError: (error, variables) => {
+          debugger
           setIsEnableLoader(false);
           setShowToast({ key: "error", error });
           setTimeout(closeToast, 5000);
         },
         onSuccess: (data, variables) => {
+          debugger
           setIsEnableLoader(false);
+          //just history.push to the response component from here and show relevant details
+          if(data?.letterOfIndents?.[0]){
+            const updatedLOI = data?.letterOfIndents?.[0]
+            const state = {
+              header:getResponseHeader(performedAction),
+              id: updatedLOI?.letterOfIndentNumber,
+              info: t("WORKS_LOI_ID"),
+              message: t("WORKS_LOI_RESPONSE_MESSAGE", { loiNumber: updatedLOI?.letterOfIndentNumber }),
+              links: [
+                {
+                  name: t("WORKS_CREATE_NEW_LOI"),
+                  redirectUrl: `/${window.contextPath}/employee/works/create-loi`,
+                  code: "",
+                  svg: "CreateEstimateIcon",
+                  isVisible:false
+                },
+                {
+                  name: t("WORKS_GOTO_LOI_INBOX"),
+                  redirectUrl: `/${window.contextPath}/employee/works/LOIInbox`,
+                  code: "",
+                  svg: "CreateEstimateIcon",
+                  isVisible:true
+                },
+              ],
+              responseData:data,
+              requestData:variables
+            }
+            history.push(`/${window.contextPath}/employee/works/response`, state)
+          }
           if (isOBPS?.bpa) {
             data.selectedAction = selectedAction;
             history.replace(`/${window?.contextPath}/employee/obps/response`, { data: data });

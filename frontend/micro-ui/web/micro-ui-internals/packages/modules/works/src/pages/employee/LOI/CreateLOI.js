@@ -76,13 +76,15 @@ const CreateLOI = () => {
                             name: t("WORKS_CREATE_NEW_LOI"),
                             redirectUrl: `/${window.contextPath}/employee/works/create-loi`,
                             code: "",
-                            svg: "CreateEstimateIcon"
+                            svg: "CreateEstimateIcon",
+                            isVisible:true,
                         },
                         {
                             name: t("WORKS_GOTO_LOI_INBOX"),
                             redirectUrl: `/${window.contextPath}/employee/works/LOIInbox`,
                             code: "",
-                            svg: "CreateEstimateIcon"
+                            svg: "CreateEstimateIcon",
+                            isVisible: true,
                         },
                     ],
                     responseData,

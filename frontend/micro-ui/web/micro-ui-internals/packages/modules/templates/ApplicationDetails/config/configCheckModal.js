@@ -15,7 +15,7 @@ const configCheckModal = ({
     selectedDept,
     setSelectedDept
 }) => {
-    debugger
+    
     let checkConditions = true
     if (action.isTerminateState) checkConditions = false;
 
@@ -23,16 +23,16 @@ const configCheckModal = ({
 
     return {
         label: {
-            heading: `WORKS_PROCESSINGMODAL_HEADER`,
-            submit: `WORKS_FORWARD`,
-            cancel: "CS_COMMON_CANCEL",
+            heading: `WORKS_CHECK_FORWARD`,
+            submit: `WORKS_FORWARD_FOR_APPROVAL`,
+            cancel: "WORKS_CANCEL",
         },
         form: [
             {
                 body:[
                     {
                         label: !checkConditions ? null : t("WORKS_APPROVER_DEPT"),
-                        //placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
+                        placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
                         // isMandatory: false,
                         type: "dropdown",
                         populators: !checkConditions ? null : (
@@ -40,7 +40,7 @@ const configCheckModal = ({
                                 option={department}
                                 autoComplete="off"
                                 optionKey="name"
-                                //id="fieldInspector"
+                                id="sdf"
                                 select={setSelectedDept}
                                 selected={selectedDept}
                             />
@@ -56,7 +56,7 @@ const configCheckModal = ({
                                 option={designation}
                                 autoComplete="off"
                                 optionKey="name"
-                                //id="fieldInspector"
+                                id="name2"
                                 select={setSelectedDesignation}
                                 selected={selectedDesignation}
                             />
@@ -72,11 +72,18 @@ const configCheckModal = ({
                                 option={approvers}
                                 autoComplete="off"
                                 optionKey="name"
-                                //id="fieldInspector"
+                                id="fieldInspector"
                                 select={setSelectedApprover}
                                 selected={selectedApprover}
                             />
                         ),
+                    },
+                    {
+                        label: t("WF_COMMON_COMMENTS"),
+                        type: "textarea",
+                        populators: {
+                            name: "comments",
+                        },
                     },
                 ]
             }
