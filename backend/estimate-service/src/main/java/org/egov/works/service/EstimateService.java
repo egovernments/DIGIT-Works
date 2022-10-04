@@ -2,7 +2,6 @@ package org.egov.works.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.EstimateServiceConfiguration;
 import org.egov.works.producer.Producer;
 import org.egov.works.repository.EstimateRepository;
@@ -39,6 +38,12 @@ public class EstimateService {
     private WorkflowService workflowService;
 
 
+    /**
+     * Create Estimate by validating the details, enriched , update the workflow
+     * and finally pushed to kafka to persist in postgres DB.
+     * @param request
+     * @return
+     */
     public EstimateRequest createEstimate(EstimateRequest request) {
         serviceValidator.validateCreateEstimate(request);
         enrichmentService.enrichCreateEstimate(request);
@@ -47,6 +52,12 @@ public class EstimateService {
         return request;
     }
 
+    /**
+     * Search Estimate based on given search criteria
+     * @param requestInfoWrapper
+     * @param searchCriteria
+     * @return
+     */
     public List<Estimate> searchEstimate(RequestInfoWrapper requestInfoWrapper, EstimateSearchCriteria searchCriteria) {
         serviceValidator.validateSearchEstimate(requestInfoWrapper, searchCriteria);
         enrichmentService.enrichSearchEstimate(requestInfoWrapper.getRequestInfo(), searchCriteria);
@@ -60,5 +71,18 @@ public class EstimateService {
         }
 
         return estimateList;
+    }
+
+    /**
+     * Except Date of Proposal, everything will be editable.
+     * @param request
+     * @return
+     */
+    public EstimateRequest updateEstimate(EstimateRequest request) {
+        serviceValidator.validateUpdateEstimate(request);
+        enrichmentService.enrichUpdateEstimate(request);
+        workflowService.updateWorkflowStatus(request);
+        producer.push(serviceConfiguration.getUpdateEstimateTopic(), request);
+        return request;
     }
 }

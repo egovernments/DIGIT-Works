@@ -6,6 +6,7 @@ public class EstimateServiceConstant {
     public static final String MDMS_WORKS_MODULE_NAME = "works";
     public static final String MDMS_TENANT_MODULE_NAME = "tenant";
     public static final String MDMS_FINANCE_MODULE_NAME = "finance";
+    public static final String MDMS_COMMON_MASTERS_MODULE_NAME = "common-masters";
 
     //Masters
     public static final String MASTER_BENEFICIART_TYPE = "BeneficiaryType";
@@ -32,5 +33,8 @@ public class EstimateServiceConstant {
     //General
     public static final String SEMICOLON = ":";
     public static final String DOT = ".";
+
+    //Estimate update roles - Add the roles using comma as separator
+    public static final String UPDATE_ROLES = "EST_CREATOR";
 
 }

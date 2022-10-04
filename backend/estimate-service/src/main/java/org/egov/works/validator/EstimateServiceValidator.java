@@ -7,6 +7,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.repository.EstimateRepository;
 import org.egov.works.util.LocationUtil;
 import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.*;
@@ -14,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.egov.works.util.EstimateServiceConstant.*;
 
@@ -29,6 +28,9 @@ public class EstimateServiceValidator {
 
     @Autowired
     private LocationUtil locationUtil;
+
+    @Autowired
+    private EstimateRepository estimateRepository;
 
     public void validateCreateEstimate(EstimateRequest request) {
         Map<String, String> errorMap = new HashMap<>();
@@ -143,16 +145,16 @@ public class EstimateServiceValidator {
             throw new CustomException("REQUEST_INFO", "Request info is mandatory");
         }
         if (requestInfo.getUserInfo() == null) {
-            errorMap.put("USERINFO", "UserInfo is mandatory");
+            throw new CustomException("USERINFO", "UserInfo is mandatory");
         }
         if (requestInfo.getUserInfo() != null && StringUtils.isBlank(requestInfo.getUserInfo().getUuid())) {
-            errorMap.put("USERINFO_UUID", "UUID is mandatory");
+            throw new CustomException("USERINFO_UUID", "UUID is mandatory");
         }
     }
 
     private void validateMDMSData(Estimate estimate, Object mdmsData, Map<String, String> errorMap) {
 
-        final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
+        final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
         final String jsonPathForWorksBeneficiaryType = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_BENEFICIART_TYPE + ".*";
         final String jsonPathForWorksEntrustmentMode = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_ENTRUSTMENTMODE + ".*";
         final String jsonPathForWorksTypeOfWork = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_TYPEOFWORK + ".*";
@@ -235,5 +237,41 @@ public class EstimateServiceValidator {
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
+    }
+
+    public void validateUpdateEstimate(EstimateRequest request) {
+        Map<String, String> errorMap = new HashMap<>();
+        Estimate estimate = request.getEstimate();
+        RequestInfo requestInfo = request.getRequestInfo();
+        EstimateRequestWorkflow workflow = request.getWorkflow();
+
+        validateRequestInfo(requestInfo, errorMap);
+        validateEstimate(estimate, errorMap);
+        validateWorkFlow(workflow, errorMap);
+
+        UUID id = estimate.getId();
+        if (id == null) {
+            errorMap.put("ESTIMATE_ID", "Estimate id is mandatory");
+        } else {
+            List<String> ids = new ArrayList<>();
+            ids.add(id.toString());
+            EstimateSearchCriteria searchCriteria = EstimateSearchCriteria.builder().ids(ids).tenantId(estimate.getTenantId()).build();
+            List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
+            if (CollectionUtils.isEmpty(estimateList)) {
+                throw new CustomException("INVALID_ESTIMATE_MODIFY", "The record that you are trying to update does not exists in the system");
+            }
+        }
+        String rootTenantId = estimate.getTenantId();
+        //split the tenantId
+        rootTenantId = rootTenantId.split("\\.")[0];
+
+        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+
+        validateMDMSData(estimate, mdmsData, errorMap);
+        validateLocation(estimate, requestInfo, errorMap);
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+
     }
 }

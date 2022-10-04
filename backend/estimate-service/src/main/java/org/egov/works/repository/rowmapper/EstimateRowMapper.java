@@ -7,11 +7,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.Estimate;
 import org.egov.works.web.models.EstimateDetail;
+import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
@@ -72,10 +74,8 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                     .subScheme(subScheme).subTypeOfWork(subtypeOfWork).typeOfWork(typeOfWork).tenantId(tenantId).department(department)
                     .workCategory(workCategory).auditDetails(auditDetails).build();
 
-            estimate.setAdditionalDetails(additionalDetails);
 
             addEstimateDetails(rs, estimate, estimateMap);
-
             estimateMap.put(id, estimate);
         }
         return new ArrayList<>(estimateMap.values());
@@ -107,16 +107,18 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
     }
 
 
-    private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {
-        JsonNode additionalDetail = null;
+    private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {
+        JsonNode additionalDetails = null;
         try {
-            Object jsonData = rs.getObject(columnName);
-            if (jsonData != null) {
-                additionalDetail = mapper.convertValue(jsonData, JsonNode.class);
+            PGobject obj = (PGobject) rs.getObject(columnName);
+            if (obj != null) {
+                additionalDetails = mapper.readTree(obj.getValue());
             }
-        } catch (SQLException e) {
-            throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
+        } catch (IOException e) {
+            throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object");
         }
-        return additionalDetail;
+        if (additionalDetails.isEmpty())
+            additionalDetails = null;
+        return additionalDetails;
     }
 }

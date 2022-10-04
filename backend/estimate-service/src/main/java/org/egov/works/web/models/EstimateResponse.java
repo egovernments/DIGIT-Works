@@ -24,7 +24,7 @@ import java.util.List;
 @Builder
 public class EstimateResponse {
 
-    @JsonProperty("responseInfo")
+    @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo = null;
 
     @JsonProperty("estimates")

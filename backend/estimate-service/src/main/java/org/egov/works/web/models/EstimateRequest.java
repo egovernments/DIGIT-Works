@@ -6,6 +6,8 @@ import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Request for Estimate _create and _update api&#39;s
  */
@@ -20,10 +22,12 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 public class EstimateRequest {
 
-    @JsonProperty("requestInfo")
+    @JsonProperty("RequestInfo")
+    @NotNull(message = "Request info is mandatory")
     private RequestInfo requestInfo = null;
 
     @JsonProperty("estimate")
+    @NotNull(message = "Estimate is mandatory")
     private Estimate estimate = null;
 
     @JsonProperty("workflow")

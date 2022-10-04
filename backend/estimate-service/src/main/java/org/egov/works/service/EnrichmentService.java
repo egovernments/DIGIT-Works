@@ -4,8 +4,10 @@ import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.EstimateServiceConfiguration;
+import org.egov.works.repository.EstimateRepository;
 import org.egov.works.repository.IdGenRepository;
 import org.egov.works.util.EstimateServiceUtil;
 import org.egov.works.web.models.Estimate;
@@ -17,10 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.egov.works.util.EstimateServiceConstant.UPDATE_ROLES;
 
 @Service
 public class EnrichmentService {
@@ -33,6 +35,9 @@ public class EnrichmentService {
 
     @Autowired
     private EstimateServiceConfiguration config;
+
+    @Autowired
+    private EstimateRepository estimateRepository;
 
 
     public void enrichCreateEstimate(EstimateRequest request) {
@@ -106,5 +111,46 @@ public class EnrichmentService {
 
         if (searchCriteria.getLimit() != null && searchCriteria.getLimit() > config.getMaxLimit())
             searchCriteria.setLimit(config.getMaxLimit());
+    }
+
+    public void enrichUpdateEstimate(EstimateRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        Estimate estimate = request.getEstimate();
+
+        List<String> ids = new ArrayList<>();
+        ids.add(estimate.getId().toString());
+        EstimateSearchCriteria searchCriteria = EstimateSearchCriteria.builder().ids(ids).tenantId(estimate.getTenantId()).build();
+
+        //Existing estimate
+        List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
+
+        if (enrichEstimateBasedOnRole(requestInfo)) {
+            //set the audit details from DB
+            estimate.setAuditDetails(estimateList.get(0).getAuditDetails());
+        } /*Roles apart from UPDATE_ROLES, will not be able to edit/modify the existing
+            record apart from estimate status field */ else {
+            estimate = estimateList.get(0);
+            request.setEstimate(estimate);
+        }
+
+        AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, false);
+
+        estimate.setAuditDetails(auditDetails);
+    }
+
+
+    private boolean enrichEstimateBasedOnRole(RequestInfo requestInfo) {
+        User userInfo = requestInfo.getUserInfo();
+        boolean rolePresent = false;
+        if (userInfo.getRoles() == null || userInfo.getRoles().isEmpty()) {
+            List<org.egov.common.contract.request.Role> roles = userInfo.getRoles();
+            List<String> updateRoles = Arrays.asList(UPDATE_ROLES.split(","));
+
+            rolePresent = roles.stream().anyMatch(role -> {
+                return updateRoles.contains(role.getCode());
+            });
+
+        }
+        return rolePresent;
     }
 }
