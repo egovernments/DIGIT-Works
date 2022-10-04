@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.works.util.EstimateServiceConstant.UPDATE_ROLES;
+import static org.egov.works.util.EstimateServiceConstant.ALLOW_EDITING_ROLES;
 
 @Service
 public class EnrichmentService {
@@ -38,7 +38,6 @@ public class EnrichmentService {
 
     @Autowired
     private EstimateRepository estimateRepository;
-
 
     public void enrichCreateEstimate(EstimateRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
@@ -144,7 +143,7 @@ public class EnrichmentService {
         boolean rolePresent = false;
         if (userInfo.getRoles() == null || userInfo.getRoles().isEmpty()) {
             List<org.egov.common.contract.request.Role> roles = userInfo.getRoles();
-            List<String> updateRoles = Arrays.asList(UPDATE_ROLES.split(","));
+            List<String> updateRoles = Arrays.asList(ALLOW_EDITING_ROLES.split(","));
 
             rolePresent = roles.stream().anyMatch(role -> {
                 return updateRoles.contains(role.getCode());

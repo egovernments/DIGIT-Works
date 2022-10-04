@@ -28,15 +28,12 @@ public class MDMSUtils {
     public final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
     public final String filterSubSchemeModuleCode = "$.[?(@.active==true)].subSchemes.[?(@.active==true && @.code=='{code}')]]";
     public final String filterSubTypeModuleCode = "$.[?(@.active==true)].subTypes.[?(@.active==true && @.code=='{code}')]]";
-    private EstimateServiceConfiguration config;
-    private ServiceRequestRepository serviceRequestRepository;
-
 
     @Autowired
-    public MDMSUtils(EstimateServiceConfiguration config, ServiceRequestRepository serviceRequestRepository) {
-        this.config = config;
-        this.serviceRequestRepository = serviceRequestRepository;
-    }
+    private EstimateServiceConfiguration config;
+
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
 
     /**
      * Calls MDMS service to fetch works master data

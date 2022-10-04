@@ -31,23 +31,17 @@ import java.util.List;
 @RequestMapping("/estimate/v1")
 public class EstimateApiController {
 
-    private final ObjectMapper objectMapper;
-
-    private final HttpServletRequest request;
-
-    private ResponseInfoCreator responseInfoCreator;
-
-    private EstimateService estimateService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public EstimateApiController(ObjectMapper objectMapper, HttpServletRequest request
-            , ResponseInfoCreator responseInfoCreator
-            , EstimateService estimateService) {
-        this.objectMapper = objectMapper;
-        this.request = request;
-        this.estimateService = estimateService;
-        this.responseInfoCreator = responseInfoCreator;
-    }
+    private HttpServletRequest request;
+
+    @Autowired
+    private ResponseInfoCreator responseInfoCreator;
+
+    @Autowired
+    private EstimateService estimateService;
 
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)

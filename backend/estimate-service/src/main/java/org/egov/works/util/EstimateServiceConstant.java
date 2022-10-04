@@ -24,7 +24,7 @@ public class EstimateServiceConstant {
     //work flow
     public static final String ESTIMATE_MODULE_NAME = "estimate";
 
-    //location
+    //MDMS- location
     public static final String BOUNDARY_ADMIN_HIERARCHY_CODE = "ADMIN";
     public static final String MASTER_BOUNDARY_LOCATION = "TenantBoundary";
     public static final String MDMS_LOCATION_MODULE_NAME = "egov-location";
@@ -35,6 +35,6 @@ public class EstimateServiceConstant {
     public static final String DOT = ".";
 
     //Estimate update roles - Add the roles using comma as separator
-    public static final String UPDATE_ROLES = "EST_CREATOR";
+    public static final String ALLOW_EDITING_ROLES = "EST_CREATOR";
 
 }

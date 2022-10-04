@@ -22,15 +22,12 @@ import java.util.Map;
 public class IdGenRepository {
 
 
+    @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
     private EstimateServiceConfiguration config;
 
-    @Autowired
-    public IdGenRepository(RestTemplate restTemplate, EstimateServiceConfiguration config) {
-        this.restTemplate = restTemplate;
-        this.config = config;
-    }
 
 
     /**

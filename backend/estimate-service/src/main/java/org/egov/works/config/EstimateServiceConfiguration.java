@@ -64,13 +64,6 @@ public class EstimateServiceConfiguration {
     private String estimateWFBusinessService;
     @Value("${estimate.workflow.module.name}")
     private String estimateWFModuleName;
-    //Location Config
-    @Value("${egov.location.host}")
-    private String locationHost;
-    @Value("${egov.location.context.path}")
-    private String locationContextPath;
-    @Value("${egov.location.endpoint}")
-    private String locationEndpoint;
 
     @PostConstruct
     public void initialize() {

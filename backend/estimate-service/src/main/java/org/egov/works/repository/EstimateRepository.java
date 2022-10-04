@@ -15,17 +15,15 @@ import java.util.List;
 @Repository
 public class EstimateRepository {
 
+    @Autowired
     private EstimateRowMapper rowMapper;
-    private EstimateQueryBuilder queryBuilder;
-    private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public EstimateRepository(EstimateRowMapper rowMapper, EstimateQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
-        this.rowMapper = rowMapper;
-        this.queryBuilder = queryBuilder;
-        this.jdbcTemplate = jdbcTemplate;
+    private EstimateQueryBuilder queryBuilder;
 
-    }
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
 
     /**
      * @param searchCriteria
