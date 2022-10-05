@@ -181,10 +181,15 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
   
   function submit (_data) {
     //make the update object here and call submitAction 
+    //if the action is reject then you need to make a search call and get creater's uuid
     const workflow = {
       action: action?.action,
       comments: _data?.comments,
       assignee: [selectedApprover?.uuid]
+    }
+
+    if(action?.action.includes("REJECT")) {
+      workflow.assignee = [applicationData?.auditDetails?.createdBy]
     }
 
     Object.keys(workflow).forEach(key => {
