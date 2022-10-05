@@ -34,9 +34,17 @@ const CreateLOI = () => {
             }
         });
         delete data.uploads
-        const letterOfIndent = { letterOfIndent: data,workflow:{
-            action:"CREATE"
-        } }
+        const workflow = {
+            action:"CREATE",
+            comments:_data?.comments,
+            assignee:[_data?.app?.uuid]
+        }
+        Object.keys(workflow).forEach(key => {
+            if (workflow[key] === undefined) {
+                delete workflow[key];
+            }
+        });
+        const letterOfIndent = { letterOfIndent: data,workflow }
 
 
         await LOIMutation(letterOfIndent, {

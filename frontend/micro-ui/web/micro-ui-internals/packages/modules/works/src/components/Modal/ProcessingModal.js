@@ -59,8 +59,9 @@ const ProcessingModal = ({
     //based on these two make an hrms search for approver dropdown
     let Approvers = []
 
-    const { isLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDepartment?.code }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDepartment && selectedDesignation) });
-    employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp.user.name)
+    const { isLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDepartment?.code,roles:"LOI_CHECKER",isActive:true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDepartment && selectedDesignation) });
+
+    employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
     Approvers = employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees: []
 
     
