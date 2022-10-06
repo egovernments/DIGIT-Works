@@ -30,7 +30,20 @@ const ViewLOI = (props) => {
         },
     );
 
-    
+    workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
+        if (action?.action === "EDIT") {
+            
+            let pathName = `/${window?.contextPath}/employee/works/create-loi?loiNumber=${applicationDetails?.applicationData?.letterOfIndentNumber}&isEdit=true&subEstimateNumber=EP/2022-23/09/000080/000056`;
+            action.redirectionUrll = {
+                action: "EDIT_LOI_APPLICATION",
+                pathname: pathName,
+                state: {
+                    applicationDetails: applicationDetails,
+                    action: "EDIT_LOI_APPLICATION"
+                },
+            };
+        }
+    })
 
     let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
     const { isLoading: hookLoading, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(

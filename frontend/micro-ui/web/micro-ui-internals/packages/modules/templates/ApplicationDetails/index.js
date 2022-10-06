@@ -56,6 +56,7 @@ const ApplicationDetails = (props) => {
   }, [showToast]);
 
   function onActionSelect(action) {
+    
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -64,15 +65,11 @@ const ApplicationDetails = (props) => {
       else if (action?.isWarningPopUp) {
         setWarningPopUp(true);
       } else if (action?.redirectionUrll) {
-        if (action?.redirectionUrll?.action === "ACTIVATE_CONNECTION") {
+        //here do the loi edit upon rejection
+        if (action?.redirectionUrll?.action === "EDIT_LOI_APPLICATION") {
           history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
         }
-        else if (action?.redirectionUrll?.action === "RE-SUBMIT-APPLICATION"){
-          history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
-        }
-        else {
-          window.location.assign(`${window.location.origin}/${window?.contextPath}/employee/payment/collect/${action?.redirectionUrll?.pathname}`);
-        }
+        
       } else if (!action?.redirectionUrl) {
         setShowModal(true);
       } else {
