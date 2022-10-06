@@ -16,7 +16,7 @@
   "BusinessServices": [
     {
       "tenantId": "pb",
-      "businessService": "estimate-approval-2",
+      "businessService": "estimate-approval",
       "business": "estimate-service",
       "businessServiceSla": 432000000,
       "states": [
