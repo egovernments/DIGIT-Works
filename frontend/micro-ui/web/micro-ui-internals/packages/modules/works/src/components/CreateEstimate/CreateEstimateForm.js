@@ -42,12 +42,15 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
         [
             {
                 "name": "Designation"
+            },
+            {
+                "name": "Department"
             }
         ]
         );
 
     if (designationData?.[`common-masters`]) {
-        var { Designation } = designationData?.[`common-masters`]
+        var { Designation,Department } = designationData?.[`common-masters`]
     }
 
     const getDate = () => {
@@ -81,9 +84,6 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
             {
                 "name": "TypeOfWork"
             },
-            {
-                "name": "Department"
-            }
         ]
     );
 
@@ -110,15 +110,13 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
     const { subTypes: SubTypeOfWork } = useWatch({ control: control, name: "typeOfWork", defaultValue: [] });
 
     if (data?.works) {
-        var { EntrustmentMode, BeneficiaryType, NatureOfWork, TypeOfWork, Department } = data?.works
+        var { EntrustmentMode, BeneficiaryType, NatureOfWork, TypeOfWork } = data?.works
     }
 
-    const { subScheme: subScheme } = useWatch({ control: control, name: "scheme", defaultValue: [] });
+    const { subSchemes: subScheme } = useWatch({ control: control, name: "scheme", defaultValue: [] });
     if (financeData?.finance) {
         var { Scheme, BudgetHead, Functions, Fund } = financeData?.finance
     }
-
-
 
     const handleCreateClick = async () => {
         const subWorkFieldsToValidate = []

@@ -28,12 +28,12 @@ const SearchFields = ({ register, control, reset, t }) => {
                 <TextInput
                     name="estimateNumber"
                     inputRef={register()}
-                    // {...(validation = {
-                    //     isRequired: false,
-                    //     pattern: "^[a-zA-Z0-9-_\/]*$",
-                    //     type: "text",
-                    //     title: t("ERR_INVALID_APPLICATION_NO"),
-                    // })}
+                    {...(validation = {
+                        isRequired: false,
+                        pattern: "^[a-zA-Z0-9-_\/]*$",
+                        type: "text",
+                        title: t("ERR_INVALID_APPLICATION_NO"),
+                    })}
                 />
             </SearchField>
             <SearchField>
@@ -41,12 +41,12 @@ const SearchFields = ({ register, control, reset, t }) => {
                 <TextInput
                     name="adminSanctionNumber"
                     inputRef={register()}
-                    // {...(validation = {
-                    //     isRequired: false,
-                    //     pattern: "^[a-zA-Z0-9-_\/]*$",
-                    //     type: "text",
-                    //     title: t("ERR_INVALID_APPLICATION_NO"),
-                    // })}
+                    {...(validation = {
+                        isRequired: false,
+                        pattern: "^[a-zA-Z0-9-_\/]*$",
+                        type: "text",
+                        title: t("ERR_INVALID_APPLICATION_NO"),
+                    })}
                 />
             </SearchField>
             <SearchField>

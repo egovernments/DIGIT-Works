@@ -73,4 +73,15 @@ export const WorksService = {
             // params:{},
             auth: true,
         }),
+    updateEstimate:(details)=>
+       Request({
+           url: Urls.works.updateEstimate,
+           data:details,
+           useCache:false,
+           setTimeParam:false,
+           userService:true,
+           method:"POST",
+           // params:{},
+           auth:true,
+       }),
 }
