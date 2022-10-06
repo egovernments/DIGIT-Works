@@ -184,8 +184,8 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
     //if the action is reject then you need to make a search call and get creater's uuid
     const workflow = {
       action: action?.action,
-      comments: _data?.comments,
-      assignee: [selectedApprover?.uuid]
+      comment: _data?.comments,
+      assignees: selectedApprover?.uuid ? [selectedApprover?.uuid] : undefined
     }
 
     if(action?.action.includes("REJECT")) {

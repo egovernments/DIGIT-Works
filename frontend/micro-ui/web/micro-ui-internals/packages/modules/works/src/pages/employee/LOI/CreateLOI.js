@@ -36,8 +36,8 @@ const CreateLOI = () => {
         delete data.uploads
         const workflow = {
             action:"CREATE",
-            comments:_data?.comments,
-            assignee:[_data?.app?.uuid]
+            comment:_data?.comments,
+            assignees:[_data?.app?.uuid]
         }
         Object.keys(workflow).forEach(key => {
             if (workflow[key] === undefined) {

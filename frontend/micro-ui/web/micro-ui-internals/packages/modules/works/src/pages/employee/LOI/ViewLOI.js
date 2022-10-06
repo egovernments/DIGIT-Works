@@ -162,7 +162,7 @@ const ViewLOI = (props) => {
                     applicationDetails={applicationDetails}
                     isLoading={isLoading }
                     // isDataLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading}
-                    // applicationData={applicationDetails?.applicationData}
+                    applicationData={applicationDetails?.applicationData}
                     mutate={mutate}
                     workflowDetails={workflowDetails}
                     businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}
