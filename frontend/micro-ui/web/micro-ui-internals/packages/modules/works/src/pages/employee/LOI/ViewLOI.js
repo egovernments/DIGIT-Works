@@ -3,7 +3,7 @@ import { Header, SubmitBar, Menu, ActionBar,Loader } from "@egovernments/digit-u
 import { useParams, useHistory } from "react-router-dom";
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from "react-i18next";
-import { ApplicationDetailsTemplate } from "../../../../../templates/ApplicationDetails"
+import ApplicationDetailsTemplate  from "../../../../../templates/ApplicationDetails"
 import ApplicationDetailsContent from "../../../../../templates/ApplicationDetails/components/ApplicationDetailsContent";
 import ProcessingModal from "../../../components/Modal/ProcessingModal";
 import RejectLOIModal from '../../../components/Modal/RejectLOIModal'
@@ -19,6 +19,32 @@ const ViewLOI = (props) => {
     
     let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t,tenantId,loiNumber,subEstimateNumber,{enabled:!!(loiNumber && subEstimateNumber)});
     
+    let workflowDetails = Digit.Hooks.useWorkflowDetails(
+        {
+            tenantId: tenantId,
+            id: loiNumber,
+            moduleCode: applicationDetails?.processInstancesDetails?.[0]?.businessService,
+            config: {
+                enabled: applicationDetails?.processInstancesDetails?.[0]?.businessService ? true : false,
+            }
+        },
+    );
+
+    workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
+        if (action?.action === "EDIT") {
+            
+            let pathName = `/${window?.contextPath}/employee/works/create-loi?loiNumber=${applicationDetails?.applicationData?.letterOfIndentNumber}&isEdit=true&subEstimateNumber=EP/2022-23/09/000080/000056`;
+            action.redirectionUrll = {
+                action: "EDIT_LOI_APPLICATION",
+                pathname: pathName,
+                state: {
+                    applicationDetails: applicationDetails,
+                    action: "EDIT_LOI_APPLICATION"
+                },
+            };
+        }
+    })
+
     let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
     const { isLoading: hookLoading, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
         null,
@@ -87,6 +113,20 @@ const ViewLOI = (props) => {
         setShowRejectModal(false)
     }
 
+    const {
+        isLoading: updatingApplication,
+        isError: updateApplicationError,
+        data: updateResponse,
+        error: updateError,
+        mutate,
+    } = Digit.Hooks.works.useApplicationActionsLOI();
+
+    const [showToast, setShowToast] = useState(null);
+
+    const closeToast = () => {
+        setShowToast(null);
+    };
+
     if (isLoading) return <Loader />
 
     return (
@@ -130,7 +170,26 @@ const ViewLOI = (props) => {
                   errors={errors}
               />}
 
-                <ApplicationDetailsContent
+
+                <ApplicationDetailsTemplate
+                    applicationDetails={applicationDetails}
+                    isLoading={isLoading }
+                    // isDataLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading}
+                    applicationData={applicationDetails?.applicationData}
+                    mutate={mutate}
+                    workflowDetails={workflowDetails}
+                    businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}
+                    moduleCode="works"
+                    showToast={showToast}
+                    setShowToast={setShowToast}
+                    closeToast={closeToast}
+                    timelineStatusPrefix={`WORKS_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`}
+                    // oldValue={res}
+                    // isInfoLabel={true}
+                    // clearDataDetails={clearDataDetails}
+                />
+
+                {/* <ApplicationDetailsContent
                     applicationDetails={applicationDetails}
                     //workflowDetails={workflowDetails}
                     //isDataLoading={isDataLoading}
@@ -142,9 +201,9 @@ const ViewLOI = (props) => {
                     showTimeLine={false}
                 //oldValue={oldValue}
                 //isInfoLabel={isInfoLabel}
-                />
+                /> */}
             </div>
-            <ActionBar>
+            {/* <ActionBar>
                 {displayMenu ?
                     <Menu
                     localeKeyPrefix={"WORKS"}
@@ -154,7 +213,7 @@ const ViewLOI = (props) => {
                     onSelect={onActionSelect}
                     />:null}
                 <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-            </ActionBar>
+            </ActionBar> */}
         </Fragment>
 
     )

@@ -237,6 +237,7 @@ import useGetDSSAboutJSON from "./useGetDSSAboutJSON";
 import useStaticData from "./useStaticData";
 import useBillAmendmentInbox from "./billAmendment/useInbox";
 import { usePrivacyContext } from "./usePrivacyContext";
+
 import useSearchWORKS from "./works/useSearchWORKS";
 import useViewEstimateDetails from "./works/useViewEstimateDetails"
 import useViewLOIDetails from "./works/useViewLOIDetails"
@@ -244,7 +245,9 @@ import useCreateLOI from "./works/useCreateLOI";
 import useEstimateSearch from "./works/useSearch"
 import useCreateEstimate from "./works/useCreateEstimate";
 import useSearchEstimate from "./works/userSearchEstimate";
+import useApplicationActionsLOI from "./works/useApplicationActions";
 import useUpdateEstimate from "./works/useUpdateEstimate";
+
 const works = {
   useViewEstimateDetails,
   useViewLOIDetails,
@@ -253,7 +256,9 @@ const works = {
   useSearchWORKS,
   useCreateEstimate,
   useSearchEstimate,
+  useApplicationActionsLOI,
   useUpdateEstimate
+
 }
 
 const pgr = {

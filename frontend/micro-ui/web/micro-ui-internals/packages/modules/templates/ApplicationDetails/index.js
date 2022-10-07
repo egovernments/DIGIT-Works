@@ -56,6 +56,7 @@ const ApplicationDetails = (props) => {
   }, [showToast]);
 
   function onActionSelect(action) {
+    
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -64,15 +65,11 @@ const ApplicationDetails = (props) => {
       else if (action?.isWarningPopUp) {
         setWarningPopUp(true);
       } else if (action?.redirectionUrll) {
-        if (action?.redirectionUrll?.action === "ACTIVATE_CONNECTION") {
+        //here do the loi edit upon rejection
+        if (action?.redirectionUrll?.action === "EDIT_LOI_APPLICATION") {
           history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
         }
-        else if (action?.redirectionUrll?.action === "RE-SUBMIT-APPLICATION"){
-          history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
-        }
-        else {
-          window.location.assign(`${window.location.origin}/${window?.contextPath}/employee/payment/collect/${action?.redirectionUrll?.pathname}`);
-        }
+        
       } else if (!action?.redirectionUrl) {
         setShowModal(true);
       } else {
@@ -97,43 +94,74 @@ const ApplicationDetails = (props) => {
     setWarningPopUp(false);
   };
 
+  const getResponseHeader = (action) => {
+
+    if(action?.includes("CHECK")){
+      return t("WORKS_LOI_RESPONSE_FORWARD_HEADER")
+    } else if (action?.includes("APPROVE")){
+     return  t("WORKS_LOI_RESPONSE_APPROVE_HEADER")
+    }else if(action?.includes("REJECT")){
+      return t("WORKS_LOI_RESPONSE_REJECT_HEADER")
+    }
+  }
+
+  const getResponseMessage = (action,updatedLOI) => {
+  
+    if (action?.includes("CHECK")) {
+      return t("WORKS_LOI_RESPONSE_MESSAGE_CHECK", { loiNumber: updatedLOI?.letterOfIndentNumber,name:"Nipun",designation:"SE" })
+    } else if (action?.includes("APPROVE")) {
+      return t("WORKS_LOI_RESPONSE_MESSAGE_APPROVE", { loiNumber: updatedLOI?.letterOfIndentNumber })
+    } else if (action?.includes("REJECT")) {
+      return t("WORKS_LOI_RESPONSE_MESSAGE_REJECT", { loiNumber: updatedLOI?.letterOfIndentNumber })
+    }
+  }
+
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
+    const performedAction = data?.workflow?.action
+    
     setIsEnableLoader(true);
-    if (typeof data?.customFunctionToExecute === "function") {
-      data?.customFunctionToExecute({ ...data });
-    }
-    if (nocData !== false && nocMutation) {
-      const nocPrmomises = nocData?.map((noc) => {
-        return nocMutation?.mutateAsync(noc);
-      });
-      try {
-        setIsEnableLoader(true);
-        const values = await Promise.all(nocPrmomises);
-        values &&
-          values.map((ob) => {
-            Digit.SessionStorage.del(ob?.Noc?.[0]?.nocType);
-          });
-      } catch (err) {
-        setIsEnableLoader(false);
-        let errorValue = err?.response?.data?.Errors?.[0]?.code
-          ? t(err?.response?.data?.Errors?.[0]?.code)
-          : err?.response?.data?.Errors?.[0]?.message || err;
-        closeModal();
-        setShowToast({ key: "error", error: { message: errorValue } });
-        setTimeout(closeToast, 5000);
-        return;
-      }
-    }
+    
     if (mutate) {
       setIsEnableLoader(true);
       mutate(data, {
         onError: (error, variables) => {
+          
           setIsEnableLoader(false);
           setShowToast({ key: "error", error });
           setTimeout(closeToast, 5000);
         },
         onSuccess: (data, variables) => {
+          
           setIsEnableLoader(false);
+          //just history.push to the response component from here and show relevant details
+          if(data?.letterOfIndents?.[0]){
+            const updatedLOI = data?.letterOfIndents?.[0]
+            const state = {
+              header:getResponseHeader(performedAction,updatedLOI),
+              id: updatedLOI?.letterOfIndentNumber,
+              info: t("WORKS_LOI_ID"),
+              message: getResponseMessage(performedAction,updatedLOI),
+              links: [
+                {
+                  name: t("WORKS_CREATE_NEW_LOI"),
+                  redirectUrl: `/${window.contextPath}/employee/works/create-loi`,
+                  code: "",
+                  svg: "CreateEstimateIcon",
+                  isVisible:false
+                },
+                {
+                  name: t("WORKS_GOTO_LOI_INBOX"),
+                  redirectUrl: `/${window.contextPath}/employee/works/LOIInbox`,
+                  code: "",
+                  svg: "CreateEstimateIcon",
+                  isVisible:true
+                },
+              ],
+              responseData:data,
+              requestData:variables
+            }
+            history.push(`/${window.contextPath}/employee/works/response`, state)
+          }
           if (isOBPS?.bpa) {
             data.selectedAction = selectedAction;
             history.replace(`/${window?.contextPath}/employee/obps/response`, { data: data });

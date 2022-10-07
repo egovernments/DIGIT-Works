@@ -53,14 +53,15 @@ const ProcessingModal = ({
         ]
     );
 
-    const selectedDepartment = useWatch({ control: control, name: "appDesig", defaultValue: "" });
-    const selectedDesignation = useWatch({ control: control, name: "appDept", defaultValue: "" });
+    const selectedDepartment = useWatch({ control: control, name: "appDept", defaultValue: "" });
+    const selectedDesignation = useWatch({ control: control, name: "appDesig", defaultValue: "" });
 
     //based on these two make an hrms search for approver dropdown
     let Approvers = []
 
-    const { isLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ Designation: selectedDesignation?.code, Department: selectedDepartment?.code }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDepartment && selectedDesignation) });
-    employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp.user.name)
+    const { isLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDepartment?.code,roles:"LOI_CHECKER",isActive:true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDepartment && selectedDesignation) });
+
+    employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
     Approvers = employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees: []
 
     
@@ -135,7 +136,9 @@ const ProcessingModal = ({
                         control={control}
                         rules={{ required: true }}
                         render={(props) => {
+                            
                             return (
+                                isLoading?<Loader/>:
                                 <Dropdown
                                     onBlur={props.onBlur}
                                     option={Approvers}
