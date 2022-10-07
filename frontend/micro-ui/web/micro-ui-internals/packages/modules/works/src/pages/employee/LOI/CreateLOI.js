@@ -21,7 +21,7 @@ const CreateLOI = (props) => {
     const defaultFormValues = isEdit ? { ...state?.data.applicationDetails.applicationData.additionalDetails.formData } : {}
     //deleting the approver field so that it is not populated by default while editing loi upon rejection
     delete defaultFormValues?.app
-
+    delete defaultFormValues?.uploads
     const { mutate: LOIMutation } = Digit.Hooks.works.useCreateLOI();
     //here fetch the update mutation as well for modify upon rejection use case
     const history = useHistory();
