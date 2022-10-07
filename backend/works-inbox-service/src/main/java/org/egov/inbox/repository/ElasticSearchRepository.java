@@ -72,11 +72,6 @@ public class ElasticSearchRepository {
     private String getESURL(InboxSearchCriteria criteria) {
 
         StringBuilder builder = new StringBuilder(config.getIndexServiceHost());
-        if (criteria.getProcessSearchCriteria().getModuleName().equals("ws-services"))
-            builder.append(config.getEsWSIndex());
-        else if (criteria.getProcessSearchCriteria().getModuleName().equals("sw-services")) {
-            builder.append(config.getEsSWIndex());
-        }
         builder.append(config.getIndexServiceHostSearchEndpoint());
 
         return builder.toString();
