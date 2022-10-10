@@ -28,7 +28,7 @@ public class EnrichmentService {
     @Autowired
     private IdGenRepository idGenRepository;
 
-    public void enrichLOI(LetterOfIndentRequest request) {
+    public void enrichCreateLOI(LetterOfIndentRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         LetterOfIndent letterOfIndent = request.getLetterOfIndent();
         String rootTenantId = letterOfIndent.getTenantId().split("\\.")[0];
@@ -44,6 +44,14 @@ public class EnrichmentService {
         if (loiNumbers != null && !loiNumbers.isEmpty()) {
             letterOfIndent.setLetterOfIndentNumber(loiNumbers.get(0));
         }
+    }
+
+    public void enrichUpdateLOI(LetterOfIndentRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        LetterOfIndent letterOfIndent = request.getLetterOfIndent();
+        AuditDetails auditDetails = loiUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), letterOfIndent, false);
+        letterOfIndent.setAuditDetails(auditDetails);
+
     }
 
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey, String idformat, int count) {

@@ -34,7 +34,7 @@ public class LetterOfIndentService {
 
     public LetterOfIndentRequest createLOI(LetterOfIndentRequest request) {
         loiValidator.validateCreateLOI(request);
-        enrichmentService.enrichLOI(request);
+        enrichmentService.enrichCreateLOI(request);
         workflowService.updateWorkflowStatus(request);
         producer.push(loiConfiguration.getLoiSaveTopic(), request);
         return request;
@@ -42,7 +42,7 @@ public class LetterOfIndentService {
 
     public LetterOfIndentRequest updateLOI(LetterOfIndentRequest request) {
         loiValidator.validateUpdateLOI(request);
-        enrichmentService.enrichLOI(request);
+        enrichmentService.enrichUpdateLOI(request);
         workflowService.updateWorkflowStatus(request);
         producer.push(loiConfiguration.getLoiUpdateTopic(), request);
         return request;
@@ -51,7 +51,7 @@ public class LetterOfIndentService {
     public List<LetterOfIndent> searchLOI(LOISearchCriteria searchCriteria) {
         loiValidator.validateSearchLOI(searchCriteria);
         enrichmentService.enrichSearchLOI(searchCriteria);
-        List<LetterOfIndent> loiList = loiRepository.getEstimate(searchCriteria);
+        List<LetterOfIndent> loiList = loiRepository.getLoi(searchCriteria);
         return loiList;
 
     }

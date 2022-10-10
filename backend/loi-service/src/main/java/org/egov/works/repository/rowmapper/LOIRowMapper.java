@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
+import org.postgresql.util.PGobject;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
@@ -80,24 +82,24 @@ public class LOIRowMapper implements ResultSetExtractor<List<LetterOfIndent>> {
                     .auditDetails(auditDetails)
                     .fileDate(fileDate)
                     .build();
+
             loiMap.put(id, letterOfIndent);
         }
         return new ArrayList<>(loiMap.values());
     }
 
-    private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {
-        JsonNode additionalDetail = null;
+    private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {
+        JsonNode propertyAdditionalDetails = null;
         try {
-            Object jsonData = rs.getObject(columnName);
-            if (jsonData != null) {
-                additionalDetail = mapper.convertValue(jsonData, JsonNode.class);
-                if(additionalDetail != null){
-                    additionalDetail =  additionalDetail.get("value");
-                }
+            PGobject obj = (PGobject) rs.getObject(columnName);
+            if (obj != null) {
+                propertyAdditionalDetails = mapper.readTree(obj.getValue());
             }
-        } catch (SQLException e) {
-            throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
+        } catch (IOException e) {
+            throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object");
         }
-        return additionalDetail;
+        if (propertyAdditionalDetails.isEmpty())
+            propertyAdditionalDetails = null;
+        return propertyAdditionalDetails;
     }
 }
