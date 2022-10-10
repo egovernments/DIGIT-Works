@@ -61,4 +61,5 @@ public class LOIConfiguration {
     @Value("${workflow.loi.module.name}")
     private String workflowLOIModuleName;
 
+
 }
