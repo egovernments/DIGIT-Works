@@ -51,7 +51,7 @@ public class LetterOfIndentService {
     public List<LetterOfIndent> searchLOI(LOISearchCriteria searchCriteria) {
         loiValidator.validateSearchLOI(searchCriteria);
         enrichmentService.enrichSearchLOI(searchCriteria);
-        List<LetterOfIndent> loiList = loiRepository.getEstimate(searchCriteria);
+        List<LetterOfIndent> loiList = loiRepository.getLoi(searchCriteria);
         return loiList;
 
     }

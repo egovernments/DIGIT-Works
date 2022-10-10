@@ -33,7 +33,7 @@ public class LetterOfIndentRepository {
      * @param searchCriteria
      * @return
      */
-    public List<LetterOfIndent> getEstimate(LOISearchCriteria searchCriteria) {
+    public List<LetterOfIndent> getLoi(LOISearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getLOIQuery(searchCriteria,preparedStmtList);
         List<LetterOfIndent> loiList = jdbcTemplate.query(query,rowMapper,preparedStmtList.toArray());
