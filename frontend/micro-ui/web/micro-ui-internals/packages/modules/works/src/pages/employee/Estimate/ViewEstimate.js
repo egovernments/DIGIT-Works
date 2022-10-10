@@ -3,7 +3,7 @@ import { Header, SubmitBar, Menu, ActionBar, Loader } from "@egovernments/digit-
 import { useParams, useHistory } from "react-router-dom";
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from "react-i18next";
-import { ApplicationDetailsTemplate } from "../../../../../templates/ApplicationDetails"
+import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails"
 import ApplicationDetailsContent from "../../../../../templates/ApplicationDetails/components/ApplicationDetailsContent";
 import ProcessingModal from "../../../components/Modal/ProcessingModal";
 import RejectLOIModal from "../../../components/Modal/RejectLOIModal";
@@ -16,6 +16,19 @@ const ViewEstimate = (props) => {
     const { tenantId, estimateNumber, department } = Digit.Hooks.useQueryParams(); 
     let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewEstimateDetails(t,tenantId,estimateNumber);
     const tenant = Digit.ULBService.getStateId();
+
+    let workflowDetails = Digit.Hooks.useWorkflowDetails(
+        {
+            tenantId: tenantId,
+            id: estimateNumber,
+            moduleCode: applicationDetails?.processInstancesDetails?.[0]?.businessService,
+            config: {
+                enabled: applicationDetails?.processInstancesDetails?.[0]?.businessService ? true : false,
+            }
+        },
+    );
+    
+
     let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
     const { isLoading: hookLoading, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
         null,
@@ -99,6 +112,21 @@ const ViewEstimate = (props) => {
         setDisplayMenu(false);
     }
     Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu );
+
+    const {
+        isLoading: updatingApplication,
+        isError: updateApplicationError,
+        data: updateResponse,
+        error: updateError,
+        mutate,
+    } = Digit.Hooks.works.useApplicationActionsEstimate();
+
+    const [showToast, setShowToast] = useState(null);
+
+    const closeToast = () => {
+        setShowToast(null);
+    };
+    
     return (
         <Fragment>
             <div className={"employee-main-application-details"}>
@@ -142,21 +170,39 @@ const ViewEstimate = (props) => {
                 />}
 
                 {isLoading ? <Loader/> :
-                <ApplicationDetailsContent
+                <ApplicationDetailsTemplate
                     applicationDetails={applicationDetails}
-                    //workflowDetails={workflowDetails}
-                    //isDataLoading={isDataLoading}
-                    //applicationData={applicationData}
-                    //businessService={businessService}
-                    //timelineStatusPrefix={timelineStatusPrefix}
-                    //statusAttribute={statusAttribute}
-                    //paymentsList={paymentsList}
-                    showTimeLine={false}
-                //oldValue={oldValue}
-                //isInfoLabel={isInfoLabel}
-                />}
+                    isLoading={isLoading }
+                    // isDataLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading}
+                    applicationData={applicationDetails?.applicationData}
+                    mutate={mutate}
+                    workflowDetails={workflowDetails}
+                    businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}
+                    moduleCode="works"
+                    showToast={showToast}
+                    setShowToast={setShowToast}
+                    closeToast={closeToast}
+                    timelineStatusPrefix={`WORKS_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`}
+                    // oldValue={res}
+                    // isInfoLabel={true}
+                    // clearDataDetails={clearDataDetails}
+                />
+                // <ApplicationDetailsContent
+                //     applicationDetails={applicationDetails}
+                //     //workflowDetails={workflowDetails}
+                //     //isDataLoading={isDataLoading}
+                //     //applicationData={applicationData}
+                //     //businessService={businessService}
+                //     //timelineStatusPrefix={timelineStatusPrefix}
+                //     //statusAttribute={statusAttribute}
+                //     //paymentsList={paymentsList}
+                //     showTimeLine={false}
+                // //oldValue={oldValue}
+                // //isInfoLabel={isInfoLabel}
+                // />
+                }
             </div>
-            <ActionBar>
+            {/* <ActionBar>
                 {displayMenu ?
                     <Menu
                     localeKeyPrefix={"WORKS"}
@@ -166,7 +212,7 @@ const ViewEstimate = (props) => {
                     onSelect={onActionSelect}
                     />:null}
                 <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-            </ActionBar>
+            </ActionBar> */}
         </Fragment>
 
     )

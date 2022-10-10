@@ -15,14 +15,20 @@ const CreateEstimate = (props) => {
     const history=useHistory();
     const onFormSubmit = async (_data) => {
         const payload = await createEstimatePayload(_data);
-        const estimate = {
-            estimate: payload, workflow: {
-                "action": "CREATE",
-                "comment": _data?.comments,
-                "assignees": [
-                    // _data?.app?.uuid
-                ]
+        const workflow =  {
+            "action": "CREATE",
+            "comment": _data?.comments,
+            "assignees": [
+                _data?.app?.uuid
+            ]
+        }
+        Object.keys(workflow).forEach(key => {
+            if (workflow[key] === undefined) {
+                delete workflow[key];
             }
+        });
+        const estimate = {
+            estimate: payload, workflow
         }
 
         await EstimateMutation(estimate, {
