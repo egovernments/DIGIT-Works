@@ -27,7 +27,6 @@ const ViewEstimate = (props) => {
             }
         },
     );
-    console.log("Workflow",workflowDetails)
     workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
         if (action?.action === "EDIT") {
             
