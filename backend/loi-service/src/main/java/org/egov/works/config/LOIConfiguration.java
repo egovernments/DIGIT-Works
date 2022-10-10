@@ -61,5 +61,15 @@ public class LOIConfiguration {
     @Value("${workflow.loi.module.name}")
     private String workflowLOIModuleName;
 
+    //Workflow Config
+    @Value("${egov.workflow.host}")
+    private String wfHost;
+    @Value("${loi.workflow.business.service}")
+    private String loiWFBusinessService;
+    @Value("${egov.workflow.transition.path}")
+    private String wfTransitionPath;
+    @Value("${loi.workflow.module.name}")
+    private String loiWFModuleName;
+
 
 }
