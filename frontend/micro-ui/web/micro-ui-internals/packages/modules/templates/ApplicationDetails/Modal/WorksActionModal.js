@@ -54,7 +54,7 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
   //   },
   //   { enabled: !action?.isTerminateState }
   // );
-  let { loiNumber } = Digit.Hooks.useQueryParams();
+  let { loiNumber, estimateNumber } = Digit.Hooks.useQueryParams();
    const [config, setConfig] = useState({});
    const [defaultValues, setDefaultValues] = useState({});
    const [approvers, setApprovers] = useState([]);
@@ -138,7 +138,7 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
 
   useEffect(() => {
     
-    if(action?.action?.includes("CHECK")){
+    if(action?.action?.includes("CHECK") || action?.action?.includes("TECHNICALSANCATION")){
       setConfig(
         configCheckModal({
           t,
@@ -155,7 +155,7 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
           setSelectedDept
         })
       )
-    }else if(action?.action?.includes("APPROVE")){
+    }else if(action?.action?.includes("APPROVE") || action?.action?.includes("ADMINSANCTION")){
       setConfig(
         configApproveModal({
           t,
@@ -197,7 +197,8 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
         delete workflow[key];
       }
     });
-    submitAction({letterOfIndent:applicationData,workflow})
+    {estimateNumber ? submitAction({estimate:applicationData,workflow}) :
+    submitAction({letterOfIndent:applicationData,workflow})}
     
   }
 

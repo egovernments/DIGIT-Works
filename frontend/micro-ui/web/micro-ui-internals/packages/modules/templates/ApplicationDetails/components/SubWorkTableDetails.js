@@ -30,7 +30,7 @@ const SubWorkTableDetails = ({data}) => {
     }
 
     const renderBody = (rows) => {
-        return rows.map((row, index) => {
+        return rows?.map((row, index) => {
             return <tr style={{ "height": "50%" }}>
                 <td style={getStyles(1)}>{row[0]}</td>
                 <td style={getStyles(2)} ><div className='field'>{row[1]}</div></td>

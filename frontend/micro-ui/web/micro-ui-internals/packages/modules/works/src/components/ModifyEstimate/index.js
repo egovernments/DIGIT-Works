@@ -13,18 +13,19 @@ const ModifyEstimate = (props) => {
     const [showToast, setShowToast] = useState(null);
     const {t} = useTranslation();
     const history = useHistory();
-    const {state} = useLocation()
-    const {tenantId, estimateNumber} = state
+    let {tenantId, estimateNumber} = Digit.Hooks.useQueryParams();
+
     const {status, data} = Digit.Hooks.works.useSearchWORKS({ tenantId,filters: {estimateNumber:estimateNumber}});
-    let estimate = data?.estimates[0]
-    const onFormSubmit = async (estimateId,_data) => {
-        const payload = await updateEstimatePayload(estimateId, _data);
+    let estimateEdit = data?.estimates[0]
+    const onFormSubmit = async (_data) => {
+
+        const payload = await updateEstimatePayload(_data, estimateEdit);
         const estimate = {
             estimate: payload, workflow: {
-                "action": "CREATE",
+                "action": "EDIT",
                 "comment": _data?.comments,
                 "assignees": [
-                    // _data?.app?.uuid
+                    _data?.app?.uuid
                 ]
             }
         }
@@ -58,7 +59,7 @@ const ModifyEstimate = (props) => {
     return (
         <Fragment>
             {status==="loading"?<Loader/>:
-            <ModifyEstimateForm onFormSubmit={onFormSubmit} estimate={estimate} />}
+            <ModifyEstimateForm onFormSubmit={onFormSubmit} estimate={estimateEdit} />}
             {showToast && (
                 <Toast
                 error={showToast.error}

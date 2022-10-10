@@ -69,6 +69,9 @@ const ApplicationDetails = (props) => {
         if (action?.redirectionUrll?.action === "EDIT_LOI_APPLICATION") {
           history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
         }
+        if (action?.redirectionUrll?.action === "EDIT_ESTIMATE_APPLICATION") {
+          history.push(`${action?.redirectionUrll?.pathname}`);
+        }
         
       } else if (!action?.redirectionUrl) {
         setShowModal(true);

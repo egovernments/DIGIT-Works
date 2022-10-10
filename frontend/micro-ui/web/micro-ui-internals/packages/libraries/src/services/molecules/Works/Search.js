@@ -210,9 +210,13 @@ export const WorksSearch = {
         return response?.letterOfIndents
     },
     viewEstimateScreen: async (t, tenantId, estimateNumber) => {
+
+        const workflowDetails = await WorksSearch.workflowDataDetails(tenantId, estimateNumber);
+
         const estimateArr = await WorksSearch?.searchEstimate(tenantId, { estimateNumber })
         const estimate = estimateArr?.[0]
         
+        const additionalDetails = estimate?.additionalDetails
         //const estimate = sampleEstimateSearchResponse?.estimates?.[0] 
         let details = []
         const estimateValues={
@@ -220,7 +224,7 @@ export const WorksSearch = {
             asSectionHeader: true,
             values: [
                 { title: "WORKS_ESTIMATE_ID", value: estimate?.estimateNumber},
-                { title: "WORKS_STATUS", value: estimate?.status}
+                { title: "WORKS_STATUS", value: estimate?.estimateStatus}
             ]
         }
 
@@ -268,21 +272,8 @@ export const WorksSearch = {
                     item?.amount]
             )
         }
+        const files = additionalDetails?.filesAttached
 
-        const files = [
-            {
-                "fileStoreId": "81d1bce2-7513-4231-b1ab-8f7c3df37c9b",
-                "tenantId": "pb"
-            },
-            {
-                "fileStoreId": "954952fe-6d3e-484c-a773-77f20da639dc",
-                "tenantId": "pb"
-            },
-            {
-                "fileStoreId": "eb68a8ca-59bf-4e7f-b604-1c1197bb91c3",
-                "tenantId": "pb"
-            }
-        ]
         const documentDetails = {
             title: "",
             asSectionHeader: true,
@@ -292,9 +283,9 @@ export const WorksSearch = {
                     BS: 'Works',
                     values: files?.map((document) => {
                         return {
-                            title: `Same`,
-                            documentType: "type",
-                            documentUid: "id",
+                            title: document?.fileName,
+                            documentType: document?.documentType,
+                            documentUid: document?.fileStoreId,
                             fileStoreId: document?.fileStoreId,
                         };
                     }),
@@ -307,6 +298,8 @@ export const WorksSearch = {
         details = [...details, estimateValues, estimateDetails, financialDetails, workDetails, documentDetails]
         return {
             applicationDetails: details,
+            processInstancesDetails: workflowDetails?.ProcessInstances,
+            applicationData:estimate,
         }
     },
     workflowDataDetails: async (tenantId, businessIds) => {

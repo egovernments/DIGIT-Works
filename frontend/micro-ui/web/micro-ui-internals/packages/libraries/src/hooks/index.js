@@ -246,6 +246,7 @@ import useEstimateSearch from "./works/useSearch"
 import useCreateEstimate from "./works/useCreateEstimate";
 import useSearchEstimate from "./works/userSearchEstimate";
 import useApplicationActionsLOI from "./works/useApplicationActions";
+import useApplicationActionsEstimate from "./works/useUpdateEstimate";
 import useUpdateEstimate from "./works/useUpdateEstimate";
 
 const works = {
@@ -257,8 +258,8 @@ const works = {
   useCreateEstimate,
   useSearchEstimate,
   useApplicationActionsLOI,
-  useUpdateEstimate
-
+  useUpdateEstimate,
+  useApplicationActionsEstimate
 }
 
 const pgr = {
