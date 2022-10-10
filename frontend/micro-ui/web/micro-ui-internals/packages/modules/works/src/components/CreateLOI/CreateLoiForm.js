@@ -4,10 +4,12 @@ import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, CardText, C
 import { useTranslation } from 'react-i18next';
 import ProcessingModal from '../Modal/ProcessingModal';
 
-
+import { useHistory, useLocation } from "react-router-dom";
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
-const CreateLoiForm = ({ onFormSubmit }) => {
+const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEdit }) => {
+    
+    //state?.data?.applicationDetails?.processInstancesDetails?.[0]?.state?.state
     const handleCreateClick = async (e) => {
 
         // const result = await trigger(["lor", "fileno", "dlperiod", "fromDate", "aggDate", "agencyname", "officerInChargedesig","officerIncharge","work"])
@@ -305,7 +307,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
         trigger,
         ...methods
     } = useForm({
-        defaultValues: { ...dummyDefault },
+        defaultValues:defaultFormValues,
         mode: "onSubmit"
     });
 
@@ -372,9 +374,13 @@ const CreateLoiForm = ({ onFormSubmit }) => {
             <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_LOI")}</Header>
             <Card >
                 <CardSectionHeader >{t(`WORKS_LOI_DETAILS`)}</CardSectionHeader>
-                {isLoadingEstimateSearch && <Loader /> }
+                <StatusTable>
+                    {isEdit && <Row label={`${t("WORKS_LOI_ID")}:`} text={loiNumber} textStyle={{ whiteSpace: "pre" }} />}
+                    {isEdit && <Row label={`${t("WORKS_LOI_STATUS")}:`} text={state?.data?.applicationDetails?.processInstancesDetails?.[0]?.state?.state} textStyle={{ whiteSpace: "pre", color: "red" }} />}
+                </StatusTable>
+                {isLoadingEstimateSearch && <Loader />}
                 {estimateSearchSuccess  && <StatusTable>
-                    <Row label={`${t("WORKS_ESTIMATE_NO")}:`} text={estimateNumber} textStyle={{ whiteSpace: "pre" }} />
+                    <Row label={`${t("WORKS_ESTIMATE_NO")}:`} text={estimate?.estimateNumber} textStyle={{ whiteSpace: "pre" }} />
                     <Row
                         label={`${t("WORKS_NAME_OF_WORK")}:`}
                         text={estimate?.estimateDetails?.[0]?.name}
@@ -382,6 +388,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                     />
                     <Row label={`${t("WORKS_SUB_ESTIMATE_NO")}:`} text={estimate?.estimateDetails?.[0]?.estimateDetailNumber} />
                 </StatusTable>}
+                
                 {showModal && <ProcessingModal
                     t={t}
                     heading={"WORKS_PROCESSINGMODAL_HEADER"}
@@ -397,7 +404,7 @@ const CreateLoiForm = ({ onFormSubmit }) => {
                     errors={errors}
                 />}
 
-
+                
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_ABSTRACT_ESTIMATE_NO`)}:`}</CardLabel>
                     <div className='field'>

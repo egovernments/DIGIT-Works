@@ -308,7 +308,7 @@ export const WorksSearch = {
     },
     viewLOIScreen: async (t, tenantId, loiNumber,subEstimateNumber) => {
         
-
+        
         const workflowDetails = await WorksSearch.workflowDataDetails(tenantId, loiNumber);
 
         const loiArr = await WorksSearch.searchLOI(tenantId, {letterOfIndentNumber:loiNumber})
@@ -333,8 +333,8 @@ export const WorksSearch = {
                 { title: "WORKS_LOI_NUMBER", value: loi?.letterOfIndentNumber || t("NA") },
                 { title: "WORKS_DATE_CREATED", value: convertEpochToDate(loi?.auditDetails?.createdTime) || t("NA") },
                 { title: "WORKS_ESTIMATE_NO", value: estimate?.estimateNumber || t("NA") },
-                { title: "WORKS_SUB_ESTIMATE_NO", value: estimate?.estimateDetails?.filter(subEs => subEs?.estimateDetailNumber===subEstimateNumber)?.estimateDetailNumber || t("NA") },
-                { title: "WORKS_NAME_OF_WORK", value: estimate?.estimateDetails?.filter(subEs => subEs?.estimateDetailNumber === subEstimateNumber)?.name || t("NA") },
+                { title: "WORKS_SUB_ESTIMATE_NO", value: subEstimateNumber },
+                { title: "WORKS_NAME_OF_WORK", value: estimate?.estimateDetails?.filter(subEs => subEs?.estimateDetailNumber === subEstimateNumber)?.[0]?.name || t("NA") },
                 { title: "WORKS_DEPARTMENT", value: estimate?.department || t("NA") },
                 { title: "WORKS_FILE_NO", value: loi?.fileNumber || t("NA") },
                 { title: "WORKS_FILE_DATE", value: convertEpochToDate(loi?.fileDate) || t("NA") },

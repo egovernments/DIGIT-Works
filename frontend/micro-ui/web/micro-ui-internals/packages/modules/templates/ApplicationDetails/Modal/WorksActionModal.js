@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { configApproveModal, configRejectModal, configCheckModal } from "../config";
 
 import cloneDeep from "lodash/cloneDeep";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 
 const Heading = (props) => {
@@ -55,7 +54,6 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
   //   },
   //   { enabled: !action?.isTerminateState }
   // );
-  const history = useHistory();
   let { loiNumber, estimateNumber } = Digit.Hooks.useQueryParams();
    const [config, setConfig] = useState({});
    const [defaultValues, setDefaultValues] = useState({});
@@ -177,9 +175,6 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
           department
         })
       )
-    }
-    else if(estimateNumber && action?.action.includes("EDIT")){
-      history.push(`/${window.contextPath}/employee/works/modify-estimate?tenantId=${tenantId}&estimateNumber=${estimateNumber}`)
     }
   }, [approvers,designation,department]);
 

@@ -27,7 +27,21 @@ const ViewEstimate = (props) => {
             }
         },
     );
-    
+    console.log("Workflow",workflowDetails)
+    workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
+        if (action?.action === "EDIT") {
+            
+            let pathName = `/${window.contextPath}/employee/works/modify-estimate?tenantId=${tenantId}&estimateNumber=${estimateNumber}`;
+            action.redirectionUrll = {
+                action: "EDIT_ESTIMATE_APPLICATION",
+                pathname: pathName,
+                state: {
+                    applicationDetails: applicationDetails,
+                    action: "EDIT_ESTIMATE_APPLICATION"
+                },
+            };
+        }
+    })
 
     let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
     const { isLoading: hookLoading, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
