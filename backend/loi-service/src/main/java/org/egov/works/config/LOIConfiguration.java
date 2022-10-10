@@ -70,5 +70,4 @@ public class LOIConfiguration {
     private String wfTransitionPath;
     @Value("${loi.workflow.module.name}")
     private String loiWFModuleName;
-
 }
