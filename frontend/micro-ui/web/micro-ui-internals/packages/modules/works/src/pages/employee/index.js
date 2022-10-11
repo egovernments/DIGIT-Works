@@ -93,9 +93,9 @@ const BILLSBreadCrumbs = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
-      path: `/${window.contextPath}/employee/works/LOIInbox`,
+      path: `/${window.contextPath}/employee/works/loiinbox`,
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_LOI_INBOX")}` : t("WORKS_LOI_INBOX"),
-      show: location.pathname.includes("/works/LOIInbox") ? true : false,
+      show: location.pathname.includes("/works/loiinbox") ? true : false,
       isBack: fromScreen && true,
     },
   ];

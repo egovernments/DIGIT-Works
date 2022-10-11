@@ -43,7 +43,7 @@ const CreateEstimate = (props) => {
                     header:"Estimate Created and Forwarded Successfully",
                     id:responseData?.estimates[0]?.estimateNumber,
                     info:"Estimate ID",
-                    message:`A new Estimate has been created successfully and forwarded to the ${responseData?.estimates[0]?.department} Department for processing.`,
+                    message:`A new Estimate has been created successfully and forwarded to the ${t(`ES_COMMON_${responseData?.estimates[0]?.department}`)} Department for processing.`,
                     links:[
                         {
                             name:"Create new Estimate",

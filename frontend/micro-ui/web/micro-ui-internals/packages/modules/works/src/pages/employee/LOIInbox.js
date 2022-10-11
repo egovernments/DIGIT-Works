@@ -113,7 +113,7 @@ const LOIInbox = ({
   } else {
     return (
       <div>
-        {isInbox && <Header>{t("ES_COMMON_INBOX")}{data?.totalCount ? <p className="inbox-count">{data?.totalCount}</p> : null}</Header>}
+        {isInbox && <Header>{t("WORKS_LOI_INBOX")}{data?.totalCount ? <p className="inbox-count">{data?.totalCount}</p> : null}</Header>}
 
         <LOIDesktopInbox
           businessService={businessService}

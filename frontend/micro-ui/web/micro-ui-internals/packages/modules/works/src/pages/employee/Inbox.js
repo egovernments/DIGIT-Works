@@ -109,9 +109,27 @@ const Inbox = ({
   const config = {
     enabled: !!(payload && Object.keys(payload).length > 0),
   };
-  //API Call
-  const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
-
+  //API Call useEstimateInbox
+  // const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
+  const result = {
+    status: "success",
+    isSuccess: true,
+    isLoading: false,
+    data:{
+      estimates: [{
+        tenantId:"pb.amritsar",
+        estimateNumber: "EP/2022-23/10/000102",
+        department: "DEPT_1",
+        fund: "01",
+        function: "0001",
+        budgetHead: "01",
+        createdBy: "A.P.Sreenivasulu",
+        owner: "A.P.Sreenivasulu",
+        status: "CREATED",
+        totalAmount: "Rs,10000"
+      }]
+    }
+  }
   const handleSort = useCallback((args) => {
     if (args.length === 0) return;
     setSortParams(args);
@@ -152,7 +170,7 @@ const Inbox = ({
   } else {
     return (
       <div>
-        {isInbox && <Header>{t("ES_COMMON_INBOX")}{data?.totalCount ? <p className="inbox-count">{data?.totalCount}</p> : null}</Header>}
+        {isInbox && <Header>{t("WORKS_ESTIMATE_INBOX")}{data?.totalCount ? <p className="inbox-count">{data?.totalCount}</p> : null}</Header>}
 
         <DesktopInbox
           businessService={businessService}
