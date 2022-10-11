@@ -10,14 +10,25 @@ const SearchFields = ({ register, control, reset, t }) => {
         [
             {
                 "name": "TypeOfWork"
-            },
-            {
-                "name": "Department"
             }
         ] 
         );
         if(data?.works){
-            var {TypeOfWork,Department } = data?.works
+            var { TypeOfWork } = data?.works
+        }
+
+        const { isLoading:desgLoading, data:departmentData } = Digit.Hooks.useCustomMDMS(
+            tenant,
+            "common-masters",
+            [
+                {
+                    "name": "Department"
+                }
+            ]
+        );
+        
+        if (departmentData?.[`common-masters`]) {
+            var { Department } = departmentData?.[`common-masters`]
         }
 
     let validation = {} 

@@ -21,7 +21,7 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
           return (
             <div>
               <span className="link">
-                <Link to={`${props.parentRoute}/view-loi/` + row.original?.searchData?.["LOIId"]}>
+                <Link to={`${props.parentRoute}/view-loi/?loiNumber=LI/2022-23/10/000083&subEstimateNumber=EP/2022-23/09/000092/000068`}>
                   {row.original?.LOIId}
                 </Link>
               </span>

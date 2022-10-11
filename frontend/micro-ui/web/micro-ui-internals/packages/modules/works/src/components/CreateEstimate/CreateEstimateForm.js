@@ -118,6 +118,21 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
         var { Scheme, BudgetHead, Functions, Fund } = financeData?.finance
     }
 
+    const { isLoading: locationLoading, data: locationData, isFetched: locationDataFetched } = Digit.Hooks.useCustomMDMS(
+        tenantId,
+        "egov-location",
+        [
+            {
+                "name": "TenantBoundary"
+            },
+        ]
+    );
+    if (locationData?.[`egov-location`]) {
+        var { children: ward } = locationData?.[`egov-location`]?.TenantBoundary[0]?.boundary?.children[0]
+    }
+
+    const { children: location } = useWatch({ control: control, name: "ward", defaultValue: [] });
+
     const handleCreateClick = async () => {
         const subWorkFieldsToValidate = []
         rows.map(row => row.isShow && subWorkFieldsToValidate.push(...[`estimateDetails.${row.key}.name`, `estimateDetails.${row.key}.amount`]))
@@ -223,7 +238,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-                                        option={BeneficiaryType}
+                                        option={ward}
                                         selected={props?.value}
                                         optionKey={"name"}
                                         t={t}
@@ -247,7 +262,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             return (
                                 <Dropdown
                                     className={`field`}
-                                    option={BeneficiaryType}
+                                    option={location}
                                     selected={props?.value}
                                     optionKey={"name"}
                                     t={t}
