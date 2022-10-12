@@ -173,6 +173,7 @@ export const WorkflowService = {
             auditDetails: {
               created: Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.createdTime),
               lastModified: Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.lastModifiedTime),
+              lastModifiedEpoch: instance.auditDetails.lastModifiedTime,
             },
             timeLineActions: instance.nextActions
               ? instance.nextActions.filter((action) => action.roles.includes(role)).map((action) => action?.action)

@@ -66,6 +66,7 @@ function ApplicationDetailsContent({
     return `${day}/${month}/${year}`;
   };
   const getTimelineCaptions = (checkpoint) => {
+    
     if (checkpoint.state === "OPEN" || (checkpoint.status === "INITIATED" && !window.location.href.includes("/obps/"))) {
       const caption = {
         date: convertEpochToDateDMY(applicationData?.auditDetails?.createdTime),
@@ -85,14 +86,16 @@ function ApplicationDetailsContent({
       };
       return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
     } else {
+      
       const caption = {
-        date: Digit.DateUtils?.ConvertTimestampToDate(applicationData?.auditDetails?.lastModifiedTime),
+        date: `${Digit.DateUtils?.ConvertTimestampToDate(checkpoint.auditDetails.lastModifiedEpoch)} ${Digit.DateUtils?.ConvertEpochToTimeInHours(checkpoint.auditDetails.lastModifiedEpoch)} ${Digit.DateUtils?.getDayfromTimeStamp(checkpoint.auditDetails.lastModifiedEpoch)}`,
         // name: checkpoint?.assigner?.name,
         name: checkpoint?.assignes?.[0]?.name,
         // mobileNumber: checkpoint?.assigner?.mobileNumber,
         wfComment: checkpoint?.wfComment,
         mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
       };
+      
       return <TLCaption data={caption} />;
     }
   };
@@ -370,7 +373,7 @@ function ApplicationDetailsContent({
                             info={checkpoint.comment}
                             label={t(
                               `${timelineStatusPrefix}${
-                                checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : checkpoint?.[statusAttribute]
+                                checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}_ACTION` : checkpoint?.[statusAttribute]
                               }`
                             )}
                             customChild={getTimelineCaptions(checkpoint)}

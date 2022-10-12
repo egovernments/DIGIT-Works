@@ -43,255 +43,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
         }
     }
 
-    const dummyDefault = {
-        "workIdentificationNumber": "12312321",
-        "fileNumber": "2131",
-        "negotiatedPercentage": "90",
-        "contractorId": "12321",
-        "securityDeposit": "123",
-        "bankGuarantee": "123",
-        "emdAmount": "123",
-        "contractPeriod": "12",
-        "defectLiabilityPeriod": "12",
-        "fileDate": "2022-12-31",
-        "agreementDate": "2022-09-29",
-        "agencyName": {
-            "name": "agency1"
-        },
-        "officerIncharge": {
-            "id": 111,
-            "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
-            "code": "EMP-107-000011",
-            "employeeStatus": "EMPLOYED",
-            "employeeType": "PERMANENT",
-            "dateOfAppointment": 1663200000000,
-            "jurisdictions": [
-                {
-                    "id": "e4486069-8275-4191-bb26-33dc7d177e6d",
-                    "hierarchy": "ADMIN",
-                    "boundary": "pb.amritsar",
-                    "boundaryType": "City",
-                    "tenantId": "pb.amritsar",
-                    "auditDetails": {
-                        "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
-                        "createdDate": 1663826773203,
-                        "lastModifiedBy": null,
-                        "lastModifiedDate": 0
-                    },
-                    "isActive": true
-                }
-            ],
-            "assignments": [
-                {
-                    "id": "740b9561-0a7b-4bdf-af3a-7e4138aeb2a8",
-                    "position": 14,
-                    "designation": "DESIG_01",
-                    "department": "DEPT_1",
-                    "fromDate": 1663804800000,
-                    "toDate": null,
-                    "govtOrderNumber": null,
-                    "tenantid": "pb.amritsar",
-                    "reportingTo": null,
-                    "auditDetails": {
-                        "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
-                        "createdDate": 1663826773203,
-                        "lastModifiedBy": null,
-                        "lastModifiedDate": 0
-                    },
-                    "isHOD": false,
-                    "isCurrentAssignment": true
-                }
-            ],
-            "serviceHistory": [],
-            "education": [],
-            "tests": [],
-            "tenantId": "pb.amritsar",
-            "documents": [],
-            "deactivationDetails": [],
-            "reactivationDetails": [],
-            "auditDetails": {
-                "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
-                "createdDate": 1663826773203,
-                "lastModifiedBy": null,
-                "lastModifiedDate": 0
-            },
-            "reActivateEmployee": false,
-            "user": {
-                "id": 111,
-                "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
-                "userName": "EMP-107-000011",
-                "password": null,
-                "salutation": null,
-                "name": "Estimate Checker",
-                "gender": "MALE",
-                "mobileNumber": "8877665544",
-                "emailId": null,
-                "altContactNumber": null,
-                "pan": null,
-                "aadhaarNumber": null,
-                "permanentAddress": null,
-                "permanentCity": null,
-                "permanentPinCode": null,
-                "correspondenceCity": null,
-                "correspondencePinCode": null,
-                "correspondenceAddress": "None",
-                "active": true,
-                "dob": 778444200000,
-                "pwdExpiryDate": 1671602773000,
-                "locale": null,
-                "type": "EMPLOYEE",
-                "signature": null,
-                "accountLocked": false,
-                "roles": [
-                    {
-                        "name": "EST_CHECKER",
-                        "code": "EST_CHECKER",
-                        "description": null,
-                        "tenantId": "pb.amritsar"
-                    }
-                ],
-                "fatherOrHusbandName": null,
-                "relationship": null,
-                "bloodGroup": null,
-                "identificationMark": null,
-                "photo": null,
-                "createdBy": "93",
-                "createdDate": 1663826773000,
-                "lastModifiedBy": "93",
-                "lastModifiedDate": 1663826773000,
-                "otpReference": null,
-                "tenantId": "pb.amritsar"
-            },
-            "isActive": true,
-            "nameOfEmp": "Estimate Checker"
-        },
-        "uploads": [],
-        "officerInChargedesig": {
-            "code": "DESIG_01",
-            "name": "Superintending Engineer ( B&R)",
-            "description": "Superintending Engineer ( B&R)",
-            "active": true
-        },
-        "comments": "sdljkf",
-        // "appDept": {
-        //     "name": "Street Lights",
-        //     "code": "DEPT_1",
-        //     "active": true
-        // },
-        // "appDesig": {
-        //     "code": "DESIG_02",
-        //     "name": "Corporation Engineer (B&R)",
-        //     "description": "Corporation Engineer (B&R)",
-        //     "active": true
-        // },
-        // "app": {
-        //     "id": 111,
-        //     "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
-        //     "code": "EMP-107-000011",
-        //     "employeeStatus": "EMPLOYED",
-        //     "employeeType": "PERMANENT",
-        //     "dateOfAppointment": 1663200000000,
-        //     "jurisdictions": [
-        //         {
-        //             "id": "e4486069-8275-4191-bb26-33dc7d177e6d",
-        //             "hierarchy": "ADMIN",
-        //             "boundary": "pb.amritsar",
-        //             "boundaryType": "City",
-        //             "tenantId": "pb.amritsar",
-        //             "auditDetails": {
-        //                 "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
-        //                 "createdDate": 1663826773203,
-        //                 "lastModifiedBy": null,
-        //                 "lastModifiedDate": 0
-        //             },
-        //             "isActive": true
-        //         }
-        //     ],
-        //     "assignments": [
-        //         {
-        //             "id": "740b9561-0a7b-4bdf-af3a-7e4138aeb2a8",
-        //             "position": 14,
-        //             "designation": "DESIG_01",
-        //             "department": "DEPT_1",
-        //             "fromDate": 1663804800000,
-        //             "toDate": null,
-        //             "govtOrderNumber": null,
-        //             "tenantid": "pb.amritsar",
-        //             "reportingTo": null,
-        //             "auditDetails": {
-        //                 "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
-        //                 "createdDate": 1663826773203,
-        //                 "lastModifiedBy": null,
-        //                 "lastModifiedDate": 0
-        //             },
-        //             "isHOD": false,
-        //             "isCurrentAssignment": true
-        //         }
-        //     ],
-        //     "serviceHistory": [],
-        //     "education": [],
-        //     "tests": [],
-        //     "tenantId": "pb.amritsar",
-        //     "documents": [],
-        //     "deactivationDetails": [],
-        //     "reactivationDetails": [],
-        //     "auditDetails": {
-        //         "createdBy": "d0f71367-f81c-46a3-be73-258f8ff68b23",
-        //         "createdDate": 1663826773203,
-        //         "lastModifiedBy": null,
-        //         "lastModifiedDate": 0
-        //     },
-        //     "reActivateEmployee": false,
-        //     "user": {
-        //         "id": 111,
-        //         "uuid": "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9",
-        //         "userName": "EMP-107-000011",
-        //         "password": null,
-        //         "salutation": null,
-        //         "name": "Estimate Checker",
-        //         "gender": "MALE",
-        //         "mobileNumber": "8877665544",
-        //         "emailId": null,
-        //         "altContactNumber": null,
-        //         "pan": null,
-        //         "aadhaarNumber": null,
-        //         "permanentAddress": null,
-        //         "permanentCity": null,
-        //         "permanentPinCode": null,
-        //         "correspondenceCity": null,
-        //         "correspondencePinCode": null,
-        //         "correspondenceAddress": "None",
-        //         "active": true,
-        //         "dob": 778444200000,
-        //         "pwdExpiryDate": 1671602773000,
-        //         "locale": null,
-        //         "type": "EMPLOYEE",
-        //         "signature": null,
-        //         "accountLocked": false,
-        //         "roles": [
-        //             {
-        //                 "name": "EST_CHECKER",
-        //                 "code": "EST_CHECKER",
-        //                 "description": null,
-        //                 "tenantId": "pb.amritsar"
-        //             }
-        //         ],
-        //         "fatherOrHusbandName": null,
-        //         "relationship": null,
-        //         "bloodGroup": null,
-        //         "identificationMark": null,
-        //         "photo": null,
-        //         "createdBy": "93",
-        //         "createdDate": 1663826773000,
-        //         "lastModifiedBy": "93",
-        //         "lastModifiedDate": 1663826773000,
-        //         "otpReference": null,
-        //         "tenantId": "pb.amritsar"
-        //     },
-        //     "isActive": true,
-        //     "nameOfEmp": "Estimate Checker"
-        // }
-    }
+    
     const { t } = useTranslation()
     const [showModal, setShowModal] = useState(false)
     const {
@@ -371,7 +123,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
     }
     return (
         <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
-            <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_LOI")}</Header>
+            <Header styles={{ "marginLeft": "14px" }}>{isEdit ? t("WORKS_MODIFY_LOI"): t("WORKS_CREATE_LOI")}</Header>
             <Card >
                 <CardSectionHeader >{t(`WORKS_LOI_DETAILS`)}</CardSectionHeader>
                 <StatusTable>
@@ -395,7 +147,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
                     closeModal={() => setShowModal(false)}
                     actionCancelLabel={"WORKS_CANCEL"}
                     actionCancelOnSubmit={() => setShowModal(false)}
-                    actionSaveLabel={"WORKS_FORWARD"}
+                    actionSaveLabel={"WORKS_FORWARD_LOI"}
                     actionSaveOnSubmit={onFormSubmit}
                     onSubmit={onFormSubmit}
                     control={control}
@@ -674,7 +426,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
                 </LabelFieldPair>
 
                 <ActionBar>
-                    <SubmitBar onSubmit={handleCreateClick} label={t("WORKS_CREATE_LOI")} />
+                    <SubmitBar onSubmit={handleCreateClick} label={isEdit ? t("WORKS_PROCEED_TO_FORWARD"):t("WORKS_CREATE_LOI")} />
                 </ActionBar>
             </Card>
         </form>
