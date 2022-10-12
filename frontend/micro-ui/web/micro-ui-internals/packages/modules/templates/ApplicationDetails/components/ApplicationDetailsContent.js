@@ -86,15 +86,16 @@ function ApplicationDetailsContent({
       };
       return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
     } else {
-
+      
       const caption = {
-        date: `${Digit.DateUtils?.ConvertTimestampToDate(applicationData?.auditDetails?.lastModifiedTime)} ${Digit.DateUtils?.ConvertEpochToTimeInHours(applicationData?.auditDetails?.lastModifiedTime)} ${Digit.DateUtils?.getDayfromTimeStamp(applicationData?.auditDetails?.lastModifiedTime)}`,
+        date: `${Digit.DateUtils?.ConvertTimestampToDate(checkpoint.auditDetails.lastModifiedEpoch)} ${Digit.DateUtils?.ConvertEpochToTimeInHours(checkpoint.auditDetails.lastModifiedEpoch)} ${Digit.DateUtils?.getDayfromTimeStamp(checkpoint.auditDetails.lastModifiedEpoch)}`,
         // name: checkpoint?.assigner?.name,
         name: checkpoint?.assignes?.[0]?.name,
         // mobileNumber: checkpoint?.assigner?.mobileNumber,
         wfComment: checkpoint?.wfComment,
         mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
       };
+      
       return <TLCaption data={caption} />;
     }
   };
