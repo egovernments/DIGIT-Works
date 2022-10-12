@@ -359,8 +359,8 @@ export const WorksSearch = {
             title: "WORKS_AGGREEMENT_DETAILS",
             asSectionHeader: true,
             values: [
-                { title: "WORKS_AGENCY_NAME", value:  t("NA") },
-                { title: "WORKS_CONT_ID", value:  t("NA") },
+                { title: "WORKS_AGENCY_NAME", value: t("NA") },
+                { title: "WORKS_CONT_ID", value: loi?.contractorId || t("NA") },
                 { title: "WORKS_PREPARED_BY", value:  t("NA") },
                 { title: "WORKS_ADD_SECURITY_DP", value:loi?.securityDeposit || t("NA") },
                 { title: "WORKS_BANK_G", value: loi?.bankGuarantee || t("NA") },
