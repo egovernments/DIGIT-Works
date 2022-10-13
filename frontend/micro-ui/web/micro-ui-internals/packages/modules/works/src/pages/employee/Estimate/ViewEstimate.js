@@ -14,6 +14,8 @@ const ViewEstimate = (props) => {
     const menuRef = useRef();
     const [displayMenu, setDisplayMenu] = useState(false);
     const { tenantId, estimateNumber, department } = Digit.Hooks.useQueryParams(); 
+    
+    // to fetch a details of Estimate by using params t, tenantInfo, estimateNumber
     let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewEstimateDetails(t,tenantId,estimateNumber);
     const tenant = Digit.ULBService.getStateId();
 
@@ -126,6 +128,7 @@ const ViewEstimate = (props) => {
     }
     Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu );
 
+    // call update estimate API to update estimate form values and application staus during workflow action 
     const {
         isLoading: updatingApplication,
         isError: updateApplicationError,

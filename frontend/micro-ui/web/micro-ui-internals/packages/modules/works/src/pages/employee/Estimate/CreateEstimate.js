@@ -9,6 +9,7 @@ const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wo
 
 
 const CreateEstimate = (props) => {
+    // Call create estimate API by using requestInfo,estimate(payload,workflow)
     const { mutate: EstimateMutation } = Digit.Hooks.works.useCreateEstimate("WORKS");
     const [showToast, setShowToast] = useState(null);
     const {t}=useTranslation();

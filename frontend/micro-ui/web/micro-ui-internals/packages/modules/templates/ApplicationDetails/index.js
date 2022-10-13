@@ -119,6 +119,32 @@ const ApplicationDetails = (props) => {
     }
   }
 
+  const getEstimateResponseHeader = (action) => {
+
+    if(action?.includes("CHECK")){
+      return t("WORKS_ESTIMATE_RESPONSE_FORWARD_HEADER")
+    } else if (action?.includes("TECHNICALSANCATION")){
+     return  t("WORKS_ESTIMATE_RESPONSE_FORWARD_HEADER")
+    }else if (action?.includes("ADMINSANCTION")){
+      return  t("WORKS_ESTIMATE_RESPONSE_APPROVE_HEADER")
+    }else if(action?.includes("REJECT")){
+      return t("WORKS_ESTIMATE_RESPONSE_REJECT_HEADER")
+    }
+  }
+
+  const getEstimateResponseMessage = (action,updatedEstimate) => {
+  
+    if (action?.includes("CHECK")) {
+      return t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CHECK", { estimateNumber: updatedEstimate?.estimateNumber,Name:"Super",Designation:"SE",Department:"Health" })
+    } else if (action?.includes("TECHNICALSANCATION")) {
+      return t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CHECK", { estimateNumber: updatedEstimate?.estimateNumber,Name:"Super",Designation:"SE",Department:"Health" })
+    } else if (action?.includes("ADMINSANCTION")) {
+      return t("WORKS_ESTIMATE_RESPONSE_MESSAGE_APPROVE", { estimateNumber: updatedEstimate?.estimateNumber })
+    } else if (action?.includes("REJECT")) {
+      return t("WORKS_ESTIMATE_RESPONSE_MESSAGE_REJECT", { estimateNumber: updatedEstimate?.estimateNumber })
+    }
+  }
+
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
     const performedAction = data?.workflow?.action
     
@@ -157,6 +183,34 @@ const ApplicationDetails = (props) => {
                   redirectUrl: `/${window.contextPath}/employee/works/LOIInbox`,
                   code: "",
                   svg: "CreateEstimateIcon",
+                  isVisible:true
+                },
+              ],
+              responseData:data,
+              requestData:variables
+            }
+            history.push(`/${window.contextPath}/employee/works/response`, state)
+          }
+          if(data?.estimates?.[0]){
+            const updatedEstimate = data?.estimates?.[0]
+            const state = {
+              header:getEstimateResponseHeader(performedAction,updatedEstimate),
+              id: updatedEstimate?.estimateNumber,
+              info: t("WORKS_ESTIMATE_ID"),
+              message: getEstimateResponseMessage(performedAction,updatedEstimate),
+              links: [
+                {
+                  name: t("WORKS_CREATE_ESTIMATE"),
+                  redirectUrl: `/${window.contextPath}/employee/works/create-estimate`,
+                  code: "",
+                  svg: "CreateEstimateIcon",
+                  isVisible:false
+                },
+                {
+                  name: t("WORKS_GOTO_ESTIMATE_INBOX"),
+                  redirectUrl: `/${window.contextPath}/employee/works/inbox`,
+                  code: "",
+                  svg: "RefreshIcon",
                   isVisible:true
                 },
               ],
