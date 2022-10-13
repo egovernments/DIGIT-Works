@@ -1,4 +1,4 @@
-import { Dropdown } from '@egovernments/digit-ui-react-components';
+import { Dropdown,Loader } from '@egovernments/digit-ui-react-components';
 import React,{useState} from 'react'
 
 const configCheckModal = ({
@@ -13,7 +13,8 @@ const configCheckModal = ({
     setSelectedDesignation,
     department,
     selectedDept,
-    setSelectedDept
+    setSelectedDept,
+    approverLoading=false,
 }) => {
     
     let checkConditions = true
@@ -33,7 +34,7 @@ const configCheckModal = ({
                     {
                         label: !checkConditions ? null : t("WORKS_APPROVER_DEPT"),
                         placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
-                        // isMandatory: false,
+                        isMandatory: true,
                         type: "dropdown",
                         populators: !checkConditions ? null : (
                             <Dropdown
@@ -49,7 +50,7 @@ const configCheckModal = ({
                     {
                         label: !checkConditions ? null : t("WORKS_APPROVER_DESIGNATION"),
                         //placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
-                        // isMandatory: false,
+                        isMandatory: true,
                         type: "dropdown",
                         populators: !checkConditions ? null : (
                             <Dropdown
@@ -65,13 +66,13 @@ const configCheckModal = ({
                     {
                         label: !checkConditions ? null : t("WORKS_APPROVER"),
                         //placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
-                        // isMandatory: false,
+                        isMandatory: true,
                         type: "dropdown",
                         populators: !checkConditions ? null : (
-                            <Dropdown
+                            approverLoading ? <Loader/> : <Dropdown
                                 option={approvers}
                                 autoComplete="off"
-                                optionKey="name"
+                                optionKey="nameOfEmp"
                                 id="fieldInspector"
                                 select={setSelectedApprover}
                                 selected={selectedApprover}

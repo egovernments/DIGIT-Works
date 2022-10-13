@@ -105,24 +105,24 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
     ]
   );
 
-  const { data: approverData, isLoading: approverLoading } = Digit.Hooks.useEmployeeSearch(
-    tenantId,
-    {
-      roles: action?.assigneeRoles?.map?.((e) => ({ code: e })),
-      isActive: true,
-    },
-    { enabled: !action?.isTerminateState }
-  );
+  // const { data: approverData, isLoading: approverLoading } = Digit.Hooks.useEmployeeSearch(
+  //   tenantId,
+  //   {
+  //     roles: action?.assigneeRoles?.map?.((e) => ({ code: e })),
+  //     isActive: true,
+  //   },
+  //   { enabled: !action?.isTerminateState }
+  // );
     
   
   // const { isLoading: approverLoading, isError,isSuccess:approverSuccess, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ Designation: selectedDesignation?.code, Department: selectedDept?.code }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept?.code && selectedDesignation?.code) });
   // employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp.user.name)
 
   
-  useEffect(() => {
+  // useEffect(() => {
     
-    setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
-  }, [approverData]);
+  //   setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
+  // }, [approverData]);
 
   useEffect(() => {
     
@@ -135,6 +135,19 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
 
 
   
+  const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: action?.assigneeRoles?.toString(), isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: action?.action === "CHECK"});
+
+
+  employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
+
+  useEffect(() => {
+    setApprovers(employeeDatav1?.Employees)
+  }, [employeeDatav1])
+  
+  
+  // if (employeeDatav1?.Employees?.length > 0) {
+  //   setApprovers(employeeDatav1?.Employees)
+  // }
 
   useEffect(() => {
     
@@ -152,7 +165,8 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
           setSelectedDesignation,
           department,
           selectedDept,
-          setSelectedDept
+          setSelectedDept,
+          approverLoading
         })
       )
     }else if(action?.action?.includes("APPROVE") || action?.action?.includes("ADMINSANCTION")){
@@ -218,7 +232,7 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
       actionSaveOnSubmit={() => { }}
       formId="modal-action"
     >
-      {approverLoading ? (
+      {mdmsLoading ? (
         <Loader />
       ) : (
         <FormComposer
