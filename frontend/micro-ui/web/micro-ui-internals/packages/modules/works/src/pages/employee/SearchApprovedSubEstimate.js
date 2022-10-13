@@ -1,29 +1,45 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Fragment } from "react";
+import { Toast } from "@egovernments/digit-ui-react-components";
 
 
 const SearchApprovedSubEstimate = () => {
 
-    const [payload, setPayload] = useState({})
-
+    const [payload, setPayload] = useState(null)
+    const [showToast, setShowToast] = useState(null);
+    const {t} = useTranslation()
     const onSubmit = (_data) => {
 
+        //show toast error if no params are added
+        if (_data.estimateNumber === "" && _data.adminSanctionNumber === "" && !_data.department && !_data.estimateDetailNumber && !_data.fromProposalDate && !_data.toProposalDate) {
+            setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
+            setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
+            return
+        }
         
-        var fromDate = new Date(_data?.fromProposalDate);
-        fromDate?.setSeconds(fromDate?.getSeconds() - 19800);
-        var toDate = new Date(_data?.toProposalDate);
-        toDate?.setSeconds(toDate?.getSeconds() + 86399 - 19800);
+        var fromProposalDate = new Date(_data?.fromProposalDate);
+        fromProposalDate?.setSeconds(fromProposalDate?.getSeconds() - 19800);
+        var toProposalDate = new Date(_data?.toProposalDate);
+        toProposalDate?.setSeconds(toProposalDate?.getSeconds() + 86399 - 19800);
         const data = {
             ..._data,
-            ...(_data.toProposalDate ? { toDate: toDate?.getTime() } : {}),
-            ...(_data.fromProposalDate ? { fromDate: fromDate?.getTime() } : {}),
+            ...(_data.toProposalDate ? { toProposalDate: toProposalDate?.getTime() } : {}),
+            ...(_data.fromProposalDate ? { fromProposalDate: fromProposalDate?.getTime() } : {}),
         };
         setPayload(
             Object.keys(data)
                 .filter((k) => data[k])
                 .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {})
         );
+        // console.log(Object.keys(data)
+        //     .filter((k) => data[k])
+        //     .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {}))
+        
+            
         //make the payload according to the swagger
     }
 
@@ -124,9 +140,38 @@ const SearchApprovedSubEstimate = () => {
         ]
     }
 
+    const { isLoading: isLoadingEstimateSearch, isError: isErrorEstimateSearch, data: estimateSearchResponse, isSuccess: estimateSearchSuccess } = Digit.Hooks.works.useSearchApprovedEstimates({ tenantId: Digit.ULBService.getCurrentTenantId(), filters: { ...payload }, config: { enabled: !!payload }} );
+    
+    
+    const isResultsOk = () => {
+        return estimateSearchResponse?.length > 0 ? true : false;
+    }
+
+    const getData = () => {
+        if (estimateSearchResponse?.length == 0) {
+            return { display: "ES_COMMON_NO_DATA" }
+        } else if (estimateSearchResponse?.length > 0) {
+            return estimateSearchResponse
+        } else {
+            return [];
+        }
+    }
     const SearchApplicationApproved = Digit.ComponentRegistryService.getComponent("SearchApprovedSubEs");
     return (
-        <SearchApplicationApproved onSubmit={onSubmit} data={dummyResult.estimates} tenantId={"pb.jalandhar"} count={dummyResult.estimates.length} />
+        <Fragment>
+            {showToast && (
+                <Toast
+                error={showToast.error}
+                warning={showToast.warning}
+                label={t(showToast.label)}
+                onClose={() => {
+                    setShowToast(null);
+                }}
+                />
+            )}
+            <SearchApplicationApproved onSubmit={onSubmit} data={getData()} tenantId={"pb.jalandhar"} count={isLoadingEstimateSearch?.length} resultOk={isResultsOk()} isLoading={isLoadingEstimateSearch}/>
+      </Fragment>
+        
     )
 }
 

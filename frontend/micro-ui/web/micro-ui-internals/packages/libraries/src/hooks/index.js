@@ -239,6 +239,7 @@ import useBillAmendmentInbox from "./billAmendment/useInbox";
 import { usePrivacyContext } from "./usePrivacyContext";
 
 import useSearchWORKS from "./works/useSearchWORKS";
+import useSearchApprovedEstimates from "./works/useSearchApprovedEstimates";
 import useViewEstimateDetails from "./works/useViewEstimateDetails"
 import useViewLOIDetails from "./works/useViewLOIDetails"
 import useCreateLOI from "./works/useCreateLOI";
@@ -259,7 +260,8 @@ const works = {
   useSearchEstimate,
   useApplicationActionsLOI,
   useUpdateEstimate,
-  useApplicationActionsEstimate
+  useApplicationActionsEstimate,
+  useSearchApprovedEstimates
 }
 
 const pgr = {

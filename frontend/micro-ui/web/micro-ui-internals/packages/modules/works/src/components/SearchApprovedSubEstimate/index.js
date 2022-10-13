@@ -5,30 +5,22 @@ import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
+const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => {
     const { t } = useTranslation();
 
     const { register, control, handleSubmit, setValue, getValues, reset,formState } = useForm({
-        // defaultValues: {
-        //     "offset": 0,
-        //     "limit": 10,
-        //     "sortBy": "commencementDate",
-        //     "sortOrder": "DESC",
-        //     "estimateNumber": "12123",
-        //     "estiamteDetailNumber": "213131221",
-        //     "adminSanctionNumber": "12121",
-        //     "department": {
-        //         "name": "Engg"
-        //     },
-        //     "fromProposalDate": "2022-09-01",
-        //     "toProposalDate": "2022-09-02"
-        // }
+        defaultValues: {
+            "offset": 0,
+            "limit": 10,
+            "sortBy": "department",
+            "sortOrder": "DESC",
+        }
     });
 
     useEffect(() => {
         register("offset", 0)
         register("limit", 10)
-        register("sortBy", "createdTime")
+        register("sortBy", "department")
         register("sortOrder", "DESC")
     }, [register])
 
@@ -42,8 +34,8 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
                 return (
                     <div>
                         <span className="link">
-                            <Link to={`/digit-ui/employee/`}>
-                                {row.original["estimateNumber"]}
+                            <Link to={`view-estimate?tenantId=${row.original.tenantId}&estimateNumber=${row.original.estimateNumber}`}>
+                                {row.original["estimateDetailNumber"]}
                             </Link>
                         </span>
                     </div>
@@ -53,69 +45,70 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
         {
             Header: t("WORKS_NAME_OF_WORK"),
             disableSortBy: true,
-            accessor: (row) => GetCell(row.subject)
+            accessor: (row) => GetCell(row.name || t("ES_COMMON_null"))
         },
         {
             Header: t("WORKS_DEPARTMENT"),
             disableSortBy: true,
-            accessor: (row) => GetCell(row.department),
+            accessor: (row) => GetCell(t(`ES_COMMON_${row.department}`)),
         },
         {
             Header: t("WORKS_ADMIN_SANC_NO"),
             disableSortBy: true,
-            accessor: (row) => GetCell(row.adminSanctionNumber),
+            accessor: (row) => GetCell(row.adminSanctionNumber || t("ES_COMMON_null")),
         },
         {
             Header: t("WORKS_ADMIN_APP_DATE"),
             disableSortBy: true,
-            accessor: (row) => GetCell(row.adminSanctionNumber),
+            accessor: (row) => GetCell(Digit.DateUtils.ConvertEpochToDate(row.auditDetails.lastModifiedTime) ),
         },
         {
             Header: t("WORKS_FUND"),
             disableSortBy: true,
-            accessor: (row) => GetCell(row.fund ),
+            accessor: (row) => GetCell(t(`ES_COMMON_FUND_${row.fund}`) ),
         },
         {
             Header: t("WORKS_FUNCTION"),
-            accessor: (row) => GetCell(row.function),
+            accessor: (row) => GetCell(t(`ES_COMMON_${row.function}`)),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_BUDGET_HEAD"),
-            accessor: (row) => GetCell(row.budgetHead),
+            accessor: (row) => GetCell(`ES_COMMON_BUDGETHEAD_${row.budgetHead}`),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_CREATED_BY"),
-            accessor: (row) => GetCell(row.auditDetails.createdBy),
+            accessor: (row) => GetCell(row?.additionalDetails?.owner || t("ES_COMMON_null")),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_OWNER"),
-            accessor: (row) => GetCell("owner"),
+            accessor: (row) => GetCell(row?.additionalDetails?.owner || t("ES_COMMON_null")),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_STATUS"),
-            accessor: (row) => GetCell(row.estimateStatus),
+            accessor: (row) => GetCell(row.estimateStatus || t("ES_COMMON_null")),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_TOTAL_AMT"),
-            accessor: (row) => GetCell(row.totalAmount),
+            accessor: (row) => GetCell(row.amount || t("ES_COMMON_null")),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_ACTIONS"),
             Cell: ({ row }) => {
                 return (
-                    <div>
                         <span className="link">
                             <Link to={`/digit-ui/employee/`}>
-                                <span ><CreateLoiIcon  style={{ "margin": "auto" }} /> {"Create LOI"} </span>
+                                <div style={{"display":"flex","justifyContent":"space-between","alignItems":"center"}}>
+                                    <span ><CreateLoiIcon style={{ "margin": "auto" }} />  </span>
+                                    <p>{"Create LOI"}</p>
+                                </div>  
                             </Link>
                         </span>
-                    </div>
                 );
             },
             disableSortBy: true,
@@ -146,34 +139,51 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
     return (
         <>
             <Header styles={{ fontSize: "32px" }}>{t("WORKS_SEARCH_APPROVED_ESTIMATE")}</Header>
-            <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} >
+            <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchFields {...{ register, control, reset, t,formState }} />
             </SearchForm>
-            <div style={{"overflow-x":"scroll"}}>
-            <Table
-                t={t}
-                data={data}
-                totalRecords={count}
-                columns={columns}
-                getCellProps={(cellInfo) => {
-                    return {
-                        style: {
-                            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-                            padding: "20px 18px",
-                            fontSize: "16px"
-                        },
-                    };
-                }}
-                onPageSizeChange={onPageSizeChange}
-                currentPage={parseInt((getValues("offset") / getValues("limit")))}
-                onNextPage={nextPage}
-                onPrevPage={previousPage}
-                pageSizeLimit={getValues("limit")}
-                onSort={onSort}
-                disableSort={false}
-                sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
-            />
-            </div>
+            
+            {data?.display && !resultOk ? (
+                <Card style={{ marginTop: 20 }}>
+                    {t(data?.display)
+                        .split("\\n")
+                        .map((text, index) => (
+                            <p key={index} style={{ textAlign: "center" }}>
+                                {text}
+                            </p>
+                        ))}
+                </Card>
+            ) : resultOk?
+                    <div style={{ "overflow-x": "scroll" }}>
+                        <Table
+                            t={t}
+                            data={data}
+                            totalRecords={count}
+                            columns={columns}
+                            getCellProps={(cellInfo) => {
+                                
+                                return {
+                                    style: {
+                                        minWidth: cellInfo.column.Header === "Actions" ? "8rem" : "",
+                                        padding: "20px 12px",
+                                        fontSize: "16px"
+                                    },
+                                };
+                            }}
+                            onPageSizeChange={onPageSizeChange}
+                            currentPage={parseInt((getValues("offset") / getValues("limit")))}
+                            onNextPage={nextPage}
+                            onPrevPage={previousPage}
+                            pageSizeLimit={getValues("limit")}
+                            onSort={onSort}
+                            disableSort={false}
+                            sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
+                        />
+                    </div>
+            :null}
+
+            
+            
         </>
         
     )
