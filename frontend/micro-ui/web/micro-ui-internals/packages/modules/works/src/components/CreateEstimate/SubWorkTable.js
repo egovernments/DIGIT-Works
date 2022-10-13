@@ -77,7 +77,7 @@ const SubWorkTable = ({ t, register, errors, rows, setRows }) => {
                 <td style={getStyles(1)}>{i}</td>
                 <td style={getStyles(2)} ><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`estimateDetails.${row.key}.name`} inputRef={register({
                     required: true,
-                    pattern: /^[a-zA-Z0-9_.$@#\/]*$/
+                    pattern: /^[a-zA-Z0-9 _.$@#\/]*$/
                 })
                 }
 
