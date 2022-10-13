@@ -82,7 +82,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
     private void addEstimateDetails(ResultSet rs, Estimate estimate) throws SQLException {
         String estDetailsId = rs.getString("estDetailId");
-        String estimateId = rs.getString("estDetail.estimate_id");
+        String estimateId = rs.getString("estimate_id");
         if (StringUtils.isNotBlank(estimateId) && estimateId.equalsIgnoreCase(estimate.getId().toString())) {
             EstimateDetail estimateDetail = EstimateDetail.builder()
                     .id(UUID.fromString(estDetailsId))
