@@ -1,6 +1,7 @@
 export const createEstimatePayload =(data)=>{
     let estimateDetails= data?.estimateDetails.filter((item)=>item!==null)
     const tenantId = Digit.ULBService.getCurrentTenantId()
+    let Zone = tenantId === "pb.jalandhar" ? "JZN1" : "Z1"
     let payload={  
         "tenantId": tenantId,
         "status": "ACTIVE",
@@ -9,7 +10,7 @@ export const createEstimatePayload =(data)=>{
         "requirementNumber": data?.requirementNumber,
         "description": "Construct new schools",
         "department": data?.department?.code,
-        "location":`${tenantId}:ADMIN:${tenantId}:Z1:${data?.ward?.code}:${data?.location?.code}`,
+        "location":`${tenantId}:ADMIN:${tenantId}:${Zone}:${data?.ward?.code}:${data?.location?.code}`,
         "workCategory": "Engineering",
         "beneficiaryType": data?.beneficiaryType.code,
         "natureOfWork": data?.natureOfWork.code,
