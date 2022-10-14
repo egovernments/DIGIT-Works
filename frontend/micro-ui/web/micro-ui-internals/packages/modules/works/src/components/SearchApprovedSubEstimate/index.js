@@ -34,7 +34,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
                 return (
                     <div>
                         <span className="link">
-                            <Link to={`view-estimate?tenantId=${row.original.tenantId}&estimateNumber=${row.original.estimateNumber}`}>
+                            <Link to={`view-estimate?tenantId=${row.original.tenantId}&estimateNumber=${row.original.estimateNumber}&estimateStatus=Approved`}>
                                 {row.original["estimateDetailNumber"]}
                             </Link>
                         </span>
@@ -102,7 +102,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
             Cell: ({ row }) => {
                 return (
                         <span className="link">
-                            <Link to={`/digit-ui/employee/`}>
+                        <Link to={`create-loi?estimateNumber=${row.original.estimateNumber}&subEstimateNumber=${row.original.estimateDetailNumber}`}>
                                 <div style={{"display":"flex","justifyContent":"space-between","alignItems":"center"}}>
                                     <span ><CreateLoiIcon style={{ "margin": "auto" }} />  </span>
                                     <p>{"Create LOI"}</p>
@@ -115,11 +115,11 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
         }
     ]), [])
 
-    const onSort = useCallback((args) => {
-        if (args.length === 0) return
-        setValue("sortBy", args.id)
-        setValue("sortOrder", args.desc ? "DESC" : "ASC")
-    }, [])
+    // const onSort = useCallback((args) => {
+    //     if (args.length === 0) return
+    //     setValue("sortBy", args.id)
+    //     setValue("sortOrder", args.desc ? "DESC" : "ASC")
+    // }, [])
 
     function onPageSizeChange(e) {
         setValue("limit", Number(e.target.value))
@@ -128,11 +128,21 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
 
     function nextPage() {
         setValue("offset", getValues("offset") + getValues("limit"))
+        
         handleSubmit(onSubmit)()
     }
     function previousPage() {
+        
         setValue("offset", getValues("offset") - getValues("limit"))
+        
         handleSubmit(onSubmit)()
+    }
+
+
+    const isMobile = window.Digit.Utils.browser.isMobile();
+
+    if (isMobile) {
+        return <MobileSearchApplication {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }} />;
     }
 
 
@@ -142,23 +152,23 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
             <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchFields {...{ register, control, reset, t,formState }} />
             </SearchForm>
-            
-            {data?.display && !resultOk ? (
+
+            {isLoading?<Loader/>: data?.display && !resultOk ? (
                 <Card style={{ marginTop: 20 }}>
                     {t(data?.display)
-                        .split("\\n")
-                        .map((text, index) => (
+                        ?.split("\\n")
+                        ?.map((text, index) => (
                             <p key={index} style={{ textAlign: "center" }}>
                                 {text}
                             </p>
                         ))}
                 </Card>
             ) : resultOk?
-                    <div style={{ "overflow-x": "scroll" }}>
+                    <div style={{ "overflowX": "scroll" }}>
                         <Table
                             t={t}
                             data={data}
-                            totalRecords={count}
+                           // totalRecords={count}
                             columns={columns}
                             getCellProps={(cellInfo) => {
                                 
@@ -171,11 +181,11 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
                                 };
                             }}
                             onPageSizeChange={onPageSizeChange}
-                            currentPage={parseInt((getValues("offset") / getValues("limit")))}
+                            currentPage={getValues("offset") / getValues("limit")}
                             onNextPage={nextPage}
                             onPrevPage={previousPage}
                             pageSizeLimit={getValues("limit")}
-                            onSort={onSort}
+                            //onSort={onSort}
                             disableSort={false}
                             sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
                         />
