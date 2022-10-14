@@ -73,17 +73,19 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                     .subScheme(subScheme).subTypeOfWork(subtypeOfWork).typeOfWork(typeOfWork).tenantId(tenantId).department(department)
                     .workCategory(workCategory).auditDetails(auditDetails).build();
 
+            if (!estimateMap.containsKey(id)) {
+                estimateMap.put(id, estimate);
+            }
+            addEstimateDetails(rs, estimateMap.get(id));
 
-            addEstimateDetails(rs, estimate, estimateMap);
-            estimateMap.put(id, estimate);
         }
         return new ArrayList<>(estimateMap.values());
     }
 
-    private void addEstimateDetails(ResultSet rs, Estimate estimate, Map<String, Estimate> estimateMap) throws SQLException {
+    private void addEstimateDetails(ResultSet rs, Estimate estimate) throws SQLException {
         String estDetailsId = rs.getString("estDetailId");
-        if (StringUtils.isNotBlank(estDetailsId)) {
-
+        String estimateId = rs.getString("estimate_id");
+        if (StringUtils.isNotBlank(estimateId) && estimateId.equalsIgnoreCase(estimate.getId().toString())) {
             EstimateDetail estimateDetail = EstimateDetail.builder()
                     .id(UUID.fromString(estDetailsId))
                     .estimateDetailNumber(rs.getString("estimate_detail_number"))
@@ -94,14 +96,14 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             JsonNode additionalDetails = getAdditionalDetail("estDetailAdditional", rs);
             estimateDetail.setAdditionalDetails(additionalDetails);
 
-            if (estimateMap.containsKey(estDetailsId)) {
-                estimateMap.get(estDetailsId).getEstimateDetails().add(estimateDetail);
-            } else {
+            if (estimate.getEstimateDetails() == null || estimate.getEstimateDetails().isEmpty()) {
                 List<EstimateDetail> estimateDetailList = new LinkedList<>();
                 estimateDetailList.add(estimateDetail);
-
                 estimate.setEstimateDetails(estimateDetailList);
+            } else {
+                estimate.getEstimateDetails().add(estimateDetail);
             }
+
         }
     }
 
