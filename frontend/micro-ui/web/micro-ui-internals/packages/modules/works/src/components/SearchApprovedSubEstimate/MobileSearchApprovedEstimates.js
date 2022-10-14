@@ -87,7 +87,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
                     <Link to={`create-loi?estimateNumber=${row.estimateNumber}&subEstimateNumber=${row.estimateDetailNumber}`}>
                         <div style={{ "display": "flex", "justifyContent": "flex-start", "alignItems": "center" }}>
                             <span ><CreateLoiIcon style={{ "margin": "auto" }} />  </span>
-                            <p style={{"marginLeft":"0.5rem"}}>{"Create LOI"}</p>
+                            <p style={{ "marginLeft": "0.5rem" }}>{t("WORKS_Create_LOI")}</p>
                         </div>
                     </Link>
                 </span>

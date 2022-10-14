@@ -45,7 +45,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
         {
             Header: t("WORKS_NAME_OF_WORK"),
             disableSortBy: true,
-            accessor: (row) => GetCell(row.name || t("ES_COMMON_null"))
+            accessor: (row) => GetCell(row.name || t("ES_COMMON_NA"))
         },
         {
             Header: t("WORKS_DEPARTMENT"),
@@ -55,7 +55,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
         {
             Header: t("WORKS_ADMIN_SANC_NO"),
             disableSortBy: true,
-            accessor: (row) => GetCell(row.adminSanctionNumber || t("ES_COMMON_null")),
+            accessor: (row) => GetCell(row.adminSanctionNumber || t("ES_COMMON_NA")),
         },
         {
             Header: t("WORKS_ADMIN_APP_DATE"),
@@ -79,22 +79,22 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
         },
         {
             Header: t("WORKS_CREATED_BY"),
-            accessor: (row) => GetCell(row?.additionalDetails?.owner || t("ES_COMMON_null")),
+            accessor: (row) => GetCell(row?.additionalDetails?.owner || t("ES_COMMON_NA")),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_OWNER"),
-            accessor: (row) => GetCell(row?.additionalDetails?.owner || t("ES_COMMON_null")),
+            accessor: (row) => GetCell(row?.additionalDetails?.owner || t("ES_COMMON_NA")),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_STATUS"),
-            accessor: (row) => GetCell(row.estimateStatus || t("ES_COMMON_null")),
+            accessor: (row) => GetCell(row.estimateStatus || t("ES_COMMON_NA")),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_TOTAL_AMT"),
-            accessor: (row) => GetCell(row.amount || t("ES_COMMON_null")),
+            accessor: (row) => GetCell(row.amount || t("ES_COMMON_NA")),
             disableSortBy: true,
         },
         {
@@ -105,7 +105,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
                         <Link to={`create-loi?estimateNumber=${row.original.estimateNumber}&subEstimateNumber=${row.original.estimateDetailNumber}`}>
                                 <div style={{"display":"flex","justifyContent":"space-between","alignItems":"center"}}>
                                     <span ><CreateLoiIcon style={{ "margin": "auto" }} />  </span>
-                                    <p>{"Create LOI"}</p>
+                                    <p>{t("WORKS_Create_LOI")}</p>
                                 </div>  
                             </Link>
                         </span>

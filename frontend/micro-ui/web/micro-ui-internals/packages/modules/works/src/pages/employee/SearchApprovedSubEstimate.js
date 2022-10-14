@@ -7,6 +7,8 @@ import { Toast } from "@egovernments/digit-ui-react-components";
 
 const SearchApprovedSubEstimate = () => {
 
+    const tenantId = Digit.UserService.getUser()?.info?.tenantId;
+
     const [payload, setPayload] = useState(null)
     const [showToast, setShowToast] = useState(null);
     const {t} = useTranslation()
@@ -169,7 +171,7 @@ const SearchApprovedSubEstimate = () => {
                 }}
                 />
             )}
-            <SearchApplicationApproved onSubmit={onSubmit} data={getData()} tenantId={"pb.jalandhar"} count={isLoadingEstimateSearch?.length} resultOk={isResultsOk()} isLoading={isLoadingEstimateSearch}/>
+            <SearchApplicationApproved onSubmit={onSubmit} data={getData()} tenantId={tenantId} count={isLoadingEstimateSearch?.length} resultOk={isResultsOk()} isLoading={isLoadingEstimateSearch}/>
       </Fragment>
         
     )
