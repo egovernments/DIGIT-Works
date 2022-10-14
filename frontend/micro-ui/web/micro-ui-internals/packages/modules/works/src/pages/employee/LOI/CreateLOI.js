@@ -7,6 +7,7 @@ import { useHistory,useLocation } from 'react-router-dom';
 
 const CreateLOI = (props) => {
     
+    // call update LOI API to update LOI form values and application staus during workflow action 
     const {
         isLoading: updatingApplication,
         isError: updateApplicationError,
@@ -22,6 +23,7 @@ const CreateLOI = (props) => {
     //deleting the approver field so that it is not populated by default while editing loi upon rejection
     delete defaultFormValues?.app
     delete defaultFormValues?.uploads
+    // Call create LOI API by using requestInfo,letterOfIndent
     const { mutate: LOIMutation } = Digit.Hooks.works.useCreateLOI();
     //here fetch the update mutation as well for modify upon rejection use case
     const history = useHistory();

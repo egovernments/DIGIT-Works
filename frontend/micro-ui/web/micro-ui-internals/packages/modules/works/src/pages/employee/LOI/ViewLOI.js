@@ -17,6 +17,7 @@ const ViewLOI = (props) => {
     const tenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     
+    // to fetch a details of LOI by using params t, tenantInfo, loiNumber, subEstiamteNumber
     let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t,tenantId,loiNumber,subEstimateNumber,{enabled:!!(loiNumber && subEstimateNumber)});
     
     let workflowDetails = Digit.Hooks.useWorkflowDetails(
@@ -113,6 +114,7 @@ const ViewLOI = (props) => {
         setShowRejectModal(false)
     }
 
+    // call update LOI API to update LI form values and application staus during workflow action 
     const {
         isLoading: updatingApplication,
         isError: updateApplicationError,

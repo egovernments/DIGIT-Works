@@ -19,26 +19,32 @@ import {stringReplaceAll, convertEpochToDateDMY, mdmsData} from "./index";
   }
 
   const getLOIDetails=(application,t)=>{
-    const LOIDetails=application?.applicationDetails[0];
+    const LOIDetails=application?.applicationDetails[0]?.values;
+    let arr=[];
+    LOIDetails.map((item)=>arr.push({title:t(item.title),value:item.value}))
     return{
-      title:t(LOIDetails.title),
-      values:LOIDetails.values
+      title: t(application?.applicationDetails[0]?.title),
+      values: arr
     }
   }
 
   const getFinancialDetails=(application,t)=>{
-    const financialDetails=application?.applicationDetails[1];
+    const financialDetails=application?.applicationDetails[1]?.values;
+    let arr=[];
+    financialDetails.map((item)=>arr.push({title:t(item.title),value:item.value}))
     return{
-      title:t(financialDetails.title),
-      values:financialDetails.values
+      title:t(application?.applicationDetails[1]?.title),
+      values:arr
     }
   }
 
   const getAgreementDetails=(application,t)=>{
-    const agreementDetails=application?.applicationDetails[2];
+    const agreementDetails=application?.applicationDetails[2]?.values;
+    let arr=[];
+    agreementDetails.map((item)=>arr.push({title:t(item.title),value:item.value}))
     return{
-      title:t(agreementDetails.title),
-      values:agreementDetails.values
+      title:t(application?.applicationDetails[2]?.title),
+      values:arr
     }
   }
   

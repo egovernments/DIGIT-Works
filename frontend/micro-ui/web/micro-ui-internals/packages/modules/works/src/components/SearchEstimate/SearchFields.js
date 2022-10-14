@@ -43,7 +43,7 @@ const SearchFields = ({ register, control, reset, t }) => {
                         isRequired: false,
                         pattern: "^[a-zA-Z0-9-_\/]*$",
                         type: "text",
-                        title: t("ERR_INVALID_APPLICATION_NO"),
+                        title: t("ERR_INVALID_ESTIMATE_NO"),
                     })}
                 />
             </SearchField>
@@ -56,7 +56,7 @@ const SearchFields = ({ register, control, reset, t }) => {
                         isRequired: false,
                         pattern: "^[a-zA-Z0-9-_\/]*$",
                         type: "text",
-                        title: t("ERR_INVALID_APPLICATION_NO"),
+                        title: t("ERR_INVALID_ADM_SANC_NO"),
                     })}
                 />
             </SearchField>

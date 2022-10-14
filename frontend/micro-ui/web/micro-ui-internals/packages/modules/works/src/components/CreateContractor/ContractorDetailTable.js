@@ -8,16 +8,28 @@ const WORKSContractorTable = ({ t, register, errors, rows, setRows,Controller,co
       "works",
       [
           {
-              "name": "Department"
-          },
-          {
               "name":"ContractorClass"
           }
       ]
       );
       if(data?.works){
-        var { Department,ContractorClass } = data?.works
+        var { ContractorClass } = data?.works
       }
+      
+    const { isLoading:deptLoading, data:deptData } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        "common-masters",
+        [
+            {
+                "name": "Department"
+            }
+        ]
+        );
+
+        if (deptData?.[`common-masters`]) {
+            var { Department } = deptData?.[`common-masters`]
+        }
+
       const statusULB=[
         {
           name:"Active", code:'Active', active:true
