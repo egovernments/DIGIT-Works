@@ -43,16 +43,27 @@ const WORKSContractorTable = () => {
     "works",
     [
         {
-            "name": "Department"
-        },
-        {
             "name":"ContractorClass"
         }
     ]
     );
     if(data?.works){
-      var { Department,ContractorClass } = data?.works
+      var { ContractorClass } = data?.works
     }
+  const { isLoading:deptLoading, data:deptData } = Digit.Hooks.useCustomMDMS(
+    tenant,
+    "common-masters",
+    [
+        {
+            "name": "Department"
+        }
+    ]
+    );
+
+    if (deptData?.[`common-masters`]) {
+        var { Department } = deptData?.[`common-masters`]
+    }
+
   const getStyles = (index) => {
     let obj = {}
     switch (index) {

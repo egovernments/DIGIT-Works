@@ -28,21 +28,12 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
     });
 
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
-    const { isLoading: hookLoading, isError, error, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
-        null,
-        tenantId,
-        paginationParams,
-        null
-    );
+    
     const tenant = Digit.ULBService.getStateId()
-    const { isLoading:desgLoading, data:designationData } = Digit.Hooks.useCustomMDMS(
+    const { isLoading:desgLoading, data:designationData, isFetched:desgFetched } = Digit.Hooks.useCustomMDMS(
         tenant,
         "common-masters",
         [
-            {
-                "name": "Designation"
-            },
             {
                 "name": "Department"
             }
@@ -50,8 +41,9 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
         );
 
     if (designationData?.[`common-masters`]) {
-        var { Designation,Department } = designationData?.[`common-masters`]
+        var { Department } = designationData?.[`common-masters`]
     }
+    Department?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
 
     const getDate = () => {
         const today = new Date();
@@ -108,15 +100,25 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
 
 
     const { subTypes: SubTypeOfWork } = useWatch({ control: control, name: "typeOfWork", defaultValue: [] });
+    SubTypeOfWork?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
 
     if (data?.works) {
         var { EntrustmentMode, BeneficiaryType, NatureOfWork, TypeOfWork } = data?.works
     }
+    EntrustmentMode?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+    BeneficiaryType?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+    NatureOfWork?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+    TypeOfWork?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
 
     const { subSchemes: subScheme } = useWatch({ control: control, name: "scheme", defaultValue: [] });
     if (financeData?.finance) {
         var { Scheme, BudgetHead, Functions, Fund } = financeData?.finance
     }
+    Scheme?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.schemeCode}`)}))
+    BudgetHead?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_BUDGETHEAD_${item?.code}`)}))
+    Functions?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+    Fund?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_FUND_${item?.code}`)}))
+    subScheme?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
 
     const { isLoading: locationLoading, data: locationData, isFetched: locationDataFetched } = Digit.Hooks.useCustomMDMS(
         tenantId,
@@ -130,8 +132,10 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
     if (locationData?.[`egov-location`]) {
         var { children: ward } = locationData?.[`egov-location`]?.TenantBoundary[0]?.boundary?.children[0]
     }
+    ward?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
 
     const { children: location } = useWatch({ control: control, name: "ward", defaultValue: [] });
+    location?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
 
     const handleCreateClick = async () => {
         const subWorkFieldsToValidate = []
@@ -155,7 +159,8 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
     };
 
     return (
-        isFetched && <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
+        (isFetched && isFinanceDataFetched && desgFetched && locationDataFetched)?
+        <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
             <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_ESTIMATE")}</Header>
             <Card >
                 <CardSectionHeader style={{ "marginTop": "14px" }} >{t(`WORKS_ESTIMATE_DETAILS`)}</CardSectionHeader>
@@ -164,7 +169,6 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{`${t(`WORKS_DATE_PROPOSAL`)}:*`}</CardLabel>
                     <TextInput className={"field"} name="proposalDate" inputRef={register()} value={getDate()} disabled style={{ backgroundColor: "#E5E5E5" }} />
                 </LabelFieldPair>
-
 
                 {/* Modal */}
                 {showModal && <ProcessingModal
@@ -180,10 +184,6 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                     register={register}
                     handleSubmit={handleSubmit}
                     errors={errors}
-                    employeeData={employeeData}
-                    Department={Department}
-                    Designation={Designation}
-
                 />}
 
                 {/* DROPDOWN ROW */}
@@ -199,7 +199,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                     <Dropdown
                                         option={Department}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey="i18nKey"
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -240,7 +240,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                     <Dropdown
                                         option={ward}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -264,7 +264,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                     className={`field`}
                                     option={location}
                                     selected={props?.value}
-                                    optionKey={"name"}
+                                    optionKey={"i18nKey"}
                                     t={t}
                                     select={props?.onChange}
                                     onBlur={props.onBlur}
@@ -288,7 +288,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
 
                                         option={BeneficiaryType}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -313,7 +313,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
 
                                         option={NatureOfWork}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -336,7 +336,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                     <Dropdown
                                         option={TypeOfWork}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -358,7 +358,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                     className={`field`}
                                     option={SubTypeOfWork}
                                     selected={props?.value}
-                                    optionKey={"name"}
+                                    optionKey={"i18nKey"}
                                     t={t}
                                     select={props?.onChange}
                                     onBlur={props.onBlur}
@@ -379,7 +379,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                     <Dropdown
                                         option={EntrustmentMode}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -406,7 +406,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
 
                                         option={Fund}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -430,7 +430,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
 
                                         option={Functions}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -454,7 +454,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
 
                                         option={BudgetHead}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -477,7 +477,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                     <Dropdown
                                         option={Scheme}
                                         selected={props?.value}
-                                        optionKey={"schemeName"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -502,7 +502,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
 
                                         option={subScheme}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -564,7 +564,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                     <SubmitBar onSubmit={handleCreateClick} label={t("WORKS_CREATE_ESTIMATE")} />
                 </ActionBar>
             </Card>
-        </form>
+        </form> : <Loader/>
     )
 }
 
