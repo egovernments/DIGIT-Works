@@ -88,15 +88,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
         designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
     })
 
-    const locs = designationData?.["common-masters"]?.Designation?.map(designation=> {
-        const obj = {
-            "module":"rainmaker-works",
-            "code": `ES_COMMON_DESIGNATION_${designation?.name}`,
-            "message":designation.name,
-            "locale":"en_IN"
-        }
-        return obj
-    })
+    
     
 
     const { estimateNumber,subEstimateNumber } = Digit.Hooks.useQueryParams();
