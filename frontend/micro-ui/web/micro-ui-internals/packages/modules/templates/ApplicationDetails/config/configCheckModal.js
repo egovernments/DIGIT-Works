@@ -40,10 +40,11 @@ const configCheckModal = ({
                             <Dropdown
                                 option={department}
                                 autoComplete="off"
-                                optionKey="name"
+                                optionKey="i18nKey"
                                 id="sdf"
                                 select={setSelectedDept}
                                 selected={selectedDept}
+                                t={t}
                             />
                         ),
                     },
@@ -56,10 +57,11 @@ const configCheckModal = ({
                             <Dropdown
                                 option={designation}
                                 autoComplete="off"
-                                optionKey="name"
+                                optionKey="i18nKey"
                                 id="name2"
                                 select={setSelectedDesignation}
                                 selected={selectedDesignation}
+                                t={t}
                             />
                         ),
                     },

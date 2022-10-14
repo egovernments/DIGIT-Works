@@ -13,8 +13,9 @@ const ViewEstimate = (props) => {
     const { register, control, watch, handleSubmit, formState: { errors, ...rest }, reset, trigger, getValues} = useForm({defaultValues: {}, mode: "onSubmit"});
     const menuRef = useRef();
     const [displayMenu, setDisplayMenu] = useState(false);
-    const { tenantId, estimateNumber, department } = Digit.Hooks.useQueryParams(); 
-    
+
+    const { tenantId, estimateNumber, department,estimateStatus } = Digit.Hooks.useQueryParams(); 
+
     // to fetch a details of Estimate by using params t, tenantInfo, estimateNumber
     let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewEstimateDetails(t,tenantId,estimateNumber);
     const tenant = Digit.ULBService.getStateId();
@@ -147,7 +148,7 @@ const ViewEstimate = (props) => {
         <Fragment>
             <div className={"employee-main-application-details"}>
                 <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-                    <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_VIEW_ESTIMATE")}</Header>
+                    <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{estimateStatus?t("WORKS_VIEW_APPROVED_ESTIMATE"):t("WORKS_VIEW_ESTIMATE")}</Header>
                 </div>
                 {showModal && <ProcessingModal
                     t={t}

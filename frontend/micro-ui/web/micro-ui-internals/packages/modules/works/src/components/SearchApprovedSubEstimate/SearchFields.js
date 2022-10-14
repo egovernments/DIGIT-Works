@@ -23,48 +23,30 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
 
     
     const tenant = Digit.ULBService.getStateId();
-    const { isLoading, data:departmentOptions, isFetched } = Digit.Hooks.useCustomMDMS(
+    const { isLoading: desgLoading, data: departmentData } = Digit.Hooks.useCustomMDMS(
         tenant,
-        "works",
+        "common-masters",
         [
-            {
-                "name": "BeneficiaryType"
-            },
-            {
-                "name": "EntrustmentMode"
-            },
-            {
-                "name": "NatureOfWork"
-            },
-            {
-                "name": "TypeOfWork"
-            },
             {
                 "name": "Department"
             }
-        ],
-        {
-            select:(data) => {
-                
-                return data?.works?.Department
-            }
-        }
+        ]
     );
 
-    const deptOptions = [
-        {
-            "name":"Engg"
-        },
-        {
-            "name": "R&D"
-        }, {
-            "name": "Civil"
-        },
-    ]
+    if (departmentData?.[`common-masters`]) {
+        var { Department } = departmentData?.[`common-masters`]
+    }
+    
+    
+
+    Department?.map(dept=>{
+        dept.i18nKey = `ES_COMMON_${dept.code}`
+    })
+    
     
     let validation = {}
 
-    if (isLoading) {
+    if (desgLoading) {
         return <Loader />
     }
 
@@ -86,7 +68,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
             <SearchField>
                 <label>{t("WORKS_SUB_ESTIMATE_NO")}</label>
                 <TextInput
-                    name="estiamteDetailNumber"
+                    name="estimateDetailNumber"
                     inputRef={register()}
                 // {...(validation = {
                 //     isRequired: false,
@@ -119,8 +101,8 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
                             selected={props.value}
                             select={props.onChange}
                             //onBlur={props.onBlur}
-                            option={deptOptions}
-                            optionKey="name"
+                            option={Department}
+                            optionKey="i18nKey"
                             t={t}
                         />
                     )}
@@ -147,17 +129,16 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
                 <SubmitBar label={t("ACTION_TEST_SEARCH")} submit />
                 <p onClick={() => {
                     reset({
-                        // applicationType: "",
-                        // fromDate: "",
-                        // toDate: "",
-                        // connectionNumber: "",
-                        // applicationStatus: "",
-                        // applicationNumber: "",
-                        // tradeName: "",
-                        // offset: 0,
-                        // limit: 10,
-                        // sortBy: "commencementDate",
-                        // sortOrder: "DESC"
+                        "offset": 0,
+                        "limit": 10,
+                        "sortBy": "department",
+                        "sortOrder": "DESC",
+                        "toProposalDate":"",
+                        "fromProposalDate":"",
+                        "department":"",
+                        "adminSanctionNumber":"",
+                        "estimateDetailNumber":"",
+                        "estimateNumber":"",
                     });
                 }}>{t(`ES_COMMON_CLEAR_SEARCH`)}</p>
             </SearchField>

@@ -105,6 +105,13 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
     ]
   );
 
+  mdmsData?.["common-masters"]?.Designation?.map(designation => {
+    designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
+  })
+
+  mdmsData?.["common-masters"]?.Department?.map(department => {
+    department.i18nKey = `ES_COMMON_${department?.code}`
+  })
   // const { data: approverData, isLoading: approverLoading } = Digit.Hooks.useEmployeeSearch(
   //   tenantId,
   //   {

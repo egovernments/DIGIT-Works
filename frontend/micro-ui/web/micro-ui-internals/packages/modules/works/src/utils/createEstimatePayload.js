@@ -23,7 +23,11 @@ export const createEstimatePayload =(data)=>{
         "scheme": data?.scheme?.code,
         "subScheme": data?.scheme?.subSchemes[0]?.code,
         "estimateDetails": estimateDetails,
-        "additionalDetails": {}
+        "additionalDetails": {
+          formData:data,
+          createdBy: Digit.UserService.getUser()?.info?.name,
+          owner: Digit.UserService.getUser()?.info?.name
+        }
       }
       return payload;
 }

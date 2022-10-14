@@ -11,7 +11,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
     
     //state?.data?.applicationDetails?.processInstancesDetails?.[0]?.state?.state
     const handleCreateClick = async (e) => {
-
+        
         // const result = await trigger(["lor", "fileno", "dlperiod", "fromDate", "aggDate", "agencyname", "officerInChargedesig","officerIncharge","work"])
         const obj = {
             "workIdentificationNumber": "123423",
@@ -84,6 +84,11 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
         ]
     );
 
+    designationData?.["common-masters"]?.Designation?.map(designation=> {
+        designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
+    })
+
+    
     
 
     const { estimateNumber,subEstimateNumber } = Digit.Hooks.useQueryParams();
@@ -346,7 +351,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
                                     <Dropdown
                                         option={designationData?.["common-masters"]?.Designation}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
