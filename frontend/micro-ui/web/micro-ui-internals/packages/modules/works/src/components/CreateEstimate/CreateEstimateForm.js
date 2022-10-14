@@ -115,7 +115,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
         var { Scheme, BudgetHead, Functions, Fund } = financeData?.finance
     }
     Scheme?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.schemeCode}`)}))
-    BudgetHead?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+    BudgetHead?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_BUDGETHEAD_${item?.code}`)}))
     Functions?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
     Fund?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_FUND_${item?.code}`)}))
     subScheme?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
