@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react";
 import { Link } from "react-router-dom";
-import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast, CreateLoiIcon } from "@egovernments/digit-ui-react-components";
 import SearchFormFields from "./SearchFields";
 
 const MobileSearchApplication = ({ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit, businessService="" }) => {
@@ -55,62 +55,44 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
             MobileComponentDirectory({ currentlyActiveMobileModal, searchFormFieldsComponentProps, tenantId, ...props }),
         [currentlyActiveMobileModal]
     );
-    const replaceUnderscore = (str) => {
-        str = str.replace(/_/g, " ");
-        return str;
-    };
 
     const propsMobileInboxCards = useMemo(() => {
         if (data?.display) {
             return [];
         }
 
-        const getWaterSewerageData = (data) => {
-            if (
-                data?.applicationType == "NEW_WATER_CONNECTION" ||
-                data?.applicationType == "MODIFY_WATER_CONNECTION" ||
-                data?.applicationType == "DISCONNECT_WATER_CONNECTION"
-            ) {
-                return "WATER"
-            } else if (
-                data?.applicationType == "NEW_SEWERAGE_CONNECTION" ||
-                data?.applicationType == "MODIFY_SEWERAGE_CONNECTION" ||
-                data?.applicationType == "DISCONNECT_SEWERAGE_CONNECTION"
-            ) {
-                return "SEWERAGE"
-            }
-        }
-
-        const getFlowUrls = (applicationType) => {
-            let application = "application";
-            if (applicationType?.toUpperCase()?.includes("DISCONNECT")) {
-                application = "disconnection"
-            } else if (applicationType?.toUpperCase()?.includes("MODIFY")) {
-                application = "modify"
-            }
-            return application;
-        }
-
-        return data?.map((data) => ({
-            [t("WS_MYCONNECTIONS_CONSUMER_NO")]: data?.connectionNo || "NA",
-            //[t("WS_ACK_COMMON_APP_NO_LABEL")]: data?.applicationNo || "-",
-            [t("WS_ACK_COMMON_APP_NO_LABEL")]: (
+        return data?.map((row) => ({
+            [t("WORKS_SUB_ESTIMATE_NO")]: (
                 <div>
                     <span className="link">
-                        <Link
-                            to={`/digit-ui/employee/ws/${getFlowUrls(data?.applicationType)}-details?applicationNumber=${data?.applicationNo}&tenantId=${tenantId}&service=${getWaterSewerageData(data)
-                                }`}
-                        >
-                            {data?.applicationNo}
+                        <Link to={`view-estimate?tenantId=${row.tenantId}&estimateNumber=${row.estimateNumber}&estimateStatus=Approved`}>
+                            {row["estimateDetailNumber"]}
                         </Link>
                     </span>
                 </div>
             ),
-            [t("WS_APPLICATION_TYPE_LABEL")]: data?.applicationType ? replaceUnderscore(data.applicationType) : "-",
-            [t("WS_COMMON_TABLE_COL_OWN_NAME_LABEL")]: data?.ownerNames || "-",
-            [t("WS_COMMON_TABLE_COL_APPLICATION_STATUS_LABEL")]: t(data?.applicationStatus || "NA"),
-            [t("WS_COMMON_TABLE_COL_ADDRESS")]: data?.address || "-",
-            // [t("TL_LOCALIZATION_TRADE_OWNER_NAME")]: data?.tradeLicenseDetail?.owners?.map( o => o.name ). join(",") || "" ,
+            [t("WORKS_NAME_OF_WORK")]: row.name || t("ES_COMMON_null"),
+            [t("WORKS_DEPARTMENT")]: t(`ES_COMMON_${row.department}`),
+            [t("WORKS_ADMIN_SANC_NO")]: row.adminSanctionNumber || t("ES_COMMON_null"),
+            [t("WORKS_ADMIN_APP_DATE")]: Digit.DateUtils.ConvertEpochToDate(row.auditDetails.lastModifiedTime),
+            [t("WORKS_FUND")]: t(`ES_COMMON_FUND_${row.fund}`),
+            [t("WORKS_FUNCTION")]: t(`ES_COMMON_${row.function}`),
+            [t("WORKS_BUDGET_HEAD")]: t(`ES_COMMON_BUDGETHEAD_${row.budgetHead}`),
+            [t("WORKS_CREATED_BY")]: row?.additionalDetails?.owner || t("ES_COMMON_null"),
+            [t("WORKS_OWNER")]: row?.additionalDetails?.owner || t("ES_COMMON_null"),
+            [t("WORKS_STATUS")]: row.estimateStatus || t("ES_COMMON_null"),
+            [t("WORKS_TOTAL_AMT")]: row.amount || t("ES_COMMON_null"),
+            [t("WORKS_ACTIONS")]: (
+                <span className="link">
+                    <Link to={`create-loi?estimateNumber=${row.estimateNumber}&subEstimateNumber=${row.estimateDetailNumber}`}>
+                        <div style={{ "display": "flex", "justifyContent": "flex-start", "alignItems": "center" }}>
+                            <span ><CreateLoiIcon style={{ "margin": "auto" }} />  </span>
+                            <p style={{"marginLeft":"0.5rem"}}>{"Create LOI"}</p>
+                        </div>
+                    </Link>
+                </span>
+            )
+
         }));
     }, [data]);
 
@@ -153,8 +135,8 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
                 <DetailsCard
                     {...{
                         data: propsMobileInboxCards,
-                        linkPrefix: `/digit-ui/employee/ws/application-details/`,
-                        serviceRequestIdKey: t("WS_COMMON_TABLE_COL_APP_NO"),
+                        linkPrefix: `/${window.contextPath}/employee/works/view-estimate/`,
+                            serviceRequestIdKey: t("WORKS_SUB_ESTIMATE_NO"),
                     }}
                 />
             )}

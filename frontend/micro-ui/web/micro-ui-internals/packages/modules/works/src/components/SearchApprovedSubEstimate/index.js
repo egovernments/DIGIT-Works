@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-
+import MobileSearchApplication from "./MobileSearchApprovedEstimates";
 const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => {
     const { t } = useTranslation();
 
@@ -74,7 +74,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
         },
         {
             Header: t("WORKS_BUDGET_HEAD"),
-            accessor: (row) => GetCell(`ES_COMMON_BUDGETHEAD_${row.budgetHead}`),
+            accessor: (row) => GetCell(t(`ES_COMMON_BUDGETHEAD_${row.budgetHead}`)),
             disableSortBy: true,
         },
         {
