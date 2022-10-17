@@ -105,7 +105,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
                         <Link to={`create-loi?estimateNumber=${row.original.estimateNumber}&subEstimateNumber=${row.original.estimateDetailNumber}`}>
                                 <div style={{"display":"flex","justifyContent":"space-between","alignItems":"center"}}>
                                     <span ><CreateLoiIcon style={{ "margin": "auto" }} />  </span>
-                                    <p>{t("WORKS_CREATE_LOI_ACTION")}</p>
+                                    <p>{t("WORKS_Create_LOI")}</p>
                                 </div>  
                             </Link>
                         </span>

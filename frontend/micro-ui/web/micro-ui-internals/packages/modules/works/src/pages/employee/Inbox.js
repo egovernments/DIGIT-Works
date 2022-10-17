@@ -15,7 +15,8 @@ const Inbox = ({
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const [enableSarch, setEnableSearch] = useState(() => (isInbox ? {} : { enabled: false }));
-  
+  const [pageOffset, setPageOffset] = useState(initialStates?.pageOffset || 0);
+  const [pageSize, setPageSize] = useState(initialStates?.pageSize || 10);
   const [sortParams, setSortParams] = useState(initialStates?.sortParams || [{ id: "applicationDate", desc: false }]);
   const [setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState] = useState(false);
   const [searchParams, setSearchParams] = useState(() => {
@@ -157,14 +158,18 @@ const Inbox = ({
     return (
       <MobileInbox
         data={getData()}
-        // isLoading={hookLoading}
-        // searchFields={getSearchFields()}
+        isLoading={result?.isLoading}
+        isSearch={!isInbox}
+        // searchFields={searchFields}
         onFilterChange={handleFilterChange}
         onSearch={handleFilterChange}
-        onSort={handleSort}
+        onSort={onSort}
         parentRoute={parentRoute}
         searchParams={searchParams}
         sortParams={sortParams}
+        linkPrefix={`${parentRoute}/view-estimate/`}
+        // tableConfig={rest?.tableConfig?res?.tableConfig:TableConfig(t)["PT"]}
+        filterComponent={filterComponent}
       />
     );
   } else {

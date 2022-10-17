@@ -1,19 +1,23 @@
-import { Card, ShippingTruck } from "@egovernments/digit-ui-react-components";
+import { Card, PropertyHouse, ShippingTruck } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; 
 
 const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
   const { t } = useTranslation();
 
   const allLinks = [
     {
-      text: t("ES_TITLE_NEW_REGISTRATION"),
-      link: "/digit-ui/employee/pt/new-application",
+      text: t("WORKS_CREATE_ESTIMATE"),
+      link: `/works-ui/employee/works/create-estimate`,
+      businessService: "WORKS",
+      roles: [],
     },
     {
-      text: t("ES_TITILE_SEARCH_APPLICATION"),
-      link: `${linkPrefix}/search`,
+      text: t("WORKS_SEARCH_EST"),
+      link: `/works-ui/employee/works/search-Estimate`,
+      businessService: "WORKS",
+      roles: [],
     },
   ];
 
@@ -42,9 +46,9 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
   const GetLogo = () => (
     <div className="header">
       <span className="logo">
-        <ShippingTruck />
+        <PropertyHouse />
       </span>{" "}
-      <span className="text">{t("ES_TITLE_PROPERTY_TAX")}</span>
+      <span className="text">{t("WORKS_MGMT")}</span>
     </div>
   );
 

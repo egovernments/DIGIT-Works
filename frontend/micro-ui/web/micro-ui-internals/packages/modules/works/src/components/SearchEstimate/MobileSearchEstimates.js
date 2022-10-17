@@ -62,19 +62,17 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
         }
 
         return data?.map((row) => ({
-            [t("WORKS_SUB_ESTIMATE_NO")]: (
+            [t("WORKS_ESTIMATE_NO")]: (
                 <div>
                     <span className="link">
-                        <Link to={`view-estimate?tenantId=${row.tenantId}&estimateNumber=${row.estimateNumber}&estimateStatus=Approved`}>
-                            {row["estimateDetailNumber"]}
+                        <Link to={`view-estimate?tenantId=${row?.tenantId}&estimateNumber=${row?.estimateNumber}&department=${row?.department}`}>
+                            {row?.estimateNumber || "NA"}
                         </Link>
                     </span>
-                </div>
+                </div> 
             ),
-            [t("WORKS_NAME_OF_WORK")]: row.name || t("ES_COMMON_NA"),
             [t("WORKS_DEPARTMENT")]: t(`ES_COMMON_${row.department}`),
             [t("WORKS_ADMIN_SANC_NO")]: row.adminSanctionNumber || t("ES_COMMON_NA"),
-            [t("WORKS_ADMIN_APP_DATE")]: Digit.DateUtils.ConvertEpochToDate(row.auditDetails.lastModifiedTime),
             [t("WORKS_FUND")]: t(`ES_COMMON_FUND_${row.fund}`),
             [t("WORKS_FUNCTION")]: t(`ES_COMMON_${row.function}`),
             [t("WORKS_BUDGET_HEAD")]: t(`ES_COMMON_BUDGETHEAD_${row.budgetHead}`),
@@ -82,20 +80,8 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
             [t("WORKS_OWNER")]: row?.additionalDetails?.owner || t("ES_COMMON_NA"),
             [t("WORKS_STATUS")]: row.estimateStatus || t("ES_COMMON_NA"),
             [t("WORKS_TOTAL_AMT")]: row.amount || t("ES_COMMON_NA"),
-            [t("WORKS_ACTIONS")]: (
-                <span className="link">
-                    <Link to={`create-loi?estimateNumber=${row.estimateNumber}&subEstimateNumber=${row.estimateDetailNumber}`}>
-                        <div style={{ "display": "flex", "justifyContent": "flex-start", "alignItems": "center" }}>
-                            <span ><CreateLoiIcon style={{ "margin": "auto" }} />  </span>
-                            <p style={{ "marginLeft": "0.5rem" }}>{t("WORKS_Create_LOI")}</p>
-                        </div>
-                    </Link>
-                </span>
-            )
-
         }));
     }, [data]);
-
     return (
         <React.Fragment>
             <div className="searchBox">

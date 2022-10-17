@@ -1,5 +1,5 @@
 import React from "react";
-import { TextInput, DatePicker, SubmitBar, FilterIcon, RefreshIcon } from "@egovernments/digit-ui-react-components";
+import { TextInput, DatePicker, SubmitBar, FilterIcon, RefreshIcon, CloseSvg } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { Controller, useForm} from 'react-hook-form'
@@ -37,6 +37,11 @@ const LOIInboxFilter = ({ onFilterChange, ...props }) => {
             {props.type === "desktop" && (
               <span className="clear-search" onClick={clearAll} style={{ border: "1px solid #e0e0e0", padding: "6px" }}>
                 <RefreshIcon/>
+              </span>
+            )}
+            {props.type === "mobile" && (
+              <span onClick={props.Close}>
+                <CloseSvg />
               </span>
             )}
           </div>

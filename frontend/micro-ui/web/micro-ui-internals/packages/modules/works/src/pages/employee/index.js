@@ -118,10 +118,9 @@ const App = ({ path }) => {
         return { marginLeft: "4px" }
 
       case (screenType?.includes("/search")):
-        return { marginLeft: "-7px" }
-
+        return { marginLeft: "7px" }
       case (screenType?.includes("/inbox") || screenType?.includes("/LOIInbox")):
-        return { marginLeft: "-5px" }
+        return { marginLeft: "5px" }
 
       default:
         return { marginLeft: "8px" }
