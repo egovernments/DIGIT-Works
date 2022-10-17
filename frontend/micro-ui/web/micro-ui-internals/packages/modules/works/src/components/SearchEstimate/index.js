@@ -4,8 +4,9 @@ import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import MobileSearchApplication from "./MobileSearchApprovedEstimates";
 
-const SearchEstimateApplication = ({onSubmit,data,resultOk,isLoading}) => {
+const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoading}) => {
 
     const { t } = useTranslation(); 
     const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
@@ -14,7 +15,6 @@ const SearchEstimateApplication = ({onSubmit,data,resultOk,isLoading}) => {
         limit: 10,
         sortBy: "department",
         sortOrder: "DESC",
-        // isConnectionSearch: true,
       },
     });
   
@@ -116,7 +116,11 @@ const SearchEstimateApplication = ({onSubmit,data,resultOk,isLoading}) => {
       ],
       []
     );
-  
+    const isMobile = window.Digit.Utils.browser.isMobile();
+    if (isMobile) {
+        return <MobileSearchApplication {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }} />;
+    }
+   
   return (
     <>
           <Header styles={{ fontSize: "32px" }}>{t("WORKS_SEARCH_ESTIMATES")}</Header>

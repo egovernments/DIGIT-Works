@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
 import { Card, DetailsCard, Loader, PopUp, SearchAction } from "@egovernments/digit-ui-react-components";
 import { FilterAction } from "@egovernments/digit-ui-react-components";
-import SearchApplication from "./search";
-import SortBy from "./SortBy";
-
+import SearchApplication from "./SearchApplication";
+import { Link } from "react-router-dom";
 export const ApplicationCard = ({
   t,
   data,
@@ -45,34 +43,29 @@ export const ApplicationCard = ({
   if (isLoading) {
     return <Loader />;
   }
-
   const propsMobileInboxCards = useMemo(() => {
     if (data?.display) {
         return [];
     }
 
     return data?.map((row) => ({
-        [t("WORKS_ESTIMATE_NO")]: (
+        [t("WORKS_LOI_ID")]: (
             <div>
                 <span className="link">
-                    <Link to={`view-estimate?tenantId=${row?.tenantId}&estimateNumber=${row?.estimateNumber}`}>
-                        {row?.estimateNumber || t("ES_COMMON_null")}
+                    <Link to={`view-loi/?loiNumber=LI/2022-23/10/000083&subEstimateNumber=EP/2022-23/09/000092/000068`}>
+                        {row?.LOIId || "NA"}
                     </Link>
                 </span>
             </div> 
         ),
-        [t("WORKS_DEPARTMENT")]:t(`ES_COMMON_${row?.department}`) || t("ES_COMMON_null"),
-        [t("WORKS_ADMIN_SANCTION_NUMBER")]: row.adminSanctionNumber || t("ES_COMMON_null"),
-        [t("WORKS_FUND")]: t(`ES_COMMON_FUND_${row?.fund}`) || t("ES_COMMON_null"),
-        [t("WORKS_FUNCTION")]: t(`ES_COMMON_${row?.function}`) || t("ES_COMMON_null"),
-        [t("WORKS_BUDGET_HEAD")]: t(`ES_COMMON_${row?.budgetHead}`) || t("ES_COMMON_null"),
-        [t("WORKS_CREATED_BY")]: row?.createdBy || t("ES_COMMON_null"),
-        [t("WORKS_OWNER")]: row?.owner || t("ES_COMMON_null"),
-        [t("WORKS_STATUS")]: row?.status || t("ES_COMMON_null"),
-        [t("WORKS_TOTAL_AMOUNT")]: row?.totalAmount || t("ES_COMMON_null"),
+        [t("WORKS_LOI_DATE")]: row.LOIDate || t("ES_COMMON_null"),
+        [t("WORKS_ABSTRACT_ESTIMATE_NO")]: row.EstimateNumber || t("ES_COMMON_null"),
+        [t("WORKS_NAME_OF_WORK")]: row.NameOfWork || t("ES_COMMON_null"),
+        [t("WORKS_CONTRACTOR_NAME")]: row.ContractorName || t("ES_COMMON_null"),
+        [t("WORKS_AGREEMENT_AMT")]: row?.AgrementAmount || t("ES_COMMON_null"),
+        [t("WORKS_SLA")]: row?.SLA || t("ES_COMMON_null"),
     }));
-  }, [data]);
-  
+}, [data]);
   let result;
   if (!data || data?.length === 0) {
     result = (
@@ -135,11 +128,11 @@ export const ApplicationCard = ({
               {<FilterComp onFilterChange={onSearchFilter} Close={handlePopupClose} type="mobile" searchParams={searchParams} />}
             </div>
           )}
-          {type === "SORT" && (
+          {/* {type === "SORT" && (
             <div className="popup-module">
               {<SortBy type="mobile" sortParams={sortParams} onClose={handlePopupClose} onSort={onSort} />}
             </div>
-          )}
+          )} */}
           {type === "SEARCH" && (
             <div className="popup-module">
               <SearchApplication

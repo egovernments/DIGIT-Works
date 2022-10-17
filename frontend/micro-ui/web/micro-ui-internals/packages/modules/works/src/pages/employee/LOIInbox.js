@@ -4,10 +4,11 @@ import { Header } from "@egovernments/digit-ui-react-components";
 
 import LOIDesktopInbox from "../../components/LOIDesktopInbox";
 import LOIMobileInbox from "../../components/LOIMobileInbox";
+import { useForm } from "react-hook-form";
 
 const LOIInbox = ({
   parentRoute,
-  businessService = "LOI",
+  businessService = "WORKS",
   initialStates = {},
   filterComponent,
   isInbox
@@ -20,34 +21,52 @@ const LOIInbox = ({
   const [sortParams, setSortParams] = useState(initialStates?.sortParams || [{ id: "applicationDate", desc: false }]);
   const [setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState] = useState(false);
   const [searchParams, setSearchParams] = useState(() => {
-    return initialStates?.searchParams || {};
+    return initialStates?.searchParams || {
+      offset: 0,
+      limit: 10,
+      sortBy: "department",
+      sortOrder: "DESC",
+    }
   });
-  let isMobile = window.Digit.Utils.browser.isMobile();
-  let paginationParams = isMobile
-    ? { limit: 100, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
-    : { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
+  const [payload, setPayload] = useState({});
 
-  const { isFetching, isLoading: hookLoading, searchResponseKey, searchFields, ...rest } = Digit.Hooks.tl.useInbox({
-    tenantId,
-    filters: { ...searchParams, ...paginationParams, sortParams },
-    config: {},
+  let isMobile = window.Digit.Utils.browser.isMobile();
+  
+  const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
+    defaultValues: {
+      offset: 0, 
+      limit: 10,
+      sortBy: "department",
+      sortOrder: "DESC",
+    },
   });
-  const data = [{ LOIId: "1136/TO/DB/FLOOD/10-11", LOIDate: "08/09/2010", EstimateNumber: "EST/KRPN/1136", NameOfWork: "Providing CC Drain in Birla Gaddah", ContractorName: "S.A.Basha", AgrementAmount: "3553600.00", SLA: "15Days" },
-  { LOIId: "1136/TO/DB/FLOOD/10-11", LOIDate: "08/09/2010", EstimateNumber: "EST/KRPN/1136", NameOfWork: "Providing CC Drain in Birla Gaddah", ContractorName: "S.A.Basha", AgrementAmount: "3553600.00", SLA: "15Days", },
-  { LOIId: "1136/TO/DB/FLOOD/10-11", LOIDate: "08/09/2010", EstimateNumber: "EST/KRPN/1136", NameOfWork: "Providing CC Drain in Birla Gaddah", ContractorName: "S.A.Basha", AgrementAmount: "3553600.00", SLA: "15Days", },
-  { LOIId: "1136/TO/DB/FLOOD/10-11", LOIDate: "08/09/2010", EstimateNumber: "EST/KRPN/1136", NameOfWork: "Providing CC Drain in Birla Gaddah", ContractorName: "S.A.Basha", AgrementAmount: "3553600.00", SLA: "15Days", }]
 
   useEffect(() => {
-    setPageOffset(0);
-  }, [searchParams]);
+    register("offset", 0);
+    register("limit", 10);
+    register("sortBy", "department");
+    register("sortOrder", "DESC");
+  }, [register]);
 
-  const fetchNextPage = () => {
-    setPageOffset((prevState) => prevState + pageSize);
-  };
+  const onSort = useCallback((args) => {
+    if (args.length === 0) return;
+    setValue("sortBy", args.id);
+    setValue("sortOrder", args.desc ? "DESC" : "ASC");
+  }, []);
 
-  const fetchPrevPage = () => {
-    setPageOffset((prevState) => prevState - pageSize);
-  };
+  const onPageSizeChange=(e)=> {
+    setValue("limit", Number(e.target.value));
+    handleSubmit(handleFilterChange)();
+  }
+
+  const nextPage=()=> {
+    setValue("offset", getValues("offset") + getValues("limit"));
+    handleSubmit(handleFilterChange)();
+  }
+  const previousPage=()=> {
+    setValue("offset", getValues("offset") - getValues("limit"));
+    handleSubmit(handleFilterChange)();
+  }
 
   const handleFilterChange = (filterParam) => {
     let keys_to_delete = filterParam?.delete;
@@ -57,87 +76,97 @@ const LOIInbox = ({
     } else {
       _new = { ...searchParams, ...filterParam };
     }
-    // let _new = { ...searchParams, ...filterParam };
-    // if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
-    // delete filterParam.delete;
-    if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
-    delete _new?.delete;
-    delete filterParam?.delete;
+    setPayload(
+      Object.keys(_new)
+      .filter((k) => _new[k])
+      .reduce((acc, key) => ({ ...acc, [key]: typeof _new[key] === "object" ? _new[key].code : _new[key] }), {})
+      );
+
     setSetSearchFieldsBackToOriginalState(true);
     setSearchParams({ ..._new });
     setEnableSearch({ enabled: true });
   };
-  const handleSort = useCallback((args) => {
-    if (args.length === 0) return;
-    setSortParams(args);
-  }, []);
 
-  const handlePageSizeChange = (e) => {
-    setPageSize(Number(e.target.value));
+  const config = {
+    enabled: !!(payload && Object.keys(payload).length > 0),
   };
-  const getSearchFields = () => {
-    return [
-      {
-        label: t("TL_HOME_SEARCH_RESULTS_APP_NO_LABEL"),
-        name: "applicationNumber",
-      },
-      {
-        label: t("CORE_COMMON_MOBILE_NUMBER"),
-        name: "mobileNumber",
-        maxlength: 10,
 
-        pattern: Digit.Utils.getPattern("MobileNo"),
+  //API Call useEstimateInbox
+  // const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
+  const result = {
+    status: "success",
+    totalCount:10,
+    isSuccess: true,
+    isLoading: false,
+    data:{
+      estimates: [{ LOIId: "1136/TO/DB/FLOOD/10-11", LOIDate: "08/09/2010", EstimateNumber: "EST/KRPN/1136", NameOfWork: "Providing CC Drain in Birla Gaddah", ContractorName: "S.A.Basha", AgrementAmount: "3553600.00", SLA: "15Days" },
+      { LOIId: "1136/TO/DB/FLOOD/10-11", LOIDate: "08/09/2010", EstimateNumber: "EST/KRPN/1136", NameOfWork: "Providing CC Drain in Birla Gaddah", ContractorName: "S.A.Basha", AgrementAmount: "3553600.00", SLA: "15Days", },
+      { LOIId: "1136/TO/DB/FLOOD/10-11", LOIDate: "08/09/2010", EstimateNumber: "EST/KRPN/1136", NameOfWork: "Providing CC Drain in Birla Gaddah", ContractorName: "S.A.Basha", AgrementAmount: "3553600.00", SLA: "15Days", },
+      { LOIId: "1136/TO/DB/FLOOD/10-11", LOIDate: "08/09/2010", EstimateNumber: "EST/KRPN/1136", NameOfWork: "Providing CC Drain in Birla Gaddah", ContractorName: "S.A.Basha", AgrementAmount: "3553600.00", SLA: "15Days", }]    
+    }
+  }
 
-        type: "mobileNumber",
+  const getData = () => {
+    if (result?.data?.estimates?.length == 0 ) {
+      return { display: "ES_COMMON_NO_DATA" }
+    } else if (result?.data?.estimates?.length > 0) {
+      return result?.data?.estimates
+    } else {
+      return [];
+    }
+  }
 
-        title: t("ES_SEARCH_APPLICATION_MOBILE_INVALID"),
-        componentInFront: "+91",
-      },
-    ];
-  };
+  const isResultsOk = () => {
+    return result?.data?.estimates?.length > 0 ? true : false;
+  }
 
   if (isMobile) {
     return (
       <LOIMobileInbox
-        data={data}
-        isLoading={hookLoading}
-        searchFields={getSearchFields()}
-        onFilterChange={handleFilterChange}
-        onSearch={handleFilterChange}
-        onSort={handleSort}
-        parentRoute={parentRoute}
-        searchParams={searchParams}
-        sortParams={sortParams}
+      data={getData()}
+      isLoading={result?.isLoading}
+      isSearch={!isInbox}
+      // searchFields={searchFields}
+      onFilterChange={handleFilterChange}
+      onSearch={handleFilterChange}
+      onSort={onSort}
+      parentRoute={parentRoute}
+      searchParams={searchParams}
+      sortParams={sortParams}
+      linkPrefix={`${parentRoute}/application-details/`}
+      // tableConfig={rest?.tableConfig?res?.tableConfig:TableConfig(t)["PT"]}
+      filterComponent={filterComponent}
       />
     );
   } else {
     return (
       <div>
-        {isInbox && <Header>{t("WORKS_LOI_INBOX")}{data?.totalCount ? <p className="inbox-count">{data?.totalCount}</p> : null}</Header>}
+        {isInbox && <Header>{t("WORKS_LOI_INBOX")}{result?.totalCount ? <p className="inbox-count">{result?.totalCount}</p> : null}</Header>}
 
         <LOIDesktopInbox
           businessService={businessService}
-          data={data}
-          tableConfig={rest?.tableConfig}
-          isLoading={hookLoading}
+          data={getData()}
+          // tableConfig={tableConfig}
+          resultOk={isResultsOk()}
+          isLoading={result?.isLoading}
           defaultSearchParams={initialStates.searchParams}
           isSearch={!isInbox}
           onFilterChange={handleFilterChange}
-          searchFields={getSearchFields()}
+          // searchFields={getSearchFields()}
           setSearchFieldsBackToOriginalState={setSearchFieldsBackToOriginalState}
           setSetSearchFieldsBackToOriginalState={setSetSearchFieldsBackToOriginalState}
           onSearch={handleFilterChange}
-          onSort={handleSort}
-          onNextPage={fetchNextPage}
-          onPrevPage={fetchPrevPage}
-          currentPage={Math.floor(pageOffset / pageSize)}
-          pageSizeLimit={pageSize}
+          onSort={onSort}
+          onNextPage={nextPage}
+          onPrevPage={previousPage}
+          currentPage={getValues("offset") / getValues("limit")}
+          pageSizeLimit={getValues("limit")}
           disableSort={false}
-          onPageSizeChange={handlePageSizeChange}
+          onPageSizeChange={onPageSizeChange}
           parentRoute={parentRoute}
           searchParams={searchParams}
           sortParams={sortParams}
-          totalRecords={Number(data?.totalCount)}
+          totalRecords={Number(result?.data?.totalCount)}
           filterComponent={filterComponent}
         />
       </div>

@@ -23,9 +23,12 @@ const Filter = ({ onFilterChange, ...props }) => {
       }
   ]
   );
-  if(data?.works){
+  if(data?.finance){
     var { Functions,BudgetHead,Fund } = data?.finance
   }
+  BudgetHead?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+  Functions?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+  Fund?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_FUND_${item?.code}`)}))
 
   const applyLocalFilters = () => {
     let form=getValues();
@@ -38,12 +41,19 @@ const Filter = ({ onFilterChange, ...props }) => {
   };
 
   const clearAll = () => {
-    reset();
+    reset(
+      {
+        estimateFromDate:"",
+        estimateToDate:"",
+        fund:"",
+        function:"",
+        budgetHead:"",
+      });
   };
 
   return (
     <React.Fragment> 
-      <div className="filter">
+      {isFetched && <div className="filter">
         <div className="filter-card">
           <div className="heading" style={{ alignItems: "center" }}>
             <div className="filter-label" style={{ display: "flex", alignItems: "center" }}>
@@ -56,6 +66,11 @@ const Filter = ({ onFilterChange, ...props }) => {
             {props.type === "desktop" && (
               <span className="clear-search" onClick={clearAll} style={{ border: "1px solid #e0e0e0", padding: "6px" }}>
                 <RefreshIcon/>
+              </span>
+            )}
+            {props.type === "mobile" && (
+              <span onClick={props.Close}>
+                <CloseSvg />
               </span>
             )}
           </div>
@@ -109,7 +124,7 @@ const Filter = ({ onFilterChange, ...props }) => {
                     <Dropdown
                       option={Fund}
                       selected={props?.value}
-                      optionKey={"name"}
+                      optionKey={"i18nKey"}
                       t={t}
                       select={props?.onChange}
                       onBlur={props.onBlur}
@@ -131,7 +146,7 @@ const Filter = ({ onFilterChange, ...props }) => {
                     <Dropdown
                       option={Functions}
                       selected={props?.value}
-                      optionKey={"name"}
+                      optionKey={"i18nKey"}
                       t={t}
                       select={props?.onChange}
                       onBlur={props.onBlur}
@@ -153,7 +168,7 @@ const Filter = ({ onFilterChange, ...props }) => {
                     <Dropdown
                       option={BudgetHead}
                       selected={props?.value}
-                      optionKey={"name"}
+                      optionKey={"i18nKey"}
                       t={t}
                       select={props?.onChange}
                       onBlur={props.onBlur}
@@ -167,7 +182,7 @@ const Filter = ({ onFilterChange, ...props }) => {
             </div>
           </div>
         </div>
-      </div>
+      </div>}
     </React.Fragment>
   );
 };
