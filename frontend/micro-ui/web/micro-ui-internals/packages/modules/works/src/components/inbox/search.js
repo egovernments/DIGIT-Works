@@ -12,17 +12,27 @@ const SearchApplication = ({ onSearch }) => {
     "works",
     [
         {
-            "name": "Department"
-        },
-        {
             "name":"TypeOfWork"
         }
     ]
     );
   if(data?.works){
-    var { Department,TypeOfWork } = data?.works
+    var { TypeOfWork } = data?.works
   }
 
+  const { isLoading:desgLoading, data:departmentData } = Digit.Hooks.useCustomMDMS(
+    tenant,
+    "common-masters",
+    [
+        {
+            "name": "Department"
+        }
+    ]
+    );
+
+  if (departmentData?.[`common-masters`]) {
+      var { Department } = departmentData?.[`common-masters`]
+  }
   const onSubmitInput = (data) => {
     for(var key in data){
       if(data[key]=== undefined || data[key]===""){

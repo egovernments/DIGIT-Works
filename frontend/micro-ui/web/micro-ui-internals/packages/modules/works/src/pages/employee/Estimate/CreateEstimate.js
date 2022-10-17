@@ -9,20 +9,27 @@ const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wo
 
 
 const CreateEstimate = (props) => {
+    // Call create estimate API by using requestInfo,estimate(payload,workflow)
     const { mutate: EstimateMutation } = Digit.Hooks.works.useCreateEstimate("WORKS");
     const [showToast, setShowToast] = useState(null);
     const {t}=useTranslation();
     const history=useHistory();
     const onFormSubmit = async (_data) => {
         const payload = await createEstimatePayload(_data);
-        const estimate = {
-            estimate: payload, workflow: {
-                "action": "CREATE",
-                "comment": _data?.comments,
-                "assignees": [
-                    // _data?.app?.uuid
-                ]
+        const workflow =  {
+            "action": "CREATE",
+            "comment": _data?.comments,
+            "assignees": [
+                _data?.app?.uuid
+            ]
+        }
+        Object.keys(workflow).forEach(key => {
+            if (workflow[key] === undefined) {
+                delete workflow[key];
             }
+        });
+        const estimate = {
+            estimate: payload, workflow
         }
 
         await EstimateMutation(estimate, {
@@ -37,7 +44,7 @@ const CreateEstimate = (props) => {
                     header:"Estimate Created and Forwarded Successfully",
                     id:responseData?.estimates[0]?.estimateNumber,
                     info:"Estimate ID",
-                    message:`A new Estimate has been created successfully and forwarded to the ${responseData?.estimates[0]?.department} Department for processing.`,
+                    message:`A new Estimate has been created successfully and forwarded to the ${t(`ES_COMMON_${responseData?.estimates[0]?.department}`)} Department for processing.`,
                     links:[
                         {
                             name:"Create new Estimate",

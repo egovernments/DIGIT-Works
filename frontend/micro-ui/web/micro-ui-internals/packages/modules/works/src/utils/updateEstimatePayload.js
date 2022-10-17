@@ -1,8 +1,8 @@
-export const updateEstimatePayload =(id,data)=>{
+export const updateEstimatePayload =(data, estimate)=>{
     // let estimateDetails= data?.estimateDetails.filter((item)=>item!==null)
     const tenantId = Digit.ULBService.getCurrentTenantId()
     let payload={  
-        "id": id,
+        "id": estimate?.id,
         "tenantId": tenantId,
         "status": "ACTIVE",
         "estimateStatus": "CREATED",
@@ -23,7 +23,7 @@ export const updateEstimatePayload =(id,data)=>{
         "subScheme": data?.subScheme?.code,
         "location": "pb.amritsar:ADMIN:pb.amritsar:Z1:B1:SUN04",
         "additionalDetails": {},
-        // "estimateDetails": estimateDetails
+        "estimateDetails": data?.estimateDetails
       }
       return payload;
 }

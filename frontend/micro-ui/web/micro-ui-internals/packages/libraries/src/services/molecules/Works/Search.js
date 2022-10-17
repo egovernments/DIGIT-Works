@@ -17,180 +17,6 @@ const convertEpochToDate = (dateEpoch) => {
     return `${day}/${month}/${year}`;
 };
 
-const sampleEstimateSearchResponse = {
-    "responseInfo": {
-        "apiInfo": {
-            "id": "string",
-            "version": "string",
-            "path": "string"
-        },
-        "deviceDetail": {
-            "id": "string",
-            "signature": "string"
-        },
-        "ts": 0,
-        "action": "string",
-        "key": "string",
-        "msgId": "string",
-        "requesterId": "string",
-        "authToken": "string",
-        "userInfo": {
-            "tenantId": "string",
-            "uuid": "string",
-            "userName": "string",
-            "password": "string",
-            "idToken": "string",
-            "mobile": "string",
-            "email": "string",
-            "primaryrole": [
-                {
-                    "name": "string",
-                    "code": "string",
-                    "tenantId": "string",
-                    "description": "string"
-                }
-            ],
-            "additionalroles": [
-                {
-                    "tenantId": "string",
-                    "roles": [
-                        {
-                            "name": "string",
-                            "code": "string",
-                            "tenantId": "string",
-                            "description": "string"
-                        }
-                    ]
-                }
-            ]
-        },
-        "correlationId": "string",
-        "signature": "string"
-    },
-    "estimates": [
-        {
-            "id": "251c51eb-e970-4e01-a99a-70136c47a934",
-            "tenantId": "pb.jalandhar OR dwss",
-            "estimateNumber": "EST/2022-23/010",
-            "adminSanctionNumber": "ASE/2022-23/110",
-            "proposalDate": 1658222690000,
-            "status": "ACTIVE",
-            "estimateStatus": "CREATED",
-            "subject": "Construct new schools",
-            "requirementNumber": "File-18430283",
-            "description": "Construct new schools",
-            "department": "string",
-            "location": "string",
-            "workCategory": "string",
-            "beneficiaryType": "string",
-            "natureOfWork": "string",
-            "typeOfWork": "string",
-            "subTypeOfWork": "string",
-            "entrustmentMode": "string",
-            "fund": "string",
-            "function": "string",
-            "budgetHead": "string",
-            "scheme": "string",
-            "subScheme": "string",
-            "totalAmount": 0,
-            "estimateDetails": [
-                {
-                    "id": "251c51eb-e970-4e01-a99a-70136c47a934",
-                    "estimateDetailNumber": "SUB-EST/2022-23/010",
-                    "name": "string",
-                    "amount": 0,
-                    "additionalDetails": {}
-                }
-            ],
-            "auditDetails": {
-                "createdBy": "string",
-                "lastModifiedBy": "string",
-                "createdTime": 0,
-                "lastModifiedTime": 0
-            },
-            "additionalDetails": {}
-        }
-    ]
-}
-
-const sampleLOISearchResponse = {
-    "responseInfo": {
-        "apiInfo": {
-            "id": "string",
-            "version": "string",
-            "path": "string"
-        },
-        "deviceDetail": {
-            "id": "string",
-            "signature": "string"
-        },
-        "ts": 0,
-        "action": "string",
-        "key": "string",
-        "msgId": "string",
-        "requesterId": "string",
-        "authToken": "string",
-        "userInfo": {
-            "tenantId": "string",
-            "uuid": "string",
-            "userName": "string",
-            "password": "string",
-            "idToken": "string",
-            "mobile": "string",
-            "email": "string",
-            "primaryrole": [
-                {
-                    "name": "string",
-                    "code": "string",
-                    "tenantId": "string",
-                    "description": "string"
-                }
-            ],
-            "additionalroles": [
-                {
-                    "tenantId": "string",
-                    "roles": [
-                        {
-                            "name": "string",
-                            "code": "string",
-                            "tenantId": "string",
-                            "description": "string"
-                        }
-                    ]
-                }
-            ]
-        },
-        "correlationId": "string",
-        "signature": "string"
-    },
-    "letterOfIndents": [
-        {
-            "tenantId": "pb.jalandhar OR dwss",
-            "id": "251c51eb-e970-4e01-a99a-70136c47a934",
-            "letterOfIndentNumber": "LOI/2022-23/010",
-            "workPackageNumber": "WP/2022-23/010",
-            "workIdentificationNumber": "string",
-            "fileNumber": "string",
-            "negotiatedPercentage": 40,
-            "contractorId": "251c51eb-e970-4e01-a99a-70136c47a934",
-            "securityDeposit": 100000,
-            "bankGuarantee": "string",
-            "emdAmount": 1.5,
-            "contractPeriod": 1.5,
-            "defectLiabilityPeriod": 1.5,
-            "oicId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "status": "DRAFT",
-            "letterStatus": "CREATED",
-            "auditDetails": {
-                "createdBy": "string",
-                "lastModifiedBy": "string",
-                "createdTime": 1660206057000,
-                "lastModifiedTime": 0
-            }
-        }
-    ]
-}
-
 
 export const WorksSearch = {
     searchEstimate: async (tenantId="pb.jalandhar", filters = {} ) => {
@@ -210,9 +36,13 @@ export const WorksSearch = {
         return response?.letterOfIndents
     },
     viewEstimateScreen: async (t, tenantId, estimateNumber) => {
+
+        const workflowDetails = await WorksSearch.workflowDataDetails(tenantId, estimateNumber);
+
         const estimateArr = await WorksSearch?.searchEstimate(tenantId, { estimateNumber })
         const estimate = estimateArr?.[0]
         
+        const additionalDetails = estimate?.additionalDetails
         //const estimate = sampleEstimateSearchResponse?.estimates?.[0] 
         let details = []
         const estimateValues={
@@ -220,7 +50,7 @@ export const WorksSearch = {
             asSectionHeader: true,
             values: [
                 { title: "WORKS_ESTIMATE_ID", value: estimate?.estimateNumber},
-                { title: "WORKS_STATUS", value: estimate?.status}
+                { title: "WORKS_STATUS", value: estimate?.estimateStatus}
             ]
         }
 
@@ -268,21 +98,8 @@ export const WorksSearch = {
                     item?.amount]
             )
         }
+        const files = additionalDetails?.filesAttached
 
-        const files = [
-            {
-                "fileStoreId": "81d1bce2-7513-4231-b1ab-8f7c3df37c9b",
-                "tenantId": "pb"
-            },
-            {
-                "fileStoreId": "954952fe-6d3e-484c-a773-77f20da639dc",
-                "tenantId": "pb"
-            },
-            {
-                "fileStoreId": "eb68a8ca-59bf-4e7f-b604-1c1197bb91c3",
-                "tenantId": "pb"
-            }
-        ]
         const documentDetails = {
             title: "",
             asSectionHeader: true,
@@ -292,9 +109,9 @@ export const WorksSearch = {
                     BS: 'Works',
                     values: files?.map((document) => {
                         return {
-                            title: `Same`,
-                            documentType: "type",
-                            documentUid: "id",
+                            title: document?.fileName,
+                            documentType: document?.documentType,
+                            documentUid: document?.fileStoreId,
                             fileStoreId: document?.fileStoreId,
                         };
                     }),
@@ -307,6 +124,8 @@ export const WorksSearch = {
         details = [...details, estimateValues, estimateDetails, financialDetails, workDetails, documentDetails]
         return {
             applicationDetails: details,
+            processInstancesDetails: workflowDetails?.ProcessInstances,
+            applicationData:estimate,
         }
     },
     workflowDataDetails: async (tenantId, businessIds) => {
@@ -342,7 +161,7 @@ export const WorksSearch = {
                 { title: "WORKS_ESTIMATE_NO", value: estimate?.estimateNumber || t("NA") },
                 { title: "WORKS_SUB_ESTIMATE_NO", value: subEstimateNumber },
                 { title: "WORKS_NAME_OF_WORK", value: estimate?.estimateDetails?.filter(subEs => subEs?.estimateDetailNumber === subEstimateNumber)?.[0]?.name || t("NA") },
-                { title: "WORKS_DEPARTMENT", value: estimate?.department || t("NA") },
+                { title: "WORKS_DEPARTMENT", value: t(`ES_COMMON_${estimate?.department}`) || t("NA") },
                 { title: "WORKS_FILE_NO", value: loi?.fileNumber || t("NA") },
                 { title: "WORKS_FILE_DATE", value: convertEpochToDate(loi?.fileDate) || t("NA") },
             ]
@@ -366,8 +185,8 @@ export const WorksSearch = {
             title: "WORKS_AGGREEMENT_DETAILS",
             asSectionHeader: true,
             values: [
-                { title: "WORKS_AGENCY_NAME", value:  t("NA") },
-                { title: "WORKS_CONT_ID", value:  t("NA") },
+                { title: "WORKS_AGENCY_NAME", value: t("NA") },
+                { title: "WORKS_CONT_ID", value: loi?.contractorId || t("NA") },
                 { title: "WORKS_PREPARED_BY", value:  t("NA") },
                 { title: "WORKS_ADD_SECURITY_DP", value:loi?.securityDeposit || t("NA") },
                 { title: "WORKS_BANK_G", value: loi?.bankGuarantee || t("NA") },

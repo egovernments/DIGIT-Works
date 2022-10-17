@@ -106,13 +106,11 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
 
     const handleCreateClick = async () => {
         const subWorkFieldsToValidate = []
-        rows.map(row => subWorkFieldsToValidate.push(...[`estimateDetails.${row.key}.name`, `estimateDetails.${row.key}.amount`]))
+        rows.map((row,index) => subWorkFieldsToValidate.push(...[`estimateDetails.${index}.name`, `estimateDetails.${index}.amount`]))
         const fieldsToValidate = ['requirementNumber', 'department', 'ward', 'location', 'beneficiaryType', 'natureOfWork', 'typeOfWork', 'subTypeOfWork', 'entrustmentMode', 'fund', 'function', 'budgetHead', 'scheme', 'subScheme', ...subWorkFieldsToValidate]
-        const abc=getValues()
         const result = await trigger(fieldsToValidate)
         if (result) {
-            // setShowModal(true)
-            onFormSubmit(estimate?.id,abc)
+            setShowModal(true)
         }
     } 
 
@@ -137,7 +135,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_STATUS`)}</CardLabel>
-                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{estimate?.status}</CardLabel>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{estimate?.estimateStatus}</CardLabel>
                 </LabelFieldPair>
                 <CardSectionHeader style={{ "marginTop": "14px" }} >{t(`WORKS_ESTIMATE_DETAILS`)}</CardSectionHeader>
                 {/* TEXT INPUT ROW */}

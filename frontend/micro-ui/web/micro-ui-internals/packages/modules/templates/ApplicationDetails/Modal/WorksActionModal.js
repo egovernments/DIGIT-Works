@@ -54,7 +54,7 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
   //   },
   //   { enabled: !action?.isTerminateState }
   // );
-  let { loiNumber } = Digit.Hooks.useQueryParams();
+  let { loiNumber, estimateNumber } = Digit.Hooks.useQueryParams();
    const [config, setConfig] = useState({});
    const [defaultValues, setDefaultValues] = useState({});
    const [approvers, setApprovers] = useState([]);
@@ -105,24 +105,31 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
     ]
   );
 
-  const { data: approverData, isLoading: approverLoading } = Digit.Hooks.useEmployeeSearch(
-    tenantId,
-    {
-      roles: action?.assigneeRoles?.map?.((e) => ({ code: e })),
-      isActive: true,
-    },
-    { enabled: !action?.isTerminateState }
-  );
+  mdmsData?.["common-masters"]?.Designation?.map(designation => {
+    designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
+  })
+
+  mdmsData?.["common-masters"]?.Department?.map(department => {
+    department.i18nKey = `ES_COMMON_${department?.code}`
+  })
+  // const { data: approverData, isLoading: approverLoading } = Digit.Hooks.useEmployeeSearch(
+  //   tenantId,
+  //   {
+  //     roles: action?.assigneeRoles?.map?.((e) => ({ code: e })),
+  //     isActive: true,
+  //   },
+  //   { enabled: !action?.isTerminateState }
+  // );
     
   
   // const { isLoading: approverLoading, isError,isSuccess:approverSuccess, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ Designation: selectedDesignation?.code, Department: selectedDept?.code }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept?.code && selectedDesignation?.code) });
   // employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp.user.name)
 
   
-  useEffect(() => {
+  // useEffect(() => {
     
-    setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
-  }, [approverData]);
+  //   setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
+  // }, [approverData]);
 
   useEffect(() => {
     
@@ -135,10 +142,23 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
 
 
   
+  const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: action?.assigneeRoles?.toString(), isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: action?.action === "CHECK"});
+
+
+  employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
+
+  useEffect(() => {
+    setApprovers(employeeDatav1?.Employees)
+  }, [employeeDatav1])
+  
+  
+  // if (employeeDatav1?.Employees?.length > 0) {
+  //   setApprovers(employeeDatav1?.Employees)
+  // }
 
   useEffect(() => {
     
-    if(action?.action?.includes("CHECK")){
+    if(action?.action?.includes("CHECK") || action?.action?.includes("TECHNICALSANCATION")){
       setConfig(
         configCheckModal({
           t,
@@ -152,10 +172,11 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
           setSelectedDesignation,
           department,
           selectedDept,
-          setSelectedDept
+          setSelectedDept,
+          approverLoading
         })
       )
-    }else if(action?.action?.includes("APPROVE")){
+    }else if(action?.action?.includes("APPROVE") || action?.action?.includes("ADMINSANCTION")){
       setConfig(
         configApproveModal({
           t,
@@ -197,7 +218,8 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
         delete workflow[key];
       }
     });
-    submitAction({letterOfIndent:applicationData,workflow})
+    {estimateNumber ? submitAction({estimate:applicationData,workflow}) :
+    submitAction({letterOfIndent:applicationData,workflow})}
     
   }
 
@@ -217,7 +239,7 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
       actionSaveOnSubmit={() => { }}
       formId="modal-action"
     >
-      {approverLoading ? (
+      {mdmsLoading ? (
         <Loader />
       ) : (
         <FormComposer

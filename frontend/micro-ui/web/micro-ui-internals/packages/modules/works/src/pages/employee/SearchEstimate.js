@@ -1,7 +1,6 @@
 import React, { Fragment, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import { Toast } from "@egovernments/digit-ui-react-components";
-import { searchEstimatePayload } from "../../utils/searchEstimatePayload";
 
 const SearchEstimate = () => {
     const { t } = useTranslation();
@@ -12,7 +11,7 @@ const SearchEstimate = () => {
 
 
   const onSubmit = async (_data) => {
-    //debugger
+    
     var fromProposalDate = new Date(_data?.fromProposalDate);
     fromProposalDate?.setSeconds(fromProposalDate?.getSeconds() - 19800);
     var toProposalDate = new Date(_data?.toProposalDate);
@@ -23,12 +22,6 @@ const SearchEstimate = () => {
       ...(_data.fromProposalDate ? { fromProposalDate: fromProposalDate?.getTime() } : {}),
     };
 
-    setPayload(
-      Object.keys(data)
-      .filter((k) => data[k])
-      .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {})
-      );
-
     if(data.estimateNumber==="" && data.adminSanctionNumber==="" && !data.department && !data.typeofwork && !data.fromProposalDate && !data.toProposalDate ){
       setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
       setTimeout(() => {
@@ -36,10 +29,16 @@ const SearchEstimate = () => {
       }, 3000);
       return
     }
+    setPayload(
+      Object.keys(data)
+      .filter((k) => data[k])
+      .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {})
+      );
   }
     const config = {
       enabled: !!(payload && Object.keys(payload).length > 0),
     };
+    // Call search estimate API by using params tenantId,filters
     const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
     const getData = () => {
       if (result?.data?.estimates?.length == 0 ) {

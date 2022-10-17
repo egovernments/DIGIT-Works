@@ -6,8 +6,12 @@ import { useHistory } from 'react-router-dom';
 const HandleDownloadPdf = () => {
   const {t} = useTranslation()
   const history=useHistory();
-  let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t);
   const tenantInfo = Digit.ULBService.getCurrentTenantId();
+  // Add redirect params (loiNumber,subEstiamteNumber) to download pdf
+  const { loiNumber,subEstiamteNumber } = Digit.Hooks.useQueryParams();
+  
+  // to fetch a details of LOI by using params t, tenantInfo, loiNumber, subEstiamteNumber
+  let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t, tenantInfo, loiNumber, subEstiamteNumber);
   let result = applicationDetails;
   const PDFdata = getPDFData({...result },tenantInfo, t);
   PDFdata.then((ress) => Digit.Utils.pdf.generatev1(ress));

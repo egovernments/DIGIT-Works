@@ -10,15 +10,15 @@ const SearchApplication = ({ onSearch }) => {
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
     tenant,
-    "works",
+    "common-masters",
     [
         {
             "name": "Department"
         }
     ]
     );
-  if(data?.works){
-    var { Department } = data?.works
+  if(data?.[`common-masters`]){
+    var { Department } = data?.[`common-masters`]
   }
   
   const onSubmitInput = (data) => {  

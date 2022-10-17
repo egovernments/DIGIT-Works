@@ -10,14 +10,25 @@ const SearchFields = ({ register, control, reset, t }) => {
         [
             {
                 "name": "TypeOfWork"
-            },
-            {
-                "name": "Department"
             }
         ] 
         );
         if(data?.works){
-            var {TypeOfWork,Department } = data?.works
+            var { TypeOfWork } = data?.works
+        }
+
+        const { isLoading:desgLoading, data:departmentData } = Digit.Hooks.useCustomMDMS(
+            tenant,
+            "common-masters",
+            [
+                {
+                    "name": "Department"
+                }
+            ]
+        );
+        
+        if (departmentData?.[`common-masters`]) {
+            var { Department } = departmentData?.[`common-masters`]
         }
 
     let validation = {} 
@@ -32,7 +43,7 @@ const SearchFields = ({ register, control, reset, t }) => {
                         isRequired: false,
                         pattern: "^[a-zA-Z0-9-_\/]*$",
                         type: "text",
-                        title: t("ERR_INVALID_APPLICATION_NO"),
+                        title: t("ERR_INVALID_ESTIMATE_NO"),
                     })}
                 />
             </SearchField>
@@ -45,7 +56,7 @@ const SearchFields = ({ register, control, reset, t }) => {
                         isRequired: false,
                         pattern: "^[a-zA-Z0-9-_\/]*$",
                         type: "text",
-                        title: t("ERR_INVALID_APPLICATION_NO"),
+                        title: t("ERR_INVALID_ADM_SANC_NO"),
                     })}
                 />
             </SearchField>

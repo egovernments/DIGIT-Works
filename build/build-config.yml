@@ -34,6 +34,12 @@ config:
         image-name: "loi-service"
       - work-dir: "backend/loi-service/src/main/resources/db"
         image-name: "loi-service-db"
+        
+  - name: "builds/digit-works/backend/works-inbox-service"
+    build:
+      - work-dir: "backend/works-inbox-service"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "works-inbox-service"
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui

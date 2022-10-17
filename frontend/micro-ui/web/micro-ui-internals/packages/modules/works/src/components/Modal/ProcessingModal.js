@@ -53,6 +53,14 @@ const ProcessingModal = ({
         ]
     );
 
+    designationData?.["common-masters"]?.Designation?.map(designation => {
+        designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
+    })
+    designationData?.["common-masters"]?.Department?.map(department => {
+        department.i18nKey = `ES_COMMON_${department?.code}`
+    })
+
+
     const selectedDepartment = useWatch({ control: control, name: "appDept", defaultValue: "" });
     const selectedDesignation = useWatch({ control: control, name: "appDesig", defaultValue: "" });
 
@@ -93,7 +101,7 @@ const ProcessingModal = ({
                                     onBlur={props.onBlur}
                                     option={designationData?.["common-masters"]?.Department}
                                     selected={props?.value}
-                                    optionKey={"name"}
+                                    optionKey={"i18nKey"}
                                     t={t}
                                     select={props?.onChange}
                                 />
@@ -117,7 +125,7 @@ const ProcessingModal = ({
                                     onBlur={props.onBlur}
                                     option={designationData?.["common-masters"]?.Designation}
                                     selected={props?.value}
-                                    optionKey={"name"}
+                                    optionKey={"i18nKey"}
                                     t={t}
                                     select={props?.onChange}
                                 />

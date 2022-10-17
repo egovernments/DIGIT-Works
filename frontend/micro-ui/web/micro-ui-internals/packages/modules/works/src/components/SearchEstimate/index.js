@@ -106,7 +106,7 @@ const SearchEstimateApplication = ({onSubmit,data,resultOk,isLoading}) => {
         {
           Header: t("WORKS_STATUS"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.status)),
+          accessor: (row) => (GetCell(row?.estimateStatus)),
         },
         {
           Header: t("WORKS_TOTAL_AMOUNT"),
