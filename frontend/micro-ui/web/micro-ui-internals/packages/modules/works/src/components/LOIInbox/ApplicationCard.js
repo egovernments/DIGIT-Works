@@ -58,12 +58,12 @@ export const ApplicationCard = ({
                 </span>
             </div> 
         ),
-        [t("WORKS_LOI_DATE")]: row.LOIDate || t("ES_COMMON_null"),
-        [t("WORKS_ABSTRACT_ESTIMATE_NO")]: row.EstimateNumber || t("ES_COMMON_null"),
-        [t("WORKS_NAME_OF_WORK")]: row.NameOfWork || t("ES_COMMON_null"),
-        [t("WORKS_CONTRACTOR_NAME")]: row.ContractorName || t("ES_COMMON_null"),
-        [t("WORKS_AGREEMENT_AMT")]: row?.AgrementAmount || t("ES_COMMON_null"),
-        [t("WORKS_SLA")]: row?.SLA || t("ES_COMMON_null"),
+        [t("WORKS_LOI_DATE")]: row.LOIDate || t("ES_COMMON_NA"),
+        [t("WORKS_ABSTRACT_ESTIMATE_NO")]: row.EstimateNumber || t("ES_COMMON_NA"),
+        [t("WORKS_NAME_OF_WORK")]: row.NameOfWork || t("ES_COMMON_NA"),
+        [t("WORKS_CONTRACTOR_NAME")]: row.ContractorName || t("ES_COMMON_NA"),
+        [t("WORKS_AGREEMENT_AMT")]: row?.AgrementAmount || t("ES_COMMON_NA"),
+        [t("WORKS_SLA")]: row?.SLA || t("ES_COMMON_NA"),
     }));
 }, [data]);
   let result;

@@ -101,16 +101,14 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
             Header: t("WORKS_ACTIONS"),
             Cell: ({ row }) => {
                 return (
-                    <div>
                         <span className="link">
                         <Link to={`create-loi?estimateNumber=${row.original.estimateNumber}&subEstimateNumber=${row.original.estimateDetailNumber}`}>
                                 <div style={{"display":"flex","justifyContent":"space-between","alignItems":"center"}}>
                                     <span ><CreateLoiIcon style={{ "margin": "auto" }} />  </span>
-                                    <p>{t("WORKS_CREATE_LOI_ACTION")}</p>
-                                </div> 
+                                    <p>{t("WORKS_Create_LOI")}</p>
+                                </div>  
                             </Link>
                         </span>
-                    </div>
                 );
             },
             disableSortBy: true,
@@ -130,13 +128,13 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
 
     function nextPage() {
         setValue("offset", getValues("offset") + getValues("limit"))
-
+        
         handleSubmit(onSubmit)()
     }
     function previousPage() {
-
+        
         setValue("offset", getValues("offset") - getValues("limit"))
-
+        
         handleSubmit(onSubmit)()
     }
 
@@ -173,7 +171,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
                            // totalRecords={count}
                             columns={columns}
                             getCellProps={(cellInfo) => {
-
+                                
                                 return {
                                     style: {
                                         minWidth: cellInfo.column.Header === "Actions" ? "8rem" : "",
@@ -193,11 +191,12 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
                         />
                     </div>
             :null}
-            
+
             
             
         </>
-
+        
     )
 }
+
 export default SearchApprovedSubEs

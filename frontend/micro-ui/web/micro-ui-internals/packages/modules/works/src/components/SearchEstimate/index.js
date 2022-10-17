@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import MobileSearchApplication from "./MobileSearchApprovedEstimates";
+import MobileSearchApplication from "./MobileSearchEstimates";
 
 const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoading}) => {
 

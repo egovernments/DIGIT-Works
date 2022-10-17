@@ -72,14 +72,14 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
                 </div> 
             ),
             [t("WORKS_DEPARTMENT")]: t(`ES_COMMON_${row.department}`),
-            [t("WORKS_ADMIN_SANC_NO")]: row.adminSanctionNumber || t("ES_COMMON_null"),
+            [t("WORKS_ADMIN_SANC_NO")]: row.adminSanctionNumber || t("ES_COMMON_NA"),
             [t("WORKS_FUND")]: t(`ES_COMMON_FUND_${row.fund}`),
             [t("WORKS_FUNCTION")]: t(`ES_COMMON_${row.function}`),
             [t("WORKS_BUDGET_HEAD")]: t(`ES_COMMON_BUDGETHEAD_${row.budgetHead}`),
-            [t("WORKS_CREATED_BY")]: row?.additionalDetails?.owner || t("ES_COMMON_null"),
-            [t("WORKS_OWNER")]: row?.additionalDetails?.owner || t("ES_COMMON_null"),
-            [t("WORKS_STATUS")]: row.estimateStatus || t("ES_COMMON_null"),
-            [t("WORKS_TOTAL_AMT")]: row.amount || t("ES_COMMON_null"),
+            [t("WORKS_CREATED_BY")]: row?.additionalDetails?.owner || t("ES_COMMON_NA"),
+            [t("WORKS_OWNER")]: row?.additionalDetails?.owner || t("ES_COMMON_NA"),
+            [t("WORKS_STATUS")]: row.estimateStatus || t("ES_COMMON_NA"),
+            [t("WORKS_TOTAL_AMT")]: row.amount || t("ES_COMMON_NA"),
         }));
     }, [data]);
     return (
