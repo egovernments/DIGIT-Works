@@ -67,8 +67,8 @@ public class InboxConfiguration {
 	@Value("${egov.es.password}")
 	private String esPassword;
 
-	@Value("${services.esindexer.host}")
-	private String indexServiceHost;
+	//@Value("${services.esindexer.host}")
+	private String indexServiceHost="";
 
 	@Value("${egov.services.esindexer.host.search}")
 	private String indexServiceHostSearchEndpoint;

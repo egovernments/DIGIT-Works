@@ -34,11 +34,11 @@ public class DSSInboxFilterService {
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-    @Value("${egov.dashboard.analytics.host}")
-    private String dashboardAnalyticsHost;
+    //@Value("${egov.dashboard.analytics.host}")
+    private String dashboardAnalyticsHost= "";
 
-    @Value("${egov.dashboard.analytics.getchartv2.path}")
-    private String dashboardAnalyticsEndPoint;
+   // @Value("${egov.dashboard.analytics.getchartv2.path}")
+    private String dashboardAnalyticsEndPoint="";
 
     public Map<String, BigDecimal> getAggregateData(InboxMetricCriteria request) {
         Map<String, BigDecimal> result = new HashMap<>();
