@@ -33,14 +33,6 @@ public class LOIConfiguration {
     @Value("${loi.search.max.limit}")
     private Integer maxLimit;
 
-    //Search Configs
-    @Value("${loi.default.limit}")
-    private Integer defaultLimit;
-    @Value("${loi.default.offset}")
-    private Integer defaultOffset;
-    @Value("${loi.search.max.limit}")
-    private Integer maxLimit;
-
     //MDMS
     @Value("${egov.mdms.host}")
     private String mdmsHost;
