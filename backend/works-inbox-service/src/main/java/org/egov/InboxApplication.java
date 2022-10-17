@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@Import({ TracerConfiguration.class, MultiStateInstanceUtil.class, EncryptionConfiguration.class   })
+@Import({ TracerConfiguration.class, MultiStateInstanceUtil.class/*, EncryptionConfiguration.class*/   })
 public class InboxApplication {
 
 	public static void main(String[] args) {
