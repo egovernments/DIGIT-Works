@@ -4,23 +4,31 @@ import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import MobileSearchApplication from "./MobileSearchApprovedEstimates";
-const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => {
+
+const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count }) => {
     const { t } = useTranslation();
 
     const { register, control, handleSubmit, setValue, getValues, reset,formState } = useForm({
-        defaultValues: {
-            "offset": 0,
-            "limit": 10,
-            "sortBy": "department",
-            "sortOrder": "DESC",
-        }
+        // defaultValues: {
+        //     "offset": 0,
+        //     "limit": 10,
+        //     "sortBy": "commencementDate",
+        //     "sortOrder": "DESC",
+        //     "estimateNumber": "12123",
+        //     "estiamteDetailNumber": "213131221",
+        //     "adminSanctionNumber": "12121",
+        //     "department": {
+        //         "name": "Engg"
+        //     },
+        //     "fromProposalDate": "2022-09-01",
+        //     "toProposalDate": "2022-09-02"
+        // }
     });
 
     useEffect(() => {
         register("offset", 0)
         register("limit", 10)
-        register("sortBy", "department")
+        register("sortBy", "createdTime")
         register("sortOrder", "DESC")
     }, [register])
 
@@ -34,8 +42,8 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
                 return (
                     <div>
                         <span className="link">
-                            <Link to={`view-estimate?tenantId=${row.original.tenantId}&estimateNumber=${row.original.estimateNumber}&estimateStatus=Approved`}>
-                                {row.original["estimateDetailNumber"]}
+                            <Link to={`/digit-ui/employee/`}>
+                                {row.original["estimateNumber"]}
                             </Link>
                         </span>
                     </div>
@@ -45,81 +53,80 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
         {
             Header: t("WORKS_NAME_OF_WORK"),
             disableSortBy: true,
-            accessor: (row) => GetCell(row.name || t("ES_COMMON_null"))
+            accessor: (row) => GetCell(row.subject)
         },
         {
             Header: t("WORKS_DEPARTMENT"),
             disableSortBy: true,
-            accessor: (row) => GetCell(t(`ES_COMMON_${row.department}`)),
+            accessor: (row) => GetCell(row.department),
         },
         {
             Header: t("WORKS_ADMIN_SANC_NO"),
             disableSortBy: true,
-            accessor: (row) => GetCell(row.adminSanctionNumber || t("ES_COMMON_null")),
+            accessor: (row) => GetCell(row.adminSanctionNumber),
         },
         {
             Header: t("WORKS_ADMIN_APP_DATE"),
             disableSortBy: true,
-            accessor: (row) => GetCell(Digit.DateUtils.ConvertEpochToDate(row.auditDetails.lastModifiedTime) ),
+            accessor: (row) => GetCell(row.adminSanctionNumber),
         },
         {
             Header: t("WORKS_FUND"),
             disableSortBy: true,
-            accessor: (row) => GetCell(t(`ES_COMMON_FUND_${row.fund}`) ),
+            accessor: (row) => GetCell(row.fund ),
         },
         {
             Header: t("WORKS_FUNCTION"),
-            accessor: (row) => GetCell(t(`ES_COMMON_${row.function}`)),
+            accessor: (row) => GetCell(row.function),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_BUDGET_HEAD"),
-            accessor: (row) => GetCell(t(`ES_COMMON_BUDGETHEAD_${row.budgetHead}`)),
+            accessor: (row) => GetCell(row.budgetHead),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_CREATED_BY"),
-            accessor: (row) => GetCell(row?.additionalDetails?.owner || t("ES_COMMON_null")),
+            accessor: (row) => GetCell(row.auditDetails.createdBy),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_OWNER"),
-            accessor: (row) => GetCell(row?.additionalDetails?.owner || t("ES_COMMON_null")),
+            accessor: (row) => GetCell("owner"),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_STATUS"),
-            accessor: (row) => GetCell(row.estimateStatus || t("ES_COMMON_null")),
+            accessor: (row) => GetCell(row.estimateStatus),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_TOTAL_AMT"),
-            accessor: (row) => GetCell(row.amount || t("ES_COMMON_null")),
+            accessor: (row) => GetCell(row.totalAmount),
             disableSortBy: true,
         },
         {
             Header: t("WORKS_ACTIONS"),
             Cell: ({ row }) => {
                 return (
+                    <div>
                         <span className="link">
-                        <Link to={`create-loi?estimateNumber=${row.original.estimateNumber}&subEstimateNumber=${row.original.estimateDetailNumber}`}>
-                                <div style={{"display":"flex","justifyContent":"space-between","alignItems":"center"}}>
-                                    <span ><CreateLoiIcon style={{ "margin": "auto" }} />  </span>
-                                    <p>{"Create LOI"}</p>
-                                </div>  
+                            <Link to={`/digit-ui/employee/`}>
+                                <span ><CreateLoiIcon  style={{ "margin": "auto" }} /> {"Create LOI"} </span>
                             </Link>
                         </span>
+                    </div>
                 );
             },
             disableSortBy: true,
         }
     ]), [])
 
-    // const onSort = useCallback((args) => {
-    //     if (args.length === 0) return
-    //     setValue("sortBy", args.id)
-    //     setValue("sortOrder", args.desc ? "DESC" : "ASC")
-    // }, [])
+    const onSort = useCallback((args) => {
+        if (args.length === 0) return
+        setValue("sortBy", args.id)
+        setValue("sortOrder", args.desc ? "DESC" : "ASC")
+    }, [])
 
     function onPageSizeChange(e) {
         setValue("limit", Number(e.target.value))
@@ -128,72 +135,45 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
 
     function nextPage() {
         setValue("offset", getValues("offset") + getValues("limit"))
-        
         handleSubmit(onSubmit)()
     }
     function previousPage() {
-        
         setValue("offset", getValues("offset") - getValues("limit"))
-        
         handleSubmit(onSubmit)()
-    }
-
-
-    const isMobile = window.Digit.Utils.browser.isMobile();
-
-    if (isMobile) {
-        return <MobileSearchApplication {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }} />;
     }
 
 
     return (
         <>
             <Header styles={{ fontSize: "32px" }}>{t("WORKS_SEARCH_APPROVED_ESTIMATE")}</Header>
-            <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
+            <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} >
                 <SearchFields {...{ register, control, reset, t,formState }} />
             </SearchForm>
-
-            {isLoading?<Loader/>: data?.display && !resultOk ? (
-                <Card style={{ marginTop: 20 }}>
-                    {t(data?.display)
-                        ?.split("\\n")
-                        ?.map((text, index) => (
-                            <p key={index} style={{ textAlign: "center" }}>
-                                {text}
-                            </p>
-                        ))}
-                </Card>
-            ) : resultOk?
-                    <div style={{ "overflowX": "scroll" }}>
-                        <Table
-                            t={t}
-                            data={data}
-                           // totalRecords={count}
-                            columns={columns}
-                            getCellProps={(cellInfo) => {
-                                
-                                return {
-                                    style: {
-                                        minWidth: cellInfo.column.Header === "Actions" ? "8rem" : "",
-                                        padding: "20px 12px",
-                                        fontSize: "16px"
-                                    },
-                                };
-                            }}
-                            onPageSizeChange={onPageSizeChange}
-                            currentPage={getValues("offset") / getValues("limit")}
-                            onNextPage={nextPage}
-                            onPrevPage={previousPage}
-                            pageSizeLimit={getValues("limit")}
-                            //onSort={onSort}
-                            disableSort={false}
-                            sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
-                        />
-                    </div>
-            :null}
-
-            
-            
+            <div style={{"overflow-x":"scroll"}}>
+            <Table
+                t={t}
+                data={data}
+                totalRecords={count}
+                columns={columns}
+                getCellProps={(cellInfo) => {
+                    return {
+                        style: {
+                            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+                            padding: "20px 18px",
+                            fontSize: "16px"
+                        },
+                    };
+                }}
+                onPageSizeChange={onPageSizeChange}
+                currentPage={parseInt((getValues("offset") / getValues("limit")))}
+                onNextPage={nextPage}
+                onPrevPage={previousPage}
+                pageSizeLimit={getValues("limit")}
+                onSort={onSort}
+                disableSort={false}
+                sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
+            />
+            </div>
         </>
         
     )

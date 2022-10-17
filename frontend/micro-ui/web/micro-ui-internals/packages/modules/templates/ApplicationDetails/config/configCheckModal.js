@@ -20,7 +20,7 @@ const configCheckModal = ({
     let checkConditions = true
     if (action.isTerminateState) checkConditions = false;
 
-    if(designation?.length===0 || approvers?.length===0 || department?.length===0) return {}
+    if(designation?.length===0 || department?.length===0) return {}
 
     return {
         label: {
