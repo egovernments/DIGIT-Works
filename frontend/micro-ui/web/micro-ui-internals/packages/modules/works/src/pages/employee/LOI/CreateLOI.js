@@ -91,6 +91,7 @@ const CreateLOI = (props) => {
                                 code: "",
                                 svg: "CreateEstimateIcon",
                                 isVisible: true,
+                                type:"add"
                             },
                             {
                                 name: t("WORKS_GOTO_LOI_INBOX"),
@@ -98,6 +99,7 @@ const CreateLOI = (props) => {
                                 code: "",
                                 svg: "CreateEstimateIcon",
                                 isVisible: true,
+                                type:"inbox"
                             },
                         ],
                         responseData,
@@ -130,6 +132,7 @@ const CreateLOI = (props) => {
                             code: "",
                             svg: "CreateEstimateIcon",
                             isVisible:true,
+                            type:"add"
                         },
                         {
                             name: t("WORKS_GOTO_LOI_INBOX"),
@@ -137,6 +140,7 @@ const CreateLOI = (props) => {
                             code: "",
                             svg: "CreateEstimateIcon",
                             isVisible: true,
+                            type:"inbox"
                         },
                     ],
                     responseData,
