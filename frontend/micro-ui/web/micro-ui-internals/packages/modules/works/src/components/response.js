@@ -3,7 +3,7 @@ import { useQueryClient } from "react-query";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { CreateEstimateIcon,DownloadIcon } from "@egovernments/digit-ui-react-components";
+import { CreateEstimateIcon,DownloadIcon,GotoInboxIcon } from "@egovernments/digit-ui-react-components";
 import { useHistory,useLocation } from "react-router-dom";
 import getPDFData from "../utils/getWorksAcknowledgementData"
 
@@ -32,21 +32,27 @@ import getPDFData from "../utils/getWorksAcknowledgementData"
 // Pass the state object to it while doing history.push  
  */
 const Response = (props) => {
- 
+  
+  console.log("hey")
     const {state}  = useLocation()
     const history = useHistory()
     const {t} = useTranslation()
     const tenantInfo = Digit.ULBService.getCurrentTenantId();
-    //let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewLOIDetails(t);
-
-    // const handleDownloadPdf=()=>{
-    //   let result = applicationDetails;
-    //   const PDFdata = getPDFData({...result },tenantInfo, t);
-    //   PDFdata.then((ress) => Digit.Utils.pdf.generatev1(ress));
-    // };
-  
     
-    //get all the required data from the state while doing history.push
+    //we have two types of icon currently -> add,inbox(CreateEstimateIcon,Inbox Icon)
+    const renderIcon = (type,link) => {
+      debugger
+      switch (type) {
+        case "add":
+          <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
+        case "inbox":
+          <p><GotoInboxIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
+        default:
+          return <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
+          
+      }
+    }
+
   return (
     <Card>
           <Banner
@@ -82,7 +88,8 @@ const Response = (props) => {
                 link.isVisible && <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={()=> {
                     history.push(link.redirectUrl)
                   }}>
-                      <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
+                      {renderIcon(link.type,link)}
+                      {/* <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p> */}
                 </div>
               ))}
               

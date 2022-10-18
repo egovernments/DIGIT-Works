@@ -176,14 +176,16 @@ const ApplicationDetails = (props) => {
                   redirectUrl: `/${window.contextPath}/employee/works/create-loi`,
                   code: "",
                   svg: "CreateEstimateIcon",
-                  isVisible:false
+                  isVisible:false,
+                  type:"add"
                 },
                 {
                   name: t("WORKS_GOTO_LOI_INBOX"),
                   redirectUrl: `/${window.contextPath}/employee/works/LOIInbox`,
                   code: "",
                   svg: "CreateEstimateIcon",
-                  isVisible:true
+                  isVisible:true,
+                  type:"inbox"
                 },
               ],
               responseData:data,
@@ -204,14 +206,16 @@ const ApplicationDetails = (props) => {
                   redirectUrl: `/${window.contextPath}/employee/works/create-estimate`,
                   code: "",
                   svg: "CreateEstimateIcon",
-                  isVisible:false
+                  isVisible:false,
+                  type:"add"
                 },
                 {
                   name: t("WORKS_GOTO_ESTIMATE_INBOX"),
                   redirectUrl: `/${window.contextPath}/employee/works/inbox`,
                   code: "",
                   svg: "RefreshIcon",
-                  isVisible:true
+                  isVisible:true,
+                  type:"inbox"
                 },
               ],
               responseData:data,

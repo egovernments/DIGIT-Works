@@ -173,7 +173,8 @@ import {
   DeathIcon,
   BirthIcon,
   FirenocIcon,
-  CreateEstimateIcon
+  CreateEstimateIcon,
+  GotoInboxIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -451,5 +452,6 @@ export {
   DeathIcon,
   BirthIcon,
   FirenocIcon,
-  CreateEstimateIcon
+  CreateEstimateIcon,
+  GotoInboxIcon
 };
