@@ -52,6 +52,7 @@ const CreateEstimate = (props) => {
                             code:"",
                             svg:"CreateEstimateIcon",
                             isVisible:true,
+                            type:"add"
                         }
                     ]
                 })
