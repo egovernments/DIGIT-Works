@@ -42,7 +42,11 @@ const configCheckModal = ({
                                 autoComplete="off"
                                 optionKey="i18nKey"
                                 id="sdf"
-                                select={setSelectedDept}
+                                select={(val) => { 
+                                    setSelectedDept(val)
+                                    setSelectedApprover("")
+                                    //setValue()
+                                }}
                                 selected={selectedDept}
                                 t={t}
                             />
@@ -59,7 +63,11 @@ const configCheckModal = ({
                                 autoComplete="off"
                                 optionKey="i18nKey"
                                 id="name2"
-                                select={setSelectedDesignation}
+                                select={(val)=>{
+                                    setSelectedDesignation(val)
+                                    setSelectedApprover("")
+                                    //resetting approver dropdown when dept/designation changes
+                                }}
                                 selected={selectedDesignation}
                                 t={t}
                             />

@@ -385,6 +385,8 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                     handleSubmit={handleSubmit}
                     errors={errors}
                     action={"estimate"}
+                    setValue={setValue}
+                    
                 />}
 
                 {/* DROPDOWN ROW */}
