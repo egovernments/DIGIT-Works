@@ -38,7 +38,8 @@ const ProcessingModal = ({
     employeeData,
     Department,
     Designation,
-    action="estimate"
+    action="estimate",
+    setValue,
 }) => {
 
     const allowedRoles = {
@@ -67,10 +68,16 @@ const ProcessingModal = ({
         department.i18nKey = `ES_COMMON_${department?.code}`
     })
 
+    const isChanged = () => {
+        setValue("app", "")
+    }
+
+
 
     const selectedDepartment = useWatch({ control: control, name: "appDept", defaultValue: "" });
     const selectedDesignation = useWatch({ control: control, name: "appDesig", defaultValue: "" });
-
+    
+    
     //based on these two make an hrms search for approver dropdown
     let Approvers = []
 
@@ -87,7 +94,8 @@ const ProcessingModal = ({
     employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
     Approvers = employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees : []
 
-      return (
+    
+    return (
         desLoading?<Loader/> :
         <Modal
             headerBarMain={<Heading t={t} heading={heading} />}
@@ -101,7 +109,6 @@ const ProcessingModal = ({
         >
 
             <Card style={{ boxShadow: "none" }}>
-                
                     <span className="surveyformfield">
                         <label>{`${t("WORKS_APPROVER_DEPT")}*`}</label>
                     <Controller
@@ -116,7 +123,12 @@ const ProcessingModal = ({
                                     selected={props?.value}
                                     optionKey={"i18nKey"}
                                     t={t}
-                                    select={props?.onChange}
+                                    select={(val)=>{
+                                        props.onChange(val)
+                                        isChanged()    
+                                        //resetting approver dropdown when dept/designation changes
+                                    }}
+                                    
                                 />
                             );
                         }}
@@ -140,7 +152,10 @@ const ProcessingModal = ({
                                     selected={props?.value}
                                     optionKey={"i18nKey"}
                                     t={t}
-                                    select={props?.onChange}
+                                    select={(val) => {
+                                        props.onChange(val)
+                                        isChanged()
+                                    }}
                                 />
                             );
                         }}
@@ -157,7 +172,6 @@ const ProcessingModal = ({
                         control={control}
                         rules={{ required: true }}
                         render={(props) => {
-                            
                             return (
                                 isLoading?<Loader/>:
                                 <Dropdown
