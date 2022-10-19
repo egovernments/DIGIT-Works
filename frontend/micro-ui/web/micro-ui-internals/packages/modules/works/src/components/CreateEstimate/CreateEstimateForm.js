@@ -23,7 +23,207 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
         trigger,
         ...methods
     } = useForm({
-        defaultValues: {},
+        // defaultValues: {
+        //     "fund": {
+        //         "code": "01",
+        //         "name": "General Fund",
+        //         "active": true,
+        //         "i18nKey": "General Fund"
+        //     },
+        //     "ward": {
+        //         "id": 3,
+        //         "code": "B1",
+        //         "name": "Block 1",
+        //         "label": "Block",
+        //         "i18nKey": "Block 1",
+        //         "children": [
+        //             {
+        //                 "id": 4,
+        //                 "area": "Area1",
+        //                 "code": "SUN04",
+        //                 "name": "Ajit Nagar - Area1",
+        //                 "label": "Locality",
+        //                 "i18nKey": "Ajit Nagar - Area1",
+        //                 "pincode": [
+        //                     143001
+        //                 ],
+        //                 "children": [],
+        //                 "latitude": 31.63089,
+        //                 "localname": "Ajit Nagar - Area1",
+        //                 "longitude": 74.871552,
+        //                 "boundaryNum": 1
+        //             },
+        //             {
+        //                 "id": 5,
+        //                 "area": "Area1",
+        //                 "code": "SUN11",
+        //                 "name": "Back Side 33 KVA Grid Patiala Road - Area1",
+        //                 "label": "Locality",
+        //                 "i18nKey": "Back Side 33 KVA Grid Patiala Road - Area1",
+        //                 "pincode": [
+        //                     143001
+        //                 ],
+        //                 "children": [],
+        //                 "latitude": null,
+        //                 "localname": "Back Side 33 KVA Grid Patiala Road - Area1",
+        //                 "longitude": null,
+        //                 "boundaryNum": 1
+        //             },
+        //             {
+        //                 "id": 6,
+        //                 "area": "Area2",
+        //                 "code": "SUN12",
+        //                 "name": "Back Side 66 KVA Grid Patiala Road - Area2",
+        //                 "label": "Locality",
+        //                 "i18nKey": "Back Side 66 KVA Grid Patiala Road - Area2",
+        //                 "pincode": [
+        //                     143001
+        //                 ],
+        //                 "children": [],
+        //                 "latitude": null,
+        //                 "localname": "Back Side 66 KVA Grid Patiala Road - Area2",
+        //                 "longitude": null,
+        //                 "boundaryNum": 1
+        //             },
+        //             {
+        //                 "id": 7,
+        //                 "area": "Area1",
+        //                 "code": "SUN13",
+        //                 "name": "Back Side Civil Courts Colony - Area1",
+        //                 "label": "Locality",
+        //                 "i18nKey": "Back Side Civil Courts Colony - Area1",
+        //                 "pincode": [
+        //                     143001
+        //                 ],
+        //                 "children": [],
+        //                 "latitude": null,
+        //                 "localname": "Back Side Civil Courts Colony - Area1",
+        //                 "longitude": null,
+        //                 "boundaryNum": 1
+        //             }
+        //         ],
+        //         "latitude": null,
+        //         "localname": "Block1",
+        //         "longitude": null,
+        //         "boundaryNum": 1
+        //     },
+        //     "scheme": {
+        //         "fund": "Grant Fund from Central Government",
+        //         "active": true,
+        //         "i18nKey": "15th CFC-15th Central Finance Commission",
+        //         "schemeCode": "15th CFC",
+        //         "schemeName": "15th CFC-15th Central Finance Commission",
+        //         "subSchemes": [
+        //             {
+        //                 "code": "15th CFC-01",
+        //                 "name": "Drinking Water Supply (including Rain Water Harvesting & Recycling)",
+        //                 "active": true,
+        //                 "i18nKey": "Drinking Water Supply (including Rain Water Harvesting & Recycling)"
+        //             }
+        //         ]
+        //     },
+        //     "uploads": [],
+        //     "comments": "s",
+        //     "function": {
+        //         "code": "0001",
+        //         "name": "Municipal Body",
+        //         "active": true,
+        //         "i18nKey": "Municipal Body",
+        //         "functionGroup": "General Administration"
+        //     },
+        //     "location": {
+        //         "id": 4,
+        //         "area": "Area1",
+        //         "code": "SUN04",
+        //         "name": "Ajit Nagar - Area1",
+        //         "label": "Locality",
+        //         "i18nKey": "Ajit Nagar - Area1",
+        //         "pincode": [
+        //             143001
+        //         ],
+        //         "children": [],
+        //         "latitude": 31.63089,
+        //         "localname": "Ajit Nagar - Area1",
+        //         "longitude": 74.871552,
+        //         "boundaryNum": 1
+        //     },
+        //     "subScheme": {
+        //         "code": "15th CFC-01",
+        //         "name": "Drinking Water Supply (including Rain Water Harvesting & Recycling)",
+        //         "active": true,
+        //         "i18nKey": "Drinking Water Supply (including Rain Water Harvesting & Recycling)"
+        //     },
+        //     "budgetHead": {
+        //         "code": "01",
+        //         "name": "ADM",
+        //         "active": true,
+        //         "i18nKey": "ADM"
+        //     },
+        //     "department": {
+        //         "code": "DEPT_1",
+        //         "name": "Street Lights",
+        //         "active": true,
+        //         "i18nKey": "Street Lights"
+        //     },
+        //     "typeOfWork": {
+        //         "code": "Road",
+        //         "name": "Road",
+        //         "active": true,
+        //         "i18nKey": "Road",
+        //         "subTypes": [
+        //             {
+        //                 "code": "RD01",
+        //                 "name": "Road Forming",
+        //                 "active": true,
+        //                 "i18nKey": "Road Forming"
+        //             },
+        //             {
+        //                 "code": "RD02",
+        //                 "name": "Road Widening",
+        //                 "active": true,
+        //                 "i18nKey": "Road Widening"
+        //             },
+        //             {
+        //                 "code": "RD03",
+        //                 "name": "Maintenance",
+        //                 "active": true,
+        //                 "i18nKey": "Maintenance"
+        //             }
+        //         ]
+        //     },
+        //     "natureOfWork": {
+        //         "code": "Capital",
+        //         "name": "Capital",
+        //         "active": true,
+        //         "i18nKey": "Capital"
+        //     },
+        //     "subTypeOfWork": {
+        //         "code": "RD01",
+        //         "name": "Road Forming",
+        //         "active": true,
+        //         "i18nKey": "Road Forming"
+        //     },
+        //     "beneficiaryType": {
+        //         "code": "General",
+        //         "name": "General",
+        //         "active": true,
+        //         "i18nKey": "General"
+        //     },
+        //     "entrustmentMode": {
+        //         "code": "Nomination",
+        //         "name": "Nomination",
+        //         "active": true,
+        //         "i18nKey": "Nomination"
+        //     },
+        //     "estimateDetails": [
+        //         null,
+        //         {
+        //             "name": "work11",
+        //             "amount": "211"
+        //         }
+        //     ],
+        //     "requirementNumber": "123"
+        // },
         mode: "onSubmit"
     });
 
@@ -184,6 +384,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                     register={register}
                     handleSubmit={handleSubmit}
                     errors={errors}
+                    action={"estimate"}
                 />}
 
                 {/* DROPDOWN ROW */}

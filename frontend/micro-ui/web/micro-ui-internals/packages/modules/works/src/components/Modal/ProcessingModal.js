@@ -37,9 +37,16 @@ const ProcessingModal = ({
     errors:formErrors,
     employeeData,
     Department,
-    Designation
+    Designation,
+    action="estimate"
 }) => {
 
+    const allowedRoles = {
+        estimate: "EST_CHECKER",
+        loi: "LOI_CHECKER"
+    } 
+    
+    const rolesForThisAction = allowedRoles?.[action];
     const { isLoading: desLoading, data: designationData } = Digit.Hooks.useCustomMDMS(
         Digit.ULBService.getCurrentTenantId(),
         "common-masters",
@@ -67,12 +74,18 @@ const ProcessingModal = ({
     //based on these two make an hrms search for approver dropdown
     let Approvers = []
 
-    const { isLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDepartment?.code,roles:"LOI_CHECKER",isActive:true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDepartment && selectedDesignation) });
+    // const { isLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDepartment?.code,isActive:true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDepartment || selectedDesignation) });
 
-    employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
-    Approvers = employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees: []
-
+    // employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
+     //filter based on roles, use rolesForThisAction
+    // const subResult = employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees: []
     
+    // Approvers = subResult?.filter(app=>app?.user?.roles?.some(role=> role?.code===rolesForThisAction))
+    
+
+    const { isLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDepartment?.code, roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDepartment || selectedDesignation) });
+    employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
+    Approvers = employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees : []
 
       return (
         desLoading?<Loader/> :

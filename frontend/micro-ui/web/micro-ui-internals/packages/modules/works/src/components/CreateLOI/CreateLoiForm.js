@@ -160,6 +160,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
                     register={register}
                     handleSubmit={handleSubmit}
                     errors={errors}
+                    action={"loi"}
                 />}
 
                 
