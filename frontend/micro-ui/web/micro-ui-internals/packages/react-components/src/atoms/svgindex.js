@@ -1,10 +1,17 @@
 import React from "react";
 
-const CreateEstimateIcon = ({className,style={}}) => (
+const CreateEstimateIcon = ({ className, style = {}, fill ="#F47738"}) => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className={className} style={style} xmlns="http://www.w3.org/2000/svg">
-    <path d="M14 8.75C14.6125 8.75 15.1987 8.86375 15.75 9.05625V5.25L10.5 0H1.75C0.77875 0 0 0.77875 0 1.75V14C0 14.9712 0.7875 15.75 1.75 15.75H9.05625C8.86375 15.1987 8.75 14.6125 8.75 14C8.75 11.1037 11.1037 8.75 14 8.75ZM9.625 1.3125L14.4375 6.125H9.625V1.3125ZM17.5 13.125V14.875H14.875V17.5H13.125V14.875H10.5V13.125H13.125V10.5H14.875V13.125H17.5Z" fill="#F47738" />
+    <path d="M14 8.75C14.6125 8.75 15.1987 8.86375 15.75 9.05625V5.25L10.5 0H1.75C0.77875 0 0 0.77875 0 1.75V14C0 14.9712 0.7875 15.75 1.75 15.75H9.05625C8.86375 15.1987 8.75 14.6125 8.75 14C8.75 11.1037 11.1037 8.75 14 8.75ZM9.625 1.3125L14.4375 6.125H9.625V1.3125ZM17.5 13.125V14.875H14.875V17.5H13.125V14.875H10.5V13.125H13.125V10.5H14.875V13.125H17.5Z" fill={fill} />
   </svg>
 );
+
+const GotoInboxIcon = ({ className, style={}, fill ="#F47738" }) => (
+  <svg width="15" height="13" viewBox="0 0 15 13" fill="none" className={className} style={style} xmlns="http://www.w3.org/2000/svg">
+    <path d="M2.14286 6.5C2.14286 2.91056 5.02143 0 8.57143 0C12.1214 0 15 2.91056 15 6.5C15 10.0894 12.1214 13 8.57143 13C7.1 13 5.74286 12.4944 4.65714 11.6567L5.67143 10.6167C6.49286 11.2017 7.49286 11.5556 8.57143 11.5556C11.3357 11.5556 13.5714 9.295 13.5714 6.5C13.5714 3.705 11.3357 1.44444 8.57143 1.44444C5.80714 1.44444 3.57143 3.705 3.57143 6.5H5.71429L2.85714 9.38889L0 6.5H2.14286Z" fill={fill} />
+  </svg>
+
+)
 
 const ArrowLeft = ({ className }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" className={className} width="19px">
@@ -1092,6 +1099,7 @@ export {
   AnnouncementIcon,
   ReceiptIcon,
   CreateEstimateIcon,
+  GotoInboxIcon,
   ArrowLeft,
   ArrowDown,
   CameraSvg,
