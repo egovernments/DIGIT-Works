@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Header } from "@egovernments/digit-ui-react-components";
-
 import LOIDesktopInbox from "../../components/LOIDesktopInbox";
 import LOIMobileInbox from "../../components/LOIMobileInbox";
 import { useForm } from "react-hook-form";
@@ -28,7 +27,12 @@ const LOIInbox = ({
       sortOrder: "DESC",
     }
   });
-  const [payload, setPayload] = useState({});
+  const [payload, setPayload] = useState({
+    offset: 0,
+      limit: 10,
+      sortBy: "department",
+      sortOrder: "DESC",
+  });
 
   let isMobile = window.Digit.Utils.browser.isMobile();
   
@@ -92,7 +96,7 @@ const LOIInbox = ({
   };
 
   //API Call useEstimateInbox
-  // const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
+  const result1 = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: {estimateNumber:"EP/2022-23/10/000102"}, config });
   const result = {
     status: "success",
     totalCount:10,
@@ -124,7 +128,7 @@ const LOIInbox = ({
     return (
       <LOIMobileInbox
       data={getData()}
-      isLoading={result?.isLoading}
+      isLoading={result1?.isLoading}
       isSearch={!isInbox}
       // searchFields={searchFields}
       onFilterChange={handleFilterChange}
@@ -147,8 +151,8 @@ const LOIInbox = ({
           businessService={businessService}
           data={getData()}
           // tableConfig={tableConfig}
-          resultOk={isResultsOk()}
-          isLoading={result?.isLoading}
+          resultOk={isResultsOk}
+          isLoading={result1?.isLoading}
           defaultSearchParams={initialStates.searchParams}
           isSearch={!isInbox}
           onFilterChange={handleFilterChange}

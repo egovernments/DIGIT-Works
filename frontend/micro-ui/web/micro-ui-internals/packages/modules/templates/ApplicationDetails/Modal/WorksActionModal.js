@@ -142,7 +142,7 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
 
 
   
-  const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: action?.assigneeRoles?.toString(), isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: action?.action === "CHECK"});
+  const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: action?.assigneeRoles?.toString(), isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: action?.action === "CHECK" || action?.action === "TECHNICALSANCATION"});
 
 
   employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
@@ -193,7 +193,8 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
           selectedReason,
           setSelectedReason,
           loiNumber,
-          department
+          department,
+          estimateNumber
         })
       )
     }

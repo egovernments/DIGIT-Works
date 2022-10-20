@@ -27,19 +27,10 @@ const Inbox = ({
       sortOrder: "DESC",
     }
   });
-  const [payload, setPayload] = useState({});
-
-  let isMobile = window.Digit.Utils.browser.isMobile();
-  // let paginationParams = isMobile
-  //   ? { limit: 100, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
-  //   : { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
-
-  // const { isFetching, isLoading: hookLoading, searchResponseKey, searchFields, ...rest } = Digit.Hooks.works.useInbox({
-  //   tenantId,
-  //   filters: { ...searchParams, ...paginationParams, sortParams },
-  //   config: {},
-  // });
-
+  const [payload, setPayload] = useState({offset: 0,
+    limit: 10,
+    sortBy: "department",
+    sortOrder: "DESC",});
   const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
     defaultValues: {
       offset: 0, 
@@ -48,6 +39,17 @@ const Inbox = ({
       sortOrder: "DESC",
     },
   });
+
+  let isMobile = window.Digit.Utils.browser.isMobile();
+  let paginationParams = isMobile
+    ? { limit: 100, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
+    : { limit: 100, offset: getValues("offset"), sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
+
+  // const { isFetching, isLoading: hookLoading, searchResponseKey, searchFields, ...rest } = Digit.Hooks.works.useInbox({
+  //   tenantId,
+  //   filters: { ...searchParams, ...paginationParams, sortParams },
+  //   config: {},
+  // });
 
   useEffect(() => {
     register("offset", 0);
@@ -66,7 +68,8 @@ const Inbox = ({
     CreatedBy: "A.P.Sreenivasulu",
     Owner: "A.P.Sreenivasulu",
     Status: "Craeted",
-    TotalAmount: "Rs,10000"
+    TotalAmount: "Rs,10000",
+    totalCount: 10
   }]
 
   const onSort = useCallback((args) => {
@@ -111,7 +114,7 @@ const Inbox = ({
     enabled: !!(payload && Object.keys(payload).length > 0),
   };
   //API Call useEstimateInbox
-  // const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
+  const result1 = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
   const result = {
     status: "success",
     isSuccess: true,
@@ -126,8 +129,12 @@ const Inbox = ({
         budgetHead: "01",
         createdBy: "A.P.Sreenivasulu",
         owner: "A.P.Sreenivasulu",
-        status: "CREATED",
-        totalAmount: "Rs,10000"
+        estimateStatus: "APPROVED",
+        totalAmount: "Rs,10000",
+        auditDetails:{
+          createdBy:"0f603b14-10dc-450f-976a-64aae4160907",
+          lastModifiedBy:"0f603b14-10dc-450f-976a-64aae4160907"
+        }
       }]
     }
   }
@@ -135,7 +142,12 @@ const Inbox = ({
     if (args.length === 0) return;
     setSortParams(args);
   }, []);
-
+  const { isLoading: hookLoading, isError, error, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
+    null,
+    tenantId,
+    paginationParams,
+    null
+);
   // const handlePageSizeChange = (e) => {
   //   setPageSize(Number(e.target.value));
   // };
@@ -143,7 +155,23 @@ const Inbox = ({
     if (result?.data?.estimates?.length == 0 ) {
       return { display: "ES_COMMON_NO_DATA" }
     } else if (result?.data?.estimates?.length > 0) {
-      return result?.data?.estimates
+      let newResult = [];
+        result?.data?.estimates?.map((val)=>{
+          let totalAmount = 0
+              val?.estimateDetails?.map((amt)=>{
+              totalAmount = totalAmount + amt?.amount
+            })
+            employeeData?.Employees?.map((item)=>{
+              if(val?.auditDetails?.lastModifiedBy === item?.uuid){
+                Object.assign(val,{"owner":item?.user?.name})
+              }
+              if(val?.auditDetails?.createdBy === item?.uuid){
+                newResult.push(Object.assign(val,{"createdBy":item?.user?.name,"totalAmount":totalAmount}))
+              }
+          })
+          // newResult = newResult.filter((val)=>val?.fund === payload?.fund)
+        })
+      return newResult
     } else {
       return [];
     }
@@ -158,7 +186,7 @@ const Inbox = ({
     return (
       <MobileInbox
         data={getData()}
-        isLoading={result?.isLoading}
+        isLoading={result1?.isLoading}
         isSearch={!isInbox}
         // searchFields={searchFields}
         onFilterChange={handleFilterChange}
@@ -182,7 +210,7 @@ const Inbox = ({
           data={getData()}
           // tableConfig={tableConfig}
           resultOk={isResultsOk()}
-          isLoading={result?.isLoading}
+          isLoading={result1?.isLoading}
           defaultSearchParams={initialStates.searchParams}
           isSearch={!isInbox}
           onFilterChange={handleFilterChange}
