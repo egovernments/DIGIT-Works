@@ -63,15 +63,10 @@ public class InboxService {
     }
 
     public InboxResponse fetchInboxData(InboxSearchCriteria criteria, RequestInfo requestInfo) {
-        //mock response - start
-        if (true)
-            return InboxResponse.builder().totalCount(10).build();
-        //mock response - end
-
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
         HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
         processCriteria.setTenantId(criteria.getTenantId());
-        Integer flag=0;
+        Integer flag = 0;
 
         Integer totalCount = 0;
         Integer nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
@@ -87,7 +82,7 @@ public class InboxService {
         processCriteria.setAssignee(null);
         processCriteria.setStatus(null);
 
-        List<HashMap<String, Object>> bpaCitizenStatusCountMap = new ArrayList<HashMap<String,Object>>();
+        List<HashMap<String, Object>> bpaCitizenStatusCountMap = new ArrayList<HashMap<String, Object>>();
         List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
 
         String moduleName = processCriteria.getModuleName();
@@ -108,7 +103,7 @@ public class InboxService {
         InboxResponse response = new InboxResponse();
         JSONArray businessObjects = null;
         // Map<String,String> srvMap = (Map<String, String>) config.getServiceSearchMapping().get(businessServiceName.get(0));
-        Map<String, String> srvMap = fetchAppropriateServiceMap(businessServiceName,moduleName);
+        Map<String, String> srvMap = fetchAppropriateServiceMap(businessServiceName, moduleName);
         if (CollectionUtils.isEmpty(businessServiceName)) {
             throw new CustomException(ErrorConstants.MODULE_SEARCH_INVLAID, "Bussiness Service is mandatory for module search");
         }
@@ -124,7 +119,7 @@ public class InboxService {
                 BusinessService businessService = workflowService.getBusinessService(criteria.getTenantId(), requestInfo,
                         businessSrv);
                 bussinessSrvs.add(businessService);
-                businessServiceSlaMap.put(businessService.getBusinessService(),businessService.getBusinessServiceSla());
+                businessServiceSlaMap.put(businessService.getBusinessService(), businessService.getBusinessServiceSla());
             }
             HashMap<String, String> StatusIdNameMap = workflowService.getActionableStatusesForRole(requestInfo, bussinessSrvs,
                     processCriteria);
@@ -171,7 +166,7 @@ public class InboxService {
                 totalCount = fsmInboxFilter.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo, dsoId);
             }*/
 
-            List<Map<String,Object>> result = new ArrayList<>();
+            List<Map<String, Object>> result = new ArrayList<>();
             Map<String, Object> businessMapWS = new LinkedHashMap<>();
 
             businessObjects = new JSONArray();
@@ -188,7 +183,7 @@ public class InboxService {
             String businessService;
             Map<String, String> srvSearchMap;
             JSONArray serviceSearchObject = new JSONArray();
-            Map<String, Object> serviceSearchMap ;
+            Map<String, Object> serviceSearchMap;
             serviceSearchMap = StreamSupport.stream(serviceSearchObject.spliterator(), false)
                     .collect(Collectors.toMap(s1 -> ((JSONObject) s1).get("connectionNo").toString(),
                             s1 -> s1, (e1, e2) -> e1, LinkedHashMap::new));
@@ -204,7 +199,7 @@ public class InboxService {
             if (businessObjects.length() > 0 && processInstances.size() > 0) {
                 if (CollectionUtils.isEmpty(businessKeys)) {
                     businessMap.keySet().forEach(businessKey -> {
-                        if(null != processInstanceMap.get(businessKey)) {
+                        if (null != processInstanceMap.get(businessKey)) {
                             //When Bill Amendment objects are searched
                             Inbox inbox = new Inbox();
                             inbox.setProcessInstance(processInstanceMap.get(businessKey));
@@ -249,7 +244,7 @@ public class InboxService {
                     StringUtils.arrayToDelimitedString(processInstanceMap.keySet().toArray(), ","));
             moduleSearchCriteria.put("tenantId", criteria.getTenantId());
             // moduleSearchCriteria.put("offset", criteria.getOffset());
-            moduleSearchCriteria.put("limit", -1);
+            moduleSearchCriteria.put("limit", criteria.getLimit());
             businessObjects = fetchModuleObjects(moduleSearchCriteria, businessServiceName, criteria.getTenantId(), requestInfo,
                     srvMap);
             Map<String, Object> businessMap = StreamSupport.stream(businessObjects.spliterator(), false)
@@ -280,9 +275,8 @@ public class InboxService {
 
     /**
      * @param businessServiceSlaMap
-     * @param data -- application object
-     * @return
-     * Description : Calculate ServiceSLA for each application for WS and SW
+     * @param data                  -- application object
+     * @return Description : Calculate ServiceSLA for each application for WS and SW
      */
     private Long getApplicationServiceSla(Map<String, Long> businessServiceSlaMap, Object data) {
 
@@ -312,7 +306,7 @@ public class InboxService {
      * log.error("Exception trace: ", e); } return uuid; }
      */
 
-    private Map<String, String> fetchAppropriateServiceMap(List<String> businessServiceName,String  moduleName) {
+    private Map<String, String> fetchAppropriateServiceMap(List<String> businessServiceName, String moduleName) {
         StringBuilder appropriateKey = new StringBuilder();
         for (String businessServiceKeys : config.getServiceSearchMapping().keySet()) {
             if (businessServiceKeys.contains(businessServiceName.get(0))) {
@@ -348,13 +342,13 @@ public class InboxService {
                     url.append("&").append(param).append("=");
                     url.append(StringUtils
                             .arrayToDelimitedString(((Collection<?>) moduleSearchCriteria.get(param)).toArray(), ","));
-                } else if(param.equalsIgnoreCase("appStatus")){
+                } else if (param.equalsIgnoreCase("appStatus")) {
                     url.append("&").append("applicationStatus").append("=")
                             .append(moduleSearchCriteria.get(param).toString());
-                } else if(param.equalsIgnoreCase("consumerNo")){
+                } else if (param.equalsIgnoreCase("consumerNo")) {
                     url.append("&").append("connectionNumber").append("=")
                             .append(moduleSearchCriteria.get(param).toString());
-                } else if(null != moduleSearchCriteria.get(param)) {
+                } else if (null != moduleSearchCriteria.get(param)) {
                     url.append("&").append(param).append("=").append(moduleSearchCriteria.get(param).toString());
                 }
             }
@@ -399,9 +393,7 @@ public class InboxService {
 
             if (value instanceof JSONArray) {
                 value = toList((JSONArray) value);
-            }
-
-            else if (value instanceof JSONObject) {
+            } else if (value instanceof JSONObject) {
                 value = toMap((JSONObject) value);
             }
             map.put(key, value);
@@ -415,9 +407,7 @@ public class InboxService {
             Object value = array.get(i);
             if (value instanceof JSONArray) {
                 value = toList((JSONArray) value);
-            }
-
-            else if (value instanceof JSONObject) {
+            } else if (value instanceof JSONObject) {
                 value = toMap((JSONObject) value);
             }
             list.add(value);
