@@ -44,6 +44,9 @@ const LOIInbox = ({
       sortOrder: "DESC",
     },
   });
+  let paginationParams = isMobile
+  ? { limit: 100, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
+  : { limit: 100, offset: getValues("offset"), sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
 
   useEffect(() => {
     register("offset", 0);
@@ -109,6 +112,13 @@ const LOIInbox = ({
       { LOIId: "1136/TO/DB/FLOOD/10-11", LOIDate: "08/09/2010", EstimateNumber: "EST/KRPN/1136", NameOfWork: "Providing CC Drain in Birla Gaddah", ContractorName: "S.A.Basha", AgrementAmount: "3553600.00", SLA: "15Days", }]    
     }
   }
+
+  const { isLoading: hookLoading, isError, error, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
+    null,
+    tenantId,
+    paginationParams,
+    null
+);
 
   const getData = () => {
     if (result?.data?.estimates?.length == 0 ) {
