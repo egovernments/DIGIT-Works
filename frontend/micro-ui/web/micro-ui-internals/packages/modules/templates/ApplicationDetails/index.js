@@ -70,7 +70,7 @@ const ApplicationDetails = (props) => {
           history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
         }
         if (action?.redirectionUrll?.action === "EDIT_ESTIMATE_APPLICATION") {
-          history.push(`${action?.redirectionUrll?.pathname}`);
+          history.push(`${action?.redirectionUrll?.pathname}`,{ data: action?.redirectionUrll?.state });
         }
         
       } else if (!action?.redirectionUrl) {

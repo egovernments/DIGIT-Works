@@ -152,7 +152,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
         if (e.code === 'Enter') e.preventDefault();
     };
     const ulb={"name":t("WORKS_MODIFY_ESTIMATE"), "code":"health", "active":true}
-
+    let wardLocation =estimate?.location.replace(/(^:)|(:$)/g, '').split(":")
     return (
         isFetched && <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
             <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_MODIFY_ESTIMATE")}</Header>
@@ -199,7 +199,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="department"
                             control={control}
                             rules={{ required: true }}
-                            defaultValue={{name:t(`ES_COMMON_${estimate?.department}`), code:estimate?.department, active:true}}
+                            defaultValue={{i18nKey:t(`ES_COMMON_${estimate?.department}`), code:estimate?.department, active:true}}
                             render={(props) => {
                                 return ( 
                                     <Dropdown
@@ -241,7 +241,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="ward"
                             control={control}
                             rules={{ required: true }}
-                            defaultValue={{name:estimate?.beneficiaryType, code:estimate?.beneficiaryType, active:true}}
+                            defaultValue={{i18nKey:t(`ES_COMMON_${wardLocation[4]}`), code:wardLocation[4], active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -265,7 +265,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                         name="location"
                         control={control}
                         //rules={{ required: true }}
-                        defaultValue={{name:estimate?.beneficiaryType, code:estimate?.beneficiaryType, active:true}}
+                        defaultValue={{i18nKey:t(`ES_COMMON_${wardLocation[5]}`), code:wardLocation[5], active:true}}
                         render={(props) => {
                             return (
                                 <Dropdown
@@ -290,7 +290,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="beneficiaryType"
                             control={control}
                             rules={{ required: true }}
-                            defaultValue={{name:estimate?.beneficiaryType, code:estimate?.beneficiaryType, active:true}}
+                            defaultValue={{i18nKey:estimate?.beneficiaryType, code:estimate?.beneficiaryType, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -316,7 +316,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="natureOfWork"
                             control={control}
                             rules={{ required: true }}
-                            defaultValue={{name:estimate?.natureOfWork, code:estimate?.natureOfWork, active:true}}
+                            defaultValue={{i18nKey:estimate?.natureOfWork, code:estimate?.natureOfWork, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -341,7 +341,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="typeOfWork"
                             control={control}
                             rules={{ required: true }}
-                            defaultValue={{name:estimate?.typeOfWork, code:estimate?.typeOfWork, active:true}}
+                            defaultValue={{i18nKey:estimate?.typeOfWork, code:estimate?.typeOfWork, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -363,7 +363,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                     <Controller
                         name="subTypeOfWork"
                         control={control}
-                        defaultValue={{name:t(`ES_COMMON_${estimate?.subTypeOfWork}`), code:estimate?.subTypeOfWork, active:true}}
+                        defaultValue={{i18nKey:t(`ES_COMMON_${estimate?.subTypeOfWork}`), code:estimate?.subTypeOfWork, active:true}}
                         render={(props) => {
                             return (
                                 <Dropdown
@@ -386,7 +386,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="entrustmentMode"
                             control={control}
                             rules={{ required: true }}
-                            defaultValue={{name:estimate?.entrustmentMode, code:estimate?.entrustmentMode, active:true}}
+                            defaultValue={{i18nKey:estimate?.entrustmentMode, code:estimate?.entrustmentMode, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -413,7 +413,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="fund"
                             control={control}
                             rules={{ required: true }}
-                            defaultValue={{name:t(`ES_COMMON_${estimate?.fund}`), code:estimate?.fund, active:true}}
+                            defaultValue={{i18nKey:t(`ES_COMMON_${estimate?.fund}`), code:estimate?.fund, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -437,7 +437,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="function"
                             control={control}
                             rules={{ required: true }}
-                            defaultValue={{name:t(`ES_COMMON_${estimate?.function}`), code:estimate?.function, active:true}}
+                            defaultValue={{i18nKey:t(`ES_COMMON_${estimate?.function}`), code:estimate?.function, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -462,7 +462,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="budgetHead"
                             control={control}
                             rules={{ required: true }}
-                            defaultValue={{name:t(`ES_COMMON_${estimate?.budgetHead}`), code:estimate?.budgetHead, active:true}}
+                            defaultValue={{i18nKey:t(`ES_COMMON_${estimate?.budgetHead}`), code:estimate?.budgetHead, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -487,7 +487,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="scheme"
                             control={control}
                             rules={{ required: false }}
-                            defaultValue={{name:t(`ES_COMMON_${estimate?.scheme}`), code:estimate?.scheme, active:true}}
+                            defaultValue={{i18nKey:t(`ES_COMMON_${estimate?.scheme}`), code:estimate?.scheme, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
@@ -512,7 +512,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="subScheme"
                             control={control}
                             rules={{ required: false }}
-                            defaultValue={{name:t(`ES_COMMON_${estimate?.subScheme}`), code:estimate?.subScheme, active:true}}
+                            defaultValue={{i18nKey:t(`ES_COMMON_${estimate?.subScheme}`), code:estimate?.subScheme, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
