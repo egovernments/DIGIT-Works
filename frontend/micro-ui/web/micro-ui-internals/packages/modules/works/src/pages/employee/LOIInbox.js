@@ -73,13 +73,13 @@ const LOIInbox = ({
   }
 
   const handleFilterChange = (filterParam) => {
-    let keys_to_delete = filterParam?.delete;
-    let _new = {};
-    if (isMobile) {
-      _new = { ...filterParam };
-    } else {
-      _new = { ...searchParams, ...filterParam };
-    }
+    let _new = { ...searchParams, ...filterParam };
+    // if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
+    // delete filterParam.delete;
+    // if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
+    // delete _new?.delete;
+    // delete filterParam?.delete;
+    
     setPayload(
       Object.keys(_new)
       .filter((k) => _new[k])
@@ -96,7 +96,7 @@ const LOIInbox = ({
   };
 
   //API Call useEstimateInbox
-  const result1 = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: {estimateNumber:"EP/2022-23/10/000102"}, config });
+  const result1 = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
   const result = {
     status: "success",
     totalCount:10,
