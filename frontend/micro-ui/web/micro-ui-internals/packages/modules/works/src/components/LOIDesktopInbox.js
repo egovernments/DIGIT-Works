@@ -7,7 +7,7 @@ import SearchApplication from "./LOIInbox/SearchApplication";
 import { Link } from "react-router-dom";
 import { convertEpochToDateDMY } from "../utils";
 
-const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState, ...props }) => {
+const LOIDesktopInbox = ({tableConfig, resultOk, filterComponent,columns, isLoading, setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState, ...props }) => {
     const { data } = props;
     const { t } = useTranslation();
     const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));
@@ -75,21 +75,21 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
     ];  
     
     let result;
-  // if (props.isLoading) {
-  //   result = <Loader />;
-  // } else if (data?.table?.length === 0) {
-  //   result = (
-  //     <Card style={{ marginTop: 20 }}>
-  //       {t("CS_MYAPPLICATIONS_NO_APPLICATION")
-  //         .split("\\n")
-  //         .map((text, index) => (
-  //           <p key={index} style={{ textAlign: "center" }}>
-  //             {text}
-  //           </p>
-  //         ))}
-  //     </Card>
-  //   );
-  // } else if (data?.table?.length > 0) {
+    if (isLoading) {
+      result = <Loader />;
+    } else if (data?.display && !resultOk) {
+      result = (
+        <Card style={{ marginTop: 20 }}>
+          {t(data?.display)
+            .split("\\n")
+            .map((text, index) => (
+              <p key={index} style={{ textAlign: "center" }}>
+                {text}
+              </p>
+            ))}
+        </Card>
+      );
+    } else if (resultOk) {
   result = (
     <ApplicationTable
       t={t}
@@ -115,7 +115,7 @@ const LOIDesktopInbox = ({tableConfig, filterComponent,columns, isLoading, setSe
       totalRecords={props.totalRecords}
     />
   );
-  // }
+  }
 
 return (
     <div className="inbox-container">

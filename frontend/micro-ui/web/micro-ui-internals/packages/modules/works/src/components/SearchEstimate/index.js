@@ -60,7 +60,7 @@ const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
                   <span className={"link"}>
                     <Link
                       to={`view-estimate?tenantId=${row.original?.tenantId}&estimateNumber=${row.original?.estimateNumber}&department=${row.original?.department}`}>
-                      {row.original?.estimateNumber || "NA"}
+                      {row.original?.estimateNumber || t("ES_COMMON_NA")}
                     </Link>
                   </span> 
                 ) : (
@@ -71,47 +71,47 @@ const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
         {
           Header: t("WORKS_DEPARTMENT"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.department}`))),
+          accessor: (row) => GetCell(t(`ES_COMMON_${row?.department}`) || t("ES_COMMON_NA")),
         },
-        {
-          Header: t("WORKS_ADMIN_SANCTION_NUMBER"),
-          disableSortBy: true,
-          accessor: (row) => (GetCell(row?.adminSanctionNumber)),
-        },
+        // {
+        //   Header: t("WORKS_ADMIN_SANCTION_NUMBER"),
+        //   disableSortBy: true,
+        //   accessor: (row) => GetCell(row?.adminSanctionNumber || t("ES_COMMON_NA")),
+        // },
         {
           Header: t("WORKS_FUND"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(t(`ES_COMMON_FUND_${row?.fund}`))),
+          accessor: (row) => GetCell(t(`ES_COMMON_FUND_${row?.fund}`) || t("ES_COMMON_NA")),
         },
         {
           Header: t("WORKS_FUNCTION"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.function}`))),
+          accessor: (row) => GetCell(t(`ES_COMMON_${row?.function}`) || t("ES_COMMON_NA")),
         },
         {
           Header: t("WORKS_BUDGET_HEAD"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.budgetHead}`))),
+          accessor: (row) => GetCell(t(`ES_COMMON_${row?.budgetHead}`) || t("ES_COMMON_NA")),
         },        
         {
           Header: t("WORKS_CREATED_BY"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.createdBy)),
+          accessor: (row) => GetCell(row?.createdBy || t("ES_COMMON_NA")),
         },
         {
           Header: t("WORKS_OWNER"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.owner)),
+          accessor: (row) => GetCell(row?.owner || t("ES_COMMON_NA")),
         },
         {
           Header: t("WORKS_STATUS"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.estimateStatus)),
+          accessor: (row) => GetCell(row?.estimateStatus || t("ES_COMMON_NA")) ,
         },
         {
           Header: t("WORKS_TOTAL_AMOUNT"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.totalAmount)),
+          accessor: (row) => GetCell(row?.totalAmount || t("ES_COMMON_NA")),
         },
       ],
       []

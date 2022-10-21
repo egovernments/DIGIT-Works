@@ -41,11 +41,11 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
           disableSortBy: true,
           accessor: (row) => (GetCell(t(`ES_COMMON_${row?.department}`))),
         },
-        {
-          Header: t("WORKS_ADMIN_SANCTION_NUMBER"),
-          disableSortBy: true,
-          accessor: (row) => (GetCell(row?.adminSanctionNumber)),
-        },
+        // {
+        //   Header: t("WORKS_ADMIN_SANCTION_NUMBER"),
+        //   disableSortBy: true,
+        //   accessor: (row) => (GetCell(row?.adminSanctionNumber)),
+        // },
         {
           Header: t("WORKS_FUND"),
           disableSortBy: true,
@@ -74,7 +74,7 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
         {
           Header: t("WORKS_STATUS"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.status)),
+          accessor: (row) => (GetCell(row?.estimateStatus)),
         },
         {
           Header: t("WORKS_TOTAL_AMOUNT"),

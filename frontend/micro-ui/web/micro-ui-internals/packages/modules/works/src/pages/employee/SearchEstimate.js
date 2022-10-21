@@ -8,8 +8,9 @@ const SearchEstimate = () => {
     const SearchApplication = Digit.ComponentRegistryService.getComponent("SearchEstimateApplication");
     const [showToast, setShowToast] = useState(null);
     const [payload, setPayload] = useState({});
-
-
+    const { isLoading: hookLoading, isError, error, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
+        null,tenantId,
+      );
   const onSubmit = async (_data) => {
     
     var fromProposalDate = new Date(_data?.fromProposalDate);
@@ -44,7 +45,22 @@ const SearchEstimate = () => {
       if (result?.data?.estimates?.length == 0 ) {
         return { display: "ES_COMMON_NO_DATA" }
       } else if (result?.data?.estimates?.length > 0) {
-        return result?.data?.estimates
+        let newResult = [];
+        result?.data?.estimates?.map((val)=>{
+          let totalAmount = 0
+              val?.estimateDetails?.map((amt)=>{
+              totalAmount = totalAmount + amt?.amount
+            })
+            employeeData?.Employees?.map((item)=>{
+              if(val?.auditDetails?.lastModifiedBy === item?.uuid){
+                Object.assign(val,{"owner":item?.user?.name})
+              }
+              if(val?.auditDetails?.createdBy === item?.uuid){
+                newResult.push(Object.assign(val,{"createdBy":item?.user?.name,"totalAmount":totalAmount}))
+              }
+          })
+        })
+      return newResult
       } else {
         return [];
       }

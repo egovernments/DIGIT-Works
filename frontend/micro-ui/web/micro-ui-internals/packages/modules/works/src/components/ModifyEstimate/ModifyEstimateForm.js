@@ -52,6 +52,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
     if (designationData?.[`common-masters`]) {
         var { Designation, Department } = designationData?.[`common-masters`]
     }
+    Department?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
 
     const [rows, setRows] = useState(estimate?.estimateDetails)
 
@@ -94,15 +95,42 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
     );
 
     const { subTypes: SubTypeOfWork } = useWatch({ control: control, name: "typeOfWork", defaultValue: [] });
+    SubTypeOfWork?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
 
     if (data?.works) {
         var { EntrustmentMode, BeneficiaryType, NatureOfWork, TypeOfWork } = data?.works
     }
+    EntrustmentMode?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+    BeneficiaryType?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+    NatureOfWork?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+    TypeOfWork?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
 
     const { subSchemes: subScheme } = useWatch({ control: control, name: "scheme", defaultValue: [] });
     if (financeData?.finance) {
         var { Scheme, BudgetHead, Functions, Fund } = financeData?.finance
     }
+    Scheme?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.schemeCode}`)}))
+    BudgetHead?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_BUDGETHEAD_${item?.code}`)}))
+    Functions?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+    Fund?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_FUND_${item?.code}`)}))
+    subScheme?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+
+    const { isLoading: locationLoading, data: locationData, isFetched: locationDataFetched } = Digit.Hooks.useCustomMDMS(
+        tenantId,
+        "egov-location",
+        [
+            {
+                "name": "TenantBoundary"
+            },
+        ]
+    );
+    if (locationData?.[`egov-location`]) {
+        var { children: ward } = locationData?.[`egov-location`]?.TenantBoundary[0]?.boundary?.children[0]
+    }
+    ward?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
+
+    const { children: location } = useWatch({ control: control, name: "ward", defaultValue: [] });
+    location?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
 
     const handleCreateClick = async () => {
         const subWorkFieldsToValidate = []
@@ -159,9 +187,8 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                     register={register}
                     handleSubmit={handleSubmit}
                     errors={errors}
-                    employeeData={employeeData}
-                    Department={Department}
-                    Designation={Designation}
+                    action={"estimate"}
+                    setValue={setValue}
                 />}
 
                 {/* DROPDOWN ROW */}
@@ -178,7 +205,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                                     <Dropdown
                                         option={Department}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -218,9 +245,9 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-                                        option={BeneficiaryType}
+                                        option={ward}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -243,9 +270,9 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             return (
                                 <Dropdown
                                     className={`field`}
-                                    option={BeneficiaryType}
+                                    option={location}
                                     selected={props?.value}
-                                    optionKey={"name"}
+                                    optionKey={"i18nKey"}
                                     t={t}
                                     select={props?.onChange}
                                     onBlur={props.onBlur}
@@ -270,7 +297,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
 
                                         option={BeneficiaryType}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -296,7 +323,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
 
                                         option={NatureOfWork}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -320,7 +347,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                                     <Dropdown
                                         option={TypeOfWork}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -343,7 +370,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                                     className={`field`}
                                     option={SubTypeOfWork}
                                     selected={props?.value}
-                                    optionKey={"name"}
+                                    optionKey={"i18nKey"}
                                     t={t}
                                     select={props?.onChange}
                                     onBlur={props.onBlur}
@@ -365,7 +392,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                                     <Dropdown
                                         option={EntrustmentMode}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -392,7 +419,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                                     <Dropdown
                                         option={Fund}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -417,7 +444,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
 
                                         option={Functions}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -442,7 +469,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
 
                                         option={BudgetHead}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -466,7 +493,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                                     <Dropdown
                                         option={Scheme}
                                         selected={props?.value}
-                                        optionKey={"schemeName"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -492,7 +519,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
 
                                         option={subScheme}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
