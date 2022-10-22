@@ -9,6 +9,7 @@ import org.egov.inbox.config.InboxConfiguration;
 import org.egov.inbox.repository.ElasticSearchRepository;
 import org.egov.inbox.repository.ServiceRequestRepository;
 import org.egov.inbox.util.ErrorConstants;
+import org.egov.inbox.util.EstimateServiceUtil;
 import org.egov.inbox.web.model.Inbox;
 import org.egov.inbox.web.model.InboxResponse;
 import org.egov.inbox.web.model.InboxSearchCriteria;
@@ -33,6 +34,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static org.egov.inbox.util.BSConstants.ACKNOWLEDGEMENT_IDS_PARAM;
+import static org.egov.inbox.util.BSConstants.LOCALITY_PARAM;
+import static org.egov.inbox.util.EstimateConstant.ESTIMATE_SERVICE;
+import static org.egov.inbox.util.EstimateConstant.OFFSET_PARAM;
+
 @Slf4j
 @Service
 public class InboxService {
@@ -50,6 +56,9 @@ public class InboxService {
 
     @Autowired
     ElasticSearchRepository elasticSearchRepository;
+
+    @Autowired
+    private EstimateServiceUtil estimateServiceUtil;
 
     @Autowired
     public InboxService(InboxConfiguration config, ServiceRequestRepository serviceRequestRepository,
@@ -158,18 +167,27 @@ public class InboxService {
             // Redirect request to searcher in case of PT to fetch acknowledgement IDS
             Boolean isSearchResultEmpty = false;
             List<String> businessKeys = new ArrayList<>();
-
-            //TODO as on now this does not seem to be required, hence commenting the code
-           /* if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
-					&& processCriteria.getModuleName().equalsIgnoreCase(FSMConstants.FSM_MODULE)) {
-
-                totalCount = fsmInboxFilter.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo, dsoId);
-            }*/
-
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(ESTIMATE_SERVICE)) {
+                List<String> estimateNumbers = estimateServiceUtil.fetchEstimateNumbersFromEstimateService(criteria,
+                        StatusIdNameMap, requestInfo);
+                totalCount = estimateNumbers != null && !estimateNumbers.isEmpty() ? estimateNumbers.size() : 0;
+                if (!CollectionUtils.isEmpty(estimateNumbers)) {
+                    moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, estimateNumbers);
+                    businessKeys.addAll(estimateNumbers);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }
             List<Map<String, Object>> result = new ArrayList<>();
             Map<String, Object> businessMapWS = new LinkedHashMap<>();
 
             businessObjects = new JSONArray();
+            if (!isSearchResultEmpty) {
+                businessObjects = fetchModuleObjects(moduleSearchCriteria, businessServiceName, criteria.getTenantId(),
+                        requestInfo, srvMap);
+            }
             Map<String, Object> businessMap = StreamSupport.stream(businessObjects.spliterator(), false)
                     .collect(Collectors.toMap(s1 -> ((JSONObject) s1).get(businessIdParam).toString(),
                             s1 -> s1, (e1, e2) -> e1, LinkedHashMap::new));
@@ -183,10 +201,10 @@ public class InboxService {
             String businessService;
             Map<String, String> srvSearchMap;
             JSONArray serviceSearchObject = new JSONArray();
-            Map<String, Object> serviceSearchMap;
-            serviceSearchMap = StreamSupport.stream(serviceSearchObject.spliterator(), false)
-                    .collect(Collectors.toMap(s1 -> ((JSONObject) s1).get("connectionNo").toString(),
-                            s1 -> s1, (e1, e2) -> e1, LinkedHashMap::new));
+//            Map<String, Object> serviceSearchMap;
+//            serviceSearchMap = StreamSupport.stream(serviceSearchObject.spliterator(), false)
+//                    .collect(Collectors.toMap(s1 -> ((JSONObject) s1).get("connectionNo").toString(),
+//                            s1 -> s1, (e1, e2) -> e1, LinkedHashMap::new));
 
             ProcessInstanceResponse processInstanceResponse;
             processInstanceResponse = workflowService.getProcessInstance(processCriteria, requestInfo);
@@ -200,29 +218,13 @@ public class InboxService {
                 if (CollectionUtils.isEmpty(businessKeys)) {
                     businessMap.keySet().forEach(businessKey -> {
                         if (null != processInstanceMap.get(businessKey)) {
-                            //When Bill Amendment objects are searched
+                            //For non- Bill Amendment Inbox search
                             Inbox inbox = new Inbox();
                             inbox.setProcessInstance(processInstanceMap.get(businessKey));
                             inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
-                            inbox.setServiceObject(toMap(
-                                    (JSONObject) serviceSearchMap.get(inbox.getBusinessObject().get("consumerCode"))));
                             inboxes.add(inbox);
                         }
                     });
-                } else {
-                    //When Bill Amendment objects are searched
-                    for (String businessKey : businessKeys) {
-                        Inbox inbox = new Inbox();
-                        if (processInstanceMap.get(businessKey) == null) {
-                            totalCount--;
-                            continue;
-                        }
-                        inbox.setProcessInstance(processInstanceMap.get(businessKey));
-                        inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
-                        inbox.setServiceObject(toMap(
-                                (JSONObject) serviceSearchMap.get(inbox.getBusinessObject().get("consumerCode"))));
-                        inboxes.add(inbox);
-                    }
                 }
             }
         } else {

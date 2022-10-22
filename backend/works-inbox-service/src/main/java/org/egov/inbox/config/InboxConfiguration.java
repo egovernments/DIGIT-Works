@@ -102,4 +102,13 @@ public class InboxConfiguration {
 
 	@Value("${es.search.default.sort.order}")
 	private String defaultSortOrder;
+
+	//Estimate Service
+
+	@Value("${works.estimate.host}")
+	private String estimateServiceHost;
+
+	@Value("${works.estimate.search.path}")
+	private String estimateServiceSearchPath;
+
 }
