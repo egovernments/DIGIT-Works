@@ -331,7 +331,11 @@ public class InboxService {
             throw new CustomException(ErrorConstants.INVALID_MODULE_SEARCH_PATH,
                     "search path not configured for the businessService : " + businessServiceName);
         }
-        StringBuilder url = new StringBuilder(srvMap.get("searchPath"));
+        //TODO-start : check how is configured in other inbox service
+        String searchModuleUrl = srvMap.get("searchPath");
+        searchModuleUrl = searchModuleUrl.replace("http://localhost:8080",config.getWorkflowHost());
+        //TODO-end
+        StringBuilder url = new StringBuilder(searchModuleUrl);
         url.append("?tenantId=").append(tenantId);
 
         Set<String> searchParams = moduleSearchCriteria.keySet();
