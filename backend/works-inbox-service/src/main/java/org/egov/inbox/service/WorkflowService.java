@@ -104,6 +104,7 @@ public class WorkflowService {
 			StringBuilder url = new StringBuilder(config.getWorkflowHost());
 			url.append(config.getProcessStatusCountPath());
 			criteria.setIsProcessCountCall(true);
+			url = buildWorkflowUrl(criteria, url, Boolean.FALSE);
 			// For BPA having large request, so that it was sending from the body
 			List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
 

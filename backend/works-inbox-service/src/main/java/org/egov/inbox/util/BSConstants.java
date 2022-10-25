@@ -17,9 +17,6 @@ public class BSConstants {
 	public static final String BS_APPLICATION_SEARCH_TYPE_PARAM = "searchType";
 	public static final String ASSIGNEE_PARAM = "assignee";
 	public static final String STATUS_PARAM = "status";
-	public static final String OFFSET_PARAM = "offset";
-	public static final String NO_OF_RECORDS_PARAM = "noOfRecords";
-	public static final String LIMIT_PARAM = "limit";
 	public static final String ACKNOWLEDGEMENT_IDS_PARAM = "businessIds";
 	public static final String BS_REQUESTINFO_PARAM = "RequestInfo";
 	public static final String BS_SEARCH_CRITERIA_PARAM = "searchCriteria";
