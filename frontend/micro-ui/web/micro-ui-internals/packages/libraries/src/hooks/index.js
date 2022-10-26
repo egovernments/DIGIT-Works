@@ -261,8 +261,7 @@ const works = {
   useApplicationActionsLOI,
   useUpdateEstimate,
   useApplicationActionsEstimate,
-  useSearchApprovedEstimates,
-  useInbox: useWorksInbox
+  useSearchApprovedEstimates
 }
 
 const pgr = {
