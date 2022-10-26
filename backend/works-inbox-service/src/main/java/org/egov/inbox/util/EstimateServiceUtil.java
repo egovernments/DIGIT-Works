@@ -67,8 +67,11 @@ public class EstimateServiceUtil {
             if (moduleSearchCriteria.containsKey(EstimateConstant.ESTIMATE_IDS)) {
                 uriBuilder.append("&ids=").append(moduleSearchCriteria.get(EstimateConstant.ESTIMATE_IDS));
             }
-            if (moduleSearchCriteria.containsKey(EstimateConstant.ESTIMATE_IDS)) {
-                uriBuilder.append("&ids=").append(moduleSearchCriteria.get(EstimateConstant.ESTIMATE_IDS));
+            if (moduleSearchCriteria.containsKey(EstimateConstant.DEPARTMENT)) {
+                uriBuilder.append("&department=").append(moduleSearchCriteria.get(EstimateConstant.DEPARTMENT));
+            }
+            if (moduleSearchCriteria.containsKey(EstimateConstant.TYPE_OF_WORK)) {
+                uriBuilder.append("&typeOfWork=").append(moduleSearchCriteria.get(EstimateConstant.TYPE_OF_WORK));
             }
             if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
                 uriBuilder.append("&estimateStatus=").append(processCriteria.getStatus());
