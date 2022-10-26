@@ -1,0 +1,122 @@
+{
+  "RequestInfo": {
+    "apiId": "loi-service",
+    "action": "",
+    "did": 1,
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "requesterId": "",
+    "ts": 1513579888683,
+    "ver": "1.0.0",
+    "authToken": "94ecb06f-8e5b-4798-af8f-56a987560209",
+    "userInfo": {
+      "uuid": "dev"
+    }
+  },
+  "BusinessServices": [
+    {
+      "tenantId": "pb",
+      "businessService": "loi-approval",
+      "business": "loi-service",
+      "businessServiceSla": 432000000,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CREATE",
+              "nextState": "CREATED",
+              "roles": [
+                "LOI_CREATOR"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "CREATED",
+          "applicationStatus": "CREATED",
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CHECK",
+              "nextState": "CHECKED",
+              "roles": [
+                "LOI_CHECKER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "LOI_CHECKER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "CHECKED",
+          "applicationStatus": "CHECKED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "APPROVE",
+              "nextState": "APPROVED",
+              "roles": [
+                "LOI_APPROVER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "LOI_APPROVER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "REJECTED",
+          "applicationStatus": "REJECTED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "EDIT",
+              "nextState": "CREATED",
+              "roles": [
+                "LOI_CREATOR"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "APPROVED",
+          "applicationStatus": "APPROVED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": null
+        }
+      ]
+    }
+  ]
+}
