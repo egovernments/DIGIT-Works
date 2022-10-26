@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError } from '@egovernments/digit-ui-react-components'
 
-const SubWorkTable = ({ t, register, errors, rows, setRows, estimateDetails, setValue }) => {
+const SubWorkTable = ({ t, register, errors, rows, setRows, estimateDetails, setValue, control, Controller }) => {
     const getStyles = (index) => {
         let obj = {}
         switch (index) {
@@ -53,25 +53,45 @@ const SubWorkTable = ({ t, register, errors, rows, setRows, estimateDetails, set
     const renderBody = () => {
         let i = 0
         return rows.map((row, index) => {
-            setValue(`estimateDetails.${index}.name`,row.name)
-            setValue(`estimateDetails.${index}.amount`,row.amount)
             return <tr key={index} style={{ "height": "50%" }}>
                 <td style={getStyles(1)}>{++i}</td>
-                <td style={getStyles(2)} ><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`estimateDetails.${index}.name`} inputRef={register({
-                    required: true,
-                    pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
-                })
-                }
-
-                />{errors && errors?.estimateDetails?.[index]?.name?.type === "pattern" && (
+                <td style={getStyles(2)} ><div className='field'>
+                <Controller
+                    control={control}
+                    name={`estimateDetails.${index}.name`}
+                    defaultValue={row.name}
+                    rules={{pattern: /^[a-zA-Z0-9_.$@#\/]*$/, required:true}}
+                    render={(props)=>(
+                        <TextInput
+                            value={props.value}
+                            onChange={(e) => {
+                                props.onChange(e.target.value);
+                            }}
+                            onBlur={props.onBlur}
+                        />
+                    )}
+                />
+                {errors && errors?.estimateDetails?.[index]?.name?.type === "pattern" && (
                     <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     {errors && errors?.estimateDetails?.[index]?.name?.type === "required" && (
                         <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
-                <td style={getStyles(3)}><div className='field'><TextInput style={{ "marginBottom": "0px" }} name={`estimateDetails.${index}.amount`} inputRef={register({
-                    required: true,
-                    pattern: /^[0-9]*$/
-                })}
-                />{errors && errors?.estimateDetails?.[index]?.amount?.type === "pattern" && (
+                <td style={getStyles(3)}><div className='field'>
+                <Controller
+                    control={control}
+                    name={`estimateDetails.${index}.amount`}
+                    defaultValue={row.amount}
+                    rules={{pattern: /^[a-zA-Z0-9_.$@#\/]*$/, required:true}}
+                    render={(props)=>(
+                        <TextInput
+                            value={props.value}
+                            onChange={(e) => {
+                                props.onChange(e.target.value);
+                            }}
+                            onBlur={props.onBlur}
+                        />
+                    )}
+                />
+                {errors && errors?.estimateDetails?.[index]?.amount?.type === "pattern" && (
                     <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     {errors && errors?.estimateDetails?.[index]?.amount?.type === "required" && (
                         <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>

@@ -20,13 +20,14 @@ export const createEstimatePayload =(data)=>{
         "fund": data?.fund?.code,
         "function": data?.function?.code,
         "budgetHead": data?.budgetHead?.code,
-        "scheme": data?.scheme?.code,
+        "scheme": data?.scheme?.schemeCode,
         "subScheme": data?.scheme?.subSchemes[0]?.code,
         "estimateDetails": estimateDetails,
         "additionalDetails": {
           formData:data,
           createdBy: Digit.UserService.getUser()?.info?.name,
-          owner: Digit.UserService.getUser()?.info?.name
+          owner: Digit.UserService.getUser()?.info?.name,
+          filesAttached: data?.uploads
         }
       }
       return payload;
