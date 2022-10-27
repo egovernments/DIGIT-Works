@@ -1,39 +1,233 @@
 {
-	"info": {
-		"_postman_id": "00a2714b-063c-4afe-afc7-216d549dafe0",
-		"name": "Letter-Of-Indent (LOI)",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "4973513"
-	},
-	"item": [
-		{
-			"name": "Create LOI",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"requestInfo\": {\n    \"apiInfo\": {\n      \"id\": \"string\",\n      \"version\": \"string\",\n      \"path\": \"string\"\n    },\n    \"deviceDetail\": {\n      \"id\": \"string\",\n      \"signature\": \"string\"\n    },\n    \"ts\": 0,\n    \"action\": \"string\",\n    \"key\": \"string\",\n    \"msgId\": \"string\",\n    \"requesterId\": \"string\",\n    \"authToken\": \"string\",\n    \"signature\": \"string\"\n  },\n  \"letterOfIndent\": {\n    \"tenantId\": \"pb.jalandhar\",\n    \"workIdentificationNumber\": \"string\",\n    \"fileNumber\": \"string\",\n    \"fileDate\": 1658397420000,\n    \"negotiatedPercentage\": 40,\n    \"agreementDate\": 1658397420000,\n    \"contractorId\": \"251c51eb-e970-4e01-a99a-70136c47a934\",\n    \"securityDeposit\": 100000,\n    \"bankGuarantee\": \"string\",\n    \"emdAmount\": 0,\n    \"contractPeriod\": 0,\n    \"defectLiabilityPeriod\": 0,\n    \"oicId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n    \"status\": \"DRAFT\",\n    \"letterStatus\": \"CREATED\",\n    \"additionalDetails\": {}\n  },\n  \"workflow\": {\n    \"action\": \"string\",\n    \"comment\": \"string\",\n    \"assignees\": [\n      \"string\"\n    ]\n  }\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8023/loi-service/v1/_create",
-					"host": [
-						"localhost"
-					],
-					"port": "8023",
-					"path": [
-						"loi-service",
-						"v1",
-						"_create"
-					]
-				}
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "_postman_id": "1698aebe-99ef-4428-a20b-10f5c4e633ee",
+    "name": "LOI-Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create LOI",
+      "id": "bbb1a27d-1955-43d4-a26d-eaf6445f50ed",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json, text/plain, */*"
+          },
+          {
+            "key": "Accept-Language",
+            "value": "en-US,en;q=0.9"
+          },
+          {
+            "key": "Connection",
+            "value": "keep-alive"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json;charset=UTF-8"
+          },
+          {
+            "key": "Origin",
+            "value": "http://localhost:3000"
+          },
+          {
+            "key": "Referer",
+            "value": "http://localhost:3000/works-ui/employee/works/create-loi"
+          },
+          {
+            "key": "Sec-Fetch-Dest",
+            "value": "empty"
+          },
+          {
+            "key": "Sec-Fetch-Mode",
+            "value": "cors"
+          },
+          {
+            "key": "Sec-Fetch-Site",
+            "value": "same-origin"
+          },
+          {
+            "key": "User-Agent",
+            "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+          },
+          {
+            "key": "sec-ch-ua",
+            "value": "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\""
+          },
+          {
+            "key": "sec-ch-ua-mobile",
+            "value": "?0"
+          },
+          {
+            "key": "sec-ch-ua-platform",
+            "value": "\"Windows\""
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"letterOfIndent\": {\n        \"workIdentificationNumber\": \"12121212\",\n        \"fileNumber\": \"32423\",\n        \"negotiatedPercentage\": \"3\",\n        \"contractorId\": \"324\",\n        \"securityDeposit\": \"324\",\n        \"bankGuarantee\": \"432\",\n        \"emdAmount\": \"123\",\n        \"contractPeriod\": \"32\",\n        \"defectLiabilityPeriod\": \"12\",\n        \"fileDate\": 1672511399000,\n        \"agreementDate\": 1640975399000,\n        \"agencyName\": \"agency1\",\n        \"officerInChargedesig\": \"d1\",\n        \"officerIncharge\": \"officer2\",\n        \"uploads\": [],\n        \"comments\": \"jksdf\",\n        \"appDept\": \"deptOfEngg\",\n        \"appDesig\": \"junior engg\",\n        \"app\": \"officer2\",\n        \"tenantId\":\"pb.amritsar\",\n        \"oicId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n        \"status\":\"DRAFT\",\n        \"action\":\"CREATE\",\n        \"additionalDetails\":{\n            \"name\":\"Employee\"\n        }\n    },\n    \"workflow\":{\n        \"action\":\"CREATE\"\n    },\n    \"RequestInfo\": {\n        \"tenantId\":\"pb.amritsar\",\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"1df44cd6-065c-4908-9d14-a7c1fb93f0af\",\n        \"userInfo\": {\n            \"id\": 109,\n            \"uuid\": \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\",\n            \"userName\": \"Nipsyyyy\",\n            \"name\": \"Nipun \",\n            \"mobileNumber\": \"9667076655\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"EST CREATOR\",\n                    \"code\": \"EST_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"EST_CHECKER\",\n                    \"code\": \"EST_CHECKER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"LOI APPROVER\",\n                    \"code\": \"LOI_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"EST TECH SANC\",\n                    \"code\": \"EST_TECH_SANC\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"EST FIN SANC\",\n                    \"code\": \"EST_FIN_SANC\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"LOI CREATOR\",\n                    \"code\": \"LOI_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"SUPER USER\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"EST TECH SANC\",\n                    \"code\": \"EST_ADMIN_SANC\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"LOI CHECKER\",\n                    \"code\": \"LOI_CHECKER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"HRMS Admin\",\n                    \"code\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1663059767517|en_IN\",\n        \"plainAccessRequest\": {},\n        \"ts\":1,\n        \"action\":\"CREATE\"\n    }\n}"
+        },
+        "url": "http://works-dev.digit.org/loi-service/v1/_create"
+      },
+      "response": []
+    },
+    {
+      "name": "Search LOI",
+      "id": "520adf52-b088-4022-80b3-ba6e380f6fd4",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json, text/plain, */*"
+          },
+          {
+            "key": "Accept-Language",
+            "value": "en-US,en;q=0.9"
+          },
+          {
+            "key": "Connection",
+            "value": "keep-alive"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json;charset=UTF-8"
+          },
+          {
+            "key": "Origin",
+            "value": "http://localhost:3000"
+          },
+          {
+            "key": "Referer",
+            "value": "http://localhost:3000/works-ui/employee/works/search-estimate-approved"
+          },
+          {
+            "key": "Sec-Fetch-Dest",
+            "value": "empty"
+          },
+          {
+            "key": "Sec-Fetch-Mode",
+            "value": "cors"
+          },
+          {
+            "key": "Sec-Fetch-Site",
+            "value": "same-origin"
+          },
+          {
+            "key": "User-Agent",
+            "value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+          },
+          {
+            "key": "sec-ch-ua",
+            "value": "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\""
+          },
+          {
+            "key": "sec-ch-ua-mobile",
+            "value": "?0"
+          },
+          {
+            "key": "sec-ch-ua-platform",
+            "value": "\"Linux\""
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"1df44cd6-065c-4908-9d14-a7c1fb93f0af\",\n        \"userInfo\": {\n    \"id\": 109,\n    \"uuid\": \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\",\n    \"userName\": \"Nipsyyyy\",\n    \"name\": \"Nipun \",\n    \"mobileNumber\": \"9667076655\",\n    \"emailId\": null,\n    \"locale\": null,\n    \"type\": \"EMPLOYEE\",\n    \"roles\": [\n        {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"pb.amritsar\"\n        },\n        {\n            \"name\": \"EST CREATOR\",\n            \"code\": \"EST_CREATOR\",\n            \"tenantId\": \"pb.amritsar\"\n        },\n        {\n            \"name\": \"EST_CHECKER\",\n            \"code\": \"EST_CHECKER\",\n            \"tenantId\": \"pb.amritsar\"\n        },\n        {\n            \"name\": \"LOI APPROVER\",\n            \"code\": \"LOI_APPROVER\",\n            \"tenantId\": \"pb.amritsar\"\n        },\n        {\n            \"name\": \"EST TECH SANC\",\n            \"code\": \"EST_TECH_SANC\",\n            \"tenantId\": \"pb.amritsar\"\n        },\n        {\n            \"name\": \"EST FIN SANC\",\n            \"code\": \"EST_FIN_SANC\",\n            \"tenantId\": \"pb.amritsar\"\n        },\n        {\n            \"name\": \"LOI CREATOR\",\n            \"code\": \"LOI_CREATOR\",\n            \"tenantId\": \"pb.amritsar\"\n        },\n        {\n            \"name\": \"SUPER USER\",\n            \"code\": \"SUPERUSER\",\n            \"tenantId\": \"pb.amritsar\"\n        },\n        {\n            \"name\": \"EST TECH SANC\",\n            \"code\": \"EST_ADMIN_SANC\",\n            \"tenantId\": \"pb.amritsar\"\n        },\n        {\n            \"name\": \"LOI CHECKER\",\n            \"code\": \"LOI_CHECKER\",\n            \"tenantId\": \"pb.amritsar\"\n        },\n        {\n            \"name\": \"HRMS Admin\",\n            \"code\": \"HRMS_ADMIN\",\n            \"tenantId\": \"pb.amritsar\"\n        }\n    ],\n    \"active\": true,\n    \"tenantId\": \"pb.amritsar\",\n    \"permanentCity\": null\n},\n        \"msgId\": \"1663219251988|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
+        },
+        "url": {
+          "raw": "http://works-dev.digit.org/loi-service/v1/_search?tenantId=pb.amritsar&letterOfIndentNumber=LI/2022-23/09/000059",
+          "protocol": "http",
+          "host": [
+            "works-dev",
+            "digit",
+            "org"
+          ],
+          "path": [
+            "loi-service",
+            "v1",
+            "_search"
+          ],
+          "query": [
+            {
+              "key": "tenantId",
+              "value": "pb.amritsar"
+            },
+            {
+              "key": "letterOfIndentNumber",
+              "value": "LI/2022-23/09/000059"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update LOI",
+      "id": "021194d3-7c4d-4a3b-9297-f4df10a1065b",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json, text/plain, */*"
+          },
+          {
+            "key": "Accept-Language",
+            "value": "en-US,en;q=0.9"
+          },
+          {
+            "key": "Connection",
+            "value": "keep-alive"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json;charset=UTF-8"
+          },
+          {
+            "key": "Origin",
+            "value": "http://localhost:3000"
+          },
+          {
+            "key": "Referer",
+            "value": "http://localhost:3000/works-ui/employee/works/create-loi"
+          },
+          {
+            "key": "Sec-Fetch-Dest",
+            "value": "empty"
+          },
+          {
+            "key": "Sec-Fetch-Mode",
+            "value": "cors"
+          },
+          {
+            "key": "Sec-Fetch-Site",
+            "value": "same-origin"
+          },
+          {
+            "key": "User-Agent",
+            "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+          },
+          {
+            "key": "sec-ch-ua",
+            "value": "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\""
+          },
+          {
+            "key": "sec-ch-ua-mobile",
+            "value": "?0"
+          },
+          {
+            "key": "sec-ch-ua-platform",
+            "value": "\"Windows\""
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"letterOfIndent\":\n       {\n            \"tenantId\": \"pb.amritsar\",\n            \"id\": \"da0ce48f-0a6d-3028-96f9-ef98221d4bdd\",\n            \"letterOfIndentNumber\": \"LI/2022-23/10/000062\",\n            \"workPackageNumber\": null,\n            \"workIdentificationNumber\": \"12312321\",\n            \"fileNumber\": \"2131\",\n            \"fileDate\": 1672511399000,\n            \"negotiatedPercentage\": 90,\n            \"agreementDate\": 1664476199000,\n            \"contractorId\": \"12321\",\n            \"securityDeposit\": 123,\n            \"bankGuarantee\": \"123\",\n            \"emdAmount\": 123,\n            \"contractPeriod\": 12,\n            \"defectLiabilityPeriod\": 12,\n            \"oicId\": \"48b2e8a0-e133-3c2b-8a1b-8a057976c124\",\n            \"status\": \"DRAFT\",\n            \"letterStatus\": \"CREATED\",\n            \"auditDetails\": {\n                \"createdBy\": \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\",\n                \"lastModifiedBy\": \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\",\n                \"createdTime\": 1664771159713,\n                \"lastModifiedTime\": 1664771159713\n            }\n        }\n    ,\n    \"workflow\":{\n        \"action\":\"CHECK\"\n    },\n    \"RequestInfo\": {\n        \"tenantId\":\"pb.amritsar\",\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"1df44cd6-065c-4908-9d14-a7c1fb93f0af\",\n        \"userInfo\": {\n            \"id\": 109,\n            \"uuid\": \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\",\n            \"userName\": \"Nipsyyyy\",\n            \"name\": \"Nipun \",\n            \"mobileNumber\": \"9667076655\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"EST CREATOR\",\n                    \"code\": \"EST_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"EST_CHECKER\",\n                    \"code\": \"EST_CHECKER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"LOI APPROVER\",\n                    \"code\": \"LOI_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"EST TECH SANC\",\n                    \"code\": \"EST_TECH_SANC\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"EST FIN SANC\",\n                    \"code\": \"EST_FIN_SANC\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"LOI CREATOR\",\n                    \"code\": \"LOI_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"SUPER USER\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"EST TECH SANC\",\n                    \"code\": \"EST_ADMIN_SANC\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"LOI CHECKER\",\n                    \"code\": \"LOI_CHECKER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"HRMS Admin\",\n                    \"code\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1663059767517|en_IN\",\n        \"plainAccessRequest\": {},\n        \"ts\":1,\n        \"action\":\"CREATE\"\n    }\n}"
+        },
+        "url": "http://works-dev.digit.org/loi-service/v1/_update"
+      },
+      "response": []
+    }
+  ]
 }
