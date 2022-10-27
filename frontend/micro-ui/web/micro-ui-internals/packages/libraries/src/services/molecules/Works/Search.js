@@ -41,7 +41,7 @@ export const WorksSearch = {
 
         const estimateArr = await WorksSearch?.searchEstimate(tenantId, { estimateNumber })
         const estimate = estimateArr?.[0]
-        
+        let wardLocation =estimate?.location.replace(/(^:)|(:$)/g, '').split(":")
         const additionalDetails = estimate?.additionalDetails
         //const estimate = sampleEstimateSearchResponse?.estimates?.[0] 
         let details = []
@@ -61,8 +61,8 @@ export const WorksSearch = {
                 { title: "WORKS_DATE_PROPOSAL", value: Digit.DateUtils.ConvertEpochToDate(estimate?.proposalDate) || t("NA") },
                 { title: "WORKS_DEPARTMENT", value: t(`ES_COMMON_${estimate?.department}`) || t("NA") },
                 { title: "WORKS_LOR", value: estimate?.requirementNumber || t("NA") },
-                { title: "WORKS_ELECTION_WARD", value: t("NA") },
-                { title: "WORKS_LOCATION", value: estimate?.location || t("NA") },
+                { title: "WORKS_ELECTION_WARD", value: t(`ES_COMMON_${wardLocation[4]}`) || t("NA") },
+                { title: "WORKS_LOCATION", value: (`ES_COMMON_${wardLocation[5]}`) || t("NA") },
                 { title: "WORKS_WORK_CATEGORY", value: estimate?.workCategory || t("NA") },
                 { title: "WORKS_BENEFICIERY", value: estimate?.beneficiaryType || t("NA") },
                 { title: "WORKS_WORK_NATURE", value: estimate?.natureOfWork || t("NA") },

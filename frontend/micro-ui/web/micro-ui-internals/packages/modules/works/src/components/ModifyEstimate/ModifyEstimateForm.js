@@ -147,7 +147,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
     if (isLoading) {
         return <Loader />
     }
-    setValue("requirementNumber",estimate?.requirementNumber)
+
     const checkKeyDown = (e) => {
         if (e.code === 'Enter') e.preventDefault();
     };
@@ -221,10 +221,20 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_LOR`)}:*`}</CardLabel>
                     <div className='field'>
-                        <TextInput name="requirementNumber" inputRef={register({
-                            pattern: /^[a-zA-Z0-9_.$@#\/]*$/, required:true
-
-                        })}
+                        <Controller
+                            control={control}
+                            name="requirementNumber"
+                            defaultValue={estimate?.requirementNumber}
+                            rules={{pattern: /^[a-zA-Z0-9_.$@#\/]*$/, required:true}}
+                            render={(props)=>(
+                                <TextInput
+                                    value={props.value}
+                                    onChange={(e) => {
+                                        props.onChange(e.target.value);
+                                    }}
+                                    onBlur={props.onBlur}
+                                />
+                            )}
                         />
                         {errors && errors?.requirementNumber?.type === "pattern" && (
                             <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
@@ -320,7 +330,6 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-
                                         option={NatureOfWork}
                                         selected={props?.value}
                                         optionKey={"i18nKey"}
@@ -533,7 +542,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
 
                 {/* Render the sub work table here */}
                 <CardSectionHeader >{`${t(`WORKS_SUB_WORK_DETAILS`)}*`}</CardSectionHeader>
-                <SubWorkTable register={register} t={t} errors={errors} rows={rows} setRows={setRows} setValue={setValue} estimateDetails={estimate?.estimateDetails} />
+                <SubWorkTable register={register} t={t} errors={errors} Controller={Controller} control={control} rows={rows} setRows={setRows} setValue={setValue} estimateDetails={estimate?.estimateDetails} />
 
                 <CardSectionHeader style={{ "marginTop": "20px" }} >{t(`WORKS_RELEVANT_DOCS`)}</CardSectionHeader>
                 <LabelFieldPair>
