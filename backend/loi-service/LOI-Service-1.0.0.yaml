@@ -1,0 +1,294 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Letter-Of-Indent-Service
+  description: 'This service/registry validates and maintains letter-of-indent.'
+
+paths:
+  /loi-service/v1/_create:
+    post:
+      summary: 'Create a Letter Of Indent'
+      description: 'Submit Letter Of Indent details to create an it in the system'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LetterOfIndentRequest'
+        description: Request object to create estimate in the system
+        required: true
+      responses:
+        '202':
+          description: Successful created  Letter Of Indent
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LetterOfIndentResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes'
+
+  /loi-service/v1/_update:
+    post:
+      summary: 'Update a Letter Of Indent'
+      description: 'Submit updated details to update an existing Letter Of Indent in the system'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LetterOfIndentRequest'
+        description: Request object to update estimate in the system
+        required: true
+      responses:
+        '202':
+          description: Successful updated Estimate
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LetterOfIndentResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes'
+  /loi-service/v1/_search:
+    post:
+      summary: Fetch the LetterOfIndent(s) based on the search criteria
+      description: |
+        Gets the list of LetterOfIndent(s) for a particular tenant based on search criteria.
+      parameters:
+        - $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/parameters/tenantId'
+        - name: ids
+          description: Search by list of UUID
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              maxItems: 10
+        - name: letterOfIndentNumber
+          description: Search by LetterOfIndent Number
+          in: query
+          schema:
+            type: string
+        - name: workPackageNumber
+          description: The unique identifier of the Work Package the custom formatting,to be used to fetch the LetterOfIndent
+          in: query
+          schema:
+            type: string
+        - name: letterStatus
+          description: Search by Letter Status i.e by status of the LetterOfIndent
+          in: query
+          schema:
+            type: string
+        - name: contractorid
+          description:  search by contractId
+          in: query
+          schema:
+            type: string
+        - name: fromAgreementDate
+          description:  search by agreement date between the from date and todate
+          in: query
+          schema:
+            type: number
+        - name: toAgreementDate
+          description:  search by agreement date between the from date and todate
+          in: query
+          schema:
+            type: number
+        - name: sortBy
+          in: query
+          description: sort the search results by fields
+          schema:
+            type: string
+            enum:
+              - defectLiabilityPeriod
+              - contractPeriod
+              - emdAmount
+              - agreementDate
+              - letterStatus
+              - createdTime
+        - name: sortOrder
+          in: query
+          description: sorting order of the search resulsts
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: limit
+          in: query
+          description: limit on the resulsts
+          schema:
+            type: number
+        - name: offset
+          in: query
+          description: offset index of the overall search resulsts
+          schema:
+            type: number
+      responses:
+        '202':
+          description: Successful response sorted by reverse chrnological order of creation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LetterOfIndentResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes'
+
+components:
+  schemas:
+    LetterOfIndent:
+      type: object
+      description: 'Entity schema for letter of indent.'
+      properties:
+        tenantId:
+          type: string
+          description: 'Unique identifier of the tenant which could be a department/ulb/state'
+          example: 'pb.jalandhar OR dwss'
+        id:
+          type: string
+          description: 'Unique identifier of the indent.'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          readOnly: true
+        letterOfIndentNumber:
+          type: string
+          description: 'The unique identifier of the letter of indent the custom formatting.'
+          example: 'LOI/2022-23/010'
+          readOnly: true
+        workPackageNumber:
+          type: string
+          description: 'The unique identifier of the Work Package the custom formatting.'
+          example: 'WP/2022-23/010'
+          readOnly: true
+        workIdentificationNumber:
+          type: string
+          description: 'Work Identification Number'
+        fileNumber:
+          type: string
+        fileDate:
+          type: number
+          format: timestamp
+          example: 1658397420000
+        negotiatedPercentage:
+          type: number
+          example: 40
+          minimum: -100
+          maximum: 100
+        agreementDate:
+          type: number
+          format: timestamp
+          description: 'Should lie between Admin Sanctioned Date and Todays Date'
+          example: 1658397420000
+        contractorId:
+          type: string
+          description: 'Unique Identifier of the Contractor from the Contractor Registry.'
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+        securityDeposit:
+          type: number
+          description: 'The Security deposit that is paid by the contractor for the work'
+          example: 100000
+        bankGuarantee:
+          type: string
+          description: 'Bank guarantee details are entered'
+        emdAmount:
+          type: number
+          description: 'The Earnest Money deposit that was paid by the contractor on submission of the tender response'
+        contractPeriod:
+          type: number
+          description: 'Number of days of the contract.'
+        defectLiabilityPeriod:
+          type: number
+          description: 'Denomination: Number of days'
+        oicId:
+          type: string
+          format: uuid
+          description: 'Officer In-Charge Id. Id refers to the employee id from the HRMS service.'
+        status:
+          type: string
+          description: 'It stores the status of the letter. '
+          enum:
+            - DRAFT
+            - ACTIVE
+            - INACTIVE
+        letterStatus:
+          type: string
+          description: 'Status of the letter according to the workflow stage.'
+          example: 'CREATED'
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/AuditDetails'
+        additionalDetails:
+          type: object
+          description: 'Any additional information that needs to be attached to the LOI. For attachments, fileStoreIds will also be stored here. '
+      required:
+        - tenantId
+        - workPackageId
+        - fileNumber
+        - fileDate
+        - negotiatedPercentage
+        - agreementDate
+        - contractorId
+        - emdAmount
+        - defectLiabilityPeriod
+        - oicId
+
+    LetterOfIndentRequest:
+      type: object
+      description: Request for LetterOfIndent _create and _update api's
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/RequestHeader'
+        letterOfIndent:
+          $ref: '#/components/schemas/LetterOfIndent'
+        workflow:
+          type: object
+          properties:
+            action:
+              type: string
+              description: 'Action of the workflow to be performned on the request'
+            comment:
+              type: string
+              description: 'comment for the workflow action to be performed'
+            assignees:
+              type: array
+              items:
+                type: string
+                description: ' uuid of the users in the system to assign workflow to the specific user intead of a all the users with the gien role.'
+          required:
+            - action
+      required:
+        - requestInfo
+        - letterOfIndent
+        - workflow
+
+    LetterOfIndentResponse:
+      type: object
+      description: Response for the LetterOfIndent _create, _update and _search api's
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/RequestHeader'
+        letterOfIndents:
+          type: array
+          items:
+            $ref: '#/components/schemas/LetterOfIndent'
+      required:
+        - ResponseInfo
+        - letterOfIndents
+
+    save-letter-of-indent:
+      allOf:
+        - $ref: '#/components/schemas/LetterOfIndentRequest'
+        - description: 'All create events will be added to this topic. Persister and Indexer will read the events from it.'
+
+    update-letter-of-indent:
+      allOf:
+        - $ref: '#/components/schemas/LetterOfIndentRequest'
+        - description: 'All update events will be added to this topic. Persister and Indexer will read the events from it.'
