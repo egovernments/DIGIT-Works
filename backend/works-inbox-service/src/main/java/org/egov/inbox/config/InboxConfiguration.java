@@ -31,25 +31,25 @@ public class InboxConfiguration {
 		TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
 	}
 
-	@Value("${workflow.host}")
+	@Value("${egov.workflow.host}")
 	private String workflowHost;
 
-	@Value("${workflow.process.search.path}")
+	@Value("${egov.workflow.process.search.path}")
 	private String processSearchPath;
 
-	@Value("${workflow.businessservice.search.path}")
+	@Value("${egov.workflow.businessservice.search.path}")
 	private String businessServiceSearchPath;
 
 	@Value("#{${service.search.mapping}}")
 	private Map<String, Map<String, String>> serviceSearchMapping;
 
-	@Value("${workflow.process.count.path}")
+	@Value("${egov.workflow.process.count.path}")
 	private String processCountPath;
 	
-	@Value("${workflow.process.nearing.sla.count.path}")
+	@Value("${egov.workflow.process.nearing.sla.count.path}")
 	private String nearingSlaProcessCountPath;
 
-	@Value("${workflow.process.statuscount.path}")
+	@Value("${egov.workflow.process.statuscount.path}")
 	private String processStatusCountPath;
 
 	@Value("#{${bs.businesscode.service.search}}")
@@ -67,8 +67,8 @@ public class InboxConfiguration {
 	@Value("${egov.es.password}")
 	private String esPassword;
 
-	@Value("${services.esindexer.host}")
-	private String indexServiceHost;
+	//@Value("${services.esindexer.host}")
+	private String indexServiceHost="";
 
 	@Value("${egov.services.esindexer.host.search}")
 	private String indexServiceHostSearchEndpoint;
@@ -102,4 +102,13 @@ public class InboxConfiguration {
 
 	@Value("${es.search.default.sort.order}")
 	private String defaultSortOrder;
+
+	//Estimate Service
+
+	@Value("${works.estimate.host}")
+	private String estimateServiceHost;
+
+	@Value("${works.estimate.search.path}")
+	private String estimateServiceSearchPath;
+
 }

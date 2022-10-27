@@ -16,7 +16,7 @@
   "dependencies": {
     "@egovernments/digit-ui-libraries":"1.5.0",
     "@egovernments/digit-ui-module-works": "1.5.0",
-    "@egovernments/digit-ui-module-hrms":"1.5.5-alpha.3",    
+    "@egovernments/digit-ui-module-hrms":"1.5.5-alpha.4",    
     "@egovernments/digit-ui-module-core": "1.5.5-alpha.2",
     "@egovernments/digit-ui-react-components": "^1.5.0",
     "babel-loader": "8.1.0",

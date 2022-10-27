@@ -62,7 +62,7 @@ public class ElasticSearchService {
     private String internalMicroserviceRoleUuid = null;
 
 
-    @PostConstruct
+   // @PostConstruct
     void initalizeSystemuser(){
         RequestInfo requestInfo = new RequestInfo();
         StringBuilder uri = new StringBuilder();
