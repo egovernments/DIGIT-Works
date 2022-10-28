@@ -45,11 +45,16 @@ const Inbox = ({
     ? { limit: 100, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
     : { limit: 100, offset: getValues("offset"), sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
 
-  // const { isFetching, isLoading: hookLoading, searchResponseKey, searchFields, ...rest } = Digit.Hooks.works.useInbox({
-  //   tenantId,
-  //   filters: { ...searchParams, ...paginationParams, sortParams },
-  //   config: {},
-  // });
+  const config = {
+    enabled: !!(payload && Object.keys(payload).length > 0),
+  };
+  
+  //API Call useEstimateInbox
+ const { isFetching, isLoading, data, ...rest }=Digit.Hooks.works.useInbox({
+    tenantId,
+    _filters: payload,
+    config: config,
+  });
 
   useEffect(() => {
     register("offset", 0);
@@ -57,20 +62,6 @@ const Inbox = ({
     register("sortBy", "department");
     register("sortOrder", "DESC");
   }, [register]);
-
-
-  const data = [{
-    EstimateNumber: "LE/ENG/00002/10/2017-18",
-    Department: "ENGINEERING",
-    Fund: "Municipal Fund",
-    Function: "Water Supply",
-    BudgetHead: "Water Purification",
-    CreatedBy: "A.P.Sreenivasulu",
-    Owner: "A.P.Sreenivasulu",
-    Status: "Craeted",
-    TotalAmount: "Rs,10000",
-    totalCount: 10
-  }]
 
   const onSort = useCallback((args) => {
     if (args.length === 0) return;
@@ -110,34 +101,31 @@ const Inbox = ({
     setSearchParams({ ..._new });
     setEnableSearch({ enabled: true });
   };
-  const config = {
-    enabled: !!(payload && Object.keys(payload).length > 0),
-  };
-  //API Call useEstimateInbox
-  const result1 = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
-  const result = {
-    status: "success",
-    isSuccess: true,
-    isLoading: false,
-    data:{
-      estimates: [{
-        tenantId:"pb.amritsar",
-        estimateNumber: "EP/2022-23/10/000102",
-        department: "DEPT_1",
-        fund: "01",
-        function: "0001",
-        budgetHead: "01",
-        createdBy: "A.P.Sreenivasulu",
-        owner: "A.P.Sreenivasulu",
-        estimateStatus: "APPROVED",
-        totalAmount: "Rs,10000",
-        auditDetails:{
-          createdBy:"0f603b14-10dc-450f-976a-64aae4160907",
-          lastModifiedBy:"0f603b14-10dc-450f-976a-64aae4160907"
-        }
-      }]
-    }
-  }
+  
+  // const result = {
+  //   status: "success",
+  //   isSuccess: true,
+  //   totalCount: 10,
+  //   isLoading: false,
+  //   data:{
+  //     estimates: [{
+  //       tenantId:"pb.amritsar",
+  //       estimateNumber: "EP/2022-23/10/000102",
+  //       department: "DEPT_1",
+  //       fund: "01",
+  //       function: "0001",
+  //       budgetHead: "01",
+  //       createdBy: "A.P.Sreenivasulu",
+  //       owner: "A.P.Sreenivasulu",
+  //       estimateStatus: "APPROVED",
+  //       totalAmount: "Rs,10000",
+  //       auditDetails:{
+  //         createdBy:"0f603b14-10dc-450f-976a-64aae4160907",
+  //         lastModifiedBy:"0f603b14-10dc-450f-976a-64aae4160907"
+  //       },
+  //     }]
+  //   }
+  // }
   const handleSort = useCallback((args) => {
     if (args.length === 0) return;
     setSortParams(args);
@@ -148,25 +136,24 @@ const Inbox = ({
     paginationParams,
     null
 );
-  // const handlePageSizeChange = (e) => {
-  //   setPageSize(Number(e.target.value));
-  // };
+  
   const getData = () => {
-    if (result?.data?.estimates?.length == 0 ) {
+    if (data?.items?.length == 0 ) {
       return { display: "ES_COMMON_NO_DATA" }
-    } else if (result?.data?.estimates?.length > 0) {
+    } else if (data?.items?.length > 0) {
       let newResult = [];
-        result?.data?.estimates?.map((val)=>{
+        data?.items?.map((val)=>{
           let totalAmount = 0
-              val?.estimateDetails?.map((amt)=>{
+          let newObject = val?.businessObject
+            newObject?.estimateDetails?.map((amt)=>{
               totalAmount = totalAmount + amt?.amount
             })
             employeeData?.Employees?.map((item)=>{
-              if(val?.auditDetails?.lastModifiedBy === item?.uuid){
-                Object.assign(val,{"owner":item?.user?.name})
+              if(newObject?.auditDetails?.lastModifiedBy === item?.uuid){
+                Object.assign(newObject,{"owner":item?.user?.name})
               }
-              if(val?.auditDetails?.createdBy === item?.uuid){
-                newResult.push(Object.assign(val,{"createdBy":item?.user?.name,"totalAmount":totalAmount}))
+              if(newObject?.auditDetails?.createdBy === item?.uuid){
+                newResult.push(Object.assign(newObject,{"createdBy":item?.user?.name,"totalAmount":totalAmount}))
               }
           })
           // newResult = newResult.filter((val)=>val?.fund === payload?.fund)
@@ -178,7 +165,7 @@ const Inbox = ({
   }
 
   const isResultsOk = () => {
-    return result?.data?.estimates?.length > 0 ? true : false;
+    return data?.items?.length > 0 ? true : false;
   }
   
 
@@ -186,7 +173,7 @@ const Inbox = ({
     return (
       <MobileInbox
         data={getData()}
-        isLoading={result1?.isLoading}
+        isLoading={isLoading}
         isSearch={!isInbox}
         // searchFields={searchFields}
         onFilterChange={handleFilterChange}
@@ -210,7 +197,7 @@ const Inbox = ({
           data={getData()}
           // tableConfig={tableConfig}
           resultOk={isResultsOk()}
-          isLoading={result1?.isLoading}
+          isLoading={isLoading}
           defaultSearchParams={initialStates.searchParams}
           isSearch={!isInbox}
           onFilterChange={handleFilterChange}
