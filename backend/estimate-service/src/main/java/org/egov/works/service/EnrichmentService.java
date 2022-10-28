@@ -141,7 +141,7 @@ public class EnrichmentService {
     private boolean enrichEstimateBasedOnRole(RequestInfo requestInfo) {
         User userInfo = requestInfo.getUserInfo();
         boolean rolePresent = false;
-        if (userInfo.getRoles() == null || userInfo.getRoles().isEmpty()) {
+        if (userInfo.getRoles() != null && !userInfo.getRoles().isEmpty()) {
             List<org.egov.common.contract.request.Role> roles = userInfo.getRoles();
             List<String> updateRoles = Arrays.asList(ALLOW_EDITING_ROLES.split(","));
 

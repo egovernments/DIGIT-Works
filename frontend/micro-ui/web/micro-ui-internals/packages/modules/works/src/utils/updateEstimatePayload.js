@@ -1,6 +1,8 @@
 export const updateEstimatePayload =(data, estimate)=>{
     // let estimateDetails= data?.estimateDetails.filter((item)=>item!==null)
     const tenantId = Digit.ULBService.getCurrentTenantId()
+    let Zone = tenantId === "pb.jalandhar" ? "JZN1" : "Z1"
+
     let payload={  
         "id": estimate?.id,
         "tenantId": tenantId,
@@ -10,6 +12,7 @@ export const updateEstimatePayload =(data, estimate)=>{
         "requirementNumber": data?.requirementNumber,
         "description": "Construct new schools",
         "department": data?.department?.code,
+        "location":`${tenantId}:ADMIN:${tenantId}:${Zone}:${data?.ward?.code}:${data?.location?.code}`,
         "workCategory": "Engineering",
         "beneficiaryType":  data?.beneficiaryType.code,
         "natureOfWork": data?.natureOfWork.code,
@@ -21,9 +24,11 @@ export const updateEstimatePayload =(data, estimate)=>{
         "budgetHead": data?.budgetHead?.code,
         "scheme": data?.scheme?.code,
         "subScheme": data?.subScheme?.code,
-        "location": "pb.amritsar:ADMIN:pb.amritsar:Z1:B1:SUN04",
-        "additionalDetails": {},
-        "estimateDetails": data?.estimateDetails
+        "estimateDetails": data?.estimateDetails,
+        "additionalDetails": {
+          formData:data,
+          filesAttached: data?.uploads
+        }
       }
       return payload;
 }

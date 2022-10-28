@@ -13,12 +13,6 @@ const InboxLinks = ({ parentRoute, businessService }) => {
       businessService: "WORKS",
       roles: [],
     },
-    {
-      text: "WORKS_SEARCH_LOI",
-      link: `/works-ui/employee/works/search-loi`,
-      businessService: "WORKS",
-      roles: [],
-    },
   ];
 
   const [links, setLinks] = useState([]);
