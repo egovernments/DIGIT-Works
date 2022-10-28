@@ -112,19 +112,23 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
         if (e.code === 'Enter') e.preventDefault();
     };
     const convertToNegative = (e) => {
-
+        
         const aggrementAmount = subEstimateDetails?.amount
-        const value = getValues("negotiatedPercentage")
+        let value = getValues("negotiatedPercentage")
+        setValue("negotiatedPercentage", parseInt(value) - 10, { shouldValidate: true });
+        value= parseInt(value) -10;
         const result = aggrementAmount - ((Math.abs(parseInt(value)) * aggrementAmount) / 100)
-        setValue('negotiatedPercentage', `-${Math.abs(value)}`, { shouldValidate: true })
+        //setValue('negotiatedPercentage', `-${Math.abs(value)}`, { shouldValidate: true })
         setValue('aggrementAmount', result.toString(), { shouldValidate: true })
     }
     const convertToPositive = (e) => {
         
         const aggrementAmount = subEstimateDetails?.amount
-        const value = getValues("negotiatedPercentage")
+        let value = getValues("negotiatedPercentage")
+        setValue("negotiatedPercentage", parseInt(value) + 10, { shouldValidate: true });
+        value = parseInt(value) + 10;
         const result = aggrementAmount + ((Math.abs(parseInt(value)) * aggrementAmount) / 100)
-        setValue('negotiatedPercentage', Math.abs(value), { shouldValidate: true })
+        //setValue('negotiatedPercentage', Math.abs(value), { shouldValidate: true })
         setValue('aggrementAmount', result.toString(), { shouldValidate: true })
     }
     return (
@@ -161,6 +165,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
                     handleSubmit={handleSubmit}
                     errors={errors}
                     action={"loi"}
+                    setValue={setValue}
                 />}
 
                 
@@ -212,7 +217,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
                         <div className='percent-input'>
                             <button type="button" onClick={convertToPositive} style={{ "height": "40px", "width": "40px" }}><AddIcon fill={"#F47738"} styles={{ "display": "revert" }} /></button>
                             <button type="button" onClick={convertToNegative} style={{ "height": "40px", "width": "40px" }}><SubtractIcon fill={"#AFA8A4"} styles={{ "display": "revert", "marginTop": "7px" }} /></button>
-                            <TextInput name="negotiatedPercentage" type="number" inputRef={register({ validate: value => parseInt(value) >= -100 && parseInt(value) <= 100, required: true })} />
+                            <TextInput name="negotiatedPercentage" defaultValue={0} type="number" inputRef={register({ validate: value => parseInt(value) >= -100 && parseInt(value) <= 100, required: true })} />
                             <div className="tooltip" style={{ "margin": "8px -30px 10px 10px" }}>
                                 <InfoBannerIcon fill="#0b0c0c" />
                                 <span className="tooltiptext" style={{
@@ -231,7 +236,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_AGREEMENT_AMT`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="aggrementAmount" type="number" disabled={true} inputRef={register()} style={{ backgroundColor: "#E5E5E5" }} />
+                    <TextInput className={"field"} name="aggrementAmount" type="number" defaultValue={parseInt(subEstimateDetails?.amount)} disabled  inputRef={register()} style={{ backgroundColor: "#E5E5E5" }} />
                 </LabelFieldPair>
 
                 <CardSectionHeader >{t(`WORKS_AGGREEMENT_DETAILS`)}</CardSectionHeader>
@@ -277,16 +282,16 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONT_ID`)}:`}</CardLabel>
-                    <TextInput className={"field"} name="contractorId" inputRef={register()} />
+                    <TextInput style={{ backgroundColor: "#E5E5E5" }} disabled className={"field"} name="contractorId" inputRef={register()} />
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_ADD_SECURITY_DP`)}:`}</CardLabel>
                     <div className='field'>
-                        <TextInput name="securityDeposit" inputRef={register({
+                        <TextInput name="securityDeposit" type="number" inputRef={register({
                             pattern: /^[0-9]*$/
                         })}
-                            style={{ backgroundColor: "#E5E5E5" }}
+                            
                         />
                         {errors && errors?.securityDeposit?.type === "pattern" && (
                             <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
@@ -307,7 +312,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_EMD`)}:*`}</CardLabel>
                     <div className='field'>
-                        <TextInput name="emdAmount" inputRef={register({
+                        <TextInput name="emdAmount" type="number" inputRef={register({
                             required: true,
                             pattern: /^[0-9]*$/
                         })} />
@@ -321,7 +326,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONT_PERIOD`)}:`}</CardLabel>
                     <div className='field'>
-                        <TextInput name="contractPeriod" inputRef={register({
+                        <TextInput name="contractPeriod" type="number" inputRef={register({
                             pattern: /^[0-9]*$/
                         })} />
                         {errors && errors?.contractPeriod?.type === "pattern" && (
@@ -332,7 +337,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_DEFECT_LIA`)}:*`}</CardLabel>
                     <div className='field'>
-                        <TextInput name="defectLiabilityPeriod" inputRef={register({ required: true, pattern: /^[0-9]*$/ })} />
+                        <TextInput name="defectLiabilityPeriod" type="number" inputRef={register({ required: true, pattern: /^[0-9]*$/ })} />
                         {errors && errors?.defectLiabilityPeriod?.type === "required" && (
                             <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                         {errors && errors?.defectLiabilityPeriod?.type === "pattern" && (
