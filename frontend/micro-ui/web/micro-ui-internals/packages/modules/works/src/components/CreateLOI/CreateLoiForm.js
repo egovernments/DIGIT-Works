@@ -125,7 +125,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
     const convertToPositive = (e) => {
         const aggrementAmount = subEstimateDetails?.amount
         let value = getValues("negotiatedPercentage")
-        const setThisValue = Math.abs((parseFloat(value)).toFixed(2))
+        const setThisValue = Math.abs((parseFloat(value))).toFixed(2)
         setValue("negotiatedPercentage", setThisValue, { shouldValidate: true });
         value = setThisValue;
         const result = aggrementAmount + ((Math.abs(parseFloat(value)) * aggrementAmount) / 100)
