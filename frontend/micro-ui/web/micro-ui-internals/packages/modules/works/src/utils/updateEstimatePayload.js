@@ -22,8 +22,8 @@ export const updateEstimatePayload =(data, estimate)=>{
         "fund": data?.fund?.code,
         "function": data?.function?.code,
         "budgetHead": data?.budgetHead?.code,
-        "scheme": data?.scheme?.code,
-        "subScheme": data?.subScheme?.code,
+        "scheme": data?.scheme?.code || data?.scheme?.schemeCode,
+        "subScheme": data?.subScheme?.code || data?.scheme?.subSchemes[0]?.code,
         "estimateDetails": data?.estimateDetails,
         "additionalDetails": {
           formData:data,
