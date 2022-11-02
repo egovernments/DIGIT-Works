@@ -23,6 +23,7 @@ var Digit = window.Digit || {};
 const enabledModules = [
   "Works",
   "HRMS",
+  "AttendenceMgmt"
   // "Engagement"
 ];
 
