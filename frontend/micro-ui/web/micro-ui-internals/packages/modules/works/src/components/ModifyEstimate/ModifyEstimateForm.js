@@ -259,7 +259,10 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                                         selected={props?.value}
                                         optionKey={"i18nKey"}
                                         t={t}
-                                        select={props?.onChange}
+                                        select={(val)=>{
+                                            props?.onChange(val)
+                                            setValue("location","")
+                                        }}
                                         onBlur={props.onBlur}
                                     />
                                 );
@@ -504,7 +507,10 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                                         selected={props?.value}
                                         optionKey={"i18nKey"}
                                         t={t}
-                                        select={props?.onChange}
+                                        select={(val)=>{
+                                            props?.onChange(val)
+                                            setValue("subScheme","")
+                                        }}
                                         onBlur={props.onBlur}
                                     />
                                 );

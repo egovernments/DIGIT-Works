@@ -65,6 +65,7 @@ const CreateEstimate = (props) => {
             <CreateEstimateForm onFormSubmit={onFormSubmit} />
             {showToast && (
                 <Toast
+                style={{"zIndex":"9999999"}}
                 error={showToast.error}
                 warning={showToast.warning}
                 label={t(showToast.label)}
