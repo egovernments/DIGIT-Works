@@ -133,7 +133,6 @@ const App = ({ path }) => {
           <div style={getBreadCrumbStyles(window.location.href)}>
             <BILLSBreadCrumbs location={location} />
           </div>
-          <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
           <PrivateRoute path={`${path}/create-contractor`} component={() => <NewApplication {...path} />} />
           <PrivateRoute path={`${path}/search-Estimate-approved`} component={(props) => <Search {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/inbox`} component={() => (<Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />
