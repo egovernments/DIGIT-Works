@@ -8,6 +8,7 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initWorksComponents } from "@egovernments/digit-ui-module-works";
+import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt"
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { HRMSModule ,initHRMSComponents  } from "@egovernments/digit-ui-module-hrms";
 import "@egovernments/digit-ui-css/example/index.css";
@@ -64,6 +65,7 @@ const initDigitUI = () => {
   initDSSComponents();
   initEngagementComponents();
   initWorksComponents();
+  initAttendenceMgmtComponents();
   initHRMSComponents();
   const moduleReducers = (initData) => (
     initData

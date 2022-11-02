@@ -26,7 +26,7 @@ const componentsToRegister = {
     AttendenceMgmtModule,
 };
 
-export const initWorksComponents = () => {
+export const initAttendenceMgmtComponents = () => {
     Object.entries(componentsToRegister).forEach(([key, value]) => {
         Digit.ComponentRegistryService.setComponent(key, value);
     });
