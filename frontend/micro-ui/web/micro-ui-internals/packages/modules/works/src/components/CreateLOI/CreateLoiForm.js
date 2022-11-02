@@ -101,7 +101,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
     const selectedDesignation = useWatch({ control: control, name: "officerInChargedesig", defaultValue: "" });
     //use this designation to make an hrms search and get the options for officer in charge from there
 
-    const { isLoading, isError, error, data: employeeData } = Digit.Hooks.hrms.useHRMSSearch({ Designation: selectedDesignation?.code }, Digit.ULBService.getCurrentTenantId(), null, null,{enabled:!!selectedDesignation});
+    const { isLoading, isError, error, data: employeeData } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code }, Digit.ULBService.getCurrentTenantId(), null, null,{enabled:!!selectedDesignation});
 
     const Employees = employeeData? employeeData.Employees : []
     Employees.map(emp => emp.nameOfEmp = emp.user.name)
