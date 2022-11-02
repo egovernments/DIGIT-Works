@@ -101,7 +101,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
     const selectedDesignation = useWatch({ control: control, name: "officerInChargedesig", defaultValue: "" });
     //use this designation to make an hrms search and get the options for officer in charge from there
 
-    const { isLoading, isError, error, data: employeeData } = Digit.Hooks.hrms.useHRMSSearch({ Designation: selectedDesignation?.code }, Digit.ULBService.getCurrentTenantId(), null, null,{enabled:!!selectedDesignation});
+    const { isLoading, isError, error, data: employeeData } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code }, Digit.ULBService.getCurrentTenantId(), null, null,{enabled:!!selectedDesignation});
 
     const Employees = employeeData? employeeData.Employees : []
     Employees.map(emp => emp.nameOfEmp = emp.user.name)
@@ -115,21 +115,22 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
         
         const aggrementAmount = subEstimateDetails?.amount
         let value = getValues("negotiatedPercentage")
-        setValue("negotiatedPercentage", parseInt(value) - 10, { shouldValidate: true });
-        value= parseInt(value) -10;
-        const result = aggrementAmount - ((Math.abs(parseInt(value)) * aggrementAmount) / 100)
+        const setThisValue = (Math.abs(parseFloat(value)) * -1).toFixed(2)
+        setValue("negotiatedPercentage", setThisValue , { shouldValidate: true });
+        value= setThisValue ;
+        const result = aggrementAmount - ((Math.abs(parseFloat(value)) * aggrementAmount) / 100)
         //setValue('negotiatedPercentage', `-${Math.abs(value)}`, { shouldValidate: true })
-        setValue('aggrementAmount', result.toString(), { shouldValidate: true })
+        setValue('aggrementAmount', result.toFixed(2).toString(), { shouldValidate: true })
     }
     const convertToPositive = (e) => {
-        
         const aggrementAmount = subEstimateDetails?.amount
         let value = getValues("negotiatedPercentage")
-        setValue("negotiatedPercentage", parseInt(value) + 10, { shouldValidate: true });
-        value = parseInt(value) + 10;
-        const result = aggrementAmount + ((Math.abs(parseInt(value)) * aggrementAmount) / 100)
+        const setThisValue = Math.abs((parseFloat(value))).toFixed(2)
+        setValue("negotiatedPercentage", setThisValue, { shouldValidate: true });
+        value = setThisValue;
+        const result = aggrementAmount + ((Math.abs(parseFloat(value)) * aggrementAmount) / 100)
         //setValue('negotiatedPercentage', Math.abs(value), { shouldValidate: true })
-        setValue('aggrementAmount', result.toString(), { shouldValidate: true })
+        setValue('aggrementAmount', result.toFixed(2).toString(), { shouldValidate: true })
     }
     return (
         <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
@@ -217,7 +218,7 @@ const CreateLoiForm = ({ onFormSubmit, defaultFormValues, state, loiNumber, isEd
                         <div className='percent-input'>
                             <button type="button" onClick={convertToPositive} style={{ "height": "40px", "width": "40px" }}><AddIcon fill={"#F47738"} styles={{ "display": "revert" }} /></button>
                             <button type="button" onClick={convertToNegative} style={{ "height": "40px", "width": "40px" }}><SubtractIcon fill={"#AFA8A4"} styles={{ "display": "revert", "marginTop": "7px" }} /></button>
-                            <TextInput name="negotiatedPercentage" defaultValue={0} type="number" inputRef={register({ validate: value => parseInt(value) >= -100 && parseInt(value) <= 100, required: true })} />
+                            <TextInput name="negotiatedPercentage" defaultValue={0} type="number" inputRef={register({ validate: value => parseInt(value) >= -100 && parseInt(value) <= 100, required: true })}/>
                             <div className="tooltip" style={{ "margin": "8px -30px 10px 10px" }}>
                                 <InfoBannerIcon fill="#0b0c0c" />
                                 <span className="tooltiptext" style={{
