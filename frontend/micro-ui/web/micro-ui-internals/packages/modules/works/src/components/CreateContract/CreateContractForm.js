@@ -1,8 +1,9 @@
 import React, { Fragment, useState, useMemo } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
-import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, CardLabelError, Loader, DatePicker, RadioButtons } from '@egovernments/digit-ui-react-components';
+import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, CardLabelError, Loader, DatePicker, RadioButtons, InfoBannerIcon } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
 import ProcessingModal from '../Modal/ProcessingModal';
+import { format } from "date-fns";
 
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
@@ -31,51 +32,46 @@ const CreateContractForm = ({ onFormSubmit }) => {
         ],
         [t]
       );
-    const [selectAssigned, setSelectedAssigned] = useState();
 
     const currentContractType = useMemo(()=>[
         { code: "WORKS_WORK_ORDER", name: "WORKS_WORK_ORDER"},
         { code: "WORKS_PURCHASE_ORDER", name: "WORKS_PURCHASE_ORDER"}
     ],[t])
-    const [selectContactType, setSelectContractType] = useState();
-    
+    const [balanceAmount, setBalanceAmount] = useState(0);
+    const [contractedAmount, setContractedAmount] = useState(0);
     const selectedDesignation = useWatch({ control: control, name: "officerInChargedesig", defaultValue: "" });
+    //use this designation to make an hrms search and get the options for officer in charge from there
+    let officerIncharge = []
+    const { isLoading, isError, error, data: employeeData } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code }, Digit.ULBService.getCurrentTenantId(), null, null,{enabled:!!selectedDesignation});
 
-    const {isLoading, isError, error, data: employeeData } = Digit.Hooks.hrms.useHRMSSearch({ Designation: selectedDesignation?.code }, Digit.ULBService.getCurrentTenantId(), null, null,{enabled:!!selectedDesignation});
-
-    const Employees = employeeData? employeeData.Employees : []
-    Employees.map(emp => emp.nameOfEmp = emp.user.name)
-
-    const tenantId = Digit.ULBService.getCurrentTenantId();
+    employeeData?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
+    officerIncharge = employeeData?.Employees?.length > 0 ? employeeData?.Employees : []
     
     const tenant = Digit.ULBService.getStateId()
-    const { isLoading:desgLoading, data:designationData, isFetched:desgFetched } = Digit.Hooks.useCustomMDMS(
-        tenant,
+    
+    const dummyData = [{name:"Orgn1"},{name:"Orgn2"},{name:"Orgn3"}]
+
+    const { isLoading: desLoading, data: designationData } = Digit.Hooks.useCustomMDMS(
+        Digit.ULBService.getCurrentTenantId(),
         "common-masters",
         [
-            {
-                "name": "Department"
-            },
             {
                 "name": "Designation"
             }
         ]
-        );
+    );
 
-    if (designationData?.[`common-masters`]) {
-        var { Department, Designation } = designationData?.[`common-masters`]
-    }
-    Department?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
-    Designation?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_DESIGNATION_${item?.name}`)}))
+    designationData?.["common-masters"]?.Designation?.map(designation=> {
+        designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
+    })
+
+
     const getDate = () => {
-        const today = new Date();
-
-        const date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
-        return date
+        return format(new Date(),'yyyy-MM-dd').toString();
     }
     
     const handleCreateClick = async () => {
-        const fieldsToValidate = ['fileNumber', 'fileDate', 'executingAuthority', 'contractedAmount', 'currentContractType', 'currentContractAmount', 'balanceAmount', 'agreementDate', 'OrganisationId', 'officerInChargedesig', 'officerIncharge']
+        const fieldsToValidate = ['fileNumber', 'fileDate', 'executingAuthority', 'contractedAmount', 'currentContractType', 'currentContractAmount', 'balanceAmount', 'agreementDate', 'organisationId', 'officerInChargedesig', 'officerIncharge']
 
         const result = await trigger(fieldsToValidate)
         if (result) {
@@ -85,23 +81,11 @@ const CreateContractForm = ({ onFormSubmit }) => {
 
     const [showModal, setShowModal] = useState(false)
 
-    if (isLoading) {
-        return <Loader />
-    }
-
     const checkKeyDown = (e) => {
         if (e.code === 'Enter') e.preventDefault();
     };
 
-    const onRadioChange = (value) => {
-    setSelectedAssigned(value);
-    };
-
-    const onContractTypeChange = (value) => {
-        setSelectContractType(value)
-    }
     return (
-        ( desgFetched )?
         <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
             <Header styles={{ "marginLeft": "14px" }}>{t("WORKS_CREATE_CONTRACT")}</Header>
             <Card >
@@ -109,17 +93,23 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 {/* TEXT INPUT LABEL */}
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_ESTIMATE_NO`)}</CardLabel>
-                    <CardLabel style={{ "fontSize": "16px" }} >{`1136/TO/DB/FLOOD/10-11`}</CardLabel>
+                    <div className='field' style={{"marginBottom": "24px"}}>
+                        <CardLabel >{`1136/TO/DB/FLOOD/10-11`}</CardLabel>
+                    </div>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_NAME_OF_WORK`)}</CardLabel>
-                    <CardLabel style={{ "fontSize": "16px" ,"width": "100%", marginLeft:"150px" }} >{`Construction of CC drain from D No 45-142-A-58-A to 45-142-472-A at Venkateramana Colony in Ward No 43`}</CardLabel>
+                    <div className='field' style={{"marginBottom": "24px"}}>
+                        <CardLabel style={{"width":"100%"}}>{`Construction of CC drain from D No 45-142-A-58-A to 45-142-472-A at Venkateramana Colony in Ward No 43`}</CardLabel>
+                    </div>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_SUB_ESTIMATE_NO`)}</CardLabel>
-                    <CardLabel style={{ "fontSize": "16px"}} >{`LE/ENG/00002/10/2017-18`}</CardLabel>
+                    <div className='field' style={{"marginBottom": "24px"}}>
+                        <CardLabel>{`LE/ENG/00002/10/2017-18`}</CardLabel>
+                    </div>
                 </LabelFieldPair>
 
                 {/* Modal */}
@@ -129,7 +119,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                     closeModal={() => setShowModal(false)}
                     actionCancelLabel={"WORKS_CANCEL"}
                     actionCancelOnSubmit={() => setShowModal(false)}
-                    actionSaveLabel={"WORKS_FORWARD"}
+                    actionSaveLabel={"WORKS_FORWARD_FOR_APPROVAL"}
                     actionSaveOnSubmit={onFormSubmit}
                     onSubmit={onFormSubmit}
                     control={control}
@@ -144,8 +134,10 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FILE_NO`)}:*`}</CardLabel>
                     <div className='field'>
-                        <TextInput name="fileNumber" inputRef={register({ pattern: /^[a-zA-Z0-9_.$@#\/]*$/ })} />
-        
+                        <TextInput 
+                            name="fileNumber" 
+                            inputRef={register({ pattern: /^[a-zA-Z0-9_.$@#\/]*$/ })} 
+                        />        
                         {errors && errors?.fileNumber?.type === "pattern" && (
                             <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     </div>
@@ -157,9 +149,13 @@ const CreateContractForm = ({ onFormSubmit }) => {
                         <Controller
                             name="fileDate"
                             control={control}
-                            // rules={{ required: true }}
-                            render={(props) => <DatePicker
-                                style={{ "width": "100%" }} date={props.value} onChange={props.onChange} onBlur={props.onBlur} />}
+                            render={(props) => 
+                            <DatePicker
+                                style={{ "width": "100%" }} 
+                                date={props.value} 
+                                onChange={props.onChange} 
+                                onBlur={props.onBlur} 
+                            />}
                         />
                         {errors && errors?.fileDate?.type === "required" && (
                             <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
@@ -168,20 +164,21 @@ const CreateContractForm = ({ onFormSubmit }) => {
 
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_EXECUTING_AUTH`)}:*`}</CardLabel>
-                    <div className='field'>
+                    <div className='field' style={{"margin": "0px"}}>
                         <Controller
                             name="executingAuthority"
                             control={control}
                             rules={{ required: true }}
-                            render={() => {
+                            defaultValue={assignedToOptions[0]}
+                            render={(props) => {
                                 return (
                                     <RadioButtons
-                                        style={{ display: "flex" }}
-                                        onSelect={onRadioChange} 
-                                        selectedOption={selectAssigned} 
+                                        style={{ display: "flex",columnGap:"50px"}}
+                                        onSelect={props.onChange} 
+                                        selectedOption={props.value} 
                                         optionsKey="name" 
                                         options={assignedToOptions}
-                                        value={selectAssigned} />
+                                     />
                                 );
                             }}
                         />
@@ -194,11 +191,20 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 <CardSectionHeader style={{ "marginTop": "14px" }}>{t(`WORKS_FINANCIAL_DETAILS`)}</CardSectionHeader>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{t(`WORKS_PROJECT_ESTIMATE_AMT`)}</CardLabel>
-                    <CardLabel style={{ "fontSize": "16px"}} >{`5,00,000`}</CardLabel>
+                    <div className='field' style={{"marginBottom": "24px"}}>
+                        <CardLabel style={{ "fontSize": "16px"}} >{`5,00,000`}</CardLabel>
+                    </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{t(`WORKS_CONTRACTED_AMT`)}</CardLabel>
-                    <TextInput className={"field"} name="contractedAmount" inputRef={register()} value="0" disabled style={{ backgroundColor: "#E5E5E5" }} />
+                        <TextInput 
+                            className={"field"} 
+                            name="contractedAmount" 
+                            inputRef={register()} 
+                            value={contractedAmount} 
+                            disabled 
+                            style={{ backgroundColor: "#E5E5E5" }} 
+                        />
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CURRENT_CONTRACT_TYPE`)}:*`}</CardLabel>
@@ -207,15 +213,15 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             name="currentContractType"
                             control={control}
                             rules= {{required : true}}
-                            render={() => {
+                            render={(props) => {
                                 return (
                                     <RadioButtons 
-                                        style={{ display: "flex" }}
-                                        onSelect={onContractTypeChange} 
-                                        selectedOption={selectContactType} 
+                                        style={{ display: "flex", columnGap:"50px" }}
+                                        onSelect={props.onChange} 
+                                        selectedOption={props.value} 
                                         optionsKey="name" 
                                         options={currentContractType}
-                                        />
+                                    />
                                 );
                             }}
                         />
@@ -226,11 +232,11 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CURRENT_CONTRACT_AMT`)}:*`}</CardLabel>
                     <div className='field'>
-                        <TextInput name="currentContractAmount" inputRef={register({
-                            pattern: /^$|^[0-9\s]+$/ , required: true
-                        })}
+                        <TextInput 
+                            name="currentContractAmount" 
+                            inputRef={register({ pattern: /^$|^[0-9.\s]+$/ , required: true })}
                         />
-                            {errors && errors?.fileNumber?.type === "pattern" && (
+                            {errors && errors?.currentContractAmount?.type === "pattern" && (
                             <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}                        
                             {errors && errors?.currentContractAmount?.type === "required" && (
                             <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
@@ -238,36 +244,47 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{t(`WORKS_BALANCE_AMT`)}</CardLabel>
-                    <div className='field'>
-                        <TextInput className={"field"} name="balanceAmount" inputRef={register()} value="0" disabled style={{ backgroundColor: "#E5E5E5" }} />
-                    </div>
+                        <TextInput 
+                            className={"field"} 
+                            name="balanceAmount" 
+                            inputRef={register()} 
+                            value={balanceAmount} 
+                            disabled 
+                            style={{ backgroundColor: "#E5E5E5" }} 
+                        />
                 </LabelFieldPair>
                 {/* AGGREEMENT DETAILS */}
                 <CardSectionHeader style={{ "marginTop": "14px" }}>{t(`WORKS_AGGREEMENT_DETAILS`)}</CardSectionHeader>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_DATE_OF_AGG`)}:*`}</CardLabel>
                     <div className='field'>
-                        <Controller
-                            defaultValue={getDate()}
-                            render={(props) => <DatePicker style={{ "width": "100%" }} date={props.value} onChange={props.onChange} onBlur={props.onBlur} />}
+                    <Controller
                             name="agreementDate"
                             control={control}
+                            defaultValue={getDate}
+                            render={(props) => 
+                            <DatePicker
+                                style={{ "width": "100%" }} 
+                                date={props.value} 
+                                onChange={props.onChange} 
+                                onBlur={props.onBlur} 
+                            />}
                         />
                     </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_NAME_OF_ORGN`)}:*`}</CardLabel>
                     <div className='field'>
-                        <Controller
+                    <Controller
                             name="nameOfOrganisation"
                             control={control}
                             rules={{ required: true }}
                             render={(props) => {
                                 return (
                                     <Dropdown
-                                        option={Department}
+                                        option={dummyData}
                                         selected={props?.value}
-                                        optionKey={"i18nKey"}
+                                        optionKey={"name"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -276,13 +293,30 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             }}
                         />
                         {errors && errors?.nameOfOrganisation?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    </div>
+                    <div className="tooltip" style={{ "margin": "-10px -30px 10px 10px" }}>
+                        <InfoBannerIcon fill="#0b0c0c" />
+                        <span className="tooltiptext" style={{
+                            whiteSpace: "nowrap",
+                            fontSize: "medium"
+                        }}>
+                            {`${t(`WORKS_ORGN_INFO`)}`}
+                        </span>
+                    </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_ORGN_ID`)}:*`}</CardLabel>
-                    <TextInput style={{ backgroundColor: "#E5E5E5" }} disabled className={"field"} name="OrganisationId" inputRef={register()} />
+                        <TextInput 
+                            style={{ backgroundColor: "#E5E5E5" }} 
+                            disabled 
+                            className={"field"} 
+                            name="organisationId" 
+                            inputRef={register()} 
+                        />
                 </LabelFieldPair>
-                {desgLoading?<Loader />: <LabelFieldPair>
+
+                {desLoading?<Loader />: <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_OFFICER_INCHARGE_DES`)}:*`}</CardLabel>
                     <div className='field'>
                         <Controller
@@ -296,7 +330,10 @@ const CreateContractForm = ({ onFormSubmit }) => {
                                         selected={props?.value}
                                         optionKey={"i18nKey"}
                                         t={t}
-                                        select={props?.onChange}
+                                        select={(val)=>{
+                                            props.onChange(val)
+                                            setValue("officerIncharge","")
+                                        }}
                                         onBlur={props.onBlur}
                                     />
                                 );
@@ -318,7 +355,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                                 return (
                                     <Dropdown
                                         onBlur={props.onBlur}
-                                        option={selectedDesignation? Employees : []}
+                                        option={officerIncharge}
                                         selected={props?.value}
                                         optionKey={"nameOfEmp"}
                                         t={t}
@@ -378,7 +415,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                     <SubmitBar onSubmit={handleCreateClick} label={t("WORKS_PROCEED_FORWARD")} />
                 </ActionBar>
             </Card>
-        </form> : <Loader/>
+        </form>
     )
 }
 
