@@ -60,7 +60,7 @@ const SubWorkTable = ({ t, register, errors, rows, setRows, estimateDetails, set
                     control={control}
                     name={`estimateDetails.${index}.name`}
                     defaultValue={row.name}
-                    rules={{pattern: /^[a-zA-Z0-9_.$@#\/]*$/, required:true}}
+                    rules={{pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/, required:true}}
                     render={(props)=>(
                         <TextInput
                             value={props.value}
