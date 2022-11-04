@@ -1,7 +1,7 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
-
+import AttendenceMgmtCard from "./components/AttendenceMgmtCard"
 import EmployeeApp from "./pages/employee";
 
 const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
