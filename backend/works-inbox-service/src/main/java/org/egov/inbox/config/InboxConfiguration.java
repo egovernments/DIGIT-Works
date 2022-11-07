@@ -111,4 +111,11 @@ public class InboxConfiguration {
 	@Value("${works.estimate.search.path}")
 	private String estimateServiceSearchPath;
 
+	//Searcher
+	@Value("${egov.searcher.host}")
+	private String searcherHost;
+
+	@Value("${egov.searcher.estimate.search.path}")
+	private String estimateInboxSearcherEndpoint;
+
 }

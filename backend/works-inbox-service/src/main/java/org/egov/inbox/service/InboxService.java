@@ -9,7 +9,6 @@ import org.egov.inbox.config.InboxConfiguration;
 import org.egov.inbox.repository.ElasticSearchRepository;
 import org.egov.inbox.repository.ServiceRequestRepository;
 import org.egov.inbox.util.ErrorConstants;
-import org.egov.inbox.util.EstimateServiceUtil;
 import org.egov.inbox.web.model.Inbox;
 import org.egov.inbox.web.model.InboxResponse;
 import org.egov.inbox.web.model.InboxSearchCriteria;
@@ -58,7 +57,7 @@ public class InboxService {
     ElasticSearchRepository elasticSearchRepository;
 
     @Autowired
-    private EstimateServiceUtil estimateServiceUtil;
+    private EstimateInboxFilterService estimateInboxFilterService;
 
     @Autowired
     public InboxService(InboxConfiguration config, ServiceRequestRepository serviceRequestRepository,
@@ -83,10 +82,16 @@ public class InboxService {
         if (!CollectionUtils.isEmpty(processCriteria.getStatus()))
             inputStatuses = new ArrayList<>(processCriteria.getStatus());
         StringBuilder assigneeUuid = new StringBuilder();
+        //get user -> uuid from request info in case of 'estimate'
         if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
             assigneeUuid = assigneeUuid.append(processCriteria.getAssignee());
             processCriteria.setStatus(null);
         }
+
+        //assignee -> workflow service--> estimate number
+        //list of estimate numbers + filters --> estimate service
+        //response aggregate
+
         // Since we want the whole status count map regardless of the status filter and assignee filter being passed
         processCriteria.setAssignee(null);
         processCriteria.setStatus(null);
@@ -108,13 +113,13 @@ public class InboxService {
         processCriteria.setStatus(inputStatuses);
         processCriteria.setAssignee(assigneeUuid.toString());
         List<String> businessServiceName = processCriteria.getBusinessService();
-        List<Inbox> inboxes = new ArrayList<Inbox>();
+        List<Inbox> inboxes = new ArrayList<>();
         InboxResponse response = new InboxResponse();
         JSONArray businessObjects = null;
         // Map<String,String> srvMap = (Map<String, String>) config.getServiceSearchMapping().get(businessServiceName.get(0));
         Map<String, String> srvMap = fetchAppropriateServiceMap(businessServiceName, moduleName);
         if (CollectionUtils.isEmpty(businessServiceName)) {
-            throw new CustomException(ErrorConstants.MODULE_SEARCH_INVLAID, "Bussiness Service is mandatory for module search");
+            throw new CustomException(ErrorConstants.MODULE_SEARCH_INVLAID, "Business Service is mandatory for module search");
         }
 
         Map<String, Long> businessServiceSlaMap = new HashMap<>();
@@ -168,7 +173,7 @@ public class InboxService {
             Boolean isSearchResultEmpty = false;
             List<String> businessKeys = new ArrayList<>();
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(ESTIMATE_SERVICE)) {
-                List<String> estimateNumbers = estimateServiceUtil.fetchEstimateNumbersFromEstimateService(criteria,
+                List<String> estimateNumbers = estimateInboxFilterService.fetchEstimatesFromEstimateSearcher(criteria,
                         StatusIdNameMap, requestInfo);
                 totalCount = estimateNumbers != null && !estimateNumbers.isEmpty() ? estimateNumbers.size() : 0;
                 if (!CollectionUtils.isEmpty(estimateNumbers)) {
@@ -296,17 +301,6 @@ public class InboxService {
         }
         return null;
     }
-
-    /*
-     * private String fetchUserUUID(String mobileNumber, RequestInfo requestInfo, String tenantId) { StringBuilder uri = new
-     * StringBuilder(); uri.append(userHost).append(userSearchEndpoint); Map<String, Object> userSearchRequest = new HashMap<>();
-     * userSearchRequest.put("RequestInfo", requestInfo); userSearchRequest.put("tenantId", tenantId);
-     * userSearchRequest.put("userType", "CITIZEN"); userSearchRequest.put("userName", mobileNumber); String uuid = ""; try {
-     * Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest); if(null != user) { uuid = JsonPath.read(user,
-     * "$.user[0].uuid"); }else { log.error("Service returned null while fetching user for username - " + mobileNumber); }
-     * }catch(Exception e) { log.error("Exception while fetching user for username - " + mobileNumber);
-     * log.error("Exception trace: ", e); } return uuid; }
-     */
 
     private Map<String, String> fetchAppropriateServiceMap(List<String> businessServiceName, String moduleName) {
         StringBuilder appropriateKey = new StringBuilder();
