@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import { Toast } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from 'react-i18next';
-import CreateContractForm from '../../../components/CreateContract/CreateContractForm';
+import CreateContractForm from '../../components/CreateContract/CreateContractForm';
 
 const CreateContract = (props) => {
     const [showToast, setShowToast] = useState(null);

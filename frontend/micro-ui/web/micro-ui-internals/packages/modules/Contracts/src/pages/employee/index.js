@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
+import CreateContract from "./CreateContract";
 
 const ContractsBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
@@ -14,12 +15,12 @@ const ContractsBreadCrumbs = ({ location }) => {
             content: t("WORKS_WMS"),
             show: true,
         },
-        // {
-        //     path: `/${window.contextPath}/employee/works/loiinbox`,
-        //     content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_LOI_INBOX")}` : t("WORKS_LOI_INBOX"),
-        //     show: location.pathname.includes("/works/loiinbox") ? true : false,
-        //     isBack: fromScreen && true,
-        // },
+        {
+            path: `/${window.contextPath}/employee/contracts/create-contract`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_CONTRACT")}` : t("WORKS_CREATE_CONTRACT"),
+            show: location.pathname.includes("/contracts/create-contract") ? true : false,
+            isBack: fromScreen && true,
+        },
     ];
     return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 
@@ -56,6 +57,7 @@ const App = ({ path }) => {
                         <ContractsBreadCrumbs location={location} />
                     </div>
                     <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
+                    <PrivateRoute path={`${path}/create-contract`} component={() => <CreateContract/>}/>
                     {/* <PrivateRoute path={`${path}/create-contractor`} component={() => <NewApplication {...path} />} />
                     <PrivateRoute path={`${path}/search-Estimate-approved`} component={(props) => <Search {...props} parentRoute={path} />} />
                     <PrivateRoute path={`${path}/inbox`} component={() => (<Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />

@@ -2,7 +2,7 @@ import React, { Fragment, useState, useMemo } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, TextInput, Dropdown, UploadFile, MultiUploadWrapper, ActionBar, SubmitBar, CardLabelError, Loader, DatePicker, RadioButtons, InfoBannerIcon } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from 'react-i18next';
-import ProcessingModal from '../Modal/ProcessingModal';
+import ProcessingModal from '@egovernments/digit-ui-module-works/src/components/Modal/ProcessingModal';
 import { format } from "date-fns";
 
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
