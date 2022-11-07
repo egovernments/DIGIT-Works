@@ -58,19 +58,6 @@ const App = ({ path }) => {
                     </div>
                     <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
                     <PrivateRoute path={`${path}/create-contract`} component={() => <CreateContract/>}/>
-                    {/* <PrivateRoute path={`${path}/create-contractor`} component={() => <NewApplication {...path} />} />
-                    <PrivateRoute path={`${path}/search-Estimate-approved`} component={(props) => <Search {...props} parentRoute={path} />} />
-                    <PrivateRoute path={`${path}/inbox`} component={() => (<Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />
-                    <PrivateRoute path={`${path}/LOIInbox`} component={() => (<LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />
-                    <PrivateRoute path={`${path}/search-estimate`} component={() => <SearchEstimate />} />
-                    <PrivateRoute path={`${path}/search-approved-estimate`} component={() => <SearchApprovedSubEstimate />} />
-                    <PrivateRoute path={`${path}/create-loi`} component={() => <CreateLOI {...{ path }} />} />
-                    <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{ path }} />} />
-                    <PrivateRoute path={`${path}/modify-estimate`} component={() => <ModifyEstimate {...{ path }} />} />
-                    <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
-                    <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
-                    <PrivateRoute path={`${path}/response`} component={() => <Response {...{ path }} />} />
-                    <PrivateRoute path={`${path}/download`} component={() => <HandleDownloadPdf {...{ path }} />} /> */}
                 </div>
             </React.Fragment>
         </Switch>

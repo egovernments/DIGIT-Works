@@ -15,7 +15,6 @@ import Inbox from "./Inbox";
 import LOIInbox from "./LOIInbox";
 import HandleDownloadPdf from "../../components/HandleDownloadPdf";
 import ModifyEstimate from "../../components/ModifyEstimate";
-import CreateContract from "./Contract/CreateContract";
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
 
@@ -31,12 +30,6 @@ const BILLSBreadCrumbs = ({ location }) => {
       path: "/works-ui/employee/works/create-contractor",
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_CONTRACTOR")}` : t("WORKS_CREATE_CONTRACTOR"),
       show: location.pathname.includes("/works/create-contractor") ? true : false,
-      isBack: fromScreen && true,
-    },
-    {
-      path: "/works-ui/employee/works/create-contract",
-      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACTS")}` : t("WORKS_CONTRACTS"),
-      show: location.pathname.includes("/works/create-contract") ? true : false,
       isBack: fromScreen && true,
     },
     {
@@ -142,7 +135,6 @@ const App = ({ path }) => {
           </div>
           <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
           <PrivateRoute path={`${path}/create-contractor`} component={() => <CreateContractor {...path} />} />
-          <PrivateRoute path={`${path}/create-contract`} component={() => <CreateContract {...path} />} />
           <PrivateRoute path={`${path}/search-Estimate-approved`} component={(props) => <Search {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/inbox`} component={() => (<Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />
           <PrivateRoute path={`${path}/LOIInbox`} component={() => (<LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />
