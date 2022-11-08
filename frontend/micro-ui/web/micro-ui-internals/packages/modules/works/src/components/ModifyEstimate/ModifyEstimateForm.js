@@ -363,7 +363,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                                         t={t}
                                         select={(val)=>{
                                             props?.onChange(val)
-                                            setValue("","")
+                                            setValue("subTypeOfWork","")
                                         }}
                                         onBlur={props.onBlur}
                                     />
