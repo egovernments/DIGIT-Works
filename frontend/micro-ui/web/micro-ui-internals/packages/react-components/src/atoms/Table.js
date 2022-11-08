@@ -34,6 +34,7 @@ const Table = ({
   tableRef,
   isReportTable=false
 }) => {
+  
   const {
     getTableProps,
     getTableBodyProps,
@@ -78,7 +79,6 @@ const Table = ({
     usePagination,
     useRowSelect
   );
-
   useEffect(() => {
     onSort(sortBy);
   }, [onSort, sortBy]);
@@ -148,7 +148,7 @@ const Table = ({
           {`${t("CS_COMMON_ROWS_PER_PAGE")} :`}
           <select
             className="cp"
-            value={pageSize}
+            value={manualPagination?pageSizeLimit: pageSize}
             style={{ marginRight: "15px" }}
             onChange={manualPagination ? onPageSizeChange : (e) => setPageSize(Number(e.target.value))}
           >

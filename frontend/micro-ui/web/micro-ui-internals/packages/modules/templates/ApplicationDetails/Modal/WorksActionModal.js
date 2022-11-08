@@ -43,7 +43,6 @@ const convertDateToEpochNew = (dateString, dayStartOrEnd = "dayend") => {
 
 
 const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode,applicationDetails,workflowDetails }) => {
-  
   //here according to the action selected render appropriate modal
 
   // const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
@@ -146,9 +145,9 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
 
 
   employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
-
+  
   useEffect(() => {
-    setApprovers(employeeDatav1?.Employees)
+    setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : [])
   }, [employeeDatav1])
   
   

@@ -249,6 +249,7 @@ import useSearchEstimate from "./works/userSearchEstimate";
 import useApplicationActionsLOI from "./works/useApplicationActions";
 import useApplicationActionsEstimate from "./works/useUpdateEstimate";
 import useUpdateEstimate from "./works/useUpdateEstimate";
+import useWorksInbox from "./works/useInbox";
 
 const works = {
   useViewEstimateDetails,
@@ -261,7 +262,8 @@ const works = {
   useApplicationActionsLOI,
   useUpdateEstimate,
   useApplicationActionsEstimate,
-  useSearchApprovedEstimates
+  useSearchApprovedEstimates,
+  useInbox:useWorksInbox
 }
 
 const pgr = {

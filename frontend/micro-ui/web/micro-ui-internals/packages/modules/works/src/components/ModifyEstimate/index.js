@@ -64,6 +64,7 @@ const ModifyEstimate = (props) => {
             <ModifyEstimateForm onFormSubmit={onFormSubmit} estimate={estimateEdit} />}
             {showToast && (
                 <Toast
+                style={{"zIndex":"9999999"}}
                 error={showToast.error}
                 warning={showToast.warning}
                 label={t(showToast.label)}
