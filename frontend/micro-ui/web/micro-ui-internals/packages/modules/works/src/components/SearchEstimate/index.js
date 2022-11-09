@@ -13,7 +13,7 @@ const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
       defaultValues: {
         offset: 0,
         limit: 10,
-        sortBy: "department",
+        // sortBy: "department",
         sortOrder: "DESC",
       },
     });
@@ -21,7 +21,7 @@ const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
     useEffect(() => {
       register("offset", 0);
       register("limit", 10);
-      register("sortBy", "department");
+      // register("sortBy", "department");
       register("sortOrder", "DESC");
     }, [register]);
   
