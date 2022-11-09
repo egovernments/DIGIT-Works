@@ -10,7 +10,7 @@ public class EstimateConstant {
     public static final String TYPE_OF_WORK = "typeOfWork";
     public static final String FUND = "fund";
     public static final String FUNCTION = "function";
-    public static final String BUDGET_HEAD = "function";
+    public static final String BUDGET_HEAD = "budgetHead";
     public static final String ESTIMATE_NUMBER = "estimateNumber";
     public static final String ESTIMATE_ID = "estimateId";
     public static final String FROM_PROPOSAL_DATE = "fromProposalDate";
