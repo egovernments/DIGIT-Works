@@ -18,7 +18,6 @@
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<lombok.version>1.18.22</lombok.version>
 	</properties>
 
 	<dependencies>
@@ -93,7 +92,6 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-			<version>${lombok.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.cedarsoftware</groupId>
@@ -168,19 +166,19 @@
 	</dependencies>
 	<repositories>
 		<repository>
-			<id>repo.egovernments.org</id>
+			<id>repo.digit.org</id>
 			<name>eGov ERP Releases Repository</name>
-			<url>https://nexus-repo.egovernments.org/nexus/content/repositories/releases/</url>
+			<url>https://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
 		</repository>
 		<repository>
-			<id>repo.egovernments.org.snapshots</id>
+			<id>repo.digit.org.snapshots</id>
 			<name>eGov ERP Releases Repository</name>
-			<url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+			<url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
-			<id>repo.egovernments.org.public</id>
+			<id>repo.digit.org.public</id>
 			<name>eGov Public Repository Group</name>
-			<url>https://nexus-repo.egovernments.org/nexus/content/groups/public/</url>
+			<url>https://nexus-repo.digit.org/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
 	<build>
