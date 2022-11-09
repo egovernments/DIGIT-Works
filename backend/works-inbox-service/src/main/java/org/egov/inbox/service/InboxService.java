@@ -76,7 +76,7 @@ public class InboxService {
         processCriteria.setTenantId(criteria.getTenantId());
         Integer flag = 0;
 
-        Integer totalCount = 0;
+        Integer totalCount = workflowService.getProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
         Integer nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
         List<String> inputStatuses = new ArrayList<>();
         if (!CollectionUtils.isEmpty(processCriteria.getStatus()))
@@ -173,9 +173,11 @@ public class InboxService {
             Boolean isSearchResultEmpty = false;
             List<String> businessKeys = new ArrayList<>();
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(ESTIMATE_SERVICE)) {
-                List<String> estimateNumbers = estimateInboxFilterService.fetchEstimatesFromEstimateSearcher(criteria,
+                totalCount = estimateInboxFilterService.fetchEstimateNumbersCountFromEstimateSearcher(criteria, StatusIdNameMap,
+                        requestInfo);
+                List<String> estimateNumbers = estimateInboxFilterService.fetchEstimateNumbersFromEstimateSearcher(criteria,
                         StatusIdNameMap, requestInfo);
-                totalCount = estimateNumbers != null && !estimateNumbers.isEmpty() ? estimateNumbers.size() : 0;
+
                 if (!CollectionUtils.isEmpty(estimateNumbers)) {
                     moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, estimateNumbers);
                     businessKeys.addAll(estimateNumbers);
