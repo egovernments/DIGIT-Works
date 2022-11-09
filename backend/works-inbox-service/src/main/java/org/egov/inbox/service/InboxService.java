@@ -220,7 +220,7 @@ public class InboxService {
                     .collect(Collectors.toMap(ProcessInstance::getBusinessId, Function.identity()));
 
             if (businessObjects.length() > 0 && processInstances.size() > 0) {
-                if (CollectionUtils.isEmpty(businessKeys)) {
+                if (!CollectionUtils.isEmpty(businessKeys)) {
                     businessMap.keySet().forEach(businessKey -> {
                         if (null != processInstanceMap.get(businessKey)) {
                             //For non- Bill Amendment Inbox search
