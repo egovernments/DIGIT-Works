@@ -118,4 +118,7 @@ public class InboxConfiguration {
 	@Value("${egov.searcher.estimate.search.path}")
 	private String estimateInboxSearcherEndpoint;
 
+	@Value("${egov.searcher.estimate.count.path}")
+	private String estimateInboxSearcherCountEndpoint;
+
 }
