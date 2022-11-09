@@ -121,29 +121,4 @@ public class EstimateInboxFilterService {
         }
         return acknowledgementNumbers;
     }
-
-    private List<String> fetchUserUUID(String mobileNumber, RequestInfo requestInfo, String tenantId) {
-//        StringBuilder uri = new StringBuilder();
-//        uri.append(userHost).append(userSearchEndpoint);
-//        Map<String, Object> userSearchRequest = new HashMap<>();
-//        userSearchRequest.put("RequestInfo", requestInfo);
-//        userSearchRequest.put("tenantId", tenantId);
-//        userSearchRequest.put("userType", "CITIZEN");
-//        userSearchRequest.put("mobileNumber", mobileNumber);
-//        List<String> userUuids = new ArrayList<>();
-//        try {
-//            Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
-//            if (null != user) {
-//                //log.info(user.toString());
-//                userUuids = JsonPath.read(user, "$.user.*.uuid");
-//            } else {
-//                log.error("Service returned null while fetching user for mobile number - " + mobileNumber);
-//            }
-//        } catch (Exception e) {
-//            log.error("Exception while fetching user for mobile number - " + mobileNumber);
-//            log.error("Exception trace: ", e);
-//        }
-//        return userUuids;
-        return null;
-    }
 }
