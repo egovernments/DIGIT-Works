@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
-import NewApplication from "./CreateContractor";
+import CreateContractor from "./Contractor/CreateContractor";
 import Search from "./search";
 import SearchEstimate from "./SearchEstimate";
 import CreateLOI from "./LOI/CreateLOI";
@@ -133,7 +133,8 @@ const App = ({ path }) => {
           <div style={getBreadCrumbStyles(window.location.href)}>
             <BILLSBreadCrumbs location={location} />
           </div>
-          <PrivateRoute path={`${path}/create-contractor`} component={() => <NewApplication {...path} />} />
+          <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
+          <PrivateRoute path={`${path}/create-contractor`} component={() => <CreateContractor {...path} />} />
           <PrivateRoute path={`${path}/search-Estimate-approved`} component={(props) => <Search {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/inbox`} component={() => (<Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />
           <PrivateRoute path={`${path}/LOIInbox`} component={() => (<LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />

@@ -1,7 +1,7 @@
 import React from "react";
 import _ from "lodash";
 import CreateContractorForm from '../../../components/CreateContractor/CreateContractorForm'
-const NewApplication = () => {
+const CreateContractor = () => {
   const onFormSubmit = async(_data) => {
   }
   return (
@@ -9,4 +9,4 @@ const NewApplication = () => {
   );
 };
 
-export default NewApplication;
+export default CreateContractor;

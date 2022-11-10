@@ -361,7 +361,10 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                                         selected={props?.value}
                                         optionKey={"i18nKey"}
                                         t={t}
-                                        select={props?.onChange}
+                                        select={(val)=>{
+                                            props?.onChange(val)
+                                            setValue("subTypeOfWork","")
+                                        }}
                                         onBlur={props.onBlur}
                                     />
                                 );
@@ -425,7 +428,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                             name="fund"
                             control={control}
                             rules={{ required: true }}
-                            defaultValue={{i18nKey:t(`ES_COMMON_${estimate?.fund}`), code:estimate?.fund, active:true}}
+                            defaultValue={{i18nKey:t(`ES_COMMON_FUND_${estimate?.fund}`), code:estimate?.fund, active:true}}
                             render={(props) => {
                                 return (
                                     <Dropdown
