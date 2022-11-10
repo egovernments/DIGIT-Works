@@ -2,8 +2,9 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import AttendenceMgmtCard from "./components/AttendenceMgmtCard"
-import EmployeeApp from "./pages/employee";
-
+import CitizenApp from "./pages/citizen";
+import mobileInbox from "./components/markAttendenceInbox/mobileInbox";
+import ViewRegister from "./pages/citizen/viewRegister/ViewRegister";
 const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
     const moduleCode = ["AttendenceMgmt"];
     const { path, url } = useRouteMatch();
@@ -18,12 +19,14 @@ const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
         return <Loader />;
     }
 
-    return <EmployeeApp path={path} stateCode={stateCode} />;
+    return <CitizenApp path={path} stateCode={stateCode} />;
 };
 
 const componentsToRegister = {
     AttendenceMgmtCard,
     AttendenceMgmtModule,
+    AttendenceMgmtInbox: mobileInbox,
+    ViewRegister,
 };
 
 export const initAttendenceMgmtComponents = () => {
