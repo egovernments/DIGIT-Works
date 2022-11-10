@@ -11,8 +11,8 @@ import {stringReplaceAll, convertEpochToDateDMY, mdmsData} from "./index";
     return {
       title: "",
       isHeader: true,
-      typeOfApplication: t("WORKS_NEW_APPLICATION"),
-      date: Digit.DateUtils.ConvertEpochToDate(application?.auditDetails?.createdTime) || "NA",
+      typeOfApplication: t("WORKS_LOI_DETAILS"),
+      date: Digit.DateUtils.ConvertEpochToDate(application?.applicationData?.auditDetails?.createdTime) || "NA",
       values: values,
       ...dynamicHeaderData
     }
@@ -67,7 +67,7 @@ import {stringReplaceAll, convertEpochToDateDMY, mdmsData} from "./index";
     return {
       t: t,
       tenantId: tenantInfo,
-      title: `PDF_STATIC_LABEL_WS_CONSOLIDATED_ACKNOWELDGMENT_LOGO_SUB_HEADER`,
+      title: t(`PDF_STATIC_LABEL_WS_CONSOLIDATED_ACKNOWELDGMENT_LOGO_SUB_HEADER`),
       name: `${t("PDF_STATIC_LABEL_WS_CONSOLIDATED_ACKNOWELDGMENT_LOGO_SUB_HEADER")}`,
       email: "",
       phoneNumber: "",
