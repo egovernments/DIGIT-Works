@@ -6,6 +6,8 @@ import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 // import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initWorksComponents } from "@egovernments/digit-ui-module-works";
+import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt"
+
 import {   initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 window.contextPath=window?.globalConfigs?.getConfig("CONTEXT_PATH");
@@ -33,7 +35,8 @@ const enabledModules = [
   // "Bills",
     "HRMS",
   "Works",
-  "Contracts"
+  "AttendenceMgmt"
+  "Contracts",
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
  
@@ -43,6 +46,7 @@ window.Digit.ComponentRegistryService.setupRegistry({
 // initEngagementComponents();
 initWorksComponents();
 initHRMSComponents();
+initAttendenceMgmtComponents();
 initContractsComponents();
 
 const moduleReducers = (initData) => ({

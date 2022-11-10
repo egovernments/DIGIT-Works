@@ -9,11 +9,16 @@ const SearchApprovedSubEstimate = () => {
 
     const tenantId = Digit.UserService.getUser()?.info?.tenantId;
 
+    const [showTable, setShowTable] = useState(true)
+    const onClearSearch = (isShow = true) => {
+        setShowTable(isShow);
+    }
+
     const [payload, setPayload] = useState(null)
     const [showToast, setShowToast] = useState(null);
     const {t} = useTranslation()
     const onSubmit = (_data) => {
-
+        setShowTable(true)
         //show toast error if no params are added
         if (_data.estimateNumber === "" && _data.adminSanctionNumber === "" && !_data.department && !_data.estimateDetailNumber && !_data.fromProposalDate && !_data.toProposalDate) {
             setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
@@ -171,7 +176,7 @@ const SearchApprovedSubEstimate = () => {
                 }}
                 />
             )}
-            <SearchApplicationApproved onSubmit={onSubmit} data={getData()} tenantId={tenantId} count={isLoadingEstimateSearch?.length} resultOk={isResultsOk()} isLoading={isLoadingEstimateSearch}/>
+            <SearchApplicationApproved onSubmit={onSubmit} data={getData()} tenantId={tenantId} count={isLoadingEstimateSearch?.length} resultOk={isResultsOk()} isLoading={isLoadingEstimateSearch} onClearSearch={onClearSearch} showTable={showTable}/>
       </Fragment>
         
     )

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
 import CreateContract from "./CreateContract";
+import Inbox from "./Inbox";
 
 const ContractsBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
@@ -19,6 +20,12 @@ const ContractsBreadCrumbs = ({ location }) => {
             path: `/${window.contextPath}/employee/contracts/create-contract`,
             content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_CONTRACT")}` : t("WORKS_CREATE_CONTRACT"),
             show: location.pathname.includes("/contracts/create-contract") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/contracts/inbox`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACTS")}` : t("WORKS_CONTRACTS"),
+            show: location.pathname.includes("/contracts/inbox") ? true : false,
             isBack: fromScreen && true,
         },
     ];
@@ -58,6 +65,7 @@ const App = ({ path }) => {
                     </div>
                     <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
                     <PrivateRoute path={`${path}/create-contract`} component={() => <CreateContract/>}/>
+                    <PrivateRoute path={`${path}/inbox`} component={() => <Inbox parentRoute={path} businessService="WORKS" filterComponent="contractInboxFilter" initialStates={{}} isInbox={true} />}/>
                 </div>
             </React.Fragment>
         </Switch>
