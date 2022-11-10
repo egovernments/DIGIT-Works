@@ -1,5 +1,5 @@
 import React, { useState, Fragment, useEffect, useRef } from "react";
-import { Header, SubmitBar, Menu, ActionBar,Loader } from "@egovernments/digit-ui-react-components";
+import { Header, SubmitBar, Menu, ActionBar,Loader, MultiLink } from "@egovernments/digit-ui-react-components";
 import { useParams, useHistory } from "react-router-dom";
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,7 @@ import ApplicationDetailsTemplate  from "../../../../../templates/ApplicationDet
 import ApplicationDetailsContent from "../../../../../templates/ApplicationDetails/components/ApplicationDetailsContent";
 import ProcessingModal from "../../../components/Modal/ProcessingModal";
 import RejectLOIModal from '../../../components/Modal/RejectLOIModal'
+import getPDFData from "../../../utils/getWorksAcknowledgementData"
 const ViewLOI = (props) => {
     const { t } = useTranslation()
     const { register, control, watch, handleSubmit, formState: { errors, ...rest }, reset, trigger, getValues} = useForm({defaultValues: {}, mode: "onSubmit"});
@@ -123,6 +124,14 @@ const ViewLOI = (props) => {
         mutate,
     } = Digit.Hooks.works.useApplicationActionsLOI();
 
+    const HandleDownloadPdf = () => {
+        let result = applicationDetails;
+        const PDFdata = getPDFData({...result },tenantId, t);
+        PDFdata.then((ress) => Digit.Utils.pdf.generatev1(ress));
+            return null;
+      }
+      
+
     const [showToast, setShowToast] = useState(null);
 
     const closeToast = () => {
@@ -136,6 +145,11 @@ const ViewLOI = (props) => {
             <div className={"employee-main-application-details"}>
                 <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
                     <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_VIEW_LOI")}</Header>
+                    <MultiLink
+                        className="multilinkWrapper employee-mulitlink-main-div"
+                        onHeadClick={ HandleDownloadPdf }
+                        downloadBtnClassName={"employee-download-btn-className"}
+                    />
                 </div>
 
                 {showModal && <ProcessingModal

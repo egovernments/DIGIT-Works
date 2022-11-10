@@ -11,8 +11,12 @@ const SearchEstimate = () => {
     const { isLoading: hookLoading, isError, error, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
         null,tenantId,
       );
+    const [showTable, setShowTable] = useState(true)
+    const onClearSearch = (isShow = true) => {
+        setShowTable(isShow);
+    }
   const onSubmit = async (_data) => {
-    
+    setShowTable(true)
     var fromProposalDate = new Date(_data?.fromProposalDate);
     fromProposalDate?.setSeconds(fromProposalDate?.getSeconds() - 19800);
     var toProposalDate = new Date(_data?.toProposalDate);
@@ -78,6 +82,8 @@ const SearchEstimate = () => {
         // count={result?.count}
         resultOk={isResultsOk()}
         isLoading={result?.isLoading}
+        onClearSearch={onClearSearch} 
+        showTable={showTable}
       />
       {showToast && (
         <Toast

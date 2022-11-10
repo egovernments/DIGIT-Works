@@ -33,10 +33,10 @@ const enabledModules = [
   // "WS",
   // "Reports",
   // "Bills",
-    "HRMS",
+  "HRMS",
   "Works",
-  "AttendenceMgmt"
-  "Contracts",
+  "AttendenceMgmt",
+  "Contracts"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
  

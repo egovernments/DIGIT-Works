@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 import { Controller, useWatch } from "react-hook-form";
 import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader } from "@egovernments/digit-ui-react-components";
 
-const SearchFields = ({ register, control, reset, t }) => {
+const SearchFields = ({ register, control, reset, t, onClearSearch }) => {
     const tenant = Digit.ULBService.getStateId()
     const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
         tenant,
@@ -126,6 +126,7 @@ const SearchFields = ({ register, control, reset, t }) => {
                         sortBy: "department",
                         sortOrder: "DESC"
                     });
+                    onClearSearch(false)
                 }}>{t(`CLEAR_SEARCH_LINk`)}</p>
             </SearchField>
         </>
