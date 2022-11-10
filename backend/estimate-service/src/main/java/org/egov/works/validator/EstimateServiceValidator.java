@@ -217,7 +217,7 @@ public class EstimateServiceValidator {
             errorMap.put("INVALID_TYPE_OF_WORK", "The type Of Work: " + estimate.getTypeOfWork() + " is not present in MDMS");
         if (CollectionUtils.isEmpty(natureOfWorkRes))
             errorMap.put("INVALID_NATURE_OF_WORK", "The nature Of Work : " + estimate.getNatureOfWork() + " is not present in MDMS");
-        if (CollectionUtils.isEmpty(subTypeOfWorkRes))
+        if (CollectionUtils.isEmpty(subTypeOfWorkRes) && StringUtils.isNotBlank(estimate.getSubTypeOfWork()))
             errorMap.put("INVALID_SUB_TYPE_OF_WORK", "The sub type Of Work : " + estimate.getSubTypeOfWork() + " is not present in MDMS");
 
 
@@ -225,9 +225,9 @@ public class EstimateServiceValidator {
             errorMap.put("INVALID_FINANCE_FUND", "The finance fund: " + estimate.getFund() + " is not present in MDMS");
         if (CollectionUtils.isEmpty(financeFunctionRes))
             errorMap.put("INVALID_FINANCE_FUNCTION", "The finance function: " + estimate.getFunction() + " is not present in MDMS");
-        if (CollectionUtils.isEmpty(financeSchemeRes))
+        if (CollectionUtils.isEmpty(financeSchemeRes) && StringUtils.isNotBlank(estimate.getScheme()))
             errorMap.put("INVALID_FINANCE_SCHEME", "The finance scheme: " + estimate.getScheme() + " is not present in MDMS");
-        if (CollectionUtils.isEmpty(financeSubSchemeRes))
+        if (CollectionUtils.isEmpty(financeSubSchemeRes) && StringUtils.isNotBlank(estimate.getSubScheme()))
             errorMap.put("INVALID_FINANCE_SUB_SCHEME", "The finance sub scheme: " + estimate.getSubScheme() + " is not present in MDMS");
         if (CollectionUtils.isEmpty(financeBudgetHeadRes))
             errorMap.put("INVALID_FINANCE_BUDGET_HEAD", "The finance budget head: " + estimate.getBudgetHead() + " is not present in MDMS");

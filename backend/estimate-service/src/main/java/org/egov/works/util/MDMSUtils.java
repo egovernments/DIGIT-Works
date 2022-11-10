@@ -27,7 +27,8 @@ public class MDMSUtils {
     public static final String PLACEHOLDER_SUB_CODE = "{subCode}";
     public static final String filterCode = "$.*.code";
     public final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
-    public final String filterSubSchemeModuleCode = "$.[?(@.active==true && @.code == '{code}')].subSchemes.[?(@.active==true && @.code=='{subCode}')]]";
+    public final String filterSchemeModuleCode = "$.[?(@.active==true && @.schemeCode=='{code}')]";
+    public final String filterSubSchemeModuleCode = "$.[?(@.active==true && @.schemeCode == '{code}')].subSchemes.[?(@.active==true && @.code=='{subCode}')]]";
     public final String filterSubTypeModuleCode = "$.[?(@.active==true && @.code == '{code}')].subTypes.[?(@.active==true && @.code=='{subCode}')]]";
 
     @Autowired
@@ -125,7 +126,7 @@ public class MDMSUtils {
                 .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getBudgetHead())).build();
 
         MasterDetail schemeMasterDetails = MasterDetail.builder().name(MASTER_SCHEME)
-                .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getScheme() != null ? estimate.getScheme() : "")).build();
+                .filter(filterSchemeModuleCode.replace(PLACEHOLDER_CODE, estimate.getScheme() != null ? estimate.getScheme() : "")).build();
 
         String subSchemeFilter = filterSubSchemeModuleCode.replace(PLACEHOLDER_SUB_CODE, (estimate.getSubScheme() != null ? estimate.getSubScheme() : ""));
         MasterDetail subSchemeMasterDetails = MasterDetail.builder().name(MASTER_SCHEME)
