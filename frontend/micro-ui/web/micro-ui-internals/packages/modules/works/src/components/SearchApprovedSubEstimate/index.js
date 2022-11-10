@@ -1,11 +1,12 @@
-import React, { Fragment, useEffect, useCallback, useMemo } from "react";
+import React, { Fragment, useEffect, useCallback, useMemo, useState } from "react";
 import { SearchForm, Table, Card, Loader, Header, CreateLoiIcon } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import MobileSearchApplication from "./MobileSearchApprovedEstimates";
-const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => {
+const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultOk,onClearSearch,showTable }) => {
+    
     const { t } = useTranslation();
 
     const { register, control, handleSubmit, setValue, getValues, reset,formState } = useForm({
@@ -145,15 +146,17 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
         return <MobileSearchApplication {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }} />;
     }
 
+    
 
+    
     return (
         <>
             <Header styles={{ fontSize: "32px" }}>{t("WORKS_SEARCH_APPROVED_ESTIMATE")}</Header>
             <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
-                <SearchFields {...{ register, control, reset, t,formState }} />
+                <SearchFields {...{ register, control, reset, t,formState,onClearSearch }} />
             </SearchForm>
 
-            {isLoading?<Loader/>: data?.display && !resultOk ? (
+            {showTable?isLoading?<Loader/>: data?.display && !resultOk ? (
                 <Card style={{ marginTop: 20 }}>
                     {t(data?.display)
                         ?.split("\\n")
@@ -188,9 +191,10 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
                             //onSort={onSort}
                             disableSort={false}
                             sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
+
                         />
                     </div>
-            :null}
+            :null:null}
 
             
             
