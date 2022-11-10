@@ -24,10 +24,11 @@ import static org.egov.works.util.EstimateServiceConstant.*;
 public class MDMSUtils {
 
     public static final String PLACEHOLDER_CODE = "{code}";
+    public static final String PLACEHOLDER_SUB_CODE = "{subCode}";
     public static final String filterCode = "$.*.code";
     public final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
-    public final String filterSubSchemeModuleCode = "$.[?(@.active==true)].subSchemes.[?(@.active==true && @.code=='{code}')]]";
-    public final String filterSubTypeModuleCode = "$.[?(@.active==true)].subTypes.[?(@.active==true && @.code=='{code}')]]";
+    public final String filterSubSchemeModuleCode = "$.[?(@.active==true && @.code == '{code}')].subSchemes.[?(@.active==true && @.code=='{subCode}')]]";
+    public final String filterSubTypeModuleCode = "$.[?(@.active==true && @.code == '{code}')].subTypes.[?(@.active==true && @.code=='{subCode}')]]";
 
     @Autowired
     private EstimateServiceConfiguration config;
@@ -126,8 +127,9 @@ public class MDMSUtils {
         MasterDetail schemeMasterDetails = MasterDetail.builder().name(MASTER_SCHEME)
                 .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getScheme() != null ? estimate.getScheme() : "")).build();
 
+        String subSchemeFilter = filterSubSchemeModuleCode.replace(PLACEHOLDER_SUB_CODE, (estimate.getSubScheme() != null ? estimate.getSubScheme() : ""));
         MasterDetail subSchemeMasterDetails = MasterDetail.builder().name(MASTER_SCHEME)
-                .filter(filterSubSchemeModuleCode.replace(PLACEHOLDER_CODE, estimate.getSubScheme() != null ? estimate.getSubScheme() : "")).build();
+                .filter(subSchemeFilter.replace(PLACEHOLDER_CODE, estimate.getScheme() != null ? estimate.getScheme() : "")).build();
 
 
         estimateWorksMasterDetails.add(fundMasterDetails);
@@ -155,8 +157,9 @@ public class MDMSUtils {
         MasterDetail typeOfWorkMasterDetails = MasterDetail.builder().name(MASTER_TYPEOFWORK)
                 .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getTypeOfWork())).build();
 
+        String subTypeFilter = filterSubTypeModuleCode.replace(PLACEHOLDER_SUB_CODE, (estimate.getSubTypeOfWork() != null ? estimate.getSubTypeOfWork() : ""));
         MasterDetail subTypeOfWorkMasterDetails = MasterDetail.builder().name(MASTER_TYPEOFWORK)
-                .filter(filterSubTypeModuleCode.replace(PLACEHOLDER_CODE, (estimate.getSubTypeOfWork() != null ? estimate.getSubTypeOfWork() : ""))).build();
+                .filter(subTypeFilter.replace(PLACEHOLDER_CODE, estimate.getTypeOfWork())).build();
 
         MasterDetail natureOfWorkMasterDetails = MasterDetail.builder().name(MASTER_NATUREOFWORK)
                 .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getNatureOfWork())).build();

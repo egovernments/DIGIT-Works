@@ -76,6 +76,12 @@ public class EstimateServiceValidator {
         if (StringUtils.isBlank(workflow.getAction())) {
             errorMap.put("WORK_FLOW.ACTION", "Work flow's action is mandatory");
         }
+        if (workflow.getAssignees() == null || workflow.getAssignees().isEmpty()) {
+            throw new CustomException("WORK_FLOW.ASSIGNEE", "Work flow's assignee is mandatory");
+        }
+        if (workflow.getAssignees().size() != 1) {
+            throw new CustomException("WORK_FLOW.ASSIGNEE.LENGTH", "Work flow's assignee should be one");
+        }
     }
 
     private void validateEstimate(Estimate estimate, Map<String, String> errorMap) {
@@ -83,7 +89,7 @@ public class EstimateServiceValidator {
             throw new CustomException("ESTIMATE", "Estimate is mandatory");
         }
         if (StringUtils.isBlank(estimate.getTenantId())) {
-            errorMap.put("TENANT_ID", "Tenant is is mandatory");
+            errorMap.put("TENANT_ID", "Tenant is mandatory");
         }
         if (estimate.getStatus() == null || !EnumUtils.isValidEnum(Estimate.StatusEnum.class, estimate.getStatus().toString())) {
             errorMap.put("STATUS", "Status is mandatory");
@@ -236,6 +242,9 @@ public class EstimateServiceValidator {
         }
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
+        }
+        if (searchCriteria.getIds() != null && !searchCriteria.getIds().isEmpty() && searchCriteria.getIds().size() > 10) {
+            throw new CustomException("IDS", "Ids should be of max length 10.");
         }
     }
 

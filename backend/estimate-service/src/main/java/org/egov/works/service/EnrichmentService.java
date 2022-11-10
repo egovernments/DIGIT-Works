@@ -10,10 +10,7 @@ import org.egov.works.config.EstimateServiceConfiguration;
 import org.egov.works.repository.EstimateRepository;
 import org.egov.works.repository.IdGenRepository;
 import org.egov.works.util.EstimateServiceUtil;
-import org.egov.works.web.models.Estimate;
-import org.egov.works.web.models.EstimateDetail;
-import org.egov.works.web.models.EstimateRequest;
-import org.egov.works.web.models.EstimateSearchCriteria;
+import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,7 +19,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.works.util.EstimateServiceConstant.ALLOW_EDITING_ROLES;
+import static org.egov.works.util.EstimateServiceConstant.*;
 
 @Service
 public class EnrichmentService {
@@ -135,6 +132,48 @@ public class EnrichmentService {
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, false);
 
         estimate.setAuditDetails(auditDetails);
+
+        enrichUpdateEstimateWorkFlowForActionReject(request);
+        //enrichAdminSactionNumber(request);
+    }
+
+    /**
+     * if action is 'ADMINSANCTION' then generate a custom admin saction
+     * number
+     *
+     * @param request
+     */
+    private void enrichAdminSactionNumber(EstimateRequest request) {
+        EstimateRequestWorkflow workflow = request.getWorkflow();
+        Estimate estimate = request.getEstimate();
+        RequestInfo requestInfo = request.getRequestInfo();
+
+        if (workflow.getAction().equals(ACTION_ADMINSANCTION)) {
+            String rootTenantId = estimate.getTenantId().split("\\.")[0];
+
+            List<String> adminSactionNumbers = getIdList(requestInfo, rootTenantId
+                    , config.getIdgenEstimateAdminSactionNumberName(), config.getIdgenEstimateAdminSactionNumberFormat(), 1);
+
+            if (adminSactionNumbers != null && !adminSactionNumbers.isEmpty()) {
+                String adminSactionNumber = adminSactionNumbers.get(0);
+                estimate.setAdminSanctionNumber(adminSactionNumber);
+            }
+        }
+    }
+
+    /**
+     * If the workflow action is 'REJECT' then assignee will be updated
+     * as 'EST_CREATOR'
+     *
+     * @param request
+     */
+    private void enrichUpdateEstimateWorkFlowForActionReject(EstimateRequest request) {
+        EstimateRequestWorkflow workflow = request.getWorkflow();
+        List<String> updatedAssignees = new ArrayList<>();
+        updatedAssignees.add(ROLE_EST_CREATOR);
+        if (workflow.getAction().equals(ACTION_REJECT)) {
+            workflow.setAssignees(updatedAssignees);
+        }
     }
 
 
