@@ -1,23 +1,22 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { Card, DetailsCard, Loader, PopUp, SearchAction } from "@egovernments/digit-ui-react-components";
 import { FilterAction } from "@egovernments/digit-ui-react-components";
-import SearchApplication from "./SearchApplication";
-import { Link } from "react-router-dom";
+import SearchApplication from "./search";
+import SortBy from "./SortBy";
+
 export const ApplicationCard = ({
   t,
   data,
   onFilterChange,
   onSearch,
   onSort,
-  serviceRequestIdKey,
   isFstpOperator,
   isLoading,
   isSearch,
   searchParams,
   searchFields,
   sortParams,
-  linkPrefix,
-  removeParam,
   filterComponent,
 }) => {
   const [type, setType] = useState(isSearch ? "SEARCH" : "");
@@ -40,23 +39,28 @@ export const ApplicationCard = ({
     }
 
     return data?.map((row) => ({
-        [t("WORKS_LOI_ID")]: (
+        [t("WORKS_CONTRACT_ID")]: (
             <div>
                 <span className="link">
-                    <Link to={`view-loi/?loiNumber=LI/2022-23/10/000083&subEstimateNumber=EP/2022-23/09/000092/000068`}>
-                        {row?.LOIId || "NA"}
+                    <Link to={`view-contract?tenantId=${row?.tenantId}&contractId=${row?.contractId}`}>
+                        {row?.contractId || t("ES_COMMON_NA")}
                     </Link>
                 </span>
             </div> 
         ),
-        [t("WORKS_LOI_DATE")]: row.LOIDate || t("ES_COMMON_NA"),
-        [t("WORKS_ABSTRACT_ESTIMATE_NO")]: row.EstimateNumber || t("ES_COMMON_NA"),
-        [t("WORKS_NAME_OF_WORK")]: row.NameOfWork || t("ES_COMMON_NA"),
-        [t("WORKS_CONTRACTOR_NAME")]: row.ContractorName || t("ES_COMMON_NA"),
-        [t("WORKS_AGREEMENT_AMT")]: row?.AgrementAmount || t("ES_COMMON_NA"),
-        [t("WORKS_SLA")]: row?.SLA || t("ES_COMMON_NA"),
+        [t("WORKS_CONTRACT_DATE")]:t(row?.contractDate) || t("ES_COMMON_NA"),
+        [t("WORKS_CONTRACT_TYPE")]: row.contractType || t("ES_COMMON_NA"),
+        [t("WORKS_NAME_OF_WORK")]: t(row?.nameOfTheWork) || t("ES_COMMON_NA"),
+        [t("WORKS_ABSTRACT_ESTIMATE_NO")]: t(row?.abstractEstimateNumber) || t("ES_COMMON_NA"),
+        [t("WORKS_IMPLEMENT_AUTH")]: t(row?.implementingAuthority) || t("ES_COMMON_NA"),
+        [t("WORKS_NAME_OF_ORGN")]: row?.orgnName || t("ES_COMMON_NA"),
+        [t("WORKS_OFFICER_INCHARGE_NAME")]: row?.officerIncharge || t("ES_COMMON_NA"),
+        [t("WORKS_AGREEMENT_AMT")]: row?.agreemntAmount || t("ES_COMMON_NA"),
+        [t("WORKS_SLA")]: row?.sla || t("ES_COMMON_NA"),
+        [t("WORKS_STATUS")]: row?.status || t("ES_COMMON_NA"),
     }));
-}, [data]);
+  }, [data]);
+  
   let result;
   if (!data || data?.length === 0) {
     result = (
@@ -81,7 +85,7 @@ export const ApplicationCard = ({
   }}
   />
   }
-  
+
   const handlePopupClose = () => {
     setPopup(false);
     setType("");
@@ -129,11 +133,11 @@ export const ApplicationCard = ({
               {<FilterComp onFilterChange={onSearchFilter} Close={handlePopupClose} type="mobile" searchParams={searchParams} />}
             </div>
           )}
-          {/* {type === "SORT" && (
+          {type === "SORT" && (
             <div className="popup-module">
               {<SortBy type="mobile" sortParams={sortParams} onClose={handlePopupClose} onSort={onSort} />}
             </div>
-          )} */}
+          )}
           {type === "SEARCH" && (
             <div className="popup-module">
               <SearchApplication

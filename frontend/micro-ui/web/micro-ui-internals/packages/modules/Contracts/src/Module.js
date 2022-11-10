@@ -1,7 +1,7 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
-
+import contractInboxFilter from "./components/inbox/NewInboxFilter";
 import EmployeeApp from "./pages/employee";
 
 const ContractsModule = ({ stateCode, userType, tenants }) => {
@@ -23,6 +23,7 @@ const ContractsModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
     ContractsModule,
+    contractInboxFilter
 };
 
 export const initContractsComponents = () => {

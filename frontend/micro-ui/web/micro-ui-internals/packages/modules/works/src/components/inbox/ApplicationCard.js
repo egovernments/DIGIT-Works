@@ -11,15 +11,12 @@ export const ApplicationCard = ({
   onFilterChange,
   onSearch,
   onSort,
-  serviceRequestIdKey,
   isFstpOperator,
   isLoading,
   isSearch,
   searchParams,
   searchFields,
   sortParams,
-  linkPrefix,
-  removeParam,
   filterComponent,
 }) => {
   const [type, setType] = useState(isSearch ? "SEARCH" : "");
@@ -35,16 +32,6 @@ export const ApplicationCard = ({
   useEffect(() => {
     if (type) setPopup(true);
   }, [type]);
-
-  const handlePopupClose = () => {
-    setPopup(false);
-    setType("");
-    setSortParams(sortParams);
-  };
-
-  if (isLoading) {
-    return <Loader />;
-  }
 
   const propsMobileInboxCards = useMemo(() => {
     if (data?.display) {
@@ -96,6 +83,16 @@ export const ApplicationCard = ({
           serviceRequestIdKey: t("WORKS_ESTIMATE_NO"),
   }}
   />
+  }
+
+  const handlePopupClose = () => {
+    setPopup(false);
+    setType("");
+    setSortParams(sortParams);
+  };
+
+  if (isLoading) {
+    return <Loader />;
   }
 
   return (
