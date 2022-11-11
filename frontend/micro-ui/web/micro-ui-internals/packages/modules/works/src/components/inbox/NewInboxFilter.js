@@ -80,7 +80,7 @@ const Filter = ({ onFilterChange, ...props }) => {
                 {t("WORKS_CREATED_FROM_DATE")}:
               </div>
               <Controller
-                name={`estimateFromDate`}
+                name={`fromProposalDate`}
                 control={control}
                 rules={{ required: true }}
                 render={(props) => {
@@ -98,7 +98,7 @@ const Filter = ({ onFilterChange, ...props }) => {
                 {t("WORKS_CREATED_TO_DATE")}:
               </div>
               <Controller
-                name={`estimateToDate`}
+                name={`toProposalDate`}
                 control={control}
                 rules={{ required: true }}
                 render={(props) => {

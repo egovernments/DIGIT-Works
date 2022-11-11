@@ -85,20 +85,24 @@ const Inbox = ({
 
   const handleFilterChange = (filterParam) => {
     let _new = { ...searchParams, ...filterParam };
-    // if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
-    // delete filterParam.delete;
-    // if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
-    // delete _new?.delete;
-    // delete filterParam?.delete;
-    
+    var fromProposalDate = new Date(_new?.fromProposalDate);
+    fromProposalDate?.setSeconds(fromProposalDate?.getSeconds() - 19800);
+    var toProposalDate = new Date(_new?.toProposalDate);
+    toProposalDate?.setSeconds(toProposalDate?.getSeconds() + 86399 - 19800);
+    const data = {
+      ..._new,
+      ...(_new.toProposalDate ? { toProposalDate: toProposalDate?.getTime() } : {}),
+      ...(_new.fromProposalDate ? { fromProposalDate: fromProposalDate?.getTime() } : {}),
+    };
+
     setPayload(
-      Object.keys(_new)
-      .filter((k) => _new[k])
-      .reduce((acc, key) => ({ ...acc, [key]: typeof _new[key] === "object" ? _new[key].code : _new[key] }), {})
+      Object.keys(data)
+      .filter((k) => data[k])
+      .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {})
       );
 
     setSetSearchFieldsBackToOriginalState(true);
-    setSearchParams({ ..._new });
+    setSearchParams({ ...data });
     setEnableSearch({ enabled: true });
   };
   
