@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useCallback, useMemo } from "react";
+import React, { Fragment, useEffect, useCallback, useMemo, useState } from "react";
 import { SearchForm, Table, Card, Loader, Header } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
@@ -6,14 +6,14 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import MobileSearchApplication from "./MobileSearchEstimates";
 
-const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoading}) => {
+const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoading, onClearSearch,showTable}) => {
 
     const { t } = useTranslation(); 
     const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
       defaultValues: {
         offset: 0,
         limit: 10,
-        sortBy: "department",
+        // sortBy: "department",
         sortOrder: "DESC",
       },
     });
@@ -21,7 +21,7 @@ const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
     useEffect(() => {
       register("offset", 0);
       register("limit", 10);
-      register("sortBy", "department");
+      // register("sortBy", "department");
       register("sortOrder", "DESC");
     }, [register]);
   
@@ -125,10 +125,9 @@ const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
     <>
           <Header styles={{ fontSize: "32px" }}>{t("WORKS_SEARCH_ESTIMATES")}</Header>
           <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} >
-              <SearchFields {...{ register, control, reset, t }} />
+              <SearchFields {...{ register, control, reset, t, onClearSearch }} />
           </SearchForm>
-          { isLoading ? <Loader /> : null }
-          {data?.display && !resultOk ? (
+          {showTable ? isLoading ? <Loader/> : data?.display && !resultOk ? (
               <Card style={{ marginTop: 20 }}>
                 {t(data?.display)
                   .split("\\n")
@@ -163,7 +162,7 @@ const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
                 disableSort={false}
                 sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
               />
-           </div>): null
+           </div>): null : null
         }
 
     </>

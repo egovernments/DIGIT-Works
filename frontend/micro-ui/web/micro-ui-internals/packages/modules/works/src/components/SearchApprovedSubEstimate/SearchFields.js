@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 import { Controller, useWatch } from "react-hook-form";
 import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader } from "@egovernments/digit-ui-react-components";
 
-const SearchFields = ({ register, control, reset, t,formState }) => {
+const SearchFields = ({ register, control, reset, t, formState, onClearSearch }) => {
     const dummyData = [
         {
             name: "Nipun"
@@ -140,6 +140,7 @@ const SearchFields = ({ register, control, reset, t,formState }) => {
                         "estimateDetailNumber":"",
                         "estimateNumber":"",
                     });
+                    onClearSearch(false)
                 }}>{t(`ES_COMMON_CLEAR_SEARCH`)}</p>
             </SearchField>
         </>

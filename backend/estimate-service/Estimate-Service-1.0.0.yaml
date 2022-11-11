@@ -7,9 +7,8 @@ info:
 paths:
   /estimate/v1/_create:
     post:
-      summary: 'Create an estimate'
       description: 'Submit Estimate with the estimate details to create an estimate in the system'
-      request Body:
+      requestBody:
         content:
           application/json:
             schema:
@@ -60,6 +59,11 @@ paths:
       summary: Fetch the Estimate(s) based on the search criteria used
       description: |
         Gets the list of estimates for a particular tenant based on search criteria.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestInfoWrapper'
       parameters:
         - $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/parameters/tenantId'
         - name: estiamteDetailNumber
@@ -339,6 +343,12 @@ components:
       required:
         - ResponseInfo
         - estimates
+    
+    RequestInfoWrapper:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
 
     save-estimate:
       allOf:
