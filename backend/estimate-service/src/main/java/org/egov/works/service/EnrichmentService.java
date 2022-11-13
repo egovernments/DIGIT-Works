@@ -134,31 +134,6 @@ public class EnrichmentService {
         estimate.setAuditDetails(auditDetails);
 
         enrichUpdateEstimateWorkFlowForActionReject(request);
-        //enrichAdminSactionNumber(request);
-    }
-
-    /**
-     * if action is 'ADMINSANCTION' then generate a custom admin saction
-     * number
-     *
-     * @param request
-     */
-    private void enrichAdminSactionNumber(EstimateRequest request) {
-        EstimateRequestWorkflow workflow = request.getWorkflow();
-        Estimate estimate = request.getEstimate();
-        RequestInfo requestInfo = request.getRequestInfo();
-
-        if (workflow.getAction().equals(ACTION_ADMINSANCTION)) {
-            String rootTenantId = estimate.getTenantId().split("\\.")[0];
-
-            List<String> adminSactionNumbers = getIdList(requestInfo, rootTenantId
-                    , config.getIdgenEstimateAdminSactionNumberName(), config.getIdgenEstimateAdminSactionNumberFormat(), 1);
-
-            if (adminSactionNumbers != null && !adminSactionNumbers.isEmpty()) {
-                String adminSactionNumber = adminSactionNumbers.get(0);
-                estimate.setAdminSanctionNumber(adminSactionNumber);
-            }
-        }
     }
 
     /**
