@@ -47,8 +47,9 @@ public class EstimateServiceValidator {
         rootTenantId = rootTenantId.split("\\.")[0];
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+        Object mdmsDataForSubTypes = mdmsUtils.mDMSCallForSubTypes(request, rootTenantId);
 
-        validateMDMSData(estimate, mdmsData, errorMap);
+        validateMDMSData(estimate, mdmsData, mdmsDataForSubTypes, errorMap);
         validateLocation(estimate, requestInfo, errorMap);
 
         if (!errorMap.isEmpty())
@@ -158,7 +159,7 @@ public class EstimateServiceValidator {
         }
     }
 
-    private void validateMDMSData(Estimate estimate, Object mdmsData, Map<String, String> errorMap) {
+    private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDataForSubTypes, Map<String, String> errorMap) {
 
         final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
         final String jsonPathForWorksBeneficiaryType = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_BENEFICIART_TYPE + ".*";
@@ -198,9 +199,9 @@ public class EstimateServiceValidator {
             financeFundRes = JsonPath.read(mdmsData, jsonPathForFinanceFund);
             financeFunctionRes = JsonPath.read(mdmsData, jsonPathForFinanceFunctions);
             financeSchemeRes = JsonPath.read(mdmsData, jsonPathForFinanceScheme);
-            financeSubSchemeRes = JsonPath.read(mdmsData, jsonPathForFinanceSubScheme);
+            financeSubSchemeRes = JsonPath.read(mdmsDataForSubTypes, jsonPathForFinanceSubScheme);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
-            subTypeOfWorkRes = JsonPath.read(mdmsData, jsonPathForWorksSubTypeOfWork);
+            subTypeOfWorkRes = JsonPath.read(mdmsDataForSubTypes, jsonPathForWorksSubTypeOfWork);
             financeBudgetHeadRes = JsonPath.read(mdmsData, jsonPathForFinanceBudgetHead);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -218,7 +219,7 @@ public class EstimateServiceValidator {
         if (CollectionUtils.isEmpty(natureOfWorkRes))
             errorMap.put("INVALID_NATURE_OF_WORK", "The nature Of Work : " + estimate.getNatureOfWork() + " is not present in MDMS");
         if (CollectionUtils.isEmpty(subTypeOfWorkRes) && StringUtils.isNotBlank(estimate.getSubTypeOfWork()))
-            errorMap.put("INVALID_SUB_TYPE_OF_WORK", "The sub type Of Work : " + estimate.getSubTypeOfWork() + " is not present in MDMS");
+            errorMap.put("INVALID_SUB_TYPE_OF_WORK", "The sub type Of Work : " + estimate.getSubTypeOfWork() + " is not present in MDMS for Type of works : " + estimate.getTypeOfWork());
 
 
         if (CollectionUtils.isEmpty(financeFundRes))
@@ -227,8 +228,8 @@ public class EstimateServiceValidator {
             errorMap.put("INVALID_FINANCE_FUNCTION", "The finance function: " + estimate.getFunction() + " is not present in MDMS");
         if (CollectionUtils.isEmpty(financeSchemeRes) && StringUtils.isNotBlank(estimate.getScheme()))
             errorMap.put("INVALID_FINANCE_SCHEME", "The finance scheme: " + estimate.getScheme() + " is not present in MDMS");
-        if (CollectionUtils.isEmpty(financeSubSchemeRes) && StringUtils.isNotBlank(estimate.getSubScheme()))
-            errorMap.put("INVALID_FINANCE_SUB_SCHEME", "The finance sub scheme: " + estimate.getSubScheme() + " is not present in MDMS");
+        if (CollectionUtils.isEmpty(financeSubSchemeRes) && StringUtils.isNotBlank(estimate.getSubScheme()) && StringUtils.isNotBlank(estimate.getScheme()))
+            errorMap.put("INVALID_FINANCE_SUB_SCHEME", "The finance sub scheme: " + estimate.getSubScheme() + " is not present in MDMS for scheme : " + estimate.getScheme());
         if (CollectionUtils.isEmpty(financeBudgetHeadRes))
             errorMap.put("INVALID_FINANCE_BUDGET_HEAD", "The finance budget head: " + estimate.getBudgetHead() + " is not present in MDMS");
 
@@ -275,8 +276,9 @@ public class EstimateServiceValidator {
         rootTenantId = rootTenantId.split("\\.")[0];
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+        Object mdmsDataForSubTypes = mdmsUtils.mDMSCallForSubTypes(request, rootTenantId);
 
-        validateMDMSData(estimate, mdmsData, errorMap);
+        validateMDMSData(estimate, mdmsData, mdmsDataForSubTypes, errorMap);
         validateLocation(estimate, requestInfo, errorMap);
 
         if (!errorMap.isEmpty())
