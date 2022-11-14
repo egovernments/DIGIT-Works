@@ -28,7 +28,7 @@ const SearchEstimate = () => {
       ...(_data.fromProposalDate ? { fromProposalDate: fromProposalDate?.getTime() } : {}),
     };
 
-    if(data.estimateNumber==="" && data.adminSanctionNumber==="" && !data.department && !data.typeofwork && !data.fromProposalDate && !data.toProposalDate ){
+    if(data.estimateNumber==="" && data.adminSanctionNumber==="" && !data.department && !data.typeOfWork && !data.fromProposalDate && !data.toProposalDate ){
       setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
       setTimeout(() => {
         setShowToast(false);
