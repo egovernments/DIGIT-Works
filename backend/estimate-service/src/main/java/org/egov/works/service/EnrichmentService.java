@@ -138,14 +138,15 @@ public class EnrichmentService {
 
     /**
      * If the workflow action is 'REJECT' then assignee will be updated
-     * as 'EST_CREATOR'
+     * with user id that is having role as 'EST_CREATOR'  (i.e the 'auditDetails.createdBy')
      *
      * @param request
      */
     private void enrichUpdateEstimateWorkFlowForActionReject(EstimateRequest request) {
         EstimateRequestWorkflow workflow = request.getWorkflow();
+        AuditDetails auditDetails = request.getEstimate().getAuditDetails();
         List<String> updatedAssignees = new ArrayList<>();
-        updatedAssignees.add(ROLE_EST_CREATOR);
+        updatedAssignees.add(auditDetails.getCreatedBy());
         if (workflow.getAction().equals(ACTION_REJECT)) {
             workflow.setAssignees(updatedAssignees);
         }

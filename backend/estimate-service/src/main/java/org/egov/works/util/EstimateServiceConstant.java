@@ -37,7 +37,6 @@ public class EstimateServiceConstant {
     //Estimate update roles - Add the roles using comma as separator
     public static final String ALLOW_EDITING_ROLES = "EST_CREATOR";
     public static final String ACTION_REJECT = "REJECT";
-    public static final String ACTION_ADMINSANCTION = "ADMINSANCTION";
     public static final String ROLE_EST_CREATOR = "EST_CREATOR";
 
 }
