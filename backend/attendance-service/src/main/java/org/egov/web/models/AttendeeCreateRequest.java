@@ -25,10 +25,9 @@ public class AttendeeCreateRequest {
 
     @JsonProperty("attendees")
     @Valid
-    private List<Attendee1> attendees = null;
+    private List<IndividualEntry> attendees = null;
 
-
-    public AttendeeCreateRequest addAttendeesItem(Attendee1 attendeesItem) {
+    public AttendeeCreateRequest addAttendeesItem(IndividualEntry attendeesItem) {
         if (this.attendees == null) {
             this.attendees = new ArrayList<>();
         }

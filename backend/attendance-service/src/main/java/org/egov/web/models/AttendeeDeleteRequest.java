@@ -25,10 +25,9 @@ public class AttendeeDeleteRequest {
 
     @JsonProperty("attendees")
     @Valid
-    private List<Attendee2> attendees = null;
+    private List<IndividualEntry> attendees = null;
 
-
-    public AttendeeDeleteRequest addAttendeesItem(Attendee2 attendeesItem) {
+    public AttendeeDeleteRequest addAttendeesItem(IndividualEntry attendeesItem) {
         if (this.attendees == null) {
             this.attendees = new ArrayList<>();
         }

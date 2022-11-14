@@ -40,7 +40,7 @@ public class AttendanceRegister {
     private Double endDate = null;
 
     @JsonProperty("status")
-    private Object status = null;
+    private Status status = null;
 
     @JsonProperty("staff")
     @Valid

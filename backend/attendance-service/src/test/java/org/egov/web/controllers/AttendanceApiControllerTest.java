@@ -1,36 +1,17 @@
 package org.egov.web.controllers;
 
-import org.egov.web.models.AttendanceLogRequest;
-import org.egov.web.models.AttendanceLogResponse;
-import org.egov.web.models.AttendanceRegisterRequest;
-import org.egov.web.models.AttendanceRegisterResponse;
-import org.egov.web.models.AttendeeCreateRequest;
-import org.egov.web.models.AttendeeCreateResponse;
-import org.egov.web.models.AttendeeDeleteRequest;
-import org.egov.web.models.AttendeeDeleteResponse;
-import org.egov.web.models.ErrorRes1;
-import org.egov.web.models.RequestInfoWrapper;
-import org.egov.web.models.StaffPermissionRequest;
-import org.egov.web.models.StaffPermissionResponse;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.egov.TestConfiguration;
 
-    import java.util.ArrayList;
-    import java.util.HashMap;
-    import java.util.List;
-    import java.util.Map;
-
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

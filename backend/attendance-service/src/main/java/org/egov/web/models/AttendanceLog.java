@@ -1,6 +1,7 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.Document;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -37,7 +38,7 @@ public class AttendanceLog {
     private String type = null;
 
     @JsonProperty("status")
-    private Object status = null;
+    private Status status = null;
 
     @JsonProperty("documentIds")
     @Valid
