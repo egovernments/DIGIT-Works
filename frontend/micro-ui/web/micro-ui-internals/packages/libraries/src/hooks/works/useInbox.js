@@ -20,7 +20,7 @@ const useWorksInbox = ({ tenantId, _filters, config }) => {
         processSearchCriteria: {
             tenantId,
             businessService: [
-                "estimate-approval-2"
+                "estimate-approval"
             ],
             moduleName: "estimate-service",
             assignee:USER_UUID,

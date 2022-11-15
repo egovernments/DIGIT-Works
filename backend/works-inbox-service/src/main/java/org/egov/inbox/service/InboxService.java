@@ -173,8 +173,8 @@ public class InboxService {
             Boolean isSearchResultEmpty = false;
             List<String> businessKeys = new ArrayList<>();
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(ESTIMATE_SERVICE)) {
-                totalCount = estimateInboxFilterService.fetchEstimateNumbersCountFromEstimateSearcher(criteria, StatusIdNameMap,
-                        requestInfo);
+//                totalCount = estimateInboxFilterService.fetchEstimateNumbersCountFromEstimateSearcher(criteria, StatusIdNameMap,
+//                        requestInfo);
                 List<String> estimateNumbers = estimateInboxFilterService.fetchEstimateNumbersFromEstimateSearcher(criteria,
                         StatusIdNameMap, requestInfo);
 

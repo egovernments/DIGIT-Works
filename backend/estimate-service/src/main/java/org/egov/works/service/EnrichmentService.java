@@ -10,10 +10,7 @@ import org.egov.works.config.EstimateServiceConfiguration;
 import org.egov.works.repository.EstimateRepository;
 import org.egov.works.repository.IdGenRepository;
 import org.egov.works.util.EstimateServiceUtil;
-import org.egov.works.web.models.Estimate;
-import org.egov.works.web.models.EstimateDetail;
-import org.egov.works.web.models.EstimateRequest;
-import org.egov.works.web.models.EstimateSearchCriteria;
+import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,7 +19,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.works.util.EstimateServiceConstant.ALLOW_EDITING_ROLES;
+import static org.egov.works.util.EstimateServiceConstant.*;
 
 @Service
 public class EnrichmentService {
@@ -135,6 +132,24 @@ public class EnrichmentService {
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, false);
 
         estimate.setAuditDetails(auditDetails);
+
+        enrichUpdateEstimateWorkFlowForActionReject(request);
+    }
+
+    /**
+     * If the workflow action is 'REJECT' then assignee will be updated
+     * with user id that is having role as 'EST_CREATOR'  (i.e the 'auditDetails.createdBy')
+     *
+     * @param request
+     */
+    private void enrichUpdateEstimateWorkFlowForActionReject(EstimateRequest request) {
+        EstimateRequestWorkflow workflow = request.getWorkflow();
+        AuditDetails auditDetails = request.getEstimate().getAuditDetails();
+        List<String> updatedAssignees = new ArrayList<>();
+        updatedAssignees.add(auditDetails.getCreatedBy());
+        if (workflow.getAction().equals(ACTION_REJECT)) {
+            workflow.setAssignees(updatedAssignees);
+        }
     }
 
 
