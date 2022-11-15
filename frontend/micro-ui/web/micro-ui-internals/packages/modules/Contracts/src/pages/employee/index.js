@@ -5,6 +5,7 @@ import { Switch, useLocation } from "react-router-dom";
 import CreateContract from "./CreateContract";
 import Inbox from "./Inbox";
 import SearchContracts from "./SearchContract";
+import ViewContract from "./ViewContract";
 
 const ContractsBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
@@ -33,6 +34,12 @@ const ContractsBreadCrumbs = ({ location }) => {
             path: `/${window.contextPath}/employee/contracts/search-contract`,
             content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_SEARCH_CONTRACTS")}` : t("WORKS_SEARCH_CONTRACTS"),
             show: location.pathname.includes("/contracts/search-contract") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/contracts/view-contract`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_VIEW_CONTRACT")}` : t("WORKS_VIEW_CONTRACT"),
+            show: location.pathname.includes("/contracts/view-contract") ? true : false,
             isBack: fromScreen && true,
         }
     ];
@@ -73,6 +80,7 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
                     <PrivateRoute path={`${path}/create-contract`} component={() => <CreateContract/>} />
                     <PrivateRoute path={`${path}/search-contract`} component={() => <SearchContracts/>} />
+                    <PrivateRoute path={`${path}/view-contract`} component={() => <ViewContract/>} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <Inbox parentRoute={path} businessService="WORKS" filterComponent="contractInboxFilter" initialStates={{}} isInbox={true} />}/>
                 </div>
             </React.Fragment>

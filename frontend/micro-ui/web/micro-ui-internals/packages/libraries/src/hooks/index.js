@@ -250,6 +250,7 @@ import useApplicationActionsLOI from "./works/useApplicationActions";
 import useApplicationActionsEstimate from "./works/useUpdateEstimate";
 import useUpdateEstimate from "./works/useUpdateEstimate";
 import useWorksInbox from "./works/useInbox";
+import useViewContractDetails from "./contracts/useViewContractDetails";
 
 const works = {
   useViewEstimateDetails,
@@ -263,7 +264,11 @@ const works = {
   useUpdateEstimate,
   useApplicationActionsEstimate,
   useSearchApprovedEstimates,
-  useInbox:useWorksInbox
+  useInbox:useWorksInbox,
+}
+
+const contracts = {
+  useViewContractDetails
 }
 
 const pgr = {
@@ -559,7 +564,8 @@ const Hooks = {
   useDynamicData,
   useBulkPdfDetails,
   useBillAmendmentInbox,
-  works
+  works,
+  contracts
 };
 
 export default Hooks;
