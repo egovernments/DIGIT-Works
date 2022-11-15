@@ -12,22 +12,29 @@ import java.util.List;
 @Builder
 public class MusterRollSearchCriteria {
 
+    @JsonProperty("id")
+    private String id;
+
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @JsonProperty("")
+    @JsonProperty("musterRollNumber")
+    private String musterRollNumber;
+
+    @JsonProperty("registerId")
     private String registerId;
 
-    @JsonProperty("fromTime")
-    private Long fromTime;
+    @JsonProperty("fromDate")
+    private Long fromDate;
 
-    @JsonProperty("toTime")
-    private Double toTime;
-
-    @JsonProperty("individualIds")
-    private List<String> individualIds;
+    @JsonProperty("toDate")
+    private Double toDate;
 
     @JsonProperty("status")
     private Status status;
+
+    @JsonProperty("musterRollStatus")
+    private String musterRollStatus;
+
 
 }
