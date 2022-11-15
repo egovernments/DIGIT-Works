@@ -41,50 +41,17 @@ public class MusterRoll   {
         @JsonProperty("registerId")
         private String registerId = null;
 
-              /**
-   * Gets or Sets status
-   */
-  public enum StatusEnum {
-    ACTIVE("ACTIVE"),
-    
-    INACTIVE("INACTIVE"),
-    
-    CANCELLED("CANCELLED");
-
-    private String value;
-
-    StatusEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static StatusEnum fromValue(String text) {
-      for (StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-
         @JsonProperty("status")
-        private StatusEnum status = null;
+        private Status status = null;
 
         @JsonProperty("musterRollStatus")
         private String musterRollStatus = null;
 
         @JsonProperty("startDate")
-        private BigDecimal startDate = null;
+        private Long startDate = null;
 
         @JsonProperty("endDate")
-        private BigDecimal endDate = null;
+        private Long endDate = null;
 
         @JsonProperty("individualEntries")
         @Valid

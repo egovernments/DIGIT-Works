@@ -32,7 +32,7 @@ public class MusterRollRequest   {
         private MusterRoll musterRoll = null;
 
         @JsonProperty("workflow")
-        private MusterRollRequestWorkflow workflow = null;
+        private Workflow workflow = null;
 
 
 }

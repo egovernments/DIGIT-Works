@@ -24,7 +24,7 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MusterRollRequestWorkflow   {
+public class Workflow {
         @JsonProperty("action")
         private String action = null;
 
@@ -36,7 +36,7 @@ public class MusterRollRequestWorkflow   {
         private List<String> assignees = null;
 
 
-        public MusterRollRequestWorkflow addAssigneesItem(String assigneesItem) {
+        public Workflow addAssigneesItem(String assigneesItem) {
             if (this.assignees == null) {
             this.assignees = new ArrayList<>();
             }

@@ -26,7 +26,7 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class MusterRollResponse   {
-        @JsonProperty("responseInfo")
+        @JsonProperty("ResponseInfo")
         private ResponseInfo responseInfo = null;
 
         @JsonProperty("musterRolls")

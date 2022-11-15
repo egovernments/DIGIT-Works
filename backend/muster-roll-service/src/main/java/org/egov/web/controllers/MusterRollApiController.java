@@ -2,19 +2,20 @@ package org.egov.web.controllers;
 
 
 import java.math.BigDecimal;
+
+import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
 import org.egov.common.contract.request.RequestInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
+import org.egov.web.models.MusterRollSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 
 import javax.validation.constraints.*;
@@ -24,7 +25,7 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
 
 @Controller
-    @RequestMapping("/muster-roll/v1")
+    @RequestMapping("/v1")
     public class MusterRollApiController{
 
         @Autowired
@@ -47,9 +48,8 @@ import javax.validation.constraints.*;
             return new ResponseEntity<MusterRollResponse>(HttpStatus.NOT_IMPLEMENTED);
         }
 
-
-        @RequestMapping(value="/_search", method = RequestMethod.POST)
-        public ResponseEntity<MusterRollResponse> musterRollV1SearchPost(@NotNull @ApiParam(value = "Unique id for a tenant.", required = true) @Valid @RequestParam(value = "tenantId", required = true) String tenantId,@ApiParam(value = "Parameter to carry Request metadata in the request body"  )  @Valid @RequestBody RequestInfo requestInfo,@ApiParam(value = "Id of the muster roll") @Valid @RequestParam(value = "id", required = false) String id,@ApiParam(value = "(Custom-formatted) Muster roll number") @Valid @RequestParam(value = "musterRollNumber", required = false) String musterRollNumber,@ApiParam(value = "Register Id") @Valid @RequestParam(value = "registerId", required = false) String registerId,@ApiParam(value = "Return registers with any overlap in the given time period") @Valid @RequestParam(value = "fromDate", required = false) BigDecimal fromDate,@ApiParam(value = "Return registers with any overlap in the given time period") @Valid @RequestParam(value = "toDate", required = false) BigDecimal toDate,@ApiParam(value = "Status of the muster roll. This can't be the only query param. It should be paired with some other search param.") @Valid @RequestParam(value = "status", required = false) String status,@ApiParam(value = "Workflow Status of the muster roll. This can't be the only query param. It should be paired with some other search param.") @Valid @RequestParam(value = "musterRollStatus", required = false) String musterRollStatus) {
+        @RequestMapping(value = "/_search", method = RequestMethod.POST)
+        public ResponseEntity<MusterRollResponse> attendanceV1SearchPOST(@Valid @RequestBody RequestInfoWrapper body, @Valid @ModelAttribute MusterRollSearchCriteria searchCriteria) {
             String accept = request.getHeader("Accept");
             if (accept != null && accept.contains("application/json")) {
                 try {
@@ -63,7 +63,7 @@ import javax.validation.constraints.*;
 
             return new ResponseEntity<MusterRollResponse>(HttpStatus.NOT_IMPLEMENTED);
         }
-
+        
         @RequestMapping(value="/_update", method = RequestMethod.POST)
         public ResponseEntity<MusterRollResponse> musterRollV1UpdatePost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody MusterRollRequest musterRollRequest) {
             String accept = request.getHeader("Accept");

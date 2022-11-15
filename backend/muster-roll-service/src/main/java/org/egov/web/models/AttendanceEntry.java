@@ -29,7 +29,7 @@ import lombok.Builder;
 @Builder
 public class AttendanceEntry   {
         @JsonProperty("time")
-        private BigDecimal time = null;
+        private Long time = null;
 
         @JsonProperty("attendance")
         private BigDecimal attendance = null;
