@@ -47,8 +47,8 @@ public class MdmsUtil {
         try {
             response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
             rate = JsonPath.read(response, "$.MdmsRes.VTR.RegistrationCharges.[0].amount");
-        }catch(Exception e) {
-            log.error("Exception occurred while fetching category lists from mdms: ",e);
+        } catch (Exception e) {
+            log.error("Exception occurred while fetching category lists from mdms: ", e);
         }
         //log.info(ulbToCategoryListMap.toString());
         return rate;

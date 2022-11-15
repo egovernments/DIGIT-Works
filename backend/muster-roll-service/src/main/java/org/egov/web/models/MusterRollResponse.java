@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
+
 import org.egov.common.contract.response.ResponseInfo;
 
 import lombok.AllArgsConstructor;
@@ -25,22 +28,22 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MusterRollResponse   {
-        @JsonProperty("ResponseInfo")
-        private ResponseInfo responseInfo = null;
+public class MusterRollResponse {
+    @JsonProperty("ResponseInfo")
+    private ResponseInfo responseInfo = null;
 
-        @JsonProperty("musterRolls")
-        @Valid
-        private List<MusterRoll> musterRolls = null;
+    @JsonProperty("musterRolls")
+    @Valid
+    private List<MusterRoll> musterRolls = null;
 
 
-        public MusterRollResponse addMusterRollsItem(MusterRoll musterRollsItem) {
-            if (this.musterRolls == null) {
+    public MusterRollResponse addMusterRollsItem(MusterRoll musterRollsItem) {
+        if (this.musterRolls == null) {
             this.musterRolls = new ArrayList<>();
-            }
+        }
         this.musterRolls.add(musterRollsItem);
         return this;
-        }
+    }
 
 }
 

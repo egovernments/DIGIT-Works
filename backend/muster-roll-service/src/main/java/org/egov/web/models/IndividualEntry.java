@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
 
 import lombok.AllArgsConstructor;
@@ -25,28 +27,28 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class IndividualEntry   {
-        @JsonProperty("individualId")
-        private String individualId = null;
+public class IndividualEntry {
+    @JsonProperty("individualId")
+    private String individualId = null;
 
-        @JsonProperty("totalAttendance")
-        private BigDecimal totalAttendance = null;
+    @JsonProperty("totalAttendance")
+    private BigDecimal totalAttendance = null;
 
-        @JsonProperty("attendanceEntries")
-        @Valid
-        private List<AttendanceEntry> attendanceEntries = null;
+    @JsonProperty("attendanceEntries")
+    @Valid
+    private List<AttendanceEntry> attendanceEntries = null;
 
-        @JsonProperty("additionalDetails")
-        private Object additionalDetails = null;
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
 
-        public IndividualEntry addAttendanceEntriesItem(AttendanceEntry attendanceEntriesItem) {
-            if (this.attendanceEntries == null) {
+    public IndividualEntry addAttendanceEntriesItem(AttendanceEntry attendanceEntriesItem) {
+        if (this.attendanceEntries == null) {
             this.attendanceEntries = new ArrayList<>();
-            }
+        }
         this.attendanceEntries.add(attendanceEntriesItem);
         return this;
-        }
+    }
 
 }
 

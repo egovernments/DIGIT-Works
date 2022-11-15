@@ -42,47 +42,47 @@ public class UserUtil {
 
     /**
      * Returns UserDetailResponse by calling user service with given uri and object
+     *
      * @param userRequest Request object for user service
-     * @param uri The address of the endpoint
+     * @param uri         The address of the endpoint
      * @return Response from user service as parsed as userDetailResponse
      */
 
     public UserDetailResponse userCall(Object userRequest, StringBuilder uri) {
         String dobFormat = null;
-        if(uri.toString().contains(userSearchEndpoint)  || uri.toString().contains(userUpdateEndpoint))
-            dobFormat="yyyy-MM-dd";
-        else if(uri.toString().contains(userCreateEndpoint))
+        if (uri.toString().contains(userSearchEndpoint) || uri.toString().contains(userUpdateEndpoint))
+            dobFormat = "yyyy-MM-dd";
+        else if (uri.toString().contains(userCreateEndpoint))
             dobFormat = "dd/MM/yyyy";
-        try{
-            LinkedHashMap responseMap = (LinkedHashMap)serviceRequestRepository.fetchResult(uri, userRequest);
-            parseResponse(responseMap,dobFormat);
-            UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
+        try {
+            LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
+            parseResponse(responseMap, dobFormat);
+            UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
             return userDetailResponse;
-        }
-        catch(IllegalArgumentException  e)
-        {
-            throw new CustomException("IllegalArgumentException","ObjectMapper not able to convertValue in userCall");
+        } catch (IllegalArgumentException e) {
+            throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
         }
     }
 
 
     /**
      * Parses date formats to long for all users in responseMap
+     *
      * @param responeMap LinkedHashMap got from user api response
      */
 
-    public void parseResponse(LinkedHashMap responeMap, String dobFormat){
-        List<LinkedHashMap> users = (List<LinkedHashMap>)responeMap.get("user");
+    public void parseResponse(LinkedHashMap responeMap, String dobFormat) {
+        List<LinkedHashMap> users = (List<LinkedHashMap>) responeMap.get("user");
         String format1 = "dd-MM-yyyy HH:mm:ss";
-        if(users!=null){
-            users.forEach( map -> {
-                        map.put("createdDate",dateTolong((String)map.get("createdDate"),format1));
-                        if((String)map.get("lastModifiedDate")!=null)
-                            map.put("lastModifiedDate",dateTolong((String)map.get("lastModifiedDate"),format1));
-                        if((String)map.get("dob")!=null)
-                            map.put("dob",dateTolong((String)map.get("dob"),dobFormat));
-                        if((String)map.get("pwdExpiryDate")!=null)
-                            map.put("pwdExpiryDate",dateTolong((String)map.get("pwdExpiryDate"),format1));
+        if (users != null) {
+            users.forEach(map -> {
+                        map.put("createdDate", dateTolong((String) map.get("createdDate"), format1));
+                        if ((String) map.get("lastModifiedDate") != null)
+                            map.put("lastModifiedDate", dateTolong((String) map.get("lastModifiedDate"), format1));
+                        if ((String) map.get("dob") != null)
+                            map.put("dob", dateTolong((String) map.get("dob"), dobFormat));
+                        if ((String) map.get("pwdExpiryDate") != null)
+                            map.put("pwdExpiryDate", dateTolong((String) map.get("pwdExpiryDate"), format1));
                     }
             );
         }
@@ -90,28 +90,30 @@ public class UserUtil {
 
     /**
      * Converts date to long
-     * @param date date to be parsed
+     *
+     * @param date   date to be parsed
      * @param format Format of the date
      * @return Long value of date
      */
-    private Long dateTolong(String date,String format){
+    private Long dateTolong(String date, String format) {
         SimpleDateFormat f = new SimpleDateFormat(format);
         Date d = null;
         try {
             d = f.parse(date);
         } catch (ParseException e) {
-            throw new CustomException("INVALID_DATE_FORMAT","Failed to parse date format in user");
+            throw new CustomException("INVALID_DATE_FORMAT", "Failed to parse date format in user");
         }
-        return  d.getTime();
+        return d.getTime();
     }
 
     /**
      * enriches the userInfo with statelevel tenantId and other fields
+     *
      * @param mobileNumber
      * @param tenantId
      * @param userInfo
      */
-    public void addUserDefaultFields(String mobileNumber,String tenantId, User userInfo){
+    public void addUserDefaultFields(String mobileNumber, String tenantId, User userInfo) {
         Role role = getCitizenRole(tenantId);
         userInfo.setRoles(Collections.singletonList(role));
         userInfo.setType("CITIZEN");
@@ -121,10 +123,11 @@ public class UserUtil {
 
     /**
      * Returns role object for citizen
+     *
      * @param tenantId
      * @return
      */
-    private Role getCitizenRole(String tenantId){
+    private Role getCitizenRole(String tenantId) {
         Role role = new Role();
         role.setCode("CITIZEN");
         role.setName("Citizen");
@@ -132,7 +135,7 @@ public class UserUtil {
         return role;
     }
 
-    public String getStateLevelTenant(String tenantId){
+    public String getStateLevelTenant(String tenantId) {
         return tenantId.split("\\.")[0];
     }
 

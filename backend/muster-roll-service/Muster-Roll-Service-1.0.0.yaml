@@ -4,11 +4,11 @@ info:
   title: Muster Roll Service
   description: ''
 
-paths: 
+paths:
   /muster-roll/v1/_create:
     post:
       tags:
-      - Muster Roll
+        - Muster Roll
       requestBody:
         content:
           application/json:
@@ -25,7 +25,7 @@ paths:
   /muster-roll/v1/_update:
     post:
       tags:
-      - Muster Roll
+        - Muster Roll
       requestBody:
         content:
           application/json:
@@ -42,49 +42,49 @@ paths:
   /muster-roll/v1/_search:
     post:
       tags:
-      - Muster Roll
+        - Muster Roll
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/RequestInfoWrapper'
       parameters:
-      - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/parameters/tenantId'
-      - name: id
-        description: Id of the muster roll
-        in: query
-        schema:
-          type: string
-      - name: musterRollNumber
-        description: (Custom-formatted) Muster roll number
-        in: query
-        schema:
-          type: string
-      - name: registerId
-        description: Register Id
-        in: query
-        schema:
-          type: string
-      - name: fromDate
-        description: Return registers with any overlap in the given time period 
-        in: query
-        schema:
-          type: number
-      - name: toDate
-        description: Return registers with any overlap in the given time period 
-        in: query
-        schema:
-          type: number
-      - name: status
-        description: Status of the muster roll. This can't be the only query param. It should be paired with some other search param. 
-        in: query
-        schema:
-          type: string
-      - name: musterRollStatus
-        description: Workflow Status of the muster roll. This can't be the only query param. It should be paired with some other search param. 
-        in: query
-        schema:
-          type: string
+        - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/parameters/tenantId'
+        - name: id
+          description: Id of the muster roll
+          in: query
+          schema:
+            type: string
+        - name: musterRollNumber
+          description: (Custom-formatted) Muster roll number
+          in: query
+          schema:
+            type: string
+        - name: registerId
+          description: Register Id
+          in: query
+          schema:
+            type: string
+        - name: fromDate
+          description: Return registers with any overlap in the given time period
+          in: query
+          schema:
+            type: number
+        - name: toDate
+          description: Return registers with any overlap in the given time period
+          in: query
+          schema:
+            type: number
+        - name: status
+          description: Status of the muster roll. This can't be the only query param. It should be paired with some other search param.
+          in: query
+          schema:
+            type: string
+        - name: musterRollStatus
+          description: Workflow Status of the muster roll. This can't be the only query param. It should be paired with some other search param.
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: 'Search results'
@@ -112,35 +112,35 @@ components:
           readOnly: true
         registerId:
           type: string
-          description: Reference to the register id upon which the muster roll is being generated. 
+          description: Reference to the register id upon which the muster roll is being generated.
         status:
           type: string
           enum:
-          - ACTIVE
-          - INACTIVE
-          - CANCELLED
+            - ACTIVE
+            - INACTIVE
+            - CANCELLED
         musterRollStatus:
           type: string
-          description: It will store the state of the workflow. 
+          description: It will store the state of the workflow.
           example: CREATED
-        startDate: 
+        startDate:
           type: number
           format: timestamp
           example: 1665497225000
-          description: Timestamp of the start date in milliseconds. In case of weekly registers, there will be additional checks for the starting date like muster roll start on every Monday. 
+          description: Timestamp of the start date in milliseconds. In case of weekly registers, there will be additional checks for the starting date like muster roll start on every Monday.
         endDate:
           type: number
           format: timestamp
           example: 1665497271000
-          description: Timestamp of the end date in milliseconds. In case of mandatory weekly muster rolls, it is set automatically. 
+          description: Timestamp of the end date in milliseconds. In case of mandatory weekly muster rolls, it is set automatically.
         individualEntries:
           type: array
           items:
             $ref: '#/components/schemas/IndividualEntry'
-      required: 
-      - tenantId
-      - registerId
-      - startDate
+      required:
+        - tenantId
+        - registerId
+        - startDate
 
     IndividualEntry:
       type: object
@@ -152,7 +152,7 @@ components:
         totalAttendance:
           type: number
           readOnly: true
-          description: It is the computed sum of attendance in the given time preiod of the muster roll. This will be stored in the msuter roll service's db. It will be computed only when the register is created or edited. So the computation will happen with CREATE and EDIT actions only. 
+          description: It is the computed sum of attendance in the given time preiod of the muster roll. This will be stored in the msuter roll service's db. It will be computed only when the register is created or edited. So the computation will happen with CREATE and EDIT actions only.
         attendanceEntries:
           type: array
           readOnly: true
@@ -160,22 +160,22 @@ components:
             $ref: '#/components/schemas/AttendanceEntry'
         additionalDetails:
           type: object
-          description: This can be used to store skillset that is a requirement for Mukta. This is an updatable field from the user's input. 
+          description: This can be used to store skillset that is a requirement for Mukta. This is an updatable field from the user's input.
 
     AttendanceEntry:
       type: object
       readOnly: true
-      description: This computed data will also be stored as part of the muster roll db. 
+      description: This computed data will also be stored as part of the muster roll db.
       properties:
         time:
           type: number
           readOnly: true
           format: timestamp
-          description: The timestamp for a given time period against which the attendance is marked. 
+          description: The timestamp for a given time period against which the attendance is marked.
         attendance:
           type: number
           example: 0
-          description: It is the computed attendance value based on the entry and exit events fetched from the Attendance service. The muster roll service will still allow the user to override the value of this attendance. 
+          description: It is the computed attendance value based on the entry and exit events fetched from the Attendance service. The muster roll service will still allow the user to override the value of this attendance.
 
     MusterRollRequest:
       type: object

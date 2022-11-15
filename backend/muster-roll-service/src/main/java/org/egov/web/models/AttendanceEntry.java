@@ -1,14 +1,19 @@
 package org.egov.web.models;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
 import java.math.BigDecimal;
+
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,12 +32,12 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceEntry   {
-        @JsonProperty("time")
-        private Long time = null;
+public class AttendanceEntry {
+    @JsonProperty("time")
+    private Long time = null;
 
-        @JsonProperty("attendance")
-        private BigDecimal attendance = null;
+    @JsonProperty("attendance")
+    private BigDecimal attendance = null;
 
 
 }

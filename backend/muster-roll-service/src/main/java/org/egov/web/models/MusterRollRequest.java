@@ -22,17 +22,17 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MusterRollRequest   {
-        @JsonProperty("RequestInfo")
-        @NotNull(message = "Request info is mandatory")
-        private RequestInfo requestInfo = null;
+public class MusterRollRequest {
+    @JsonProperty("RequestInfo")
+    @NotNull(message = "Request info is mandatory")
+    private RequestInfo requestInfo = null;
 
-        @JsonProperty("musterRoll")
-        @NotNull(message = "Muster Roll is mandatory")
-        private MusterRoll musterRoll = null;
+    @JsonProperty("musterRoll")
+    @NotNull(message = "Muster Roll is mandatory")
+    private MusterRoll musterRoll = null;
 
-        @JsonProperty("workflow")
-        private Workflow workflow = null;
+    @JsonProperty("workflow")
+    private Workflow workflow = null;
 
 
 }
