@@ -3,6 +3,7 @@ import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import contractInboxFilter from "./components/inbox/NewInboxFilter";
 import EmployeeApp from "./pages/employee";
+import SearchContractApplication from "./components/SearchContract";
 
 const ContractsModule = ({ stateCode, userType, tenants }) => {
     const moduleCode = ["Contracts"];
@@ -23,7 +24,8 @@ const ContractsModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
     ContractsModule,
-    contractInboxFilter
+    contractInboxFilter,
+    SearchContractApplication
 };
 
 export const initContractsComponents = () => {

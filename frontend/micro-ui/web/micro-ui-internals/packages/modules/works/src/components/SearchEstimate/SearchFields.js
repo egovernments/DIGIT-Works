@@ -81,7 +81,7 @@ const SearchFields = ({ register, control, reset, t, onClearSearch }) => {
                 <label>{t("WORKS_WORK_TYPE")}</label>
                 <Controller
                     control={control}
-                    name="typeofwork"
+                    name="typeOfWork"
                     render={(props) => (
                         <Dropdown
                             selected={props.value}

@@ -4,6 +4,7 @@ import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-component
 import { Switch, useLocation } from "react-router-dom";
 import CreateContract from "./CreateContract";
 import Inbox from "./Inbox";
+import SearchContracts from "./SearchContract";
 
 const ContractsBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
@@ -28,6 +29,12 @@ const ContractsBreadCrumbs = ({ location }) => {
             show: location.pathname.includes("/contracts/inbox") ? true : false,
             isBack: fromScreen && true,
         },
+        {
+            path: `/${window.contextPath}/employee/contracts/search-contract`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_SEARCH_CONTRACTS")}` : t("WORKS_SEARCH_CONTRACTS"),
+            show: location.pathname.includes("/contracts/search-contract") ? true : false,
+            isBack: fromScreen && true,
+        }
     ];
     return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 
@@ -49,7 +56,7 @@ const App = ({ path }) => {
 
             case (screenType?.includes("/search")):
                 return { marginLeft: "7px" }
-            case (screenType?.includes("/inbox") || screenType?.includes("/LOIInbox")):
+            case (screenType?.includes("/inbox") || screenType?.includes("/inbox")):
                 return { marginLeft: "5px" }
 
             default:
@@ -64,7 +71,8 @@ const App = ({ path }) => {
                         <ContractsBreadCrumbs location={location} />
                     </div>
                     <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
-                    <PrivateRoute path={`${path}/create-contract`} component={() => <CreateContract/>}/>
+                    <PrivateRoute path={`${path}/create-contract`} component={() => <CreateContract/>} />
+                    <PrivateRoute path={`${path}/search-contract`} component={() => <SearchContracts/>} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <Inbox parentRoute={path} businessService="WORKS" filterComponent="contractInboxFilter" initialStates={{}} isInbox={true} />}/>
                 </div>
             </React.Fragment>

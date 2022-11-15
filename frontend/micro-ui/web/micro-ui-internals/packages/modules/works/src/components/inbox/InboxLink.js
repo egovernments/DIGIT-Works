@@ -11,10 +11,10 @@ const InboxLinks = ({ parentRoute, businessService }) => {
       text: t("WORKS_CREATE_ESTIMATE"),
       link: `/works-ui/employee/works/create-estimate`,
       businessService: "WORKS",
-      roles: [],
+      roles: ["EST_CREATOR"],
     },
     {
-      text: "WORKS_SEARCH_EST",
+      text: t("WORKS_SEARCH_EST"),
       link: `/works-ui/employee/works/search-Estimate`,
       businessService: "WORKS",
       roles: [],
@@ -27,7 +27,6 @@ const InboxLinks = ({ parentRoute, businessService }) => {
 
   useEffect(() => {
     let linksToShow = allLinks
-      .filter((e) => e.businessService === businessService)
       .filter(({ roles }) => roles.some((e) => userRoles.map(({ code }) => code).includes(e)) || !roles?.length);
     setLinks(linksToShow);
   }, []);
@@ -42,13 +41,11 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   );
 
   return (
-    // <Card style={{ paddingRight: 0, marginTop: 0 }} className="employeeCard filter inboxLinks">
     <Card className="employeeCard filter inboxLinks">
       <div className="complaint-links-container">
         {GetLogo()}
-        {/* <div style={{ marginLeft: "unset", paddingLeft: "0px" }} className="body"> */}
         <div className="body">
-          {allLinks.map(({ link, text, hyperlink = false, roles = [] }, index) => {
+          {links.map(({ link, text, hyperlink = false, roles = [] }, index) => {
             return (
               <span className="link" key={index}>
                 {hyperlink ? <a href={link}>{text}</a> : <Link to={link}>{t(text)}</Link>}

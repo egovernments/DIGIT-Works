@@ -2,10 +2,10 @@ import React, { Fragment, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import { Toast } from "@egovernments/digit-ui-react-components";
 
-const SearchEstimate = () => {
+const SearchContracts = () => {
     const { t } = useTranslation();
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const SearchApplication = Digit.ComponentRegistryService.getComponent("SearchEstimateApplication");
+    const SearchContractApplication = Digit.ComponentRegistryService.getComponent("SearchContractApplication");
     const [showToast, setShowToast] = useState(null);
     const [payload, setPayload] = useState({});
     const { isLoading: hookLoading, isError, error, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
@@ -28,7 +28,7 @@ const SearchEstimate = () => {
       ...(_data.fromProposalDate ? { fromProposalDate: fromProposalDate?.getTime() } : {}),
     };
 
-    if(data.estimateNumber==="" && data.adminSanctionNumber==="" && !data.department && !data.typeOfWork && !data.fromProposalDate && !data.toProposalDate ){
+    if(data.nameOfTheProject==="" && data.contractId==="" && data.estimateNumber==="" && !data.fromProposalDate && !data.toProposalDate ){
       setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
       setTimeout(() => {
         setShowToast(false);
@@ -45,39 +45,46 @@ const SearchEstimate = () => {
       enabled: !!(payload && Object.keys(payload).length > 0),
     };
     // Call search estimate API by using params tenantId,filters
-    const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
+    // const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
+    const result = {
+      status: "success",
+      isSuccess: true,
+      totalCount: 10,
+      isLoading: false,
+      data:{
+        contracts: [{
+          tenantId:"pb.amritsar",
+          contractId: "1136/TO/DB/FLOOD/10-11",
+          contractDate: "08/09/2010",
+          contractType: "Work Order",
+          nameOfTheWork: "Providing CC Drain in Birla Gaddah (Tungabhaqdra workers colony) in 27th ward",
+          abstractEstimateNumber: "EST/KRPN/1136",
+          implementingAuthority: "Organisation",
+          orgnName: "Maa Bhagavati SHG",
+          officerIncharge: "S.A Bhasha",
+          agreemntAmount: "3553600.00",
+          status:"Approved"
+        }]
+      }
+    }
+    
     const getData = () => {
-      if (result?.data?.estimates?.length == 0 ) {
+      if (result.data.contracts?.length == 0 ) {
         return { display: "ES_COMMON_NO_DATA" }
-      } else if (result?.data?.estimates?.length > 0) {
-        let newResult = [];
-        result?.data?.estimates?.map((val)=>{
-          let totalAmount = 0
-              val?.estimateDetails?.map((amt)=>{
-              totalAmount = totalAmount + amt?.amount
-            })
-            employeeData?.Employees?.map((item)=>{
-              if(val?.auditDetails?.lastModifiedBy === item?.uuid){
-                Object.assign(val,{"owner":item?.user?.name})
-              }
-              if(val?.auditDetails?.createdBy === item?.uuid){
-                newResult.push(Object.assign(val,{"createdBy":item?.user?.name,"totalAmount":totalAmount}))
-              }
-          })
-        })
-      return newResult
+      } else if (result?.data.contracts?.length > 0) {
+        return result?.data.contracts
       } else {
         return [];
       }
     }
-
+  
     const isResultsOk = () => {
-      return result?.data?.estimates?.length > 0 ? true : false;
+      return result?.data.contracts?.length > 0 ? true : false;
     }
   
   return (
     <Fragment>
-      <SearchApplication 
+      <SearchContractApplication
         onSubmit={onSubmit}
         data={getData()}
         // count={result?.count}
@@ -100,4 +107,4 @@ const SearchEstimate = () => {
   )
 }
 
-export default SearchEstimate 
+export default SearchContracts
