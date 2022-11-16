@@ -44,6 +44,8 @@ public class EstimateServiceConfiguration {
     private String idgenSubEstimateNumberName;
     @Value("${egov.idgen.estimate.detail.number.format}")
     private String idgenSubEstimateNumberFormat;
+
+
     //search config
     @Value("${estimate.default.offset}")
     private Integer defaultOffset;
