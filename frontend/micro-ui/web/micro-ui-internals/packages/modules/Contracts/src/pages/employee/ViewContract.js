@@ -1,14 +1,14 @@
 import React, { useState, Fragment } from "react";
-import { Header, Loader, MultiLink } from "@egovernments/digit-ui-react-components";
+import { Header, Loader, MultiLink, ActionBar, SubmitBar, Menu} from "@egovernments/digit-ui-react-components";
 import { useForm } from 'react-hook-form'
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate  from "../../../../templates/ApplicationDetails"
 import ProcessingModal from "@egovernments/digit-ui-module-works/src/components/Modal/ProcessingModal";
-// import RejectLOIModal from '../../../components/Modal/RejectLOIModal'
+import RejectLOIModal from "@egovernments/digit-ui-module-works/src/components/Modal/RejectLOIModal";
 import getPDFData from "../../../utils/getWorksAcknowledgementData"
 const ViewContract = (props) => {
     const { t } = useTranslation()
-    const { register, control, watch, handleSubmit, formState: { errors, ...rest }, getValues} = useForm({defaultValues: {}, mode: "onSubmit"});
+    const { register, control, watch, handleSubmit, formState: { errors, ...rest }, getValues} = useForm({mode: "onSubmit"});
     const [displayMenu, setDisplayMenu] = useState(false);
     let { contractId } = Digit.Hooks.useQueryParams();
     let subEstimateNumber = "EP/2022-23/09/000094/000070"
@@ -30,14 +30,13 @@ const ViewContract = (props) => {
 
     // workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
     //     if (action?.action === "EDIT") {
-            
-    //         let pathName = `/${window?.contextPath}/employee/works/create-loi?loiNumber=${applicationDetails?.applicationData?.letterOfIndentNumber}&isEdit=true&subEstimateNumber=EP/2022-23/09/000080/000056`;
+    //         let pathName = `/${window?.contextPath}/employee/contracts/create-contract?contractId=${applicationDetails?.applicationData?.contractId}&isEdit=true&subEstimateNumber=EP/2022-23/09/000080/000056`;
     //         action.redirectionUrll = {
-    //             action: "EDIT_LOI_APPLICATION",
+    //             action: "EDIT_CONTRACT_APPLICATION",
     //             pathname: pathName,
     //             state: {
     //                 applicationDetails: applicationDetails,
-    //                 action: "EDIT_LOI_APPLICATION"
+    //                 action: "EDIT_CONTRACT_APPLICATION"
     //             },
     //         };
     //     }
@@ -54,14 +53,14 @@ const ViewContract = (props) => {
     const [showModal, setShowModal] = useState(false)
     const [showRejectModal, setShowRejectModal] = useState(false)
     
-    // const actionULB=[
-    //     {
-    //         "name":"FORWARD_LOI"
-    //     },
-    //     {
-    //         "name":"REJECT_LOI"
-    //     } 
-    // ]
+    const actionULB=[
+        {
+            "name":"APPROVE_FORWARD"
+        },
+        {
+            "name":"REJECT"
+        } 
+    ]
 
     function onActionSelect(action) {
         if(action?.name==="FORWARD_LOI"){
@@ -84,14 +83,14 @@ const ViewContract = (props) => {
         setShowRejectModal(false)
     }
 
-    // // call update LOI API to update LI form values and application staus during workflow action 
+    // // call update Contract API to update Contract form values and application staus during workflow action 
     // const {
     //     isLoading: updatingApplication,
     //     isError: updateApplicationError,
     //     data: updateResponse,
     //     error: updateError,
     //     mutate,
-    // } = Digit.Hooks.works.useApplicationActionsLOI();
+    // } = Digit.Hooks.contracts.useApplicationActionsContract();
 
     const [showToast, setShowToast] = useState(null);
 
@@ -115,7 +114,7 @@ const ViewContract = (props) => {
                     <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_VIEW_CONTRACT")}</Header>
                     <MultiLink
                         className="multilinkWrapper employee-mulitlink-main-div"
-                        // onHeadClick={HandleDownloadPdf}
+                        onHeadClick={HandleDownloadPdf}
                         downloadBtnClassName={"employee-download-btn-className"}
                     />
                 </div>
@@ -134,14 +133,11 @@ const ViewContract = (props) => {
                     handleSubmit={handleSubmit}
                     errors={errors}
                     employeeData={employeeData}
-                    Department={Department}
-                    Designation={Designation}
-
                 />}
 
-                {/* {showRejectModal && <RejectLOIModal
+                {showRejectModal && <RejectLOIModal
                   t={t}
-                  heading={"WORKS_REJECT_LOI"}
+                  heading={"WORKS_REJECT"}
                   closeModal={() => setShowRejectModal(false)}
                   actionCancelLabel={"WORKS_CANCEL"}
                   actionCancelOnSubmit={() => setShowRejectModal(false)}
@@ -152,7 +148,7 @@ const ViewContract = (props) => {
                   register={register}
                   handleSubmit={handleSubmit}
                   errors={errors}
-              />} */}
+              />}
 
 
                 <ApplicationDetailsTemplate
@@ -164,9 +160,9 @@ const ViewContract = (props) => {
                     // workflowDetails={workflowDetails}
                     // businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}
                     moduleCode="works"
-                    // showToast={showToast}
-                    // setShowToast={setShowToast}
-                    // closeToast={closeToast}
+                    showToast={showToast}
+                    setShowToast={setShowToast}
+                    closeToast={closeToast}
                     // timelineStatusPrefix={`WORKS_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`}
                     // oldValue={res}
                     // isInfoLabel={true}
@@ -187,7 +183,7 @@ const ViewContract = (props) => {
                 //isInfoLabel={isInfoLabel}
                 /> */}
             </div>
-            {/* <ActionBar>
+            <ActionBar>
                 {displayMenu ?
                     <Menu
                     localeKeyPrefix={"WORKS"}
@@ -196,8 +192,8 @@ const ViewContract = (props) => {
                     t={t}
                     onSelect={onActionSelect}
                     />:null}
-                <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-            </ActionBar> */}
+                <SubmitBar label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+            </ActionBar>
         </Fragment>
 
     )

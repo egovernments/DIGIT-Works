@@ -85,21 +85,24 @@ export const WorksSearch = {
         };
 
         const tableHeader = [t("WORKS_SNO"), t("WORKS_NAME_OF_WORK"), t("WORKS_ESTIMATED_AMT")]
-        const tableRows = [["1", "Construction of CC drain from D No 45-142-A-58-A to 45-142-472-A at Venkateramana Colony in Ward No 43", "640000"], ["", "Total Amount", "640000"]]
-
+        // const tableRows = [["1", "Construction of CC drain from D No 45-142-A-58-A to 45-142-472-A at Venkateramana Colony in Ward No 43", "640000"], ["", "Total Amount", "640000"]]
+        let totalAmount = 0;
+        const tableRows=estimate?.estimateDetails.map((item,index)=>{
+            totalAmount= totalAmount + item.amount
+            return(
+                [index+1,
+                item?.name,
+                item?.amount] )
+            })
+        tableRows.push(["",t("WORKS_TOTAL_AMT"),totalAmount])
         const workDetails = {
             title: "WORKS_WORK_DETAILS",
             asSectionHeader: true,
             isTable: true,
             headers: tableHeader,
-            tableRows:estimate?.estimateDetails.map((item,index)=>
-                    [index+1,
-                    item?.name,
-                    item?.amount]
-            )
+            tableRows:tableRows
         }
         const files = additionalDetails?.filesAttached
-
         const documentDetails = {
             title: "",
             asSectionHeader: true,

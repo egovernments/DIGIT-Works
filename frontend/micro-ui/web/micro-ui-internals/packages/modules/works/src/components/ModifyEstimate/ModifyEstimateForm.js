@@ -27,6 +27,10 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
         mode: "onSubmit"
     });
 
+    let filesAttached=[]
+    estimate?.additionalDetails?.filesAttached.map((val)=>{
+        filesAttached.push([val?.fileName,{file:{type:val?.documentType},fileStoreId:{fileStoreId:val?.fileStoreId}}])
+    })
     const tenantId = Digit.ULBService.getCurrentTenantId();
     let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
     const { isLoading: hookLoading, isError, error, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
@@ -559,6 +563,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
                     <div className='field'>
                         <Controller
                             name="uploads"
+                            defaultValue={filesAttached}
                             control={control}
                             rules={{ required: false }}
                             render={({ onChange, ref, value = [] }) => {

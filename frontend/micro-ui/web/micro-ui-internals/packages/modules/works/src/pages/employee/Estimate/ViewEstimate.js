@@ -27,6 +27,7 @@ const ViewEstimate = (props) => {
             moduleCode: applicationDetails?.processInstancesDetails?.[0]?.businessService,
             config: {
                 enabled: applicationDetails?.processInstancesDetails?.[0]?.businessService ? true : false,
+                cacheTime:0
             }
         },
     );

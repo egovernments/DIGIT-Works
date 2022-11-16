@@ -47,6 +47,7 @@ const Inbox = ({
 
   const config = {
     enabled: !!(payload && Object.keys(payload).length > 0),
+    cacheTime:0
   };
   
   //API Call useEstimateInbox

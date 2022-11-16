@@ -1,6 +1,8 @@
 import React from 'react'
+import { useTranslation } from "react-i18next";
 
 const SubWorkTableDetails = ({data}) => {
+    const { t } = useTranslation();
 
     const getStyles = (index) => {
         let obj = {}
@@ -33,7 +35,7 @@ const SubWorkTableDetails = ({data}) => {
         return rows?.map((row, index) => {
             return <tr style={{ "height": "50%" }}>
                 <td style={getStyles(1)}>{row[0]}</td>
-                <td style={getStyles(2)} ><div className='field'>{row[1]}</div></td>
+                <td style={getStyles(2)} > { row[1] === t("WORKS_TOTAL_AMT") ? <div style={{"float":"right", "fontWeight":"bold"}}>{row[1]}</div> : <div className='field'>{row[1]}</div> }</td>
                 <td style={getStyles(3)}><div className='field'>{row[2]}</div></td>
                 {/* <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td> */}
             </tr>

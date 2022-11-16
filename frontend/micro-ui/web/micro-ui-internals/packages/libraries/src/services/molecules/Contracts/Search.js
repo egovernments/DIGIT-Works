@@ -42,9 +42,37 @@ let sampleContractSearchResponse = {
         emdAmount:"",
         engineerIncharge: "S.A Bhasha",
         sla:"15 days",
-        status:"Approved"
+        status:"Approved",
+        additionalDetails:{
+            filesAttached: [{
+                documentType: "application/pdf",
+                fileName: "acknowledgement (4).pdf",
+                fileStoreId: "37c527b7-a34b-4b23-95df-1ce727ea3f87"
+            },{
+                documentType: "application/pdf",
+                fileName: "acknowledgement.pdf",
+                fileStoreId: "39686c00-bd88-4a56-99fd-46e5b70017be"
+            }]
+        }
       }]
     }
+}
+
+let workflowDataDetails ={
+    ProcessInstances:[{
+        action: "CREATE",
+        assigner:{
+            name: "Est Super User",
+            uuid: "c8d0093a-4d2b-495f-8bdf-fd9d3594e43f",
+            mobileNumber: "9876543210"
+        },
+        auditDetails:{
+            createdBy: "c8d0093a-4d2b-495f-8bdf-fd9d3594e43f",
+            createdTime: 1668593783889,
+            lastModifiedBy: "c8d0093a-4d2b-495f-8bdf-fd9d3594e43f",
+            lastModifiedTime: 1668593783889
+        }
+    }]
 }
 
 export const ContractSearch = {
@@ -64,7 +92,7 @@ export const ContractSearch = {
         // const loiArr = await WorksSearch.searchLOI(tenantId, {letterOfIndentNumber:loiNumber})
         //  const loi = loiArr?.[0]
         const contract = sampleContractSearchResponse?.data?.contracts[0]
-        // const additionalDetails = loi?.additionalDetails
+        const additionalDetails = contract?.additionalDetails
         // const userInfo = Digit.UserService.getUser()?.info || {};
         // const uuidUser = userInfo?.uuid;
         // const {user:users} = await Digit.UserService.userSearch(tenantId, { uuid: [loi?.oicId] }, {});
@@ -115,7 +143,7 @@ export const ContractSearch = {
                 // { title: "WORKS_INCHARGE_ENGG", value: additionalDetails?.oic?.nameOfEmp || t("NA") },
             ]
         }
-        // const files = additionalDetails?.filesAttached
+        const files = additionalDetails?.filesAttached
         
 
         const documentDetails = {
@@ -125,14 +153,14 @@ export const ContractSearch = {
                 documents: [{
                     title: "WORKS_RELEVANT_DOCS",
                     BS: 'Works',
-                    // values: files?.map((document) => {
-                    //     return {
-                    //         title: document?.fileName,
-                    //         documentType: document?.documentType,
-                    //         documentUid: document?.fileStoreId,
-                    //         fileStoreId: document?.fileStoreId,
-                    //     };
-                    // }),
+                    values: files?.map((document) => {
+                        return {
+                            title: document?.fileName,
+                            documentType: document?.documentType,
+                            documentUid: document?.fileStoreId,
+                            fileStoreId: document?.fileStoreId,
+                        };
+                    }),
                 },
                 ]
             }
