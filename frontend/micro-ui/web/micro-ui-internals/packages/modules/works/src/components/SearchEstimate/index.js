@@ -28,7 +28,7 @@ const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
     const onSort = useCallback((args) => {
       if (args.length === 0) return;
       setValue("sortBy", args.id);
-      setValue("sortOrder", args.desc ? "DESC" : "ASC");
+      // setValue("sortOrder", args.desc ? "DESC" : "ASC");
     }, []);
 
     function onPageSizeChange(e) {
