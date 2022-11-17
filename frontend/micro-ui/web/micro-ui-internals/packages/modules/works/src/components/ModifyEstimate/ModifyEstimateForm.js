@@ -29,7 +29,7 @@ const ModifyEstimateForm = ({ onFormSubmit, estimate}) => {
 
     let filesAttached=[]
     estimate?.additionalDetails?.filesAttached.map((val)=>{
-        filesAttached.push([val?.fileName,{file:{type:val?.documentType},fileStoreId:{fileStoreId:val?.fileStoreId}}])
+        filesAttached.push([val?.fileName,{file:{type:val?.documentType,name:val?.fileName},fileStoreId:{fileStoreId:val?.fileStoreId}}])
     })
     const tenantId = Digit.ULBService.getCurrentTenantId();
     let paginationParams = { limit: 10, offset:0, sortOrder:"ASC" }
