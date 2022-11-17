@@ -26,6 +26,7 @@ import { CheckPoint, ConnectingCheckPoints } from "./atoms/ConnectingCheckPoints
 import CustomButton from "./atoms/CustomButton";
 import DatePicker from "./atoms/DatePicker";
 import DateRange from "./molecules/DateRange";
+import DateRangeNew from "./molecules/DateRangeNew";
 import DateWrap from "./atoms/DateWrap";
 import DisplayPhotos from "./atoms/DisplayPhotos";
 import Dropdown from "./atoms/Dropdown";
@@ -408,6 +409,7 @@ export {
   PDFSvg,
   DownloadPrefixIcon,
   DateRange,
+  DateRangeNew,
   EditIcon,
   SearchIcon,
   DeleteIcon,

@@ -189,9 +189,9 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
                             onPrevPage={previousPage}
                             pageSizeLimit={getValues("limit")}
                             //onSort={onSort}
-                            disableSort={false}
-                            sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
-
+                            //disableSort={false}
+                            //sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
+                            autoSort={true}
                         />
                     </div>
             :null:null}
