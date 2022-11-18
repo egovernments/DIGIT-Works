@@ -43,6 +43,7 @@ const SearchEstimate = () => {
   }
     const config = {
       enabled: !!(payload && Object.keys(payload).length > 0),
+      cacheTime:0
     };
     // Call search estimate API by using params tenantId,filters
     const result = Digit.Hooks.works.useSearchWORKS({ tenantId, filters: payload, config });
