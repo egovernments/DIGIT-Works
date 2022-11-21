@@ -72,6 +72,44 @@ export const WorksSearch = {
             ]
         };
 
+        const approveEstimateDetails = {
+            title: "WORKS_ESTIMATE_DETAILS",
+            asSectionHeader: true,
+            values: [
+                { title: "WORKS_DATE_PROPOSAL", value: Digit.DateUtils.ConvertEpochToDate(estimate?.proposalDate) || t("NA") },
+                { title: "WORKS_LOR", value: estimate?.requirementNumber || t("NA") }
+            ]
+        }
+
+        const locationDetails = {
+            title: "WORKS_LOCATION_DETAILS",
+            asSectionHeader: true,
+            values: [
+                { title: "WORKS_LOCATION", value: (`ES_COMMON_${wardLocation[5]}`) || t("NA") },
+                { title: "WORKS_LOCALITY", value: (`ES_COMMON_${wardLocation[5]}`) || t("NA")},
+                { title: "WORKS_WARD", value: t(`ES_COMMON_${wardLocation[4]}`) || t("NA") },
+                { title: "WORKS_ULB", value: (`ES_COMMON_${wardLocation[3]}`) || t("NA")},
+                { title: "WORKS_GEO_LOCATION", value: (`ES_COMMON_${wardLocation[2]}`) || t("NA")}
+            ]
+        }
+
+        const approvedWorkDetails = {
+            title: "WORKS_WORK_DETAILS",
+            asSectionHeader: true,
+            values: [
+                { title: "WORKS_WORK_NATURE", value: estimate?.natureOfWork || t("NA") },
+                { title: "WORKS_WORK_TYPE", value: estimate?.typeOfWork || t("NA") }
+            ]
+        }
+
+        const approvedFinancialDetails = {
+            title: "WORKS_FINANCIAL_DETAILS",
+            asSectionHeader: true,
+            values: [
+                {title: "WORKS_CHART_ACCOUNTS", value: ""}
+            ]
+        }
+
         const financialDetails = {
             title: "WORKS_FINANCIAL_DETAILS",
             asSectionHeader: true,
@@ -83,24 +121,33 @@ export const WorksSearch = {
                 { title: "WORKS_SUB_SCHEME", value: t(`ES_COMMON_${estimate?.subScheme}`) || t("NA") },
             ]
         };
+        let tableHeader=[]
+        {estimate.estimateStatus === "APPROVED" ?
+            tableHeader = [t("WORKS_SNO"), t("WORKS_NAME_OF_WORK"), t("WORKS_ESTIMATED_AMT"),t("WORKS_ACTION")] :
+            tableHeader = [t("WORKS_SNO"), t("WORKS_NAME_OF_WORK"), t("WORKS_ESTIMATED_AMT")] }
 
-        const tableHeader = [t("WORKS_SNO"), t("WORKS_NAME_OF_WORK"), t("WORKS_ESTIMATED_AMT")]
         // const tableRows = [["1", "Construction of CC drain from D No 45-142-A-58-A to 45-142-472-A at Venkateramana Colony in Ward No 43", "640000"], ["", "Total Amount", "640000"]]
         let totalAmount = 0;
         const tableRows=estimate?.estimateDetails.map((item,index)=>{
             totalAmount= totalAmount + item.amount
-            return(
+            return (estimate?.estimateStatus === "APPROVED" ?
                 [index+1,
                 item?.name,
-                item?.amount] )
-            })
+                item?.amount,
+                t("WORKS_CREATE_CONTRACT")] :
+                [index+1,
+                item?.name,
+                item?.amount]
+            )
+        })
         tableRows.push(["",t("WORKS_TOTAL_AMT"),totalAmount])
         const workDetails = {
             title: "WORKS_WORK_DETAILS",
             asSectionHeader: true,
             isTable: true,
             headers: tableHeader,
-            tableRows:tableRows
+            tableRows: tableRows,
+            state: estimate
         }
         const files = additionalDetails?.filesAttached
         const documentDetails = {
@@ -122,8 +169,8 @@ export const WorksSearch = {
                 ]
             }
         }
-
-
+        estimate?.estimateStatus === "APPROVED" ?
+        details = [...details, estimateValues, approveEstimateDetails, locationDetails, approvedWorkDetails, approvedFinancialDetails, workDetails, documentDetails] :
         details = [...details, estimateValues, estimateDetails, financialDetails, workDetails, documentDetails]
         return {
             applicationDetails: details,

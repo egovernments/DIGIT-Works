@@ -4,6 +4,7 @@ import { Card, Header, CardSectionHeader, LabelFieldPair, CardLabel, TextInput, 
 import { useTranslation } from 'react-i18next';
 import ProcessingModal from '@egovernments/digit-ui-module-works/src/components/Modal/ProcessingModal';
 import { format } from "date-fns";
+import { useLocation } from 'react-router-dom';
 
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
@@ -11,6 +12,8 @@ const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wo
 const CreateContractForm = ({ onFormSubmit }) => {
 
     const { t } = useTranslation()
+    const {state} = useLocation();
+    const {index, data} = state;
     const {
         register,
         control,
@@ -92,24 +95,18 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 <CardSectionHeader style={{ "marginTop": "14px" }} >{t(`WORKS_PROJECT_DETAILS`)}</CardSectionHeader>
                 {/* TEXT INPUT LABEL */}
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_ESTIMATE_NO`)}</CardLabel>
-                    <div className='field' style={{"marginBottom": "24px"}}>
-                        <CardLabel >{`1136/TO/DB/FLOOD/10-11`}</CardLabel>
-                    </div>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_ESTIMATE_NO`)}</CardLabel>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{data?.state?.estimateNumber}</CardLabel>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_NAME_OF_WORK`)}</CardLabel>
-                    <div className='field' style={{"marginBottom": "24px"}}>
-                        <CardLabel style={{"width":"100%"}}>{`Construction of CC drain from D No 45-142-A-58-A to 45-142-472-A at Venkateramana Colony in Ward No 43`}</CardLabel>
-                    </div>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_NAME_OF_WORK`)}</CardLabel>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{data?.state?.estimateDetails[index]?.name}</CardLabel>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_SUB_ESTIMATE_NO`)}</CardLabel>
-                    <div className='field' style={{"marginBottom": "24px"}}>
-                        <CardLabel>{`LE/ENG/00002/10/2017-18`}</CardLabel>
-                    </div>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_SUB_ESTIMATE_NO`)}</CardLabel>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{data?.state?.estimateDetails[index]?.estimateDetailNumber}</CardLabel>
                 </LabelFieldPair>
 
                 {/* Modal */}

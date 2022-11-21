@@ -118,7 +118,7 @@ const SearchFields = ({ register, control, reset, t, onClearSearch }) => {
                         estimateNumber: "",
                         fromProposalDate: "",
                         toProposalDate: "",
-                        typeofwork: "",
+                        typeOfWork: "",
                         department: "",
                         adminSanctionNumber: "",
                         offset: 0,

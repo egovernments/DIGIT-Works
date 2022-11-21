@@ -1,9 +1,11 @@
+import { EditIcon } from '@egovernments/digit-ui-react-components';
 import React from 'react'
 import { useTranslation } from "react-i18next";
+import { useHistory } from 'react-router-dom';
 
 const SubWorkTableDetails = ({data}) => {
     const { t } = useTranslation();
-
+    const history = useHistory();
     const getStyles = (index) => {
         let obj = {}
         switch (index) {
@@ -37,6 +39,16 @@ const SubWorkTableDetails = ({data}) => {
                 <td style={getStyles(1)}>{row[0]}</td>
                 <td style={getStyles(2)} > { row[1] === t("WORKS_TOTAL_AMT") ? <div style={{"float":"right", "fontWeight":"bold"}}>{row[1]}</div> : <div className='field'>{row[1]}</div> }</td>
                 <td style={getStyles(3)}><div className='field'>{row[2]}</div></td>
+                {row[3] && <td style={getStyles(4)}>
+                    <div style={{display:"flex",flexDirection:"row",cursor:"pointer",color:"#F47738"}} onClick={() => history.push(
+                        {
+                            pathname: '/works-ui/employee/contracts/create-contract',
+                            state:{index, data}
+                        }
+                        )}>
+                        <EditIcon/> {row[3]}
+                    </div>
+                </td>}
                 {/* <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td> */}
             </tr>
         })
