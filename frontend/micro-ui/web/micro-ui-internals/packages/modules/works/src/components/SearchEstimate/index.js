@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import MobileSearchApplication from "./MobileSearchEstimates";
 
-const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoading, onClearSearch,showTable}) => {
+const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoading, onClearSearch, showTable, count}) => {
 
     const { t } = useTranslation(); 
     const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
@@ -142,7 +142,7 @@ const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
               <Table
                 t={t}
                 data={data}
-                // totalRecords={count}
+                totalRecords={count}
                 columns={columns}
                 getCellProps={(cellInfo) => {
                   return {

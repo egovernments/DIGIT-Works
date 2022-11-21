@@ -16,8 +16,6 @@ const SearchEstimate = () => {
         setShowTable(isShow);
     }
   const onSubmit = async (_data) => {
-    setShowTable(true)
-
     var fromProposalDate = new Date(_data?.fromProposalDate);
     fromProposalDate?.setSeconds(fromProposalDate?.getSeconds() - 19800);
     var toProposalDate = new Date(_data?.toProposalDate);
@@ -40,6 +38,8 @@ const SearchEstimate = () => {
       .filter((k) => data[k])
       .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {})
       );
+      
+    setShowTable(true)
   }
     const config = {
       enabled: !!(payload && Object.keys(payload).length > 0),
@@ -81,7 +81,7 @@ const SearchEstimate = () => {
       <SearchApplication 
         onSubmit={onSubmit}
         data={getData()}
-        // count={result?.count}
+        count={result?.data?.count}
         resultOk={isResultsOk()}
         isLoading={result?.isLoading}
         onClearSearch={onClearSearch} 
