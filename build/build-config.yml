@@ -19,6 +19,14 @@
 config:
 
 # backend
+  - name: "builds/digit-works/backend/attendance-service"
+    build:
+      - work-dir: "backend/attendance-service"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "attendance-service"
+      - work-dir: "backend/attendance-service/src/main/resources/db"
+        image-name: "attendance-service-db"
+
   - name: "builds/digit-works/backend/estimate-service"
     build:
       - work-dir: "backend/estimate-service"
