@@ -15,7 +15,6 @@ const ViewRegister = (props) => {
 
 
     // const handleFilterChange = (data) => {
-    //     debugger
     //     setValue({ ...value, ...data });
     // };
 

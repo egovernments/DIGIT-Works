@@ -11,7 +11,7 @@ const AttendenceTablev1 = ({ userState,setUserState,t }) => {
     const [showSkillSelector,setShowSkillSelector] = useState(true)
 
     const setSkill = (e) => {
-        debugger
+        
     }
 
     const updateState = (idxOut, idxIn) => {
