@@ -41,7 +41,7 @@ lastmodifiedby               character varying(256),
 createdtime                  bigint,
 lastmodifiedtime             bigint,
 CONSTRAINT pk_eg_wms_staff_permissions PRIMARY KEY (id),
-CONSTRAINT fk_eg_wms_staff_permissions FOREIGN KEY (register_id) REFERENCES eg_wms_attendance_register (id),
+CONSTRAINT fk_eg_wms_register_staff_permissions FOREIGN KEY (register_id) REFERENCES eg_wms_attendance_register (id),
 CONSTRAINT fk_eg_wms_staff_permissions FOREIGN KEY (staff_id) REFERENCES eg_wms_attendance_staff (id)
 );
 
