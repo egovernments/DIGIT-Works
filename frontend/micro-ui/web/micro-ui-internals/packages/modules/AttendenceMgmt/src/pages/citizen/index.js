@@ -4,6 +4,8 @@ import { PrivateRoute, BackButton, AppContainer } from "@egovernments/digit-ui-r
 import { Switch, useLocation } from "react-router-dom";
 import ShgInbox from "./markAttendenceInbox/ShgInbox";
 import ShgHome from "../../components/shgHome/ShgHome";
+import ViewProjectsInbox from "./manageWageSeekers/ViewProjectsInbox";
+import ViewProject from "./manageWageSeekers/ViewProject";
 // const AttendenceMgmtBreadCrumbs = ({ location }) => {
 //     const { t } = useTranslation();
 
@@ -41,6 +43,8 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/trackattendence`} component={() => <ShgInbox {...{path}} />} />
                     <PrivateRoute path={`${path}/view-register`} component={() => <ViewRegister {...{ path }} />} />
                     <PrivateRoute path={`${path}/shghome`} component={() => <ShgHome {...{ path }} />} />
+                    <PrivateRoute path={`${path}/view-projects`} component={() => <ViewProjectsInbox {...{ path }} />} />
+                    <PrivateRoute path={`${path}/view-project`} component={() => <ViewProject {...{ path }} exact/>} />
                 </AppContainer>
             </Switch>
         </span>

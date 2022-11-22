@@ -30,6 +30,7 @@ import DateRangeNew from "./molecules/DateRangeNew";
 import DateWrap from "./atoms/DateWrap";
 import DisplayPhotos from "./atoms/DisplayPhotos";
 import Dropdown from "./atoms/Dropdown";
+import SearchableDropdown from "./atoms/SearchableDropdown";
 import EllipsisMenu from "./atoms/EllipsisMenu";
 import EmployeeAppContainer from "./atoms/EmployeeAppContainer";
 import { EmployeeModuleCard, ModuleCardFullWidth } from "./atoms/EmployeeModuleCard";
@@ -249,6 +250,7 @@ export {
   RadioButtons,
   DashboardBox,
   Dropdown,
+  SearchableDropdown,
   TextInput,
   TextArea,
   Banner,
