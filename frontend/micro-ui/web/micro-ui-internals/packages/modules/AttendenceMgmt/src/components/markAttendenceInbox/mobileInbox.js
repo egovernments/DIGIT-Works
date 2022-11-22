@@ -149,6 +149,7 @@ const mobileInbox = ({ tenantId="pb.amritsar", data={}, onSubmit=()=>console.log
                         handleDetailCardClick: (e) => { history.push(`/${window.contextPath}/employee/attendencemgmt/view-register/`, { state:{} }) },
                         data: propsMobileInboxCards,
                         serviceRequestIdKey: t("Register_Name"),
+                        t
                     }}
                 />
             )}

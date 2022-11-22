@@ -207,6 +207,60 @@
   }
 }
 
+.table-fixed-first-column-wage-seekers {
+  thead {
+    th:first-child {
+      position: sticky;
+      background: #fff;
+      left: 0;
+      border-right: 1px solid #b1b4b6;
+      border-top-left-radius: 4px;
+    }
+  }
+
+  tbody {
+    td:first-child {
+      position: sticky;
+      background: #fff;
+      left: 0;
+      border-right: 1px solid #b1b4b6;
+    }
+  }
+}
+
+.wage-seekers-table {
+  width: 100%;
+  justify-content: center;
+  padding: 0;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+
+  td,
+  th {
+    color: #0B0C0C;
+    border: 1px solid #ddd;
+    padding: 12px;
+  }
+
+  tr:hover {
+    background-color: #EFEFEF;
+  }
+
+  th {
+    padding: 10px;
+    text-align: center;
+    color: #0B0C0C;
+  }
+
+  tr {
+    td {
+      span:hover {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
 .percent-input{
     display: flex;
     flex-direction: row;
