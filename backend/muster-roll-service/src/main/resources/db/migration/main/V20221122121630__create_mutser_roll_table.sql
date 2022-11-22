@@ -44,5 +44,5 @@ lastmodifiedby               character varying(256),
 createdtime                  bigint,
 lastmodifiedtime             bigint,
 CONSTRAINT pk_eg_wms_attendance_entries PRIMARY KEY (id),
-CONSTRAINT fk_eg_wms_attendance_entries FOREIGN KEY (attendance_summary_id, musterrollnumber) REFERENCES eg_wms_attendance_summary (id, musterrollnumber)
+CONSTRAINT fk_eg_wms_attendance_entries FOREIGN KEY (attendance_summary_id) REFERENCES eg_wms_attendance_summary (id)
 );
