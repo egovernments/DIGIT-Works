@@ -1,23 +1,14 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
+import digit.models.coremodels.AuditDetails;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * MusterRoll
@@ -58,6 +49,9 @@ public class MusterRoll {
     @JsonProperty("individualEntries")
     @Valid
     private List<IndividualEntry> individualEntries = null;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
 
     public MusterRoll addIndividualEntriesItem(IndividualEntry individualEntriesItem) {

@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import digit.models.coremodels.AuditDetails;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -40,6 +41,9 @@ public class IndividualEntry {
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
 
     public IndividualEntry addAttendanceEntriesItem(AttendanceEntry attendanceEntriesItem) {
