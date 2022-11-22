@@ -4,6 +4,9 @@ package org.egov.web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
+import org.egov.common.contract.response.ResponseInfo;
+import org.egov.service.MusterRollService;
+import org.egov.util.ResponseInfoCreator;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
 import org.egov.web.models.MusterRollSearchCriteria;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Collections;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
 
@@ -31,19 +35,34 @@ public class MusterRollApiController {
     @Autowired
     private HttpServletRequest request;
 
+    @Autowired
+    private MusterRollService musterRollService;
+
+    @Autowired
+    private ResponseInfoCreator responseInfoCreator;
+
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
-    public ResponseEntity<MusterRollResponse> musterRollV1CreatePost(@ApiParam(value = "", required = true) @Valid @RequestBody MusterRollRequest musterRollRequest) {
-        return new ResponseEntity<MusterRollResponse>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<MusterRollResponse> musterRollV1CreatePost(@ApiParam(value = "", required = true) @Valid @RequestBody MusterRollRequest body) {
+        MusterRollRequest musterRollRequest = musterRollService.createMusterRoll(body);
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(Collections.singletonList(musterRollRequest.getMusterRoll())).build();
+        return new ResponseEntity<MusterRollResponse>(musterRollResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
-    public ResponseEntity<MusterRollResponse> attendanceV1SearchPOST(@Valid @RequestBody RequestInfoWrapper body, @Valid @ModelAttribute MusterRollSearchCriteria searchCriteria) {
-        return new ResponseEntity<MusterRollResponse>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<MusterRollResponse> attendanceV1SearchPOST(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute MusterRollSearchCriteria searchCriteria) {
+        MusterRollResponse musterRollResponse = musterRollService.searchMusterRolls(requestInfoWrapper, searchCriteria);
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        musterRollResponse.setResponseInfo(responseInfo);
+        return new ResponseEntity<MusterRollResponse>(musterRollResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_update", method = RequestMethod.POST)
-    public ResponseEntity<MusterRollResponse> musterRollV1UpdatePost(@ApiParam(value = "", required = true) @Valid @RequestBody MusterRollRequest musterRollRequest) {
-        return new ResponseEntity<MusterRollResponse>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<MusterRollResponse> musterRollV1UpdatePost(@ApiParam(value = "", required = true) @Valid @RequestBody MusterRollRequest body) {
+        MusterRollRequest musterRollRequest = musterRollService.updateMusterRoll(body);
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(Collections.singletonList(musterRollRequest.getMusterRoll())).build();
+        return new ResponseEntity<MusterRollResponse>(musterRollResponse, HttpStatus.OK);
     }
 
 }
