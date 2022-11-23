@@ -5,6 +5,8 @@ import AttendenceMgmtCard from "./components/AttendenceMgmtCard"
 import CitizenApp from "./pages/citizen";
 import mobileInbox from "./components/markAttendenceInbox/mobileInbox";
 import ViewRegister from "./pages/citizen/viewRegister/ViewRegister";
+import ViewProjects from "./components/ViewProjectsInbox.js/ViewProjects";
+
 const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
     const moduleCode = ["AttendenceMgmt"];
     const { path, url } = useRouteMatch();
@@ -27,6 +29,7 @@ const componentsToRegister = {
     AttendenceMgmtModule,
     AttendenceMgmtInbox: mobileInbox,
     ViewRegister,
+    ViewProjects
 };
 
 export const initAttendenceMgmtComponents = () => {

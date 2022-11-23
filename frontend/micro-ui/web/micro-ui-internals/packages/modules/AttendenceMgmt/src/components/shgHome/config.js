@@ -7,7 +7,7 @@ const configSHGHOME = () => {
         "attendencemgmt": {
             links:[
                 {
-                    link:`/${window?.contextPath}/citizen/attendencemgmt/shghome`,
+                    link:`/${window?.contextPath}/citizen/attendencemgmt/view-projects`,
                     i18nKey: t("MANAGE_WAGE_SEEKERS")
                 },
                 {
