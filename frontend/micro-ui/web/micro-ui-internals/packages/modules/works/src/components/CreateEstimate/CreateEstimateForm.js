@@ -429,7 +429,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                         {errors && errors?.requirementNumber?.type === "pattern" && (
                             <CardLabelError style={errorStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                         {errors && errors?.requirementNumber?.type === "required" && (
-                            <CardLabelError sty={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
