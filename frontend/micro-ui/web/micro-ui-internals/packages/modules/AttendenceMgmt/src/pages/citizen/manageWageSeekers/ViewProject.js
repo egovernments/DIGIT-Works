@@ -75,12 +75,10 @@ function useTodos(page, search) {
 }
 
 const ViewProject = ({isLoading=false,resultOk=true,data={}}) => {
-
-  const [tableRow, setTableRow] = useState(sampleTableData.rows)
+  const [tableRow, setTableRow] = useState([])
   const state  = useLocation()
   const { t } = useTranslation()
   const [service, setService] = useState(null);
-  console.log(service);
   const [showExpander,setShowExpander] = useState(false)
   const [isExpanded, setIsExpanded] = useState(true)
   const [wageSeekers,setWageSeekers] = useState([])
@@ -204,7 +202,7 @@ const ViewProject = ({isLoading=false,resultOk=true,data={}}) => {
       </div>
 
       {/* Render the table here */}
-      <div style={{ "padding": "0px", "overflowX": "scroll" }} className='card'>
+      {tableRow.length>0 ?<div style={{ "padding": "0px", "overflowX": "scroll" }} className='card'>
         <Table 
           className="table-fixed-first-column-wage-seekers wage-seekers-table" 
           t={t}
@@ -225,7 +223,17 @@ const ViewProject = ({isLoading=false,resultOk=true,data={}}) => {
             };
           }}
         />
-      </div>
+      </div> : <Card style={{ marginTop: 20 }}>
+        {
+            t("ATM_NO_WAGE_SEEKERS_FOUND")
+            .split("\\n")
+            .map((text, index) => (
+              <p key={index} style={{ textAlign: "center" }}>
+                {text}
+              </p>
+            ))
+        }
+      </Card>}
       <div style={{margin:"1rem 8px"}}>
       <SubmitBar onSubmit={handleSubmit} label={t("ATM_SUBMIT")} />
       </div>

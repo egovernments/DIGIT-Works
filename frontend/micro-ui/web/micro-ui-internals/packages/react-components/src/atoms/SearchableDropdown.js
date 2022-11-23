@@ -141,7 +141,7 @@ const Dropdown = (props) => {
                 //just for static screen purposes
                 const newObj = {
                     "name": "Name New",
-                    "aadhar": "111-111-111",
+                    "aadhar": val,
                     "acno": "1212-1212-1212",
                     "ifsc": "1313-1313-1331"
                 }
