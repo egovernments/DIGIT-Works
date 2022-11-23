@@ -106,7 +106,7 @@ const SearchEstimateApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
         {
           Header: t("WORKS_STATUS"),
           disableSortBy: true,
-          accessor: (row) => GetCell(row?.estimateStatus || t("ES_COMMON_NA")) ,
+          accessor: (row) => GetCell(t(`ES_COMMON_${row?.estimateStatus}`) || t("ES_COMMON_NA")) ,
         },
         {
           Header: t("WORKS_TOTAL_AMOUNT"),

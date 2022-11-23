@@ -138,7 +138,8 @@ function ApplicationDetailsContent({
     if (
       window.location.href.includes("employee/obps") ||
       window.location.href.includes("employee/noc") ||
-      window.location.href.includes("employee/ws")
+      window.location.href.includes("employee/ws") ||
+      window.location.href.includes("employee/works")
     ) {
       return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
     } else if (checkLocation) {
