@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ArrowDown, SearchIcon } from "./svgindex";
 
 const TextField = (props) => {
-    const [value, setValue] = useState(props.selectedVal ? props.selectedVal : "");
+    const {value,setValue} = props
 
     useEffect(() => {
         if (!props.keepNull)
@@ -86,6 +86,9 @@ const translateDummy = (text) => {
 };
 
 const Dropdown = (props) => {
+
+    const {tableRow,setTableRow} = props;
+
     const user_type = Digit.SessionStorage.get("userType");
     const [dropdownStatus, setDropdownStatus] = useState(false);
     const [selectedOption, setSelectedOption] = useState(props.selected ? props.selected : null);
@@ -127,13 +130,28 @@ const Dropdown = (props) => {
     }
 
     function onSelect(val) {
+        
         if (val !== selectedOption || props.allowMultiselect) {
             props.select(val);
             setSelectedOption(val);
             setDropdownStatus(false);
+
+            //here update the tableState
+            setTableRow((prevState) => {
+                //just for static screen purposes
+                const newObj = {
+                    "name": "Name New",
+                    "aadhar": "111-111-111",
+                    "acno": "1212-1212-1212",
+                    "ifsc": "1313-1313-1331"
+                }
+                return [...prevState,newObj]
+            })
         } else {
             setSelectedOption(val);
             setforceSet(forceSet + 1);
+
+            
         }
     }
 
@@ -154,7 +172,7 @@ const Dropdown = (props) => {
 
     return (
         <div
-            className={`${user_type === "employee" ? "employee-select-wrap" : "select-wrap"} ${props?.className ? props?.className : ""}`}
+            className={`${user_type === "employee" ? "employee-select-wrap" : ""} ${props?.className ? props?.className : ""}`}
             style={{ ...props.style }}
         >
             {hasCustomSelector && (
@@ -196,6 +214,8 @@ const Dropdown = (props) => {
                         placeholder={props.placeholder}
                         onBlur={props?.onBlur}
                         inputRef={props.ref}
+                        value={props.value}
+                        setValue={props.setValue}
                     />
                     {props.showSearchIcon ? null : <ArrowDown onClick={dropdownSwitch} className="cp" disable={props.disable} />}
                     {props.showSearchIcon ? <SearchIcon onClick={dropdownSwitch} className="cp" disable={props.disable} /> : null}
