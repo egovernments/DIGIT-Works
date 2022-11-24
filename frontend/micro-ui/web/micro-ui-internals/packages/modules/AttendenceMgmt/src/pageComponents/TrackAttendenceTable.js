@@ -1,11 +1,11 @@
-import { Table } from '@egovernments/digit-ui-react-components'
+import { Table,ArrowDown } from '@egovernments/digit-ui-react-components'
 import React,{useState,useMemo,useEffect,Fragment} from 'react'
 import { useTranslation } from 'react-i18next'
 import SkillSelector from './SkillSelector'
 
 const TrackAttendenceTable = ({state,dispatch}) => {
   const [showSkillSelector, setShowSkillSelector] = useState(false)
-  
+  const [clickedRowState,setClickedRowState] = useState(null)
   const { t } = useTranslation()
   const tableRow = Object.values(state.rows)
   
@@ -70,7 +70,14 @@ const TrackAttendenceTable = ({state,dispatch}) => {
         Header: t("ATM_SKILL_LEVEL"),
         accessor: "skill",
         Cell: ({ value, column, row }) => {
-          return String(t(value));
+          return <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} onClick={() => {
+                            setClickedRowState(prevState=>row.original)
+                            setShowSkillSelector(true)                
+                            }}>
+            {String(t(value))}
+            <ArrowDown className="cp" />
+            {/* {showSkillSelector && <SkillSelector t={t} closeModal={setShowSkillSelector} userState={row} setUserState={dispatch} />} */}
+          </div>
         }
       },
       {
@@ -173,7 +180,7 @@ const TrackAttendenceTable = ({state,dispatch}) => {
         },
       },
     ]
-  }, [state])
+  }, [state, showSkillSelector])
   return (
     <React.Fragment>
       <div style={{ "padding": "0px", "overflowX": "scroll" }} className='card'>
@@ -197,7 +204,7 @@ const TrackAttendenceTable = ({state,dispatch}) => {
             };
           }}
         />
-        {/* {showSkillSelector && <SkillSelector t={t} closeModal={setShowSkillSelector} userState={state} setUserState={dispatch} />} */}
+        {showSkillSelector ? <SkillSelector t={t} closeModal={setShowSkillSelector} row={clickedRowState} dispatch={dispatch} /> : null }
       </div>
     </React.Fragment>
   )

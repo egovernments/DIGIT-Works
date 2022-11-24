@@ -61,7 +61,14 @@ const reducer = (state, action) => {
             const finalState = { ...state, rows: { ...state.rows, ...obj } } 
             return finalState;
         case "skill":
-            return { ...state }
+            const newState = {
+                [action.row.aadhar]: {
+                    ...action.row,
+                    skill:action.selectedSkill
+                }
+            }
+            const updatedState = { ...state, rows: { ...state.rows, ...newState } }
+            return updatedState
         default:
             return state;
     }
