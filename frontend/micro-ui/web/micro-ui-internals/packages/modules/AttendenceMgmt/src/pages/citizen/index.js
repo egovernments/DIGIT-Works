@@ -29,26 +29,26 @@ import ViewProject from "./manageWageSeekers/ViewProject";
 // }
 
 const App = ({ path }) => {
-    const location = useLocation();
-    
-    const ViewRegister = Digit?.ComponentRegistryService?.getComponent("ViewRegister");
+  const location = useLocation();
 
-    return (
-        <span className={"pt-citizen"}>
-            <Switch>
-                <AppContainer>
-                    {<BackButton>Back</BackButton>}
-                    {/* <PrivateRoute path={`${path}/property/new-application`} component={CreateProperty} /> */}
-                    <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
-                    <PrivateRoute path={`${path}/trackattendence`} component={() => <ShgInbox {...{path}} />} />
-                    <PrivateRoute path={`${path}/view-register`} component={() => <ViewRegister {...{ path }} />} />
-                    <PrivateRoute path={`${path}/shghome`} component={() => <ShgHome {...{ path }} />} />
-                    <PrivateRoute path={`${path}/view-projects`} component={() => <ViewProjectsInbox {...{ path }} />} />
-                    <PrivateRoute path={`${path}/view-project`} component={() => <ViewProject {...{ path }} exact/>} />
-                </AppContainer>
-            </Switch>
-        </span>
-    );
+  const ViewRegister = Digit?.ComponentRegistryService?.getComponent("ViewRegister");
+
+  return (
+    <span className={"pt-citizen"}>
+      <Switch>
+        <AppContainer>
+          {<BackButton>Back</BackButton>}
+          {/* <PrivateRoute path={`${path}/property/new-application`} component={CreateProperty} /> */}
+          <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
+          <PrivateRoute path={`${path}/trackattendence`} component={() => <ShgInbox {...{ path }} />} />
+          <PrivateRoute path={`${path}/view-register`} component={() => <ViewRegister {...{ path }} />} />
+          <PrivateRoute path={`${path}/shghome`} component={() => <ShgHome {...{ path }} />} />
+          <PrivateRoute path={`${path}/view-projects`} component={() => <ViewProjectsInbox {...{ path }} />} />
+          <PrivateRoute path={`${path}/view-project`} component={() => <ViewProject {...{ path }} exact />} />
+        </AppContainer>
+      </Switch>
+    </span>
+  );
 };
 
 export default App;
