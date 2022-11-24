@@ -22,7 +22,7 @@ import java.util.List;
 @Builder
 public class AttendeeDeleteResponse {
     @JsonProperty("ResponseInfo")
-    private ResponseInfo responseInfo = null;
+    private ResponseInfo responseInfo;
 
     @JsonProperty("attendees")
     @Valid
