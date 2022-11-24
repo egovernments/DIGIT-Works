@@ -2,6 +2,7 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -16,8 +17,8 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class StaffPermissionResponse {
-    @JsonProperty("responseInfo")
-    private Object responseInfo = null;
+    @JsonProperty("ResponseInfo")
+    private ResponseInfo responseInfo = null;
 
     @JsonProperty("staff")
     private StaffPermission staff = null;

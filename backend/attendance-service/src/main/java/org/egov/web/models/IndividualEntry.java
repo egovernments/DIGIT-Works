@@ -1,6 +1,7 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -32,6 +33,12 @@ public class IndividualEntry {
 
     @JsonProperty("denrollmentDate")
     private Double denrollmentDate = null;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
+
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
 
 }
