@@ -1,6 +1,7 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.Document;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
@@ -43,6 +44,9 @@ public class AttendanceLog {
     @JsonProperty("documentIds")
     @Valid
     private List<Document> documentIds = null;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
