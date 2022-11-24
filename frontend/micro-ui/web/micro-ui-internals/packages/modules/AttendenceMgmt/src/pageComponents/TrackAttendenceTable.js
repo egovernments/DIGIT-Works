@@ -180,7 +180,7 @@ const TrackAttendenceTable = ({state,dispatch}) => {
         },
       },
     ]
-  }, [state, showSkillSelector])
+  }, [state])
   return (
     <React.Fragment>
       <div style={{ "padding": "0px", "overflowX": "scroll" }} className='card'>
