@@ -1,5 +1,5 @@
 import React,{ useEffect, useRef, useState } from 'react'
-import { DateRange } from 'react-date-range'
+import { DatePicker } from 'react-date-range'
 import { enGB } from 'date-fns/locale'
 import format from 'date-fns/format'
 import { addDays } from 'date-fns'
@@ -72,16 +72,16 @@ const DateRangeComp = () => {
 
             <div ref={refOne}>
                 {open &&
-                    <DateRange
+                    <DatePicker
                         locale={enGB}
                         onChange={item => setRange([item.selection])}
                         editableDateInputs={false}
-                        moveRangeOnFirstSelection={true}
-                        ranges={range}
-                        months={1}
-                        direction="horizontal"
+                        //moveRangeOnFirstSelection={true}
+                        //ranges={range}
+                        //months={1}
+                        //direction="horizontal"
                         //className="calendarElement"
-                        endDateOffset={day => day.add(6, 'days')}
+                        //endDateOffset={day => day.add(6, 'days')}
                     />
                 }
             </div>

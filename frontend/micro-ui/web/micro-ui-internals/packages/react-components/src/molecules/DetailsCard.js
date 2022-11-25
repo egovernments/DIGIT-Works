@@ -15,7 +15,7 @@ const Details = ({ label, name, onClick}) => {
   );
 };
 
-const DetailsCard = ({ data, serviceRequestIdKey, linkPrefix, handleSelect, selectedItems, keyForSelected, handleDetailCardClick, isTwoDynamicPrefix = false, getRedirectionLink, handleClickEnabled = true, t, showActionBar = true, showCitizenInfoLabel = false }) => {
+const DetailsCard = ({ data, serviceRequestIdKey, linkPrefix, handleSelect, selectedItems, keyForSelected, handleDetailCardClick, isTwoDynamicPrefix = false, getRedirectionLink, handleClickEnabled = true, t, showActionBar = true, showCitizenInfoLabel = false,submitButtonLabel }) => {
   if (linkPrefix && serviceRequestIdKey) {
     return (
       <div>
@@ -72,7 +72,7 @@ const DetailsCard = ({ data, serviceRequestIdKey, linkPrefix, handleSelect, sele
               fill={"#CC7B2F"}
             />:null}
             {showActionBar ? 
-              <SubmitBar onSubmit={()=>handleDetailCardClick(object)} label={t("ATM_ENROLL_WAGE_SEEKER")} />
+              <SubmitBar onSubmit={() => handleDetailCardClick(object)} label={submitButtonLabel} />
             :null}
           </div>
         );
