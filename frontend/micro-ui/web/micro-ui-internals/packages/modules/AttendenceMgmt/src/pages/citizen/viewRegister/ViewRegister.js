@@ -1,4 +1,4 @@
-import { Card, KeyNote, DatePicker, DateRange, SearchIcon, SearchIconSvg,Table,StatusTable,Row,WeekPicker, TextInput } from '@egovernments/digit-ui-react-components';
+import { Card, KeyNote, DatePicker, DateRange, SearchIcon, SearchIconSvg,Table,StatusTable,Row,WeekPicker, TextInput,SubmitBar } from '@egovernments/digit-ui-react-components';
 import React, { Fragment, useState, useContext, useCallback, useMemo, useReducer } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
@@ -97,6 +97,11 @@ const sampleUsersState = [
 ]
 
 const ViewRegister = (props) => {
+
+    const [showSubmit,setShowSubmit] = useState(true)
+    const [showDraft,setShowDraft] = useState(true)
+    const [showDownload,setShowDownload] = useState(true)
+
     const [isExpanded, setIsExpanded] = useState(true)
     const { t } = useTranslation()
     const [state, dispatch] = useReducer(reducer,initialTableState)
@@ -112,6 +117,9 @@ const ViewRegister = (props) => {
         
     ]), [])
 
+    const handleSubmit = () => {
+        console.log("Submit button clicked");
+    }
     
     const SearchImg = () => {
         return <SearchIconSvg className="signature-img" />;
@@ -145,23 +153,6 @@ const ViewRegister = (props) => {
                 </p>
                 </StatusTable>
             </Card>
-
-
-            {/* <div className='card'>
-                <DateRangeNew t={t} values={localSearchParams?.range} onFilterChange={handleChange} filterLabel="MARK_ATTENDENCE_FOR_WEEK" />
-            </div> */}
-                        
-            
-            {/* <div className="map-search-bar-wrap"> */}
-                {/* <img src={searchicon} className="map-search-bar-icon" alt=""/> */}
-                {/* <SearchIconSvg className="map-search-bar-icon" /> */}
-                {/* <input id="pac-input" className="map-search-bar" type="dropdown" placeholder={t("SEARCH_BY_NAME_AADHAR")} /> */}
-            {/* </div> */}
-
-            {/* <AttendenceTable initialUserState={userState} /> */}
-            {/* <WeekPicker /> */}
-            {/* <DatePicker stylesForInput={{ width: "calc(100% - 290px)" }} style={{ width: "202px" }} />
-            <DateRangeComp /> */}
             <Card style={{padding:"8px 16px"}}>
                 <DateRange t={t} values={localSearchParams?.range} onFilterChange={handleChange} filterLabel="ATM_MARK_ATTENDENCE_LABEL" inputStyle={{ margin: "0.5rem 0px" }} />
             </Card>
@@ -171,6 +162,19 @@ const ViewRegister = (props) => {
             </div>
 
             <TrackAttendenceTable state={state} dispatch={dispatch} searchQuery={searchQuery} />
+
+            {showDraft ? <div style={{ margin: "1rem 8px" }}>
+                <SubmitBar onSubmit={handleSubmit} label={t("ATM_SAVE_DRAFT")} />
+            </div> : null}
+            {showSubmit?<div style={{ margin: "1rem 8px" }}>
+                <SubmitBar onSubmit={handleSubmit} label={t("ATM_SEND_FOR_APPROVAL")} />
+            </div>:null}
+            {showDownload ? <div style={{ margin: "1rem 8px" }}>
+                <SubmitBar onSubmit={handleSubmit} label={t("ATM_DOWNLOAD_MUSTER")} />
+            </div> :null}
+            
+
+
         </React.Fragment>
     )
 }
