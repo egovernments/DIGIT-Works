@@ -36,6 +36,9 @@ public class MusterRollResponse {
     @Valid
     private List<MusterRoll> musterRolls = null;
 
+    @JsonProperty("count")
+    private Integer count;
+
 
     public MusterRollResponse addMusterRollsItem(MusterRoll musterRollsItem) {
         if (this.musterRolls == null) {
