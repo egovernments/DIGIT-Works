@@ -1,24 +1,12 @@
 package org.egov.web.models;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
-
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
+import java.math.BigDecimal;
 
 /**
  * This computed data will also be stored as part of the muster roll db.
@@ -39,6 +27,10 @@ public class AttendanceEntry {
     @JsonProperty("attendance")
     private BigDecimal attendance = null;
 
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 }
 
