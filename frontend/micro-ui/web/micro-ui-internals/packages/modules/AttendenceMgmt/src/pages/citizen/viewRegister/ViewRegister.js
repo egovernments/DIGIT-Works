@@ -1,4 +1,4 @@
-import { Card, KeyNote, DatePicker, DateRange, SearchIcon, SearchIconSvg,Table,StatusTable,Row,WeekPicker } from '@egovernments/digit-ui-react-components';
+import { Card, KeyNote, DatePicker, DateRange, SearchIcon, SearchIconSvg,Table,StatusTable,Row,WeekPicker, TextInput } from '@egovernments/digit-ui-react-components';
 import React, { Fragment, useState, useContext, useCallback, useMemo, useReducer } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
@@ -106,12 +106,16 @@ const ViewRegister = (props) => {
         endDate:new Date()
     } }));
 
+    const [searchQuery, onSearch] = useState("");
     
     const columns = useMemo(() => ([
         
     ]), [])
 
     
+    const SearchImg = () => {
+        return <SearchIconSvg className="signature-img" />;
+    };
 
     const [userState, setUserState] = useState(sampleUsersState)
 
@@ -162,7 +166,11 @@ const ViewRegister = (props) => {
                 <DateRange t={t} values={localSearchParams?.range} onFilterChange={handleChange} filterLabel="ATM_MARK_ATTENDENCE_LABEL" inputStyle={{ margin: "0.5rem 0px" }} />
             </Card>
             
-            <TrackAttendenceTable state={state} dispatch={dispatch} />
+            <div className='card' style={{ "padding": "0px",marginTop:"1rem" }}>
+                <TextInput className="searchInput" placeholder={t("ATM_SEARCH_WAGE_SEEKERS_PLACEHOLDER")} signature={true} signatureImg={<SearchImg />} onChange={(e)=>onSearch(e.target.value)} style={{border:"none",borderRadius:"200px"}}/>
+            </div>
+
+            <TrackAttendenceTable state={state} dispatch={dispatch} searchQuery={searchQuery} />
         </React.Fragment>
     )
 }
