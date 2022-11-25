@@ -83,7 +83,9 @@ const Table = ({
     onSort(sortBy);
   }, [onSort, sortBy]);
 
-  useEffect(() => setGlobalFilter(onSearch), [onSearch, setGlobalFilter]);
+  useEffect(() => setGlobalFilter(onSearch), [onSearch, setGlobalFilter,data]);
+  //note -> adding data prop in dependency array to trigger filter whenever state of the table changes
+  //use case -> without this if we enter string to search and then click on it's attendence checkbox or skill selector for that matter then the global filtering resets and whole table is shown
   return (
     <React.Fragment>
     <span className={customTableWrapperClassName}>
