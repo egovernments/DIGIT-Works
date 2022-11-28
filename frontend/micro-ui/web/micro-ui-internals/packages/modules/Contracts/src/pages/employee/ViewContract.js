@@ -110,7 +110,7 @@ const ViewContract = (props) => {
     return (
         <Fragment>
             <div className={"employee-main-application-details"}>
-                <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+                <div className={"employee-application-details"}>
                     <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_VIEW_CONTRACT")}</Header>
                     <MultiLink
                         className="multilinkWrapper employee-mulitlink-main-div"
@@ -157,13 +157,14 @@ const ViewContract = (props) => {
                     // isDataLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading}
                     applicationData={applicationDetails?.applicationData}
                     // mutate={mutate}
-                    // workflowDetails={workflowDetails}
+                    workflowDetails={applicationDetails?.workflowDetails}
                     // businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}
-                    moduleCode="works"
+                    moduleCode="contracts"
                     showToast={showToast}
                     setShowToast={setShowToast}
                     closeToast={closeToast}
                     // timelineStatusPrefix={`WORKS_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`}
+                    timelineStatusPrefix=""
                     // oldValue={res}
                     // isInfoLabel={true}
                     // clearDataDetails={clearDataDetails}

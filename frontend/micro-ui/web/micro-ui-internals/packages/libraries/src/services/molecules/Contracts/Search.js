@@ -26,7 +26,7 @@ let sampleContractSearchResponse = {
         contractId: "1136/TO/DB/FLOOD/10-11",
         contractDate: "08/09/2010",
         contractType: "Work Order",
-        nameOfTheWork: "Providing CC Drain in Birla Gaddah (Tungabhaqdra workers colony) in 27th ward",
+        nameOfTheWork: "Providing CC Drain in Birla Gaddah ",
         abstractEstimateNumber: "EST/KRPN/1136",
         estimateNumber:"est/ns/2039",
         subEstimateNumber:"wn/ns/2039",
@@ -59,20 +59,124 @@ let sampleContractSearchResponse = {
 }
 
 let workflowDataDetails ={
+data:{
+    actionState:{
+        applicationBusinessService: "estimate-approval-2"
+    },
+    timeline:[{
+        assigner:{
+            emailId:"",
+            id: 109,
+            mobileNumber: "9667076655",
+            name: "Est Super User",
+            tenantId: "pb.amritsar",
+            type: "EMPLOYEE",
+            userName: "Nipsyyyy",
+            uuid: "be99b2c2-5780-4b1c-8e41-e3f8a972ebda"
+        },
+        assignes:[{ emailId:null,
+                    id: 111,
+                    mobileNumber: "8877665544",
+                    name: "Estimate Checker",
+                    roles: [{
+                        code: "EST_CHECKER",
+                        id: null,
+                        name: "EST_CHECKER",
+                        tenantId: "pb.amritsar"
+                    }],
+                    tenantId: "pb.amritsar",
+                    type: "EMPLOYEE",
+                    userName: "EMP-107-000011",
+                    uuid: "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9"
+                }],
+        auditDetails:{
+            ccreated: "23/11/2022",
+            lastModified: "23/11/2022",
+            lastModifiedEpoch: 1669175470551
+        },
+        caption:[{
+            mobileNumber: "8877665544",
+            name: "Estimate Checker"
+        }],
+        performedAction: "CREATE",
+        rating: 0,
+        state: "Contract Created",
+        status: "CREATED",
+        timeLineActions: [],
+        wfComment: ["Bill to be revised"],
+        wfDocuments: null
+    }],
     ProcessInstances:[{
         action: "CREATE",
         assigner:{
+            emailId:"",
+            id: 109,
+            mobileNumber: "9667076655",
             name: "Est Super User",
-            uuid: "c8d0093a-4d2b-495f-8bdf-fd9d3594e43f",
-            mobileNumber: "9876543210"
+            tenantId: "pb.amritsar",
+            type: "EMPLOYEE",
+            userName: "Nipsyyyy",
+            uuid: "be99b2c2-5780-4b1c-8e41-e3f8a972ebda"
         },
+        assignes:[{ emailId:null,
+                    id: 111,
+                    mobileNumber: "8877665544",
+                    name: "Estimate Checker",
+                    roles: [{
+                        code: "EST_CHECKER",
+                        id: null,
+                        name: "EST_CHECKER",
+                        tenantId: "pb.amritsar"
+                    }],
+                    tenantId: "pb.amritsar",
+                    type: "EMPLOYEE",
+                    userName: "EMP-107-000011",
+                    uuid: "88bd1b70-dd6d-45f7-bcf7-5aa7a6fae7d9"
+                }],
         auditDetails:{
             createdBy: "c8d0093a-4d2b-495f-8bdf-fd9d3594e43f",
             createdTime: 1668593783889,
             lastModifiedBy: "c8d0093a-4d2b-495f-8bdf-fd9d3594e43f",
             lastModifiedTime: 1668593783889
-        }
+        },
+        businessId: "EP/2022-23/11/000160",
+        businessService: "estimate-approval-2",
+        businesssServiceSla: -6902790,
+        comment: "",
+        documents: null,
+        entity: null,
+        escalated: false,
+        id: "e3f890d0-bcb0-4526-afde-1d36d2be91f4",
+        moduleName: "estimate-service",
+        nextActions: [{
+            action: "CHECK",
+            active: null,
+            auditDetails: null,
+            currentState: "67d17040-0c49-40a1-b932-a7b5a5266557",
+            nextState: "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+            roles: ['EST_CHECKER'],
+            tenantId: "pb",
+            uuid: "568b7e7d-d88f-4079-bb02-3dc9a37c56ea"
+        }],
+        previousStatus: null,
+        rating: 0,
+        state:{
+            actions:[{
+                action: "CHECK",
+                active: null,
+                auditDetails: null,
+                currentState: "67d17040-0c49-40a1-b932-a7b5a5266557",
+                nextState: "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                roles: ['EST_CHECKER'],
+                tenantId: "pb",
+                uuid: "568b7e7d-d88f-4079-bb02-3dc9a37c56ea"
+            }]
+        },
+        stateSla: null,
+        tenantId: "pb.amritsar"
+
     }]
+}
 }
 
 export const ContractSearch = {
@@ -171,6 +275,7 @@ export const ContractSearch = {
             applicationDetails: details,
             // processInstancesDetails: workflowDetails?.ProcessInstances,
             applicationData:contract,
+            workflowDetails:workflowDataDetails
         }
     }
 }
