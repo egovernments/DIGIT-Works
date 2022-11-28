@@ -1,9 +1,9 @@
 import { Table,ArrowDown } from '@egovernments/digit-ui-react-components'
-import React,{useState,useMemo,useEffect,Fragment} from 'react'
+import React,{useState,useMemo,useEffect,Fragment,useCallback} from 'react'
 import { useTranslation } from 'react-i18next'
 import SkillSelector from './SkillSelector'
 
-const TrackAttendenceTable = ({state,dispatch}) => {
+const TrackAttendenceTable = ({state,dispatch,searchQuery}) => {
   const [showSkillSelector, setShowSkillSelector] = useState(false)
   const [clickedRowState,setClickedRowState] = useState(null)
   const { t } = useTranslation()
@@ -42,6 +42,41 @@ const TrackAttendenceTable = ({state,dispatch}) => {
       </div>
     )
   }
+
+  const filterValue = useCallback((rows, id, filterValue = "") => {
+    
+    return rows.filter((row) => {
+      const res = Object.keys(row?.values).find((key) => {
+        if (typeof row?.values?.[key] === "object") {
+          return Object.keys(row?.values?.[key]).find((id) => {
+            if (id === "insight") {
+              return String(Math.abs(row?.values?.[key]?.[id]) + "%")
+                .toLowerCase()
+                .startsWith(filterValue?.toLowerCase());
+            }
+            return String(row?.values?.[key]?.[id])?.toLowerCase().includes(filterValue?.toLowerCase());
+          });
+        }
+        return (
+          String(row?.values?.[key]).toLowerCase()?.includes(filterValue?.toLowerCase()) ||
+          String(t(row?.values?.[key])).toLowerCase()?.includes(filterValue?.toLowerCase())
+          /* search in the table to get filter along with space is currently enabled
+          Also replace startsWith with includes
+          String(row?.values?.[key])
+            .toLowerCase()
+            .split(" ")
+            .some((str) => str?.startsWith(filterValue?.toLowerCase())) ||
+          String(t(row?.values?.[key]))
+            .toLowerCase()
+            .split(" ")
+            .some((str) => str.startsWith(filterValue?.toLowerCase()))
+            */
+        );
+      });
+      return res;
+    });
+  }, []);
+
 
   const tableColumns = useMemo(() => {
     return [
@@ -191,9 +226,9 @@ const TrackAttendenceTable = ({state,dispatch}) => {
           disableSort={false}
           autoSort={true}
           manualPagination={false}
-          // globalSearch={filterValue}
+          globalSearch={filterValue}
           initSortId="S N "
-          // onSearch={onSearch}
+          onSearch={searchQuery}
           data={tableRow}
           totalRecords={tableRow.length}
           columns={tableColumns}
