@@ -224,6 +224,7 @@ import OpenLinkContainer from "./atoms/OpenLinkContainer";
 import UploadPitPhoto from "./molecules/UploadPitPhoto";
 import { DownloadBtnCommon } from "./atoms/svgindex";
 import ToggleSwitch from "./atoms/ToggleSwitch";
+import WeekPicker from "./atoms/WeekPicker";
 export {
   Phone,
   Body,
@@ -296,6 +297,7 @@ export {
   LabelFieldPair,
   BreadCrumb,
   DatePicker,
+  WeekPicker,
   InfoBanner,
   MobileNumber,
   EllipsisMenu,

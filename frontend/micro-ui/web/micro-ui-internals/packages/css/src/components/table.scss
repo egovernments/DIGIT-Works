@@ -301,3 +301,19 @@
       background-color: #ECECEC;
     }
 }
+
+.column-attendence {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.day-attendence {
+  margin-left: 0.3rem;
+  font-weight: 550;
+}
+
+.date-attendence {
+  opacity: 0.6;
+  font-weight: 200;
+}

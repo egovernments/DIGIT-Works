@@ -26,7 +26,7 @@ const ViewProjects = ({ tenantId = "pb.amritsar", data = {}, onSubmit = () => co
     //     return `${day}/${month}/${year}`;
     // };
 
-    const GetCell = (value) => <span className="cell-text">{value}</span>;
+    // const GetCell = (value) => <span className="cell-text">{value}</span>;
 
     const propsMobileInboxCards = useMemo(() => {
         // if (data?.display) {
@@ -60,7 +60,8 @@ const ViewProjects = ({ tenantId = "pb.amritsar", data = {}, onSubmit = () => co
                         data: propsMobileInboxCards,
                         serviceRequestIdKey: t("ATM_PROJECT_NAME"),
                         t,
-                        showCitizenInfoLabel: true
+                        showCitizenInfoLabel: true,
+                        submitButtonLabel: t("ATM_ENROLL_WAGE_SEEKER")
                     }
                 }
                 />
