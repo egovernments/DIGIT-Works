@@ -50,7 +50,7 @@ export const WorksSearch = {
             asSectionHeader: true,
             values: [
                 { title: "WORKS_ESTIMATE_ID", value: estimate?.estimateNumber},
-                { title: "WORKS_STATUS", value: estimate?.estimateStatus}
+                { title: "WORKS_STATUS", value: t(`ES_COMMON_${estimate?.estimateStatus}`)}
             ]
         }
 

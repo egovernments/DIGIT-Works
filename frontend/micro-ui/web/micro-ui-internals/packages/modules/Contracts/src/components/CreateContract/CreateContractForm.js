@@ -49,7 +49,9 @@ const CreateContractForm = ({ onFormSubmit }) => {
 
     employeeData?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
     officerIncharge = employeeData?.Employees?.length > 0 ? employeeData?.Employees : []
-    
+    officerIncharge?.map(officer=> {
+        officer.i18nKey = `ES_COMMON_OFFICER_${officer?.nameOfEmp}`
+    })
     const tenant = Digit.ULBService.getStateId()
     
     const dummyData = [{name:"Orgn1"},{name:"Orgn2"},{name:"Orgn3"}]
@@ -60,12 +62,18 @@ const CreateContractForm = ({ onFormSubmit }) => {
         [
             {
                 "name": "Designation"
+            },
+            {
+                "name": "Department"
             }
         ]
     );
 
     designationData?.["common-masters"]?.Designation?.map(designation=> {
         designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
+    })
+    designationData?.["common-masters"]?.Department?.map(department=> {
+        department.i18nKey = `ES_COMMON_${department?.code}`
     })
 
 
@@ -129,7 +137,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
 
                 {/* PROJECT DETAILS */}
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FILE_NO`)}:*`}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{t(`WORKS_FILE_NO`)}</CardLabel>
                     <div className='field'>
                         <TextInput 
                             name="fileNumber" 
@@ -141,7 +149,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 </LabelFieldPair>
 
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FILE_DATE`)}:*`}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{t(`WORKS_FILE_DATE`)}</CardLabel>
                     <div className='field'>
                         <Controller
                             name="fileDate"
@@ -253,7 +261,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 {/* AGGREEMENT DETAILS */}
                 <CardSectionHeader style={{ "marginTop": "14px" }}>{t(`WORKS_AGGREEMENT_DETAILS`)}</CardSectionHeader>
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_DATE_OF_AGG`)}:*`}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{t(`WORKS_DATE_OF_AGG`)}</CardLabel>
                     <div className='field'>
                     <Controller
                             name="agreementDate"
@@ -262,7 +270,8 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             render={(props) => 
                             <DatePicker
                                 style={{ "width": "100%" }} 
-                                date={props.value} 
+                                date={props.value}
+                                max={Digit.Utils.date.getDate()}
                                 onChange={props.onChange} 
                                 onBlur={props.onBlur} 
                             />}
@@ -279,9 +288,9 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-                                        option={dummyData}
+                                        option={designationData?.["common-masters"]?.Department}
                                         selected={props?.value}
-                                        optionKey={"name"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
@@ -312,7 +321,19 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             inputRef={register()} 
                         />
                 </LabelFieldPair>
-
+                <LabelFieldPair>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONT_PERIOD`)}:*`}</CardLabel>
+                    <div className='field'>
+                        <TextInput 
+                            name="currentContractAmount" 
+                            inputRef={register({ pattern: /^$|^[0-9.\s]+$/ , required: true })}
+                        />
+                            {errors && errors?.currentContractAmount?.type === "pattern" && (
+                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}                        
+                            {errors && errors?.currentContractAmount?.type === "required" && (
+                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    </div>
+                </LabelFieldPair>
                 {desLoading?<Loader />: <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_OFFICER_INCHARGE_DES`)}:*`}</CardLabel>
                     <div className='field'>
@@ -354,7 +375,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                                         onBlur={props.onBlur}
                                         option={officerIncharge}
                                         selected={props?.value}
-                                        optionKey={"nameOfEmp"}
+                                        optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                     />
