@@ -28,16 +28,16 @@ const MobileInbox = (props) => {
             <div>
                 <span className="link">
                   <Link to={`viewAttendance?mustorRollId=${row.mustorRollId}`}>
-                    {row.mustorRollId || "NA"}
+                    {row.mustorRollId || t("ES_COMMON_NA")}
                   </Link>
                 </span>
             </div> 
         ),
-        ["Name of the Work"]:t(`ES_COMMON_${row?.work}`) || t("ES_COMMON_NA"),
+        ["Name of the Work"]: row?.work || t("ES_COMMON_NA"),
         ["Attendance Week"]: row.week || t("ES_COMMON_NA"),
-        ["IA/IP"]: t(`ES_COMMON_FUND_${row?.iaip}`) || t("ES_COMMON_NA"),
-        ["Number of Individuals"]: t(`ES_COMMON_${row?.individualCount}`) || t("ES_COMMON_NA"),
-        ["SLA (days)"]: t(`ES_COMMON_${row?.slaDays}`) || t("ES_COMMON_NA"),
+        ["IA/IP"]: row?.iaip || t("ES_COMMON_NA"),
+        ["Number of Individuals"]: row?.individualCount || t("ES_COMMON_NA"),
+        ["SLA (days)"]: row?.slaDays || t("ES_COMMON_NA"),
     }));
   }, [data]);
 
