@@ -101,7 +101,7 @@ const Inbox = ({isInbox, parentRoute, filterComponent, searchComponent,initialSt
               sortParams={sortParams}
              /> : 
             (<React.Fragment>
-                {isInbox && <Header>{"Inbox"}</Header>}
+                {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
                  <DesktopInbox
                     isFilter={true}
                     isSearch={true}

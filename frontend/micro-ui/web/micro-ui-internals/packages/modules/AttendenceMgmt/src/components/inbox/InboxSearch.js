@@ -98,8 +98,8 @@ const InboxSearch = ({type, isInboxPage, onSearch, onClose}) => {
                 </div>
               )}
               <div className={"complaint-input-container"} style={{ width: "100%" }}>
-                <div style={{marginRight:"16px"}}>
-                  <label className="filter-label" style={{ fontSize: '16px' }}>{"Name of the Work"}</label>
+                <div style={{marginRight:`${type === "mobile" ? 0 : '16px'}`}}>
+                  <label className="filter-label" style={{ fontSize: '16px' }}>{t("WORKS_NAME_OF_WORK")}</label>
                   <TextInput 
                     name="workName" 
                     inputRef={register()} 
@@ -110,7 +110,7 @@ const InboxSearch = ({type, isInboxPage, onSearch, onClose}) => {
                   /> 
                 </div>
                 <div>
-                  <label className="filter-label" style={{ fontSize: '16px' }}>{"Implementing Agency/ Partner"}</label>
+                  <label className="filter-label" style={{ fontSize: '16px' }}>{t("ATM_IMPLEMENTING_AGENCY")}</label>
                   <Controller
                     control={control}
                     name="iaip"
@@ -126,34 +126,36 @@ const InboxSearch = ({type, isInboxPage, onSearch, onClose}) => {
                     )}
                   />              
                 </div>
-                {isInboxPage &&
-                (<div style={{ gridColumn: "2/3", textAlign: "right", paddingTop: "10px", paddingRight: "16px"}} className="input-fields">
-                  <LinkLabel style={{ display: "inline"}} onClick={clearSearch}>
-                    {t("ES_COMMON_CLEAR_SEARCH")}
-                  </LinkLabel>
-                </div>
-                )}
-                {(type === "desktop") &&
-                  (<div style={{ maxWidth: "unset", marginLeft: "unset" }} className="search-submit-wrapper">
-                  <SubmitBar
-                    className="submit-bar-search"
-                    label={t("ES_COMMON_SEARCH")}
-                    disabled={!!Object.keys(formState.errors).length}
-                    submit
-                  />
-                </div>
-                )}
+                {
+                  isInboxPage && (type === "desktop") &&  (
+                    <React.Fragment>
+                      <div style={{ gridColumn: "2/3", textAlign: "right", paddingTop: "10px", paddingRight: "16px"}} className="input-fields">
+                        <LinkLabel style={{ display: "inline"}} onClick={clearSearch}>
+                          {t("ES_COMMON_CLEAR_SEARCH")}
+                        </LinkLabel>
+                      </div>
+                      <div style={{ maxWidth: "unset", marginLeft: "unset" }} className="search-submit-wrapper">
+                        <SubmitBar
+                          className="submit-bar-search"
+                          label={t("ES_COMMON_SEARCH")}
+                          disabled={!!Object.keys(formState.errors).length}
+                          submit
+                        />
+                      </div>
+                    </React.Fragment>
+                 )
+                }
               </div>
+              {(type === "mobile") && (
+                <ActionBar className="clear-search-container">
+                  <button className="clear-search" style={{ flex: 1 }}>
+                    {clearAll()}
+                  </button>
+                  <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+                </ActionBar>
+              )}
             </div>
           </div>
-          {(type === "mobile") && (
-            <ActionBar className="clear-search-container">
-              <button className="clear-search" style={{ flex: 1 }}>
-                {clearAll()}
-              </button>
-              <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
-            </ActionBar>
-          )}
         </React.Fragment>
       </form>
     )

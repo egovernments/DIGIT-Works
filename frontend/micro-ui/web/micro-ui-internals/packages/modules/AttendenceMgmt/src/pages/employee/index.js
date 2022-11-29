@@ -29,26 +29,24 @@ const App = ({ path }) => {
   const Inbox = Digit.ComponentRegistryService.getComponent("AttendenceMgmtInbox");
 
   return (
-      <span className={"pt-citizen"}>
-          <Switch>
-              <AppContainer>
-                  <React.Fragment>
-                      <AttendanceBreadCrumbs location={location} />
-                  </React.Fragment>
-                  <PrivateRoute 
-                      path={`${path}/inbox`} 
-                      component={ () => (
-                          <Inbox 
-                              isInbox 
-                              parentRoute={path}
-                              filterComponent="AttendenceInboxFilter" 
-                              searchComponent="AttendenceInboxSearch"
-                              initialStates={{}}
-                          />
-                      )} />
-              </AppContainer>
-          </Switch>
-      </span>
+    <Switch>
+      <AppContainer>
+          <React.Fragment>
+              <AttendanceBreadCrumbs location={location} />
+          </React.Fragment>
+          <PrivateRoute 
+              path={`${path}/inbox`} 
+              component={ () => (
+                  <Inbox 
+                      isInbox 
+                      parentRoute={path}
+                      filterComponent="AttendenceInboxFilter" 
+                      searchComponent="AttendenceInboxSearch"
+                      initialStates={{}}
+                  />
+              )} />
+      </AppContainer>
+    </Switch>
   );
 };
 

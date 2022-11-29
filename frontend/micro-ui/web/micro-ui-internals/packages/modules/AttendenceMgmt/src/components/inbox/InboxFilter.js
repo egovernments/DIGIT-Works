@@ -26,7 +26,7 @@ const InboxFilter = ({type, onFilterChange, onClose}) => {
             <DateRangeNew 
               {...customProps} 
               values={localSearchParams?.range} 
-              label="Muster Roll Date Range" 
+              label={t("ATM_MUSTER_ROLL_DATE_RANE")} 
               onFilterChange={handleChange} 
               customStyles={{marginBottom: '0px', fontSize: '16px'}}
             />
@@ -62,7 +62,7 @@ const InboxFilter = ({type, onFilterChange, onClose}) => {
           <div className="heading" style={{ alignItems: "center" }}>
             <div className="filter-label" style={{ display: "flex", alignItems: "center" }}>
                 <FilterIcon/>
-                <span style={{ marginLeft: "8px", fontWeight: "normal" }}>{"Filters"}:</span>
+                <span style={{ marginLeft: "8px", fontWeight: "normal" }}>{t("ES_COMMON_FILTER_BY")}:</span>
             </div>
             {type === "desktop" && (
               <span className="clear-search" onClick={clearAll} style={{ border: "1px solid #e0e0e0", padding: "6px" }}>
@@ -77,7 +77,7 @@ const InboxFilter = ({type, onFilterChange, onClose}) => {
           </div>
           <div style={{marginTop:"20px"}}>
             <FormComposer
-              label={'Apply'}
+              label={t("ES_COMMON_APPLY")}
               config={configs}
               onSubmit={onSubmit}
               buttonStyle={{marginTop: "24px"}}

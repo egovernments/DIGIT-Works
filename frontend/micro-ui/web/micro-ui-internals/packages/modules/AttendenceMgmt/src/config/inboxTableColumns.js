@@ -1,10 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+
 const GetCell = (value) => <span className="cell-text">{value}</span>;
 
-export const inboxTableColumns = [
+export const inboxTableColumns = (mustorRollIdLabel, workNameLabel, attendanceWeekLabel, iaipLabel, noOfIndLabel, slaLabel) => [
     {
-      Header: "Muster Roll ID",
+      Header: mustorRollIdLabel,
       disableSortBy: true,
       accessor: "mustorRollId",
       Cell: ({ row }) => {
@@ -20,27 +21,27 @@ export const inboxTableColumns = [
       }
     },
     {
-        Header: "Name of the Work",
+        Header: workNameLabel,
         disableSortBy: true,
         accessor: (row) => (GetCell(row?.work)),
     },
     {
-        Header: "Attendance Week",
+        Header: attendanceWeekLabel,
         disableSortBy: true,
         accessor: (row) => (GetCell(row?.week)),
     },
     {
-        Header: "IA/IP",
+        Header: iaipLabel,
         disableSortBy: true,
         accessor: (row) => (GetCell(row?.iaip)),
     },
     {
-        Header: "Number of Individuals",
+        Header: noOfIndLabel,
         disableSortBy: true,
         accessor: (row) => (GetCell(row?.individualCount)),
     },
     {
-        Header: "SLA (days)",
+        Header: slaLabel,
         disableSortBy: true,
         accessor: (row) => (GetCell(row?.slaDays)),
     }   
