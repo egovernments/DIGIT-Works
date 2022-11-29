@@ -239,8 +239,7 @@
     thead {
       background-color: #f2f2f2;
     }
-    tbody tr:last-child {
-      background-color: #f2f2f2;
+    tbody tr .total-attendence {
       font-weight: bolder;
       text-align: center;
     }

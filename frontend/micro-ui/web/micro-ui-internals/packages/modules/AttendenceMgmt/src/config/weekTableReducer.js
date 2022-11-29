@@ -45,7 +45,7 @@ export const initialTableState = {
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
     },
     "13333-3333-3333": {
-      sno: "3",
+      sno: "6",
       reg_id: "ID-1239-1312",
       aadhar: "13333-3333-3333",
       name_of_individual: "Rashmi Ranjan",
@@ -53,7 +53,7 @@ export const initialTableState = {
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
     },
     "14444-4444-4444": {
-      sno: "4",
+      sno: "7",
       reg_id: "ID-1239-1312",
       aadhar: "14444-4444-4444",
       name_of_individual: "Rashmi Ranjan",
@@ -61,7 +61,7 @@ export const initialTableState = {
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
     },
     "15555-5555-5555": {
-      sno: "5",
+      sno: "8",
       reg_id: "ID-1239-1312",
       aadhar: "15555-5555-5555",
       name_of_individual: "Rashmi Ranjan",
@@ -69,33 +69,33 @@ export const initialTableState = {
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
     },
     "24444-4444-4444": {
-      sno: "4",
+      sno: "9",
       reg_id: "ID-1239-1312",
-      aadhar: "14444-4444-4444",
+      aadhar: "24444-4444-4444",
       name_of_individual: "Rashmi Ranjan",
       guardian_name: "Rashmi Ranjan",
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
     },
     "25555-5555-5555": {
-      sno: "5",
+      sno: "10",
       reg_id: "ID-1239-1312",
-      aadhar: "15555-5555-5555",
+      aadhar: "25555-5555-5555",
       name_of_individual: "Rashmi Ranjan",
       guardian_name: "Rashmi Ranjan",
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
     },
     "34444-4444-4444": {
-      sno: "4",
+      sno: "11",
       reg_id: "ID-1239-1312",
-      aadhar: "14444-4444-4444",
+      aadhar: "34444-4444-4444",
       name_of_individual: "Rashmi Ranjan",
       guardian_name: "Rashmi Ranjan",
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
     },
     "35555-5555-5555": {
-      sno: "5",
+      sno: "12",
       reg_id: "ID-1239-1312",
-      aadhar: "15555-5555-5555",
+      aadhar: "35555-5555-5555",
       name_of_individual: "Rashmi Ranjan",
       guardian_name: "Rashmi Ranjan",
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
@@ -125,16 +125,18 @@ const updateAttendenceCount = (state) => {
       let attendence = state.rows[row].attendence[index];
       if (attendence === "half") {
         currentAttendence[index] += 0.5;
+        console.log("match half", index, row, currentAttendence);
       } else if (attendence === "full") {
         currentAttendence[index] += 1;
+        console.log("match full");
       }
     }
+    console.log(currentAttendence);
   }
   return currentAttendence;
 };
 
 const reducer = (state, action) => {
-  console.log(action);
   switch (action.type) {
     case "attendence":
       const prevAttendence = action.state.row.attendence;
@@ -148,7 +150,6 @@ const reducer = (state, action) => {
       let updatedState = { ...state, rows: { ...state.rows, ...obj } };
       let updatedAttendenceCount = updateAttendenceCount(updatedState);
       const finalState = { ...state, rows: { ...state.rows, total: { ...state.rows.total, attendence: updatedAttendenceCount } } };
-      console.log(finalState);
       return finalState;
     default:
       return state;
