@@ -20,7 +20,7 @@ const ContractsBreadCrumbs = ({ location }) => {
         },
         {
             path: `/${window.contextPath}/employee/contracts/`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACTS")}` : t("WORKS_CONTRACTS"),
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACT")}` : t("WORKS_CONTRACT"),
             show: location.pathname.includes("/contracts/create-contract") ? true : false,
             isBack: fromScreen && true,
         },
@@ -32,13 +32,13 @@ const ContractsBreadCrumbs = ({ location }) => {
         },
         {
             path: `/${window.contextPath}/employee/contracts/search-contract`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACTS")}` : t("WORKS_CONTRACTS"),
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACT")}` : t("WORKS_CONTRACT"),
             show: location.pathname.includes("/contracts/search-contract") ? true : false,
             isBack: fromScreen && true,
         },
         {
             path: `/${window.contextPath}/employee/contracts/view-contract`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACTS")}` : t("WORKS_CONTRACTS"),
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACT")}` : t("WORKS_CONTRACT"),
             show: location.pathname.includes("/contracts/view-contract") ? true : false,
             isBack: fromScreen && true,
         }

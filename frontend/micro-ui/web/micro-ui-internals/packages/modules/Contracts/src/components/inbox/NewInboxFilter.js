@@ -25,11 +25,11 @@ const Filter = ({ onFilterChange, ...props }) => {
   const clearAll = () => {
     reset(
       {
-        estimateFromDate:"",
-        estimateToDate:"",
-        fund:"",
-        function:"",
-        budgetHead:"",
+        contractFromDate:"",
+        contractToDate:"",
+        contractType:"",
+        fileNo:"",
+        estimateId:"",
       });
   };
   let validation={}
@@ -146,7 +146,7 @@ const Filter = ({ onFilterChange, ...props }) => {
                 />
             </div>
             <div>
-              <SubmitBar onSubmit={() => applyLocalFilters()} label={t("ES_COMMON_APPLY")} />
+              <SubmitBar onSubmit={() => applyLocalFilters()} label={t("WORKS_COMMON_APPLY")} />
             </div>
           </div>
         </div>

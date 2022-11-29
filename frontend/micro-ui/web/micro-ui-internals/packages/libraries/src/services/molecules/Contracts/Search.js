@@ -23,7 +23,7 @@ let sampleContractSearchResponse = {
     data:{
       contracts: [{
         tenantId:"pb.amritsar",
-        contractId: "1136/TO/DB/FLOOD/10-11",
+        contractId: "DB/TO/GF/EE-II/2014/29M",
         contractDate: "08/09/2010",
         contractType: "Work Order",
         nameOfTheWork: "Providing CC Drain in Birla Gaddah ",
