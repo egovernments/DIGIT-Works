@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { Calender } from "@egovernments/digit-ui-react-components";
 import { DateRange, createStaticRanges } from "react-date-range";
-
 import {
   format,
   addMonths,
@@ -22,7 +22,6 @@ import {
   startOfQuarter,
   endOfQuarter,
 } from "date-fns";
-import { Calender } from "@egovernments/digit-ui-react-components";
 
 function isEndDateFocused(focusNumber) {
   return focusNumber === 1;
@@ -32,7 +31,7 @@ function isStartDateFocused(focusNumber) {
   return focusNumber === 0;
 }
 
-const AttendanceDateRange = ({ values, onFilterChange, t, labelClass, classname, labelRequired }) => {
+const AttendenceDateRange = ({ values, onFilterChange, t, labelClass }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [focusedRange, setFocusedRange] = useState([0, 0]);
   const [selectionRange, setSelectionRange] = useState({
@@ -153,36 +152,35 @@ const AttendanceDateRange = ({ values, onFilterChange, t, labelClass, classname,
   };
 
   return (
-    <div className={classname}>
-      {labelRequired && (
-        <div className="filter-label" style={{ marginBottom: "1rem" }}>
-          {t(`ES_DSS_DATE_RANGE`)}
-        </div>
-      )}
-      <div className="employee-select-wrap" style={{ marginBottom: "0" }} ref={wrapperRef}>
-        <div className="select">
-          <input className="employee-select-wrap--elipses" type="text" value={values?.title ? `${values?.title}` : ""} readOnly />
-          <Calender className="cursorPointer" onClick={() => setIsModalOpen((prevState) => !prevState)} />
-        </div>
-        {isModalOpen && (
-          <div className="options-card" style={{ overflow: "visible", width: "unset", maxWidth: "fit-content" }}>
-            <DateRange
-              className="pickerShadow"
-              focusedRange={focusedRange}
-              ranges={[selectionRange]}
-              rangeColors={["#9E9E9E"]}
-              onChange={handleSelect}
-              onRangeFocusChange={setFocusedRange}
-              retainEndDateOnFirstSelection={true}
-              showSelectionPreview={true}
-              staticRanges={staticRanges}
-              inputRanges={[]}
-            />
+    <div className="">
+      <div className="row border-none date-range-pair">
+        <h2>{t(`ES_DSS_DATE_RANGE`)}</h2>
+        <div className="employee-select-wrap attendence-date-picker" style={{ marginBottom: "0" }} ref={wrapperRef}>
+          <div className="select">
+            <input className="employee-select-wrap--elipses" type="text" value={values?.title ? `${values?.title}` : ""} readOnly />
+            <Calender className="cursorPointer" onClick={() => setIsModalOpen((prevState) => !prevState)} />
           </div>
-        )}
+          {isModalOpen && (
+            <div className="options-card" style={{ overflow: "visible", width: "unset", maxWidth: "fit-content" }}>
+              <DateRange
+                className="pickerShadow"
+                focusedRange={focusedRange}
+                values={values}
+                ranges={[selectionRange]}
+                rangeColors={["#9E9E9E"]}
+                onChange={handleSelect}
+                onRangeFocusChange={setFocusedRange}
+                retainEndDateOnFirstSelection={true}
+                showSelectionPreview={true}
+                staticRanges={staticRanges}
+                inputRanges={[]}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default AttendanceDateRange;
+export default AttendenceDateRange;

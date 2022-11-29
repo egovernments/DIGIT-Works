@@ -14,7 +14,7 @@ const WeekDateRange = (props) => {
       <div className="row border-none date-range-pair">
         <h2>{props.title}</h2>
         <div className="value">
-          <AttendanceDateRange
+          <AttendancePDateRange
             t={t}
             values={localSearchParams?.range}
             onFilterChange={handleChange}

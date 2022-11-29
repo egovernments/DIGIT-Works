@@ -734,6 +734,19 @@ input[type="number"] {
 }
 
 .date-range-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   padding-top: 8px;
   margin-top: 8px;
+  h2 {
+    font-weight: bolder;
+  }
+}
+
+.week-table-card-wrapper {
+  display: contents;
+}
+
+.attendence-date-picker {
+  width: 80%;
 }

@@ -169,7 +169,7 @@
 .reports-table {
   margin-top: 2rem;
   thead {
-    th {      
+    th {
       &:first-child {
         min-width: unset;
       }
@@ -178,29 +178,29 @@
 }
 
 .sub-work-table {
-  
   justify-content: center;
   padding: 0;
   border-collapse: collapse;
   border: 1px solid #ddd;
-  td,th{
-    color: #0B0C0C;
+  td,
+  th {
+    color: #0b0c0c;
     border: 1px solid #ddd;
     padding: 12px;
   }
   tr:hover {
-      background-color: #EFEFEF;
+    background-color: #efefef;
   }
-    th {
-      padding: 10px;
-      text-align: center;
-      background-color: #EFEFEF;
-      color: #0B0C0C;;
-    }
+  th {
+    padding: 10px;
+    text-align: center;
+    background-color: #efefef;
+    color: #0b0c0c;
+  }
 
-  tr{
-    td{
-      span:hover{
+  tr {
+    td {
+      span:hover {
         cursor: pointer;
       }
     }
@@ -235,21 +235,46 @@
   border-collapse: collapse;
   border: 1px solid #ddd;
 
+  &.week-table {
+    thead {
+      background-color: #f2f2f2;
+    }
+    tbody tr:last-child {
+      background-color: #f2f2f2;
+      font-weight: bolder;
+      text-align: center;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    tbody tr td:nth-child(1) {
+      background-color: white;
+    }
+    tbody tr td:nth-child(2) {
+      background-color: white;
+    }
+    tbody tr td:nth-child(3) {
+      background-color: white;
+    }
+    tbody tr td:nth-child(4) {
+      background-color: white;
+    }
+  }
   td,
   th {
-    color: #0B0C0C;
+    color: #0b0c0c;
     border: 1px solid #ddd;
     padding: 12px;
   }
 
   tr:hover {
-    background-color: #EFEFEF;
+    background-color: #efefef;
   }
 
   th {
     padding: 10px;
     text-align: center;
-    color: #0B0C0C;
+    color: #0b0c0c;
   }
 
   tr {
@@ -261,43 +286,42 @@
   }
 }
 
-.percent-input{
-    display: flex;
-    flex-direction: row;
-    /* This bit draws the box around it */
-    
-  
-    /* I've used padding so you can see the edges of the elements. */
-    padding: 4px;
-    input {
-        /* Tell the input to use all the available space */
-        flex-grow: 2;
-        /* And hide the input's outline, so the form looks like the outline */
-        
-        height: 40px;
-      }
-      input:focus {
+.percent-input {
+  display: flex;
+  flex-direction: row;
+  /* This bit draws the box around it */
+
+  /* I've used padding so you can see the edges of the elements. */
+  padding: 4px;
+  input {
+    /* Tell the input to use all the available space */
+    flex-grow: 2;
+    /* And hide the input's outline, so the form looks like the outline */
+
+    height: 40px;
+  }
+  input:focus {
     /* removing the input focus blue box. Put this on the form if you like. */
     outline: none;
-    }
-        button {
-          /* Just a little styling to make it pretty */
-          border: 1px solid #505A5F;
-            background: #EEEEEE;
-            color: white;
-            align-items: flex-start;
-        }
+  }
+  button {
+    /* Just a little styling to make it pretty */
+    border: 1px solid #505a5f;
+    background: #eeeeee;
+    color: white;
+    align-items: flex-start;
+  }
 }
 
-.contractor-table{
+.contractor-table {
   border-collapse: collapse;
   width: 100%;
   table,
-    th,
-    td {
-        border: 1.5px solid black;
-    }
-    th {
-      background-color: #ECECEC;
-    }
+  th,
+  td {
+    border: 1.5px solid black;
+  }
+  th {
+    background-color: #ececec;
+  }
 }

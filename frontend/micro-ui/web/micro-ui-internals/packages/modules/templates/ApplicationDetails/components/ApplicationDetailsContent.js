@@ -11,7 +11,7 @@ import {
   Table,
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
-import React, { Fragment } from "react";
+import React, { Fragment, useCallback, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import BPADocuments from "./BPADocuments";
@@ -34,7 +34,9 @@ import DocumentsPreview from "./DocumentsPreview";
 import InfoDetails from "./InfoDetails";
 import ViewBreakup from "./ViewBreakup";
 import SubWorkTableDetails from "./SubWorkTableDetails";
-import WeekDateRange from "./WeekDateRange";
+import WeekAttendence from "../../../AttendenceMgmt/src/pageComponents/WeekAttendence";
+import reducer, { initialTableState } from "../../../AttendenceMgmt/src/config/weekTableReducer";
+import AttendanceDateRange from "../../../AttendenceMgmt/src/pageComponents/AttendanceDateRange";
 
 function ApplicationDetailsContent({
   applicationDetails,
@@ -50,7 +52,11 @@ function ApplicationDetailsContent({
   isInfoLabel = false,
 }) {
   const { t } = useTranslation();
-
+  const [state, dispatch] = useReducer(reducer, initialTableState);
+  const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
+  const handleDateRangeChange = useCallback((data) => {
+    setLocalSearchParams(() => ({ ...data }));
+  }, []);
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
@@ -291,14 +297,21 @@ function ApplicationDetailsContent({
                 })}
             </StatusTable>
           </div>
-          {detail?.additionalDetails.dateRange ? <WeekDateRange {...detail?.additionalDetails.dateRange}></WeekDateRange> : null}
+          {detail?.additionalDetails.dateRange ? (
+            <AttendanceDateRange
+              t={t}
+              values={localSearchParams?.range}
+              onFilterChange={handleDateRangeChange}
+              {...detail?.additionalDetails.dateRange}
+            ></AttendanceDateRange>
+          ) : null}
           {detail?.additionalDetails.table
-            ? detail?.additionalDetails.table.tableHeader && (
+            ? detail?.additionalDetails.table.weekTable.tableHeader && (
                 <>
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
-                    {detail?.additionalDetails.table.tableHeader}
+                    {detail?.additionalDetails.table.weekTable.tableHeader}
                   </CardSectionHeader>
-                  {detail?.additionalDetails.table.renderTable && <Table t={t} {...detail?.additionalDetails.table.props} />}
+                  {detail?.additionalDetails.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} />}
                 </>
               )
             : null}

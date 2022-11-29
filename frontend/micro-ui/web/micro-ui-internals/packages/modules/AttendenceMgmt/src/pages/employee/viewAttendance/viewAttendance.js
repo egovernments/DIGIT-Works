@@ -1,5 +1,5 @@
-import { ActionBar, Header, Menu, SubmitBar } from "@egovernments/digit-ui-react-components";
-import React, { useRef, useState } from "react";
+import { Header } from "@egovernments/digit-ui-react-components";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from "../../../../../templates/ApplicationDetails";
 
