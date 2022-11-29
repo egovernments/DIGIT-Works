@@ -4,18 +4,81 @@ const data = [
     Registration_ID: "123455",
     Name_of_the_Individual: "Rashmi Ranjan",
     Father_Guardian_Name: "Rashmi Ranjan",
+    Registration_ID: "123455",
+    Name_of_the_Individual: "Rashmi Ranjan",
+    Father_Guardian_Name: "Rashmi Ranjan",
   },
   {
     SNo: 2,
     Registration_ID: "123455",
     Name_of_the_Individual: "Rashmi Ranjan",
-    Father_Guardian_Name: "Rashmi Ranjan",
+    Mother_Guardian_Name: "Rashmi Ranjan",
+    Registration_No: "123455",
+    FullName_of_the_Individual: "Rashmi Ranjan",
+    Other_Guardian_Name: "Rashmi Ranjan",
   },
   {
     SNo: 3,
     Registration_ID: "123455",
     Name_of_the_Individual: "Rashmi Ranjan",
+    Mother_Guardian_Name: "Rashmi Ranjan",
+    Registration_No: "123455",
+    FullName_of_the_Individual: "Rashmi Ranjan",
+    Other_Guardian_Name: "Rashmi Ranjan",
+  },
+  {
+    SNo: 1,
+    Registration_ID: "123455",
+    Name_of_the_Individual: "Rashmi Ranjan",
     Father_Guardian_Name: "Rashmi Ranjan",
+    Registration_ID: "123455",
+    Name_of_the_Individual: "Rashmi Ranjan",
+    Father_Guardian_Name: "Rashmi Ranjan",
+  },
+  {
+    SNo: 2,
+    Registration_ID: "123455",
+    Name_of_the_Individual: "Rashmi Ranjan",
+    Mother_Guardian_Name: "Rashmi Ranjan",
+    Registration_No: "123455",
+    FullName_of_the_Individual: "Rashmi Ranjan",
+    Other_Guardian_Name: "Rashmi Ranjan",
+  },
+  {
+    SNo: 3,
+    Registration_ID: "123455",
+    Name_of_the_Individual: "Rashmi Ranjan",
+    Mother_Guardian_Name: "Rashmi Ranjan",
+    Registration_No: "123455",
+    FullName_of_the_Individual: "Rashmi Ranjan",
+    Other_Guardian_Name: "Rashmi Ranjan",
+  },
+  {
+    SNo: 1,
+    Registration_ID: "123455",
+    Name_of_the_Individual: "Rashmi Ranjan",
+    Father_Guardian_Name: "Rashmi Ranjan",
+    Registration_ID: "123455",
+    Name_of_the_Individual: "Rashmi Ranjan",
+    Father_Guardian_Name: "Rashmi Ranjan",
+  },
+  {
+    SNo: 2,
+    Registration_ID: "123455",
+    Name_of_the_Individual: "Rashmi Ranjan",
+    Mother_Guardian_Name: "Rashmi Ranjan",
+    Registration_No: "123455",
+    FullName_of_the_Individual: "Rashmi Ranjan",
+    Other_Guardian_Name: "Rashmi Ranjan",
+  },
+  {
+    SNo: 3,
+    Registration_ID: "123455",
+    Name_of_the_Individual: "Rashmi Ranjan",
+    Mother_Guardian_Name: "Rashmi Ranjan",
+    Registration_No: "123455",
+    FullName_of_the_Individual: "Rashmi Ranjan",
+    Other_Guardian_Name: "Rashmi Ranjan",
   },
 ];
 
@@ -36,6 +99,18 @@ const columns = [
     Header: "Father / Guardian' Name",
     accessor: "Father_Guardian_Name",
   },
+  {
+    Header: "Mother / Guardian' Name",
+    accessor: "Mother_Guardian_Name",
+  },
+  {
+    Header: "FullName of the Individual",
+    accessor: "FullName_of_the_Individual",
+  },
+  {
+    Header: "Other Guardian Name",
+    accessor: "Other_Guardian_Name",
+  },
 ];
 
 const transformViewDataToApplicationDetails = {
@@ -48,11 +123,36 @@ const transformViewDataToApplicationDetails = {
         { title: "Register ID", value: "ABC-ADDC" },
         { title: "Register Name", value: "Wall Painting Ward 2" },
       ],
+      additionalDetails: {
+        table: {
+          tableHeader: "Enrolled Users",
+          renderTable: true,
+          props: {
+            data: data,
+            columns: columns,
+            className: "table attendance-view-table",
+            getCellProps: (cellInfo) => {
+              return {
+                style: {
+                  padding: "8px 8px",
+                  fontSize: "10px",
+                  border: "1px solid grey",
+                },
+              };
+            },
+            totalRecords: data.length,
+          },
+        },
+        dateRange: {
+          title: "Attendance For Week",
+        },
+      },
     };
     const workflowDetails = {
       isLoading: false,
       error: null,
       isError: false,
+      breakLineRequired: false,
       data: {
         timeline: [
           {

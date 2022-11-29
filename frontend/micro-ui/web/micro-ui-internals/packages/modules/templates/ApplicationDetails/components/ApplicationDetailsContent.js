@@ -8,6 +8,7 @@ import {
   Loader,
   Row,
   StatusTable,
+  Table,
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
 import React, { Fragment } from "react";
@@ -33,6 +34,7 @@ import DocumentsPreview from "./DocumentsPreview";
 import InfoDetails from "./InfoDetails";
 import ViewBreakup from "./ViewBreakup";
 import SubWorkTableDetails from "./SubWorkTableDetails";
+import WeekDateRange from "./WeekDateRange";
 
 function ApplicationDetailsContent({
   applicationDetails,
@@ -289,18 +291,17 @@ function ApplicationDetailsContent({
                 })}
             </StatusTable>
           </div>
-          {/* {detail?.belowComponent
-            ? detail.belowComponent.belowComponentHeader && (
+          {detail?.additionalDetails.dateRange ? <WeekDateRange {...detail?.additionalDetails.dateRange}></WeekDateRange> : null}
+          {detail?.additionalDetails.table
+            ? detail?.additionalDetails.table.tableHeader && (
                 <>
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
-                    {detail.belowComponent.belowComponentHeader}
+                    {detail?.additionalDetails.table.tableHeader}
                   </CardSectionHeader>
-                  {detail.belowComponent.belowComponentCustom && (
-                    <detail.belowComponent.belowComponentCustom.component {...detail.belowComponent.belowComponentCustom.props} />
-                  )}
+                  {detail?.additionalDetails.table.renderTable && <Table t={t} {...detail?.additionalDetails.table.props} />}
                 </>
               )
-            : null} */}
+            : null}
           {detail?.additionalDetails?.inspectionReport && (
             <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} />
           )}
@@ -370,7 +371,7 @@ function ApplicationDetailsContent({
       ))}
       {showTimeLine && workflowDetails?.data?.timeline?.length > 0 && (
         <React.Fragment>
-          <BreakLine />
+          {workflowDetails?.breakLineRequired === undefined ? <BreakLine /> : workflowDetails?.breakLineRequired ? <BreakLine /> : null}
           {(workflowDetails?.isLoading || isDataLoading) && <Loader />}
           {!workflowDetails?.isLoading && !isDataLoading && (
             <Fragment>
