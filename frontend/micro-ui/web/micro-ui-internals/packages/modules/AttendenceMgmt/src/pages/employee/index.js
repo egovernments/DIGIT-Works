@@ -30,7 +30,7 @@ const App = ({ path }) => {
 
   return (
     <Switch>
-      <AppContainer>
+      <AppContainer className="ground-container">
           <React.Fragment>
               <AttendanceBreadCrumbs location={location} />
           </React.Fragment>
