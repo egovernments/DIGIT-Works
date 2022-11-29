@@ -190,6 +190,7 @@ const Inbox = ({
           searchParams={searchParams}
           sortParams={sortParams}
           // totalRecords={Number(data?.totalCount)}
+          totalRecords={1}
           filterComponent={filterComponent}
         />
       </div>
