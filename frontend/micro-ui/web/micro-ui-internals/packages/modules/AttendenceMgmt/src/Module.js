@@ -3,9 +3,13 @@ import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import AttendenceMgmtCard from "./components/AttendenceMgmtCard"
 import CitizenApp from "./pages/citizen";
+import { default as EmployeeApp } from "./pages/employee";
 import mobileInbox from "./components/markAttendenceInbox/mobileInbox";
 import ViewRegister from "./pages/citizen/viewRegister/ViewRegister";
 import ViewProjects from "./components/ViewProjectsInbox.js/ViewProjects";
+import Inbox from "./components/inbox";
+import AttendenceInboxFilter from "./components/inbox/InboxFilter";
+import AttendenceInboxSearch from "./components/inbox/InboxSearch";
 
 const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
     const moduleCode = ["AttendenceMgmt"];
@@ -20,16 +24,20 @@ const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
     if (isLoading) {
         return <Loader />;
     }
-
+    if (userType === "employee") {
+        return <EmployeeApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} />;
+    }
     return <CitizenApp path={path} stateCode={stateCode} />;
 };
 
 const componentsToRegister = {
     AttendenceMgmtCard,
     AttendenceMgmtModule,
-    AttendenceMgmtInbox: mobileInbox,
+    AttendenceMgmtInbox: Inbox,
     ViewRegister,
-    ViewProjects
+    ViewProjects,
+    AttendenceInboxFilter,
+    AttendenceInboxSearch
 };
 
 export const initAttendenceMgmtComponents = () => {

@@ -26,7 +26,7 @@ const AttendenceMgmtCard = () => {
                 //Pass Count Value from Inbox API here
                 count: 21,
                 label: t("INBOX"),
-                link: `/${window?.contextPath}/employee/works/inbox`,
+                link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
             }
         ],
         links: [
