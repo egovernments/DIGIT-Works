@@ -18,10 +18,10 @@ import java.util.List;
 @Builder
 public class AttendanceLogSearchCriteria {
 
-    @JsonProperty("")
+    @JsonProperty("tenantId")
     private String tenantId;
 
-    @JsonProperty("")
+    @JsonProperty("registerId")
     private String registerId;
 
     @JsonProperty("fromTime")

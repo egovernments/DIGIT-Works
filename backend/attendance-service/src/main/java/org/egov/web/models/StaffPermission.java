@@ -1,6 +1,7 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -39,6 +40,12 @@ public class StaffPermission {
 
     @JsonProperty("denrollmentDate")
     private Double denrollmentDate = null;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
+
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
 
     public StaffPermission addPermissionLevelsItem(PermissionLevel permissionLevelsItem) {

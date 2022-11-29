@@ -90,12 +90,12 @@ const SearchContractApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
           accessor: (row) => (GetCell(row?.implementingAuthority || t("ES_COMMON_NA"))),
         },
         {
-          Header: t("WORKS_NAME_OF_ORGN"),
+          Header: t("WORKS_ORG_NAME"),
           disableSortBy: true,
           accessor: (row) => (GetCell(row?.orgnName || t("ES_COMMON_NA"))),
         },
         {
-          Header: t("WORKS_OFFICER_INCHARGE_NAME"),
+          Header: t("WORKS_OFF_IN_CHARGE"),
           disableSortBy: true,
           accessor: (row) => (GetCell(row?.officerIncharge || t("ES_COMMON_NA"))),
         },
@@ -137,7 +137,7 @@ const SearchContractApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
               <Table
                 t={t}
                 data={data}
-                // totalRecords={count}
+                totalRecords={1}
                 columns={columns}
                 getCellProps={(cellInfo) => {
                   return {

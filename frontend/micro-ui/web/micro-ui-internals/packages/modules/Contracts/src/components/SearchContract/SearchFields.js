@@ -65,8 +65,8 @@ const SearchFields = ({ register, control, reset, t, onClearSearch }) => {
             </SearchField>
             <SearchField/>
             <SearchField className="submit">
-                <SubmitBar label={t("WORKS_COMMON_SEARCH")} submit />
-                <p onClick={() => {
+                <div style={{"display":"flex","flexDirection":"row"}}>
+                <p style={{"marginTop":"8px"}} onClick={() => {
                     reset({
                         nameOfTheProject: "",
                         fromProposalDate: "",
@@ -79,6 +79,8 @@ const SearchFields = ({ register, control, reset, t, onClearSearch }) => {
                     });
                     onClearSearch(false)
                 }}>{t(`CLEAR_SEARCH_LINk`)}</p>
+                <SubmitBar label={t("WORKS_COMMON_SEARCH")} submit />
+                </div>
             </SearchField>
         </>
     )

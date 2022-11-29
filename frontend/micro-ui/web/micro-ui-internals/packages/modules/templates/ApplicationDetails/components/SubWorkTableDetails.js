@@ -38,8 +38,10 @@ const SubWorkTableDetails = ({data}) => {
             return <tr style={{ "height": "50%" }}>
                 <td style={getStyles(1)}>{row[0]}</td>
                 <td style={getStyles(2)} > { row[1] === t("WORKS_TOTAL_AMT") ? <div style={{"float":"right", "fontWeight":"bold"}}>{row[1]}</div> : <div className='field'>{row[1]}</div> }</td>
-                <td style={getStyles(3)}><div className='field'>{row[2]}</div></td>
-                {row[3] && <td style={getStyles(4)}>
+                {row[1] === t("WORKS_TOTAL_AMT") 
+                    ?  <td style={{ "width": "15vw" }}><div style={{"float":"right", "fontWeight":"bold"}}>{row[2]}</div></td>
+                    :  <td style={{ "width": "15vw" }}><div style={{"float":"right"}}>{row[2]}</div></td>}
+                {row[3] && <td style={getStyles(3)}>
                     <div style={{display:"flex",flexDirection:"row",cursor:"pointer",color:"#F47738"}} onClick={() => history.push(
                         {
                             pathname: '/works-ui/employee/contracts/create-contract',

@@ -1,6 +1,7 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -51,7 +52,7 @@ public class AttendanceRegister {
     private List<IndividualEntry> attendees = null;
 
     @JsonProperty("auditDetails")
-    private Object auditDetails = null;
+    private AuditDetails auditDetails = null;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;

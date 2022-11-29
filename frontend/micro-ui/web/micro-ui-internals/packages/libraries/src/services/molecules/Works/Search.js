@@ -46,11 +46,11 @@ export const WorksSearch = {
         //const estimate = sampleEstimateSearchResponse?.estimates?.[0] 
         let details = []
         const estimateValues={
-            title: "WORKS_ESTIMATE_DETAILS",
+            title: " ",
             asSectionHeader: true,
             values: [
                 { title: "WORKS_ESTIMATE_ID", value: estimate?.estimateNumber},
-                { title: "WORKS_STATUS", value: estimate?.estimateStatus}
+                { title: "WORKS_STATUS", value: t(`ES_COMMON_${estimate?.estimateStatus}`)}
             ]
         }
 
@@ -129,7 +129,7 @@ export const WorksSearch = {
         // const tableRows = [["1", "Construction of CC drain from D No 45-142-A-58-A to 45-142-472-A at Venkateramana Colony in Ward No 43", "640000"], ["", "Total Amount", "640000"]]
         let totalAmount = 0;
         const tableRows=estimate?.estimateDetails.map((item,index)=>{
-            totalAmount= totalAmount + item.amount
+            totalAmount= totalAmount + item.amount;
             return (estimate?.estimateStatus === "APPROVED" ?
                 [index+1,
                 item?.name,
@@ -141,6 +141,17 @@ export const WorksSearch = {
             )
         })
         tableRows.push(["",t("WORKS_TOTAL_AMT"),totalAmount])
+        tableRows.map((item)=>{
+            let amount = item[2];
+            amount = amount.toString();
+            var lastThree = amount.substring(amount.length-3);
+            var otherNumbers = amount.substring(0,amount.length-3);
+            if(otherNumbers != '')
+                lastThree = ',' + lastThree;
+            var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+            item[2] = res
+        })
+
         const workDetails = {
             title: "WORKS_WORK_DETAILS",
             asSectionHeader: true,
