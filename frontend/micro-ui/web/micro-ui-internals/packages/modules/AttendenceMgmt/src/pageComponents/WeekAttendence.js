@@ -47,6 +47,14 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
     );
   };
 
+  const renderTotalLabel = (value) => {
+    return (
+      <div className="total-attendence-label">
+        <span>{value}</span>
+      </div>
+    );
+  };
+
   const tableColumns = useMemo(() => {
     return [
       {
@@ -54,6 +62,9 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
         Header: "S. No",
         accessor: "sno",
         Cell: ({ value, column, row }) => {
+          if (row.original.type === "total") {
+            return renderTotalLabel(t(row.original.sno)); //Pass Total as Label
+          }
           return String(t(value));
         },
       },
@@ -210,6 +221,13 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           columns={tableColumns}
           isPaginationRequired={true}
           getCellProps={(cellInfo) => {
+            if (cellInfo.value === "DNR") {
+              return {
+                style: {
+                  display: "none",
+                },
+              };
+            }
             return {
               style: {},
             };
