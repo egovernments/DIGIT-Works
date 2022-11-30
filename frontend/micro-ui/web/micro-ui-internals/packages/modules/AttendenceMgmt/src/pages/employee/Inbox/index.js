@@ -1,10 +1,10 @@
 import React, {useEffect, useState, useCallback} from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import DesktopInbox from "./DesktopInbox";
-import MobileInbox from "./MobileInbox";
 import { Header } from "@egovernments/digit-ui-react-components";
-import {dummyTableData} from '../../config/dummyTableData';
+import DesktopInbox from "../../../components/inbox/DesktopInbox";
+import MobileInbox from "../../../components/inbox/MobileInbox";
+import {dummyTableData} from '../../../config/dummyTableData';
 
 const Inbox = ({isInbox, parentRoute, filterComponent, searchComponent,initialStates = {}}) => {
     const { t } = useTranslation();

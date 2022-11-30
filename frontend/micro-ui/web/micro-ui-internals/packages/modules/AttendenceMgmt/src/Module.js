@@ -7,7 +7,7 @@ import { default as EmployeeApp } from "./pages/employee";
 import mobileInbox from "./components/markAttendenceInbox/mobileInbox";
 import ViewRegister from "./pages/citizen/viewRegister/ViewRegister";
 import ViewProjects from "./components/ViewProjectsInbox.js/ViewProjects";
-import Inbox from "./components/inbox";
+import Inbox from "./pages/employee/Inbox";
 import AttendenceInboxFilter from "./components/inbox/InboxFilter";
 import AttendenceInboxSearch from "./components/inbox/InboxSearch";
 
