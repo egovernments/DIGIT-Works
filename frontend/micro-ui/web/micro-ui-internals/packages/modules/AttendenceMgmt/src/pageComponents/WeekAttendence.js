@@ -218,16 +218,16 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           columns={tableColumns}
           isPaginationRequired={true}
           getCellProps={(cellInfo) => {
-            if (cellInfo.value === "DNR") {
-              return {
-                style: {
-                  display: "none",
-                },
-              };
+            let tableProp = {};
+            if(cellInfo.value === "ATM_TOTAL") {
+              tableProp['colSpan'] = 4;
             }
-            return {
-              style: {},
-            };
+            if (cellInfo.value === "DNR") {
+                tableProp['style'] = {
+                  display: "none",
+                }
+            }
+            return tableProp;
           }}
         />
       </div>

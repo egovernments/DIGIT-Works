@@ -85,13 +85,6 @@ const Table = ({
 
 
   useEffect(() => setGlobalFilter(onSearch), [onSearch, setGlobalFilter,data]);
-   const handleColSpan = (row) => {
-    if (row.values.sno === "ATM_TOTAL" && !isTotalColSpanRendered) {
-      isTotalColSpanRendered = true;
-      return 4;
-    }
-    return 0;
-  };
   //note -> adding data prop in dependency array to trigger filter whenever state of the table changes
   //use case -> without this if we enter string to search and then click on it's attendence checkbox or skill selector for that matter then the global filtering resets and whole table is shown
   return (
@@ -126,7 +119,6 @@ const Table = ({
                   {row.cells.map((cell) => {
                     return (
                       <td
-                        colSpan={handleColSpan(row)}
                         // style={{ padding: "20px 18px", fontSize: "16px", borderTop: "1px solid grey", textAlign: "left", verticalAlign: "middle" }}
                         {...cell.getCellProps([
                           // {
