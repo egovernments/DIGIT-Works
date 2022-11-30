@@ -42,8 +42,12 @@ if (!user || !user.access_token || !user.info) {
   /* 
   Currently for works 1.0 we enable only employee side 
   const userType = token === citizenToken ? "citizen" : "employee";
+removed usertype constant for Mukta
+    const userType =  "employee";
+
   */
-  const userType =  "employee";
+  const userType = token === citizenToken ? "citizen" : "employee";
+
   window.Digit.SessionStorage.set("user_type", userType);
   window.Digit.SessionStorage.set("userType", userType);
 

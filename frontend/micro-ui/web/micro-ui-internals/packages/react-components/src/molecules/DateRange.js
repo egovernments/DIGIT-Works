@@ -16,7 +16,7 @@ function isStartDateFocused(focusNumber) {
   return focusNumber === 0;
 }
 
-const DateRange = ({ values, onFilterChange, t,labelClass, filterLabel }) => {
+const DateRange = ({ values, onFilterChange, t,labelClass, filterLabel,...props }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [focusedRange, setFocusedRange] = useState([0, 0]);
   const [selectionRange, setSelectionRange] = useState({
@@ -67,8 +67,8 @@ const DateRange = ({ values, onFilterChange, t,labelClass, filterLabel }) => {
       {
         label: t("DSS_THIS_WEEK"),
         range: () => ({
-          startDate: startOfWeek(new Date()),
-          endDate: endOfWeek(new Date()),
+          startDate: startOfWeek(new Date(), { weekStartsOn: 1 }),
+          endDate: endOfWeek(new Date(), { weekStartsOn: 1 }),
         })
       },
       {
@@ -139,7 +139,7 @@ const DateRange = ({ values, onFilterChange, t,labelClass, filterLabel }) => {
   return (
     <>
       <div className="filter-label">{t(`${filterLabel}`)}</div>
-      <div className="employee-select-wrap" ref={wrapperRef}>
+      <div className="employee-select-wrap" style={props.inputStyle} ref={wrapperRef}>
         <div className="select">
           <input className="employee-select-wrap--elipses" type="text" value={values?.title ? `${values?.title}` : ""} readOnly />
           <Calender className="cursorPointer" onClick={() => setIsModalOpen((prevState) => !prevState)} />
@@ -158,7 +158,7 @@ const DateRange = ({ values, onFilterChange, t,labelClass, filterLabel }) => {
               staticRanges={staticRanges}
               inputRanges={[]}
               locale={enGB}
-              endDateOffset={day => day.addDays(6, 'days')} 
+              //endDateOffset={day => day.addDays(6, 'days')} 
 
             />
           </div>

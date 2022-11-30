@@ -357,7 +357,8 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
     const checkKeyDown = (e) => {
         if (e.code === 'Enter') e.preventDefault();
     };
-
+    const errorStyle = {"marginBottom" : "0px"}
+    const estimateStyle = {"marginTop":"20px","marginBottom":"4px"}
     return (
         (isFetched && isFinanceDataFetched && desgFetched && locationDataFetched)?
         <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
@@ -367,7 +368,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                 {/* TEXT INPUT ROW */}
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{`${t(`WORKS_DATE_PROPOSAL`)}:*`}</CardLabel>
-                    <TextInput className={"field"} name="proposalDate" inputRef={register()} value={getDate()} disabled style={{ backgroundColor: "#E5E5E5" }} />
+                    <TextInput className={"field"} name="proposalDate" inputRef={register()} value={getDate()} disabled style={{ backgroundColor: "#E5E5E5", marginBottom:"0px" }} />
                 </LabelFieldPair>
 
                 {/* Modal */}
@@ -406,12 +407,13 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
+                                        style={estimateStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.department?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
@@ -422,11 +424,12 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             pattern: /^[a-zA-Z0-9_.$@#\/]*$/, required:true
 
                         })}
+                        style={estimateStyle}
                         />
                         {errors && errors?.requirementNumber?.type === "pattern" && (
-                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                         {errors && errors?.requirementNumber?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
@@ -450,12 +453,13 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                             setValue("location","")
                                         }}
                                         onBlur={props.onBlur}
+                                        style={estimateStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.ward?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
@@ -474,6 +478,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                     t={t}
                                     select={props?.onChange}
                                     onBlur={props.onBlur}
+                                    style={estimateStyle}
                                 />
                             );
                         }}
@@ -491,19 +496,19 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-
                                         option={BeneficiaryType}
                                         selected={props?.value}
                                         optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
+                                        style={estimateStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.beneficiaryType?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
@@ -516,19 +521,19 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-
                                         option={NatureOfWork}
                                         selected={props?.value}
                                         optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
+                                        style={estimateStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.natureOfWork?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_WORK_TYPE`)}:*`}</CardLabel>
@@ -549,12 +554,13 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                             setValue("subTypeOfWork","")
                                         }}
                                         onBlur={props.onBlur}
+                                        style={estimateStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.typeOfWork?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_SUB_TYPE_WORK`)}:`}</CardLabel>
@@ -571,6 +577,7 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                     t={t}
                                     select={props?.onChange}
                                     onBlur={props.onBlur}
+                                    style={estimateStyle}
                                 />
                             );
                         }}
@@ -592,12 +599,13 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
+                                        style={estimateStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.entrustmentMode?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
@@ -612,19 +620,19 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-
                                         option={Fund}
                                         selected={props?.value}
                                         optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
+                                        style={estimateStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.fund?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_FUNCTION`)}:*`}</CardLabel>
@@ -636,19 +644,19 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-
                                         option={Functions}
                                         selected={props?.value}
                                         optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
+                                        style={estimateStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.function?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_BUDGET_HEAD`)}:*`}</CardLabel>
@@ -660,19 +668,19 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-
                                         option={BudgetHead}
                                         selected={props?.value}
                                         optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
+                                        style={estimateStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.budgetHead?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_SCHEME`)}:`}</CardLabel>
@@ -693,12 +701,13 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                                             setValue("subScheme","")
                                         }}
                                         onBlur={props.onBlur}
+                                        style={estimateStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.scheme?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
@@ -711,19 +720,19 @@ const CreateEstimateForm = ({ onFormSubmit }) => {
                             render={(props) => {
                                 return (
                                     <Dropdown
-
                                         option={subScheme}
                                         selected={props?.value}
                                         optionKey={"i18nKey"}
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
+                                        style={estimateStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.subScheme?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div>
                 </LabelFieldPair>
 
                 {/* Render the sub work table here */}

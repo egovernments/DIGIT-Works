@@ -347,11 +347,27 @@
   border-collapse: collapse;
   width: 100%;
   table,
-  th,
-  td {
-    border: 1.5px solid black;
-  }
-  th {
-    background-color: #ececec;
-  }
+    th,
+    td {
+        border: 1.5px solid black;
+    }
+    th {
+      background-color: #ECECEC;
+    }
+}
+
+.column-attendence {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.day-attendence {
+  margin-left: 0.3rem;
+  font-weight: 550;
+}
+
+.date-attendence {
+  opacity: 0.6;
+  font-weight: 200;
 }

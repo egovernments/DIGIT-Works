@@ -101,7 +101,7 @@ const SearchApplication = ({type, onClose, onSearch, isFstpOperator, searchParam
               {isInboxPage &&
               (<div style={{ gridColumn: "2/3", textAlign: "right", paddingTop: "10px" }} className="input-fields">
                 <LinkLabel style={{ display: "inline"}} onClick={clearSearch}>
-                  {t("ES_COMMON_CLEAR_SEARCH")}
+                  {t("WORKS_CLEAR_SEARCH")}
                 </LinkLabel>
               </div>
               )}
@@ -123,7 +123,7 @@ const SearchApplication = ({type, onClose, onSearch, isFstpOperator, searchParam
             <button className="clear-search" style={{ flex: 1 }}>
               {clearAll(mobileView)}
             </button>
-            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("WORKS_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
           </ActionBar>
         )}
       </React.Fragment>

@@ -1,93 +1,33 @@
 import React, { Fragment, useCallback, useMemo, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
-import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast, CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
-import SearchFormFields from "./SearchFields";
-import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-//import CancelBillModal from "./CancelBillModal";
 
-const mobileInbox = ({ tenantId="pb.amritsar", data={}, onSubmit=()=>console.log(submitted), isLoading=false, resultOk=true }) => {
-    
-    data= [[],[]]
+
+
+const mobileInbox = ({ tenantId = "pb.amritsar", data = {}, onSubmit = () => console.log(submitted), isLoading = false, resultOk = true }) => {
+
+    data = [[], []]
     const history = useHistory()
     const { t } = useTranslation()
-    const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
-        // defaultValues: {
-        //     offset: 0,
-        //     limit: 10,
-        //     sortBy: "commencementDate",
-        //     sortOrder: "DESC",
-        //     searchType: "CONNECTION",
-        // },
-    });
 
-    function activateModal(state, action) {
-        switch (action.type) {
-            case "set":
-                return action.payload;
-            case "remove":
-                return false;
-            default:
-                break;
-        }
-    }
 
-    const [currentlyActiveMobileModal, setActiveMobileModal] = useReducer(activateModal, false);
+    // const convertEpochToDate = (dateEpoch) => {
+    //     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
+    //         return "NA";
+    //     }
+    //     const dateFromApi = new Date(dateEpoch);
+    //     let month = dateFromApi.getMonth() + 1;
+    //     let day = dateFromApi.getDate();
+    //     let year = dateFromApi.getFullYear();
+    //     month = (month > 9 ? "" : "0") + month;
+    //     day = (day > 9 ? "" : "0") + day;
+    //     return `${day}/${month}/${year}`;
+    // };
 
-    const closeMobilePopupModal = () => {
-        setActiveMobileModal({ type: "remove" });
-    };
+    // const GetCell = (value) => <span className="cell-text">{value}</span>;
 
-    const MobilePopUpCloseButton = () => (
-        <div className="InboxMobilePopupCloseButtonWrapper" onClick={closeMobilePopupModal}>
-            <CloseSvg />
-        </div>
-    );
-
-    const searchFormFieldsComponentProps = { Controller, register, control, t, reset };
-
-    const MobileComponentDirectory = ({ currentlyActiveMobileModal, searchFormFieldsComponentProps, tenantId, ...props }) => {
-        const { closeMobilePopupModal } = props;
-        switch (currentlyActiveMobileModal) {
-            case "SearchFormComponent":
-                return (
-                    <SearchForm {...props}>
-                        <MobilePopUpCloseButton />
-                        <div className="MobilePopupHeadingWrapper">
-                            <h2>{t("ACTION_SEARCH")}:</h2>
-                        </div>
-                        <SearchFormFields {...searchFormFieldsComponentProps} {...{ closeMobilePopupModal, tenantId, t }} />
-                    </SearchForm>
-                );
-            default:
-                return <span></span>;
-        }
-    };
-
-    const convertEpochToDate = (dateEpoch) => {
-        if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
-            return "NA";
-        }
-        const dateFromApi = new Date(dateEpoch);
-        let month = dateFromApi.getMonth() + 1;
-        let day = dateFromApi.getDate();
-        let year = dateFromApi.getFullYear();
-        month = (month > 9 ? "" : "0") + month;
-        day = (day > 9 ? "" : "0") + day;
-        return `${day}/${month}/${year}`;
-    };
-
-    const CurrentMobileModalComponent = useCallback(
-        ({ currentlyActiveMobileModal, searchFormFieldsComponentProps, tenantId, ...props }) =>
-            MobileComponentDirectory({ currentlyActiveMobileModal, searchFormFieldsComponentProps, tenantId, ...props }),
-        [currentlyActiveMobileModal]
-    );
-
-    
-
-    const GetCell = (value) => <span className="cell-text">{value}</span>;
-   
     const propsMobileInboxCards = useMemo(() => {
         // if (data?.display) {
         //     return [];
@@ -104,55 +44,40 @@ const mobileInbox = ({ tenantId="pb.amritsar", data={}, onSubmit=()=>console.log
             [t("REGISTER_ID")]: "NA",
             [t("REGISTER_ORG_NAME")]: "NA",
             [t("REGISTER_DATES")]: "NA",
-            [t("REGISTER_STATUS")]:"NA",
+            [t("REGISTER_STATUS")]: "NA",
         }));
     }, [data]);
 
+
     return (
         <React.Fragment>
-            {/* <div className="searchBox">
-                <SearchAction
-                    text={t("ACTION_SEARCH")}
-                    handleActionClick={() => setActiveMobileModal({ type: "set", payload: "SearchFormComponent" })}
-                    {...{ tenantId, t }}
-                />
-                <SearchAction
-                    text={t("ACTION_FILTER")}
-                    handleActionClick={() => setActiveMobileModal({ type: "set", payload: "SearchFormComponent" })}
-                    {...{ tenantId, t }}
-                />
-                <SearchAction
-                    text={t("ACTION_SORT")}
-                    handleActionClick={() => setActiveMobileModal({ type: "set", payload: "SearchFormComponent" })}
-                    {...{ tenantId, t }}
-                />
-            </div> */}
-            {currentlyActiveMobileModal ? (
-                <PopUp>
-                    <CurrentMobileModalComponent
-                        onSubmit={(data) => {
-                            setActiveMobileModal({ type: "remove" });
-                            onSubmit(data);
-                        }}
-                        handleSubmit={handleSubmit}
-                        id="search-form"
-                        className="rm-mb form-field-flex-one inboxPopupMobileWrapper"
-                        {...{ searchFormFieldsComponentProps, currentlyActiveMobileModal, closeMobilePopupModal, tenantId }}
-                    />
-                </PopUp>
-            ) : null}
-            {/* {isLoading && <Loader />} */}
             {!isLoading && resultOk && (
-                <DetailsCard
-                    {...{
-                        handleSelect: (e) => { },
-                        handleDetailCardClick: (e) => { history.push(`/${window.contextPath}/employee/attendencemgmt/view-register/`, { state:{} }) },
-                        data: propsMobileInboxCards,
-                        serviceRequestIdKey: t("Register_Name"),
-                        t
-                    }}
-                />
+                <div>
+                    <DetailsCard
+                        {...{
+                            handleSelect: (e) => { },
+                            handleDetailCardClick: (state) => { history.push(`/${window.contextPath}/employee/attendencemgmt/view-register/`, { state }) },
+                            data: propsMobileInboxCards,
+                            serviceRequestIdKey: t("ATM_PROJECT_NAME"),
+                            t,
+                            showCitizenInfoLabel: false,
+                            submitButtonLabel: t("TRACK_ATTENDENCE")
+                        }
+                        }
+                    />
+                    {/* <CitizenInfoLabel
+                        style={{ margin: " 2rem 8px", padding: "10px", backgroundColor: "#FFE2B5", borderRadius: "0.25rem" }}
+                        textStyle={{ color: "#CC7B2F" }}
+                        info={t("ATM_INFO_LABEL")}
+                        text={t(`ATM_INFO_TEXT`)}
+                        fill={"#CC7B2F"}
+                    /> */}
+                </div>
+
             )}
+
+
+
         </React.Fragment>
     );
 };

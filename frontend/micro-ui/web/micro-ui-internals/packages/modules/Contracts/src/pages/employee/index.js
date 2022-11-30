@@ -19,8 +19,8 @@ const ContractsBreadCrumbs = ({ location }) => {
             show: true,
         },
         {
-            path: `/${window.contextPath}/employee/contracts/create-contract`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_CONTRACT")}` : t("WORKS_CREATE_CONTRACT"),
+            path: `/${window.contextPath}/employee/contracts/`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACT")}` : t("WORKS_CONTRACT"),
             show: location.pathname.includes("/contracts/create-contract") ? true : false,
             isBack: fromScreen && true,
         },
@@ -32,13 +32,13 @@ const ContractsBreadCrumbs = ({ location }) => {
         },
         {
             path: `/${window.contextPath}/employee/contracts/search-contract`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_SEARCH_CONTRACTS")}` : t("WORKS_SEARCH_CONTRACTS"),
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACT")}` : t("WORKS_CONTRACT"),
             show: location.pathname.includes("/contracts/search-contract") ? true : false,
             isBack: fromScreen && true,
         },
         {
             path: `/${window.contextPath}/employee/contracts/view-contract`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_VIEW_CONTRACT")}` : t("WORKS_VIEW_CONTRACT"),
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACT")}` : t("WORKS_CONTRACT"),
             show: location.pathname.includes("/contracts/view-contract") ? true : false,
             isBack: fromScreen && true,
         }
@@ -73,7 +73,7 @@ const App = ({ path }) => {
     return (
         <Switch>
             <React.Fragment>
-                <div className="ground-container">
+                <div>
                     <div style={getBreadCrumbStyles(window.location.href)}>
                         <ContractsBreadCrumbs location={location} />
                     </div>

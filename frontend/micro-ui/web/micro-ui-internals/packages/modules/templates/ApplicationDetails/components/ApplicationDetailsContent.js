@@ -150,7 +150,9 @@ function ApplicationDetailsContent({
     if (
       window.location.href.includes("employee/obps") ||
       window.location.href.includes("employee/noc") ||
-      window.location.href.includes("employee/ws")
+      window.location.href.includes("employee/ws") ||
+      window.location.href.includes("employee/works") ||
+      window.location.href.includes("employee/contracts")
     ) {
       return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
     } else if (checkLocation) {
@@ -163,6 +165,8 @@ function ApplicationDetailsContent({
   const getTextValue = (value) => {
     if (value?.skip) return value.value;
     else if (value?.isUnit) return value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("N/A");
+    else if (value?.value === "Approved") return <span style={{"color":"#0B6623"}}>{ `${getTranslatedValues(value?.value, value?.isNotTranslated)}`}</span>
+    else if (value?.value === "Rejected") return <span style={{"color":"#FF0000"}}>{t(value?.value)}</span>
     else return value?.value ? getTranslatedValues(value?.value, value?.isNotTranslated) : t("N/A");
   };
 
@@ -389,7 +393,8 @@ function ApplicationDetailsContent({
           {!workflowDetails?.isLoading && !isDataLoading && (
             <Fragment>
               <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
-                {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
+                {/* {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")} */}
+                {t("WORKS_WORKFLOW_HISTORY")}
               </CardSectionHeader>
               {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
                 <CheckPoint

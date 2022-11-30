@@ -20,8 +20,7 @@ const CloseBtn = (props) => {
     );
 };
 
-const SkillSelector = ({t,closeModal,userState,setUserState}) => {
-
+const SkillSelector = ({t,closeModal,row,dispatch}) => {
     const sampleSkills = [
         {
             level: "Skill 1"
@@ -33,6 +32,18 @@ const SkillSelector = ({t,closeModal,userState,setUserState}) => {
             level: "Skill 3"
         }
     ]
+
+    const handleSelect = (value) => {
+        //you have access to the row here which contains which attendence checkbox was selected
+        //you also have access to the skill selected in value.level
+        //so lets dispatch an action of type skill here and set the relevant state
+        closeModal(false)
+        dispatch({
+            type:"skill",
+            row,
+            selectedSkill:value.level
+        })
+    }
 
   return (
       <Modal
@@ -46,8 +57,8 @@ const SkillSelector = ({t,closeModal,userState,setUserState}) => {
           style={{"width":"100%"}}
       >
           <RadioButtons
-              selectedOption={userState.skill}
-              onSelect={setUserState}
+              selectedOption={row.skill}
+              onSelect={handleSelect}
               options={sampleSkills}
               optionsKey={"level"}
           />
