@@ -239,6 +239,10 @@
     thead {
       background-color: #f2f2f2;
     }
+    tbody tr {
+      border-bottom: 1px solid #efcaca;
+      text-align: center;
+    }
     tbody tr .total-attendence {
       font-weight: bolder;
       text-align: center;
@@ -260,6 +264,30 @@
     }
     tbody tr td:nth-child(4) {
       background-color: white;
+    }
+    tbody tr td:nth-child(5) {
+      border: none;
+    }
+    tbody tr td:nth-child(6) {
+      border: none;
+    }
+    tbody tr td:nth-child(7) {
+      border: none;
+    }
+    tbody tr td:nth-child(8) {
+      border: none;
+    }
+    tbody tr td:nth-child(9) {
+      border: none;
+    }
+    tbody tr td:nth-child(10) {
+      border: none;
+    }
+    tbody tr td:nth-child(11) {
+      border: none;
+    }
+    tbody tr td[colspan="4"] {
+      text-align: left;
     }
   }
   td,

@@ -59,7 +59,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
     return [
       {
         // Header: t("ATM_WAGE_SEEKER_NAME"),
-        Header: "S. No",
+        Header: t("WORKS_SNO"),
         accessor: "sno",
         Cell: ({ value, column, row }) => {
           if (row.original.type === "total") {
@@ -69,23 +69,21 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
         },
       },
       {
-        Header: "Registration ID",
+        Header: t("ATM_REGISTRATION_ID"),
         accessor: "reg_id",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
-        // Header: t("ATM_WAGE_SEEKER_AADHAR"),
-        Header: "Name of the Individual",
+        Header: t("ATM_NAME_OF_THE_INDIVIDUAL"),
         accessor: "name_of_individual",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
-        // Header: t("ATM_WAGE_SEEKER_AADHAR"),
-        Header: "Father / Guardian' Name",
+        Header: t("ATM_FATHER/GUARDIAN_NAME"),
         accessor: "guardian_name",
         Cell: ({ value, column, row }) => {
           return String(t(value));
@@ -94,7 +92,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
       {
         Header: () => (
           <div className="column-attendence">
-            <p className="day-attendence">Mon</p>
+            <p className="day-attendence">{t("ATM_MON")}</p>
             <p className="date-attendence">21 Oct</p>
           </div>
         ),
@@ -110,7 +108,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
       {
         Header: () => (
           <div className="column-attendence">
-            <p className="day-attendence">Tue</p>
+            <p className="day-attendence">{t("ATM_TUE")}</p>
             <p className="date-attendence">22 Oct</p>
           </div>
         ),
@@ -126,7 +124,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
       {
         Header: () => (
           <div className="column-attendence">
-            <p className="day-attendence">Wed</p>
+            <p className="day-attendence">{t("ATM_WED")}</p>
             <p className="date-attendence">23 Oct</p>
           </div>
         ),
@@ -142,7 +140,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
       {
         Header: () => (
           <div className="column-attendence">
-            <p className="day-attendence">Thu</p>
+            <p className="day-attendence">{t("ATM_THR")}</p>
             <p className="date-attendence">24 Oct</p>
           </div>
         ),
@@ -158,7 +156,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
       {
         Header: () => (
           <div className="column-attendence">
-            <p className="day-attendence">Fri</p>
+            <p className="day-attendence">{t("ATM_FRI")}</p>
             <p className="date-attendence">25 Oct</p>
           </div>
         ),
@@ -174,7 +172,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
       {
         Header: () => (
           <div className="column-attendence">
-            <p className="day-attendence">Sat</p>
+            <p className="day-attendence">{t("ATM_SAT")}</p>
             <p className="date-attendence">26 Oct</p>
           </div>
         ),
@@ -190,7 +188,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
       {
         Header: () => (
           <div className="column-attendence">
-            <p className="day-attendence">Sun</p>
+            <p className="day-attendence">{t("ATM_SUN")}</p>
             <p className="date-attendence">27 Oct</p>
           </div>
         ),
@@ -211,7 +209,6 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
         <Table
           className="wage-seekers-table week-table"
           t={t}
-          // customTableWrapperClassName={"dss-table-wrapper"}
           disableSort={false}
           autoSort={false}
           manualPagination={false}

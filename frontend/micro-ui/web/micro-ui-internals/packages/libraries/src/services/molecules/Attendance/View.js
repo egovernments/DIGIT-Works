@@ -1,17 +1,17 @@
 const transformViewDataToApplicationDetails = {
   genericPropertyDetails: () => {
     const RegistrationDetails = {
-      title: "Registration Details",
+      title: "ATM_REGISTRATION_DETAILS",
       asSectionHeader: true,
       values: [
-        { title: "Organisation Name", value: "Mission Shakti" },
-        { title: "Register ID", value: "ABC-ADDC" },
-        { title: "Register Name", value: "Wall Painting Ward 2" },
+        { title: "WORKS_ORG_NAME", value: "Mission Shakti" },
+        { title: "REGISTER_ID", value: "ABC-ADDC" },
+        { title: "REGISTER_NAME", value: "Wall Painting Ward 2" },
       ],
       additionalDetails: {
         table: {
           weekTable: {
-            tableHeader: "Enrolled Users",
+            tableHeader: "ATM_ENROLLED_USERS",
             renderTable: true,
           },
         },
@@ -29,7 +29,7 @@ const transformViewDataToApplicationDetails = {
         timeline: [
           {
             performedAction: "CREATE",
-            status: "CREATED",
+            status: "ES_COMMON_CREATED",
             state: "CREATED",
             assigner: {
               id: 109,
@@ -154,7 +154,7 @@ const transformViewDataToApplicationDetails = {
           },
           {
             performedAction: "CREATE",
-            status: "CREATED",
+            status: "ES_COMMON_CREATED",
             state: "CREATED",
             assigner: {
               id: 109,

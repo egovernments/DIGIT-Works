@@ -56,7 +56,7 @@ const AttendenceMgmtCard = () => {
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       },
       {
-        label: t("VIEW_ATTENDANCE"),
+        label: t("ATM_VIEW_ATTENDENCE"),
         link: `/${window?.contextPath}/employee/attendencemgmt/view-attendance`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       },

@@ -154,7 +154,7 @@ const AttendenceDateRange = ({ values, onFilterChange, t, labelClass }) => {
   return (
     <div className="">
       <div className="row border-none date-range-pair">
-        <h2>{t(`ES_DSS_DATE_RANGE`)}</h2>
+        <h2>{t(`ATM_ATTENDENCE_FOR_WEEK`)}</h2>
         <div className="employee-select-wrap attendence-date-picker" style={{ marginBottom: "0" }} ref={wrapperRef}>
           <div className="select">
             <input className="employee-select-wrap--elipses" type="text" value={values?.title ? `${values?.title}` : ""} readOnly />

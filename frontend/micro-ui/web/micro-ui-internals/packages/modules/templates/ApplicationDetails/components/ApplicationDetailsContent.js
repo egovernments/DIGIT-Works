@@ -309,7 +309,7 @@ function ApplicationDetailsContent({
             ? detail?.additionalDetails.table.weekTable.tableHeader && (
                 <>
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
-                    {detail?.additionalDetails.table.weekTable.tableHeader}
+                    {t(detail?.additionalDetails.table.weekTable.tableHeader)}
                   </CardSectionHeader>
                   {detail?.additionalDetails.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} />}
                 </>

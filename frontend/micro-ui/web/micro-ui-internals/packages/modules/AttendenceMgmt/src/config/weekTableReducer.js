@@ -101,7 +101,7 @@ export const initialTableState = {
     //   attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
     // },
     total: {
-      sno: "Total",
+      sno: "ATM_TOTAL",
       type: "total",
       reg_id: "DNR", //do not render
       aadhar: "DNR", //do not render

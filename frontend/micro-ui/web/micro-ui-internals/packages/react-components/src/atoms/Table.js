@@ -85,7 +85,7 @@ const Table = ({
 
   useEffect(() => setGlobalFilter(onSearch), [onSearch, setGlobalFilter]);
   const handleColSpan = (row) => {
-    if (row.values.sno === "Total" && !isTotalColSpanRendered) {
+    if (row.values.sno === "ATM_TOTAL" && !isTotalColSpanRendered) {
       isTotalColSpanRendered = true;
       return 4;
     }
