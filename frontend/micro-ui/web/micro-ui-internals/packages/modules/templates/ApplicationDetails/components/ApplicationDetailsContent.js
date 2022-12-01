@@ -35,7 +35,7 @@ import InfoDetails from "./InfoDetails";
 import ViewBreakup from "./ViewBreakup";
 import SubWorkTableDetails from "./SubWorkTableDetails";
 import WeekAttendence from "../../../AttendenceMgmt/src/pageComponents/WeekAttendence";
-import reducer, { initialTableState } from "../../../AttendenceMgmt/src/config/weekTableReducer";
+import reducer, { initialTableState } from "../../../AttendenceMgmt/src/config/attendenceTableReducer";
 import AttendanceDateRange from "../../../AttendenceMgmt/src/pageComponents/AttendanceDateRange";
 
 function ApplicationDetailsContent({

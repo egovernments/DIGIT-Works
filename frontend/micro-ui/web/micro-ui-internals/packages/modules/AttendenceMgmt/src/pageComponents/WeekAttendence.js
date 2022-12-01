@@ -1,9 +1,8 @@
-import { Table, ArrowDown } from "@egovernments/digit-ui-react-components";
+import { Table, ArrowDown, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useState, useMemo, useEffect, Fragment, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
 const WeekAttendence = ({ state, dispatch, searchQuery }) => {
-  console.log(state);
   const { t } = useTranslation();
   const tableRow = Object.values(state.rows);
 
@@ -17,7 +16,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
     });
   };
 
-  const AttendenceSelector = (state, row, index) => {
+  const renderAttendenceSelector = (state, row, index) => {
     const classSelector = (state) => {
       switch (state) {
         case "half":
@@ -55,10 +54,28 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
     );
   };
 
+  const handleModifiedAmount = (event) => {
+    console.log(event.target.value);
+  }
+
+  const renderBankAccountDetails = (value) => {
+    return (
+      <div className="column-bank-details">
+        <p className="detail">{value.accountNo}</p>
+        <p className="detail">{value.ifscCode}</p>
+      </div>
+    )
+  }
+
+  const renderInputBoxSelector = (value) => {
+    return (
+      <input type="number" className="modified-amount" onChange={handleModifiedAmount}></input>
+    )
+  }
+
   const tableColumns = useMemo(() => {
     return [
       {
-        // Header: t("ATM_WAGE_SEEKER_NAME"),
         Header: t("WORKS_SNO"),
         accessor: "sno",
         Cell: ({ value, column, row }) => {
@@ -102,7 +119,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           if (row.original.type === "total") {
             return renderTotal(t(row.original.attendence?.[0]));
           }
-          return AttendenceSelector(row.original.attendence?.[0], row.original, 0);
+          return renderAttendenceSelector(row.original.attendence?.[0], row.original, 0);
         },
       },
       {
@@ -118,7 +135,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           if (row.original.type === "total") {
             return renderTotal(t(row.original.attendence?.[1]));
           }
-          return AttendenceSelector(row.original.attendence?.[1], row.original, 1);
+          return renderAttendenceSelector(row.original.attendence?.[1], row.original, 1);
         },
       },
       {
@@ -134,7 +151,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           if (row.original.type === "total") {
             return renderTotal(t(row.original.attendence?.[2]));
           }
-          return AttendenceSelector(row.original.attendence?.[2], row.original, 2);
+          return renderAttendenceSelector(row.original.attendence?.[2], row.original, 2);
         },
       },
       {
@@ -150,7 +167,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           if (row.original.type === "total") {
             return renderTotal(t(row.original.attendence?.[3]));
           }
-          return AttendenceSelector(row.original.attendence?.[3], row.original, 3);
+          return renderAttendenceSelector(row.original.attendence?.[3], row.original, 3);
         },
       },
       {
@@ -166,7 +183,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           if (row.original.type === "total") {
             return renderTotal(t(row.original.attendence?.[4]));
           }
-          return AttendenceSelector(row.original.attendence?.[4], row.original, 4);
+          return renderAttendenceSelector(row.original.attendence?.[4], row.original, 4);
         },
       },
       {
@@ -182,7 +199,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           if (row.original.type === "total") {
             return renderTotal(t(row.original.attendence?.[5]));
           }
-          return AttendenceSelector(row.original.attendence?.[5], row.original, 5);
+          return renderAttendenceSelector(row.original.attendence?.[5], row.original, 5);
         },
       },
       {
@@ -198,7 +215,52 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           if (row.original.type === "total") {
             return renderTotal(t(row.original.attendence?.[6]));
           }
-          return AttendenceSelector(row.original.attendence?.[6], row.original, 6);
+          return renderAttendenceSelector(row.original.attendence?.[6], row.original, 6);
+        },
+      },
+      {
+        Header: t("ATM_ACTUAL_WORKING_DAYS"),
+        accessor: "actualWorkingDays",
+        Cell: ({ value, column, row }) => {
+          return String(t(value));
+        },
+      },
+      {
+        Header: t("ATM_AMOUNT_IN_RS"),
+        accessor: "amountInRs",
+        Cell: ({ value, column, row }) => {
+          return String(t(value));
+        },
+      },
+      {
+        Header: t("ATM_MODIFIED_WORKING_DAYS"),
+        accessor: "modifiedWorkingDays",
+        Cell: ({ value, column, row }) => {
+          if(row.original.type === "total") {
+            return String(t(value));
+          }
+          return renderInputBoxSelector(value);
+        }
+      },
+      {
+        Header: t("ATM_MODIFIED_AMOUNT_IN_RS"),
+        accessor: "modifiedAmountInRs",
+        Cell: ({ value, column, row }) => {
+          return String(t(value));
+        },
+      },
+      {
+        Header: t("ATM_BANK_ACCOUNT_DETAILS"),
+        accessor: "bankAccountDetails",
+        Cell: ({ value, column, row }) => {
+          return renderBankAccountDetails(value);
+        },
+      },
+      {
+        Header: t("ATM_WAGE_SEEKER_AADHAR"),
+        accessor: "aadharNumber",
+        Cell: ({ value, column, row }) => {
+          return String(t(value));
         },
       },
     ];
@@ -208,6 +270,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
       <div style={{ padding: "0px", overflowX: "scroll" }} className="card week-table-card-wrapper">
         <Table
           className="wage-seekers-table week-table"
+          customTableWrapperClassName="table-wrapper attendence-table"
           t={t}
           disableSort={false}
           autoSort={false}
@@ -219,6 +282,15 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           isPaginationRequired={true}
           getCellProps={(cellInfo) => {
             let tableProp = {};
+            if(cellInfo.column.Header === "Modified Amount(Rs)") {
+              tableProp['data-modified-amt'] = "modified-amt";
+            }
+            if(cellInfo.value === undefined) {
+              tableProp['data-radio-selection'] = "last-radio";
+            }
+            if(cellInfo?.row?.original?.type === "total") {
+              tableProp['data-last-row-cell'] = "last-row";
+            }
             if(cellInfo.value === "ATM_TOTAL") {
               tableProp['colSpan'] = 4;
             }
