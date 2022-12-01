@@ -1,5 +1,5 @@
 import React, { useState, Fragment, useEffect, useRef } from "react";
-import { Header, SubmitBar, Menu, ActionBar, Loader } from "@egovernments/digit-ui-react-components";
+import { Header, SubmitBar, Menu, ActionBar, Loader, MultiLink} from "@egovernments/digit-ui-react-components";
 import { useParams, useHistory } from "react-router-dom";
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from "react-i18next";
@@ -16,6 +16,31 @@ const ViewEstimate = (props) => {
 
     const { tenantId, estimateNumber, department,estimateStatus } = Digit.Hooks.useQueryParams(); 
 
+    const HandleDownloadPdf =async(tenantId,estimateNumber)=>{
+        const response = await Digit.WorksService.downloadEstimate(tenantId, estimateNumber);
+        downloadPdf(new Blob([response.data], { type: "application/pdf" }), `Estimate-${estimateNumber}.pdf`);
+    }
+    const downloadPdf = (blob, fileName) => {
+        if (window.mSewaApp && window.mSewaApp.isMsewaApp() && window.mSewaApp.downloadBase64File) {
+          var reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = function () {
+            var base64data = reader.result;
+            window.mSewaApp.downloadBase64File(base64data, fileName);
+          };
+        } else {
+          const link = document.createElement("a");
+          // create a blobURI pointing to our Blob
+          link.href = URL.createObjectURL(blob);
+          link.download = fileName;
+          // some browser needs the anchor to be in the doc
+          document.body.append(link);
+          link.click();
+          link.remove();
+          // in case the Blob uses a lot of memory
+          setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+        }
+      };
     // to fetch a details of Estimate by using params t, tenantInfo, estimateNumber
     let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewEstimateDetails(t,tenantId,estimateNumber);
     const tenant = Digit.ULBService.getStateId();
@@ -150,6 +175,11 @@ const ViewEstimate = (props) => {
             <div className={"employee-main-application-details"}>
                 <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
                     <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{estimateStatus?t("WORKS_VIEW_APPROVED_ESTIMATE"):t("WORKS_VIEW_ESTIMATE")}</Header>
+                    <MultiLink
+                        className="multilinkWrapper employee-mulitlink-main-div"
+                        onHeadClick={()=>HandleDownloadPdf(tenantId,estimateNumber)}
+                        downloadBtnClassName={"employee-download-btn-className"}
+                    />
                 </div>
                 {showModal && <ProcessingModal
                     t={t}

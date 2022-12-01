@@ -84,4 +84,16 @@ export const WorksService = {
            // params:{},
            auth:true,
        }),
+    downloadEstimate:(tenantId, estimateNumber)=>
+        Request({
+            url: Urls.works.download_pdf,
+            data: {},
+            useCache: true,
+            method: "POST",
+            params: { tenantId, estimateNumber},
+            auth: true,
+            locale: true,
+            userService: true,
+            userDownload: true,
+        }),
 }
