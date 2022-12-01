@@ -3,9 +3,8 @@ import { useQueryClient } from "react-query";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { CreateEstimateIcon,DownloadIcon,GotoInboxIcon } from "@egovernments/digit-ui-react-components";
+import { CreateEstimateIcon,DownloadImgIcon,GotoInboxIcon } from "@egovernments/digit-ui-react-components";
 import { useHistory,useLocation } from "react-router-dom";
-import getPDFData from "../utils/getWorksAcknowledgementData"
 
 // state = {
 //     header,idText,id,message,links
@@ -37,7 +36,7 @@ const Response = (props) => {
     const {state}  = useLocation()
     const history = useHistory()
     const {t} = useTranslation()
-    const tenantInfo = Digit.ULBService.getCurrentTenantId();
+    const tenantId = Digit.ULBService.getCurrentTenantId();
     
     //we have two types of icon currently -> add,inbox(CreateEstimateIcon,Inbox Icon)
     const renderIcon = (type,link) => {
@@ -47,11 +46,38 @@ const Response = (props) => {
           return <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
         case "inbox":
           return <p><GotoInboxIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
+        case "download":
+          return <p style={{"display":"flex","flexDirection":"row"}}><DownloadImgIcon style={{ "display": "inline"}}/>{t(link.name)}</p>
         default:
           return <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
           
       }
     }
+  const HandleDownloadPdf =async(tenantId,estimateNumber)=>{
+    const response = await Digit.WorksService.downloadEstimate(tenantId, estimateNumber);
+    downloadPdf(new Blob([response.data], { type: "application/pdf" }), `Estimate-${estimateNumber}.pdf`);
+  }
+  const downloadPdf = (blob, fileName) => {
+      if (window.mSewaApp && window.mSewaApp.isMsewaApp() && window.mSewaApp.downloadBase64File) {
+        var reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = function () {
+          var base64data = reader.result;
+          window.mSewaApp.downloadBase64File(base64data, fileName);
+        };
+      } else {
+        const link = document.createElement("a");
+        // create a blobURI pointing to our Blob
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        // some browser needs the anchor to be in the doc
+        document.body.append(link);
+        link.click();
+        link.remove();
+        // in case the Blob uses a lot of memory
+        setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+      }
+    };
 
   return (
     <Card>
@@ -77,7 +103,7 @@ const Response = (props) => {
                   : null} */}
                   {t(state.message)}
           </CardText>
-          <div style={{"display":"flex","justifyContent":"space-between","flexDirection":"column","alignItems":"flex-end"}}>
+          <div style={{"display":"flex","justifyContent":"space-between","flexDirection":"row","alignItems":"flex-end"}}>
 
               {/* <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} 
                     onClick={handleDownloadPdf}>
@@ -85,9 +111,12 @@ const Response = (props) => {
               </div> */}
 
               {state.links.map(link => (
-                link.isVisible && <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={()=> {
-                    history.push(link.redirectUrl)
-                  }}>
+                link.isVisible && <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} 
+                onClick={
+                  link.type === "download" 
+                  ? ()=>{HandleDownloadPdf(tenantId,state.id)} 
+                  : ()=> {history.push(link.redirectUrl)}
+                  }>
                       {renderIcon(link.type,link)}
                       {/* <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p> */}
                 </div>
