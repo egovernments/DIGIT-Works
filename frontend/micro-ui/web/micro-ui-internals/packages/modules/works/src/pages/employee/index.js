@@ -15,6 +15,9 @@ import Inbox from "./Inbox";
 import LOIInbox from "./LOIInbox";
 import HandleDownloadPdf from "../../components/HandleDownloadPdf";
 import ModifyEstimate from "../../components/ModifyEstimate";
+import SearchOrganization from "../../pages/employee/Master/SearchOrganization";
+import CreateOrganization from "../../pages/employee/Master/CreateOrganization";
+
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
 
@@ -138,7 +141,6 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/search-Estimate-approved`} component={(props) => <Search {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/inbox`} component={() => (<Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />
           <PrivateRoute path={`${path}/LOIInbox`} component={() => (<LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />
-
           <PrivateRoute path={`${path}/search-estimate`} component={() => <SearchEstimate />} />
           <PrivateRoute path={`${path}/search-approved-estimate`} component={() => <SearchApprovedSubEstimate />} />
           <PrivateRoute path={`${path}/create-loi`} component={() => <CreateLOI {...{ path }} />} />
@@ -148,6 +150,8 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/response`} component={() => <Response {...{ path }} />} />
           <PrivateRoute path={`${path}/download`} component={()=> <HandleDownloadPdf {...{path}}/>}/>
+          <PrivateRoute path={`${path}/search-organization`} component={() => <SearchOrganization parentRoute={path}/>} />
+          <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganization parentRoute={path}/>} />
         </div>
       </React.Fragment>
     </Switch>

@@ -62,7 +62,7 @@ const WorksCard = () => {
       },
       {
         label: t("WORKS_MASTERS"),
-        link: `/${window?.contextPath}/employee/`,
+        link: `/${window?.contextPath}/employee/works/search-organization`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {
