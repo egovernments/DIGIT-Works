@@ -41,18 +41,34 @@ const CreateEstimate = (props) => {
             },
             onSuccess: async (responseData, variables) => {
                 history.push("/works-ui/employee/works/response",{
-                    header:"Estimate Created and Forwarded Successfully",
+                    header:t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
                     id:responseData?.estimates[0]?.estimateNumber,
-                    info:"Estimate ID",
-                    message:`A new Estimate has been created successfully and forwarded to the ${t(`ES_COMMON_${responseData?.estimates[0]?.department}`)} Department for processing.`,
+                    info:t("WORKS_ESTIMATE_ID"),
+                    message:t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE",{department:t(`ES_COMMON_${responseData?.estimates[0]?.department}`)}),
                     links:[
                         {
-                            name:"Create new Estimate",
+                            name:t("WORKS_CREATE_ESTIMATE"),
                             redirectUrl:"/works-ui/employee/works/create-estimate",
                             code:"",
                             svg:"CreateEstimateIcon",
                             isVisible:true,
                             type:"add"
+                        },
+                        {
+                            name:t("WORKS_GOTO_ESTIMATE_INBOX"),
+                            redirectUrl:"/works-ui/employee/works/inbox",
+                            code:"",
+                            svg:"GotoInboxIcon",
+                            isVisible:true,
+                            type:"inbox"
+                        },
+                        {
+                            name:t("WORKS_DOWNLOAD_PDF"),
+                            redirectUrl:"/works-ui/employee/works/inbox", 
+                            code:"",
+                            svg:"DownloadPrefixIcon",
+                            isVisible:true,
+                            type:"download"
                         }
                     ]
                 })
