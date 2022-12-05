@@ -25,10 +25,10 @@ public class AttendanceServiceConfiguration {
     private String idGenHost;
     @Value("${egov.idgen.path}")
     private String idGenPath;
-    @Value("${egov.idgen.estimate.number.name}")
-    private String idgenEstimateNumberName;
-    @Value("${egov.idgen.estimate.number.format}")
-    private String idgenEstimateNumberFormat;
+    @Value("${egov.idgen.attendance.register.number.name}")
+    private String idgenAttendanceRegisterNumberName;
+    @Value("${egov.idgen.attendance.register.number.format}")
+    private String idgenAttendanceRegisterNumberFormat;
 
     @PostConstruct
     public void initialize() {
