@@ -101,6 +101,18 @@ const BILLSBreadCrumbs = ({ location }) => {
       show: location.pathname.includes("/works/loiinbox") ? true : false,
       isBack: fromScreen && true,
     },
+    {
+      path: `/${window.contextPath}/employee/works/search-organization`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_MASTERS")}` : t("WORKS_MASTERS"),
+      show: location.pathname.includes("/works/search-organization") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/works/create-organization`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_ORGANISATION")}` : t("WORKS_CREATE_ORGANISATION"),
+      show: location.pathname.includes("/works/create-organization") ? true : false,
+      isBack: fromScreen && true,
+    }
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 };

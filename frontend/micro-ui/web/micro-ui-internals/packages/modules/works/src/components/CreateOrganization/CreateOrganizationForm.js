@@ -46,7 +46,7 @@ const CreateOrganizationForm = () => {
 
     const onSubmit = (data) => {
         console.log('Submitted data', data)
-        console.log('Submitted data', uploadedFile)
+        console.log('Submitted file', uploadedFile)
     }
 
     return (

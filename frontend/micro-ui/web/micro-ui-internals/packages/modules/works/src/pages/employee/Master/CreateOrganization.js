@@ -8,7 +8,7 @@ const CreateOrganization = ({parentRoute}) => {
 
   return (
     <React.Fragment>
-       <Header>{"Create Organization"}</Header>
+       <Header>{t("WORKS_CREATE_ORGANISATION")}</Header>
        <CreateOrganizationForm/>
     </React.Fragment>
   )
