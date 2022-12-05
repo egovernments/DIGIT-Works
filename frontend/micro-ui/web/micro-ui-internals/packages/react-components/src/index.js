@@ -203,6 +203,7 @@ import DashboardBox from "./molecules/DashboardBox";
 import DetailsCard from "./molecules/DetailsCard";
 import FilterAction from "./molecules/FilterAction";
 import FormStep from "./molecules/FormStep";
+import CustomDropdown from "./molecules/CustomDropdown";
 import InputCard from "./molecules/InputCard";
 import Localities from "./molecules/Localities";
 import LocationSearchCard from "./molecules/LocationSearchCard";
@@ -367,6 +368,8 @@ export {
   FilterForm,
   FilterFormField,
   SortAction,
+  CustomDropdown,
+
   // hoc
   FormComposer,
   ResponseComposer,

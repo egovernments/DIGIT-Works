@@ -62,7 +62,7 @@ const SearchContracts = () => {
           implementingAuthority: "Organisation",
           orgnName: "Maa Bhagavati SHG",
           officerIncharge: "S.A Bhasha",
-          agreemntAmount: "3553600.00",
+          agreemntAmount: "35,53,600.00",
           status:"Approved"
         }]
       }

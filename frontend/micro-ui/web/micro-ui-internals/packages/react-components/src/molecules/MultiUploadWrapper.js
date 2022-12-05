@@ -115,6 +115,7 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
                     setFileErrors([])
                 }}
                 accept={acceptFiles}
+                message={t(`WORKS_NO_FILE_SELECTED`)}
             />
             <span style={{ display: 'flex' }}>
                 {fileErrors.length ? fileErrors.map(({ valid, name, type, size, error }) => (
