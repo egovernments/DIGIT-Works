@@ -16,6 +16,14 @@ const SearchContractApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
         sortOrder: "DESC",
       },
     });
+    let isMobile = window.Digit.Utils.browser.isMobile();
+  let paginationParams = isMobile
+    ? { limit: 100, offset: 0, sortOrder: "DESC"}
+    : { limit: 100, offset: getValues("offset"), sortOrder: "DESC"};
+
+    const { isLoading: hookLoading, isError, error, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
+        null,tenantId,paginationParams
+      );
   
     useEffect(() => {
       register("offset", 0);
@@ -67,51 +75,142 @@ const SearchContractApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
         {
           Header: t("WORKS_CONTRACT_DATE"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.contractDate || t("ES_COMMON_NA"))),
+          Cell: ({ row }) =>{
+            return( 
+              <div style={{"minWidth":"90px"}}>
+                {row.original?.contractDate ? (
+                  <span >
+                      {row.original?.contractDate || t("ES_COMMON_NA")}
+                  </span> 
+                ) : (
+                  <span>{t("ES_COMMON_NA")}</span>
+                )}
+              </div>)}
         },
         {
           Header: t("WORKS_CONTRACT_TYPE"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row.contractType || t("ES_COMMON_NA"))),
+          Cell: ({ row }) =>{
+            return( 
+              <div style={{"minWidth":"110px"}}>
+                {row.original?.contractType ? (
+                  <span >
+                      {row.original?.contractType || t("ES_COMMON_NA")}
+                  </span> 
+                ) : (
+                  <span>{t("ES_COMMON_NA")}</span>
+                )}
+              </div>)}
         },
         {
           Header: t("WORKS_NAME_OF_WORK"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row.nameOfTheWork || t("ES_COMMON_NA"))),
+          Cell: ({ row }) =>{
+            return( 
+              <div style={{"minWidth":"382px"}}>
+                {row.original?.nameOfTheWork ? (
+                  <span >
+                      {row.original?.nameOfTheWork || t("ES_COMMON_NA")}
+                  </span> 
+                ) : (
+                  <span>{t("ES_COMMON_NA")}</span>
+                )}
+              </div>)}
         },
         {
           Header: t("WORKS_ABSTRACT_ESTIMATE_NO"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row.abstractEstimateNumber || t("ES_COMMON_NA"))),
+          Cell: ({ row }) =>{
+            return( 
+              <div style={{"minWidth":"160px"}}>
+                {row.original?.abstractEstimateNumber ? (
+                  <span >
+                      {row.original?.abstractEstimateNumber || t("ES_COMMON_NA")}
+                  </span> 
+                ) : (
+                  <span>{t("ES_COMMON_NA")}</span>
+                )}
+              </div>)}
         },        
         {
           Header: t("WORKS_IMPLEMENT_AUTH"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.implementingAuthority || t("ES_COMMON_NA"))),
+          Cell: ({ row }) =>{
+            return( 
+              <div style={{"minWidth":"130px"}}>
+                {row.original?.implementingAuthority ? (
+                  <span >
+                      {row.original?.implementingAuthority || t("ES_COMMON_NA")}
+                  </span> 
+                ) : (
+                  <span>{t("ES_COMMON_NA")}</span>
+                )}
+              </div>)}
         },
         {
           Header: t("WORKS_ORG_NAME"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.orgnName || t("ES_COMMON_NA"))),
+          Cell: ({ row }) =>{
+            return( 
+              <div style={{"minWidth":"150px"}}>
+                {row.original?.orgnName ? (
+                  <span >
+                      {row.original?.orgnName || t("ES_COMMON_NA")}
+                  </span> 
+                ) : (
+                  <span>{t("ES_COMMON_NA")}</span>
+                )}
+              </div>)}
         },
         {
           Header: t("WORKS_OFF_IN_CHARGE"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.officerIncharge || t("ES_COMMON_NA"))),
+          Cell: ({ row }) =>{
+            return( 
+              <div style={{"minWidth":"150px"}}>
+                {row.original?.officerIncharge ? (
+                  <span >
+                      {row.original?.officerIncharge || t("ES_COMMON_NA")}
+                  </span> 
+                ) : (
+                  <span>{t("ES_COMMON_NA")}</span>
+                )}
+              </div>)}
         },
         {
           Header: t("WORKS_AGREEMENT_AMT"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.agreemntAmount || t("ES_COMMON_NA"))),
+          Cell: ({ row }) =>{
+            return( 
+              <div style={{"minWidth":"220px"}}>
+                {row.original?.agreemntAmount ? (
+                  <span >
+                      {row.original?.agreemntAmount || t("ES_COMMON_NA")}
+                  </span> 
+                ) : (
+                  <span>{t("ES_COMMON_NA")}</span>
+                )}
+              </div>)}
         },
         {
           Header: t("WORKS_STATUS"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.status || t("ES_COMMON_NA"))),
+          // accessor: (row) => (GetCell(row?.status || t("ES_COMMON_NA"))),
+          Cell: ({ row }) =>{
+            return( 
+              <div style={{"minWidth":"90px"}}>
+                {row.original?.status ? (
+                  <span >
+                      {row.original?.status || t("ES_COMMON_NA")}
+                  </span> 
+                ) : (
+                  <span>{t("ES_COMMON_NA")}</span>
+                )}
+              </div>)}
         }
     ],[]);
 
-    const isMobile = window.Digit.Utils.browser.isMobile();
+
     if (isMobile) {
         return <MobileSearchApplication {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }} />;
     }
@@ -142,7 +241,7 @@ const SearchContractApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
                 getCellProps={(cellInfo) => {
                   return {
                     style: {
-                      minWidth: cellInfo.column.Header === t("WORKS_INBOX_APPLICATION_NO") ? "240px" : "",
+                      minWidth: cellInfo.column.Header === t("WORKS_CONTRACT_ID") ? "180px" : "",
                       padding: "20px 18px",
                       fontSize: "16px"
                     },

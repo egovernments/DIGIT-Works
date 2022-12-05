@@ -19,20 +19,50 @@ import LinkButton from "../atoms/LinkButton";
 import { useTranslation } from "react-i18next";
 import MobileNumber from "../atoms/MobileNumber";
 import _ from "lodash";
+import CustomDropdown from "../molecules/CustomDropdown";
+
+/**
+ *  formcomposer used to render forms
+ *
+ * @author jagankumar-egov
+ *
+ * @example
+ * 
+ * refer this implementation of sample file
+ * frontend/micro-ui/web/micro-ui-internals/packages/modules/AttendenceMgmt/src/pages/citizen/Sample.js
+ *
+ */
 
 export const FormComposer = (props) => {
-  const { register, handleSubmit, setValue, getValues, reset, watch, trigger, control, formState, errors, setError, clearErrors, unregister } = useForm({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    reset,
+    watch,
+    trigger,
+    control,
+    formState,
+    errors,
+    setError,
+    clearErrors,
+    unregister,
+  } = useForm({
     defaultValues: props.defaultValues,
   });
   const { t } = useTranslation();
   const formData = watch();
 
   useEffect(() => {
-    if(props?.appData && Object.keys(props?.appData)?.length>0 && !(_.isEqual(props?.appData,formData)))
-    {
-       reset({...props?.appData});
+    if (
+      props?.appData &&
+      Object.keys(props?.appData)?.length > 0 &&
+      (!_.isEqual(props?.appData, formData) || !_.isEqual(props?.appData?.ConnectionHolderDetails?.[0], formData?.ConnectionHolderDetails?.[0]))
+    ) {
+      reset({ ...props?.appData });
     }
-  },[props?.appData])
+  }, [props?.appData, formData, props?.appData?.ConnectionHolderDetails]);
 
   useEffect(() => {
     props.getFormAccessors && props.getFormAccessors({ setValue, getValues });
@@ -52,7 +82,6 @@ export const FormComposer = (props) => {
 
   const fieldSelector = (type, populators, isMandatory, disable = false, component, config) => {
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
-
     switch (type) {
       case "text":
       case "date":
@@ -65,28 +94,45 @@ export const FormComposer = (props) => {
             {populators?.componentInFront ? (
               <span className={`component-in-front ${disable && "disabled"}`}>{populators.componentInFront}</span>
             ) : null}
-            <TextInput
-              className="field"
-              {...populators}
-              inputRef={register(populators.validation)}
-              isRequired={isMandatory}
-              type={type}
-              disable={disable}
-              watch={watch}
-            />
+             <Controller
+                defaultValue={formData?.[populators.name]}
+                render={({ onChange, ref, value }) => (
+                  <TextInput  value={formData?.[populators.name]} type={type} name={populators.name} onChange={onChange} inputRef={ref}
+                  errorStyle={errors?.[populators.name]}
+                  />
+                )}
+                name={populators.name}
+                rules={{ required: isMandatory, ...populators.validation }}
+                control={control}
+              />
           </div>
+          
         );
+
       case "textarea":
         // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));
         return (
-          <TextArea className="field" name={populators?.name || ""} {...populators} inputRef={register(populators.validation)} disable={disable} />
+          <Controller
+          defaultValue={formData?.[populators.name]}
+          render={({ onChange, ref, value }) => (
+            <TextArea className="field" value={formData?.[populators.name]} type={type} name={populators.name} onChange={onChange} inputRef={ref} disable={disable}                   errorStyle={errors?.[populators.name]}
+            />
+          )}
+          name={populators.name}
+          rules={{ required: isMandatory, ...populators.validation }}
+          control={control}
+        />
         );
       case "mobileNumber":
         return (
           <Controller
-            render={(props) => <MobileNumber className="field" onChange={props.onChange} value={props.value} disable={disable} />}
+            render={(props) => <MobileNumber inputRef={props.ref} className="field fullWidth" onChange={props.onChange}
+            value={props.value} disable={disable} {...props} 
+            errorStyle={errors?.[populators.name]}
+            />}
             defaultValue={populators.defaultValue}
             name={populators?.name}
+            rules={{ required: isMandatory, ...populators.validation }}
             control={control}
           />
         );
@@ -99,6 +145,32 @@ export const FormComposer = (props) => {
             control={control}
           />
         );
+        case "select":
+        case "radio":
+        case "dropdown":
+        case "radioordropdown":
+        return (
+            <Controller
+              render={(props) => (
+                <CustomDropdown
+                  t={t}
+                  label={config?.label}
+                  type={type}
+                  onBlur={props.onBlur}
+                  value={props.value}
+                  inputRef={props.ref} 
+                  onChange={props.onChange}
+                  config={populators}
+                  disable={config?.disable}
+                  errorStyle={errors?.[populators.name]}
+                />
+              )}
+              rules={{ required: isMandatory, ...populators.validation }}
+              defaultValue={formData?.[populators.name]}
+              name={config.key}
+              control={control}
+            />
+          );
       case "component":
         return (
           <Controller
@@ -190,16 +262,40 @@ export const FormComposer = (props) => {
     }
   };
 
+  const titleStyle = { color: "#505A5F", fontWeight: "700", fontSize: "16px" };
+
+  const getCombinedComponent = (section) => {
+    if (section.head && section.subHead) {
+      return (
+        <>
+          <CardSectionHeader style={props?.sectionHeadStyle ? props?.sectionHeadStyle : { margin: "5px 0px" }} id={section.headId}>
+            {t(section.head)}
+          </CardSectionHeader>
+          <CardSectionHeader style={titleStyle} id={`${section.headId}_DES`}>
+            {t(section.subHead)}
+          </CardSectionHeader>
+        </>
+      );
+    } else if (section.head) {
+      return (
+        <>
+          <CardSectionHeader style={props?.sectionHeadStyle ? props?.sectionHeadStyle : {}} id={section.headId}>
+            {t(section.head)}
+          </CardSectionHeader>
+        </>
+      );
+    } else {
+      return <div></div>;
+    }
+  };
+
+
   const formFields = useMemo(
     () =>
       props.config?.map((section, index, array) => {
         return (
           <React.Fragment key={index}>
-            {section.head && (
-              <CardSectionHeader style={props?.sectionHeadStyle ? props?.sectionHeadStyle : {}} id={section.headId}>
-                {t(section.head)}
-              </CardSectionHeader>
-            )}
+            {section && getCombinedComponent(section)}
             {section.body.map((field, index) => {
               if (props.inline)
                 return (
@@ -281,10 +377,10 @@ export const FormComposer = (props) => {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
-      <Card style={getCardStyles()} className={props?.className} noCardStyle={props.noCardStyle}>
+      <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
         {!props.childrenAtTheBottom && props.children}
         {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
-        {props.description && <CardLabelDesc> {props.description} </CardLabelDesc>}
+        {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
         {props.text && <CardText>{props.text}</CardText>}
         {formFields}
         {props.childrenAtTheBottom && props.children}
