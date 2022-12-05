@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
@@ -9,7 +9,7 @@ import CreateLOI from "./LOI/CreateLOI";
 import CreateEstimate from "./Estimate/CreateEstimate";
 import ViewEstimate from "./Estimate/ViewEstimate";
 import ViewLOI from "./LOI/ViewLOI";
-import SearchApprovedSubEstimate from "../employee/SearchApprovedSubEstimate"
+import SearchApprovedSubEstimate from "../employee/SearchApprovedSubEstimate";
 import Response from "../../components/response";
 import Inbox from "./Inbox";
 import LOIInbox from "./LOIInbox";
@@ -100,32 +100,39 @@ const BILLSBreadCrumbs = ({ location }) => {
     },
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
-
-}
+};
 
 const App = ({ path }) => {
   const location = useLocation();
-  const locationCheck =
-    window.location.href.includes("/employee/ws/new-application");
+  const EstimateSession = Digit.Hooks.useSessionStorage("ESTIMATE_CREATE", {});
+  const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
+  const locationCheck = window.location.href.includes("/employee/ws/new-application");
   const getBreadCrumbStyles = (screenType) => {
     // Defining 4 types for now -> create,view,inbox,search
 
     switch (true) {
-      case (screenType?.includes("/create")):
-        return { marginLeft: "10px" }
+      case screenType?.includes("/create"):
+        return { marginLeft: "10px" };
 
-      case (screenType?.includes("/view")):
-        return { marginLeft: "4px" }
+      case screenType?.includes("/view"):
+        return { marginLeft: "4px" };
 
-      case (screenType?.includes("/search")):
-        return { marginLeft: "7px" }
-      case (screenType?.includes("/inbox") || screenType?.includes("/LOIInbox")):
-        return { marginLeft: "5px" }
+      case screenType?.includes("/search"):
+        return { marginLeft: "7px" };
+      case screenType?.includes("/inbox") || screenType?.includes("/LOIInbox"):
+        return { marginLeft: "5px" };
 
       default:
-        return { marginLeft: "8px" }
+        return { marginLeft: "8px" };
     }
-  }
+  };
+  useEffect(() => {
+    return () => {
+      if (!window.location.href.includes("create-estimate") && Object.keys(sessionFormData) != 0) {
+        clearSessionFormData();
+      }
+    };
+  });
   return (
     <Switch>
       <React.Fragment>
@@ -136,18 +143,28 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
           <PrivateRoute path={`${path}/create-contractor`} component={() => <CreateContractor {...path} />} />
           <PrivateRoute path={`${path}/search-Estimate-approved`} component={(props) => <Search {...props} parentRoute={path} />} />
-          <PrivateRoute path={`${path}/inbox`} component={() => (<Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />
-          <PrivateRoute path={`${path}/LOIInbox`} component={() => (<LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />)} />
+          <PrivateRoute
+            path={`${path}/inbox`}
+            component={() => (
+              <Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />
+            )}
+          />
+          <PrivateRoute
+            path={`${path}/LOIInbox`}
+            component={() => (
+              <LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />
+            )}
+          />
 
           <PrivateRoute path={`${path}/search-estimate`} component={() => <SearchEstimate />} />
           <PrivateRoute path={`${path}/search-approved-estimate`} component={() => <SearchApprovedSubEstimate />} />
           <PrivateRoute path={`${path}/create-loi`} component={() => <CreateLOI {...{ path }} />} />
-          <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{ path }} />} />
+          <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{ path }} EstimateSession={EstimateSession} />} />
           <PrivateRoute path={`${path}/modify-estimate`} component={() => <ModifyEstimate {...{ path }} />} />
           <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
           <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/response`} component={() => <Response {...{ path }} />} />
-          <PrivateRoute path={`${path}/download`} component={()=> <HandleDownloadPdf {...{path}}/>}/>
+          <PrivateRoute path={`${path}/download`} component={() => <HandleDownloadPdf {...{ path }} />} />
         </div>
       </React.Fragment>
     </Switch>
