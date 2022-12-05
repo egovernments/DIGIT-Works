@@ -56,7 +56,7 @@ const CreateOrganizationForm = () => {
             label={config.label.submit}
             config={config.form}
             onSubmit={onSubmit}
-            // fieldStyle={{ marginRight: 0 }}
+            fieldStyle={{ fontWeight: '600' }}
         /> 
         </React.Fragment>
     )

@@ -82,7 +82,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "org_name",
                     type: "text",
                     disable: false,
-                    populators: { name: "org_name", error: "Enter required details", validation: { pattern: /^[A-Za-z]+$/i } },
+                    populators: { name: "org_name", error: "Enter required details", validation: { pattern: Digit.Utils.getPattern('Name') } },
                 },
                 {
                     //TODO: max date is not working
@@ -93,7 +93,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     disable: false,
                     populators: { 
                         name: "formation_date", 
-                        max: Digit.Utils.date.getDate()
+                        max: new Date().toISOString().split("T")[0]
                     },
                 },
                 {
@@ -191,7 +191,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "bank_acc_holder_name",
                     type: "text",
                     disable: false,
-                    populators: { name: "acc_holder_name", error: "Enter required details", validation: { pattern: /^[A-Za-z]+$/i } },
+                    populators: { name: "acc_holder_name", error: "Enter required details", validation: { pattern: Digit.Utils.getPattern('Name') } },
                 },
                 {
                     isMandatory: true,
@@ -214,7 +214,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "bank_acc_no",
                     type: "number",
                     disable: false,
-                    populators: { name: "bank_acc_no", error: "Enter required details" },
+                    populators: { name: "bank_acc_no", error: "Enter required details", validation: {pattern: Digit.Utils.getPattern('bankAccountNo')} },
                 },
                 {
                     inline: true,
@@ -223,7 +223,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "ifsc",
                     type: "text",
                     disable: false,
-                    populators: { name: "ifsc", error: "Enter required details", validation: { pattern: /^[A-Za-z0-9]+$/i } },
+                    populators: { name: "ifsc", error: "Enter required details", validation: {pattern: Digit.Utils.getPattern('IFSC')} },
                 },
                 {
                     inline: true,
@@ -255,7 +255,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "contract_person_name",
                     type: "text",
                     disable: false,
-                    populators: { name: "contract_person_name", error: "Enter required details", validation: { pattern: /^[A-Za-z]+$/i } },
+                    populators: { name: "contract_person_name", error: "Enter required details", validation: { pattern: Digit.Utils.getPattern('Name') } },
                 },
                 {
                     inline: true,
@@ -264,7 +264,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "father_name",
                     type: "text",
                     disable: false,
-                    populators: { name: "father_name", error: "Enter required details", validation: { pattern: /^[A-Za-z]+$/i } },
+                    populators: { name: "father_name", error: "Enter required details", validation: { pattern: Digit.Utils.getPattern('Name') } },
                 },
                 {
                     isMandatory: true,
@@ -287,7 +287,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "phone",
                     type: "number",
                     disable: false,
-                    populators: { name: "phone", error: "Enter valid phone", validation: Digit.Utils.getPattern('MobileNo')},
+                    populators: { name: "phone", error: "Enter valid phone", validation: { min: 5999999999, max: 9999999999 }},
                 },
                 {
                     isMandatory: true,

@@ -95,6 +95,7 @@ module.exports = {
     },
     inset: {
       0: 0,
+      6: "6px",
       10: "10px",
     },
     extend: {},
