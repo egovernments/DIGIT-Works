@@ -98,6 +98,11 @@ paths:
         in: query
         schema:
           type: string
+      - name: staffId
+        description: Get all the registers where the given staff was registered.
+        in: query
+        schema:
+          type: string
       responses:
         '200':
           description: 'Search results'
@@ -373,15 +378,19 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendanceRegister:
-          $ref: '#/components/schemas/AttendanceRegister'
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/AttendanceRegister'
+            - description: 'Entries of the attendance register to be created.'
     
     AttendanceRegisterResponse:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendanceRegister:
           type: array
           items:
@@ -417,7 +426,7 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendees:
           type: array
           items:
@@ -432,7 +441,7 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendees:
           type: array
           items:
@@ -442,7 +451,7 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendees:
           type: array
           items: 
@@ -457,7 +466,7 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendees:
           type: array
           items:
@@ -484,10 +493,6 @@ components:
         userId:
           type: string
           description: Identifier of the user of the system
-        permissionLevels:
-          type: array
-          items:
-            $ref: '#/components/schemas/PermissionLevel'
         enrollmentDate:
           readOnly: true
           type: number
@@ -504,7 +509,7 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         staff:
           allOf:
           - $ref: '#/components/schemas/StaffPermission'
@@ -516,7 +521,7 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         staff:
           $ref: '#/components/schemas/StaffPermission'
 
@@ -565,7 +570,7 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendance:
           type: array
           items:
@@ -575,7 +580,7 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendance:
           type: array
           items:
@@ -585,7 +590,7 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
 
 
 servers:
