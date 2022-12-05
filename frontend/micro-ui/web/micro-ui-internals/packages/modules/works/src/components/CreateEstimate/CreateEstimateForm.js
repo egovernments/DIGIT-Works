@@ -20,6 +20,7 @@ import {
 import { useTranslation } from "react-i18next";
 import SubWorkTable from "./SubWorkTable";
 import ProcessingModal from "../Modal/ProcessingModal";
+import _ from "lodash";
 
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
