@@ -20,6 +20,31 @@ import { useTranslation } from "react-i18next";
 import MobileNumber from "../atoms/MobileNumber";
 import _ from "lodash";
 import CustomDropdown from "../molecules/CustomDropdown";
+import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
+
+const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
+
+const wrapperStyles = {
+  // "display":"flex",
+  // "flexDirection":"column",
+  // "justifyContent":"center",
+  // "padding":"2rem",
+  // "margin":"1rem",
+  // "width":"80%",
+  // "backgroundColor":"#FAFAFA",
+  // "border": "1px solid #D6D5D4"
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  border: "solid",
+  borderRadius: "5px",
+  padding: "10px",
+  paddingTop: "20px",
+  marginTop: "10px",
+  borderColor: "#f3f3f3",
+  background: "#FAFAFA",
+  marginBottom: "20px",
+}
 
 /**
  *  formcomposer used to render forms
@@ -83,8 +108,8 @@ export const FormComposer = (props) => {
   const fieldSelector = (type, populators, isMandatory, disable = false, component, config) => {
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
     switch (type) {
-      case "text":
       case "date":
+      case "text": 
       case "number":
       case "password":
       case "time":
@@ -99,6 +124,7 @@ export const FormComposer = (props) => {
                 render={({ onChange, ref, value }) => (
                   <TextInput  value={formData?.[populators.name]} type={type} name={populators.name} onChange={onChange} inputRef={ref}
                   errorStyle={errors?.[populators.name]}
+                    style={type === "date" ?{"paddingRight": "3px"}:""}
                   />
                 )}
                 name={populators.name}
@@ -145,6 +171,44 @@ export const FormComposer = (props) => {
             control={control}
           />
         );
+        case "multiupload":
+          return (
+            <Controller
+              name="uploads"
+              control={control}
+              rules={{ required: false }}
+              render={({ onChange, ref, value = [] }) => {
+                function getFileStoreData(filesData) {
+                  const numberOfFiles = filesData.length
+                  let finalDocumentData = []
+                  if (numberOfFiles > 0) {
+                    filesData.forEach(value => {
+                      finalDocumentData.push({
+                        fileName: value?.[0],
+                        fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
+                        documentType: value?.[1]?.file?.type
+                      })
+                    })
+                  }
+                  onChange(finalDocumentData)
+                }
+                return <MultiUploadWrapper
+                  t={t}
+                  module="works"
+                  tenantId={"pb.amritsar"}
+                  getFormState={getFileStoreData}
+                  showHintBelow={true}
+                  setuploadedstate={value}
+                  allowedFileTypesRegex={allowedFileTypes}
+                  allowedMaxSizeInMB={5}
+                  hintText={t("WORKS_DOC_UPLOAD_HINT")}
+                  maxFilesAllowed={5}
+                  extraStyleName={{ padding: "0.5rem" }}
+                />
+              }
+              }
+            />
+          )
         case "select":
         case "radio":
         case "dropdown":
@@ -335,7 +399,7 @@ export const FormComposer = (props) => {
                 );
               return (
                 <Fragment>
-                  <LabelFieldPair key={index}>
+                  <LabelFieldPair key={index} style={props?.showWrapperContainers ? {...wrapperStyles} : ""}>
                     {!field.withoutLabel && (
                       <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}>
                         {t(field.label)}
