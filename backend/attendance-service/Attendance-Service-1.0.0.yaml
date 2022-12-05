@@ -40,7 +40,7 @@ paths:
               $ref: '#/components/schemas/AttendanceRegisterRequest'
       responses:
         '202':
-          description: 'Request to update the register has been accept
+          description: 'Request to update the register has been accepted.'
           content:
             application/json:
               schema:
