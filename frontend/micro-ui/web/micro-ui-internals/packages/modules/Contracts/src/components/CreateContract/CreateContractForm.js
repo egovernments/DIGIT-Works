@@ -212,7 +212,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                         />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CURRENT_CONTRACT_TYPE`)}:*`}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONTRACT_TYPE`)}:*`}</CardLabel>
                     <div className='field'>
                         <Controller
                             name="currentContractType"
@@ -304,6 +304,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                     <div className="tooltip" style={{ "margin": "-10px -30px 10px 10px" }}>
                         <InfoBannerIcon fill="#0b0c0c" />
                         <span className="tooltiptext" style={{
+                            marginLeft:"-200px",
                             whiteSpace: "nowrap",
                             fontSize: "medium"
                         }}>

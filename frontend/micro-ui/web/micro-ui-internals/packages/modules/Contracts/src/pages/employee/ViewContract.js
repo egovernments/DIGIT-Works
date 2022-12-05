@@ -193,7 +193,7 @@ const ViewContract = (props) => {
                     t={t}
                     onSelect={onActionSelect}
                     />:null}
-                <SubmitBar label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+                <SubmitBar label={t("WORKS_ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)} />
             </ActionBar>
         </Fragment>
 
