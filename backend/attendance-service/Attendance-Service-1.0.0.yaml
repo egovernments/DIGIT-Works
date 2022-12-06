@@ -493,10 +493,6 @@ components:
         userId:
           type: string
           description: Identifier of the user of the system
-        permissionLevels:
-          type: array
-          items:
-            $ref: '#/components/schemas/PermissionLevel'
         enrollmentDate:
           readOnly: true
           type: number
