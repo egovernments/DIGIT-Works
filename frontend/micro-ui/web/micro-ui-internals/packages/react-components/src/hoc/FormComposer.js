@@ -401,12 +401,12 @@ export const FormComposer = (props) => {
                 <Fragment>
                   <LabelFieldPair key={index} style={props?.showWrapperContainers ? {...wrapperStyles} : ""}>
                     {!field.withoutLabel && (
-                      <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}>
+                      <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert",fontWeight:props.isDescriptionBold?"600":null }}>
                         {t(field.label)}
                         {field.isMandatory ? " * " : null}
                       </CardLabel>
                     )}
-                    <div style={field.withoutLabel ? { width: "100%", ...props?.fieldStyle } : {}} className="field">
+                    <div style={field.withoutLabel ? { width: "100%", ...props?.fieldStyle } : {...props?.fieldStyle}} className="field">
                       {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
                       {field?.description && <CardText style={{ fontSize: "14px", marginTop: "-24px" }}>{t(field?.description)}</CardText>}
                     </div>
