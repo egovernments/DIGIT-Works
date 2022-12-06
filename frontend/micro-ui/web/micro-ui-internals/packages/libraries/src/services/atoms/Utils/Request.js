@@ -68,8 +68,9 @@ export const Request = async ({
   multipartData = {},
   reqTimestamp = false,
 }) => {
+  const ts = new Date().getTime();
   if (method.toUpperCase() === "POST") {
-    const ts = new Date().getTime();
+   
     data.RequestInfo = {
       apiId: "Rainmaker",
     };
@@ -84,9 +85,6 @@ export const Request = async ({
     }
     if (noRequestInfo) {
       delete data.RequestInfo;
-    }
-    if (reqTimestamp) {
-      data.RequestInfo = { ...data.RequestInfo, ts: Number(ts) };
     }
 
     /* 
@@ -118,6 +116,9 @@ export const Request = async ({
     }
   } else if (setTimeParam) {
     params._ = Date.now();
+  }
+  if (reqTimestamp) {
+    data.RequestInfo = { ...data.RequestInfo, ts: Number(ts) };
   }
 
   let _url = url
@@ -185,6 +186,7 @@ export const ServiceRequest = async ({
   useCache = false,
   params = {},
   auth,
+  reqTimestamp,
   userService,
 }) => {
   const preHookName = `${serviceName}Pre`;
@@ -197,7 +199,7 @@ export const ServiceRequest = async ({
     reqParams = preHookRes.params;
     reqData = preHookRes.data;
   }
-  const resData = await Request({ method, url, data: reqData, headers, useCache, params: reqParams, auth, userService });
+  const resData = await Request({ method, url, data: reqData, headers, useCache, params: reqParams, auth, userService,reqTimestamp });
 
   if (window[postHookName] && typeof window[postHookName] === "function") {
     return await window[postHookName](resData);

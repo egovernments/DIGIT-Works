@@ -30,9 +30,8 @@ import Sample from "./Sample";
 // }
 
 const App = ({ path }) => {
-    const location = useLocation();
-    
-    const ViewRegister = Digit?.ComponentRegistryService?.getComponent("ViewRegister");
+  const location = useLocation();
+
 
     return (
         <span className={"pt-citizen"}>
@@ -51,6 +50,7 @@ const App = ({ path }) => {
             </Switch>
         </span>
     );
+
 };
 
 export default App;
