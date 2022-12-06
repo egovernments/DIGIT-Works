@@ -240,10 +240,10 @@ import { usePrivacyContext } from "./usePrivacyContext";
 
 import useSearchWORKS from "./works/useSearchWORKS";
 import useSearchApprovedEstimates from "./works/useSearchApprovedEstimates";
-import useViewEstimateDetails from "./works/useViewEstimateDetails"
-import useViewLOIDetails from "./works/useViewLOIDetails"
+import useViewEstimateDetails from "./works/useViewEstimateDetails";
+import useViewLOIDetails from "./works/useViewLOIDetails";
 import useCreateLOI from "./works/useCreateLOI";
-import useEstimateSearch from "./works/useSearch"
+import useEstimateSearch from "./works/useSearch";
 import useCreateEstimate from "./works/useCreateEstimate";
 import useSearchEstimate from "./works/userSearchEstimate";
 import useApplicationActionsLOI from "./works/useApplicationActions";
@@ -251,6 +251,7 @@ import useApplicationActionsEstimate from "./works/useUpdateEstimate";
 import useUpdateEstimate from "./works/useUpdateEstimate";
 import useWorksInbox from "./works/useInbox";
 import useViewContractDetails from "./contracts/useViewContractDetails";
+import useViewAttendance from "./attendance/useViewAttendance";
 
 const works = {
   useViewEstimateDetails,
@@ -264,12 +265,12 @@ const works = {
   useUpdateEstimate,
   useApplicationActionsEstimate,
   useSearchApprovedEstimates,
-  useInbox:useWorksInbox,
-}
+  useInbox: useWorksInbox,
+};
 
 const contracts = {
-  useViewContractDetails
-}
+  useViewContractDetails,
+};
 
 const pgr = {
   useComplaintDetails,
@@ -504,6 +505,10 @@ const reports = {
   useReportMeta,
 };
 
+const attendance = {
+  useViewAttendance,
+};
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -565,7 +570,8 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   works,
-  contracts
+  contracts,
+  attendance,
 };
 
 export default Hooks;
