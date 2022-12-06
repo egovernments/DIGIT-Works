@@ -78,12 +78,10 @@ public class EstimateServiceValidator {
             errorMap.put("WORK_FLOW.ACTION", "Work flow's action is mandatory");
         }
         if ((StringUtils.isNotBlank(workflow.getAction()) && !ACTION_REJECT.equals(workflow.getAction()))
-                && (workflow.getAssignees() == null || workflow.getAssignees().isEmpty())) {
+                && (workflow.getAssignees() == null || workflow.getAssignees().isEmpty() || workflow.getAssignees().size() != 1)) {
             throw new CustomException("WORK_FLOW.ASSIGNEE", "Work flow's assignee is mandatory");
         }
-        if (workflow.getAssignees().size() != 1) {
-            throw new CustomException("WORK_FLOW.ASSIGNEE.LENGTH", "Work flow's assignee should be one");
-        }
+
     }
 
     private void validateEstimate(Estimate estimate, Map<String, String> errorMap) {

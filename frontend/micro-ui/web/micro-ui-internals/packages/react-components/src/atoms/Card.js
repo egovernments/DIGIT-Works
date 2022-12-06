@@ -10,7 +10,7 @@ const Card = ({ onClick, style, children, className, ReactRef, ...props }) => {
   
   return (
     <div
-      className={`${isEmployee ? "employeeCard" : "card"} ${className ? className : ""}`}
+      className={`${props.noCardStyle ? "" : isEmployee ? "employeeCard" : "card"} ${className ? className : ""}`}
       onClick={onClick}
       style={style}
       {...props}
