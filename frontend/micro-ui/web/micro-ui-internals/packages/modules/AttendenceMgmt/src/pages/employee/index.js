@@ -19,7 +19,13 @@ const AttendanceBreadCrumbs = ({ location }) => {
       content: fromScreen ? `${t(fromScreen)} / AM` : "AM",
       show: location.pathname.includes("/attendencemgmt/inbox") ? true : false,
       isBack: fromScreen && true,
-    }
+    },
+    {
+      path: `/${window.contextPath}/employee/attendencemgmt/view-attendance`,
+      content: fromScreen ? `${t(fromScreen)} / VIEW ATTENDANCE` : "VIEW ATTENDANCE",
+      show: location.pathname.includes("/attendencemgmt/view-attendance") ? true : false,
+      isBack: fromScreen && true,
+    },
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 
@@ -27,6 +33,7 @@ const AttendanceBreadCrumbs = ({ location }) => {
 
 const App = ({ path }) => {
   const location = useLocation();
+  const ViewAttendanceApp = Digit?.ComponentRegistryService?.getComponent("ViewAttendance");
   const Inbox = Digit.ComponentRegistryService.getComponent("AttendenceMgmtInbox");
 
   return (
@@ -35,6 +42,7 @@ const App = ({ path }) => {
           <React.Fragment>
               <AttendanceBreadCrumbs location={location} />
           </React.Fragment>
+          <PrivateRoute path={`${path}/view-attendance`} component={ViewAttendanceApp} />
           <PrivateRoute 
               path={`${path}/inbox`} 
               component={ () => (

@@ -10,6 +10,7 @@ import ViewProjects from "./components/ViewProjectsInbox.js/ViewProjects";
 import Inbox from "./pages/employee/Inbox";
 import AttendenceInboxFilter from "./components/inbox/InboxFilter";
 import AttendenceInboxSearch from "./components/inbox/InboxSearch";
+import ViewAttendance from "./pages/employee/viewAttendance/viewAttendance";
 
 
 export const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
@@ -36,6 +37,7 @@ const componentsToRegister = {
     AttendenceMgmtCard,
     AttendenceMgmtModule,
     AttendenceMgmtInbox: Inbox,
+    ViewAttendance,
     ViewRegister,
     ViewProjects,
     AttendenceInboxFilter,
