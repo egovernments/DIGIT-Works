@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { createOrganizationConfig } from '../../config/createOrganizationConfig'
 import { FormComposer } from '@egovernments/digit-ui-react-components'
 import { useTranslation } from 'react-i18next'
+import { useHistory } from 'react-router-dom'
 
-const CreateOrganizationForm = () => {
+const CreateOrganizationForm = ({setCreateOrgStatus}) => {
     const { t } = useTranslation();
     
     //Upload
@@ -47,6 +48,8 @@ const CreateOrganizationForm = () => {
     const onSubmit = (data) => {
         console.log('Submitted data', data)
         console.log('Submitted file', uploadedFile)
+        //TODO: based on API response, pass as true/false
+        setCreateOrgStatus(true)
     }
 
     return (
@@ -57,6 +60,8 @@ const CreateOrganizationForm = () => {
             config={config.form}
             onSubmit={onSubmit}
             fieldStyle={{ fontWeight: '600' }}
+            noBreakLine={true}
+            sectionHeadStyle={{marginTop: '1rem', marginBottom: '2rem'}}
         /> 
         </React.Fragment>
     )
