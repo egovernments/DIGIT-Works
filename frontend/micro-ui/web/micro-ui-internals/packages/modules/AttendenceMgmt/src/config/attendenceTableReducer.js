@@ -239,13 +239,10 @@ const updateAttendenceCount = (state) => {
       let attendence = state.rows[row].attendence[index];
       if (attendence === "half") {
         currentAttendence[index] += 0.5;
-        console.log("match half", index, row, currentAttendence);
       } else if (attendence === "full") {
         currentAttendence[index] += 1;
-        console.log("match full");
       }
     }
-    console.log(currentAttendence);
   }
   return currentAttendence;
 };

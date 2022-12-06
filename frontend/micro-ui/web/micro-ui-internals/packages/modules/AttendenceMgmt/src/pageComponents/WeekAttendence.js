@@ -55,7 +55,6 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
   };
 
   const handleModifiedAmount = (event) => {
-    console.log(event.target.value);
   }
 
   const renderBankAccountDetails = (value) => {
