@@ -156,8 +156,10 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
         Header: t("WORKS_SLA"),
         disableSortBy: true,
         Cell: ({ row }) =>{
+          let cellcolor;
+          row.original?.sla > 30 ? cellcolor="#FF0000" : cellcolor="#4F992D"
           return( 
-            <div style={{"minWidth":"80px"}}>
+            <div style={{"minWidth":"80px", "color":cellcolor}}>
               {row.original?.sla ? (
                 <span >
                     {row.original?.sla || t("ES_COMMON_NA")}
@@ -165,7 +167,8 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
               ) : (
                 <span>{t("ES_COMMON_NA")}</span>
               )}
-            </div>)}      },
+            </div>)}      
+      },
       {
         Header: t("WORKS_STATUS"),
         disableSortBy: true,

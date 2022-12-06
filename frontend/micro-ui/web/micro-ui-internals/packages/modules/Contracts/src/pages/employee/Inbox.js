@@ -111,7 +111,7 @@ const Inbox = ({
         implementingAuthority: "Organisation",
         orgnName: "Maa Bhagavati SHG",
         officerIncharge: "S.A Bhasha",
-        agreemntAmount: "3553600.00",
+        agreemntAmount: "35,53,600.00",
         sla:"15 days",
         status:"Approved"
       }]
