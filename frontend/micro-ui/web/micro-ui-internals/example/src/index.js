@@ -8,7 +8,7 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initWorksComponents } from "@egovernments/digit-ui-module-works";
-import { AttendenceMgmtModule, initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
+import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { HRMSModule, initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
@@ -61,7 +61,6 @@ const initDigitUI = () => {
 
   window?.Digit.ComponentRegistryService.setupRegistry({
     // ...pgrComponents,
-    AttendenceMgmtModule,
   });
 
   // initPGRComponents();
