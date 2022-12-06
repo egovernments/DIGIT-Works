@@ -11,7 +11,7 @@ import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
-import { HRMSModule ,initHRMSComponents  } from "@egovernments/digit-ui-module-hrms";
+import { HRMSModule, initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import "@egovernments/digit-ui-css/example/index.css";
 
 // import * as comps from "@egovernments/digit-ui-react-components";
@@ -32,10 +32,10 @@ const enabledModules = [
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
-  const token = window.localStorage.getItem("token")|| process.env[`REACT_APP_${userType}_TOKEN`];
- 
-  const citizenInfo = window.localStorage.getItem("Citizen.user-info")
- 
+  const token = window.localStorage.getItem("token") || process.env[`REACT_APP_${userType}_TOKEN`];
+
+  const citizenInfo = window.localStorage.getItem("Citizen.user-info");
+
   const citizenTenantId = window.localStorage.getItem("Citizen.tenant-id") || stateCode;
 
   const employeeInfo = window.localStorage.getItem("Employee.user-info");
@@ -57,7 +57,7 @@ const initTokens = (stateCode) => {
 };
 
 const initDigitUI = () => {
-  window.contextPath=window?.globalConfigs?.getConfig("CONTEXT_PATH");
+  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
   window?.Digit.ComponentRegistryService.setupRegistry({
     // ...pgrComponents,
@@ -70,9 +70,7 @@ const initDigitUI = () => {
   initAttendenceMgmtComponents();
   initHRMSComponents();
   initContractsComponents();
-  const moduleReducers = (initData) => (
-    initData
-  );
+  const moduleReducers = (initData) => initData;
 
   window.Digit.Customizations = {
     PGR: pgrCustomizations,
