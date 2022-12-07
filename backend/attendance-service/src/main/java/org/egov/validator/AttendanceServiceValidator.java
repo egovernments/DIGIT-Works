@@ -11,6 +11,7 @@ import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterRequest;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
+import digit.models.coremodels.RequestInfoWrapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -125,6 +126,14 @@ public class AttendanceServiceValidator {
 
         if (CollectionUtils.isEmpty(tenantRes))
             errorMap.put("INVALID_TENANT", "The tenant: " + attendanceRegisters.get(0).getTenantId() + " is not present in MDMS");
+    }
+    public void validateSearchEstimate(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
+        if (searchCriteria == null || requestInfoWrapper == null || requestInfoWrapper.getRequestInfo() == null) {
+            throw new CustomException("ATTENDANCE_REGISTER_SEARCH_CRITERIA_REQUEST", "Attendance register search criteria request is mandatory");
+        }
+        if (StringUtils.isBlank(searchCriteria.getTenantId())) {
+            throw new CustomException("TENANT_ID", "Tenant is mandatory");
+        }
     }
 
 }

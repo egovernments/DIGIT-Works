@@ -100,7 +100,7 @@ data:{
         }],
         performedAction: "CREATE",
         rating: 0,
-        state: "Contract Created",
+        state: "WORKS_CONTRACT_CREATED",
         status: "CREATED",
         timeLineActions: [],
         wfComment: ["Bill to be revised"],

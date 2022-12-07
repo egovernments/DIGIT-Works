@@ -1,20 +1,20 @@
 package org.egov.service;
 
+import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.producer.Producer;
+import org.egov.repository.AttendanceRepository;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterRequest;
-import org.egov.web.models.AttendanceRegisterResponse;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -34,6 +34,9 @@ public class AttendanceService {
     @Autowired
     private EnrichementService enrichementService;
 
+    @Autowired
+    private AttendanceRepository repository;
+
     /**
      * Create Attendance register
      *
@@ -50,17 +53,15 @@ public class AttendanceService {
     /**
      * Search attendace register based on given search criteria
      *
-     * @param requestInfo
+     * @param requestInfoWrapper
      * @param searchCriteria
      * @return
      */
-    public AttendanceRegisterResponse searchAttendanceRegister(RequestInfo requestInfo, AttendanceRegisterSearchCriteria searchCriteria) {
-        //TODO Returning Dummy Response
+    public List<AttendanceRegister> searchAttendanceRegister(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
 
-        AttendanceRegister attendanceRegister = new AttendanceRegister();
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
-        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(Collections.singletonList(attendanceRegister)).build();
-        return attendanceRegisterResponse;
+        attendanceServiceValidator.validateSearchEstimate(requestInfoWrapper,searchCriteria);
+        List<AttendanceRegister> attendanceRegisterList = repository.getAttendanceRegister(searchCriteria);
+        return attendanceRegisterList;
     }
 
     /**
