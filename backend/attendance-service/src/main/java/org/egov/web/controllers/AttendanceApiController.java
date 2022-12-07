@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.*;
+import org.egov.web.models.AttendanceRegisterResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -35,10 +36,15 @@ public class AttendanceApiController {
 
     @Autowired
     private AttendanceService attendanceService;
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> attendanceV1CreatePOST(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendanceRegisterRequest attendanceRegisterRequest) {
-        AttendanceRegisterResponse attendanceRegisterResponse = attendanceService.createAttendanceRegister(attendanceRegisterRequest);
+        AttendanceRegisterRequest enrichedAttendanceRegisterRequest = attendanceService.createAttendanceRegister(attendanceRegisterRequest);
+
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceRegisterRequest.getRequestInfo(), true);
+        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(enrichedAttendanceRegisterRequest.getAttendanceRegister()).build();
         return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse,HttpStatus.OK);
     }
 
@@ -50,8 +56,12 @@ public class AttendanceApiController {
 
     @RequestMapping(value = "/_update", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> attendanceV1UpdatePOST(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendanceRegisterRequest attendanceRegisterRequest) {
-        AttendanceRegisterResponse attendanceRegisterResponse = attendanceService.updateAttendanceRegister(attendanceRegisterRequest);
+        AttendanceRegisterRequest enrichedAttendanceRegisterRequest = attendanceService.updateAttendanceRegister(attendanceRegisterRequest);
+
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceRegisterRequest.getRequestInfo(), true);
+        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(enrichedAttendanceRegisterRequest.getAttendanceRegister()).build();
         return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse,HttpStatus.OK);
     }
+
 
 }
