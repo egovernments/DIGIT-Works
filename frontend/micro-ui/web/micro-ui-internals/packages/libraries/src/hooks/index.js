@@ -238,6 +238,40 @@ import useStaticData from "./useStaticData";
 import useBillAmendmentInbox from "./billAmendment/useInbox";
 import { usePrivacyContext } from "./usePrivacyContext";
 
+import useSearchWORKS from "./works/useSearchWORKS";
+import useSearchApprovedEstimates from "./works/useSearchApprovedEstimates";
+import useViewEstimateDetails from "./works/useViewEstimateDetails";
+import useViewLOIDetails from "./works/useViewLOIDetails";
+import useCreateLOI from "./works/useCreateLOI";
+import useEstimateSearch from "./works/useSearch";
+import useCreateEstimate from "./works/useCreateEstimate";
+import useSearchEstimate from "./works/userSearchEstimate";
+import useApplicationActionsLOI from "./works/useApplicationActions";
+import useApplicationActionsEstimate from "./works/useUpdateEstimate";
+import useUpdateEstimate from "./works/useUpdateEstimate";
+import useWorksInbox from "./works/useInbox";
+import useViewContractDetails from "./contracts/useViewContractDetails";
+import useViewAttendance from "./attendance/useViewAttendance";
+
+const works = {
+  useViewEstimateDetails,
+  useViewLOIDetails,
+  useCreateLOI,
+  useEstimateSearch,
+  useSearchWORKS,
+  useCreateEstimate,
+  useSearchEstimate,
+  useApplicationActionsLOI,
+  useUpdateEstimate,
+  useApplicationActionsEstimate,
+  useSearchApprovedEstimates,
+  useInbox: useWorksInbox,
+};
+
+const contracts = {
+  useViewContractDetails,
+};
+
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -471,6 +505,10 @@ const reports = {
   useReportMeta,
 };
 
+const attendance = {
+  useViewAttendance,
+};
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -520,6 +558,7 @@ const Hooks = {
   survey,
   noc,
   ws,
+  works,
   useCustomMDMS,
   reports,
   useGetHowItWorksJSON,
@@ -530,6 +569,9 @@ const Hooks = {
   useDynamicData,
   useBulkPdfDetails,
   useBillAmendmentInbox,
+  works,
+  contracts,
+  attendance,
 };
 
 export default Hooks;

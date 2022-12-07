@@ -29,6 +29,8 @@ import { ReportsService } from "./services/elements/Reports";
 import HrmsService from "./services/elements/HRMS";
 import { InboxGeneral } from "./services/elements/InboxService";
 import EventsServices from "./services/elements/Events";
+import { WorksService } from "./services/elements/Works";
+
 
 import ShareFiles from "./services/molecules/ShareFiles";
 import { GetServiceDefinitions } from "./services/molecules/ServiceDefinitions";
@@ -90,6 +92,7 @@ const initLibraries = () => {
   setupLibraries("StoreData", StoreData);
   setupLibraries("EventsServices", EventsServices);
   setupLibraries("WSService", WSService);
+  setupLibraries("WorksService", WorksService)
 
   setupLibraries("InboxGeneral", InboxGeneral);
   setupLibraries("ShareFiles", ShareFiles);

@@ -34,7 +34,6 @@ config:
         image-name: "muster-roll-service"
       - work-dir: "backend/muster-roll-service/src/main/resources/db"
         image-name: "muster-roll-service-db"
-        
   - name: "builds/digit-works/backend/estimate-service"
     build:
       - work-dir: "backend/estimate-service"

@@ -7,9 +7,10 @@ const Card = ({ onClick, style, children, className, ReactRef, ...props }) => {
   const info = Digit.UserService.getUser()?.info;
   const userType = info?.type;
   const isEmployee = classname === "employee" || userType === "EMPLOYEE";
+  
   return (
     <div
-      className={`${isEmployee ? "employeeCard" : "card"} ${className ? className : ""}`}
+      className={`${props.noCardStyle ? "" : isEmployee ? "employeeCard" : "card"} ${className ? className : ""}`}
       onClick={onClick}
       style={style}
       {...props}

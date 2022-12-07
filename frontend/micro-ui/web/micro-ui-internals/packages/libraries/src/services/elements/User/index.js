@@ -50,9 +50,9 @@ export const UserService = {
       window.localStorage.clear();
       window.sessionStorage.clear();
       if (userType === "citizen") {
-        window.location.replace("/digit-ui/citizen");
+        window.location.replace(`/${window?.contextPath}/citizen`);
       } else {
-        window.location.replace("/digit-ui/employee/user/language-selection");
+        window.location.replace(`/${window?.contextPath}/employee/user/language-selection`);
       }
     }
   },
@@ -119,11 +119,13 @@ export const UserService = {
     });
   },
   userSearch: async (tenantId, data, filters) => {
-    return Request({
+    
+    return ServiceRequest({
       url: Urls.UserSearch,
       params: { ...filters },
       method: "POST",
       auth: true,
+      useCache: true,
       userService: true,
       data: data.pageSize ? { tenantId, ...data } : { tenantId, ...data, pageSize: "100" },
     });

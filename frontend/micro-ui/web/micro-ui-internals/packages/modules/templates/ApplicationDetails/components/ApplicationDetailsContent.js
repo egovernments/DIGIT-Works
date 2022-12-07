@@ -8,9 +8,10 @@ import {
   Loader,
   Row,
   StatusTable,
+  Table,
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
-import React, { Fragment } from "react";
+import React, { Fragment, useCallback, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import BPADocuments from "./BPADocuments";
@@ -26,12 +27,16 @@ import SubOccupancyTable from "./SubOccupancyTable";
 import TLCaption from "./TLCaption";
 import TLTradeAccessories from "./TLTradeAccessories";
 import TLTradeUnits from "./TLTradeUnits";
-import WSAdditonalDetails from "./WSAdditonalDetails";
+//import WSAdditonalDetails from "./WSAdditonalDetails";
 import WSFeeEstimation from "./WSFeeEstimation";
-import WSInfoLabel from "../../../ws/src/pageComponents/WSInfoLabel";
+//import WSInfoLabel from "../../../ws/src/pageComponents/WSInfoLabel";
 import DocumentsPreview from "./DocumentsPreview";
 import InfoDetails from "./InfoDetails";
-import ViewBreakup from"./ViewBreakup";
+import ViewBreakup from "./ViewBreakup";
+import SubWorkTableDetails from "./SubWorkTableDetails";
+import WeekAttendence from "../../../AttendenceMgmt/src/pageComponents/WeekAttendence";
+import reducer, { initialTableState } from "../../../AttendenceMgmt/src/config/attendenceTableReducer";
+import Attendanceaange from "../../../AttendenceMgmt/src/pageComponents/AttendanceDateRange";
 
 function ApplicationDetailsContent({
   applicationDetails,
@@ -44,10 +49,14 @@ function ApplicationDetailsContent({
   statusAttribute = "status",
   paymentsList,
   oldValue,
-  isInfoLabel = false
+  isInfoLabel = false,
 }) {
   const { t } = useTranslation();
-
+  const [state, dispatch] = useReducer(reducer, initialTableState);
+  const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
+  const handleDateRangeChange = useCallback((data) => {
+    setLocalSearchParams(() => ({ ...data }));
+  }, []);
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
@@ -73,11 +82,15 @@ function ApplicationDetailsContent({
       return <TLCaption data={caption} />;
     } else if (window.location.href.includes("/obps/") || window.location.href.includes("/noc/") || window.location.href.includes("/ws/")) {
       //From BE side assigneeMobileNumber is masked/unmasked with connectionHoldersMobileNumber and not assigneeMobileNumber
-      const privacy = { uuid: checkpoint?.assignes?.[0]?.uuid, fieldName: ["connectionHoldersMobileNumber"], model: "WaterConnectionOwner" }
+      const privacy = { uuid: checkpoint?.assignes?.[0]?.uuid, fieldName: ["connectionHoldersMobileNumber"], model: "WaterConnectionOwner" };
       const caption = {
         date: checkpoint?.auditDetails?.lastModified,
         name: checkpoint?.assignes?.[0]?.name,
-        mobileNumber:applicationData?.processInstance?.assignes?.[0]?.uuid===checkpoint?.assignes?.[0]?.uuid && applicationData?.processInstance?.assignes?.[0]?.mobileNumber ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+        mobileNumber:
+          applicationData?.processInstance?.assignes?.[0]?.uuid === checkpoint?.assignes?.[0]?.uuid &&
+          applicationData?.processInstance?.assignes?.[0]?.mobileNumber
+            ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber
+            : checkpoint?.assignes?.[0]?.mobileNumber,
         comment: t(checkpoint?.comment),
         wfComment: checkpoint.wfComment,
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
@@ -85,13 +98,16 @@ function ApplicationDetailsContent({
       return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
     } else {
       const caption = {
-        date: Digit.DateUtils?.ConvertTimestampToDate(applicationData?.auditDetails?.lastModifiedTime),
+        date: `${Digit.DateUtils?.ConvertTimestampToDate(checkpoint.auditDetails.lastModifiedEpoch)} ${Digit.DateUtils?.ConvertEpochToTimeInHours(
+          checkpoint.auditDetails.lastModifiedEpoch
+        )} ${Digit.DateUtils?.getDayfromTimeStamp(checkpoint.auditDetails.lastModifiedEpoch)}`,
         // name: checkpoint?.assigner?.name,
         name: checkpoint?.assignes?.[0]?.name,
         // mobileNumber: checkpoint?.assigner?.mobileNumber,
         wfComment: checkpoint?.wfComment,
         mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
       };
+
       return <TLCaption data={caption} />;
     }
   };
@@ -134,7 +150,9 @@ function ApplicationDetailsContent({
     if (
       window.location.href.includes("employee/obps") ||
       window.location.href.includes("employee/noc") ||
-      window.location.href.includes("employee/ws")
+      window.location.href.includes("employee/ws") ||
+      window.location.href.includes("employee/works") ||
+      window.location.href.includes("employee/contracts")
     ) {
       return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
     } else if (checkLocation) {
@@ -147,27 +165,38 @@ function ApplicationDetailsContent({
   const getTextValue = (value) => {
     if (value?.skip) return value.value;
     else if (value?.isUnit) return value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("N/A");
+    else if (value?.value === "Approved") return <span style={{"color":"#0B6623"}}>{ `${getTranslatedValues(value?.value, value?.isNotTranslated)}`}</span>
+    else if (value?.value === "Rejected") return <span style={{"color":"#FF0000"}}>{t(value?.value)}</span>
     else return value?.value ? getTranslatedValues(value?.value, value?.isNotTranslated) : t("N/A");
   };
 
   const getClickInfoDetails = () => {
     if (window.location.href.includes("disconnection") || window.location.href.includes("application")) {
-      return "WS_DISCONNECTION_CLICK_ON_INFO_LABEL"
+      return "WS_DISCONNECTION_CLICK_ON_INFO_LABEL";
     } else {
-      return "WS_CLICK_ON_INFO_LABEL"
+      return "WS_CLICK_ON_INFO_LABEL";
     }
-  }
+  };
 
   const getClickInfoDetails1 = () => {
     if (window.location.href.includes("disconnection") || window.location.href.includes("application")) {
-        return "WS_DISCONNECTION_CLICK_ON_INFO1_LABEL"
+      return "WS_DISCONNECTION_CLICK_ON_INFO1_LABEL";
     } else {
-        return ""
+      return "";
     }
-  }
+  };
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
-      {isInfoLabel ? <InfoDetails t={t} userType={false} infoBannerLabel={"CS_FILE_APPLICATION_INFO_LABEL"} infoClickLable={"WS_CLICK_ON_LABEL"} infoClickInfoLabel={getClickInfoDetails()} infoClickInfoLabel1={getClickInfoDetails1()}/> : null}
+      {isInfoLabel ? (
+        <InfoDetails
+          t={t}
+          userType={false}
+          infoBannerLabel={"CS_FILE_APPLICATION_INFO_LABEL"}
+          infoClickLable={"WS_CLICK_ON_LABEL"}
+          infoClickInfoLabel={getClickInfoDetails()}
+          infoClickInfoLabel1={getClickInfoDetails1()}
+        />
+      ) : null}
       {applicationDetails?.applicationDetails?.map((detail, index) => (
         <React.Fragment key={index}>
           <div style={getMainDivStyles()}>
@@ -189,7 +218,7 @@ function ApplicationDetailsContent({
             )}
             {/* TODO, Later will move to classes */}
             {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
-            {detail?.isTable && (
+            {/* {detail?.isTable && (
               <table style={{ tableLayout: "fixed", width: "100%", borderCollapse: "collapse" }}>
                 <tr style={{ textAlign: "left" }}>
                   {detail?.headers.map((header) => (
@@ -210,7 +239,9 @@ function ApplicationDetailsContent({
                   {row.map(element => <td style={{ paddingTop:"20px",textAlign:"left" }}>{t(element)}</td>)}
                 </tr>})}
               </table>
-            )}
+            )} */}
+            {detail?.isTable && <SubWorkTableDetails data={detail} />}
+
             <StatusTable style={getTableStyles()}>
               {detail?.title &&
                 !detail?.title.includes("NOC") &&
@@ -270,7 +301,24 @@ function ApplicationDetailsContent({
                 })}
             </StatusTable>
           </div>
-          {detail?.belowComponent && <detail.belowComponent />}
+          {detail?.additionalDetails?.dateRange ? (
+            <AttendanceDateRange
+              t={t}
+              values={localSearchParams?.range}
+              onFilterChange={handleDateRangeChange}
+              {...detail?.additionalDetails?.dateRange}
+            ></AttendanceDateRange>
+          ) : null}
+          {detail?.additionalDetails?.table
+            ? detail?.additionalDetails?.table.weekTable.tableHeader && (
+                <>
+                  <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
+                    {t(detail?.additionalDetails?.table.weekTable.tableHeader)}
+                  </CardSectionHeader>
+                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} />}
+                </>
+              )
+            : null}
           {detail?.additionalDetails?.inspectionReport && (
             <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} />
           )}
@@ -324,8 +372,7 @@ function ApplicationDetailsContent({
           {detail?.additionalDetails?.taxHeadEstimatesCalculation && (
             <PropertyEstimates taxHeadEstimatesCalculation={detail?.additionalDetails?.taxHeadEstimatesCalculation} />
           )}
-          {detail?.isWaterConnectionDetails && <WSAdditonalDetails wsAdditionalDetails={detail} oldValue={oldValue} />}
-          {detail?.isLabelShow ? <WSInfoLabel t={t} /> : null}
+          {/* {detail?.isWaterConnectionDetails && <WSAdditonalDetails wsAdditionalDetails={detail} oldValue={oldValue} />} */}
           {detail?.additionalDetails?.redirectUrl && (
             <div style={{ fontSize: "16px", lineHeight: "24px", fontWeight: "400", padding: "10px 0px" }}>
               <Link to={detail?.additionalDetails?.redirectUrl?.url}>
@@ -335,19 +382,19 @@ function ApplicationDetailsContent({
               </Link>
             </div>
           )}
-          {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails}/>}
-          {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails}/>}
-          
+          {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
+          {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
         </React.Fragment>
       ))}
       {showTimeLine && workflowDetails?.data?.timeline?.length > 0 && (
         <React.Fragment>
-          <BreakLine />
+          {workflowDetails?.breakLineRequired === undefined ? <BreakLine /> : workflowDetails?.breakLineRequired ? <BreakLine /> : null}
           {(workflowDetails?.isLoading || isDataLoading) && <Loader />}
           {!workflowDetails?.isLoading && !isDataLoading && (
             <Fragment>
               <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
-                {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
+                {/* {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")} */}
+                {t("WORKS_WORKFLOW_HISTORY")}
               </CardSectionHeader>
               {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
                 <CheckPoint
@@ -367,7 +414,7 @@ function ApplicationDetailsContent({
                             info={checkpoint.comment}
                             label={t(
                               `${timelineStatusPrefix}${
-                                checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : checkpoint?.[statusAttribute]
+                                checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}_ACTION` : checkpoint?.[statusAttribute]
                               }`
                             )}
                             customChild={getTimelineCaptions(checkpoint)}

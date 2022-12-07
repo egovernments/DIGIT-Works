@@ -26,9 +26,11 @@ import { CheckPoint, ConnectingCheckPoints } from "./atoms/ConnectingCheckPoints
 import CustomButton from "./atoms/CustomButton";
 import DatePicker from "./atoms/DatePicker";
 import DateRange from "./molecules/DateRange";
+import DateRangeNew from "./molecules/DateRangeNew";
 import DateWrap from "./atoms/DateWrap";
 import DisplayPhotos from "./atoms/DisplayPhotos";
 import Dropdown from "./atoms/Dropdown";
+import SearchableDropdown from "./atoms/SearchableDropdown";
 import EllipsisMenu from "./atoms/EllipsisMenu";
 import EmployeeAppContainer from "./atoms/EmployeeAppContainer";
 import { EmployeeModuleCard, ModuleCardFullWidth } from "./atoms/EmployeeModuleCard";
@@ -129,6 +131,7 @@ import {
   EditIcon,
   SearchIcon,
   DeleteIcon,
+  CreateLoiIcon,
   OBPSIconSolidBg,
   DocumentIconSolid,
   PMBIconSolid,
@@ -164,6 +167,7 @@ import {
   RupeeSymbol,
   ValidityTimeIcon,
   AddIcon,
+  SubtractIcon,
   AddNewIcon,
   InboxIcon,
   ViewReportIcon,
@@ -171,6 +175,8 @@ import {
   DeathIcon,
   BirthIcon,
   FirenocIcon,
+  CreateEstimateIcon,
+  GotoInboxIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -197,6 +203,7 @@ import DashboardBox from "./molecules/DashboardBox";
 import DetailsCard from "./molecules/DetailsCard";
 import FilterAction from "./molecules/FilterAction";
 import FormStep from "./molecules/FormStep";
+import CustomDropdown from "./molecules/CustomDropdown";
 import InputCard from "./molecules/InputCard";
 import Localities from "./molecules/Localities";
 import LocationSearchCard from "./molecules/LocationSearchCard";
@@ -218,6 +225,7 @@ import OpenLinkContainer from "./atoms/OpenLinkContainer";
 import UploadPitPhoto from "./molecules/UploadPitPhoto";
 import { DownloadBtnCommon } from "./atoms/svgindex";
 import ToggleSwitch from "./atoms/ToggleSwitch";
+import WeekPicker from "./atoms/WeekPicker";
 export {
   Phone,
   Body,
@@ -244,6 +252,7 @@ export {
   RadioButtons,
   DashboardBox,
   Dropdown,
+  SearchableDropdown,
   TextInput,
   TextArea,
   Banner,
@@ -289,6 +298,7 @@ export {
   LabelFieldPair,
   BreadCrumb,
   DatePicker,
+  WeekPicker,
   InfoBanner,
   MobileNumber,
   EllipsisMenu,
@@ -358,6 +368,8 @@ export {
   FilterForm,
   FilterFormField,
   SortAction,
+  CustomDropdown,
+
   // hoc
   FormComposer,
   ResponseComposer,
@@ -404,9 +416,11 @@ export {
   PDFSvg,
   DownloadPrefixIcon,
   DateRange,
+  DateRangeNew,
   EditIcon,
   SearchIcon,
   DeleteIcon,
+  CreateLoiIcon,
   WSICon,
   CameraIcon,
   EditPencilIcon,
@@ -438,6 +452,7 @@ export {
   RupeeSymbol,
   ValidityTimeIcon,
   AddIcon,
+  SubtractIcon,
   AddNewIcon,
   ViewReportIcon,
   InboxIcon,
@@ -446,4 +461,6 @@ export {
   DeathIcon,
   BirthIcon,
   FirenocIcon,
+  CreateEstimateIcon,
+  GotoInboxIcon
 };
