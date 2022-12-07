@@ -1,9 +1,9 @@
 package org.egov.service;
 
-import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.repository.AttendanceRepository;
+import org.egov.config.AttendanceServiceConfiguration;
+import org.egov.producer.Producer;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.web.models.AttendanceRegister;
@@ -25,23 +25,26 @@ public class AttendanceService {
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
+    @Autowired
+    private Producer producer;
 
     @Autowired
-    private AttendanceRepository repository;
+    private AttendanceServiceConfiguration attendanceServiceConfiguration;
+
+    @Autowired
+    private EnrichementService enrichementService;
 
     /**
      * Create Attendance register
      *
-     * @param attendanceRegisterRequest
+     * @param request
      * @return
      */
-    public AttendanceRegisterResponse createAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
-        //TODO Returning Dummy Response
-
-        AttendanceRegister attendanceRegister = attendanceRegisterRequest.getAttendanceRegister();
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceRegisterRequest.getRequestInfo(), true);
-        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(Collections.singletonList(attendanceRegister)).build();
-        return attendanceRegisterResponse;
+    public AttendanceRegisterRequest createAttendanceRegister(AttendanceRegisterRequest request) {
+        attendanceServiceValidator.validateCreateAttendanceRegister(request);
+        enrichementService.enrichCreateAttendanceRegister(request);
+        producer.push(attendanceServiceConfiguration.getSaveAttendanceRegisterTopic(), request);
+        return request;
     }
 
     /**
@@ -64,12 +67,11 @@ public class AttendanceService {
      * @param attendanceRegisterRequest
      * @return
      */
-    public AttendanceRegisterResponse updateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
-        //TODO Returning Dummy Response
+    public AttendanceRegisterRequest updateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
+        attendanceServiceValidator.validateUpdateAttendanceRegister(attendanceRegisterRequest);
+        enrichementService.enrichUpdateAttendanceRegister(attendanceRegisterRequest);
+        producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
 
-        AttendanceRegister attendanceRegister = attendanceRegisterRequest.getAttendanceRegister();
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceRegisterRequest.getRequestInfo(), true);
-        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(Collections.singletonList(attendanceRegister)).build();
-        return attendanceRegisterResponse;
+        return attendanceRegisterRequest;
     }
 }
