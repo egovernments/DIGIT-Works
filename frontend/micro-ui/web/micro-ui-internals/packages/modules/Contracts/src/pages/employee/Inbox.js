@@ -93,25 +93,23 @@ const Inbox = ({ parentRoute, businessService = "WORKS", initialStates = {}, fil
     isSuccess: true,
     totalCount: 10,
     isLoading: false,
-    data: {
-      contracts: [
-        {
-          tenantId: "pb.amritsar",
-          contractId: "1136/TO/DB/FLOOD/10-11",
-          contractDate: "08/09/2010",
-          contractType: "Work Order",
-          nameOfTheWork: "Providing CC Drain in Birla Gaddah (Tungabhaqdra workers colony) in 27th ward",
-          abstractEstimateNumber: "EST/KRPN/1136",
-          implementingAuthority: "Organisation",
-          orgnName: "Maa Bhagavati SHG",
-          officerIncharge: "S.A Bhasha",
-          agreemntAmount: "3553600.00",
-          sla: "15 days",
-          status: "Approved",
-        },
-      ],
-    },
-  };
+    data:{
+      contracts: [{
+        tenantId:"pb.amritsar",
+        contractId: "1136/TO/DB/FLOOD/10-11",
+        contractDate: "08/09/2010",
+        contractType: "Work Order",
+        nameOfTheWork: "Providing CC Drain in Birla Gaddah (Tungabhaqdra workers colony) in 27th ward",
+        abstractEstimateNumber: "EST/KRPN/1136",
+        implementingAuthority: "Organisation",
+        orgnName: "Maa Bhagavati SHG",
+        officerIncharge: "S.A Bhasha",
+        agreemntAmount: "35,53,600.00",
+        sla:"15 days",
+        status:"Approved"
+      }]
+    }
+  }
   const handleSort = useCallback((args) => {
     if (args.length === 0) return;
     setSortParams(args);

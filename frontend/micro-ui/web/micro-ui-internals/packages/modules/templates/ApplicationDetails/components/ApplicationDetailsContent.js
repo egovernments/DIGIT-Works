@@ -36,7 +36,7 @@ import ViewBreakup from "./ViewBreakup";
 import SubWorkTableDetails from "./SubWorkTableDetails";
 import WeekAttendence from "../../../AttendenceMgmt/src/pageComponents/WeekAttendence";
 import reducer, { initialTableState } from "../../../AttendenceMgmt/src/config/attendenceTableReducer";
-import AttendanceDateRange from "../../../AttendenceMgmt/src/pageComponents/AttendanceDateRange";
+import Attendanceaange from "../../../AttendenceMgmt/src/pageComponents/AttendanceDateRange";
 
 function ApplicationDetailsContent({
   applicationDetails,
@@ -301,21 +301,21 @@ function ApplicationDetailsContent({
                 })}
             </StatusTable>
           </div>
-          {detail?.additionalDetails.dateRange ? (
+          {detail?.additionalDetails?.dateRange ? (
             <AttendanceDateRange
               t={t}
               values={localSearchParams?.range}
               onFilterChange={handleDateRangeChange}
-              {...detail?.additionalDetails.dateRange}
+              {...detail?.additionalDetails?.dateRange}
             ></AttendanceDateRange>
           ) : null}
-          {detail?.additionalDetails.table
-            ? detail?.additionalDetails.table.weekTable.tableHeader && (
+          {detail?.additionalDetails?.table
+            ? detail?.additionalDetails?.table.weekTable.tableHeader && (
                 <>
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
-                    {t(detail?.additionalDetails.table.weekTable.tableHeader)}
+                    {t(detail?.additionalDetails?.table.weekTable.tableHeader)}
                   </CardSectionHeader>
-                  {detail?.additionalDetails.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} />}
+                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} />}
                 </>
               )
             : null}
