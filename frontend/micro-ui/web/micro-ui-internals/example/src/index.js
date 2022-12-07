@@ -80,6 +80,7 @@ const initDigitUI = () => {
   initExpenditureComponents();
   initMastersComponents();
   initExpenditureComponents();
+  initMastersComponents();
   const moduleReducers = (initData) => initData;
 
   window.Digit.Customizations = {

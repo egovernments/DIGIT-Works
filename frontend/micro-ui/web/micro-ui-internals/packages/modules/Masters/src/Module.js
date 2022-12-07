@@ -9,6 +9,7 @@ import CreateOrganization from "./pages/employee/Master/CreateOrganization";
 import RegisterWageSeeker from "./pages/employee/registerWageSeeker/index";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
+  console.log('inside masters module');
   const moduleCode = ["Masters"];
   const { path, url } = useRouteMatch();
   const language = Digit.StoreData.getCurrentLanguage();

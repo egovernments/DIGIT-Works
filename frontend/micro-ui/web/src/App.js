@@ -38,10 +38,10 @@ const enabledModules = [
   "Works",
   "AttendenceMgmt",
   "Contracts",
-  "Masters",
   "Expenditure",
   "Estimate",
   "Project",
+  "Masters",
 ];
 window.Digit.ComponentRegistryService.setupRegistry({});
 
@@ -55,6 +55,7 @@ initContractsComponents();
 initExpenditureComponents();
 initMastersComponents();
 initExpenditureComponents();
+initMastersComponents();
 
 const moduleReducers = (initData) => ({
   initData,
