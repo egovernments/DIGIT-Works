@@ -247,6 +247,28 @@ public class WorkflowService {
 		for(Map.Entry<String,List<String>> entry : tenantIdToUserRolesMap.entrySet()){
 
 			String statelevelTenantId=entry.getKey().split("\\.")[0];
+
+			if(entry.getKey().equals(criteria.getTenantId())){
+				List<BusinessService> businessServicesByTenantId = new ArrayList();
+				if(entry.getKey().split("\\.").length==1){
+					businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(criteria.getTenantId());
+				}else{
+					businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(entry.getKey());
+				}
+				if(businessServicesByTenantId != null ) {
+					businessServicesByTenantId.forEach(service -> {
+						List<State> states = service.getStates();
+						states.forEach(state -> {
+							Set<String> stateRoles = stateToRoleMap.get(state.getUuid());
+							if(!CollectionUtils.isEmpty(stateRoles) && !Collections.disjoint(stateRoles,entry.getValue())){
+								actionableStatuses.put(state.getUuid(), state.getApplicationStatus());
+							}
+
+						});
+					});
+				}
+
+			}
 		}
 		return actionableStatuses;
 	}
