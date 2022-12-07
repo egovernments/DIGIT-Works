@@ -17,11 +17,9 @@ import { HRMSModule, initHRMSComponents } from "@egovernments/digit-ui-module-hr
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import "@egovernments/digit-ui-works-css/example/index.css";
 
-// import * as comps from "@egovernments/digit-ui-react-components";
-
-// import { subFormRegistry } from "@egovernments/digit-ui-libraries";
 
 import { pgrCustomizations, pgrComponents } from "./pgr";
+import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 
 var Digit = window.Digit || {};
 
