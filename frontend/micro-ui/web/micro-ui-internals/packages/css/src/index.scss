@@ -436,11 +436,11 @@ input[type="number"] {
   }
 }
 
-.text-input-width{
+.text-input-width {
   max-width: 540px;
 }
 
-.text-mobile-input-width{
+.text-mobile-input-width {
   max-width: 500px;
 }
 
@@ -702,11 +702,51 @@ input[type="number"] {
   font-size: 24px;
   margin-bottom: 1rem;
 }
-.privacy-icon{
+.privacy-icon {
   cursor: pointer;
 }
-.privacy-icon:hover{
-  path{
+.privacy-icon:hover {
+  path {
     fill: rgba(244, 119, 56, 1);
   }
+}
+
+.attendance-view-table {
+  thead {
+    background-color: #dbd3d3;
+    th {
+      font-size: 12px;
+      padding: 8px 8px;
+      font-weight: 500;
+      border: 1px solid grey;
+    }
+  }
+}
+
+.employeeCard.card-no-margin {
+  margin-left: 0px !important;
+  padding: 0px;
+  box-shadow: none;
+}
+
+.attendance-date-range {
+  width: 60%;
+}
+
+.date-range-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: 8px;
+  margin-top: 8px;
+  h2 {
+    font-weight: bolder;
+  }
+}
+
+.week-table-card-wrapper {
+  display: contents;
+}
+
+.attendence-date-picker {
+  width: 80%;
 }
