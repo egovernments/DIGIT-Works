@@ -6,7 +6,7 @@ import cloneDeep from "lodash/cloneDeep";
 
 
 const Heading = (props) => {
-  return <h1 className="heading-m">{props.label}</h1>;
+  return <h1 className={props.className ? `heading-m ${props.className}` : "heading-m"}>{props.label}</h1>;
 };
 
 const Close = () => (
@@ -227,11 +227,20 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
   //   return <Loader />
   // } 
 
+  const cardStyle = () => {
+    if(config.label.heading === "Processing Details") {
+      return {
+        "padding" : "0px"
+      }
+    }
+    return {}
+  }
+
   
 
   return action && config?.form  ? (
     <Modal
-      headerBarMain={<Heading label={t(config.label.heading)} />}
+      headerBarMain={<Heading label={t(config.label.heading)} className="header-left-margin" />}
       headerBarEnd={<CloseBtn onClick={closeModal} />}
       actionCancelLabel={t(config.label.cancel)}
       actionCancelOnSubmit={closeModal}
@@ -248,8 +257,9 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
           inline
           childrenAtTheBottom
           onSubmit={submit}
-          defaultValues={{}}
+          defaultValues={config?.defaultValues}
           formId="modal-action"
+          cardStyle = {cardStyle()}
         />
       )}
     </Modal>
