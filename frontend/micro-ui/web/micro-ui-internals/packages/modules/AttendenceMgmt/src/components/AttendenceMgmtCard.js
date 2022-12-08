@@ -31,27 +31,7 @@ const AttendenceMgmtCard = () => {
         ],
         links: [
             {
-                label: t("ORG_MGMT"),
-                link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
-                roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
-            },
-            {
-                label: t("IND_MGMT"),
-                link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
-                roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
-            },
-            {
-                label: t("ATTENDENCE_APPROVAL"),
-                link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
-                roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
-            },
-            {
-                label: t("ATMGMT_DASHBOADR"),
-                link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
-                roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
-            },
-            {
-                label: t("MARK_ATTENDENCE"),
+                label: t("INBOX"),
                 link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
                 roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
             },
