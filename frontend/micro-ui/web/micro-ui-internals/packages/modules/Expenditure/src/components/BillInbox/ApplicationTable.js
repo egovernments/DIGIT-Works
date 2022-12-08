@@ -19,8 +19,8 @@ const ApplicationTable = ({
   return (
     <Table
       t={t}
-      data={data}
       customTableWrapperClassName="table-wrapper attendence-table"
+      data={data}
       currentPage={currentPage}
       columns={columns}
       getCellProps={getCellProps}

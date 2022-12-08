@@ -4,6 +4,7 @@ import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-component
 import { Switch, useLocation } from "react-router-dom";
 import CreateContract from "./CreateContract";
 import Inbox from "./Inbox";
+import BILLInbox from "./billInbox";
 import SearchContracts from "./SearchContract";
 import ViewContract from "./ViewContract";
 
@@ -40,6 +41,12 @@ const ContractsBreadCrumbs = ({ location }) => {
             path: `/${window.contextPath}/employee/contracts/view-contract`,
             content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACT")}` : t("WORKS_CONTRACT"),
             show: location.pathname.includes("/contracts/view-contract") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/contracts/billInbox`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_BILLING_MGMT")}` : t("WORKS_BILLING_MGMT"),
+            show: location.pathname.includes("/contracts/billInbox") ? true : false,
             isBack: fromScreen && true,
         }
     ];
@@ -82,6 +89,7 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/search-contract`} component={() => <SearchContracts/>} />
                     <PrivateRoute path={`${path}/view-contract`} component={() => <ViewContract/>} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <Inbox parentRoute={path} businessService="WORKS" filterComponent="contractInboxFilter" initialStates={{}} isInbox={true} />}/>
+                    <PrivateRoute path={`${path}/billInbox`} component={() => <BILLInbox parentRoute={path} businessService="WORKS" filterComponent="billInboxFilter" initialStates={{}} isInbox={true} />}/>
                 </div>
             </React.Fragment>
         </Switch>
