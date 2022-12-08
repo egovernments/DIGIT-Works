@@ -29,7 +29,7 @@ public class InboxConstants {
 
     public static final String CREATED_TIME_KEY = "createdTime";
 
-    public static final String BUSINESS_SERVICE_PATH = "$.currentProcessInstance.businessService";
+    public static final String BUSINESS_SERVICE_PATH = "$.currentProcessInstance.*.businessService";
 
     public static final String APPLICATION_STATUS_KEY = "applicationstatus";
 
