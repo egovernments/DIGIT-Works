@@ -38,7 +38,7 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
         disableSortBy: true,
         Cell: ({ row }) =>{
           return( 
-            <div style={{"minWidth":"90px"}}>
+            <div style={{"minWidth":"110px"}}>
               {row.original?.contractDate ? (
                 <span >
                     {row.original?.contractDate || t("ES_COMMON_NA")}
@@ -46,7 +46,8 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
               ) : (
                 <span>{t("ES_COMMON_NA")}</span>
               )}
-            </div>)}      },
+            </div>)}      
+      },
       {
         Header: t("WORKS_CONTRACT_TYPE"),
         disableSortBy: true,
@@ -259,7 +260,7 @@ return (
           {...{setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState}}
         />
         </div>
-        <div className="result" style={{ marginLeft: "24px", flex: 1, overflowX:"scroll" }}>
+        <div className="result" style={{ marginLeft: "24px", flex: 1 }}>
         {/* <div style={{ marginLeft: !props?.isSearch ? "24px" : "",flex: 1}}> */}
           {result}
         </div>

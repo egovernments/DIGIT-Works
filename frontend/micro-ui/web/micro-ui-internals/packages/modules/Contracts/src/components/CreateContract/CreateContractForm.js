@@ -312,13 +312,15 @@ const CreateContractForm = ({ onFormSubmit }) => {
                     </div>
                     <div className="tooltip" style={{ "margin": "0px -30px 10px 10px" }}>
                         <InfoBannerIcon fill="#0b0c0c" />
-                        <span className="tooltiptext" style={{
-                            marginLeft:"-400px",
-                            whiteSpace: "nowrap",
+                        <div className="tooltiptext" style={{
+                            width:"220px",
+                            height:"100px",
+                            marginLeft:"0px",
+                            overflowWrap: "break-word",
                             fontSize: "medium"
                         }}>
                             {`${t(`WORKS_ORGN_INFO`)}`}
-                        </span>
+                        </div>
                     </div>
                 </LabelFieldPair>
                 <LabelFieldPair>

@@ -25,7 +25,7 @@ const ContractsModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
     ContractsModule,
     contractInboxFilter,
-    SearchContractApplication
+    SearchContractApplication,
 };
 
 export const initContractsComponents = () => {

@@ -89,7 +89,7 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
           {type === "radio" ? (
             <RadioButtons
               inputRef={inputRef}
-              style={{ display: "flex", justifyContent: "space-between" }}
+              style={{ display: "flex", flexDirection:"column" }}
               options={data || config?.options || []}
               key={config.name}
               optionsKey={config?.optionsKey}
