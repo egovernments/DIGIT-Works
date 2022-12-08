@@ -50,6 +50,7 @@ public class EstimateService {
         enrichmentService.enrichCreateEstimate(request);
         workflowService.updateWorkflowStatus(request);
         producer.push(serviceConfiguration.getSaveEstimateTopic(), request);
+        producer.push(serviceConfiguration.getEstimateInboxTopic(), request);
         return request;
     }
 
@@ -86,6 +87,7 @@ public class EstimateService {
         enrichmentService.enrichUpdateEstimate(request);
         workflowService.updateWorkflowStatus(request);
         producer.push(serviceConfiguration.getUpdateEstimateTopic(), request);
+        producer.push(serviceConfiguration.getEstimateInboxTopic(), request);
         return request;
     }
 }
