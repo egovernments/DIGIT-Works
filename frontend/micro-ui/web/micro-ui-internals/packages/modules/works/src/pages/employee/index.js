@@ -17,6 +17,7 @@ import HandleDownloadPdf from "../../components/HandleDownloadPdf";
 import ModifyEstimate from "../../components/ModifyEstimate";
 import SearchOrganization from "../../pages/employee/Master/SearchOrganization";
 import CreateOrganization from "../../pages/employee/Master/CreateOrganization";
+import Checklist from "./Checklist/index";
 
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -179,9 +180,10 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
           <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/response`} component={() => <Response {...{ path }} />} />
-          <PrivateRoute path={`${path}/download`} component={()=> <HandleDownloadPdf {...{path}}/>}/>
           <PrivateRoute path={`${path}/search-organization`} component={() => <SearchOrganization parentRoute={path}/>} />
           <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganization parentRoute={path}/>} />
+          <PrivateRoute path={`${path}/checklist`} component={() => <Checklist {...{ path }} />} />
+          <PrivateRoute path={`${path}/download`} component={()=> <HandleDownloadPdf {...{path}}/>}/>
         </div>
       </React.Fragment>
     </Switch>

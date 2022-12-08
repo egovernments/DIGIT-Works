@@ -38,7 +38,7 @@ const CreateEstimateForm = React.memo(({ onFormSubmit, sessionFormData, setSessi
     trigger,
     ...methods
   } = useForm({
-    defaultValues: sessionFormData,
+    // defaultValues: sessionFormData,
     // defaultValues: {
     //     "fund": {
     //         "code": "01",
@@ -243,11 +243,11 @@ const CreateEstimateForm = React.memo(({ onFormSubmit, sessionFormData, setSessi
     mode: "onSubmit",
   });
   const formData = watch();
-  useEffect(() => {
-    if (!_.isEqual(sessionFormData, formData)) {
-      setSessionFormData({ ...sessionFormData, ...formData });
-    }
-  }, [formData]);
+//   useEffect(() => {
+//     if (!_.isEqual(sessionFormData, formData)) {
+//       setSessionFormData({ ...sessionFormData, ...formData });
+//     }
+//   }, [formData]);
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const tenant = Digit.ULBService.getStateId();

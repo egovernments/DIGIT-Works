@@ -82,7 +82,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
     }
     
     const handleCreateClick = async () => {
-        const fieldsToValidate = ['fileNumber', 'fileDate', 'executingAuthority', 'contractedAmount', 'currentContractType', 'currentContractAmount', 'balanceAmount', 'agreementDate', 'organisationId', 'officerInChargedesig', 'officerIncharge']
+        const fieldsToValidate = ['fileNumber', 'fileDate', 'executingAuthority', 'contractedAmount', 'currentContractType', 'currentContractAmount', 'balanceAmount', 'agreementDate', 'organisationId', 'officerInChargedesig', 'officerIncharge', 'contractPeriod']
 
         const result = await trigger(fieldsToValidate)
         if (result) {
@@ -95,6 +95,9 @@ const CreateContractForm = ({ onFormSubmit }) => {
     const checkKeyDown = (e) => {
         if (e.code === 'Enter') e.preventDefault();
     };
+
+    const errorStyle = {"marginBottom" : "0px","whiteSpace":"nowrap"}
+    const contractStyle = {"marginTop":"20px","marginBottom":"4px"}
 
     return (
         <form onSubmit={handleSubmit(onFormSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
@@ -142,9 +145,10 @@ const CreateContractForm = ({ onFormSubmit }) => {
                         <TextInput 
                             name="fileNumber" 
                             inputRef={register({ pattern: /^[a-zA-Z0-9_.$@#\/]*$/ })} 
+                            style={contractStyle}
                         />        
                         {errors && errors?.fileNumber?.type === "pattern" && (
-                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
@@ -156,14 +160,15 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             control={control}
                             render={(props) => 
                             <DatePicker
-                                style={{ "width": "100%" }} 
-                                date={props.value} 
-                                onChange={props.onChange} 
-                                onBlur={props.onBlur} 
+                                style={{ "width": "100%","marginTop":"20px","marginBottom":"4px" }}
+                                date={props.value}
+                                onChange={props.onChange}
+                                onBlur={props.onBlur}
+                                max={Digit.Utils.date.getDate()}
                             />}
                         />
                         {errors && errors?.fileDate?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
@@ -178,7 +183,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             render={(props) => {
                                 return (
                                     <RadioButtons
-                                        style={{ display: "flex",columnGap:"50px"}}
+                                        style={{ display: "flex",columnGap:"50px","marginTop":"20px","marginBottom":"4px"}}
                                         onSelect={props.onChange} 
                                         selectedOption={props.value} 
                                         optionsKey="name" 
@@ -188,7 +193,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             }}
                         />
                         {errors && errors?.executingAuthority?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
@@ -208,10 +213,11 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             inputRef={register()} 
                             value={contractedAmount} 
                             disabled 
-                            style={{ backgroundColor: "#E5E5E5" }} 
+                            style={{ backgroundColor: "#E5E5E5","marginTop":"20px","marginBottom":"4px"}} 
                         />
                 </LabelFieldPair>
                 <LabelFieldPair>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONTRACT_TYPE`)}:*`}</CardLabel>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONTRACT_TYPE`)}:*`}</CardLabel>
                     <div className='field'>
                         <Controller
@@ -221,17 +227,18 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             render={(props) => {
                                 return (
                                     <RadioButtons 
-                                        style={{ display: "flex", columnGap:"50px" }}
+                                        style={{ display: "flex", columnGap:"50px","marginTop":"20px","marginBottom":"4px" }}
                                         onSelect={props.onChange} 
                                         selectedOption={props.value} 
                                         optionsKey="name" 
                                         options={currentContractType}
+                                        innerStyles={{"marginBottom":"2px"}}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.currentContractType?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
@@ -240,11 +247,12 @@ const CreateContractForm = ({ onFormSubmit }) => {
                         <TextInput 
                             name="currentContractAmount" 
                             inputRef={register({ pattern: /^$|^[0-9.\s]+$/ , required: true })}
+                            style={contractStyle}
                         />
                             {errors && errors?.currentContractAmount?.type === "pattern" && (
-                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}                        
+                            <CardLabelError style={errorStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}                        
                             {errors && errors?.currentContractAmount?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
@@ -255,7 +263,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             inputRef={register()} 
                             value={balanceAmount} 
                             disabled 
-                            style={{ backgroundColor: "#E5E5E5" }} 
+                            style={{ backgroundColor: "#E5E5E5","marginTop":"20px","marginBottom":"4px" }} 
                         />
                 </LabelFieldPair>
                 {/* AGGREEMENT DETAILS */}
@@ -269,7 +277,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             defaultValue={getDate}
                             render={(props) => 
                             <DatePicker
-                                style={{ "width": "100%" }} 
+                                style={{ "width": "100%","marginTop":"20px","marginBottom":"4px"}} 
                                 date={props.value}
                                 max={Digit.Utils.date.getDate()}
                                 onChange={props.onChange} 
@@ -294,45 +302,49 @@ const CreateContractForm = ({ onFormSubmit }) => {
                                         t={t}
                                         select={props?.onChange}
                                         onBlur={props.onBlur}
+                                        style={contractStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.nameOfOrganisation?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
-                    <div className="tooltip" style={{ "margin": "-10px -30px 10px 10px" }}>
+                    <div className="tooltip" style={{ "margin": "0px -30px 10px 10px" }}>
                         <InfoBannerIcon fill="#0b0c0c" />
-                        <span className="tooltiptext" style={{
-                            marginLeft:"-200px",
-                            whiteSpace: "nowrap",
+                        <div className="tooltiptext" style={{
+                            width:"220px",
+                            height:"100px",
+                            marginLeft:"0px",
+                            overflowWrap: "break-word",
                             fontSize: "medium"
                         }}>
                             {`${t(`WORKS_ORGN_INFO`)}`}
-                        </span>
+                        </div>
                     </div>
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_ORGN_ID`)}:*`}</CardLabel>
                         <TextInput 
-                            style={{ backgroundColor: "#E5E5E5" }} 
+                            style={{ backgroundColor: "#E5E5E5","marginTop":"20px","marginBottom":"4px" }} 
                             disabled 
                             className={"field"} 
                             name="organisationId" 
-                            inputRef={register()} 
+                            inputRef={register()}
                         />
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONT_PERIOD`)}:*`}</CardLabel>
                     <div className='field'>
                         <TextInput 
-                            name="currentContractAmount" 
-                            inputRef={register({ pattern: /^$|^[0-9.\s]+$/ , required: true })}
+                            name="contractPeriod" 
+                            inputRef={register({ pattern: /^[+]?([1-9][0-9]*(?:[\.][0-9]*)?|0*\.0*[1-9][0-9]*)(?:[eE][+-][0-9]+)?$/ , required: true })}
+                            style={contractStyle}
                         />
-                            {errors && errors?.currentContractAmount?.type === "pattern" && (
-                            <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}                        
-                            {errors && errors?.currentContractAmount?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            {errors && errors?.contractPeriod?.type === "pattern" && (
+                            <CardLabelError style={errorStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}                        
+                            {errors && errors?.contractPeriod?.type === "required" && (
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
                 {desLoading?<Loader />: <LabelFieldPair>
@@ -354,12 +366,13 @@ const CreateContractForm = ({ onFormSubmit }) => {
                                             setValue("officerIncharge","")
                                         }}
                                         onBlur={props.onBlur}
+                                        style={contractStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.officerInChargedesig?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>}
 
@@ -376,15 +389,16 @@ const CreateContractForm = ({ onFormSubmit }) => {
                                         onBlur={props.onBlur}
                                         option={officerIncharge}
                                         selected={props?.value}
-                                        optionKey={"i18nKey"}
+                                        optionKey={"nameOfEmp"}
                                         t={t}
                                         select={props?.onChange}
+                                        style={contractStyle}
                                     />
                                 );
                             }}
                         />
                         {errors && errors?.officerIncharge?.type === "required" && (
-                            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
                 

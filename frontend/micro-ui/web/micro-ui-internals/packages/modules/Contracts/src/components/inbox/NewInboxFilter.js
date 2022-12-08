@@ -1,17 +1,17 @@
-import React, {useMemo} from "react";
-import { Dropdown, DatePicker, CloseSvg, SubmitBar, FilterIcon, RefreshIcon, TextInput} from "@egovernments/digit-ui-react-components";
+import React, {useMemo, useState} from "react";
+import { Dropdown, DatePicker, CloseSvg, SubmitBar, FilterIcon, RefreshIcon, TextInput, CardLabelError} from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { Controller, useForm} from 'react-hook-form'
 
 const Filter = ({ onFilterChange, ...props }) => {
   const { t } = useTranslation();
-  const {register,control,getValues,reset} = useForm()
+  const {register, control, getValues, reset, setValue, formState: { errors, ...rest }} = useForm()
   const currentContractType = useMemo(()=>[
     { code: "WORKS_WORK_ORDER", name: "WORKS_WORK_ORDER"},
     { code: "WORKS_PURCHASE_ORDER", name: "WORKS_PURCHASE_ORDER"}
-],[t])
-  
+  ],[t])
+  const [contractFromDate, setContractFromDate] = useState()
   const applyLocalFilters = () => {
     let form=getValues();
     for(var key in form){
@@ -69,7 +69,11 @@ const Filter = ({ onFilterChange, ...props }) => {
                   return (
                   <DatePicker 
                   date={props.value} 
-                  onChange={props.onChange}       
+                  onChange={(val)=>{
+                    props.onChange(val);
+                    setContractFromDate(val)
+                  }}
+                  max={Digit.Utils.date.getDate()}     
                   />
                   );
                 }}
@@ -86,8 +90,10 @@ const Filter = ({ onFilterChange, ...props }) => {
                 render={(props) => {
                   return (
                   <DatePicker 
+                  min={contractFromDate}  
                   date={props.value} 
-                  onChange={props.onChange}       
+                  onChange={props.onChange}
+                  max={Digit.Utils.date.getDate()}
                   />
                   );
                 }}

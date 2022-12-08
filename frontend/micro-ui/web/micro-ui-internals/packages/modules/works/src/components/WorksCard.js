@@ -51,6 +51,12 @@ const WorksCard = () => {
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {
+        label: t("WORKS_KICKOFF_CHECKLIST"),
+        link: `/${window?.contextPath}/employee/works/checklist`,
+        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+        count: 21,
+      },
+      {
         label: t("WORKS_CONTRACTOR_BILL"),
         link: `/${window?.contextPath}/employee/works/create-contractor`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],

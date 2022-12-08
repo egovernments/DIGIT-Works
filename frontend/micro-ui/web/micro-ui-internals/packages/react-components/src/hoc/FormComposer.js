@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, Fragment } from "react";
+import React, { useEffect, useMemo, useState, Fragment, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
 import BreakLine from "../atoms/BreakLine";
 import Card from "../atoms/Card";
@@ -20,6 +20,31 @@ import { useTranslation } from "react-i18next";
 import MobileNumber from "../atoms/MobileNumber";
 import _ from "lodash";
 import CustomDropdown from "../molecules/CustomDropdown";
+import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
+
+const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
+
+const wrapperStyles = {
+  // "display":"flex",
+  // "flexDirection":"column",
+  // "justifyContent":"center",
+  // "padding":"2rem",
+  // "margin":"1rem",
+  // "width":"80%",
+  // "backgroundColor":"#FAFAFA",
+  // "border": "1px solid #D6D5D4"
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  border: "solid",
+  borderRadius: "5px",
+  padding: "10px",
+  paddingTop: "20px",
+  marginTop: "10px",
+  borderColor: "#f3f3f3",
+  background: "#FAFAFA",
+  marginBottom: "20px",
+}
 
 /**
  *  formcomposer used to render forms
@@ -83,8 +108,8 @@ export const FormComposer = (props) => {
   const fieldSelector = (type, populators, isMandatory, disable = false, component, config) => {
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
     switch (type) {
-      case "text":
       case "date":
+      case "text": 
       case "number":
       case "password":
       case "time":
@@ -98,7 +123,9 @@ export const FormComposer = (props) => {
                 defaultValue={formData?.[populators.name]}
                 render={({ onChange, ref, value }) => (
                   <TextInput  value={formData?.[populators.name]} type={type} name={populators.name} onChange={onChange} inputRef={ref}
-                  errorStyle={errors?.[populators.name]} max={populators.max}
+                    errorStyle={errors?.[populators.name]}
+                    max={populators.max}
+                    style={type === "date" ?{"paddingRight": "3px"}:""}
                   />
                 )}
                 name={populators.name}
@@ -145,6 +172,44 @@ export const FormComposer = (props) => {
             control={control}
           />
         );
+        case "multiupload":
+          return (
+            <Controller
+              name={`uploads ${populators.name}`}
+              control={control}
+              rules={{ required: false }}
+              render={({ onChange, ref, value = [] }) => {
+                function getFileStoreData(filesData) {
+                  const numberOfFiles = filesData.length
+                  let finalDocumentData = []
+                  if (numberOfFiles > 0) {
+                    filesData.forEach(value => {
+                      finalDocumentData.push({
+                        fileName: value?.[0],
+                        fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
+                        documentType: value?.[1]?.file?.type
+                      })
+                    })
+                  }
+                  onChange(finalDocumentData)
+                }
+                return <MultiUploadWrapper
+                  t={t}
+                  module="works"
+                  tenantId={"pb.amritsar"}
+                  getFormState={getFileStoreData}
+                  showHintBelow={true}
+                  setuploadedstate={value}
+                  allowedFileTypesRegex={allowedFileTypes}
+                  allowedMaxSizeInMB={5}
+                  hintText={t("WORKS_DOC_UPLOAD_HINT")}
+                  maxFilesAllowed={5}
+                  extraStyleName={{ padding: "0.5rem" }}
+                />
+              }
+              }
+            />
+          )
         case "select":
         case "radio":
         case "dropdown":
@@ -290,7 +355,77 @@ export const FormComposer = (props) => {
   };
 
 
-  const formFields = useMemo(
+  const formFields = useCallback(
+    (section, index, array) =>
+        (
+          <React.Fragment key={index}>
+            {section && getCombinedComponent(section)}
+            {section.body.map((field, index) => {
+              if (props.inline)
+                return (
+                  <React.Fragment key={index}>
+                    <div style={field.isInsideBox ? getCombinedStyle(field?.placementinbox) : {}}>
+                      {!field.withoutLabel && (
+                        <CardLabel
+                          style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}
+                          className={field?.disable ? "disabled" : ""}
+                        >
+                          {t(field.label)}
+                          {field.isMandatory ? " * " : null}
+                          {field.labelChildren && field.labelChildren}
+                        </CardLabel>
+                      )}
+                      {errors && errors[field.populators?.name] && Object.keys(errors[field.populators?.name]).length ? (
+                        <CardLabelError>{t(field.populators.error || errors[field.populators?.name]?.message)}</CardLabelError>
+                      ) : null}
+                      <div style={field.withoutLabel ? { width: "100%" } : {}} className="field">
+                        {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
+                        {field?.description && (
+                          <CardLabel
+                            style={{
+                              marginTop: "-24px",
+                              fontSize: "16px",
+                              fontWeight: "bold",
+                              color: "#505A5F",
+                              ...field?.descriptionStyles,
+                            }}
+                          >
+                            {t(field.description)}
+                          </CardLabel>
+                        )}
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              return (
+                <Fragment>
+                  <LabelFieldPair key={index} style={props?.showWrapperContainers && !field.hideContainer ? { ...wrapperStyles } : { ...wrapperStyles,border:"none",background:"white" }}>
+                    {!field.withoutLabel && (
+                      <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert",fontWeight:props.isDescriptionBold?"600":null }}>
+                        {t(field.label)}
+                        {field.isMandatory ? " * " : null}
+                      </CardLabel>
+                    )}
+                    <div style={field.withoutLabel ? { width: "100%", ...props?.fieldStyle } : {...props?.fieldStyle}} className="field">
+                      {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
+                      {field?.description && <CardText style={{ fontSize: "14px", marginTop: "-24px" }}>{t(field?.description)}</CardText>}
+                    </div>
+                  </LabelFieldPair>
+                  {field?.populators?.name && errors && errors[field?.populators?.name] && Object.keys(errors[field?.populators?.name]).length ? (
+                    <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>
+                      {t(field?.populators?.error)}
+                    </CardLabelError>
+                  ) : null}
+                </Fragment>
+              );
+            })}
+            {!props.noBreakLine && (array.length - 1 === index ? null : <BreakLine style={props?.breaklineStyle ? props?.breaklineStyle : {}} />)}
+          </React.Fragment>
+        ),
+    [props.config, formData]
+  );
+
+  const formFieldsAll = useMemo(
     () =>
       props.config?.map((section, index, array) => {
         return (
@@ -375,14 +510,15 @@ export const FormComposer = (props) => {
       e.preventDefault();
     }
   };
+   
   return (
     <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
-      <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
+      {props.showMultipleCards ? props.config?.map((section, index, array) => <Card style={getCardStyles()}>
         {!props.childrenAtTheBottom && props.children}
         {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
         {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
         {props.text && <CardText>{props.text}</CardText>}
-        {formFields}
+        {formFields(section, index, array)}
         {props.childrenAtTheBottom && props.children}
         {props.submitInForm && (
           <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
@@ -392,13 +528,30 @@ export const FormComposer = (props) => {
             {props.secondaryActionLabel}
           </div>
         )}
-        {!props.submitInForm && props.label && (
-          <ActionBar>
-            <SubmitBar label={t(props.label)} submit="submit" disabled={isDisabled} />
-            {props.onSkip && props.showSkip && <LinkButton style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)} onClick={props.onSkip} />}
-          </ActionBar>
-        )}
-      </Card>
+      </Card>):
+        <Card style={getCardStyles()}>
+          {!props.childrenAtTheBottom && props.children}
+          {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
+          {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
+          {props.text && <CardText>{props.text}</CardText>}
+          {formFieldsAll}
+          {props.childrenAtTheBottom && props.children}
+          {props.submitInForm && (
+            <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
+          )}
+          {props.secondaryActionLabel && (
+            <div className="primary-label-btn" style={{ margin: "20px auto 0 auto" }} onClick={onSecondayActionClick}>
+              {props.secondaryActionLabel}
+            </div>
+          )}
+        </Card>
+      }
+      {!props.submitInForm && props.label && (
+        <ActionBar>
+          <SubmitBar label={t(props.label)} submit="submit" disabled={isDisabled} />
+          {props.onSkip && props.showSkip && <LinkButton style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)} onClick={props.onSkip} />}
+        </ActionBar>
+      )}
     </form>
   );
 };
