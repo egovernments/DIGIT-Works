@@ -11,12 +11,12 @@ const AttendanceBreadCrumbs = ({ location }) => {
   const crumbs = [
     {
       path: "/works-ui/employee",
-      content: "AMP",
+      content: t("ATM_AMP"),
       show: true,
     },
     {
       path: `${window.contextPath}/employee/attendencemgmt/inbox`,
-      content: fromScreen ? `${t(fromScreen)} / AM` : "AM",
+      content: fromScreen ? `${t(fromScreen)} / ${t("ATM_AM")}` : t("ATM_AM"),
       show: location.pathname.includes("/attendencemgmt/inbox") ? true : false,
       isBack: fromScreen && true,
     },
