@@ -20,7 +20,7 @@ const AttendenceMgmtCard = () => {
 
     const propsForModuleCard = {
         Icon: <ComplaintIcon fill="white"/>,
-        moduleName: t("AttendenceMgmt"),
+        moduleName: t("ATM_ATTENDANCE_MANAGEMENT"),
         kpis: [
             {
                 //Pass Count Value from Inbox API here
