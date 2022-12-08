@@ -127,8 +127,10 @@ public class EstimateQueryBuilder {
         addOrderByClause(queryBuilder, searchCriteria);
 
         //addLimitAndOffset(queryBuilder, searchCriteria, preparedStmtList);
-        if(!searchCriteria.getIsCountCall())
+        if(!searchCriteria.getIsCountCall()){
+            addOrderByClause(queryBuilder, searchCriteria);
             return addPaginationWrapper(queryBuilder.toString(), preparedStmtList, searchCriteria);
+        }
 
         return queryBuilder.toString();
     }
