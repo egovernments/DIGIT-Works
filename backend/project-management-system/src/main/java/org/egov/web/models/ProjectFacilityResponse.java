@@ -1,22 +1,12 @@
 package org.egov.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import org.egov.web.models.ProjectFacility;
-import org.egov.web.models.ResponseInfo;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * ProjectFacilityResponse
@@ -29,19 +19,19 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProjectFacilityResponse   {
-        @JsonProperty("ResponseInfo")
-        private ResponseInfo responseInfo = null;
+public class ProjectFacilityResponse {
+    @JsonProperty("ResponseInfo")
+    private ResponseInfo responseInfo = null;
 
-        @JsonProperty("ProjectFacility")
-        @Valid
-        private List<ProjectFacility> projectFacility = new ArrayList<>();
+    @JsonProperty("ProjectFacility")
+    @Valid
+    private List<ProjectFacility> projectFacility = new ArrayList<>();
 
 
-        public ProjectFacilityResponse addProjectFacilityItem(ProjectFacility projectFacilityItem) {
+    public ProjectFacilityResponse addProjectFacilityItem(ProjectFacility projectFacilityItem) {
         this.projectFacility.add(projectFacilityItem);
         return this;
-        }
+    }
 
 }
 

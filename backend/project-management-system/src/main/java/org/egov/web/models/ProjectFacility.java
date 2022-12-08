@@ -1,19 +1,9 @@
 package org.egov.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import org.egov.web.models.AuditDetails;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * This object defines the mapping of a facility to a project.
@@ -27,27 +17,27 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProjectFacility   {
-        @JsonProperty("id")
-        private String id = null;
+public class ProjectFacility {
+    @JsonProperty("id")
+    private String id = null;
 
-        @JsonProperty("tenantId")
-        private String tenantId = null;
+    @JsonProperty("tenantId")
+    private String tenantId = null;
 
-        @JsonProperty("facilityId")
-        private String facilityId = null;
+    @JsonProperty("facilityId")
+    private String facilityId = null;
 
-        @JsonProperty("projectId")
-        private String projectId = null;
+    @JsonProperty("projectId")
+    private String projectId = null;
 
-        @JsonProperty("isDeleted")
-        private Boolean isDeleted = null;
+    @JsonProperty("isDeleted")
+    private Boolean isDeleted = null;
 
-        @JsonProperty("rowVersion")
-        private Integer rowVersion = null;
+    @JsonProperty("rowVersion")
+    private Integer rowVersion = null;
 
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails = null;
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
 
 }

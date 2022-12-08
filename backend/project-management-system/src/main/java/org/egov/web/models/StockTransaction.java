@@ -1,21 +1,10 @@
 package org.egov.web.models;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import org.egov.web.models.AdditionalFields;
-import org.egov.web.models.AuditDetails;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * StockTransaction
@@ -28,118 +17,118 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StockTransaction   {
-        @JsonProperty("id")
-        private String id = null;
+public class StockTransaction {
+    @JsonProperty("id")
+    private String id = null;
 
-        @JsonProperty("clientReferenceId")
-        private String clientReferenceId = null;
+    @JsonProperty("clientReferenceId")
+    private String clientReferenceId = null;
 
-        @JsonProperty("tenantId")
-        private String tenantId = null;
+    @JsonProperty("tenantId")
+    private String tenantId = null;
 
-        @JsonProperty("facilityId")
-        private String facilityId = null;
+    @JsonProperty("facilityId")
+    private String facilityId = null;
 
-        @JsonProperty("productVariantId")
-        private String productVariantId = null;
+    @JsonProperty("productVariantId")
+    private String productVariantId = null;
 
-        @JsonProperty("quantity")
-        private Long quantity = null;
+    @JsonProperty("quantity")
+    private Long quantity = null;
 
-        @JsonProperty("referenceId")
-        private String referenceId = null;
+    @JsonProperty("referenceId")
+    private String referenceId = null;
 
-        @JsonProperty("referenceIdType")
-        private String referenceIdType = null;
+    @JsonProperty("referenceIdType")
+    private String referenceIdType = null;
 
-              /**
-   * Gets or Sets transactionType
-   */
-  public enum TransactionTypeEnum {
-    RECEIVED("RECEIVED"),
-    
-    DISPATCHED("DISPATCHED");
+    /**
+     * Gets or Sets transactionType
+     */
+    public enum TransactionTypeEnum {
+        RECEIVED("RECEIVED"),
 
-    private String value;
+        DISPATCHED("DISPATCHED");
 
-    TransactionTypeEnum(String value) {
-      this.value = value;
-    }
+        private String value;
 
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TransactionTypeEnum fromValue(String text) {
-      for (TransactionTypeEnum b : TransactionTypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
+        TransactionTypeEnum(String value) {
+            this.value = value;
         }
-      }
-      return null;
-    }
-  }
 
-        @JsonProperty("transactionType")
-        private TransactionTypeEnum transactionType = null;
-
-              /**
-   * Gets or Sets transactionReason
-   */
-  public enum TransactionReasonEnum {
-    RECEIVED("RECEIVED"),
-    
-    RETURNED("RETURNED"),
-    
-    LOSS("LOSS");
-
-    private String value;
-
-    TransactionReasonEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TransactionReasonEnum fromValue(String text) {
-      for (TransactionReasonEnum b : TransactionReasonEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
         }
-      }
-      return null;
+
+        @JsonCreator
+        public static TransactionTypeEnum fromValue(String text) {
+            for (TransactionTypeEnum b : TransactionTypeEnum.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
     }
-  }
 
-        @JsonProperty("transactionReason")
-        private TransactionReasonEnum transactionReason = null;
+    @JsonProperty("transactionType")
+    private TransactionTypeEnum transactionType = null;
 
-        @JsonProperty("transactingPartyId")
-        private String transactingPartyId = null;
+    /**
+     * Gets or Sets transactionReason
+     */
+    public enum TransactionReasonEnum {
+        RECEIVED("RECEIVED"),
 
-        @JsonProperty("transactingPartyType")
-        private String transactingPartyType = null;
+        RETURNED("RETURNED"),
 
-        @JsonProperty("additionalFields")
-        private AdditionalFields additionalFields = null;
+        LOSS("LOSS");
 
-        @JsonProperty("isDeleted")
-        private Boolean isDeleted = null;
+        private String value;
 
-        @JsonProperty("rowVersion")
-        private Integer rowVersion = null;
+        TransactionReasonEnum(String value) {
+            this.value = value;
+        }
 
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails = null;
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+        @JsonCreator
+        public static TransactionReasonEnum fromValue(String text) {
+            for (TransactionReasonEnum b : TransactionReasonEnum.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
+    }
+
+    @JsonProperty("transactionReason")
+    private TransactionReasonEnum transactionReason = null;
+
+    @JsonProperty("transactingPartyId")
+    private String transactingPartyId = null;
+
+    @JsonProperty("transactingPartyType")
+    private String transactingPartyType = null;
+
+    @JsonProperty("additionalFields")
+    private AdditionalFields additionalFields = null;
+
+    @JsonProperty("isDeleted")
+    private Boolean isDeleted = null;
+
+    @JsonProperty("rowVersion")
+    private Integer rowVersion = null;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
 
 }

@@ -1,21 +1,10 @@
 package org.egov.web.models;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import org.egov.web.models.AdditionalFields;
-import org.egov.web.models.AuditDetails;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * Product
@@ -28,70 +17,70 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Product   {
-        @JsonProperty("id")
-        private String id = null;
+public class Product {
+    @JsonProperty("id")
+    private String id = null;
 
-        @JsonProperty("tenantId")
-        private String tenantId = null;
+    @JsonProperty("tenantId")
+    private String tenantId = null;
 
-              /**
-   * Define the type of product
-   */
-  public enum TypeEnum {
-    MEDICINE("MEDICINE"),
-    
-    VACCINE("VACCINE"),
-    
-    SPRAY("SPRAY"),
-    
-    BEDNET("BEDNET"),
-    
-    EDUCATIONAL_MATERIAL("EDUCATIONAL_MATERIAL");
+    /**
+     * Define the type of product
+     */
+    public enum TypeEnum {
+        MEDICINE("MEDICINE"),
 
-    private String value;
+        VACCINE("VACCINE"),
 
-    TypeEnum(String value) {
-      this.value = value;
-    }
+        SPRAY("SPRAY"),
 
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
+        BEDNET("BEDNET"),
 
-    @JsonCreator
-    public static TypeEnum fromValue(String text) {
-      for (TypeEnum b : TypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
+        EDUCATIONAL_MATERIAL("EDUCATIONAL_MATERIAL");
+
+        private String value;
+
+        TypeEnum(String value) {
+            this.value = value;
         }
-      }
-      return null;
+
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+        @JsonCreator
+        public static TypeEnum fromValue(String text) {
+            for (TypeEnum b : TypeEnum.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
     }
-  }
 
-        @JsonProperty("type")
-        private TypeEnum type = null;
+    @JsonProperty("type")
+    private TypeEnum type = null;
 
-        @JsonProperty("name")
-        private String name = null;
+    @JsonProperty("name")
+    private String name = null;
 
-        @JsonProperty("manufacturer")
-        private String manufacturer = null;
+    @JsonProperty("manufacturer")
+    private String manufacturer = null;
 
-        @JsonProperty("additionalFields")
-        private AdditionalFields additionalFields = null;
+    @JsonProperty("additionalFields")
+    private AdditionalFields additionalFields = null;
 
-        @JsonProperty("isDeleted")
-        private Boolean isDeleted = null;
+    @JsonProperty("isDeleted")
+    private Boolean isDeleted = null;
 
-        @JsonProperty("rowVersion")
-        private Integer rowVersion = null;
+    @JsonProperty("rowVersion")
+    private Integer rowVersion = null;
 
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails = null;
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
 
 }

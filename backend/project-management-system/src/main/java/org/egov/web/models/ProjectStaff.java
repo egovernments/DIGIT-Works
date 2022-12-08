@@ -1,19 +1,9 @@
 package org.egov.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import org.egov.web.models.AuditDetails;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * This object defines the mapping of a system staff user to a project for a certain period.
@@ -27,36 +17,36 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProjectStaff   {
-        @JsonProperty("id")
-        private String id = null;
+public class ProjectStaff {
+    @JsonProperty("id")
+    private String id = null;
 
-        @JsonProperty("tenantId")
-        private String tenantId = null;
+    @JsonProperty("tenantId")
+    private String tenantId = null;
 
-        @JsonProperty("userId")
-        private String userId = null;
+    @JsonProperty("userId")
+    private String userId = null;
 
-        @JsonProperty("projectId")
-        private String projectId = null;
+    @JsonProperty("projectId")
+    private String projectId = null;
 
-        @JsonProperty("startDate")
-        private Long startDate = null;
+    @JsonProperty("startDate")
+    private Long startDate = null;
 
-        @JsonProperty("endDate")
-        private Long endDate = null;
+    @JsonProperty("endDate")
+    private Long endDate = null;
 
-        @JsonProperty("channel")
-        private String channel = null;
+    @JsonProperty("channel")
+    private String channel = null;
 
-        @JsonProperty("isDeleted")
-        private Boolean isDeleted = null;
+    @JsonProperty("isDeleted")
+    private Boolean isDeleted = null;
 
-        @JsonProperty("rowVersion")
-        private Integer rowVersion = null;
+    @JsonProperty("rowVersion")
+    private Integer rowVersion = null;
 
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails = null;
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
 
 }

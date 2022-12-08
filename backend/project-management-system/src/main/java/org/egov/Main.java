@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "org.egov", "org.egov.web.controllers" , "org.egov.config"})
+@ComponentScan(basePackages = {"org.egov", "org.egov.web.controllers", "org.egov.config"})
 public class Main {
 
 

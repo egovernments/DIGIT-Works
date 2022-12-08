@@ -1,22 +1,12 @@
 package org.egov.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import org.egov.web.models.ProjectStaff;
-import org.egov.web.models.ResponseInfo;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * ProjectStaffResponse
@@ -29,19 +19,19 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProjectStaffResponse   {
-        @JsonProperty("ResponseInfo")
-        private ResponseInfo responseInfo = null;
+public class ProjectStaffResponse {
+    @JsonProperty("ResponseInfo")
+    private ResponseInfo responseInfo = null;
 
-        @JsonProperty("ProjectStaff")
-        @Valid
-        private List<ProjectStaff> projectStaff = new ArrayList<>();
+    @JsonProperty("ProjectStaff")
+    @Valid
+    private List<ProjectStaff> projectStaff = new ArrayList<>();
 
 
-        public ProjectStaffResponse addProjectStaffItem(ProjectStaff projectStaffItem) {
+    public ProjectStaffResponse addProjectStaffItem(ProjectStaff projectStaffItem) {
         this.projectStaff.add(projectStaffItem);
         return this;
-        }
+    }
 
 }
 

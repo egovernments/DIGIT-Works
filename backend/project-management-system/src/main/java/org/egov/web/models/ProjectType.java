@@ -1,23 +1,15 @@
 package org.egov.web.models;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import org.egov.web.models.AuditDetails;
-import org.egov.web.models.ProjectProductVariant;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * This is the master data to capture the metadata of Project
@@ -31,97 +23,97 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProjectType   {
-        @JsonProperty("id")
-        private String id = null;
+public class ProjectType {
+    @JsonProperty("id")
+    private String id = null;
 
-        @JsonProperty("tenantId")
-        private String tenantId = null;
+    @JsonProperty("tenantId")
+    private String tenantId = null;
 
-        @JsonProperty("name")
-        private String name = null;
+    @JsonProperty("name")
+    private String name = null;
 
-        @JsonProperty("code")
-        private String code = null;
+    @JsonProperty("code")
+    private String code = null;
 
-        @JsonProperty("group")
-        private String group = null;
+    @JsonProperty("group")
+    private String group = null;
 
-              /**
-   * beneficiary type
-   */
-  public enum BeneficiaryTypeEnum {
-    HOUSEHOLD("HOUSEHOLD"),
-    
-    INDIVIDUAL("INDIVIDUAL"),
-    
-    STRUCTURE("STRUCTURE");
+    /**
+     * beneficiary type
+     */
+    public enum BeneficiaryTypeEnum {
+        HOUSEHOLD("HOUSEHOLD"),
 
-    private String value;
+        INDIVIDUAL("INDIVIDUAL"),
 
-    BeneficiaryTypeEnum(String value) {
-      this.value = value;
-    }
+        STRUCTURE("STRUCTURE");
 
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
+        private String value;
 
-    @JsonCreator
-    public static BeneficiaryTypeEnum fromValue(String text) {
-      for (BeneficiaryTypeEnum b : BeneficiaryTypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
+        BeneficiaryTypeEnum(String value) {
+            this.value = value;
         }
-      }
-      return null;
-    }
-  }
 
-        @JsonProperty("beneficiaryType")
-        private BeneficiaryTypeEnum beneficiaryType = null;
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
+        }
 
-        @JsonProperty("eligibilityCriteria")
-        @Valid
-        private List<String> eligibilityCriteria = null;
-
-        @JsonProperty("taskProcedure")
-        @Valid
-        private List<String> taskProcedure = null;
-
-        @JsonProperty("resources")
-        @Valid
-        private List<ProjectProductVariant> resources = null;
-
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails = null;
-
-
-        public ProjectType addEligibilityCriteriaItem(String eligibilityCriteriaItem) {
-            if (this.eligibilityCriteria == null) {
-            this.eligibilityCriteria = new ArrayList<>();
+        @JsonCreator
+        public static BeneficiaryTypeEnum fromValue(String text) {
+            for (BeneficiaryTypeEnum b : BeneficiaryTypeEnum.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
             }
+            return null;
+        }
+    }
+
+    @JsonProperty("beneficiaryType")
+    private BeneficiaryTypeEnum beneficiaryType = null;
+
+    @JsonProperty("eligibilityCriteria")
+    @Valid
+    private List<String> eligibilityCriteria = null;
+
+    @JsonProperty("taskProcedure")
+    @Valid
+    private List<String> taskProcedure = null;
+
+    @JsonProperty("resources")
+    @Valid
+    private List<ProjectProductVariant> resources = null;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
+
+
+    public ProjectType addEligibilityCriteriaItem(String eligibilityCriteriaItem) {
+        if (this.eligibilityCriteria == null) {
+            this.eligibilityCriteria = new ArrayList<>();
+        }
         this.eligibilityCriteria.add(eligibilityCriteriaItem);
         return this;
-        }
+    }
 
-        public ProjectType addTaskProcedureItem(String taskProcedureItem) {
-            if (this.taskProcedure == null) {
+    public ProjectType addTaskProcedureItem(String taskProcedureItem) {
+        if (this.taskProcedure == null) {
             this.taskProcedure = new ArrayList<>();
-            }
+        }
         this.taskProcedure.add(taskProcedureItem);
         return this;
-        }
+    }
 
-        public ProjectType addResourcesItem(ProjectProductVariant resourcesItem) {
-            if (this.resources == null) {
+    public ProjectType addResourcesItem(ProjectProductVariant resourcesItem) {
+        if (this.resources == null) {
             this.resources = new ArrayList<>();
-            }
+        }
         this.resources.add(resourcesItem);
         return this;
-        }
+    }
 
 }
 
