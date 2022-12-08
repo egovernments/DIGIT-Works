@@ -7,7 +7,7 @@ import 'package:works_shg_app/theme.dart';
 import 'Env/app_config.dart';
 
 void main() {
-  HttpOverrides.global = MyHttpOverrides();
+  // HttpOverrides.global = MyHttpOverrides();
   setPathUrlStrategy();
   setEnvironment(Environment.dev);
   // runZonedGuarded(() async {
