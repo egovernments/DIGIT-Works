@@ -33,8 +33,6 @@ public class EnrichementService {
     public void enrichCreateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
         RequestInfo requestInfo = attendanceRegisterRequest.getRequestInfo();
         List<AttendanceRegister> attendanceRegisters = attendanceRegisterRequest.getAttendanceRegister();
-//        List<StaffPermission> staff = attendanceRegisters.get(0).getStaff();
-//        List<IndividualEntry> attendees = attendanceRegisters.get(0).getAttendees();
         String rootTenantId = attendanceRegisters.get(0).getTenantId().split("\\.")[0];
         List<String> registerNumbers = getIdList(requestInfo, rootTenantId
                 , config.getIdgenAttendanceRegisterNumberName(), config.getIdgenAttendanceRegisterNumberFormat(), attendanceRegisters.size());
@@ -52,17 +50,19 @@ public class EnrichementService {
 
     public void enrichUpdateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
         RequestInfo requestInfo = attendanceRegisterRequest.getRequestInfo();
-        //List<AttendanceRegister> attendanceRegisters = attendanceRegisterRequest.getAttendanceRegister();
-        AttendanceRegister attendanceRegister= attendanceRegisterRequest.getAttendanceRegister().get(0);
+        List<AttendanceRegister> attendanceRegistersInUpdateReq = attendanceRegisterRequest.getAttendanceRegister();
 
-        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().id(attendanceRegister.getId().toString())
-                .tenantId(attendanceRegister.getTenantId()).build();
-        List<AttendanceRegister> attendanceRegisterList = attendanceRepository.getAttendanceRegister(searchCriteria);
-
-        attendanceRegisterRequest.setAttendanceRegister(attendanceRegisterList);
-
-        AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), attendanceRegister, false);
-        attendanceRegister.setAuditDetails(auditDetails);
+        for (int i = 0; i < attendanceRegistersInUpdateReq.size(); i++) {
+            AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                    .id(attendanceRegistersInUpdateReq.get(i).getId().toString())
+                    .tenantId(attendanceRegistersInUpdateReq.get(i).getTenantId()).build();
+            AttendanceRegister attendanceRegisterFromDB = attendanceRepository.getAttendanceRegister(searchCriteria).get(0);
+            attendanceRegistersInUpdateReq.get(i).setAuditDetails(attendanceRegisterFromDB.getAuditDetails());
+            attendanceRegistersInUpdateReq.get(i).setAttendees(attendanceRegisterFromDB.getAttendees());
+            attendanceRegistersInUpdateReq.get(i).setStaff(attendanceRegisterFromDB.getStaff());
+            AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), attendanceRegistersInUpdateReq.get(i), false);
+            attendanceRegistersInUpdateReq.get(i).setAuditDetails(auditDetails);
+        }
     }
 
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey,
