@@ -124,8 +124,6 @@ public class EstimateQueryBuilder {
 
         //TODO -estimateType
 
-        addOrderByClause(queryBuilder, searchCriteria);
-
         //addLimitAndOffset(queryBuilder, searchCriteria, preparedStmtList);
         if(!searchCriteria.getIsCountCall()){
             addOrderByClause(queryBuilder, searchCriteria);
