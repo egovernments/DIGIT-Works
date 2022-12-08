@@ -56,7 +56,8 @@ public class EstimateApiController {
     public ResponseEntity<EstimateResponse> estimateV1SearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute EstimateSearchCriteria searchCriteria) {
         List<Estimate> estimateList = estimateService.searchEstimate(requestInfoWrapper, searchCriteria);
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        EstimateResponse estimateResponse = EstimateResponse.builder().responseInfo(responseInfo).estimates(estimateList).build();
+        Integer count = estimateService.countAllEstimateApplications(searchCriteria);
+        EstimateResponse estimateResponse = EstimateResponse.builder().responseInfo(responseInfo).estimates(estimateList).totalCount(count).build();
         return new ResponseEntity<EstimateResponse>(estimateResponse, HttpStatus.OK);
     }
 

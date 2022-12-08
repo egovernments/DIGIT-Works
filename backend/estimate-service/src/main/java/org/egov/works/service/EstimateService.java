@@ -88,4 +88,13 @@ public class EstimateService {
         producer.push(serviceConfiguration.getUpdateEstimateTopic(), request);
         return request;
     }
+
+    /**
+     * @param criteria EstimateSearchCriteria contains search criteria on estimate
+     * @return Count of List of matching estimate application
+     */
+    public Integer countAllEstimateApplications(EstimateSearchCriteria criteria) {
+        criteria.setIsCountCall(Boolean.TRUE);
+        return estimateRepository.getEstimateCount(criteria);
+    }
 }

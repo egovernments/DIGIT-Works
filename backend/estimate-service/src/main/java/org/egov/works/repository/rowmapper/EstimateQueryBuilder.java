@@ -32,6 +32,8 @@ public class EstimateQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
+    private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
     private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
         if (values.isEmpty())
             queryString.append(" WHERE ");
@@ -115,11 +117,10 @@ public class EstimateQueryBuilder {
         addOrderByClause(queryBuilder, searchCriteria);
 
         //addLimitAndOffset(queryBuilder, searchCriteria, preparedStmtList);
+        if(!searchCriteria.getIsCountCall())
+            return addPaginationWrapper(queryBuilder.toString(), preparedStmtList, searchCriteria);
 
-        String finalQuery = addPaginationWrapper(queryBuilder.toString(), preparedStmtList, searchCriteria);
-
-
-        return finalQuery;
+        return queryBuilder.toString();
     }
 
     private void addLimitAndOffset(StringBuilder queryBuilder, EstimateSearchCriteria criteria, List<Object> preparedStmtList) {
@@ -203,5 +204,13 @@ public class EstimateQueryBuilder {
         preparedStmtList.add(limit+offset);
 
         return finalQuery;
+    }
+
+    public String getSearchCountQueryString(EstimateSearchCriteria criteria, List<Object> preparedStmtList) {
+        String query = getEstimateQuery(criteria, preparedStmtList);
+        if (query != null)
+            return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
     }
 }
