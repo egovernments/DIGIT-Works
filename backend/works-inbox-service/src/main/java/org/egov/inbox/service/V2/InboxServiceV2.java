@@ -105,7 +105,8 @@ public class InboxServiceV2 {
         items.forEach(item -> {
             if(item.getBusinessObject().containsKey(CURRENT_PROCESS_INSTANCE_CONSTANT)) {
                 // Set process instance object in the native process instance field declared in the model inbox class.
-                ProcessInstance processInstance = mapper.convertValue(item.getBusinessObject().get(CURRENT_PROCESS_INSTANCE_CONSTANT), ProcessInstance.class);
+                List<ProcessInstance> data = (List<ProcessInstance>)item.getBusinessObject().get(CURRENT_PROCESS_INSTANCE_CONSTANT);
+                ProcessInstance processInstance = mapper.convertValue(data.get(0), ProcessInstance.class);
                 item.setProcessInstance(processInstance);
 
                 // Remove current process instance from business object in order to avoid having redundant data in response.
