@@ -31,6 +31,8 @@ const Checklist = (props) => {
             fieldStyle={{ marginLeft: "0.5rem" }}
             showWrapperContainers={true}
             isDescriptionBold={true}
+            noBreakLine={true}
+            showMultipleCards={true}
         />
     </React.Fragment>
   )
