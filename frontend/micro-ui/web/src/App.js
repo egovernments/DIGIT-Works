@@ -38,8 +38,8 @@ const enabledModules = [
   "Works",
   "AttendenceMgmt",
   "Contracts",
-  "Expenditure",
   "Masters",
+  "Expenditure",
   "Estimate",
   "Project",
 ];
@@ -54,6 +54,7 @@ initAttendenceMgmtComponents();
 initContractsComponents();
 initExpenditureComponents();
 initMastersComponents();
+initExpenditureComponents();
 
 const moduleReducers = (initData) => ({
   initData,

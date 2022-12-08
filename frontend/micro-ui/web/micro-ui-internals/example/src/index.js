@@ -17,7 +17,6 @@ import { HRMSModule, initHRMSComponents } from "@egovernments/digit-ui-module-hr
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import "@egovernments/digit-ui-works-css/example/index.css";
 
-
 import { pgrCustomizations, pgrComponents } from "./pgr";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 
@@ -28,6 +27,8 @@ const enabledModules = [
   "HRMS",
   "AttendenceMgmt",
   "Contracts",
+  // "Engagement",
+  "Masters",
   "Expenditure",
   "Masters",
   "Estimate",
@@ -78,6 +79,7 @@ const initDigitUI = () => {
   initContractsComponents();
   initExpenditureComponents();
   initMastersComponents();
+  initExpenditureComponents();
   const moduleReducers = (initData) => initData;
 
   window.Digit.Customizations = {

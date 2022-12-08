@@ -4,6 +4,7 @@ import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-component
 import { Switch, useLocation } from "react-router-dom";
 import CreateContract from "./CreateContract";
 import Inbox from "./Inbox";
+import BILLInbox from "./billInbox";
 import SearchContracts from "./SearchContract";
 import ViewContract from "./ViewContract";
 
