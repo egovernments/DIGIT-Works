@@ -248,10 +248,10 @@
       tbody tr .total-attendence-label {
         font-weight: bolder;
       }
-      tbody tr td[data-radio-selection="last-radio"] {
+      tbody tr td[data-radio-selection=last-radio] {
         border: none;
       }
-      tbody tr:nth-child(even) td[data-radio-selection="last-radio"] {
+      tbody tr:nth-child(even) td[data-radio-selection=last-radio] {
         border: none;
         background-color: #EEEEEE;
       }
@@ -262,15 +262,15 @@
       tbody tr td[colspan="4"] {
         text-align: left;
       }
-      tbody tr td[data-modified-amt="modified-amt"] {
+      tbody tr td[data-modified-amt=modified-amt] {
         background-color: #F5F5F5;
       }
-      tbody tr td[data-last-row-cell="last-row"] {
+      tbody tr td[data-last-row-cell=last-row] {
         font-weight: bolder;
         border: none;
         background-color: #EEEEEE;
       }
-      tbody tr td[data-last-row-cell="last-row"]:nth-child(1), :nth-child(11) {
+      tbody tr td[data-last-row-cell=last-row]:nth-child(1), :nth-child(11) {
         border-right: 1px solid #ddd !important;
       }
       .modified-amount {

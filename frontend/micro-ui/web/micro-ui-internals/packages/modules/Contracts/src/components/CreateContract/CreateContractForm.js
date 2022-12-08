@@ -218,6 +218,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONTRACT_TYPE`)}:*`}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONTRACT_TYPE`)}:*`}</CardLabel>
                     <div className='field'>
                         <Controller
                             name="currentContractType"
