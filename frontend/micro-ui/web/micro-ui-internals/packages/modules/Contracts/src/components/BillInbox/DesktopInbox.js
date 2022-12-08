@@ -1,9 +1,9 @@
 import { Card, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import ApplicationTable from "./inbox/ApplicationTable";
-import InboxLinks from "./inbox/InboxLink";
-import SearchApplication from "./inbox/search";
+import ApplicationTable from "./ApplicationTable";
+import InboxLinks from "./InboxLink";
+import SearchApplication from "./search";
 import { Link } from "react-router-dom";
 
 const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading, setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState, ...props }) => {
@@ -15,17 +15,17 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
   const inboxColumns = useMemo( 
     () => [
       {
-        Header: t("WORKS_CONTRACT_ID"),
+        Header: t("WORKS_BILL_ID"),
         disableSortBy: true,
         accessor: "connectionNo",
         Cell: ({ row }) =>{
           return( 
             <div>
-              {row.original?.contractId ? (
+              {row.original?.billId ? (
                 <span className={"link"}>
                   <Link
-                    to={`view-contract?tenantId=${row.original?.tenantId}&contractId=${row.original?.contractId}`}>
-                    {row.original?.contractId || "NA"}
+                    to={`view-bill?tenantId=${row.original?.tenantId}&billId=${row.original?.billId}`}>
+                    {row.original?.billId || "NA"}
                   </Link>
                 </span> 
               ) : (
@@ -34,14 +34,44 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
             </div>)}
       },
       {
-        Header: t("WORKS_CONTRACT_DATE"), 
+        Header: t("WORKS_BILL_DATE"), 
+        disableSortBy: true,
+        Cell: ({ row }) =>{
+          return( 
+            <div style={{"minWidth":"100px"}}>
+              {row.original?.billDate ? (
+                <span >
+                    {row.original?.billDate || t("ES_COMMON_NA")}
+                </span> 
+              ) : (
+                <span>{t("ES_COMMON_NA")}</span>
+              )}
+            </div>)}      
+      },
+      {
+        Header: t("WORKS_BILL_TYPE"),
+        disableSortBy: true,
+        Cell: ({ row }) =>{
+          return( 
+            <div style={{"minWidth":"90px"}}>
+              {row.original?.billType ? (
+                <span >
+                    {row.original?.billType || t("ES_COMMON_NA")}
+                </span> 
+              ) : (
+                <span>{t("ES_COMMON_NA")}</span>
+              )}
+            </div>)}      
+      },
+      {
+        Header: t("WORKS_DEPARTMENT"),
         disableSortBy: true,
         Cell: ({ row }) =>{
           return( 
             <div style={{"minWidth":"110px"}}>
-              {row.original?.contractDate ? (
+              {row.original?.department ? (
                 <span >
-                    {row.original?.contractDate || t("ES_COMMON_NA")}
+                    {row.original?.department || t("ES_COMMON_NA")}
                 </span> 
               ) : (
                 <span>{t("ES_COMMON_NA")}</span>
@@ -49,44 +79,14 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
             </div>)}      
       },
       {
-        Header: t("WORKS_CONTRACT_TYPE"),
+        Header: t("WORKS_CONTRACTOR_NAME"),
         disableSortBy: true,
         Cell: ({ row }) =>{
           return( 
             <div style={{"minWidth":"150px"}}>
-              {row.original?.contractType ? (
+              {row.original?.contractorName ? (
                 <span >
-                    {row.original?.contractType || t("ES_COMMON_NA")}
-                </span> 
-              ) : (
-                <span>{t("ES_COMMON_NA")}</span>
-              )}
-            </div>)}      
-      },
-      {
-        Header: t("WORKS_NAME_OF_WORK"),
-        disableSortBy: true,
-        Cell: ({ row }) =>{
-          return( 
-            <div style={{"minWidth":"382px"}}>
-              {row.original?.nameOfTheWork ? (
-                <span >
-                    {row.original?.nameOfTheWork || t("ES_COMMON_NA")}
-                </span> 
-              ) : (
-                <span>{t("ES_COMMON_NA")}</span>
-              )}
-            </div>)}      
-      },
-      {
-        Header: t("WORKS_ABSTRACT_ESTIMATE_NO"),
-        disableSortBy: true,
-        Cell: ({ row }) =>{
-          return( 
-            <div style={{"minWidth":"160px"}}>
-              {row.original?.abstractEstimateNumber ? (
-                <span >
-                    {row.original?.abstractEstimateNumber || t("ES_COMMON_NA")}
+                    {row.original?.contractorName || t("ES_COMMON_NA")}
                 </span> 
               ) : (
                 <span>{t("ES_COMMON_NA")}</span>
@@ -94,14 +94,14 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
             </div>)}      
       },        
       {
-        Header: t("WORKS_IMPLEMENT_AUTH"),
+        Header: t("WORKS_IDENTIFICATION_NO"),
         disableSortBy: true,
         Cell: ({ row }) =>{
           return( 
-            <div style={{"minWidth":"130px"}}>
-              {row.original?.implementingAuthority ? (
+            <div style={{"minWidth":"220px"}}>
+              {row.original?.workIdentificationNumber ? (
                 <span >
-                    {row.original?.implementingAuthority || t("ES_COMMON_NA")}
+                    {row.original?.workIdentificationNumber || t("ES_COMMON_NA")}
                 </span> 
               ) : (
                 <span>{t("ES_COMMON_NA")}</span>
@@ -109,14 +109,14 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
             </div>)}      
       },
       {
-        Header: t("WORKS_ORG_NAME"),
+        Header: t("WORKS_FUND"),
         disableSortBy: true,
         Cell: ({ row }) =>{
           return( 
-            <div style={{"minWidth":"150px"}}>
-              {row.original?.orgnName ? (
+            <div style={{"minWidth":"110px"}}>
+              {row.original?.fund ? (
                 <span >
-                    {row.original?.orgnName || t("ES_COMMON_NA")}
+                    {row.original?.fund || t("ES_COMMON_NA")}
                 </span> 
               ) : (
                 <span>{t("ES_COMMON_NA")}</span>
@@ -124,14 +124,14 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
             </div>)}      
       },
       {
-        Header: t("WORKS_OFF_IN_CHARGE"),
+        Header: t("WORKS_FUNCTION"),
         disableSortBy: true,
         Cell: ({ row }) =>{
           return( 
-            <div style={{"minWidth":"150px"}}>
-              {row.original?.officerIncharge ? (
+            <div style={{"minWidth":"110px"}}>
+              {row.original?.function ? (
                 <span >
-                    {row.original?.officerIncharge || t("ES_COMMON_NA")}
+                    {row.original?.function || t("ES_COMMON_NA")}
                 </span> 
               ) : (
                 <span>{t("ES_COMMON_NA")}</span>
@@ -139,14 +139,14 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
             </div>)}     
       },
       {
-        Header: t("WORKS_AGREEMENT_AMT"),
+        Header: t("WORKS_BUDGET_HEAD"),
         disableSortBy: true,
         Cell: ({ row }) =>{
           return( 
-            <div style={{"minWidth":"200px"}}>
-              {row.original?.agreemntAmount ? (
+            <div style={{"minWidth":"210px"}}>
+              {row.original?.budgetHead ? (
                 <span >
-                    {row.original?.agreemntAmount || t("ES_COMMON_NA")}
+                    {row.original?.budgetHead || t("ES_COMMON_NA")}
                 </span> 
               ) : (
                 <span>{t("ES_COMMON_NA")}</span>
@@ -154,16 +154,29 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
             </div>)}
       },
       {
-        Header: t("WORKS_SLA"),
+        Header: t("WORKS_CREATED_BY"),
         disableSortBy: true,
         Cell: ({ row }) =>{
-          let cellcolor;
-          row.original?.sla > 30 ? cellcolor="#FF0000" : cellcolor="#4F992D"
           return( 
-            <div style={{"minWidth":"80px", "color":cellcolor}}>
-              {row.original?.sla ? (
+            <div style={{"minWidth":"80px"}}>
+              {row.original?.createdBy ? (
                 <span >
-                    {row.original?.sla || t("ES_COMMON_NA")}
+                    {row.original?.createdBy || t("ES_COMMON_NA")}
+                </span> 
+              ) : (
+                <span>{t("ES_COMMON_NA")}</span>
+              )}
+            </div>)}      
+      },
+      {
+        Header: t("WORKS_OWNER"),
+        disableSortBy: true,
+        Cell: ({ row }) =>{
+          return( 
+            <div style={{"minWidth":"80px"}}>
+              {row.original?.owner ? (
+                <span >
+                    {row.original?.owner || t("ES_COMMON_NA")}
                 </span> 
               ) : (
                 <span>{t("ES_COMMON_NA")}</span>
@@ -175,10 +188,25 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
         disableSortBy: true,
         Cell: ({ row }) =>{
           return( 
-            <div style={{"minWidth":"90px"}}>
+            <div style={{"minWidth":"80px"}}>
               {row.original?.status ? (
                 <span >
                     {row.original?.status || t("ES_COMMON_NA")}
+                </span> 
+              ) : (
+                <span>{t("ES_COMMON_NA")}</span>
+              )}
+            </div>)}
+      },
+      {
+        Header: t("WORKS_TOTAL_AMOUNT"),
+        disableSortBy: true,
+        Cell: ({ row }) =>{
+          return( 
+            <div style={{"minWidth":"110px"}}>
+              {row.original?.totalAmount ? (
+                <span >
+                    {row.original?.totalAmount || t("ES_COMMON_NA")}
                 </span> 
               ) : (
                 <span>{t("ES_COMMON_NA")}</span>

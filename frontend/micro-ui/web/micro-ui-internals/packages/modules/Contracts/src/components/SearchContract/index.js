@@ -77,7 +77,7 @@ const SearchContractApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
           disableSortBy: true,
           Cell: ({ row }) =>{
             return( 
-              <div style={{"minWidth":"90px"}}>
+              <div style={{"minWidth":"110px"}}>
                 {row.original?.contractDate ? (
                   <span >
                       {row.original?.contractDate || t("ES_COMMON_NA")}
@@ -232,10 +232,11 @@ const SearchContractApplication = ({tenantId, onSubmit, data, resultOk, isLoadin
                   ))}
               </Card>
             ) : resultOk ? (
-            <div style={{overflowX:"scroll"}}>
+            <div>
               <Table
                 t={t}
                 data={data}
+                customTableWrapperClassName="table-wrapper attendence-table"
                 totalRecords={1}
                 columns={columns}
                 getCellProps={(cellInfo) => {
