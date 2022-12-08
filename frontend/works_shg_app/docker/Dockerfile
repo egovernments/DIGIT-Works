@@ -9,7 +9,7 @@ RUN flutter doctor
 RUN flutter pub get
 RUN flutter build web
 # Create runtime image
-FROM egovio/nginx:mainline-alpine
+FROM nginx:mainline-alpine
 ENV WEB_DIR=/var/web/works_shg_app
 #RUN mkdir -p ${WEB_DIR}
 COPY --from=build /app/build/web/ ${WEB_DIR}/
