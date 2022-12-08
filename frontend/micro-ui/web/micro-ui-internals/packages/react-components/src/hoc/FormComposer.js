@@ -174,7 +174,7 @@ export const FormComposer = (props) => {
         case "multiupload":
           return (
             <Controller
-              name="uploads"
+              name={`uploads ${populators.name}`}
               control={control}
               rules={{ required: false }}
               render={({ onChange, ref, value = [] }) => {
@@ -399,7 +399,7 @@ export const FormComposer = (props) => {
                 );
               return (
                 <Fragment>
-                  <LabelFieldPair key={index} style={props?.showWrapperContainers ? {...wrapperStyles} : ""}>
+                  <LabelFieldPair key={index} style={props?.showWrapperContainers && !field.hideContainer ? { ...wrapperStyles } : { ...wrapperStyles,border:"none",background:"white" }}>
                     {!field.withoutLabel && (
                       <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert",fontWeight:props.isDescriptionBold?"600":null }}>
                         {t(field.label)}
