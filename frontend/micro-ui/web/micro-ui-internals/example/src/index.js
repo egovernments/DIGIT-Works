@@ -9,9 +9,10 @@ import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
+import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
-import { HRMSModule ,initHRMSComponents  } from "@egovernments/digit-ui-module-hrms";
+import { HRMSModule, initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import "@egovernments/digit-ui-css/example/index.css";
 
 // import * as comps from "@egovernments/digit-ui-react-components";
@@ -27,15 +28,16 @@ const enabledModules = [
   "HRMS",
   "AttendenceMgmt",
   "Contracts",
+  "Expenditure",
   // "Engagement"
 ];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
-  const token = window.localStorage.getItem("token")|| process.env[`REACT_APP_${userType}_TOKEN`];
- 
-  const citizenInfo = window.localStorage.getItem("Citizen.user-info")
- 
+  const token = window.localStorage.getItem("token") || process.env[`REACT_APP_${userType}_TOKEN`];
+
+  const citizenInfo = window.localStorage.getItem("Citizen.user-info");
+
   const citizenTenantId = window.localStorage.getItem("Citizen.tenant-id") || stateCode;
 
   const employeeInfo = window.localStorage.getItem("Employee.user-info");
@@ -57,7 +59,7 @@ const initTokens = (stateCode) => {
 };
 
 const initDigitUI = () => {
-  window.contextPath=window?.globalConfigs?.getConfig("CONTEXT_PATH");
+  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
   window?.Digit.ComponentRegistryService.setupRegistry({
     // ...pgrComponents,
@@ -70,9 +72,8 @@ const initDigitUI = () => {
   initAttendenceMgmtComponents();
   initHRMSComponents();
   initContractsComponents();
-  const moduleReducers = (initData) => (
-    initData
-  );
+  initExpenditureComponents();
+  const moduleReducers = (initData) => initData;
 
   window.Digit.Customizations = {
     PGR: pgrCustomizations,

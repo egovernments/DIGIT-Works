@@ -4,21 +4,21 @@ package org.egov.web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import org.egov.common.contract.response.ResponseInfo;
+import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.service.AttendanceService;
 import org.egov.util.ResponseInfoFactory;
-import org.egov.web.models.*;
+import org.egov.web.models.AttendanceRegister;
+import org.egov.web.models.AttendanceRegisterRequest;
+import org.egov.web.models.AttendanceRegisterResponse;
+import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Collections;
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.List;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T14:44:21.051+05:30")
@@ -34,6 +34,9 @@ public class AttendanceApiController {
     private HttpServletRequest request;
 
     @Autowired
+    private ResponseInfoFactory responseInfoCreator;
+
+    @Autowired
     private AttendanceService attendanceService;
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
@@ -44,8 +47,10 @@ public class AttendanceApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> attendanceV1SearchPOST(@Valid @ModelAttribute AttendanceRegisterSearchCriteria searchCriteria, @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-        AttendanceRegisterResponse attendanceRegisterResponse = attendanceService.searchAttendanceRegister(requestInfoWrapper.getRequestInfo(), searchCriteria);
-        return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse,HttpStatus.OK);
+        List<AttendanceRegister> attendanceRegisterList = attendanceService.searchAttendanceRegister(requestInfoWrapper, searchCriteria);
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(attendanceRegisterList).build();
+        return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_update", method = RequestMethod.POST)

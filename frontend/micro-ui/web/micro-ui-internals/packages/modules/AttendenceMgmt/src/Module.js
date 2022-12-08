@@ -1,39 +1,52 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
-import AttendenceMgmtCard from "./components/AttendenceMgmtCard"
+import AttendenceMgmtCard from "./components/AttendenceMgmtCard";
 import CitizenApp from "./pages/citizen";
+import { default as EmployeeApp } from "./pages/employee";
 import mobileInbox from "./components/markAttendenceInbox/mobileInbox";
 import ViewRegister from "./pages/citizen/viewRegister/ViewRegister";
 import ViewProjects from "./components/ViewProjectsInbox.js/ViewProjects";
+import Inbox from "./pages/employee/Inbox";
+import AttendenceInboxFilter from "./components/inbox/InboxFilter";
+import AttendenceInboxSearch from "./components/inbox/InboxSearch";
+import ViewAttendance from "./pages/employee/viewAttendance/viewAttendance";
 
-const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
-    const moduleCode = ["AttendenceMgmt"];
-    const { path, url } = useRouteMatch();
-    const language = Digit.StoreData.getCurrentLanguage();
-    const { isLoading, data: store } = Digit.Services.useStore({
-        stateCode,
-        moduleCode,
-        language,
-    });
+
+export const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
+  const moduleCode = ["AttendenceMgmt"];
+  const { path, url } = useRouteMatch();
+  const language = Digit.StoreData.getCurrentLanguage();
+  const { isLoading, data: store } = Digit.Services.useStore({
+    stateCode,
+    moduleCode,
+    language,
+  });
+
 
     if (isLoading) {
         return <Loader />;
     }
-
+    if (userType === "employee") {
+        return <EmployeeApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} />;
+    }
     return <CitizenApp path={path} stateCode={stateCode} />;
 };
 
 const componentsToRegister = {
     AttendenceMgmtCard,
     AttendenceMgmtModule,
-    AttendenceMgmtInbox: mobileInbox,
+    AttendenceMgmtInbox: Inbox,
+    ViewAttendance,
     ViewRegister,
-    ViewProjects
+    ViewProjects,
+    AttendenceInboxFilter,
+    AttendenceInboxSearch
+
 };
 
 export const initAttendenceMgmtComponents = () => {
-    Object.entries(componentsToRegister).forEach(([key, value]) => {
-        Digit.ComponentRegistryService.setComponent(key, value);
-    });
+  Object.entries(componentsToRegister).forEach(([key, value]) => {
+    Digit.ComponentRegistryService.setComponent(key, value);
+  });
 };

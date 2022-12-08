@@ -20,6 +20,7 @@ const ApplicationTable = ({
     <Table
       t={t}
       data={data}
+      customTableWrapperClassName="table-wrapper attendence-table"
       currentPage={currentPage}
       columns={columns}
       getCellProps={getCellProps}
