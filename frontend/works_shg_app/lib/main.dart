@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:works_shg_app/theme.dart';
@@ -7,27 +9,27 @@ import 'package:works_shg_app/theme.dart';
 import 'Env/app_config.dart';
 
 void main() {
-  // HttpOverrides.global = MyHttpOverrides();
+  HttpOverrides.global = MyHttpOverrides();
   setPathUrlStrategy();
   setEnvironment(Environment.dev);
-  // runZonedGuarded(() async {
-  //   FlutterError.onError = (FlutterErrorDetails details) {
-  //     FlutterError.dumpErrorToConsole(details);
-  //     if (kDebugMode) {
-  //       print(details.exception.toString());
-  //     }
-  //     // exit(1); /// to close the app smoothly
-  //   };
-  //
-  //   WidgetsFlutterBinding.ensureInitialized();
-  //
-  //   runApp(const MyApp());
-  // }, (Object error, StackTrace stack) {
-  //   if (kDebugMode) {
-  //     print(error.toString());
-  //   } // exit(1); /// to close the app smoothly
-  // });
-  runApp(const MyApp());
+  runZonedGuarded(() async {
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.dumpErrorToConsole(details);
+      if (kDebugMode) {
+        print(details.exception.toString());
+      }
+      // exit(1); /// to close the app smoothly
+    };
+
+    WidgetsFlutterBinding.ensureInitialized();
+
+    runApp(const MyApp());
+  }, (Object error, StackTrace stack) {
+    if (kDebugMode) {
+      print(error.toString());
+    } // exit(1); /// to close the app smoothly
+  });
+  // runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
