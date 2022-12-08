@@ -13,7 +13,7 @@ const CreateOrganization = ({parentRoute}) => {
        {createOrgStatus === null ? 
         (
           <React.Fragment>
-            <Header>{t("WORKS_CREATE_ORGANISATION")}</Header>
+            <Header>{t("MASTERS_CREATE_ORGANISATION")}</Header>
             <CreateOrganizationForm setCreateOrgStatus={setCreateOrgStatus}/>
           </React.Fragment>
         ) :

@@ -13,7 +13,7 @@ const SearchOrganization = ({parentRoute}) => {
   
   return (
     <div>
-      <ButtonSelector theme="border" label={t("WORKS_ADD_NEW_ORGANISATION")} onSubmit={createOrgHandler} />
+      <ButtonSelector theme="border" label={t("MASTERS_ADD_NEW_ORGANISATION")} onSubmit={createOrgHandler} />
     </div>
   )
 }

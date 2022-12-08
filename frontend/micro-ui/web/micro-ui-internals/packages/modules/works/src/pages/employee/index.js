@@ -103,13 +103,13 @@ const BILLSBreadCrumbs = ({ location }) => {
     },
     {
       path: `/${window.contextPath}/employee/works/search-organization`,
-      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_MASTERS")}` : t("WORKS_MASTERS"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_MASTERS")}` : t("MASTERS_MASTERS"),
       show: location.pathname.includes("/works/search-organization") ? true : false,
       isBack: fromScreen && true,
     },
     {
       path: `/${window.contextPath}/employee/works/create-organization`,
-      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_ORGANISATION")}` : t("WORKS_CREATE_ORGANISATION"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_CREATE_ORGANISATION")}` : t("MASTERS_CREATE_ORGANISATION"),
       show: location.pathname.includes("/works/create-organization") ? true : false,
       isBack: fromScreen && true,
     }
