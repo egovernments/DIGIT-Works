@@ -20,19 +20,16 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ProjectRequest {
-    @JsonProperty("RequestInfo")
+    @JsonProperty("requestInfo")
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("Project")
+    @JsonProperty("projects")
     @Valid
-    private List<Project> project = new ArrayList<>();
-
-    @JsonProperty("apiOperation")
-    private ApiOperation apiOperation = null;
+    private List<Project> projects = new ArrayList<>();
 
 
     public ProjectRequest addProjectItem(Project projectItem) {
-        this.project.add(projectItem);
+        this.projects.add(projectItem);
         return this;
     }
 

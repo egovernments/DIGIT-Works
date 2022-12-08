@@ -66,8 +66,8 @@ public class Project {
     @Valid
     private List<Target> targets = null;
 
-    @JsonProperty("additionalFields")
-    private AdditionalFields additionalFields = null;
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
     @JsonProperty("isDeleted")
     private Boolean isDeleted = null;
