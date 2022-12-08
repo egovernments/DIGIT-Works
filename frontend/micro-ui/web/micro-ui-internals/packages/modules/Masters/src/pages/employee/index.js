@@ -24,6 +24,12 @@ const MastersBreadCrumb = ({ location }) => {
         content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_CREATE_ORGANISATION")}` : t("MASTERS_CREATE_ORGANISATION"),
         show: location.pathname.includes("/masters/create-organization") ? true : false,
         isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/masters/wage-seeker-registration`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_REGISTER_WAGESEEKER")}` : `${t("MASTERS_REGISTER_WAGESEEKER")}`,
+      show: location.pathname.includes("/masters/wage-seeker-registration") ? true : false,
+      isBack: fromScreen && true,
     }
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
@@ -32,6 +38,7 @@ const MastersBreadCrumb = ({ location }) => {
 const App = ({ path }) => {
   const SearchOrganization = Digit?.ComponentRegistryService?.getComponent("SearchOrganization");
   const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganization");
+  const RegisterWageSeekerComponent = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
 
   return (
     <Switch>
@@ -41,6 +48,7 @@ const App = ({ path }) => {
         </React.Fragment>
         <PrivateRoute path={`${path}/search-organization`} component={() => <SearchOrganization parentRoute={path}/>} />
         <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganization parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/wage-seeker-registration`} component={RegisterWageSeekerComponent} />
       </AppContainer>
     </Switch>
   );

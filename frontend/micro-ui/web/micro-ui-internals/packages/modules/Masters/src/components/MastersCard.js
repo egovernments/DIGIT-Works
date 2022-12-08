@@ -13,6 +13,10 @@ const MastersCard = () => {
       {
         label: t("ACTION_TEST_MASTERS"),
         link: `/${window?.contextPath}/employee/masters/search-organization`,
+      },
+      {
+        label: t("MASTERS_WAGESEEKER"),
+        link: `/${window.contextPath}/employee/masters/wage-seeker-registration`,
         roles: [],
       }
     ],
