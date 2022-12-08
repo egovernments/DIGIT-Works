@@ -26,6 +26,12 @@ public class EstimateQueryBuilder {
             "eg_wms_estimate_detail AS estDetail " +
             "ON (est.id=estDetail.estimate_id) ";
 
+    private static final String ESTIMATE_COUNT_QUERY = "SELECT distinct(est.estimate_number) " +
+            "FROM eg_wms_estimate AS est " +
+            "LEFT JOIN " +
+            "eg_wms_estimate_detail AS estDetail " +
+            "ON (est.id=estDetail.estimate_id) ";
+
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY est_lastModifiedTime DESC , est_id) offset_ FROM " +
             "({})" +
@@ -43,7 +49,11 @@ public class EstimateQueryBuilder {
     }
 
     public String getEstimateQuery(EstimateSearchCriteria searchCriteria, List<Object> preparedStmtList) {
-        StringBuilder queryBuilder = new StringBuilder(FETCH_ESTIMATE_QUERY);
+        StringBuilder queryBuilder = null;
+        if(!searchCriteria.getIsCountCall())
+            queryBuilder = new StringBuilder(FETCH_ESTIMATE_QUERY);
+        else
+            queryBuilder = new StringBuilder(ESTIMATE_COUNT_QUERY);
 
         List<String> ids = searchCriteria.getIds();
         if (ids != null && !ids.isEmpty()) {
