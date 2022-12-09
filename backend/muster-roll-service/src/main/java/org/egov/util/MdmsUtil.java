@@ -1,79 +1,111 @@
 package org.egov.util;
 
-import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
-
+import org.egov.repository.ServiceRequestRepository;
+import org.egov.web.models.MusterRoll;
+import org.egov.web.models.MusterRollRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+
+import static org.egov.util.MusterRollServiceConstants.*;
 
 @Slf4j
 @Component
 public class MdmsUtil {
 
     @Autowired
-    private RestTemplate restTemplate;
+    private MusterRollServiceConfiguration config;
 
-    @Value("${egov.mdms.host}")
-    private String mdmsHost;
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
 
-    @Value("${egov.mdms.search.endpoint}")
-    private String mdmsUrl;
+    public final String filterWorksModuleCode = "$.[?(@.code=='{code}')]";
+    public final String PLACEHOLDER_CODE = "{code}";
 
-    @Value("${egov.mdms.master.name}")
-    private String masterName;
-
-    @Value("${egov.mdms.module.name}")
-    private String moduleName;
-
-
-    public Integer fetchRegistrationChargesFromMdms(RequestInfo requestInfo, String tenantId) {
-        StringBuilder uri = new StringBuilder();
-        uri.append(mdmsHost).append(mdmsUrl);
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForCategoryList(requestInfo, tenantId);
-        Object response = new HashMap<>();
-        Integer rate = 0;
-        try {
-            response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-            rate = JsonPath.read(response, "$.MdmsRes.VTR.RegistrationCharges.[0].amount");
-        } catch (Exception e) {
-            log.error("Exception occurred while fetching category lists from mdms: ", e);
-        }
-        //log.info(ulbToCategoryListMap.toString());
-        return rate;
+    /**
+     * Calls MDMS service to fetch works master data
+     *
+     * @param request
+     * @param tenantId
+     * @return
+     */
+    public Object mDMSCall(MusterRollRequest request, String tenantId) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId, request);
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        return result;
     }
 
-    private MdmsCriteriaReq getMdmsRequestForCategoryList(RequestInfo requestInfo, String tenantId) {
-        MasterDetail masterDetail = new MasterDetail();
-        masterDetail.setName(masterName);
-        List<MasterDetail> masterDetailList = new ArrayList<>();
-        masterDetailList.add(masterDetail);
+    /**
+     * Returns mdms search criteria based on the tenantId
+     *
+     * @param requestInfo
+     * @param tenantId
+     * @param request
+     * @return
+     */
+    public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId, MusterRollRequest request) {
 
-        ModuleDetail moduleDetail = new ModuleDetail();
-        moduleDetail.setMasterDetails(masterDetailList);
-        moduleDetail.setModuleName(moduleName);
-        List<ModuleDetail> moduleDetailList = new ArrayList<>();
-        moduleDetailList.add(moduleDetail);
+        ModuleDetail tenantModuleDetail = getTenantModuleRequestData(request);
+        ModuleDetail musterRollModuleDetail = getMusterRollModuleRequestData();
 
-        MdmsCriteria mdmsCriteria = new MdmsCriteria();
-        mdmsCriteria.setTenantId(tenantId.split("\\.")[0]);
-        mdmsCriteria.setModuleDetails(moduleDetailList);
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(tenantModuleDetail);
+        moduleDetails.add(musterRollModuleDetail);
 
-        MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-        mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-        mdmsCriteriaReq.setRequestInfo(requestInfo);
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
+                .build();
 
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
         return mdmsCriteriaReq;
     }
+
+    private ModuleDetail getTenantModuleRequestData(MusterRollRequest request) {
+        MusterRoll musterRoll = request.getMusterRoll();
+        List<MasterDetail> musterRollTenantMasterDetails = new ArrayList<>();
+
+        MasterDetail tenantMasterDetails = MasterDetail.builder().name(MASTER_TENANTS)
+                .filter(filterCode).build();
+
+        musterRollTenantMasterDetails.add(tenantMasterDetails);
+
+        ModuleDetail musterRollTenantModuleDetail = ModuleDetail.builder().masterDetails(musterRollTenantMasterDetails)
+                .moduleName(MDMS_TENANT_MODULE_NAME).build();
+
+        return musterRollTenantModuleDetail;
+    }
+
+    private ModuleDetail getMusterRollModuleRequestData() {
+
+        List<MasterDetail> musterRollMasterDetails = new ArrayList<>();
+
+        MasterDetail musterHalfDayMasterDetails = MasterDetail.builder().name(MASTER_MUSTER_ROLL).build();
+        musterRollMasterDetails.add(musterHalfDayMasterDetails);
+
+        ModuleDetail musterRollModuleDetail = ModuleDetail.builder().masterDetails(musterRollMasterDetails)
+                .moduleName(MDMS_COMMON_MASTERS_MODULE_NAME).build();
+
+        return musterRollModuleDetail;
+    }
+
+    /**
+     * Returns the url for mdms search endpoint
+     *
+     * @return url for mdms search endpoint
+     */
+    public StringBuilder getMdmsSearchUrl() {
+        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+    }
+
 }
