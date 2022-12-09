@@ -35,8 +35,8 @@ export const PTSearch = {
           title: "PT_PROPERTY_ADDRESS_MOHALLA",
           value: `${property?.tenantId?.toUpperCase()?.split(".")?.join("_")}_REVENUE_${property?.address?.locality?.code}`,
         },
-        { title: "PT_PROPERTY_ADDRESS_HOUSE_NO", value: property?.address?.doorNo, privacy: { uuid: property?.propertyId, fieldName: "doorNo", model: "Property" } },
-        { title: "PT_PROPERTY_ADDRESS_STREET_NAME", value: property?.address?.street, privacy: { uuid: property?.propertyId, fieldName: "street", model: "Property" } },
+        { title: "PT_PROPERTY_ADDRESS_HOUSE_NO", value: property?.address?.doorNo, privacy: { uuid: property?.owners?.[0]?.uuid, fieldName: "doorNo", model: "Property" } },
+        { title: "PT_PROPERTY_ADDRESS_STREET_NAME", value: property?.address?.street, privacy: { uuid: property?.owners?.[0]?.uuid, fieldName: "street", model: "Property" } },
       ],
     };
     const assessmentDetails = {
@@ -70,7 +70,7 @@ export const PTSearch = {
                 { title: "PT_OWNERSHIP_INFO_GENDER", value: owner?.gender,  privacy: { uuid: owner?.uuid, fieldName: "gender", model: "User" },},
                 { title: "PT_OWNERSHIP_INFO_MOBILE_NO", value: owner?.mobileNumber,  privacy: { uuid: owner?.uuid, fieldName: "mobileNumber", model: "User" }, },
                 { title: "PT_OWNERSHIP_INFO_USER_CATEGORY", value: `COMMON_MASTERS_OWNERTYPE_${owner?.ownerType}` || "NA", privacy: { uuid: owner?.uuid, fieldName: "ownerType", model: "User" }, },
-                { title: "PT_SEARCHPROPERTY_TABEL_GUARDIANNAME", value: owner?.fatherOrHusbandName, privacy: { uuid: owner?.uuid, fieldName: "fatherOrHusbandName", model: "User" },  },
+                { title: "PT_SEARCHPROPERTY_TABEL_GUARDIANNAME", value: owner?.fatherOrHusbandName, privacy: { uuid: owner?.uuid, fieldName: "guardian", model: "User" },  },
                 { title: "PT_FORM3_OWNERSHIP_TYPE", value: property?.ownershipCategory },
                 { title: "PT_OWNERSHIP_INFO_EMAIL_ID", value: owner?.emailId, privacy: { uuid: owner?.uuid, fieldName: "emailId", model: "User", hide: !(owner?.emailId && owner?.emailId !== "NA") }  },
                 { title: "PT_OWNERSHIP_INFO_CORR_ADDR", value: owner?.permanentAddress || owner?.correspondenceAddress,
@@ -109,8 +109,18 @@ export const PTSearch = {
             title: "PT_PROPERTY_ADDRESS_MOHALLA",
             value: `${response?.tenantId?.toUpperCase()?.split(".")?.join("_")}_REVENUE_${response?.address?.locality?.code}`,
           },
-          { title: "PT_PROPERTY_ADDRESS_STREET_NAME", value: response?.address?.street },
-          { title: "PT_PROPERTY_ADDRESS_HOUSE_NO", value: response?.address?.doorNo },
+          { title: "PT_PROPERTY_ADDRESS_STREET_NAME", value: response?.address?.street,
+          privacy:{ 
+            uuid: response?.owners?.[0]?.uuid,
+            fieldName: "street",
+            model: "Property",
+          } },
+          { title: "PT_PROPERTY_ADDRESS_HOUSE_NO", value: response?.address?.doorNo,
+          privacy:{ 
+            uuid: response?.owners?.[0]?.uuid,
+            fieldName: "doorNo",
+            model: "Property",
+          }  },
         ],
       },
       {

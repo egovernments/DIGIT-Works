@@ -89,14 +89,14 @@ export const TLSearch = {
         {
           title: "TL_NEW_TRADE_DETAILS_STRUCT_SUB_TYPE_LABEL",
           value: response?.tradeLicenseDetail?.structureType
-            ? `TL_${response?.tradeLicenseDetail?.tradeType}`
+            ? `COMMON_MASTERS_STRUCTURETYPE_${stringReplaceAll(response?.tradeLicenseDetail?.structureType,".","_")}`
             : "NA",
         },
         {
           title: "TL_NEW_TRADE_DETAILS_TRADE_COMM_DATE_LABEL",
           value: response?.commencementDate ? convertEpochToDate(response?.commencementDate) : "NA",
         },
-        { title: "TL_NEW_GST_NUMBER_LABEL", value: response?.tradeLicenseDetail?.additionalDetail?.gstNo || "NA" },
+        { title: "TL_NEW_GST_NUMBER_LABEL", value: response?.tradeLicenseDetail?.additionalDetail?.gstNo || response?.tradeLicenseDetail?.additionalDetail?.tradeGstNo || "NA" },
         { title: "TL_NEW_OPERATIONAL_SQ_FT_AREA_LABEL", value: response?.tradeLicenseDetail?.operationalArea || "NA" },
         { title: "TL_NEW_NUMBER_OF_EMPLOYEES_LABEL", value: response?.tradeLicenseDetail?.noOfEmployees || "NA" },
       ],

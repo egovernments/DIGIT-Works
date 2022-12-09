@@ -373,7 +373,7 @@
 @media (min-width: 640px) {
   .employee {
     .ground-container {
-      @apply block;
+      @apply block ml-md;
     }
     .breadcrumb {
       @apply mb-lg;
@@ -393,8 +393,9 @@
     .main {
       display: flex;
       flex-direction: column;
-      margin-left: 55px;
-      width: calc(100%-55px);
+      padding-top: 80px;
+      margin-left: 72px;
+      width: calc(100%-83px);
     }
     .citizen-home-container {
       display: flex;

@@ -80,7 +80,6 @@
 @import "./components//howItWorks.scss";
 @import "./components/staticDynamicMessages.scss";
 @import "./components/toggleSwitch.scss";
-@import "./components/attendencetable.scss";
 
 @import "./pages/employee/index.scss";
 @import "./pages/employee/cardfix.scss";
@@ -711,17 +710,6 @@ input[type="number"] {
   }
 }
 
-.attendance-view-table {
-  thead {
-    background-color: #dbd3d3;
-    th {
-      font-size: 12px;
-      padding: 8px 8px;
-      font-weight: 500;
-      border: 1px solid grey;
-    }
-  }
-}
 
 .employeeCard.card-no-margin {
   margin-left: 0px !important;
@@ -729,9 +717,7 @@ input[type="number"] {
   box-shadow: none;
 }
 
-.attendance-date-range {
-  width: 60%;
-}
+
 
 .date-range-pair {
   display: grid;
@@ -747,6 +733,3 @@ input[type="number"] {
   display: contents;
 }
 
-.attendence-date-picker {
-  width: 80%;
-}
