@@ -31,6 +31,9 @@ public class EstimateResponse {
     @Valid
     private List<Estimate> estimates = new ArrayList<>();
 
+    @JsonProperty("TotalCount")
+    private Integer totalCount = 0;
+
     public EstimateResponse addEstimatesItem(Estimate estimatesItem) {
         this.estimates.add(estimatesItem);
         return this;
