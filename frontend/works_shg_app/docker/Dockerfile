@@ -1,11 +1,12 @@
 # Docker flutter tags https://hub.docker.com/r/cirrusci/flutter/tags?page=1&name=1.16
 
-FROM cirrusci/flutter:3.3.9 AS build
+FROM cirrusci/flutter:3.3.8 AS build
 ARG WORK_DIR
 WORKDIR /app
 # copy the project files
 COPY ${WORK_DIR} .
 RUN flutter doctor
+RUN flutter clean
 RUN flutter pub get
 RUN flutter build web
 # Create runtime image
