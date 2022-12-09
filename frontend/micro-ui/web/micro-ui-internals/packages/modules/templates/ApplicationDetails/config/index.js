@@ -14,9 +14,15 @@ import { configWSDisConnectApplication } from "./WSDisconnectApplication";
 import configCheckModal from "./configCheckModal"
 import configApproveModal from "./configApproveModal"
 import configRejectModal from "./configRejectModal"
+import configAttendanceApproveModal from "./configAttendanceApproveModal";
+import configAttendanceCheckModal from "./configAttendanceCheckModal";
+import configAttendanceRejectModal from "./configAttendanceRejectModal";
 
 
 export {
+  configAttendanceRejectModal,
+  configAttendanceCheckModal,
+  configAttendanceApproveModal,
   configCheckModal,
   configApproveModal,
   configRejectModal,
