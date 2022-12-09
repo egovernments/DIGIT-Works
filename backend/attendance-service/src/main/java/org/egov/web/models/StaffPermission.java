@@ -25,6 +25,9 @@ public class StaffPermission {
     @JsonProperty("id")
     private UUID id = null;
 
+    @JsonProperty("tenantId")
+    private String tenantId = null;
+
     @JsonProperty("registerId")
     private String registerId = null;
 
@@ -34,6 +37,7 @@ public class StaffPermission {
     @JsonProperty("permissionLevels")
     @Valid
     private List<PermissionLevel> permissionLevels = null;
+
 
     @JsonProperty("enrollmentDate")
     private Double enrollmentDate = null;

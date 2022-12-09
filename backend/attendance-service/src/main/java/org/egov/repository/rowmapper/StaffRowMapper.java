@@ -79,11 +79,20 @@ public class StaffRowMapper implements ResultSetExtractor<List<AttendanceRegiste
 
         if (StringUtils.isNotBlank(registerId) && registerId.equalsIgnoreCase(attendanceRegister.getId().toString())) {
 
+            if(deenrollmentDate==null){
             StaffPermission staffPermission = StaffPermission.builder().id(UUID.fromString(id)).userId(individualId)
-                    .registerId(registerId).enrollmentDate(enrollmentDate.doubleValue()).denrollmentDate(deenrollmentDate.doubleValue()).build();
+                    .registerId(registerId).enrollmentDate(enrollmentDate.doubleValue()).denrollmentDate(null).build();
 
             attendanceRegister.addStaffItem(staffPermission);
         }
+            else {
+                StaffPermission staffPermission = StaffPermission.builder().id(UUID.fromString(id)).userId(individualId)
+                        .registerId(registerId).enrollmentDate(enrollmentDate.doubleValue()).denrollmentDate(deenrollmentDate.doubleValue()).build();
+
+                attendanceRegister.addStaffItem(staffPermission);
+            }
+
+            }
     }
 
 

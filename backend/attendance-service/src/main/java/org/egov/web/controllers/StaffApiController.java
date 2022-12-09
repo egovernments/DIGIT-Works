@@ -2,7 +2,9 @@ package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.StaffService;
+import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.StaffPermissionRequest;
 import org.egov.web.models.StaffPermissionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Collections;
 
 @Controller
 @RequestMapping("/staff/v1")
@@ -32,15 +35,22 @@ public class StaffApiController {
     @Autowired
     private StaffService staffService;
 
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
+
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<StaffPermissionResponse> attendanceStaffV1CreatePOST(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody StaffPermissionRequest staffPermissionRequest) {
-        StaffPermissionResponse staffPermissionResponse = staffService.createAttendanceStaff(staffPermissionRequest);
+        StaffPermissionRequest enrichedRequest = staffService.createAttendanceStaff(staffPermissionRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
+        StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo).staff(enrichedRequest.getStaff()).build();
         return new ResponseEntity<StaffPermissionResponse>(staffPermissionResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_delete", method = RequestMethod.POST)
     public ResponseEntity<StaffPermissionResponse> attendanceStaffV1DeletePOST(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody StaffPermissionRequest staffPermissionRequest) {
-        StaffPermissionResponse staffPermissionResponse = staffService.deleteAttendanceStaff(staffPermissionRequest);
+        StaffPermissionRequest enrichedRequest = staffService.deleteAttendanceStaff(staffPermissionRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
+        StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo).staff(enrichedRequest.getStaff()).build();
         return new ResponseEntity<StaffPermissionResponse>(staffPermissionResponse, HttpStatus.OK);
     }
 
