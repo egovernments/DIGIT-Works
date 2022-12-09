@@ -3,7 +3,7 @@ package org.egov.service;
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.config.StaffServiceConfiguration;
+import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.util.StaffPermissionServiceUtil;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
@@ -22,7 +22,7 @@ public class EnrichmentService {
     private StaffPermissionServiceUtil staffPermissionServiceUtil;
 
     @Autowired
-    private StaffServiceConfiguration config;
+    private AttendanceServiceConfiguration config;
 
     @Autowired
     private AttendanceService attendanceService;

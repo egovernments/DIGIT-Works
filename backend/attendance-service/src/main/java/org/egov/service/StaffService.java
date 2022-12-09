@@ -1,19 +1,13 @@
 package org.egov.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.response.ResponseInfo;
-import org.egov.config.StaffServiceConfiguration;
+import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.producer.Producer;
-import org.egov.tracer.model.CustomException;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.StaffServiceValidator;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.*;
 
 @Service
 @Slf4j
@@ -31,7 +25,7 @@ public class StaffService {
     private Producer producer;
 
     @Autowired
-    private StaffServiceConfiguration serviceConfiguration;
+    private AttendanceServiceConfiguration serviceConfiguration;
 
     /**
      * Create attendance staff

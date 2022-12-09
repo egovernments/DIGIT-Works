@@ -30,6 +30,27 @@ public class AttendanceServiceConfiguration {
     @Value("${egov.idgen.attendance.register.number.format}")
     private String idgenAttendanceRegisterNumberFormat;
 
+    //MDMS
+    @Value("${egov.mdms.host}")
+    private String mdmsHost;
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsEndPoint;
+
+    //Topic
+    @Value("${staff.kafka.create.topic}")
+    private String saveStaffTopic;
+    @Value("${staff.kafka.update.topic}")
+    private String updateStaffTopic;
+
+
+    //search config
+    @Value("${staff.default.offset}")
+    private Integer defaultOffset;
+    @Value("${staff.default.limit}")
+    private Integer defaultLimit;
+    @Value("${staff.search.max.limit}")
+    private Integer maxLimit;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));

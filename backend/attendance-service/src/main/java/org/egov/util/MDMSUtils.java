@@ -2,7 +2,7 @@ package org.egov.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.config.StaffServiceConfiguration;
+import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
@@ -26,7 +26,7 @@ public class MDMSUtils {
     private ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private StaffServiceConfiguration staffConfig;
+    private AttendanceServiceConfiguration config;
 
     public static final String filterCode = "$.*.code";
 
@@ -52,7 +52,7 @@ public class MDMSUtils {
     }
 
     public StringBuilder getMdmsSearchUrl() {
-        return new StringBuilder().append(staffConfig.getMdmsHost()).append(staffConfig.getMdmsEndPoint());
+        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
     }
 
     private ModuleDetail getTenantModuleRequestData() {
