@@ -18,7 +18,7 @@ RUN cd web/ \
 
 FROM nginx:mainline-alpine
 #FROM ghcr.io/egovernments/nginx:mainline-alpine
-ENV WORK_DIR=/var/web/works-ui
+ENV WORK_DIR=/var/web/core-ui
 
 RUN mkdir -p ${WORK_DIR}
 
