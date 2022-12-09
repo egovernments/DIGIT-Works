@@ -528,7 +528,7 @@ export const FormComposer = (props) => {
           </div>
         )}
       </Card>):
-        <Card style={getCardStyles()}>
+        <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
           {!props.childrenAtTheBottom && props.children}
           {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
           {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
