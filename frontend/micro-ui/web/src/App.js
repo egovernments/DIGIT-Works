@@ -5,11 +5,7 @@ import React from "react";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 // import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
-import { initWorksComponents } from "@egovernments/digit-ui-module-works";
-import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt"
-import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
 import {   initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
-import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 window.contextPath=window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
 initLibraries();
@@ -45,18 +41,15 @@ window.Digit.ComponentRegistryService.setupRegistry({
 
 // initDSSComponents();
 // initEngagementComponents();
-initWorksComponents();
 initHRMSComponents();
-initAttendenceMgmtComponents();
-initContractsComponents();
-initExpenditureComponents();
+
 
 const moduleReducers = (initData) => ({
   initData
 });
 
 function App() {
-  window.contextPath=window?.globalConfigs?.getConfig("CONTEXT_PATH");
+  window.contextPath="core-ui";
   const stateCode =
     window.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") ||
     process.env.REACT_APP_STATE_LEVEL_TENANT_ID;

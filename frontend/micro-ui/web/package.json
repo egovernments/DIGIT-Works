@@ -7,21 +7,12 @@
   "engines": {
     "node": ">=14"
   },
-  "workspaces": [
-    "micro-ui-internals/packages/libraries",
-    "micro-ui-internals/packages/react-components",
-    "micro-ui-internals/packages/modules/*"
-  ],
   "homepage": "/works-ui",
   "dependencies": {
     "@egovernments/digit-ui-libraries":"1.5.0",
-    "@egovernments/digit-ui-module-works": "1.5.0",
     "@egovernments/digit-ui-module-hrms":"1.5.5-alpha.4",    
     "@egovernments/digit-ui-module-core": "1.5.4-alpha.6",
     "@egovernments/digit-ui-react-components": "^1.5.0",
-    "@egovernments/digit-ui-module-attendencemgmt": "1.0.0",
-    "@egovernments/digit-ui-module-contracts": "1.0.0",
-    "@egovernments/digit-ui-module-expenditure": "1.0.0",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
