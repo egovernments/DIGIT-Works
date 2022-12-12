@@ -34,11 +34,6 @@ public class StaffPermission {
     @JsonProperty("userId")
     private String userId = null;
 
-    @JsonProperty("permissionLevels")
-    @Valid
-    private List<PermissionLevel> permissionLevels = null;
-
-
     @JsonProperty("enrollmentDate")
     private Double enrollmentDate = null;
 
@@ -51,14 +46,6 @@ public class StaffPermission {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
-
-    public StaffPermission addPermissionLevelsItem(PermissionLevel permissionLevelsItem) {
-        if (this.permissionLevels == null) {
-            this.permissionLevels = new ArrayList<>();
-        }
-        this.permissionLevels.add(permissionLevelsItem);
-        return this;
-    }
 
 }
 
