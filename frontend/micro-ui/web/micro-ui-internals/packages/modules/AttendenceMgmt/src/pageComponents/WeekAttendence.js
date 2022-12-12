@@ -68,7 +68,6 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
   const renderInputBoxSelector = (value) => {
     return <input type="number" className="modified-amount" onChange={handleModifiedAmount}></input>;
   };
-  console.log("Unit Testing...");
   const tableColumns = useMemo(() => {
     return [
       {
@@ -278,22 +277,22 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           isPaginationRequired={true}
           getCellProps={(cellInfo) => {
             let tableProp = {};
-            if (cellInfo.column.Header === "Modified Amount(Rs)") {
+            if(cellInfo.column.Header === "Modified Amount(Rs)") {
               tableProp["data-modified-amt"] = "modified-amt";
             }
-            if (cellInfo.value === undefined) {
+            if(cellInfo.value === undefined) {
               tableProp["data-radio-selection"] = "last-radio";
             }
-            if (cellInfo?.row?.original?.type === "total") {
+            if(cellInfo?.row?.original?.type === "total") {
               tableProp["data-last-row-cell"] = "last-row";
             }
-            if (cellInfo.value === "ATM_TOTAL") {
+            if(cellInfo.value === "ATM_TOTAL") {
               tableProp["colSpan"] = 4;
             }
-            if (cellInfo.value === "DNR") {
+            if(cellInfo.value === "DNR") {
               tableProp["style"] = {
                 display: "none",
-              };
+              }
             }
             return tableProp;
           }}
