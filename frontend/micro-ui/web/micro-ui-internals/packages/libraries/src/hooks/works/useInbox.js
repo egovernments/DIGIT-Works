@@ -13,17 +13,15 @@ const useWorksInbox = ({ tenantId, _filters, config }) => {
         limit,
         offset,
         ...rest } = _filters
-    const USER_UUID = Digit.UserService.getUser()?.info?.uuid;
 
     const filters = {
         tenantId,
         processSearchCriteria: {
             tenantId,
             businessService: [
-                "estimate-approval"
+                "estimate-approval-2"
             ],
             moduleName: "estimate-service",
-            assignee:USER_UUID,
         },
         moduleSearchCriteria: {
             department,
@@ -31,7 +29,7 @@ const useWorksInbox = ({ tenantId, _filters, config }) => {
             fund,
             function: rest.function,
             budgetHead,
-            estimateNumber,
+            estimateId: estimateNumber,
             fromProposalDate,
             toProposalDate,
             sortOrder

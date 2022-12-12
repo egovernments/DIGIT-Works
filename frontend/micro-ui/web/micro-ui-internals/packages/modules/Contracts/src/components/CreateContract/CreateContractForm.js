@@ -82,7 +82,7 @@ const CreateContractForm = ({ onFormSubmit }) => {
     }
     
     const handleCreateClick = async () => {
-        const fieldsToValidate = ['fileNumber', 'fileDate', 'executingAuthority', 'contractedAmount', 'contractType', 'currentContractAmount', 'balanceAmount', 'agreementDate', 'organisationId', 'officerInChargedesig', 'officerIncharge', 'contractPeriod', 'securityDeposit', 'bankGuarantee', 'emdAmount', 'defectLiabilityPeriod']
+        const fieldsToValidate = ['fileNumber', 'fileDate', 'executingAuthority', 'contractedAmount', 'currentContractType', 'currentContractAmount', 'balanceAmount', 'agreementDate', 'organisationId', 'officerInChargedesig', 'officerIncharge', 'contractPeriod']
 
         const result = await trigger(fieldsToValidate)
         if (result) {
@@ -173,28 +173,27 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 </LabelFieldPair>
 
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONTRACT_TYPE`)}:*`}</CardLabel>
-                    <div className='field'>
-                    <Controller
-                        name={'contractType'}
-                        control={control}
-                        rules={{ required: true }}
-                        render={(props) => {
-                        return (
-                            <Dropdown
-                            option={currentContractType}
-                            selected={props?.value}
-                            optionKey={"name"}
-                            t={t}
-                            select={props?.onChange}
-                            onBlur={props.onBlur}
-                            style={contractStyle}
-                            />
-                        );
-                        }}
-                    />
-                        {errors && errors?.contractType?.type === "required" && (
-                        <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_EXECUTING_AUTH`)}:*`}</CardLabel>
+                    <div className='field' style={{"margin": "0px"}}>
+                        <Controller
+                            name="executingAuthority"
+                            control={control}
+                            rules={{ required: true }}
+                            defaultValue={assignedToOptions[0]}
+                            render={(props) => {
+                                return (
+                                    <RadioButtons
+                                        style={{ display: "flex",columnGap:"50px","marginTop":"20px","marginBottom":"4px"}}
+                                        onSelect={props.onChange} 
+                                        selectedOption={props.value} 
+                                        optionsKey="name" 
+                                        options={assignedToOptions}
+                                     />
+                                );
+                            }}
+                        />
+                        {errors && errors?.executingAuthority?.type === "required" && (
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
 
@@ -218,7 +217,31 @@ const CreateContractForm = ({ onFormSubmit }) => {
                         />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_WO_AMT`)}:*`}</CardLabel>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONTRACT_TYPE`)}:*`}</CardLabel>
+                    <div className='field'>
+                        <Controller
+                            name="currentContractType"
+                            control={control}
+                            rules= {{required : true}}
+                            render={(props) => {
+                                return (
+                                    <RadioButtons 
+                                        style={{ display: "flex", columnGap:"50px","marginTop":"20px","marginBottom":"4px" }}
+                                        onSelect={props.onChange} 
+                                        selectedOption={props.value} 
+                                        optionsKey="name" 
+                                        options={currentContractType}
+                                        innerStyles={{"marginBottom":"2px"}}
+                                    />
+                                );
+                            }}
+                        />
+                        {errors && errors?.currentContractType?.type === "required" && (
+                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    </div>
+                </LabelFieldPair>
+                <LabelFieldPair>
+                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CURRENT_CONTRACT_AMT`)}:*`}</CardLabel>
                     <div className='field'>
                         <TextInput 
                             name="currentContractAmount" 
@@ -244,30 +267,6 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 </LabelFieldPair>
                 {/* AGGREEMENT DETAILS */}
                 <CardSectionHeader style={{ "marginTop": "14px" }}>{t(`WORKS_AGGREEMENT_DETAILS`)}</CardSectionHeader>
-                <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_EXECUTING_AUTH`)}:*`}</CardLabel>
-                    <div className='field' style={{"margin": "0px"}}>
-                        <Controller
-                            name="executingAuthority"
-                            control={control}
-                            rules={{ required: true }}
-                            defaultValue={assignedToOptions[0]}
-                            render={(props) => {
-                                return (
-                                    <RadioButtons
-                                        style={{ display: "flex",columnGap:"50px","marginTop":"20px","marginBottom":"4px"}}
-                                        onSelect={props.onChange} 
-                                        selectedOption={props.value} 
-                                        optionsKey="name" 
-                                        options={assignedToOptions}
-                                     />
-                                );
-                            }}
-                        />
-                        {errors && errors?.executingAuthority?.type === "required" && (
-                            <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
-                    </div>
-                </LabelFieldPair>
                 <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{t(`WORKS_DATE_OF_AGG`)}</CardLabel>
                     <div className='field'>
@@ -334,42 +333,6 @@ const CreateContractForm = ({ onFormSubmit }) => {
                         />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{t(`WORKS_ADD_SECURITY_DP`)}</CardLabel>
-                    <div className='field'>
-                        <TextInput name="securityDeposit" type="number" inputRef={register({
-                            pattern: /^[0-9]*$/
-                        })}
-                        style={contractStyle}
-                        />
-                        {errors && errors?.securityDeposit?.type === "pattern" && (
-                            <CardLabelError style={errorStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-                    </div>
-                </LabelFieldPair>
-                <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{t(`WORKS_BANK_G`)}</CardLabel>
-                    <div className='field'>
-                        <TextInput name="bankGuarantee" inputRef={register({
-                            pattern: /^[a-zA-Z0-9_.$@#\/]*$/
-                        })} 
-                        style={contractStyle}
-                        />
-                        {errors && errors?.bankGuarantee?.type === "pattern" && (
-                            <CardLabelError style={errorStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-                    </div>
-                </LabelFieldPair>
-                <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{t(`WORKS_EMD`)}</CardLabel>
-                    <div className='field'>
-                        <TextInput name="emdAmount" type="number" inputRef={register({
-                            pattern: /^[0-9]*$/
-                        })} 
-                        style={contractStyle}
-                        />
-                        {errors && errors?.emdAmount?.type === "pattern" && (
-                            <CardLabelError style={errorStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-                    </div>
-                </LabelFieldPair>
-                <LabelFieldPair>
                     <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{`${t(`WORKS_CONT_PERIOD`)}:*`}</CardLabel>
                     <div className='field'>
                         <TextInput 
@@ -381,19 +344,6 @@ const CreateContractForm = ({ onFormSubmit }) => {
                             <CardLabelError style={errorStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}                        
                             {errors && errors?.contractPeriod?.type === "required" && (
                             <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
-                    </div>
-                </LabelFieldPair>
-                <LabelFieldPair>
-                    <CardLabel style={{ "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }}>{t(`WORKS_DEFECT_LIA`)}</CardLabel>
-                    <div className='field'>
-                        <TextInput 
-                            name="defectLiabilityPeriod" 
-                            type="number" 
-                            inputRef={register({ pattern: /^[0-9]*$/ })} 
-                            style={contractStyle}
-                            />
-                        {errors && errors?.defectLiabilityPeriod?.type === "pattern" && (
-                            <CardLabelError style={errorStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     </div>
                 </LabelFieldPair>
                 {desLoading?<Loader />: <LabelFieldPair>
