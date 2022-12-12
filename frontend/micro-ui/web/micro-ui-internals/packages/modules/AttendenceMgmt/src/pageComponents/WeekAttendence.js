@@ -68,7 +68,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
   const renderInputBoxSelector = (value) => {
     return <input type="number" className="modified-amount" onChange={handleModifiedAmount}></input>;
   };
-  console.log(t("WORKS_SNO"));
+  console.log("Unit Testing...");
   const tableColumns = useMemo(() => {
     return [
       {
