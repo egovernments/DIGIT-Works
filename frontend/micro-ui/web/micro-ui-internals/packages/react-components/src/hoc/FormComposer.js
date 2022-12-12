@@ -22,7 +22,6 @@ import _ from "lodash";
 import CustomDropdown from "../molecules/CustomDropdown";
 import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
 
-const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
 const wrapperStyles = {
   // "display":"flex",
@@ -201,10 +200,10 @@ export const FormComposer = (props) => {
                   getFormState={getFileStoreData}
                   showHintBelow={true}
                   setuploadedstate={value}
-                  allowedFileTypesRegex={allowedFileTypes}
-                  allowedMaxSizeInMB={5}
-                  hintText={t("WORKS_DOC_UPLOAD_HINT")}
-                  maxFilesAllowed={5}
+                  allowedFileTypesRegex={populators.allowedFileTypes}
+                  allowedMaxSizeInMB={populators.allowedMaxSizeInMB}
+                  hintText={populators.hintText}
+                  maxFilesAllowed={populators.maxFilesAllowed}
                   extraStyleName={{ padding: "0.5rem" }}
                 />
               }
@@ -411,9 +410,10 @@ export const FormComposer = (props) => {
                       {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
                       {field?.description && <CardText style={{ fontSize: "14px", marginTop: "-24px" }}>{t(field?.description)}</CardText>}
                     </div>
+                    
                   </LabelFieldPair>
                   {field?.populators?.name && errors && errors[field?.populators?.name] && Object.keys(errors[field?.populators?.name]).length ? (
-                    <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>
+                    <CardLabelError style={{ width: "70%", marginLeft: "2%", fontSize: "12px", marginTop: "-21px" }}>
                       {t(field?.populators?.error)}
                     </CardLabelError>
                   ) : null}
@@ -530,7 +530,7 @@ export const FormComposer = (props) => {
           </div>
         )}
       </Card>):
-        <Card style={getCardStyles()}>
+        <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
           {!props.childrenAtTheBottom && props.children}
           {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
           {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}

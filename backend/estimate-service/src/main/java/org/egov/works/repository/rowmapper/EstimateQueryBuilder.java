@@ -2,7 +2,9 @@ package org.egov.works.repository.rowmapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.config.EstimateServiceConfiguration;
 import org.egov.works.web.models.EstimateSearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -13,13 +15,30 @@ import java.util.List;
 @Component
 public class EstimateQueryBuilder {
 
+    @Autowired
+    private EstimateServiceConfiguration config;
+
 
     private static final String FETCH_ESTIMATE_QUERY = "SELECT est.*," +
-            "estDetail.* ,estDetail.id AS estDetailId,estDetail.additionaldetails AS estDetailAdditional " +
+            "estDetail.*, est.id as est_id, est.lastModifiedTime as est_lastModifiedTime, estDetail.id AS estDetailId, estDetail.additionaldetails AS estDetailAdditional " +
             "FROM eg_wms_estimate AS est " +
             "LEFT JOIN " +
             "eg_wms_estimate_detail AS estDetail " +
             "ON (est.id=estDetail.estimate_id) ";
+
+    private static final String ESTIMATE_COUNT_QUERY = "SELECT distinct(est.estimate_number) " +
+            "FROM eg_wms_estimate AS est " +
+            "LEFT JOIN " +
+            "eg_wms_estimate_detail AS estDetail " +
+            "ON (est.id=estDetail.estimate_id) ";
+
+    private final String paginationWrapper = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY est_lastModifiedTime DESC , est_id) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
+
+    private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
 
     private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
         if (values.isEmpty())
@@ -30,7 +49,11 @@ public class EstimateQueryBuilder {
     }
 
     public String getEstimateQuery(EstimateSearchCriteria searchCriteria, List<Object> preparedStmtList) {
-        StringBuilder queryBuilder = new StringBuilder(FETCH_ESTIMATE_QUERY);
+        StringBuilder queryBuilder = null;
+        if(!searchCriteria.getIsCountCall())
+            queryBuilder = new StringBuilder(FETCH_ESTIMATE_QUERY);
+        else
+            queryBuilder = new StringBuilder(ESTIMATE_COUNT_QUERY);
 
         List<String> ids = searchCriteria.getIds();
         if (ids != null && !ids.isEmpty()) {
@@ -101,9 +124,11 @@ public class EstimateQueryBuilder {
 
         //TODO -estimateType
 
-        addOrderByClause(queryBuilder, searchCriteria);
-
-        addLimitAndOffset(queryBuilder, searchCriteria, preparedStmtList);
+        //addLimitAndOffset(queryBuilder, searchCriteria, preparedStmtList);
+        if(!searchCriteria.getIsCountCall()){
+            addOrderByClause(queryBuilder, searchCriteria);
+            return addPaginationWrapper(queryBuilder.toString(), preparedStmtList, searchCriteria);
+        }
 
         return queryBuilder.toString();
     }
@@ -168,5 +193,34 @@ public class EstimateQueryBuilder {
         ids.forEach(id -> {
             preparedStmtList.add(id);
         });
+    }
+
+    private String addPaginationWrapper(String query,List<Object> preparedStmtList,
+                                        EstimateSearchCriteria criteria){
+        int limit = config.getDefaultLimit();
+        int offset = config.getDefaultOffset();
+        String finalQuery = paginationWrapper.replace("{}",query);
+
+        if(criteria.getLimit()!=null && criteria.getLimit()<=config.getMaxLimit())
+            limit = criteria.getLimit();
+
+        if(criteria.getLimit()!=null && criteria.getLimit()>config.getMaxLimit())
+            limit = config.getMaxLimit();
+
+        if(criteria.getOffset()!=null)
+            offset = criteria.getOffset();
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit+offset);
+
+        return finalQuery;
+    }
+
+    public String getSearchCountQueryString(EstimateSearchCriteria criteria, List<Object> preparedStmtList) {
+        String query = getEstimateQuery(criteria, preparedStmtList);
+        if (query != null)
+            return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
     }
 }
