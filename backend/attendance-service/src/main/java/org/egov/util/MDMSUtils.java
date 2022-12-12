@@ -32,16 +32,15 @@ public class MDMSUtils {
 
     public static final String filterCode = "$.*.code";
 
-    public Object mDMSCall(AttendanceRegisterRequest request, String tenantId) {
-        RequestInfo requestInfo = request.getRequestInfo();
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId, request);
+    public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
         return result;
     }
 
-    public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId, AttendanceRegisterRequest request) {
+    public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
 
-        ModuleDetail attendanceRegisterTenantModuleDetail = getTenantModuleRequestData(request);
+        ModuleDetail attendanceRegisterTenantModuleDetail = getTenantModuleRequestData();
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(attendanceRegisterTenantModuleDetail);
@@ -58,7 +57,7 @@ public class MDMSUtils {
         return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
     }
 
-    private ModuleDetail getTenantModuleRequestData(AttendanceRegisterRequest request) {
+    private ModuleDetail getTenantModuleRequestData() {
         List<MasterDetail> attendanceRegisterTenantMasterDetails = new ArrayList<>();
 
         MasterDetail tenantMasterDetails = MasterDetail.builder().name(MASTER_TENANTS)

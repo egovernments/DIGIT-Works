@@ -38,12 +38,14 @@ public class AttendanceServiceValidator {
         validateRequestInfo(requestInfo, errorMap);
         validateAttendanceRegister(attendanceRegisters, errorMap);
 
-        String rootTenantId = attendanceRegisters.get(0).getTenantId();
-        //split the tenantId
-        rootTenantId = rootTenantId.split("\\.")[0];
+        for (int i = 0; i < attendanceRegisters.size(); i++) {
+            String rootTenantId = attendanceRegisters.get(i).getTenantId();
+            //split the tenantId
+            rootTenantId = rootTenantId.split("\\.")[0];
 
-        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
-        validateMDMSData(attendanceRegisters, mdmsData, errorMap);
+            Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+            validateMDMSData(attendanceRegisters, mdmsData, errorMap);
+        }
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -71,12 +73,14 @@ public class AttendanceServiceValidator {
             }
         }
 
-        String rootTenantId = attendanceRegisters.get(0).getTenantId();
-        //split the tenantId
-        rootTenantId = rootTenantId.split("\\.")[0];
+        for (int i = 0; i < attendanceRegisters.size(); i++) {
+            String rootTenantId = attendanceRegisters.get(i).getTenantId();
+            //split the tenantId
+            rootTenantId = rootTenantId.split("\\.")[0];
 
-        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
-        validateMDMSData(attendanceRegisters, mdmsData, errorMap);
+            Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+            validateMDMSData(attendanceRegisters, mdmsData, errorMap);
+        }
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -109,6 +113,9 @@ public class AttendanceServiceValidator {
             if (StringUtils.isBlank(attendanceRegisters.get(i).getName())) {
                 errorMap.put("NAME", "Name is mandatory");
             }
+            if (attendanceRegisters.get(i).getStartDate() == null) {
+                errorMap.put("START_DATE", "Start date is mandatory");
+            }
         }
     }
 
@@ -127,6 +134,7 @@ public class AttendanceServiceValidator {
         if (CollectionUtils.isEmpty(tenantRes))
             errorMap.put("INVALID_TENANT", "The tenant: " + attendanceRegisters.get(0).getTenantId() + " is not present in MDMS");
     }
+
     public void validateSearchEstimate(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
         if (searchCriteria == null || requestInfoWrapper == null || requestInfoWrapper.getRequestInfo() == null) {
             throw new CustomException("ATTENDANCE_REGISTER_SEARCH_CRITERIA_REQUEST", "Attendance register search criteria request is mandatory");
