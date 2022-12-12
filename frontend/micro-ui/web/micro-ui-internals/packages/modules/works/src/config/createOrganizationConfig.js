@@ -2,16 +2,6 @@ import React from "react";
 import { UploadFile } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
-const org_classification = [
-    {
-      code: "org1",
-      name: "org1",
-    },
-    {
-      code: "org2",
-      name: "org2",
-    }
-]
 
 export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedFile, error}) => {
     const { t } = useTranslation()
@@ -25,18 +15,24 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
     const {data: Wards } = Digit.Hooks.useLocation(tenantId, {}, 'Ward')
     
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
-    console.log('headerLocale', headerLocale)
-    let LocalityOptions = []
+    let localityOptions = []
     Localities &&
         Localities?.TenantBoundary[0]?.boundary.map(item => {
-            LocalityOptions.push({code: item.code, name: item.name,  i18nKey: t(`TENANT_TENANTS_${item?.code}`) })
+            localityOptions.push({code: item.code, name: item.name,  i18nKey: t(`${headerLocale}_ADMIN_${item?.code}`) })
         })
        
-    let WardOptions = []
+    let wardOptions = []
     Wards &&
         Wards?.TenantBoundary[0]?.boundary.map(item => {
-            WardOptions.push({code: item.code, name: item.name,  i18nKey: t(`TENANT_TENANTS_${item?.code}`) })
+            wardOptions.push({code: item.code, name: item.name,  i18nKey: t(`${headerLocale}_ADMIN_${item?.code}`) })
         })
+
+    let ULBOptions = []
+    ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
+
+    let districtOptions = []
+    districtOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
+
 
     return {
         label: {
@@ -130,7 +126,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                         optionsKey: "i18nKey",
                         error: t("ENTER_REQ_DETAILS"),
                         required: false,
-                        options: LocalityOptions
+                        options: localityOptions
                     },
                 },
                 {
@@ -144,58 +140,33 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                         optionsKey: "i18nKey",
                         error: t("ENTER_REQ_DETAILS"),
                         required: true,
-                        options: WardOptions
+                        options: wardOptions
                     },
                 },
                 {
-                    inline: true,
-                    label: t("ULB"),
                     isMandatory: true,
                     key: "ulb",
-                    type: "text",
-                    disable: false,
-                    value: t(ULB),
-                    populators: { name: "ulb", validation: {
-                        required: true,
-                      }},
+                    type: "dropdown",
+                    label: t("ULB"),
+                    disable: true,
+                    populators: {
+                        name: "ulb",
+                        optionsKey: "i18nKey",
+                        defaultValue: ULBOptions[0],
+                        options: ULBOptions
+                    },
                 },
-                // {
-                //     inline: true,
-                //     label: t("PDF_STATIC_LABEL_ESTIMATE_DISTRICT"),
-                //     isMandatory: true,
-                //     key: "district",
-                //     type: "text",
-                //     disable: true,
-                //     value: city,
-                //     populators: { name: "district" },
-                // },
-                // {
-                //     isMandatory: true,
-                //     key: "ulb",
-                //     type: "dropdown",
-                //     label: t("ULB"),
-                //     disable: false,
-                //     populators: {
-                //         name: "ulb",
-                //         optionsKey: "name",
-                //         error: t("ENTER_REQ_DETAILS"),
-                //         required: true,
-                //         value: "org1",
-                //         options: org_classification
-                //     },
-                // },
                 {
                     isMandatory: true,
                     key: "district",
                     type: "dropdown",
                     label: t("PDF_STATIC_LABEL_ESTIMATE_DISTRICT"),
-                    disable: false,
+                    disable: true,
                     populators: {
                         name: "district",
-                        optionsKey: "name",
-                        error: t("ENTER_REQ_DETAILS"),
-                        required: true,
-                        options: org_classification
+                        optionsKey: "i18nKey",
+                        defaultValue: districtOptions[0],
+                        options: districtOptions
                     },
                 }
                 ],

@@ -7,6 +7,19 @@ import { useHistory } from 'react-router-dom'
 const CreateOrganizationForm = ({setCreateOrgStatus}) => {
     const { t } = useTranslation();
     
+    const defaultValues = {
+      'ulb': {  
+        code: "pb.amritsar",
+        i18nKey: "TENANT_TENANTS_PB_AMRITSAR",
+        name: "Amritsar"
+      },
+      'district': {   
+        code: "pb.amritsar",
+        i18nKey: "TENANT_TENANTS_PB_AMRITSAR",
+        name: "Amritsar"
+      } 
+    }
+
     //Upload
     const [file, setFile] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -62,6 +75,7 @@ const CreateOrganizationForm = ({setCreateOrgStatus}) => {
             fieldStyle={{ fontWeight: '600' }}
             noBreakLine={true}
             sectionHeadStyle={{marginTop: '1rem', marginBottom: '2rem'}}
+            defaultValues={defaultValues}
         /> 
         </React.Fragment>
     )
