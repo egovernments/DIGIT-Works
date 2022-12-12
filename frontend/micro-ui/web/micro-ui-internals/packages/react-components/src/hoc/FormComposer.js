@@ -122,9 +122,10 @@ export const FormComposer = (props) => {
              <Controller
                 defaultValue={formData?.[populators.name]}
                 render={({ onChange, ref, value }) => (
-                  <TextInput  value={formData?.[populators.name]} type={type} name={populators.name} onChange={onChange} inputRef={ref}
+                  <TextInput  value={formData?.[populators.name] || config.value} type={type} name={populators.name} onChange={onChange} inputRef={ref}
                     errorStyle={errors?.[populators.name]}
                     max={populators.max}
+                    disable={disable}
                     style={type === "date" ?{"paddingRight": "3px"}:""}
                   />
                 )}

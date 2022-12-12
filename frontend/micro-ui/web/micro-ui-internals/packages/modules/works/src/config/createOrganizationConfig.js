@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown, DatePicker, UploadFile, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { UploadFile } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const org_classification = [
@@ -15,6 +15,28 @@ const org_classification = [
 
 export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedFile, error}) => {
     const { t } = useTranslation()
+
+    const userInfo = Digit.UserService.getUser();
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const ULB = Digit.Utils.pt.getCityLocale(tenantId);
+    const city = userInfo && userInfo?.info?.permanentCity;
+   
+    const {data: Localities } = Digit.Hooks.useLocation(tenantId, {}, 'Locality')
+    const {data: Wards } = Digit.Hooks.useLocation(tenantId, {}, 'Ward')
+    
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
+    console.log('headerLocale', headerLocale)
+    let LocalityOptions = []
+    Localities &&
+        Localities?.TenantBoundary[0]?.boundary.map(item => {
+            LocalityOptions.push({code: item.code, name: item.name,  i18nKey: t(`TENANT_TENANTS_${item?.code}`) })
+        })
+       
+    let WardOptions = []
+    Wards &&
+        Wards?.TenantBoundary[0]?.boundary.map(item => {
+            WardOptions.push({code: item.code, name: item.name,  i18nKey: t(`TENANT_TENANTS_${item?.code}`) })
+        })
 
     return {
         label: {
@@ -105,10 +127,10 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     disable: false,
                     populators: {
                         name: "locality",
-                        optionsKey: "name",
+                        optionsKey: "i18nKey",
                         error: t("ENTER_REQ_DETAILS"),
                         required: false,
-                        options: org_classification
+                        options: LocalityOptions
                     },
                 },
                 {
@@ -119,26 +141,49 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     disable: false,
                     populators: {
                         name: "ward",
-                        optionsKey: "name",
+                        optionsKey: "i18nKey",
                         error: t("ENTER_REQ_DETAILS"),
                         required: true,
-                        options: org_classification
+                        options: WardOptions
                     },
                 },
                 {
+                    inline: true,
+                    label: t("ULB"),
                     isMandatory: true,
                     key: "ulb",
-                    type: "dropdown",
-                    label: t("ULB"),
+                    type: "text",
                     disable: false,
-                    populators: {
-                        name: "ulb",
-                        optionsKey: "name",
-                        error: t("ENTER_REQ_DETAILS"),
+                    value: t(ULB),
+                    populators: { name: "ulb", validation: {
                         required: true,
-                        options: org_classification
-                    },
+                      }},
                 },
+                // {
+                //     inline: true,
+                //     label: t("PDF_STATIC_LABEL_ESTIMATE_DISTRICT"),
+                //     isMandatory: true,
+                //     key: "district",
+                //     type: "text",
+                //     disable: true,
+                //     value: city,
+                //     populators: { name: "district" },
+                // },
+                // {
+                //     isMandatory: true,
+                //     key: "ulb",
+                //     type: "dropdown",
+                //     label: t("ULB"),
+                //     disable: false,
+                //     populators: {
+                //         name: "ulb",
+                //         optionsKey: "name",
+                //         error: t("ENTER_REQ_DETAILS"),
+                //         required: true,
+                //         value: "org1",
+                //         options: org_classification
+                //     },
+                // },
                 {
                     isMandatory: true,
                     key: "district",
