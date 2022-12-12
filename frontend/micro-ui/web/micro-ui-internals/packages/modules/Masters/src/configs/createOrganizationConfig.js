@@ -51,7 +51,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     populators: {
                         name: "org_type",
                         optionsKey: "name",
-                        error: t("ENTER_REQ_DETAILS"),
+                        error: t("WORKS_REQUIRED_ERR"),
                         required: false,
                         mdmsConfig: {
                             masterName: "OrganisationType",
@@ -69,7 +69,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     disable: false,
                     populators: { 
                         name: "org_name", 
-                        error: t("ENTER_REQ_DETAILS"), 
+                        error: t("WORKS_REQUIRED_ERR"), 
                         validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,120}$/i },
                     },
                 },
@@ -93,7 +93,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     populators: {
                       name: "org_classification",
                       optionsKey: "name",
-                      error: t("ENTER_REQ_DETAILS"),
+                      error: t("WORKS_REQUIRED_ERR"),
                       required: true,
                       mdmsConfig: {
                         masterName: "OrganisationClassification",
@@ -124,7 +124,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     populators: {
                         name: "locality",
                         optionsKey: "i18nKey",
-                        error: t("ENTER_REQ_DETAILS"),
+                        error: t("WORKS_REQUIRED_ERR"),
                         required: false,
                         options: localityOptions
                     },
@@ -138,7 +138,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     populators: {
                         name: "ward",
                         optionsKey: "i18nKey",
-                        error: t("ENTER_REQ_DETAILS"),
+                        error: t("WORKS_REQUIRED_ERR"),
                         required: true,
                         options: wardOptions
                     },
@@ -181,7 +181,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "bank_acc_holder_name",
                     type: "text",
                     disable: false,
-                    populators: { name: "acc_holder_name", error: t("ENTER_REQ_DETAILS"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,120}$/i } },
+                    populators: { name: "acc_holder_name", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,120}$/i } },
                 },
                 {
                     isMandatory: true,
@@ -192,7 +192,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     populators: {
                         name: "bank_acc_type",
                         optionsKey: "name",
-                        error: t("ENTER_REQ_DETAILS"),
+                        error: t("WORKS_REQUIRED_ERR"),
                         required: false,
                         mdmsConfig: {
                             masterName: "BankAccType",
@@ -208,7 +208,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "bank_acc_no",
                     type: "number",
                     disable: false,
-                    populators: { name: "bank_acc_no", error: t("ENTER_REQ_DETAILS"), validation: {pattern: Digit.Utils.getPattern('bankAccountNo')} },
+                    populators: { name: "bank_acc_no", error: t("WORKS_REQUIRED_ERR"), validation: {pattern: Digit.Utils.getPattern('bankAccountNo')} },
                 },
                 {
                     inline: true,
@@ -217,7 +217,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "ifsc",
                     type: "text",
                     disable: false,
-                    populators: { name: "ifsc", error: t("ENTER_REQ_DETAILS"), validation: {pattern: Digit.Utils.getPattern('IFSC')} },
+                    populators: { name: "ifsc", error: t("WORKS_REQUIRED_ERR"), validation: {pattern: Digit.Utils.getPattern('IFSC')} },
                 },
                 {
                     inline: true,
@@ -249,7 +249,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "contract_person_name",
                     type: "text",
                     disable: false,
-                    populators: { name: "contract_person_name", error: t("ENTER_REQ_DETAILS"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,120}$/i } },
+                    populators: { name: "contract_person_name", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,120}$/i } },
                 },
                 {
                     inline: true,
@@ -258,7 +258,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     key: "father_name",
                     type: "text",
                     disable: false,
-                    populators: { name: "father_name", error: t("ENTER_REQ_DETAILS"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,120}$/i } },
+                    populators: { name: "father_name", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,120}$/i } },
                 },
                 {
                     isMandatory: true,
@@ -269,7 +269,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     populators: {
                         name: "gender",
                         optionsKey: "name",
-                        error: t("ENTER_REQ_DETAILS"),
+                        error: t("WORKS_REQUIRED_ERR"),
                         required: true,
                         mdmsConfig: {
                             masterName: "GenderType",
@@ -296,7 +296,7 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     populators: {
                         name: "designatiom",
                         optionsKey: "name",
-                        error: t("ENTER_REQ_DETAILS"),
+                        error: t("WORKS_REQUIRED_ERR"),
                         required: true,
                         mdmsConfig: {
                             masterName: "Designation",

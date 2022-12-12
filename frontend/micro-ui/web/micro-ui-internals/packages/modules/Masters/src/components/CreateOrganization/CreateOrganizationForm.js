@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { createOrganizationConfig } from '../../config/createOrganizationConfig'
+import { createOrganizationConfig } from '../../../../Masters/src/configs/createOrganizationConfig'
 import { FormComposer } from '@egovernments/digit-ui-react-components'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'

@@ -15,8 +15,6 @@ import Inbox from "./Inbox";
 import LOIInbox from "./LOIInbox";
 import HandleDownloadPdf from "../../components/HandleDownloadPdf";
 import ModifyEstimate from "../../components/ModifyEstimate";
-import SearchOrganization from "../../pages/employee/Master/SearchOrganization";
-import CreateOrganization from "../../pages/employee/Master/CreateOrganization";
 import Checklist from "./Checklist/index";
 
 const BILLSBreadCrumbs = ({ location }) => {
@@ -101,18 +99,6 @@ const BILLSBreadCrumbs = ({ location }) => {
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_LOI_INBOX")}` : t("WORKS_LOI_INBOX"),
       show: location.pathname.includes("/works/loiinbox") ? true : false,
       isBack: fromScreen && true,
-    },
-    {
-      path: `/${window.contextPath}/employee/works/search-organization`,
-      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_MASTERS")}` : t("MASTERS_MASTERS"),
-      show: location.pathname.includes("/works/search-organization") ? true : false,
-      isBack: fromScreen && true,
-    },
-    {
-      path: `/${window.contextPath}/employee/works/create-organization`,
-      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_CREATE_ORGANISATION")}` : t("MASTERS_CREATE_ORGANISATION"),
-      show: location.pathname.includes("/works/create-organization") ? true : false,
-      isBack: fromScreen && true,
     }
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
@@ -180,8 +166,6 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
           <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/response`} component={() => <Response {...{ path }} />} />
-          <PrivateRoute path={`${path}/search-organization`} component={() => <SearchOrganization parentRoute={path}/>} />
-          <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganization parentRoute={path}/>} />
           <PrivateRoute path={`${path}/checklist`} component={() => <Checklist {...{ path }} />} />
           <PrivateRoute path={`${path}/download`} component={()=> <HandleDownloadPdf {...{path}}/>}/>
         </div>
