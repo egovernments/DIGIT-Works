@@ -50,7 +50,6 @@ public class EnrichmentService {
         RequestInfoWrapper requestInfoWrapper=RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
         //Existing Staff List
-        List<AttendanceRegister> checkAttendanceRegisters=attendanceService.searchAttendanceRegister(requestInfoWrapper,searchCriteria);
         List<StaffPermission> staffPermissionList = attendanceService.searchAttendanceRegister(requestInfoWrapper,searchCriteria).get(0).getStaff();
 
         for(StaffPermission staff:staffPermissionList){
