@@ -278,9 +278,9 @@ const getConfig = (question,t,index) => {
                 label: `${index+1}. ${question?.questionStatement}`,
                 disable: false,
                 populators: {
-                    name: "opts",
+                    name: question.uuid,
                     optionsKey: "name",
-                    error: "sample required message",
+                    error: "Required",
                     required: true,
                     options: [
                         {
@@ -309,7 +309,12 @@ const getConfig = (question,t,index) => {
             type:"multiupload",
             label: `${index + 1}. ${question?.questionStatement}`,
             populators:{
-                name: question.uuid
+                name: question.uuid,
+                allowedMaxSizeInMB:2,
+                maxFilesAllowed:4,
+                hintText:t("WORKS_DOC_UPLOAD_HINT_2MB"),
+                allowedFileTypes : /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
+                
             }
         }
 
