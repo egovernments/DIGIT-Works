@@ -14,63 +14,60 @@ const configRejectModal = ({
 
     let checkConditions = true
     if (action.isTerminateState) checkConditions = false;
-    const fieldLabelStyle = {
-        "display" : "grid",
-        "gridTemplateColumns" : "60% 1fr"
-    };
+
     if(rejectReasons?.length === 0) return {}
     if(loiNumber){
-        return {
-            label: {
-                heading: `WORKS_REJECT_LOI`,
-                submit: `WORKS_REJECT_LOI`,
-                //cancel: "CS_COMMON_CANCEL",
-            },
-            form: [
-                {
-                    body: [
-                        {
-                            withoutLabel:true,
-                            populators: <LabelFieldPair>
-                                <CardLabel style={{ "fontSize": "16px", fontWeight: "bold" }}>{t("WORKS_DEPARTMENT")}</CardLabel>
-                                <CardLabel >{"ENGG"}</CardLabel>
-                            </LabelFieldPair>,
+    return {
+        label: {
+            heading: `WORKS_REJECT_LOI`,
+            submit: `WORKS_REJECT_LOI`,
+            //cancel: "CS_COMMON_CANCEL",
+        },
+        form: [
+            {
+                body: [
+                    {
+                        withoutLabel:true,
+                        populators: <LabelFieldPair>
+                            <CardLabel style={{ "fontSize": "16px", fontWeight: "bold" }}>{t("WORKS_DEPARTMENT")}</CardLabel>
+                            <CardLabel >{"ENGG"}</CardLabel>
+                        </LabelFieldPair>,
+                    },
+                    {
+                        //label: t("WORKS_LOI_ID"),
+                        //type: "text",
+                        withoutLabel: true,
+                        populators: <LabelFieldPair>
+                            <CardLabel style={{ "fontSize": "16px", fontWeight: "bold" }}>{t("WORKS_LOI_ID")}</CardLabel>
+                            <CardLabel >{loiNumber}</CardLabel>
+                        </LabelFieldPair>
+                    },
+                    {
+                        label: !checkConditions ? null : t("WORKS_REJECT_REASON"),
+                        //placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
+                        // isMandatory: false,
+                        type: "dropdown",
+                        populators: !checkConditions ? null : (
+                            <Dropdown
+                                option={rejectReasons}
+                                autoComplete="off"
+                                optionKey="name"
+                                select={setSelectedReason}
+                                selected={selectedReason}
+                            />
+                        ),
+                    },
+                    {
+                        label: t("WF_COMMON_COMMENTS"),
+                        type: "textarea",
+                        populators: {
+                            name: "comments",
                         },
-                        {
-                            //label: t("WORKS_LOI_ID"),
-                            //type: "text",
-                            withoutLabel: true,
-                            populators: <LabelFieldPair>
-                                <CardLabel style={{ "fontSize": "16px", fontWeight: "bold" }}>{t("WORKS_LOI_ID")}</CardLabel>
-                                <CardLabel >{loiNumber}</CardLabel>
-                            </LabelFieldPair>
-                        },
-                        {
-                            label: !checkConditions ? null : t("WORKS_REJECT_REASON"),
-                            //placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
-                            // isMandatory: false,
-                            type: "dropdown",
-                            populators: !checkConditions ? null : (
-                                <Dropdown
-                                    option={rejectReasons}
-                                    autoComplete="off"
-                                    optionKey="name"
-                                    select={setSelectedReason}
-                                    selected={selectedReason}
-                                />
-                            ),
-                        },
-                        {
-                            label: t("WF_COMMON_COMMENTS"),
-                            type: "textarea",
-                            populators: {
-                                name: "comments",
-                            },
-                        },
-                    ]
-                }
-            ]
-        }
+                    },
+                ]
+            }
+        ]
+    }
     }else{
         return {
             label: {
