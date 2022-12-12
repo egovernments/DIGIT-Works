@@ -5,6 +5,23 @@ info:
   description: ''
 
 paths:
+  /muster-roll/v1/_estimate:
+    post:
+      tags:
+        - Muster Roll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MusterRollRequest'
+      responses:
+        '202':
+          description: 'Muster Roll created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MusterRollResponse'
+
   /muster-roll/v1/_create:
     post:
       tags:
