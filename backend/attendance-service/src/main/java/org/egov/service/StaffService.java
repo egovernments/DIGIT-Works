@@ -23,12 +23,8 @@ public class StaffService {
      * @param staffPermissionRequest
      * @return
      */
-    public StaffPermissionResponse createAttendanceStaff(StaffPermissionRequest staffPermissionRequest) {
-        //TODO Returning Dummy Response
-
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
-        StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo).staff(staffPermissionRequest.getStaff()).build();
-        return staffPermissionResponse;
+    public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest) {
+            return staffPermissionRequest;
     }
 
     /**
