@@ -1,4 +1,7 @@
-const ConfigWageSeekerRegistrationForm = () => {
+import { UploadFile } from "@egovernments/digit-ui-react-components";
+import React from "react";
+
+const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploadedFile, error}) => {
   return {
     form: [
       {
@@ -67,6 +70,22 @@ const ConfigWageSeekerRegistrationForm = () => {
                 localePrefix: "COMMON_GENDER",
               },
             },
+          },
+          {   
+            label: ("PHOTOGRAPH"),
+            populators: (
+              <UploadFile
+                id={"upload_photo"}
+                onUpload={selectFile}
+                onDelete={() => {
+                    setUploadedFile(null);
+                }}
+                showHint={true}
+                message={uploadedFile ? `1 ${(`CS_ACTION_FILEUPLOADED`)}` : (`CS_ACTION_NO_FILEUPLOADED`)}
+                accept= "image/*, .pdf, .png, .jpeg, .jpg"
+                iserror={error}
+              />
+            ),
           },
           {
             inline: true,
