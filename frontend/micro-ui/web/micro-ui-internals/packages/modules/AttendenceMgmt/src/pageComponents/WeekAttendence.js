@@ -54,8 +54,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
     );
   };
 
-  const handleModifiedAmount = (event) => {
-  }
+  const handleModifiedAmount = (event) => {};
 
   const renderBankAccountDetails = (value) => {
     return (
@@ -63,19 +62,17 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
         <p className="detail">{value.accountNo}</p>
         <p className="detail">{value.ifscCode}</p>
       </div>
-    )
-  }
+    );
+  };
 
   const renderInputBoxSelector = (value) => {
-    return (
-      <input type="number" className="modified-amount" onChange={handleModifiedAmount}></input>
-    )
-  }
-
+    return <input type="number" className="modified-amount" onChange={handleModifiedAmount}></input>;
+  };
+  console.log(t("WORKS_SNO"));
   const tableColumns = useMemo(() => {
     return [
       {
-        Header: t("WORKS_SNO"),
+        Header: () => <p>{t("WORKS_SNO")}</p>,
         accessor: "sno",
         Cell: ({ value, column, row }) => {
           if (row.original.type === "total") {
@@ -85,21 +82,21 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
         },
       },
       {
-        Header: t("ATM_REGISTRATION_ID"),
+        Header: () => <p>{t("ATM_REGISTRATION_ID")}</p>,
         accessor: "reg_id",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
-        Header: t("ATM_NAME_OF_THE_INDIVIDUAL"),
+        Header: () => <p>{t("ATM_NAME_OF_THE_INDIVIDUAL")}</p>,
         accessor: "name_of_individual",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
-        Header: t("ATM_FATHER/GUARDIAN_NAME"),
+        Header: () => <p>{t("ATM_FATHER/GUARDIAN_NAME")}</p>,
         accessor: "guardian_name",
         Cell: ({ value, column, row }) => {
           return String(t(value));
@@ -218,45 +215,45 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
         },
       },
       {
-        Header: t("ATM_ACTUAL_WORKING_DAYS"),
+        Header: () => <p>{t("ATM_ACTUAL_WORKING_DAYS")}</p>,
         accessor: "actualWorkingDays",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
-        Header: t("ATM_AMOUNT_IN_RS"),
+        Header: () => <p>{t("ATM_AMOUNT_IN_RS")}</p>,
         accessor: "amountInRs",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
-        Header: t("ATM_MODIFIED_WORKING_DAYS"),
+        Header: () => <p>{t("ATM_MODIFIED_WORKING_DAYS")}</p>,
         accessor: "modifiedWorkingDays",
         Cell: ({ value, column, row }) => {
-          if(row.original.type === "total") {
+          if (row.original.type === "total") {
             return String(t(value));
           }
           return renderInputBoxSelector(value);
-        }
+        },
       },
       {
-        Header: t("ATM_MODIFIED_AMOUNT_IN_RS"),
+        Header: () => <p>{t("ATM_MODIFIED_AMOUNT_IN_RS")}</p>,
         accessor: "modifiedAmountInRs",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
-        Header: t("ATM_BANK_ACCOUNT_DETAILS"),
+        Header: () => <p>{t("ATM_BANK_ACCOUNT_DETAILS")}</p>,
         accessor: "bankAccountDetails",
         Cell: ({ value, column, row }) => {
           return renderBankAccountDetails(value);
         },
       },
       {
-        Header: t("ATM_WAGE_SEEKER_AADHAR"),
+        Header: () => <p>{t("ATM_WAGE_SEEKER_AADHAR")}</p>,
         accessor: "aadharNumber",
         Cell: ({ value, column, row }) => {
           return String(t(value));
@@ -281,22 +278,22 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           isPaginationRequired={true}
           getCellProps={(cellInfo) => {
             let tableProp = {};
-            if(cellInfo.column.Header === "Modified Amount(Rs)") {
-              tableProp['data-modified-amt'] = "modified-amt";
+            if (cellInfo.column.Header === "Modified Amount(Rs)") {
+              tableProp["data-modified-amt"] = "modified-amt";
             }
-            if(cellInfo.value === undefined) {
-              tableProp['data-radio-selection'] = "last-radio";
+            if (cellInfo.value === undefined) {
+              tableProp["data-radio-selection"] = "last-radio";
             }
-            if(cellInfo?.row?.original?.type === "total") {
-              tableProp['data-last-row-cell'] = "last-row";
+            if (cellInfo?.row?.original?.type === "total") {
+              tableProp["data-last-row-cell"] = "last-row";
             }
-            if(cellInfo.value === "ATM_TOTAL") {
-              tableProp['colSpan'] = 4;
+            if (cellInfo.value === "ATM_TOTAL") {
+              tableProp["colSpan"] = 4;
             }
             if (cellInfo.value === "DNR") {
-                tableProp['style'] = {
-                  display: "none",
-                }
+              tableProp["style"] = {
+                display: "none",
+              };
             }
             return tableProp;
           }}
