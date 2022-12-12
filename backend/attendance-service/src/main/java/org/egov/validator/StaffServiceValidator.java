@@ -44,6 +44,9 @@ public class StaffServiceValidator {
         StaffPermission staffPermission = request.getStaff();
         RequestInfo requestInfo = request.getRequestInfo();
 
+        if (StringUtils.isBlank(staffPermission.getTenantId())) {
+            throw new CustomException("TENANT_ID", "Tenant id is mandatory");
+        }
 
 
         String rootTenantId = staffPermission.getTenantId();
@@ -71,6 +74,10 @@ public class StaffServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
         StaffPermission staffPermission = request.getStaff();
         RequestInfo requestInfo = request.getRequestInfo();
+
+        if (StringUtils.isBlank(staffPermission.getTenantId())) {
+            throw new CustomException("TENANT_ID", "Tenant id is mandatory");
+        }
 
 
         String rootTenantId = staffPermission.getTenantId();
@@ -189,6 +196,7 @@ public class StaffServiceValidator {
         if (StringUtils.isBlank(staffPermission.getUserId())) {
             throw new CustomException("USER_ID", "User id is mandatory");
         }
+
         AttendanceRegisterSearchCriteria criteria=AttendanceRegisterSearchCriteria.builder().id(staffPermission.getRegisterId())
                 .tenantId(staffPermission.getTenantId()).build();
 
