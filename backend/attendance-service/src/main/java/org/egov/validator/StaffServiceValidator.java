@@ -17,10 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.util.*;
 
 import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
 import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
@@ -146,6 +144,15 @@ public class StaffServiceValidator {
             throw new CustomException("REGISTER_ID", "Attendance Register with given register id does not exist for tenantId");
         }
         AttendanceRegister attendanceRegister = getAttendanceRegisters.get(0);
+
+        // staff cannot be added to register if register's end date has passed
+        Date currentDT = new Date();
+        BigDecimal enrollmentDate = new BigDecimal(currentDT.getTime());
+
+        int dateComparisonResult= attendanceRegister.getEndDate().compareTo(enrollmentDate.doubleValue());
+        if(dateComparisonResult<0){
+            throw new CustomException("END_DATE", "Staff cannot be enrolled as END_DATE of register id has already passed.");
+        }
 
 
         // check if staff tenant id is same as register tenant id
