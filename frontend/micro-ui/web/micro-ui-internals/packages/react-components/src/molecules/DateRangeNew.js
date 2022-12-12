@@ -143,7 +143,7 @@ const DateRangeNew = ({ values, onFilterChange, t, labelClass, label, customStyl
                     <Calender className="cursorPointer" onClick={() => setIsModalOpen((prevState) => !prevState)} />
                 </div>
                 {isModalOpen && (
-                    <div className="options-card" style={{ overflow: "visible", width: "unset", maxWidth: "fit-content" }}>
+                    <div className="options-card" style={{ overflow: "visible", width: "unset"}}>
                         <DateRange
                             className="pickerShadow"
                             focusedRange={focusedRange}
