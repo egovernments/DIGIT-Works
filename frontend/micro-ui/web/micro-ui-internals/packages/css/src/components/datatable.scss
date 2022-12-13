@@ -32,6 +32,18 @@
   }
 }
 
+@screen sm {
+  .row {
+    @apply flex pb-sm mb-sm flex-col;
+    h2 {
+      width: 100% !important;
+    }
+    .value {
+      width: 100% !important;
+    }
+  }
+}
+
 .employee-data-table {
   .row {
     @apply flex pb-sm mb-sm;
@@ -64,9 +76,10 @@
   }
 }
 
-
-
-.pt-citizen {.data-table {.row {
-  justify-content: space-between;
-
-}}}
+.pt-citizen {
+  .data-table {
+    .row {
+      justify-content: space-between;
+    }
+  }
+}
