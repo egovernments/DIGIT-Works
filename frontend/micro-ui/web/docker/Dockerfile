@@ -14,7 +14,7 @@ RUN cd web/ \
     && node envs.js \
     &&  ./install-deps.sh \
     && yarn install \
-    && yarn build 
+    && yarn build:webpack 
 
 FROM nginx:mainline-alpine
 #FROM ghcr.io/egovernments/nginx:mainline-alpine
