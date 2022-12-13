@@ -46,7 +46,7 @@ const configRejectModal = ({
                         label: !checkConditions ? null : t("WORKS_REJECT_REASON"),
                         //placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
                         // isMandatory: false,
-                        type: "dropdown",
+                        type: "goToDefaultCase",
                         populators: !checkConditions ? null : (
                             <Dropdown
                                 option={rejectReasons}
@@ -98,7 +98,7 @@ const configRejectModal = ({
                             label: !checkConditions ? null : t("WORKS_REJECT_REASON"),
                             //placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
                             // isMandatory: false,
-                            type: "dropdown",
+                            type: "goToDefaultCase",
                             populators: !checkConditions ? null : (
                                 <Dropdown
                                     option={rejectReasons}
