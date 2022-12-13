@@ -9,11 +9,9 @@ import { useLocation } from 'react-router-dom';
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
 
-const CreateContractForm = ({ onFormSubmit }) => {
+const CreateContractForm = ({ onFormSubmit, estimateNumber, task, subEstimate }) => {
 
     const { t } = useTranslation()
-    const {state} = useLocation();
-    const {index, data} = state;
     const {
         register,
         control,
@@ -107,17 +105,17 @@ const CreateContractForm = ({ onFormSubmit }) => {
                 {/* TEXT INPUT LABEL */}
                 <LabelFieldPair>
                     <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_ESTIMATE_NO`)}</CardLabel>
-                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{data?.state?.estimateNumber}</CardLabel>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{estimateNumber}</CardLabel>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                     <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_NAME_OF_WORK`)}</CardLabel>
-                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{data?.state?.estimateDetails[index]?.name}</CardLabel>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{task}</CardLabel>
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                     <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{t(`WORKS_SUB_ESTIMATE_NO`)}</CardLabel>
-                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{data?.state?.estimateDetails[index]?.estimateDetailNumber}</CardLabel>
+                    <CardLabel style={{ "marginTop": "14px", "fontSize": "16px", "fontStyle": "bold", "fontWeight": "600" }} >{subEstimate}</CardLabel>
                 </LabelFieldPair>
 
                 {/* Modal */}

@@ -49,45 +49,58 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
             accessor: (row) => GetCell(row.name || t("ES_COMMON_NA"))
         },
         {
+            Header: t("WORKS_WARD"),
+            disableSortBy: true,
+            accessor: (row) => {
+                let wardLocation =row?.location.replace(/(^:)|(:$)/g, '').split(":")
+                return GetCell(wardLocation[4] ? t(`ES_COMMON_${wardLocation[4]}`) : t("NA"))
+            }
+        },
+        {
             Header: t("WORKS_DEPARTMENT"),
             disableSortBy: true,
             accessor: (row) => GetCell(t(`ES_COMMON_${row.department}`)),
         },
+        // {
+        //     Header: t("WORKS_ADMIN_SANC_NO"),
+        //     disableSortBy: true,
+        //     accessor: (row) => GetCell(row.adminSanctionNumber || t("ES_COMMON_NA")),
+        // },
         {
-            Header: t("WORKS_ADMIN_SANC_NO"),
+            Header: t("WORKS_DATE_CREATED"),
             disableSortBy: true,
-            accessor: (row) => GetCell(row.adminSanctionNumber || t("ES_COMMON_NA")),
+            accessor: (row) => GetCell(Digit.DateUtils.ConvertEpochToDate(row.auditDetails.createdTime) ),
         },
         {
             Header: t("WORKS_ADMIN_APP_DATE"),
             disableSortBy: true,
             accessor: (row) => GetCell(Digit.DateUtils.ConvertEpochToDate(row.auditDetails.lastModifiedTime) ),
         },
-        {
-            Header: t("WORKS_FUND"),
-            disableSortBy: true,
-            accessor: (row) => GetCell(t(`ES_COMMON_FUND_${row.fund}`) ),
-        },
-        {
-            Header: t("WORKS_FUNCTION"),
-            accessor: (row) => GetCell(t(`ES_COMMON_${row.function}`)),
-            disableSortBy: true,
-        },
-        {
-            Header: t("WORKS_BUDGET_HEAD"),
-            accessor: (row) => GetCell(t(`ES_COMMON_BUDGETHEAD_${row.budgetHead}`)),
-            disableSortBy: true,
-        },
+        // {
+        //     Header: t("WORKS_FUND"),
+        //     disableSortBy: true,
+        //     accessor: (row) => GetCell(t(`ES_COMMON_FUND_${row.fund}`) ),
+        // },
+        // {
+        //     Header: t("WORKS_FUNCTION"),
+        //     accessor: (row) => GetCell(t(`ES_COMMON_${row.function}`)),
+        //     disableSortBy: true,
+        // },
+        // {
+        //     Header: t("WORKS_BUDGET_HEAD"),
+        //     accessor: (row) => GetCell(t(`ES_COMMON_BUDGETHEAD_${row.budgetHead}`)),
+        //     disableSortBy: true,
+        // },
         {
             Header: t("WORKS_CREATED_BY"),
             accessor: (row) => GetCell(row?.additionalDetails?.owner || t("ES_COMMON_NA")),
             disableSortBy: true,
         },
-        {
-            Header: t("WORKS_OWNER"),
-            accessor: (row) => GetCell(row?.additionalDetails?.owner || t("ES_COMMON_NA")),
-            disableSortBy: true,
-        },
+        // {
+        //     Header: t("WORKS_OWNER"),
+        //     accessor: (row) => GetCell(row?.additionalDetails?.owner || t("ES_COMMON_NA")),
+        //     disableSortBy: true,
+        // },
         {
             Header: t("WORKS_STATUS"),
             accessor: (row) => GetCell(row.estimateStatus || t("ES_COMMON_NA")),
@@ -95,7 +108,15 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
         },
         {
             Header: t("WORKS_TOTAL_AMT"),
-            accessor: (row) => GetCell(row.amount || t("ES_COMMON_NA")),
+            accessor: (row) => {
+                let amount = row?.amount;
+                amount = amount.toString();
+                var lastThree = amount.substring(amount.length-3);
+                var otherNumbers = amount.substring(0,amount.length-3);
+                if(otherNumbers != '')
+                    lastThree = ',' + lastThree;
+                var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+                return GetCell(`Rs ${res}` || t("ES_COMMON_NA"))},
             disableSortBy: true,
         },
         {
@@ -103,10 +124,10 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
             Cell: ({ row }) => {
                 return (
                         <span className="link">
-                        <Link to={`create-loi?estimateNumber=${row.original.estimateNumber}&subEstimateNumber=${row.original.estimateDetailNumber}`}>
-                                <div style={{"display":"flex","justifyContent":"space-between","alignItems":"center"}}>
+                        <Link to={`/works-ui/employee/contracts/create-contract?estimateNumber=${row.original.estimateNumber}&task=${row.original.name}&subEstimate=${row.original["estimateDetailNumber"]}`}>
+                                <div style={{"display":"flex","alignItems":"center"}}>
                                     <span ><CreateLoiIcon style={{ "margin": "auto" }} />  </span>
-                                    <p>{t("WORKS_Create_LOI")}</p>
+                                    <p>{t("WORKS_CREATE_CONTRACT")}</p>
                                 </div>  
                             </Link>
                         </span>
