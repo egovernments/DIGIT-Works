@@ -77,7 +77,7 @@ public class EstimateServiceValidator {
         if (StringUtils.isBlank(workflow.getAction())) {
             errorMap.put("WORK_FLOW.ACTION", "Work flow's action is mandatory");
         }
-        if ((StringUtils.isNotBlank(workflow.getAction()) && !ACTION_REJECT.equals(workflow.getAction()))
+        if ((StringUtils.isNotBlank(workflow.getAction()) && !(ACTION_REJECT.equals(workflow.getAction()) || ACTION_ADMIN_SANCTION.equals(workflow.getAction())))
                 && (workflow.getAssignees() == null || workflow.getAssignees().isEmpty() || workflow.getAssignees().size() != 1)) {
             throw new CustomException("WORK_FLOW.ASSIGNEE", "Work flow's assignee is mandatory");
         }

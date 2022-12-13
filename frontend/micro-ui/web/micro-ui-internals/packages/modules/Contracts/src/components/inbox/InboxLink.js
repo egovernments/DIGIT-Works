@@ -9,7 +9,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   const allLinks = [
     {
       text: t("WORKS_CREATE_NEW_CONTRACT"),
-      link: `/works-ui/employee/contracts/create-contract`,
+      link: `/works-ui/employee/works/search-approved-estimate`,
       businessService: "WORKS",
       roles: [],
     },

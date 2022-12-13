@@ -738,17 +738,25 @@ input[type="number"] {
   grid-template-columns: 1fr 1fr;
   padding-top: 8px;
   margin-top: 8px;
+  .attendence-date-picker {
+    width: 80%;
+  }
   h2 {
     font-weight: bolder;
   }
 }
 
-.week-table-card-wrapper {
-  display: contents;
+@screen sm {
+  .date-range-pair {
+    display: flex;
+    .attendence-date-picker {
+      width: 100%;
+    }
+  }
 }
 
-.attendence-date-picker {
-  width: 80%;
+.week-table-card-wrapper {
+  display: contents;
 }
 
 .header-left-margin {

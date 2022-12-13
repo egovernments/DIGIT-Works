@@ -9,7 +9,19 @@ const SearchApplication = ({type, onClose, onSearch, isFstpOperator, searchParam
   const tenant = Digit.ULBService.getStateId();
   
   const dummyData = [{name:"Orgn1"},{name:"Orgn2"},{name:"Orgn3"}]
-  
+  const { isLoading: desLoading, data: deptData } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getCurrentTenantId(),
+    "common-masters",
+    [
+        {
+            "name": "Department"
+        }
+    ]
+  );
+
+  deptData?.["common-masters"]?.Department?.map(department=> {
+      department.i18nKey = `ES_COMMON_${department?.code}`
+  })
   const mobileView = innerWidth <= 640;
 
   const onSubmitInput = (data) => {
@@ -73,9 +85,9 @@ const SearchApplication = ({type, onClose, onSearch, isFstpOperator, searchParam
                   name="nameOfOrgn"
                   render={(props) => (
                     <Dropdown
-                      option={dummyData}
+                      option={deptData?.["common-masters"]?.Department}
                       selected={props?.value}
-                      optionKey={"name"}
+                      optionKey={"i18nKey"}
                       t={t}
                       select={props?.onChange}
                       onBlur={props.onBlur}
@@ -94,7 +106,7 @@ const SearchApplication = ({type, onClose, onSearch, isFstpOperator, searchParam
                     isRequired: false,
                     pattern: "^[a-zA-Z0-9-_\/]*$",
                     type: "text",
-                    title: t("ERR_INVALID_ESTIMATE_NO"),
+                    title: t("ERR_INVALID_CONTRACT_ID"),
                   })}
                 /> 
               </div>

@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 //import SubWork from '../../components/CreateEstimate/SubWork';
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
+
 const CreateEstimate = (props) => {
   // Call create estimate API by using requestInfo,estimate(payload,workflow)
   const { mutate: EstimateMutation } = Digit.Hooks.works.useCreateEstimate("WORKS");
@@ -65,11 +66,11 @@ const CreateEstimate = (props) => {
             },
             {
               name: t("WORKS_DOWNLOAD_PDF"),
-              redirectUrl: "/works-ui/employee/works/inbox",
-              code: "",
-              svg: "DownloadPrefixIcon",
-              isVisible: true,
-              type: "download",
+              redirectUrl:"/works-ui/employee/works/inbox",
+              code:"",
+              svg:"DownloadPrefixIcon",
+              isVisible:true,
+              type:"download",
             },
           ],
         });
