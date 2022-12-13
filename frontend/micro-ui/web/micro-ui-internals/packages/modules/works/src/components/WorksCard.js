@@ -27,7 +27,7 @@ const WorksCard = () => {
         count: 21,
         label: t("INBOX"),
         link: `/${window?.contextPath}/employee/works/inbox`,
-      }
+      },
     ],
     links: [
       {
