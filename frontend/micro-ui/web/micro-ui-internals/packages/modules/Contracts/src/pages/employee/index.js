@@ -77,7 +77,6 @@ const App = ({ path }) => {
                     <div style={getBreadCrumbStyles(window.location.href)}>
                         <ContractsBreadCrumbs location={location} />
                     </div>
-                    <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
                     <PrivateRoute path={`${path}/create-contract`} component={() => <CreateContract/>} />
                     <PrivateRoute path={`${path}/search-contract`} component={() => <SearchContracts/>} />
                     <PrivateRoute path={`${path}/view-contract`} component={() => <ViewContract/>} />

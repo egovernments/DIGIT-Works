@@ -2,7 +2,7 @@ import { EmployeeModuleCard, ArrowRightInbox, WSICon } from "@egovernments/digit
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const ContractsCard = () => {
+const ExpenditureCard = () => {
   // if (!Digit.Utils.wsAccess()) {
   //   return null;
   // }
@@ -20,7 +20,7 @@ const ContractsCard = () => {
 
   const propsForModuleCard = {
     Icon: <WSICon />,
-    moduleName: t("Contracts"),
+    moduleName: t("Expenditure"),
     kpis: [
       {
         //Pass Count Value from Inbox API here
@@ -31,23 +31,18 @@ const ContractsCard = () => {
     ],
     links: [
       {
-        label: t("WORKS_CONTRACTS_INBOX"),
+        label: t("WORKS_EXP_INBOX"),
         link: `/${window?.contextPath}/employee/contracts/inbox`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       },
       {
-        label: t("WORKS_SEARCH_CONTRACTS"),
+        label: t("WORKS_EXP_SEARCH"),
         link: `/${window?.contextPath}/employee/contracts/search-contract`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       },
       {
-        label: t("WORKS_CREATE_CONTRACT"),
+        label: t("WORKS_EXP_CREATE"),
         link: `/${window?.contextPath}/employee/contracts/create-contract`,
-        roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
-      },
-      {
-        label: t("WORKS_VIEW_CONTRACT"),
-        link: `/${window?.contextPath}/employee/contracts/view-contract`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       }
     ],
@@ -55,4 +50,4 @@ const ContractsCard = () => {
   return <EmployeeModuleCard {...propsForModuleCard} />;
 };
 
-export default ContractsCard;
+export default ExpenditureCard;
