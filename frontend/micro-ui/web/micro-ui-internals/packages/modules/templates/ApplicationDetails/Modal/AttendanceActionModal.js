@@ -38,40 +38,22 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
    const [designation, setDesignation] = useState([]);
    const [selectedDesignation,setSelectedDesignation] = useState({})
 
-  const rejectReasons = [
-    {
-      name: "Estimate Details are incorrect"
-    },
-    {
-      name: "Financial Details are incorrect"
-    },
-    {
-      name: "Agreement Details are incorrect"
-    },
-    {
-      name: "Vendor Details are incorrect"
-    },
-    {
-      name: "Attachments provided are wrong"
-    },
-    {
-      name: "Others"
-    },
-  ]
-
   const { isLoading: mdmsLoading, data: mdmsData,isSuccess:mdmsSuccess } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getCurrentTenantId(),
     "common-masters",
     [
+      // {
+      //   "name": "Designation"
+      // },
+      // {
+      //   "name": "Department"
+      // },
       {
-        "name": "Designation"
-      },
-      {
-        "name": "Department"
+        "name": "RejectReasons"
       }
     ]
   );
-
+    debugger;
   mdmsData?.["common-masters"]?.Designation?.map(designation => {
     designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
   })
@@ -80,10 +62,15 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     department.i18nKey = `ES_COMMON_${department?.code}`
   })
 
+  mdmsData?.["common-masters"]?.RejectReasons?.map(rejectReasons => {
+    rejectReasons.i18nKey = `ES_ATM_${rejectReasons?.code}`
+  })
+
+
   useEffect(() => {
     setDepartment(mdmsData?.["common-masters"]?.Department)
     setDesignation(mdmsData?.["common-masters"]?.Designation)
-    setRejectionReason(rejectReasons)
+    setRejectionReason(mdmsData?.["common-masters"]?.RejectReasons)
   }, [mdmsData]);
 
 
@@ -130,7 +117,7 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
         configAttendanceRejectModal({
           t,
           action,
-          rejectReasons,
+          rejectionReason,
           selectedReason,
           setSelectedReason,
           loiNumber,
