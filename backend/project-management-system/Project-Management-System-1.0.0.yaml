@@ -1618,8 +1618,9 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Target'
-      additionalFields:
-        $ref: '#/definitions/additionalFields'
+      additionalDetails:
+        type: object
+        description: Any additional details of the register
       isDeleted:
         $ref: '#/definitions/isDeleted'
       rowVersion:
