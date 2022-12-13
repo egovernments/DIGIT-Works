@@ -6,10 +6,24 @@ export const createOrganizationConfig = () => {
 
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
-   
-    const {data: localityOptions } = Digit.Hooks.useLocation(tenantId, {}, 'Locality')
-    const {data: wardOptions } = Digit.Hooks.useLocation(tenantId, {}, 'Ward')
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
 
+    const {data: localityOptions } = Digit.Hooks.useLocation(
+            tenantId, 'Locality', 
+            {
+                select: (data) => {
+                    return data?.TenantBoundary[0]?.boundary.map((item) => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }));
+                },
+            })
+
+    const {data: wardOptions } = Digit.Hooks.useLocation(
+        tenantId, 'Ward', 
+        {
+            select: (data) => {
+                return data?.TenantBoundary[0]?.boundary.map((item) => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }));
+            },
+        })
+    
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
