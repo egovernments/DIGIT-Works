@@ -7,11 +7,11 @@ const MastersCard = () => {
 
   const propsForModuleCard = {
     Icon: <WSICon />,
-    moduleName: t("MASTERS"),
+    moduleName: t("ACTION_TEST_MASTERS"),
     kpis: [],
     links: [
       {
-        label: t("MASTERS_MASTERS"),
+        label: t("ACTION_TEST_MASTERS"),
         link: `/${window?.contextPath}/employee/masters/search-organization`,
         roles: [],
       }

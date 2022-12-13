@@ -4,33 +4,17 @@ import { useTranslation } from "react-i18next";
 export const createOrganizationConfig = () => {
     const { t } = useTranslation()
 
-    const userInfo = Digit.UserService.getUser();
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const ULB = Digit.Utils.pt.getCityLocale(tenantId);
-    const city = userInfo && userInfo?.info?.permanentCity;
+    const ULB = Digit.Utils.locale.getCityLocale(tenantId);
    
-    const {data: Localities } = Digit.Hooks.useLocation(tenantId, {}, 'Locality')
-    const {data: Wards } = Digit.Hooks.useLocation(tenantId, {}, 'Ward')
-    
-    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
-    let localityOptions = []
-    Localities &&
-        Localities?.TenantBoundary[0]?.boundary.map(item => {
-            localityOptions.push({code: item.code, name: item.name,  i18nKey: t(`${headerLocale}_ADMIN_${item?.code}`) })
-        })
-       
-    let wardOptions = []
-    Wards &&
-        Wards?.TenantBoundary[0]?.boundary.map(item => {
-            wardOptions.push({code: item.code, name: item.name,  i18nKey: t(`${headerLocale}_ADMIN_${item?.code}`) })
-        })
+    const {data: localityOptions } = Digit.Hooks.useLocation(tenantId, {}, 'Locality')
+    const {data: wardOptions } = Digit.Hooks.useLocation(tenantId, {}, 'Ward')
 
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
     let districtOptions = []
     districtOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
-
 
     return {
         label: {
