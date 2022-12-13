@@ -38,39 +38,51 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
    const [designation, setDesignation] = useState([]);
    const [selectedDesignation,setSelectedDesignation] = useState({})
 
+   const mdmsConfig = {
+    moduleName: "common-masters",
+    department : {
+      masterName: "Department",
+      localePrefix: "COMMON_MASTERS_DEPARTMENT",
+    },
+    designation : {
+      masterName: "Designation",
+      localePrefix: "COMMON_MASTERS_DESIGNATION",
+    },
+    rejectReasons : {
+      masterName: "RejectReasons",
+      localePrefix: "COMMON_MASTERS_REJECT_REASONS",
+    },
+   }
+
   const { isLoading: mdmsLoading, data: mdmsData,isSuccess:mdmsSuccess } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getCurrentTenantId(),
-    "common-masters",
-    [
-      // {
-      //   "name": "Designation"
-      // },
-      // {
-      //   "name": "Department"
-      // },
-      {
-        "name": "RejectReasons"
-      }
-    ]
+    mdmsConfig?.moduleName,
+    [{name : mdmsConfig?.designation?.masterName}, {name : mdmsConfig?.department?.masterName}],
+    {
+      select: (data) => {
+        console.log(data);
+        let designationData = _.get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.designation?.masterName}`, []);
+        designationData =  designationData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${mdmsConfig?.designation?.localePrefix}_${opt.code}` }));
+        designationData?.map(designation => {designation.i18nKey = designation?.name})
+
+        let departmentData = _.get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.department?.masterName}`, []);
+        departmentData =  departmentData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${mdmsConfig?.department?.localePrefix}_${opt.code}` }));
+        departmentData?.map(department => { department.i18nKey = department?.name})
+
+        let rejectReasonsData = _.get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.rejectReasons?.masterName}`, []);
+        rejectReasonsData =  rejectReasonsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${mdmsConfig?.rejectReasons?.localePrefix}_${opt.code}` }));
+        rejectReasonsData?.map(rejectReasons => { rejectReasons.i18nKey = rejectReasons?.name})
+
+        return {designationData, departmentData, rejectReasonsData};
+      },
+      enabled: mdmsConfig?.moduleName ? true : false,
+    }
   );
-    debugger;
-  mdmsData?.["common-masters"]?.Designation?.map(designation => {
-    designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
-  })
-
-  mdmsData?.["common-masters"]?.Department?.map(department => {
-    department.i18nKey = `ES_COMMON_${department?.code}`
-  })
-
-  mdmsData?.["common-masters"]?.RejectReasons?.map(rejectReasons => {
-    rejectReasons.i18nKey = `ES_ATM_${rejectReasons?.code}`
-  })
-
-
+  console.log(mdmsData);
   useEffect(() => {
-    setDepartment(mdmsData?.["common-masters"]?.Department)
-    setDesignation(mdmsData?.["common-masters"]?.Designation)
-    setRejectionReason(mdmsData?.["common-masters"]?.RejectReasons)
+    setDepartment(mdmsData?.departmentData)
+    setDesignation(mdmsData?.designationData)
+    setRejectionReason(mdmsData?.rejectReasons)
   }, [mdmsData]);
 
 
