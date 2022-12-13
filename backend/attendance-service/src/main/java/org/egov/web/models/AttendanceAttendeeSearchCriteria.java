@@ -2,6 +2,7 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+
 import java.util.List;
 
 @Getter
@@ -9,33 +10,26 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceLogSearchCriteria {
+public class AttendanceAttendeeSearchCriteria {
 
     @JsonProperty("id")
     private List<String> ids;
 
-    @JsonProperty("tenantId")
-    private String tenantId;
+    @JsonProperty("individualId")
+    private String individualId;
 
     @JsonProperty("registerId")
     private String registerId;
 
-    @JsonProperty("fromTime")
-    private Long fromTime;
+    @JsonProperty("enrollmentDate")
+    private Double enrollmentDate = null;
 
-    @JsonProperty("toTime")
-    private Double toTime;
-
-    @JsonProperty("individualIds")
-    private List<String> individualIds;
-
-    @JsonProperty("status")
-    private Status status;
+    @JsonProperty("denrollmentDate")
+    private Double denrollmentDate = null;
 
     @JsonProperty("limit")
     private Integer limit;
 
     @JsonProperty("offset")
     private Integer offset;
-
 }
