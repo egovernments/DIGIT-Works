@@ -32,7 +32,8 @@ const enabledModules = [
   "Contracts",
   "Expenditure",
   "Masters",
-  "Estimate"
+  "Estimate",
+  "Project"
   // "Engagement"
 ];
 

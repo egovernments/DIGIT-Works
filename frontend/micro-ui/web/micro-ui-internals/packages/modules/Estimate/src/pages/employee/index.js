@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
 
-const ContractsBreadCrumbs = ({ location }) => {
+const EstimateBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
 
     const search = useLocation().search;
@@ -53,7 +53,7 @@ const App = ({ path }) => {
             <React.Fragment>
                 <div>
                     <div style={getBreadCrumbStyles(window.location.href)}>
-                        <ContractsBreadCrumbs location={location} />
+                        <EstimateBreadCrumbs location={location} />
                     </div>
                     <PrivateRoute path={`${path}/create`} component={() => <div>Hi</div>} />
                     <PrivateRoute path={`${path}/search`} component={() => <div>Search</div>} />

@@ -41,7 +41,8 @@ const enabledModules = [
   "Contracts",
   "Expenditure",
   "Masters",
-  "Estimate"
+  "Estimate",
+  "Project"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
  
