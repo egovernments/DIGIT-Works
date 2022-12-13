@@ -53,7 +53,7 @@ public class AttendanceService {
      */
     public List<AttendanceRegister> searchAttendanceRegister(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
 
-        attendanceServiceValidator.validateSearchEstimate(requestInfoWrapper,searchCriteria);
+        attendanceServiceValidator.validateSearchRegister(requestInfoWrapper,searchCriteria);
         List<AttendanceRegister> attendanceRegisterList = repository.getAttendanceRegister(searchCriteria);
         return attendanceRegisterList;
     }

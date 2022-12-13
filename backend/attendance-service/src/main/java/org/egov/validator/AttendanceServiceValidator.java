@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class AttendanceServiceValidator {
 
-    public void validateSearchEstimate(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
+    public void validateSearchRegister(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
         if (searchCriteria == null || requestInfoWrapper == null || requestInfoWrapper.getRequestInfo() == null) {
             throw new CustomException("ATTENDANCE_REGISTER_SEARCH_CRITERIA_REQUEST", "Attendance register search criteria request is mandatory");
         }

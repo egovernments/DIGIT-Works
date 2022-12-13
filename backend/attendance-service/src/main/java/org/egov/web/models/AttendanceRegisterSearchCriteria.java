@@ -22,7 +22,7 @@ public class AttendanceRegisterSearchCriteria {
     private String tenantId;
 
     @JsonProperty("id")
-    private String id;
+    private List<String> ids;
 
     @JsonProperty("registerNumber")
     private String registerNumber;
@@ -41,5 +41,8 @@ public class AttendanceRegisterSearchCriteria {
 
     @JsonProperty("attendeeId")
     private String attendeeId;
+
+    @JsonProperty("staffId")
+    private String staffId;
 
 }

@@ -36,32 +36,47 @@ public class AttendanceRepository {
 
     public List<AttendanceRegister> getAttendanceRegister(AttendanceRegisterSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        List<String> registerIds = new ArrayList<>();
+        List<String> registerIds;
+        List<AttendanceRegister> attendeeRegisters = null;
 
-        String attendeeQuery = attendeeQueryBuilder.getAttendeeSearchQuery(searchCriteria, preparedStmtList);
-        List<AttendanceRegister> attendanceRegisters = jdbcTemplate.query(attendeeQuery, attendeeRowMapper, preparedStmtList.toArray());
+        if (StringUtils.isBlank(searchCriteria.getStaffId())) {
+            String attendeeQuery = attendeeQueryBuilder.getAttendeeSearchQuery(searchCriteria, preparedStmtList);
+            attendeeRegisters = jdbcTemplate.query(attendeeQuery, attendeeRowMapper, preparedStmtList.toArray());
 
-        //If the search is based on attendeeId , fetch the matched attendance registerIds to pass it to staffQueryBuilder
-        if (StringUtils.isNotBlank(searchCriteria.getAttendeeId())) {
-            registerIds = attendanceRegisters.stream()
-                    .map(register -> register.getId().toString()).collect(Collectors.toList());
-        }
-
-        preparedStmtList = new ArrayList<>();
-        String staffQuery = staffQueryBuilder.getStaffSearchQuery(searchCriteria, preparedStmtList,registerIds);
-        List<AttendanceRegister> staffList = jdbcTemplate.query(staffQuery, staffRowMapper, preparedStmtList.toArray());
-
-        //Merge the results
-        for (int i=0; i < attendanceRegisters.size(); i++) {
-            AttendanceRegister register = attendanceRegisters.get(i);
-            AttendanceRegister staff = staffList.get(i);
-            if (null != register && null != staff &&
-                    register.getId().toString().equalsIgnoreCase(staff.getId().toString())) {
-                register.setStaff(staff.getStaff());
+            //If the search is based on attendeeId , fetch the matched attendance registerIds to pass it to staffQueryBuilder
+            if (StringUtils.isNotBlank(searchCriteria.getAttendeeId())) {
+                registerIds = attendeeRegisters.stream()
+                        .map(register -> register.getId().toString()).collect(Collectors.toList());
+                searchCriteria.setIds(registerIds);
             }
         }
 
-        return attendanceRegisters;
+        preparedStmtList = new ArrayList<>();
+        String staffQuery = staffQueryBuilder.getStaffSearchQuery(searchCriteria, preparedStmtList);
+        List<AttendanceRegister> staffRegisters = jdbcTemplate.query(staffQuery, staffRowMapper, preparedStmtList.toArray());
+
+        if (StringUtils.isNotBlank(searchCriteria.getStaffId())) {
+            registerIds = staffRegisters.stream()
+                    .map(register -> register.getId().toString()).collect(Collectors.toList());
+            searchCriteria.setIds(registerIds);
+            preparedStmtList = new ArrayList<>();
+            String attendeeQuery = attendeeQueryBuilder.getAttendeeSearchQuery(searchCriteria, preparedStmtList);
+            attendeeRegisters = jdbcTemplate.query(attendeeQuery, attendeeRowMapper, preparedStmtList.toArray());
+
+        }
+
+        List<AttendanceRegister> attendanceRegisterList = new ArrayList<>();
+        for (AttendanceRegister attendeeRegister : attendeeRegisters) {
+            AttendanceRegister staff = staffRegisters.stream().filter(staffRegister -> staffRegister.getId().toString().equalsIgnoreCase(attendeeRegister.getId().toString()))
+                                             .findFirst().orElse(null);
+            if (staff != null) {
+                AttendanceRegister attendanceRegister = attendeeRegister;
+                attendanceRegister.setStaff(staff.getStaff());
+                attendanceRegisterList.add(attendanceRegister);
+            }
+        }
+
+        return attendanceRegisterList;
     }
 
 }
