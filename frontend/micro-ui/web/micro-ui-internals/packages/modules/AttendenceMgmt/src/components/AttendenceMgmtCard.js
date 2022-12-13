@@ -20,7 +20,7 @@ const AttendenceMgmtCard = () => {
 
     const propsForModuleCard = {
         Icon: <ComplaintIcon fill="white"/>,
-        moduleName: t("ATM_ATTENDANCE_MANAGEMENT"),
+        moduleName: t("ACTION_TEST_ATTENDENCEMGMT"),
         kpis: [
             {
                 //Pass Count Value from Inbox API here
@@ -36,7 +36,7 @@ const AttendenceMgmtCard = () => {
                 roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
             },
             {
-                label: t("ATM_VIEW_ATTENDENCE"),
+                label: t("ACTION_TEST_VIEW_ATTENDENCE"),
                 link: `/${window?.contextPath}/employee/attendencemgmt/view-attendance`,
                 roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
             },
