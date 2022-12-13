@@ -10,6 +10,7 @@ import { initEngagementComponents } from "@egovernments/digit-ui-module-engageme
 import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
 import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
+import {initEstimateComponents} from "@egovernments/digit-ui-module-estimate";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { HRMSModule, initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
@@ -30,7 +31,8 @@ const enabledModules = [
   "AttendenceMgmt",
   "Contracts",
   "Expenditure",
-  "Masters"
+  "Masters",
+  "Estimate"
   // "Engagement"
 ];
 
@@ -69,6 +71,7 @@ const initDigitUI = () => {
 
   // initPGRComponents();
   initDSSComponents();
+  initEstimateComponents();
   initEngagementComponents();
   initWorksComponents();
   initAttendenceMgmtComponents();
