@@ -11,11 +11,11 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
           {
             inline: true,
             label: "MASTERS_AADHAR_NUMBER",
-            isMandatory: false,
+            isMandatory: true,
             key: "AadharNumber",
-            type: "text",
+            type: "number",
             disable: false,
-            populators: { name: "AadharNumber", error: "Required", validation: { pattern: /^[A-Za-z]+$/i } },
+            populators: { name: "AadharNumber", error: "Enter correct aadhar number", validation: { pattern: /^([0-9]){12}$/i } },
           },
           {
             inline: true,
