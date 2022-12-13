@@ -7,12 +7,10 @@ const CreateOrganizationSuccess = ({isSuccess, setCreateOrgStatus}) => {
     const {t} = useTranslation()
 
     const modifyOrg = () => {
-        console.log('Modify');
         setCreateOrgStatus(null)
     }
 
     const createOrg = () => {
-        console.log('Create');
         setCreateOrgStatus(null)
     }
 

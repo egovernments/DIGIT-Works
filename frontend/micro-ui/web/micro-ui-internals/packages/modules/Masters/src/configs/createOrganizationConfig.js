@@ -1,9 +1,7 @@
 import React from "react";
-import { UploadFile } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
-
-export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedFile, error}) => {
+export const createOrganizationConfig = () => {
     const { t } = useTranslation()
 
     const userInfo = Digit.UserService.getUser();
@@ -303,22 +301,16 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                         }
                     },
                 },
-                {   
+                {
+                    type:"multiupload",
                     label: t("PHOTOGRAPH"),
-                    populators: (
-                      <UploadFile
-                        id={"upload_photo"}
-                        onUpload={selectFile}
-                        onDelete={() => {
-                            setUploadedFile(null);
-                        }}
-                        showHint={true}
-                        message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
-                        accept= "image/*, .pdf, .png, .jpeg, .jpg"
-                        iserror={error}
-                      />
-                    ),
-                  },
+                    populators:{
+                        name: "photograph",
+                        allowedMaxSizeInMB:2,
+                        maxFilesAllowed:2,
+                        allowedFileTypes : /(.*?)(jpeg|jpg|png|pdf|image)$/i,
+                    }
+                }
                 ],
             }
         ]

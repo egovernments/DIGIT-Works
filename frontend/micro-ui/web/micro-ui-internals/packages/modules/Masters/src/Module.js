@@ -7,7 +7,6 @@ import SearchOrganization from "./pages/employee/Master/SearchOrganization";
 import CreateOrganization from "./pages/employee/Master/CreateOrganization";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
-  console.log('inside masters module');
   const moduleCode = ["Masters"];
   const { path, url } = useRouteMatch();
   const language = Digit.StoreData.getCurrentLanguage();
