@@ -8,7 +8,8 @@ const CreateContract = (props) => {
     const {t}=useTranslation();
     //To Call create contract API by using requestInfo,contract(payload,workflow)
     // const { mutate: contractMutation } = Digit.Hooks.works.useCreateContract("WORKS");
-    
+    const { estimateNumber, task, subEstimate } = Digit.Hooks.useQueryParams();
+
     const onFormSubmit = async (_data) => {
     //      use below code for create contract API CALL
     
@@ -50,7 +51,7 @@ const CreateContract = (props) => {
 
     return (
         <Fragment>
-            <CreateContractForm onFormSubmit={onFormSubmit} />
+            <CreateContractForm onFormSubmit={onFormSubmit} estimateNumber={estimateNumber} task={task} subEstimate={subEstimate}/>
             {showToast && (
                 <Toast
                 style={{"zIndex":"9999999"}}
