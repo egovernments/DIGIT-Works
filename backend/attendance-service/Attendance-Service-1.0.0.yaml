@@ -98,6 +98,11 @@ paths:
         in: query
         schema:
           type: string
+      - name: staffId
+        description: Get all the registers where the given staff was registered.
+        in: query
+        schema:
+          type: string
       responses:
         '200':
           description: 'Search results'
@@ -269,6 +274,7 @@ paths:
       - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/parameters/tenantId'
       - name: registerId
         in: query
+        required: true
         description: Id of the register
         schema:
           type: string
@@ -285,6 +291,13 @@ paths:
       - name: individualIds
         in: query
         description: List of individual ids
+        schema:
+          type: array
+          items:
+            type: string
+      - name: ids
+        in: query
+        description: List of ids
         schema:
           type: array
           items:
@@ -373,15 +386,19 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendanceRegister:
-          $ref: '#/components/schemas/AttendanceRegister'
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/AttendanceRegister'
+            - description: 'Entries of the attendance register to be created.'
     
     AttendanceRegisterResponse:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendanceRegister:
           type: array
           items:
@@ -417,7 +434,7 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendees:
           type: array
           items:
@@ -432,7 +449,7 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendees:
           type: array
           items:
@@ -442,7 +459,7 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendees:
           type: array
           items: 
@@ -457,18 +474,11 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendees:
           type: array
           items:
             $ref: '#/components/schemas/IndividualEntry'
-
-    PermissionLevel:
-      type: string
-      enum:
-      - FILL_ATTENDANCE
-      - MANAGE_PERMISSIONS
-      - VIEW
 
     StaffPermission:
       type: object
@@ -484,10 +494,6 @@ components:
         userId:
           type: string
           description: Identifier of the user of the system
-        permissionLevels:
-          type: array
-          items:
-            $ref: '#/components/schemas/PermissionLevel'
         enrollmentDate:
           readOnly: true
           type: number
@@ -504,7 +510,7 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         staff:
           allOf:
           - $ref: '#/components/schemas/StaffPermission'
@@ -516,7 +522,7 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         staff:
           $ref: '#/components/schemas/StaffPermission'
 
@@ -535,6 +541,10 @@ components:
           type: string
           format: uuid
           description: The individual for which the attendance is being marked
+        tenantId:
+          type: string
+          example: pb.amritsar
+          description: Tenant Id of the register
         time:
           type: number
           format: timestamp
@@ -558,6 +568,7 @@ components:
       required:
       - registerId
       - individualId
+      - tenantId
       - time
       - type
     
@@ -565,7 +576,7 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendance:
           type: array
           items:
@@ -575,7 +586,7 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendance:
           type: array
           items:
@@ -585,7 +596,7 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
 
 
 servers:
