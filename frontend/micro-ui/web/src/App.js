@@ -55,7 +55,6 @@ initContractsComponents();
 initExpenditureComponents();
 initMastersComponents();
 initExpenditureComponents();
-initMastersComponents();
 
 const moduleReducers = (initData) => ({
   initData,

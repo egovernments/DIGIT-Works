@@ -18,7 +18,6 @@ import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import "@egovernments/digit-ui-works-css/example/index.css";
 
 import { pgrCustomizations, pgrComponents } from "./pgr";
-import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 
 var Digit = window.Digit || {};
 
@@ -80,7 +79,6 @@ const initDigitUI = () => {
   initExpenditureComponents();
   initMastersComponents();
   initExpenditureComponents();
-  initMastersComponents();
   const moduleReducers = (initData) => initData;
 
   window.Digit.Customizations = {

@@ -1,7 +1,10 @@
 import { UploadFile } from "@egovernments/digit-ui-react-components";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploadedFile, error}) => {
+  const {t} = useTranslation();
+
   return {
     form: [
       {
@@ -46,6 +49,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -64,6 +70,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -81,9 +90,10 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
                     setUploadedFile(null);
                 }}
                 showHint={true}
-                message={uploadedFile ? `1 ${(`CS_ACTION_FILEUPLOADED`)}` : (`CS_ACTION_NO_FILEUPLOADED`)}
+                message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
                 accept= "image/*, .pdf, .png, .jpeg, .jpg"
                 iserror={error}
+                customClass="upload-margin-bottom"
               />
             ),
           },
@@ -107,6 +117,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -125,6 +138,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -143,6 +159,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -162,6 +181,7 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
             type: "radio",
             label: "MASTERS_DOES_WAGE_SEEKER_HAS_DISABILITY",
             disable: false,
+            additionalWrapperClass : "radio-mb-flex-column",
             populators: {
               name: "genders",
               optionsKey: "name",
@@ -194,6 +214,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -227,6 +250,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -245,6 +271,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -263,6 +292,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -281,6 +313,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -314,6 +349,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -341,6 +379,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: "",
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
