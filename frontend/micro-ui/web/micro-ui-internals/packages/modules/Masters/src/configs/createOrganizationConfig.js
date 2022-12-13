@@ -152,7 +152,6 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     populators: {
                         name: "ulb",
                         optionsKey: "i18nKey",
-                        defaultValue: ULBOptions[0],
                         options: ULBOptions
                     },
                 },
@@ -165,7 +164,6 @@ export const createOrganizationConfig = ({selectFile, uploadedFile, setUploadedF
                     populators: {
                         name: "district",
                         optionsKey: "i18nKey",
-                        defaultValue: districtOptions[0],
                         options: districtOptions
                     },
                 }

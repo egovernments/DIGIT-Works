@@ -6,18 +6,21 @@ import { useHistory } from 'react-router-dom'
 
 const CreateOrganizationForm = ({setCreateOrgStatus}) => {
     const { t } = useTranslation();
+
+    const userInfo = Digit.UserService.getUser();
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const ULB = Digit.Utils.pt.getCityLocale(tenantId);
+    const city = userInfo && userInfo?.info?.permanentCity;
     
+    let ULBOptions = []
+    ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
+
+    let districtOptions = []
+    districtOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
+
     const defaultValues = {
-      'ulb': {  
-        code: "pb.amritsar",
-        i18nKey: "TENANT_TENANTS_PB_AMRITSAR",
-        name: "Amritsar"
-      },
-      'district': {   
-        code: "pb.amritsar",
-        i18nKey: "TENANT_TENANTS_PB_AMRITSAR",
-        name: "Amritsar"
-      } 
+      'ulb': ULBOptions[0],
+      'district': ULBOptions[0]
     }
 
     //Upload
