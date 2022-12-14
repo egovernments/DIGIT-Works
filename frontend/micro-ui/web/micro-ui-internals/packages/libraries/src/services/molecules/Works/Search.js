@@ -211,7 +211,6 @@ export const WorksSearch = {
         // const {user:users} = await Digit.UserService.userSearch(tenantId, { uuid: [loi?.oicId] }, {});
         // const usersResponse = await HrmsService.search(tenantId,{codes: loi?.oicId }, {});
         // const user = users?.[0]
-        // console.log(usersResponse);
         
         const loiDetails = {
             title: "WORKS_LOI_DETAILS",

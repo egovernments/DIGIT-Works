@@ -1,18 +1,32 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState } from "react";
 import { Toast } from "@egovernments/digit-ui-react-components";
-import { useTranslation } from 'react-i18next';
-import CreateContractForm from '../../components/CreateContract/CreateContractForm';
+import { useTranslation } from "react-i18next";
+import CreateContractForm from "../../components/CreateContract/CreateContractForm";
 
 const CreateContract = (props) => {
-    const [showToast, setShowToast] = useState(null);
-    const {t}=useTranslation();
-    //To Call create contract API by using requestInfo,contract(payload,workflow)
-    // const { mutate: contractMutation } = Digit.Hooks.works.useCreateContract("WORKS");
-    const { estimateNumber, task, subEstimate } = Digit.Hooks.useQueryParams();
+  const [showToast, setShowToast] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
-    const onFormSubmit = async (_data) => {
+  const { t } = useTranslation();
+  //To Call create contract API by using requestInfo,contract(payload,workflow)
+  // const { mutate: contractMutation } = Digit.Hooks.works.useCreateContract("WORKS");
+  const { estimateNumber, task, subEstimate } = Digit.Hooks.useQueryParams();
+  const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {
+    estimateNumber: estimateNumber,
+    task: task,
+    subEstimateNo: subEstimate,
+    executingAuthority: { code: "WORKS_COMMUNITY_ORGN", name: "WORKS_COMMUNITY_ORGN" },
+    projectEstimateAmount: "500000",
+    contractedAmount: 0,
+    balanceAmount: 0,
+  });
+
+  const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
+
+  const onFormSubmit = async (_data) => {
+    setShowModal(true);
     //      use below code for create contract API CALL
-    
+
     //     await contractMutation(payload, {
     //         onError: (error, variables) => {
     //             setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
@@ -47,24 +61,25 @@ const CreateContract = (props) => {
     //             })
     //         }
     //     })
-    }
+  };
 
-    return (
-        <Fragment>
-            <CreateContractForm onFormSubmit={onFormSubmit} estimateNumber={estimateNumber} task={task} subEstimate={subEstimate}/>
-            {showToast && (
-                <Toast
-                style={{"zIndex":"9999999"}}
-                error={showToast.error}
-                warning={showToast.warning}
-                label={t(showToast.label)}
-                onClose={() => {
-                    setShowToast(null);
-                }}
-                />
-            )}
-        </Fragment>
-    )
-}
+  return (
+    <Fragment>
+      {showModal && <div>Popup</div>}
+      <CreateContractForm onFormSubmit={onFormSubmit} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} />
+      {showToast && (
+        <Toast
+          style={{ zIndex: "9999999" }}
+          error={showToast.error}
+          warning={showToast.warning}
+          label={t(showToast.label)}
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
+      )}
+    </Fragment>
+  );
+};
 
-export default CreateContract
+export default CreateContract;
