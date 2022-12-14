@@ -33,6 +33,31 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
  
 
   return {
+    defaultValues : {
+      AadharNumber : "",
+      NameOfWageSeeker : "",
+      dob : "",
+      genders : "",
+      SocialCategory : "",
+      MobileNumber : "",
+      MobileValidationStatus : "",
+      WageSeekerSkills : "",
+      EngagementStatus : "",
+      Disability : "",
+      UDID : "",
+      UDID_status : "",
+      Address : "",
+      ward : "",
+      ulb : "",
+      district : "",
+      orgId : "",
+      AccountHolderName : "",
+      BankAccType : "",
+      AccountNumber : "",
+      Bank : "",
+      Branch : "",
+      IFSC : ""
+    },
     form: [
       {
         head: "MASTERS_WAGE_SEEKER_DETAILS",
@@ -45,7 +70,7 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
             key: "AadharNumber",
             type: "number",
             disable: false,
-            populators: { name: "AadharNumber", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[0-9]{12}$/i }},
+            populators: { name: "AadharNumber", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[0-9]{12}$/i, maxLength : {value : 2, message : "Enter max 2 numbers"}}},
           },
           {
             inline: true,
@@ -60,6 +85,7 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
             inline: true,
             label: "MASTERS_DOB",
             isMandatory: true,
+            key:"dob",
             description: "",
             type: "date",
             disable: false,
@@ -127,7 +153,7 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
             label: "MASTERS_MOBILE_NUMBER",
             isMandatory: true,
             key: "MobileNumber",
-            type: "mobileNumber",
+            type: "number",
             disable: false,
             populators: { name: "MobileNumber", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[6789][0-9]{9}$/i } },
           },
@@ -245,12 +271,12 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
           },
           {
             isMandatory: false,
-            key: "UDID",
+            key: "UDID_status",
             type: "radioordropdown",
             label: "MASTERS_UDID_VALIDATION_STATUS",
             disable: false,
             populators: {
-              name: "UDID",
+              name: "UDID_status",
               optionsKey: "name",
               error: "",
               optionsCustomStyle : {

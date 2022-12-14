@@ -65,6 +65,7 @@ const RegisterWageSeeker = () => {
             fieldStyle={{ marginRight: 0 }}
             inline={false}
             className="card-no-margin"
+            defaultValues={configs.defaultValues}
           />
         )}
       </div>
