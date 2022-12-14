@@ -1,6 +1,7 @@
 import { FormComposer } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
 
 export const newConfig = [
     {
@@ -248,7 +249,7 @@ export const newConfig = [
 const CreateContractForm = ({ onFormSubmit, estimateNumber, task, subEstimate }) => {
   const { t } = useTranslation();
   const configs = newConfig ? newConfig : newConfig;
-
+  
     return(
         <FormComposer
         heading={t("WORKS_CREATE_CONTRACT")}
@@ -266,7 +267,8 @@ const CreateContractForm = ({ onFormSubmit, estimateNumber, task, subEstimate })
             executingAuthority: { code: "WORKS_COMMUNITY_ORGN", name: "WORKS_COMMUNITY_ORGN" },
             projectEstimateAmount: "5,00,000",
             contractedAmount: 0,
-            balanceAmount: 0
+            balanceAmount: 0,
+            dateOfAgreement: format(new Date(),'yyyy-MM-dd').toString(),
         }}
         onSubmit={onFormSubmit}
         fieldStyle={{ marginRight: 0 }}
