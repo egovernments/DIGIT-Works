@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class AttendanceAttendeeQueryBuilder {
+public class AttendeeQueryBuilder {
 
     private static final String ATTENDANCE_ATTENDEE_SELECT_QUERY = " SELECT att.id, " +
             "att.individual_id, " +

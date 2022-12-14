@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Component
-public class AttendanceLogDocumentRowMapper implements ResultSetExtractor<List<AttendanceLog>> {
+public class LogDocumentRowMapper implements ResultSetExtractor<List<AttendanceLog>> {
 
     @Autowired
     private ObjectMapper mapper;

@@ -180,7 +180,7 @@ public class AttendanceLogServiceValidator {
                                                                             .registerId(registerId)
                                                                             .build();
 
-        return attendanceAttendeeRepository.getAttendanceAttendee(searchCriteria);
+        return attendanceAttendeeRepository.getAttendees(searchCriteria);
     }
 
     private void validateLoggedInUser(AttendanceLogRequest attendanceLogRequest ) {
@@ -248,7 +248,7 @@ public class AttendanceLogServiceValidator {
                 .tenantId(tenantId)
                 .id(registerId)
                 .build();
-        List<AttendanceRegister> attendanceRegister = attendanceRegisterRepository.getAttendanceRegister(searchCriteria);
+        List<AttendanceRegister> attendanceRegister = attendanceRegisterRepository.getRegister(searchCriteria);
         if(attendanceRegister == null || attendanceRegister.isEmpty()){
             throw new CustomException("INVALID_TENANTID", "TenantId is not associated with register");
         }
@@ -260,7 +260,7 @@ public class AttendanceLogServiceValidator {
                 .individualId(userUUID)
                 .registerId(registerId)
                 .build();
-        List<StaffPermission> attendanceStaff = attendanceStaffRepository.getActiveAttendanceStaff(searchCriteria);
+        List<StaffPermission> attendanceStaff = attendanceStaffRepository.getActiveStaff(searchCriteria);
         if(attendanceStaff == null || attendanceStaff.isEmpty()){
             throw new CustomException("UNAUTHORISED_USER", "User is not authorised");
         }

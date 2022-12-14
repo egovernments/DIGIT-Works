@@ -1,8 +1,8 @@
 package org.egov.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.repository.querybuilder.AttendanceStaffQueryBuilder;
-import org.egov.repository.rowmapper.AttendanceStaffRowMapper;
+import org.egov.repository.querybuilder.StaffQueryBuilder;
+import org.egov.repository.rowmapper.StaffRowMapper;
 import org.egov.web.models.AttendanceStaffSearchCriteria;
 import org.egov.web.models.StaffPermission;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +16,15 @@ import java.util.List;
 @Slf4j
 public class StaffRepository {
     @Autowired
-    private AttendanceStaffRowMapper rowMapper;
+    private StaffRowMapper rowMapper;
 
     @Autowired
-    private AttendanceStaffQueryBuilder queryBuilder;
+    private StaffQueryBuilder queryBuilder;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<StaffPermission> getActiveAttendanceStaff(AttendanceStaffSearchCriteria searchCriteria) {
+    public List<StaffPermission> getActiveStaff(AttendanceStaffSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getActiveAttendanceStaffSearchQuery(searchCriteria, preparedStmtList);
         List<StaffPermission> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());

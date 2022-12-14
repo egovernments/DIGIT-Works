@@ -62,7 +62,6 @@ public class AttendanceLogService {
      * @return attendanceLogResponse
      */
     public AttendanceLogResponse searchAttendanceLog(RequestInfoWrapper requestInfoWrapper, AttendanceLogSearchCriteria searchCriteria) {
-
         //Validate the incoming request
         attendanceLogServiceValidator.validateSearchAttendanceLogRequest(requestInfoWrapper,searchCriteria);
         //Enrich the incoming request
