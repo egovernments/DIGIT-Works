@@ -6,7 +6,6 @@ import { configChecklist } from './config'
 const Checklist = (props) => {
     const { t } = useTranslation()
     const onSubmit = (data) => {
-        console.log("form submitted",data);
     }
 
     const [showForm, setShowForm] = useState(false)

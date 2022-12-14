@@ -148,7 +148,6 @@ const Create = () => {
   const history = useHistory();
 
   const onSubmit = (data) => {
-    console.log(data, "data");
   };
 
   /* use newConfig instead of commonFields for local development in case needed */
