@@ -122,7 +122,7 @@ export const FormComposer = (props) => {
                 defaultValue={formData?.[populators.name]}
                 render={({ onChange, ref, value }) => (
                   <TextInput  value={formData?.[populators.name]} type={type} name={populators.name} onChange={onChange} inputRef={ref}
-                  errorStyle={errors?.[populators.name]}
+                  errorStyle={errors?.[populators.name]} disable={disable}
                     style={type === "date" ?{"paddingRight": "3px"}:""}
                   />
                 )}
