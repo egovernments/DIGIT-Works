@@ -70,7 +70,7 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
             key: "AadharNumber",
             type: "number",
             disable: false,
-            populators: { name: "AadharNumber", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[0-9]{12}$/i, maxLength : {value : 2, message : "Enter max 2 numbers"}}},
+            populators: { name: "AadharNumber", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[0-9]{12}$/i}},
           },
           {
             inline: true,
@@ -79,7 +79,7 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
             key: "NameOfWageSeeker",
             type: "text",
             disable: false,
-            populators: { name: "NameOfWageSeeker", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i } },
+            populators: { name: "NameOfWageSeeker", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i }, maxlength : 140 },
           },
           {
             inline: true,
