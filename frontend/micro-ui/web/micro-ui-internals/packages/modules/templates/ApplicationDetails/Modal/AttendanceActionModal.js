@@ -1,12 +1,9 @@
 import { Loader, Modal, FormComposer } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import { configApproveModal, configRejectModal, configCheckModal } from "../config";
-
-import cloneDeep from "lodash/cloneDeep";
-
+import { configAttendanceApproveModal, configAttendanceRejectModal, configAttendanceCheckModal } from "../config";
 
 const Heading = (props) => {
-  return <h1 className="heading-m">{props.label}</h1>;
+  return <h1 className={props.className ? `heading-m ${props.className}` : "heading-m"}>{props.label}</h1>;
 };
 
 const Close = () => (
@@ -24,35 +21,8 @@ const CloseBtn = (props) => {
   );
 };
 
-const convertDateToEpochNew = (dateString, dayStartOrEnd = "dayend") => {
-  //example input format : "2018-10-02"
-  try {
-    const parts = dateString.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
-    const DateObj = new Date(Date.UTC(parts[1], parts[3] - 1, parts[2]));
+const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode,applicationDetails,workflowDetails }) => {
 
-    DateObj.setMinutes(DateObj.getMinutes() + DateObj.getTimezoneOffset());
-    if (dayStartOrEnd === "dayend") {
-      DateObj.setHours(DateObj.getHours() + 24);
-      DateObj.setSeconds(DateObj.getSeconds() - 1);
-    }
-    return DateObj.getTime();
-  } catch (e) {
-    return dateString;
-  }
-};
-
-
-const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode,applicationDetails,workflowDetails }) => {
-  //here according to the action selected render appropriate modal
-
-  // const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
-  //   tenantId,
-  //   {
-  //     roles: action?.assigneeRoles?.map?.((e) => ({ code: e })),
-  //     isActive: true,
-  //   },
-  //   { enabled: !action?.isTerminateState }
-  // );
   let { loiNumber, estimateNumber } = Digit.Hooks.useQueryParams();
    const [config, setConfig] = useState({});
    const [defaultValues, setDefaultValues] = useState({});
@@ -68,75 +38,49 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
    const [designation, setDesignation] = useState([]);
    const [selectedDesignation,setSelectedDesignation] = useState({})
 
-  //get approverDept,designation,approver(hrms),rejectionReason
-
-  const rejectReasons = [
-    {
-      name: "Estimate Details are incorrect"
+   const mdmsConfig = {
+    moduleName: "common-masters",
+    department : {
+      masterName: "Department",
+      localePrefix: "COMMON_MASTERS_DEPARTMENT",
     },
-    {
-      name: "Financial Details are incorrect"
+    designation : {
+      masterName: "Designation",
+      localePrefix: "COMMON_MASTERS_DESIGNATION",
     },
-    {
-      name: "Agreement Details are incorrect"
+    rejectReasons : {
+      masterName: "RejectReasons",
+      localePrefix: "COMMON_MASTERS_REJECT_REASONS",
     },
-    {
-      name: "Vendor Details are incorrect"
-    },
-    {
-      name: "Attachments provided are wrong"
-    },
-    {
-      name: "Others"
-    },
-  ]
+   }
 
   const { isLoading: mdmsLoading, data: mdmsData,isSuccess:mdmsSuccess } = Digit.Hooks.useCustomMDMS(
-    Digit.ULBService.getCurrentTenantId(),
-    "common-masters",
-    [
-      {
-        "name": "Designation"
+    Digit.ULBService.getStateId(),
+    mdmsConfig?.moduleName,
+    [{name : mdmsConfig?.designation?.masterName}, {name : mdmsConfig?.department?.masterName}, {name : mdmsConfig?.rejectReasons?.masterName}],
+    {
+      select: (data) => {
+        let designationData = _.get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.designation?.masterName}`, []);
+        designationData =  designationData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${mdmsConfig?.designation?.localePrefix}_${opt.code}` }));
+        designationData?.map(designation => {designation.i18nKey = designation?.name})
+
+        let departmentData = _.get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.department?.masterName}`, []);
+        departmentData =  departmentData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${mdmsConfig?.department?.localePrefix}_${opt.code}` }));
+        departmentData?.map(department => { department.i18nKey = department?.name})
+
+        let rejectReasonsData = _.get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.rejectReasons?.masterName}`, []);
+        rejectReasonsData =  rejectReasonsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${mdmsConfig?.rejectReasons?.localePrefix}_${opt.code}` }));
+        rejectReasonsData?.map(rejectReasons => { rejectReasons.i18nKey = rejectReasons?.name})
+
+        return {designationData, departmentData, rejectReasonsData};
       },
-      {
-        "name": "Department"
-      }
-    ]
+      enabled: mdmsConfig?.moduleName ? true : false,
+    }
   );
-
-  mdmsData?.["common-masters"]?.Designation?.map(designation => {
-    designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
-  })
-
-  mdmsData?.["common-masters"]?.Department?.map(department => {
-    department.i18nKey = `ES_COMMON_${department?.code}`
-  })
-  // const { data: approverData, isLoading: approverLoading } = Digit.Hooks.useEmployeeSearch(
-  //   tenantId,
-  //   {
-  //     roles: action?.assigneeRoles?.map?.((e) => ({ code: e })),
-  //     isActive: true,
-  //   },
-  //   { enabled: !action?.isTerminateState }
-  // );
-    
-  
-  // const { isLoading: approverLoading, isError,isSuccess:approverSuccess, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ Designation: selectedDesignation?.code, Department: selectedDept?.code }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept?.code && selectedDesignation?.code) });
-  // employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp.user.name)
-
-  
-  // useEffect(() => {
-    
-  //   setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
-  // }, [approverData]);
-
   useEffect(() => {
-    
-    //setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
-    //setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees : [])
-    setDepartment(mdmsData?.["common-masters"]?.Department)
-    setDesignation(mdmsData?.["common-masters"]?.Designation)
-    setRejectionReason(rejectReasons)
+    setDepartment(mdmsData?.departmentData)
+    setDesignation(mdmsData?.designationData)
+    setRejectionReason(mdmsData?.rejectReasons)
   }, [mdmsData]);
 
 
@@ -150,16 +94,11 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
     setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : [])
   }, [employeeDatav1])
   
-  
-  // if (employeeDatav1?.Employees?.length > 0) {
-  //   setApprovers(employeeDatav1?.Employees)
-  // }
-
   useEffect(() => {
     
     if(action?.action?.includes("CHECK") || action?.action?.includes("TECHNICALSANCATION")){
       setConfig(
-        configCheckModal({
+        configAttendanceCheckModal({
           t,
           action,
           businessService,
@@ -177,7 +116,7 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
       )
     }else if(action?.action?.includes("APPROVE") || action?.action?.includes("ADMINSANCTION")){
       setConfig(
-        configApproveModal({
+        configAttendanceApproveModal({
           t,
           action
         })
@@ -185,10 +124,10 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
     }
     else if(action?.action?.includes("REJECT")){
       setConfig(
-        configRejectModal({
+        configAttendanceRejectModal({
           t,
           action,
-          rejectReasons,
+          rejectionReason,
           selectedReason,
           setSelectedReason,
           loiNumber,
@@ -201,8 +140,6 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
 
   
   function submit (_data) {
-    //make the update object here and call submitAction 
-    //if the action is reject then you need to make a search call and get creater's uuid
     const workflow = {
       action: action?.action,
       comment: _data?.comments,
@@ -223,17 +160,18 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
     
   }
 
-  // if(mdmsLoading || approverLoading ) {
-  //   return <Loader />
-  // } 
-
-
-
-  
+  const cardStyle = () => {
+    if(config.label.heading === "Processing Details") {
+      return {
+        "padding" : "0px"
+      }
+    }
+    return {}
+  }
 
   return action && config?.form  ? (
     <Modal
-      headerBarMain={<Heading label={t(config.label.heading)} />}
+      headerBarMain={<Heading label={t(config.label.heading)} className="header-left-margin" />}
       headerBarEnd={<CloseBtn onClick={closeModal} />}
       actionCancelLabel={t(config.label.cancel)}
       actionCancelOnSubmit={closeModal}
@@ -250,8 +188,9 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
           inline
           childrenAtTheBottom
           onSubmit={submit}
-          defaultValues={{}}
+          defaultValues={config?.defaultValues}
           formId="modal-action"
+          cardStyle = {cardStyle()}
         />
       )}
     </Modal>
@@ -260,4 +199,4 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
   );
 }
 
-export default WorksActionModal
+export default AttendanceActionModal

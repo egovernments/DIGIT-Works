@@ -17,7 +17,7 @@ const ViewAttendance = () => {
           applicationDetails={applicationDetails}
           isLoading={false} //will come from backend
           applicationData={applicationData}
-          moduleCode="works"
+          moduleCode="AttendenceMgmt"
           isDataLoading={false}
           workflowDetails={workflowDetails}
           showTimeLine={true}
