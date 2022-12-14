@@ -105,7 +105,6 @@ const ViewRegister = (props) => {
     const [isExpanded, setIsExpanded] = useState(true)
     const { t } = useTranslation()
     const [state, dispatch] = useReducer(reducer,initialTableState)
-    console.log('newState',state);
     const [localSearchParams, setLocalSearchParams] = useState(() => ({ range:{
         startDate:new Date(),
         endDate:new Date()
@@ -118,7 +117,6 @@ const ViewRegister = (props) => {
     ]), [])
 
     const handleSubmit = () => {
-        console.log("Submit button clicked");
     }
     
     const SearchImg = () => {

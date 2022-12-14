@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 
 
 
-const mobileInbox = ({ tenantId = "pb.amritsar", data = {}, onSubmit = () => console.log(submitted), isLoading = false, resultOk = true }) => {
+const mobileInbox = ({ tenantId = "pb.amritsar", data = {}, onSubmit = () => {}, isLoading = false, resultOk = true }) => {
 
     data = [[], []]
     const history = useHistory()

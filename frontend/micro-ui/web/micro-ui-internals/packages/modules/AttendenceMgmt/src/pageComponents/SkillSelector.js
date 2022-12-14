@@ -50,7 +50,7 @@ const SkillSelector = ({t,closeModal,row,dispatch}) => {
           headerBarMain={<Heading t={t} heading={"abcd"} />}
           headerBarEnd={<CloseBtn onClick={() => closeModal(false)} />}
           actionSaveLabel={t("Confirm")}
-          actionSaveOnSubmit={()=>console.log("submitted")}
+          actionSaveOnSubmit={()=>{}}
           formId="modal-action"
           headerBarMainStyle={{ marginLeft: "20px" }}
           popupStyles = {{margin:"auto auto",width:"80vw"}}
