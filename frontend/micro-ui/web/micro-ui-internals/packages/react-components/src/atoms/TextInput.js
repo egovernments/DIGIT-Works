@@ -27,6 +27,11 @@ const TextInput = (props) => {
             className={`${user_type ? "employee-card-input-error" : "card-input-error"} ${props.disable && "disabled"}`}
             placeholder={props.placeholder}
             onChange={(event) => {
+              if(props?.type === "number" && props?.maxlength) {
+                if(event.target.value.length > props?.maxlength) {
+                  event.target.value = event.target.value.slice(0,-1);
+                }
+              }
               if (props?.onChange) {
                 props?.onChange(event);
               }
@@ -38,8 +43,8 @@ const TextInput = (props) => {
             value={props.value}
             style={{ ...props.style }}
             defaultValue={props.defaultValue}
-            minlength={props.minlength}
-            maxlength={props.maxlength}
+            minLength={props.minlength}
+            maxLength={props.maxlength}
             max={props.max}
             pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
             min={props.min}
@@ -59,6 +64,11 @@ const TextInput = (props) => {
             className={`${user_type ? "employee-card-input" : "citizen-card-input"} ${props.disable && "disabled"} focus-visible ${props.errorStyle && "employee-card-input-error"}`}
             placeholder={props.placeholder}
             onChange={(event) => {
+              if(props?.type === "number" && props?.maxlength) {
+                if(event.target.value.length > props?.maxlength) {
+                  event.target.value = event.target.value.slice(0,-1);
+                }
+              }
               if (props?.onChange) {
                 props?.onChange(event);
               }
@@ -70,8 +80,8 @@ const TextInput = (props) => {
             value={props.value}
             style={{ ...props.style }}
             defaultValue={props.defaultValue}
-            minlength={props.minlength}
-            maxlength={props.maxlength}
+            minLength={props.minlength}
+            maxLength={props.maxlength}
             max={props.max}
             required={props?.validation && props.ValidationRequired ? props?.validation?.isRequired :props.isRequired || (props.type === "date" && (props.name === "fromDate" ? data.toDate : data.fromDate))}
             pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
