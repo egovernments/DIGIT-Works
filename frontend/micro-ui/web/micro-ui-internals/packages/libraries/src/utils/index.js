@@ -81,6 +81,10 @@ const getPattern = (type) => {
       return /^[^\$\"'<>?\\\\~`!@$%^()+={}\[\]*.:;“”‘’]{1,50}$/i;
     case "OldLicenceNo":
       return /^[a-zA-Z0-9-/]{0,64}$/;
+    case "bankAccountNo":
+      return /^\d{9,18}$/;
+    case "IFSC":
+      return /^[A-Z]{4}0[A-Z0-9]{6}$/;
   }
 };
 

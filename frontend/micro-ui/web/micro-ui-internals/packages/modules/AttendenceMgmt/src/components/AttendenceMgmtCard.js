@@ -1,4 +1,4 @@
-import { EmployeeModuleCard, ArrowRightInbox, WSICon, ComplaintIcon } from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, PropertyHouse} from "@egovernments/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -19,7 +19,7 @@ const AttendenceMgmtCard = () => {
   // links = links.filter((link) => (link.roles ? checkForEmployee(link.roles) : true));
 
     const propsForModuleCard = {
-        Icon: <ComplaintIcon fill="white"/>,
+        Icon: <PropertyHouse fill="white"/>,
         moduleName: t("ACTION_TEST_ATTENDENCEMGMT"),
         kpis: [
             {
@@ -39,7 +39,7 @@ const AttendenceMgmtCard = () => {
                 label: t("ACTION_TEST_VIEW_ATTENDENCE"),
                 link: `/${window?.contextPath}/employee/attendencemgmt/view-attendance`,
                 roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
-            },
+            }
         ],
     };
     return <EmployeeModuleCard {...propsForModuleCard} />;

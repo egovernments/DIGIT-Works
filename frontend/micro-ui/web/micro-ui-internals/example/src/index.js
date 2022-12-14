@@ -10,9 +10,11 @@ import { initEngagementComponents } from "@egovernments/digit-ui-module-engageme
 import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
 import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
+import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { HRMSModule, initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
+import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import "@egovernments/digit-ui-css/example/index.css";
 
 // import * as comps from "@egovernments/digit-ui-react-components";
@@ -29,6 +31,9 @@ const enabledModules = [
   "AttendenceMgmt",
   "Contracts",
   "Expenditure",
+  "Masters",
+  "Estimate",
+  "Project",
   // "Engagement"
 ];
 
@@ -67,12 +72,14 @@ const initDigitUI = () => {
 
   // initPGRComponents();
   initDSSComponents();
+  initEstimateComponents();
   initEngagementComponents();
   initWorksComponents();
   initAttendenceMgmtComponents();
   initHRMSComponents();
   initContractsComponents();
   initExpenditureComponents();
+  initMastersComponents();
   const moduleReducers = (initData) => initData;
 
   window.Digit.Customizations = {

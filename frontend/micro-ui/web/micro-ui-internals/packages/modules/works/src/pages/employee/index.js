@@ -99,7 +99,7 @@ const BILLSBreadCrumbs = ({ location }) => {
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_LOI_INBOX")}` : t("WORKS_LOI_INBOX"),
       show: location.pathname.includes("/works/loiinbox") ? true : false,
       isBack: fromScreen && true,
-    },
+    }
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 };

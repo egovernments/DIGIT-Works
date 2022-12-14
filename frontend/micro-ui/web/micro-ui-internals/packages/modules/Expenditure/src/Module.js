@@ -3,9 +3,10 @@ import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import EmployeeApp from "./pages/employee"
 import billInboxFilter from "./components/BillInbox/NewInboxFilter"
+import ExpenditureCard from "./components/ExpenditureCard";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
-    const moduleCode = ["Contracts"];
+    const moduleCode = ["Expenditure"];
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
     const { isLoading, data: store } = Digit.Services.useStore({
@@ -23,7 +24,8 @@ const ExpenditureModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
     ExpenditureModule,
-    billInboxFilter
+    billInboxFilter,
+    ExpenditureCard
 };
 
 export const initExpenditureComponents = () => {

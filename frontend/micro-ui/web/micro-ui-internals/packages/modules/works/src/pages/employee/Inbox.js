@@ -56,7 +56,7 @@ const Inbox = ({
     _filters: payload,
     config: config,
   });
-
+  
   useEffect(() => {
     register("offset", 0);
     register("limit", 10);
@@ -143,34 +143,17 @@ const Inbox = ({
 );
   
   const getData = () => {
-    if (data?.items?.length == 0 ) {
+    if (data?.table?.length == 0 ) {
       return { display: "ES_COMMON_NO_DATA" }
-    } else if (data?.items?.length > 0) {
-      let newResult = [];
-        data?.items?.map((val)=>{
-          let totalAmount = 0
-          let newObject = val?.businessObject
-            newObject?.estimateDetails?.map((amt)=>{
-              totalAmount = totalAmount + amt?.amount
-            })
-            employeeData?.Employees?.map((item)=>{
-              if(newObject?.auditDetails?.lastModifiedBy === item?.uuid){
-                Object.assign(newObject,{"owner":item?.user?.name})
-              }
-              if(newObject?.auditDetails?.createdBy === item?.uuid){
-                newResult.push(Object.assign(newObject,{"createdBy":item?.user?.name,"totalAmount":totalAmount}))
-              }
-          })
-          // newResult = newResult.filter((val)=>val?.fund === payload?.fund)
-        })
-      return newResult
+    } else if (data?.table?.length > 0) {
+      return data;
     } else {
       return [];
     }
   }
 
   const isResultsOk = () => {
-    return data?.items?.length > 0 ? true : false;
+    return data?.table?.length > 0 ? true : false;
   }
   
 

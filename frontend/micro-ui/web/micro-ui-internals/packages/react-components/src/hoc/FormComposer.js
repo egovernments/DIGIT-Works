@@ -122,7 +122,9 @@ export const FormComposer = (props) => {
                 defaultValue={formData?.[populators.name]}
                 render={({ onChange, ref, value }) => (
                   <TextInput  value={formData?.[populators.name]} type={type} name={populators.name} onChange={onChange} inputRef={ref}
-                  errorStyle={errors?.[populators.name]} disable={disable}
+                    errorStyle={errors?.[populators.name]}
+                    max={populators.max}
+                    disable={disable}
                     style={type === "date" ?{"paddingRight": "3px"}:""}
                   />
                 )}
@@ -471,7 +473,7 @@ export const FormComposer = (props) => {
                 <Fragment>
                   <LabelFieldPair key={index}>
                     {!field.withoutLabel && (
-                      <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}>
+                      <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" , ...props.fieldStyle}}>
                         {t(field.label)}
                         {field.isMandatory ? " * " : null}
                       </CardLabel>
