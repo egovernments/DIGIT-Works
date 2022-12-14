@@ -356,7 +356,6 @@ const ViewAttendance = () => {
   };
 
   function onActionSelect(action) {
-    console.log(action);
     // if(action?.name==="FORWARD"){
     //     setShowModal(true)
     // }
@@ -440,7 +439,6 @@ const ViewAttendance = () => {
   ];
 
   const onSubmit = (data) => {
-    console.log("Data", data);
   };
 
   const data = [
