@@ -1,4 +1,4 @@
-import { EmployeeModuleCard, ArrowRightInbox, WSICon } from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, SurveyIconSolid } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -19,8 +19,8 @@ const ContractsCard = () => {
   // links = links.filter((link) => (link.roles ? checkForEmployee(link.roles) : true));
 
   const propsForModuleCard = {
-    Icon: <WSICon />,
-    moduleName: t("Contracts"),
+    Icon: <SurveyIconSolid />,
+    moduleName: t("WORKS_CONTRACTS"),
     kpis: [
       {
         //Pass Count Value from Inbox API here
@@ -32,6 +32,11 @@ const ContractsCard = () => {
     links: [
       {
         label: t("WORKS_CONTRACTS_INBOX"),
+        link: `/${window?.contextPath}/employee/contracts/inbox`,
+        roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
+      },
+      {
+        label: t("ACTION_TEST_SEARCH_APPROVED_ESTIMATES"),
         link: `/${window?.contextPath}/employee/contracts/inbox`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       },

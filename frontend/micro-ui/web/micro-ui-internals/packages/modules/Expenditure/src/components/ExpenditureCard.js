@@ -1,4 +1,4 @@
-import { EmployeeModuleCard, ArrowRightInbox, WSICon } from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, DocumentIconSolid } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -19,30 +19,30 @@ const ExpenditureCard = () => {
   // links = links.filter((link) => (link.roles ? checkForEmployee(link.roles) : true));
 
   const propsForModuleCard = {
-    Icon: <WSICon />,
-    moduleName: t("Expenditure"),
+    Icon: <DocumentIconSolid />,
+    moduleName: t("ACTION_TEST_BILLS"),
     kpis: [
       {
         //Pass Count Value from Inbox API here
         count: 21,
         label: t("INBOX"),
-        link: `/${window?.contextPath}/employee/contracts/inbox`,
+        link: `/${window?.contextPath}/employee/expenditure/billinbox`,
       }
     ],
     links: [
       {
-        label: t("WORKS_EXP_INBOX"),
-        link: `/${window?.contextPath}/employee/contracts/inbox`,
+        label: t("ES_COMMON_INBOX"),
+        link: `/${window?.contextPath}/employee/expenditure/billinbox`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       },
       {
-        label: t("WORKS_EXP_SEARCH"),
-        link: `/${window?.contextPath}/employee/contracts/search-contract`,
+        label: t("WORKS_SEARCH_BILLS"),
+        link: `/${window?.contextPath}/employee/expenditure/search`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       },
       {
         label: t("WORKS_EXP_CREATE"),
-        link: `/${window?.contextPath}/employee/contracts/create-contract`,
+        link: `/${window?.contextPath}/employee/contracts/search-contract`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       }
     ],
