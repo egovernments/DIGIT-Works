@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class LogDocumentQueryBuilder {
+public class AttendanceLogQueryBuilder {
 
     private static final String ATTENDANCE_LOG_SELECT_QUERY = " SELECT log.id as logid, " +
             "log.individual_id as logIndividualId, " +
@@ -128,8 +128,10 @@ public class LogDocumentQueryBuilder {
     }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+//        ids.forEach(id -> {
+//            preparedStmtList.add(id);
+//        });
+
+       preparedStmtList.addAll(ids);
     }
 }

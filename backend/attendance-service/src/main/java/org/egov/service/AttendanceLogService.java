@@ -5,7 +5,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendanceLogEnrichment;
 import org.egov.kafka.Producer;
-import org.egov.repository.LogRepository;
+import org.egov.repository.AttendanceLogRepository;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceLogServiceValidator;
 import org.egov.web.models.*;
@@ -34,7 +34,7 @@ public class AttendanceLogService {
     private AttendanceServiceConfiguration config;
 
     @Autowired
-    private LogRepository attendanceLogRepository;
+    private AttendanceLogRepository attendanceLogRepository;
     /**
      * Create Attendance Log
      *
