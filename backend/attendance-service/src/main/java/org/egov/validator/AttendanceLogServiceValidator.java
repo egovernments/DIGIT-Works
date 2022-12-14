@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
-import org.egov.repository.AttendanceAttendeeRepository;
-import org.egov.repository.AttendanceLogRepository;
-import org.egov.repository.AttendanceRegisterRepository;
-import org.egov.repository.AttendanceStaffRepository;
+import org.egov.repository.AttendeeRepository;
+import org.egov.repository.LogRepository;
+import org.egov.repository.RegisterRepository;
+import org.egov.repository.StaffRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +22,16 @@ import java.util.stream.Collectors;
 public class AttendanceLogServiceValidator {
 
     @Autowired
-    private AttendanceStaffRepository attendanceStaffRepository;
+    private StaffRepository attendanceStaffRepository;
 
     @Autowired
-    private AttendanceRegisterRepository attendanceRegisterRepository;
+    private RegisterRepository attendanceRegisterRepository;
 
     @Autowired
-    private AttendanceAttendeeRepository attendanceAttendeeRepository;
+    private AttendeeRepository attendanceAttendeeRepository;
 
     @Autowired
-    private AttendanceLogRepository attendanceLogRepository;
+    private LogRepository attendanceLogRepository;
 
     @Autowired
     private AttendanceServiceConfiguration config;

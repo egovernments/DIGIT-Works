@@ -14,7 +14,7 @@ import java.util.List;
 
 @Repository
 @Slf4j
-public class AttendanceRegisterRepository {
+public class RegisterRepository {
 
     @Autowired
     private AttendanceRegisterRowMapper rowMapper;

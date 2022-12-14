@@ -14,7 +14,7 @@ import java.util.List;
 
 @Repository
 @Slf4j
-public class AttendanceLogRepository {
+public class LogRepository {
     @Autowired
     private AttendanceLogDocumentRowMapper rowMapper;
 

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class AttendanceAttendeeRepository {
+public class AttendeeRepository {
     @Autowired
     private AttendanceAttendeeRowMapper rowMapper;
 

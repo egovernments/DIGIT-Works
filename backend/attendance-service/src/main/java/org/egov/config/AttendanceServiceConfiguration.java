@@ -17,30 +17,30 @@ import org.springframework.stereotype.Component;
 public class AttendanceServiceConfiguration {
 
     // kafka topics
-    @Value("${att.svr.log.kafka.create.topic}")
+    @Value("${attendance.service.log.kafka.create.topic}")
     private String createAttendanceLogTopic;
 
-    @Value("${att.svr.log.kafka.update.topic}")
+    @Value("${attendance.service.log.kafka.update.topic}")
     private String updateAttendanceLogTopic;
 
     // service integration config
-    @Value("${att.svr.individual.svr.integration.required}")
+    @Value("${attendance.service.individual.service.integration.required}")
     private String individualServiceIntegrationRequired;
 
-    @Value("${att.svr.staff.svr.integration.required}")
+    @Value("${attendance.service.staff.service.integration.required}")
     private String staffServiceIntegrationRequired;
 
-    @Value("${att.svr.document.id.verification.required}")
+    @Value("${attendance.service.document.id.verification.required}")
     private String documentIdVerificationRequired;
 
     //search config
-    @Value("${attendance.default.offset}")
-    private Integer defaultOffset;
+    @Value("${attendance.service.log.default.offset}")
+    private Integer attendanceLogDefaultOffset;
 
-    @Value("${attendance.default.limit}")
-    private Integer defaultLimit;
+    @Value("${attendance.service.log.default.limit}")
+    private Integer attendanceLogDefaultLimit;
 
-    @Value("${attendance.search.max.limit}")
-    private Integer maxLimit;
+    @Value("${attendance.service.log.search.max.limit}")
+    private Integer attendanceLogMaxLimit;
 
 }
