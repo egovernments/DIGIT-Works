@@ -1,7 +1,7 @@
 package org.egov.repository;
 
-import org.egov.repository.querybuilder.AttendanceAttendeeQueryBuilder;
-import org.egov.repository.rowmapper.AttendanceAttendeeRowMapper;
+import org.egov.repository.querybuilder.AttendeeQueryBuilder;
+import org.egov.repository.rowmapper.AttendeeRowMapper;
 import org.egov.web.models.AttendanceAttendeeSearchCriteria;
 import org.egov.web.models.IndividualEntry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +14,15 @@ import java.util.List;
 @Repository
 public class AttendeeRepository {
     @Autowired
-    private AttendanceAttendeeRowMapper rowMapper;
+    private AttendeeRowMapper rowMapper;
 
     @Autowired
-    private AttendanceAttendeeQueryBuilder queryBuilder;
+    private AttendeeQueryBuilder queryBuilder;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<IndividualEntry> getAttendanceAttendee(AttendanceAttendeeSearchCriteria searchCriteria) {
+    public List<IndividualEntry> getAttendees(AttendanceAttendeeSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getAttendanceAttendeeSearchQuery(searchCriteria, preparedStmtList);
         List<IndividualEntry> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());

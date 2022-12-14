@@ -1,8 +1,8 @@
 package org.egov.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.repository.querybuilder.AttendanceLogDocumentQueryBuilder;
-import org.egov.repository.rowmapper.AttendanceLogDocumentRowMapper;
+import org.egov.repository.querybuilder.LogDocumentQueryBuilder;
+import org.egov.repository.rowmapper.LogDocumentRowMapper;
 import org.egov.web.models.AttendanceLog;
 import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,10 @@ import java.util.List;
 @Slf4j
 public class LogRepository {
     @Autowired
-    private AttendanceLogDocumentRowMapper rowMapper;
+    private LogDocumentRowMapper rowMapper;
 
     @Autowired
-    private AttendanceLogDocumentQueryBuilder queryBuilder;
+    private LogDocumentQueryBuilder queryBuilder;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

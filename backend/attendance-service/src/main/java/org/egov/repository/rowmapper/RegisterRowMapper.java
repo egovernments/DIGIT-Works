@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Component
-public class AttendanceRegisterRowMapper implements ResultSetExtractor<List<AttendanceRegister>> {
+public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegister>> {
 
     @Autowired
     private ObjectMapper mapper;

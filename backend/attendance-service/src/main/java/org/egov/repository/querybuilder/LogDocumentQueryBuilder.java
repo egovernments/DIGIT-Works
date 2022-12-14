@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class AttendanceLogDocumentQueryBuilder {
+public class LogDocumentQueryBuilder {
 
     private static final String ATTENDANCE_LOG_SELECT_QUERY = " SELECT log.id as logid, " +
             "log.individual_id as logIndividualId, " +

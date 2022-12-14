@@ -6,7 +6,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 @Component
-public class AttendanceRegisterQueryBuilder {
+public class RegisterQueryBuilder {
 
     private static final String ATTENDANCE_REGISTER_SELECT_QUERY = " SELECT reg.id, " +
             "reg.tenantid, " +

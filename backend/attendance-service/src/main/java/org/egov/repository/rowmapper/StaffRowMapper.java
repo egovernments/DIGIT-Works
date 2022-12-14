@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 @Component
-public class AttendanceStaffRowMapper implements ResultSetExtractor<List<StaffPermission>> {
+public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>> {
 
     @Autowired
     private ObjectMapper mapper;

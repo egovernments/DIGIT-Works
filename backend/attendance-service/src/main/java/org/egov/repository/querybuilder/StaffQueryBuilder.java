@@ -7,7 +7,7 @@ import org.springframework.util.ObjectUtils;
 import java.util.List;
 
 @Component
-public class AttendanceStaffQueryBuilder {
+public class StaffQueryBuilder {
 
     private static final String ATTENDANCE_STAFF_SELECT_QUERY = " SELECT stf.id, " +
             "stf.individual_id, " +
