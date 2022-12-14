@@ -19,7 +19,7 @@ const useWorksInbox = ({ tenantId, _filters, config }) => {
         processSearchCriteria: {
             tenantId,
             businessService: [
-                "estimate-approval-2"
+                "estimate-approval"
             ],
             moduleName: "estimate-service",
         },
@@ -37,7 +37,35 @@ const useWorksInbox = ({ tenantId, _filters, config }) => {
         limit,
         offset
     }
-    return useInbox({tenantId, filters, config})
+    return useInbox({
+        tenantId, filters, config: {
+            select: (data) => {
+                const returnedObj= {
+                    statuses: data.statusMap,
+                    table: data?.items.map(application => {
+                        const obj= {
+                        estimateNumber: application?.ProcessInstance?.businessId,
+                        department: application?.businessObject?.additionalDetails?.formData?.department?.code,
+                        fund: application?.businessObject?.additionalDetails?.formData?.fund?.code,
+                        function: application?.businessObject?.additionalDetails?.formData?.function?.code,
+                        budgetHead: application?.businessObject?.additionalDetails?.formData?.budgetHead?.code,
+                        createdBy: application?.businessObject?.additionalDetails?.createdBy,
+                        status: application?.ProcessInstance?.state?.applicationStatus,
+                        owner: application?.businessObject?.additionalDetails?.owner,
+                        totalAmount:999,
+                        //total amount is static for now(not getting response from inbox api so all the fields are currently showing from user input form only)
+                    }
+                    
+                    return obj;
+                }),
+                    totalCount: data.totalCount,
+                    nearingSlaCount: data?.nearingSlaCount
+            }
+            return returnedObj
+        },
+            ...config
+        }
+})
 }
 
 export default useWorksInbox;
