@@ -597,9 +597,3 @@ components:
       properties:
         requestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
-
-
-servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/rushang.dhanesha/Attendance-Service/1.0.0
