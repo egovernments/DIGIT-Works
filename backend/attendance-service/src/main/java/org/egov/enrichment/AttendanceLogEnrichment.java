@@ -23,33 +23,34 @@ public class AttendanceLogEnrichment {
     @Autowired
     private AttendanceServiceConfiguration config;
     public void enrichAttendanceLogCreateRequest(AttendanceLogRequest attendanceLogRequest) {
-        List<AttendanceLog> attendanceLog = attendanceLogRequest.getAttendance();
+        List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
         String byUser = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
         AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(byUser,null,true);
-        attendanceLog.forEach(e -> {
-            e.setAuditDetails(auditDetails);
+        for(AttendanceLog attendanceLog : attendanceLogs){
+            attendanceLog.setAuditDetails(auditDetails);
             UUID attendanceLogId = UUID.randomUUID();
-            e.setId(attendanceLogId);
-            e.getDocumentIds().forEach(d -> {
-                d.setId(String.valueOf(UUID.randomUUID()));
-            });
-        });
+            attendanceLog.setId(attendanceLogId);
+            List<Document> documentIds = attendanceLog.getDocumentIds();
+            for(Document documentId : documentIds){
+                documentId.setId(String.valueOf(UUID.randomUUID()));
+            }
+        }
     }
 
     public void enrichAttendanceLogUpdateRequest(AttendanceLogRequest attendanceLogRequest) {
-        List<AttendanceLog> attendanceLog = attendanceLogRequest.getAttendance();
+        List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
         String byUser = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
-        attendanceLog.forEach(e -> {
-            AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(byUser,e.getAuditDetails(),false);
-            e.setAuditDetails(auditDetails);
+        for(AttendanceLog attendanceLog : attendanceLogs){
+            AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(byUser,attendanceLog.getAuditDetails(),false);
+            attendanceLog.setAuditDetails(auditDetails);
             // enrich the documentId if not present
-            List<Document> documentIds = e.getDocumentIds();
-            documentIds.forEach(d -> {
-                if(d.getId() == null){
-                    d.setId(String.valueOf(UUID.randomUUID()));
+            List<Document> documentIds = attendanceLog.getDocumentIds();
+            for(Document documentId : documentIds){
+                if(documentId.getId() == null){
+                    documentId.setId(String.valueOf(UUID.randomUUID()));
                 }
-            });
-        });
+            }
+        }
     }
 
     public void enrichAttendanceLogSearchRequest(RequestInfo requestInfo, AttendanceLogSearchCriteria searchCriteria) {

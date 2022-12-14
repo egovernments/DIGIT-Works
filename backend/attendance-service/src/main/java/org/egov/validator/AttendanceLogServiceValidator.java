@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.AttendeeRepository;
-import org.egov.repository.LogRepository;
+import org.egov.repository.AttendanceLogRepository;
 import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
 import org.egov.tracer.model.CustomException;
@@ -31,7 +31,7 @@ public class AttendanceLogServiceValidator {
     private AttendeeRepository attendanceAttendeeRepository;
 
     @Autowired
-    private LogRepository attendanceLogRepository;
+    private AttendanceLogRepository attendanceLogRepository;
 
     @Autowired
     private AttendanceServiceConfiguration config;
@@ -298,23 +298,22 @@ public class AttendanceLogServiceValidator {
             throw new CustomException("ATTENDANCE", "Attendance array is mandatory");
         }
 
-        attendance.forEach(attendeeLog -> {
-                    if (StringUtils.isBlank(attendeeLog.getTenantId())) {
-                        errorMap.put("ATTENDANCE.TENANTID", "TenantId is mandatory");
-                    }
-                    if (StringUtils.isBlank(attendeeLog.getRegisterId())) {
-                        errorMap.put("ATTENDANCE.REGISTERID", "Attendance registerid is mandatory");
-                    }
-                    if (attendeeLog.getIndividualId() == null) {
-                        errorMap.put("ATTENDANCE.INDIVIDUALID", "Attendance indidualid is mandatory");
-                    }
-                    if (StringUtils.isBlank(attendeeLog.getType())) {
-                        errorMap.put("ATTENDANCE.TYPE", "Attendance type is mandatory");
-                    }
-                    if (attendeeLog.getTime() == null) {
-                        errorMap.put("ATTENDANCE.TIME", "Attendance time is mandatory");
-                    }
-                }
-        );
+        for(AttendanceLog attendeeLog : attendance){
+            if (StringUtils.isBlank(attendeeLog.getTenantId())) {
+                errorMap.put("ATTENDANCE.TENANTID", "TenantId is mandatory");
+            }
+            if (StringUtils.isBlank(attendeeLog.getRegisterId())) {
+                errorMap.put("ATTENDANCE.REGISTERID", "Attendance registerid is mandatory");
+            }
+            if (attendeeLog.getIndividualId() == null) {
+                errorMap.put("ATTENDANCE.INDIVIDUALID", "Attendance indidualid is mandatory");
+            }
+            if (StringUtils.isBlank(attendeeLog.getType())) {
+                errorMap.put("ATTENDANCE.TYPE", "Attendance type is mandatory");
+            }
+            if (attendeeLog.getTime() == null) {
+                errorMap.put("ATTENDANCE.TIME", "Attendance time is mandatory");
+            }
+        }
     }
 }
