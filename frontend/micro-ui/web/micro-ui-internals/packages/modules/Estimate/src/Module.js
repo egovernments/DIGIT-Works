@@ -2,11 +2,10 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import EmployeeApp from "./pages/employee"
-import billInboxFilter from "./components/BillInbox/NewInboxFilter"
-import ExpenditureCard from "./components/ExpenditureCard";
+import EstimateCard from "./components/EstimateCard";
 
-const ExpenditureModule = ({ stateCode, userType, tenants }) => {
-    const moduleCode = ["Expenditure"];
+const EstimateModule = ({ stateCode, userType, tenants }) => {
+    const moduleCode = ["Estimate","Works"];
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
     const { isLoading, data: store } = Digit.Services.useStore({
@@ -23,12 +22,11 @@ const ExpenditureModule = ({ stateCode, userType, tenants }) => {
 };
 
 const componentsToRegister = {
-    ExpenditureModule,
-    billInboxFilter,
-    ExpenditureCard
+    EstimateModule,
+    EstimateCard
 };
 
-export const initExpenditureComponents = () => {
+export const initEstimateComponents = () => {
     Object.entries(componentsToRegister).forEach(([key, value]) => {
         Digit.ComponentRegistryService.setComponent(key, value);
     });
