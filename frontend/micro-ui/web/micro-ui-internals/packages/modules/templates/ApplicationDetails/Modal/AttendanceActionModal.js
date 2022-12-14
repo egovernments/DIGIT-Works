@@ -55,9 +55,9 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
    }
 
   const { isLoading: mdmsLoading, data: mdmsData,isSuccess:mdmsSuccess } = Digit.Hooks.useCustomMDMS(
-    Digit.ULBService.getCurrentTenantId(),
+    Digit.ULBService.getStateId(),
     mdmsConfig?.moduleName,
-    [{name : mdmsConfig?.designation?.masterName}, {name : mdmsConfig?.department?.masterName}],
+    [{name : mdmsConfig?.designation?.masterName}, {name : mdmsConfig?.department?.masterName}, {name : mdmsConfig?.rejectReasons?.masterName}],
     {
       select: (data) => {
         console.log(data);
