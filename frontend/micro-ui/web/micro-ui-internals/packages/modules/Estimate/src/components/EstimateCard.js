@@ -1,5 +1,5 @@
 import { EmployeeModuleCard, CaseIcon } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React,{useState} from "react";
 import { useTranslation } from "react-i18next";
 
 const EstimateCard = () => {
@@ -16,6 +16,22 @@ const EstimateCard = () => {
   //   },
   // ];
 
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+
+  const [payload, setPayload] = useState({
+    offset: 0,
+    limit: 10,
+    sortBy: "department",
+    sortOrder: "DESC",
+  });
+
+  const { isFetching, isLoading, data, ...rest } = Digit.Hooks.works.useInbox({
+    tenantId,
+    _filters: payload,
+    config: { cacheTime: 0 },
+  });
+
+  
   // links = links.filter((link) => (link.roles ? checkForEmployee(link.roles) : true));
 
   const propsForModuleCard = {
@@ -24,7 +40,7 @@ const EstimateCard = () => {
     kpis: [
       {
         //Pass Count Value from Inbox API here
-        count: 21,
+        count: isLoading ? "-" : data?.totalCount,
         label: t("INBOX"),
         link: `/${window?.contextPath}/employee/estimate/inbox`,
       }
