@@ -60,7 +60,6 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     [{name : mdmsConfig?.designation?.masterName}, {name : mdmsConfig?.department?.masterName}, {name : mdmsConfig?.rejectReasons?.masterName}],
     {
       select: (data) => {
-        console.log(data);
         let designationData = _.get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.designation?.masterName}`, []);
         designationData =  designationData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${mdmsConfig?.designation?.localePrefix}_${opt.code}` }));
         designationData?.map(designation => {designation.i18nKey = designation?.name})
@@ -78,7 +77,6 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
       enabled: mdmsConfig?.moduleName ? true : false,
     }
   );
-  console.log(mdmsData);
   useEffect(() => {
     setDepartment(mdmsData?.departmentData)
     setDesignation(mdmsData?.designationData)
