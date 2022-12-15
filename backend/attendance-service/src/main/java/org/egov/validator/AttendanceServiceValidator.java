@@ -36,54 +36,56 @@ public class AttendanceServiceValidator {
         RequestInfo requestInfo = request.getRequestInfo();
 
         validateRequestInfo(requestInfo, errorMap);
-        validateAttendanceRegister(attendanceRegisters, errorMap);
+        validateAttendanceRegisterRequest(attendanceRegisters, errorMap);
+
+        String tenantId = attendanceRegisters.get(0).getTenantId();
+        String rootTenantId = tenantId.split("\\.")[0];
+
+        for (AttendanceRegister attendanceRegister : attendanceRegisters) {
+            if (!attendanceRegister.getTenantId().equals(tenantId)) {
+                throw new CustomException("MULTIPLE_TENANTS", "All registers must have same tenant Id. Please create new request for different tentant id");
+            }
+        }
+
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+        validateMDMSData(attendanceRegisters, mdmsData, errorMap);
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
+
+    public void validateUpdateAttendanceRegisterRequest(AttendanceRegisterRequest request) {
+        Map<String, String > errorMap = new HashMap<>();
+        List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
+        RequestInfo requestInfo = request.getRequestInfo();
+
+        validateRequestInfo(requestInfo, errorMap);
+        validateAttendanceRegisterRequest(attendanceRegisters, errorMap);
+
+        String tenantId = attendanceRegisters.get(0).getTenantId();
+        String rootTenantId = tenantId.split("\\.")[0];
+
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+        validateMDMSData(attendanceRegisters, mdmsData, errorMap);
 
         for (int i = 0; i < attendanceRegisters.size(); i++) {
-            String rootTenantId = attendanceRegisters.get(i).getTenantId();
-            //split the tenantId
-            rootTenantId = rootTenantId.split("\\.")[0];
+            if (attendanceRegisters.get(i).getId() ==null) {
+                errorMap.put("ATTENDANCE_REGISTER_ID", "Attendance register id is mandatory");
+            }
 
-            Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
-            validateMDMSData(attendanceRegisters, mdmsData, errorMap);
+            if (!attendanceRegisters.get(i).getTenantId().equals(tenantId)) {
+                errorMap.put("MULTIPLE_TENANTS", "All registers must have same tenant Id. Please create new request for different tentant id");
+            }
         }
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
 
-    public void validateUpdateAttendanceRegister(AttendanceRegisterRequest request) {
-        Map<String, String > errorMap = new HashMap<>();
-        List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
-        RequestInfo requestInfo = request.getRequestInfo();
-
-        validateRequestInfo(requestInfo, errorMap);
-        validateAttendanceRegister(attendanceRegisters, errorMap);
-
-        for (int i = 0; i < attendanceRegisters.size(); i++) {
-            UUID id = attendanceRegisters.get(i).getId();
-            if (id ==null) {
-                errorMap.put("ATTENDANCE_REGISTER_ID", "Attendance register id is mandatory");
-            } else {
-                AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().id(id.toString())
-                            .tenantId(attendanceRegisters.get(i).getTenantId()).build();
-                List<AttendanceRegister> attendanceRegisterList = attendanceRepository.getAttendanceRegister(searchCriteria);
-                if (CollectionUtils.isEmpty(attendanceRegisterList)) {
-                    throw new CustomException("INVALID_REGISTER_MODIFY", "The record that you are trying to update does not exists in the system");
-                }
-            }
+    public void validateAttendanceRegisterResponse(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegisterList) {
+        if (CollectionUtils.isEmpty(attendanceRegisterList) || attendanceRegisterRequest.getAttendanceRegister().size() != attendanceRegisterList.size()) {
+            throw new CustomException("INVALID_REGISTER_MODIFY", "The record that you are trying to update does not exists in the system");
         }
-
-        for (int i = 0; i < attendanceRegisters.size(); i++) {
-            String rootTenantId = attendanceRegisters.get(i).getTenantId();
-            //split the tenantId
-            rootTenantId = rootTenantId.split("\\.")[0];
-
-            Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
-            validateMDMSData(attendanceRegisters, mdmsData, errorMap);
-        }
-
-        if (!errorMap.isEmpty())
-            throw new CustomException(errorMap);
     }
 
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
@@ -98,7 +100,7 @@ public class AttendanceServiceValidator {
         }
     }
 
-    private void validateAttendanceRegister(List<AttendanceRegister> attendanceRegisters, Map<String, String> errorMap) {
+    private void validateAttendanceRegisterRequest(List<AttendanceRegister> attendanceRegisters, Map<String, String> errorMap) {
         if (attendanceRegisters == null || attendanceRegisters.size() == 0) {
             throw new CustomException("ATTENDANCE_REGISTER", "Attendance Register is mandatory");
         }

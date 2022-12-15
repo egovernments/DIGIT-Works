@@ -5,16 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.producer.Producer;
 import org.egov.repository.AttendanceRepository;
+import org.egov.tracer.model.CustomException;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
-import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.AttendanceRegisterRequest;
-import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -71,10 +69,34 @@ public class AttendanceService {
      * @return
      */
     public AttendanceRegisterRequest updateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
-        attendanceServiceValidator.validateUpdateAttendanceRegister(attendanceRegisterRequest);
-        enrichementService.enrichUpdateAttendanceRegister(attendanceRegisterRequest);
+        attendanceServiceValidator.validateUpdateAttendanceRegisterRequest(attendanceRegisterRequest);
+        List<AttendanceRegister> attendanceRegistersFromDB = getAttendanceRegisters(attendanceRegisterRequest);
+        attendanceServiceValidator.validateAttendanceRegisterResponse(attendanceRegisterRequest, attendanceRegistersFromDB);
+        enrichementService.enrichUpdateAttendanceRegister(attendanceRegisterRequest, attendanceRegistersFromDB);
         producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
 
         return attendanceRegisterRequest;
     }
+
+    private List<AttendanceRegister> getAttendanceRegisters(AttendanceRegisterRequest request) {
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(request.getRequestInfo()).build();
+        List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
+
+        List<String> registerIds = new ArrayList<>();
+        for (AttendanceRegister attendanceRegister: attendanceRegisters) {
+            registerIds.add(String.valueOf(attendanceRegister.getId()));
+        }
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().ids(registerIds)
+                .tenantId(attendanceRegisters.get(0).getTenantId()).build();
+        List<AttendanceRegister> attendanceRegisterList;
+        try {
+            attendanceRegisterList = searchAttendanceRegister(requestInfoWrapper, searchCriteria);
+        } catch (Exception e) {
+            throw new CustomException("SEARCH_ATTENDANCE_REGISTER", "Error in searching attendance register");
+        }
+
+        return attendanceRegisterList;
+    }
+
 }
