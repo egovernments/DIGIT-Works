@@ -21,6 +21,11 @@ const ProjectCard = () => {
         link: `/${window?.contextPath}/employee/works/checklist`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       },
+      {
+        label: t("WORKS_CHECKLIST_INBOX"),
+        link: `/${window?.contextPath}/employee/works/checklistinbox`,
+        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+      },
     ],
   };
   return <EmployeeModuleCard {...propsForModuleCard} />;
