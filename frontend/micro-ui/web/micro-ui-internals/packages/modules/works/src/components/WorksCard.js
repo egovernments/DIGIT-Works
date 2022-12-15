@@ -27,7 +27,7 @@ const WorksCard = () => {
         count: 21,
         label: t("INBOX"),
         link: `/${window?.contextPath}/employee/works/inbox`,
-      }
+      },
     ],
     links: [
       {
@@ -51,6 +51,12 @@ const WorksCard = () => {
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {
+        label: t("WORKS_KICKOFF_CHECKLIST"),
+        link: `/${window?.contextPath}/employee/works/checklist`,
+        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+        count: 21,
+      },
+      {
         label: t("WORKS_CONTRACTOR_BILL"),
         link: `/${window?.contextPath}/employee/works/create-contractor`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
@@ -62,7 +68,7 @@ const WorksCard = () => {
       },
       {
         label: t("WORKS_MASTERS"),
-        link: `/${window?.contextPath}/employee/`,
+        link: `/${window?.contextPath}/employee/works/search-organization`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {

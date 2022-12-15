@@ -3,8 +3,6 @@ package org.egov.web.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -12,10 +10,10 @@ import java.util.List;
 @Builder
 public class AttendanceStaffSearchCriteria {
     @JsonProperty("individualId")
-    private List<String> individualIds;
+    private String individualId;
 
     @JsonProperty("registerId")
-    private List<String> registerIds;
+    private String registerId;
 
     @JsonProperty("limit")
     private Integer limit;

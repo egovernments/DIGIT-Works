@@ -38,7 +38,7 @@ const CreateEstimateForm = React.memo(({ onFormSubmit, sessionFormData, setSessi
     trigger,
     ...methods
   } = useForm({
-    defaultValues: sessionFormData,
+    // defaultValues: sessionFormData,
     // defaultValues: {
     //     "fund": {
     //         "code": "01",
@@ -243,11 +243,11 @@ const CreateEstimateForm = React.memo(({ onFormSubmit, sessionFormData, setSessi
     mode: "onSubmit",
   });
   const formData = watch();
-  useEffect(() => {
-    if (!_.isEqual(sessionFormData, formData)) {
-      setSessionFormData({ ...sessionFormData, ...formData });
-    }
-  }, [formData]);
+//   useEffect(() => {
+//     if (!_.isEqual(sessionFormData, formData)) {
+//       setSessionFormData({ ...sessionFormData, ...formData });
+//     }
+//   }, [formData]);
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const tenant = Digit.ULBService.getStateId();
@@ -333,6 +333,27 @@ const CreateEstimateForm = React.memo(({ onFormSubmit, sessionFormData, setSessi
       name: "TenantBoundary",
     },
   ]);
+
+  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
+
+  const { data: localityOptions,isLocalityLoading } = Digit.Hooks.useLocation(
+    tenantId, 'Locality',
+    {
+      select: (data) => {
+        return data?.TenantBoundary[0]?.boundary.map((item) => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }));
+      },
+    })
+
+  const { data: wardOptions } = Digit.Hooks.useLocation(
+    tenantId, 'Ward',
+    {
+      select: (data) => {
+        return data?.TenantBoundary[0]?.boundary.map((item) => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }));
+      },
+    })
+
+
+  
   if (locationData?.[`egov-location`]) {
     var { children: ward } = locationData?.[`egov-location`]?.TenantBoundary[0]?.boundary?.children[0];
   }
@@ -472,7 +493,7 @@ const CreateEstimateForm = React.memo(({ onFormSubmit, sessionFormData, setSessi
               render={(props) => {
                 return (
                   <Dropdown
-                    option={ward}
+                    option={wardOptions}
                     selected={props?.value}
                     optionKey={"i18nKey"}
                     t={t}
@@ -499,7 +520,7 @@ const CreateEstimateForm = React.memo(({ onFormSubmit, sessionFormData, setSessi
               return (
                 <Dropdown
                   className={`field`}
-                  option={location}
+                  option={localityOptions}
                   selected={props?.value}
                   optionKey={"i18nKey"}
                   t={t}

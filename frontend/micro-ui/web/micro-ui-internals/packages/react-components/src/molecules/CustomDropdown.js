@@ -89,7 +89,7 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
           {type === "radio" ? (
             <RadioButtons
               inputRef={inputRef}
-              style={{ display: "flex", justifyContent: "space-between" }}
+              style={{ display: "flex", justifyContent: "flex-start", gap: "3rem" }}
               options={data || config?.options || []}
               key={config.name}
               optionsKey={config?.optionsKey}
@@ -115,8 +115,8 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
                 onChange(e, config.name);
               }}
               disable={disable}
-              selectedOption={value}
-              defaultValue={value}
+              selected={value || config.defaultValue}
+              defaultValue={value || config.defaultValue}
               t={t}
               errorStyle={errorStyle}
             />

@@ -15,6 +15,8 @@ import Inbox from "./Inbox";
 import LOIInbox from "./LOIInbox";
 import HandleDownloadPdf from "../../components/HandleDownloadPdf";
 import ModifyEstimate from "../../components/ModifyEstimate";
+import Checklist from "./Checklist/index";
+
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
 
@@ -97,7 +99,7 @@ const BILLSBreadCrumbs = ({ location }) => {
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_LOI_INBOX")}` : t("WORKS_LOI_INBOX"),
       show: location.pathname.includes("/works/loiinbox") ? true : false,
       isBack: fromScreen && true,
-    },
+    }
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 };
@@ -164,7 +166,8 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
           <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/response`} component={() => <Response {...{ path }} />} />
-          <PrivateRoute path={`${path}/download`} component={() => <HandleDownloadPdf {...{ path }} />} />
+          <PrivateRoute path={`${path}/checklist`} component={() => <Checklist {...{ path }} />} />
+          <PrivateRoute path={`${path}/download`} component={()=> <HandleDownloadPdf {...{path}}/>}/>
         </div>
       </React.Fragment>
     </Switch>

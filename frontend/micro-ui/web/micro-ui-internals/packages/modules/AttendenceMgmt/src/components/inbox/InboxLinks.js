@@ -1,6 +1,5 @@
 import { Card, PropertyHouse } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 import { useTranslation } from "react-i18next";
 
 const InboxLinks = ({ parentRoute, businessService, classNameForMobileView }) => {
@@ -9,7 +8,7 @@ const InboxLinks = ({ parentRoute, businessService, classNameForMobileView }) =>
   const GetLogo = () => (
     <div className="header">
       <span className="logo"><PropertyHouse /></span>
-      <span className="text" style={{paddingLeft: `${classNameForMobileView ? '16px' : '0px'}`}}>{"Attendance Mgmt"}</span>
+      <span className="text" style={{paddingLeft: `${classNameForMobileView ? '16px' : '0px'}`, fontSize: "16px"}}>{t("ATM_ATTENDANCE_MANAGEMENT")}</span>
     </div>
   );
 

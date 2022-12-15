@@ -7,6 +7,7 @@ import BPAActionModal from "./BPAActionModal";
 import NOCActionModal from "./NOCActionModal";
 import WNSActionModal from "./WNSActionModal";
 import WorksActionModal from "./WorksActionModal";
+import AttendanceActionModal from "./AttendanceActionModal";
 
 const ActionModal = (props) => {
   if (props?.businessService.includes("PT")) {
@@ -34,6 +35,9 @@ const ActionModal = (props) => {
   }
   if (props?.moduleCode.includes("works")) {
     return <WorksActionModal {...props} />;
+  }
+  if (props?.moduleCode.includes("AttendenceMgmt")) {
+    return <AttendanceActionModal {...props} />;
   }
 };
 

@@ -35,7 +35,7 @@ const configCheckModal = ({
                         label: !checkConditions ? null : t("WORKS_APPROVER_DEPT"),
                         placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
                         isMandatory: true,
-                        type: "dropdown",
+                        type: "goToDefaultCase",
                         populators: !checkConditions ? null : (
                             <Dropdown
                                 option={department}
@@ -56,7 +56,7 @@ const configCheckModal = ({
                         label: !checkConditions ? null : t("WORKS_APPROVER_DESIGNATION"),
                         //placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
                         isMandatory: true,
-                        type: "dropdown",
+                        type: "goToDefaultCase",
                         populators: !checkConditions ? null : (
                             <Dropdown
                                 option={designation}
@@ -77,7 +77,7 @@ const configCheckModal = ({
                         label: !checkConditions ? null : t("WORKS_APPROVER"),
                         //placeholder: !checkConditions ? null : t("WF_ASSIGNEE_NAME_PLACEHOLDER"),
                         isMandatory: true,
-                        type: "dropdown",
+                        type: "goToDefaultCase",
                         populators: !checkConditions ? null : (
                             approverLoading ? <Loader/> : <Dropdown
                                 option={approvers}

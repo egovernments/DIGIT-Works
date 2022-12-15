@@ -252,6 +252,7 @@ import useUpdateEstimate from "./works/useUpdateEstimate";
 import useWorksInbox from "./works/useInbox";
 import useViewContractDetails from "./contracts/useViewContractDetails";
 import useViewAttendance from "./attendance/useViewAttendance";
+import useLocation from "./useLocation";
 
 const works = {
   useViewEstimateDetails,
@@ -572,6 +573,7 @@ const Hooks = {
   works,
   contracts,
   attendance,
+  useLocation
 };
 
 export default Hooks;
