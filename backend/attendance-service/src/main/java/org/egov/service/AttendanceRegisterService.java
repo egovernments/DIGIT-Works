@@ -2,6 +2,7 @@ package org.egov.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.producer.Producer;
 import org.egov.repository.AttendanceRepository;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,6 +37,9 @@ public class AttendanceRegisterService {
     @Autowired
     private AttendanceRepository repository;
 
+    @Autowired
+    private StaffService staffService;
+
     /**
      * Create Attendance register
      *
@@ -44,6 +49,8 @@ public class AttendanceRegisterService {
     public AttendanceRegisterRequest createAttendanceRegister(AttendanceRegisterRequest request) {
         attendanceServiceValidator.validateCreateAttendanceRegister(request);
         enrichementService.enrichCreateAttendanceRegister(request);
+        StaffPermissionRequest staffPermissionResponse = staffService.createFirstStaff(request.getRequestInfo(), request.getAttendanceRegister());
+        enrichementService.enrichStaffInRegister(request.getAttendanceRegister(), staffPermissionResponse);
         producer.push(attendanceServiceConfiguration.getSaveAttendanceRegisterTopic(), request);
         return request;
     }
@@ -71,7 +78,7 @@ public class AttendanceRegisterService {
     public AttendanceRegisterRequest updateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
         attendanceServiceValidator.validateUpdateAttendanceRegisterRequest(attendanceRegisterRequest);
         List<AttendanceRegister> attendanceRegistersFromDB = getAttendanceRegisters(attendanceRegisterRequest);
-        attendanceServiceValidator.validateAttendanceRegisterResponse(attendanceRegisterRequest, attendanceRegistersFromDB);
+        attendanceServiceValidator.validateUpdateAgainstDB(attendanceRegisterRequest, attendanceRegistersFromDB);
         enrichementService.enrichUpdateAttendanceRegister(attendanceRegisterRequest, attendanceRegistersFromDB);
         producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
 

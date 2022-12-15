@@ -82,7 +82,7 @@ public class AttendanceServiceValidator {
             throw new CustomException(errorMap);
     }
 
-    public void validateAttendanceRegisterResponse(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegisterList) {
+    public void validateUpdateAgainstDB(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegisterList) {
         if (CollectionUtils.isEmpty(attendanceRegisterList) || attendanceRegisterRequest.getAttendanceRegister().size() != attendanceRegisterList.size()) {
             throw new CustomException("INVALID_REGISTER_MODIFY", "The record that you are trying to update does not exists in the system");
         }

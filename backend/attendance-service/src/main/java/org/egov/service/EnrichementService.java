@@ -30,10 +30,6 @@ public class EnrichementService {
     @Autowired
     private AttendanceRepository attendanceRepository;
 
-    @Autowired
-    private StaffService staffService;
-
-
     public void enrichCreateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
         RequestInfo requestInfo = attendanceRegisterRequest.getRequestInfo();
         List<AttendanceRegister> attendanceRegisters = attendanceRegisterRequest.getAttendanceRegister();
@@ -42,7 +38,6 @@ public class EnrichementService {
         List<String> registerNumbers = getIdList(requestInfo, rootTenantId
                 , config.getIdgenAttendanceRegisterNumberName(), config.getIdgenAttendanceRegisterNumberFormat(), attendanceRegisters.size());
 
-        List<StaffPermission> staffPermissionList = new ArrayList<>();
         for (int i = 0; i < attendanceRegisters.size(); i++) {
             AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null,true);
             attendanceRegisters.get(i).setAuditDetails(auditDetails);
@@ -51,15 +46,7 @@ public class EnrichementService {
             if (registerNumbers != null && !registerNumbers.isEmpty()) {
                 attendanceRegisters.get(i).setRegisterNumber(registerNumbers.get(i));
             }
-
-            StaffPermission staffPermission = StaffPermission.builder().userId(requestInfo.getUserInfo().getUuid())
-                                                    .tenantId(attendanceRegisters.get(0).getTenantId())
-                                                    .registerId(String.valueOf(attendanceRegisters.get(i).getId())).build();
-
-            staffPermissionList.add(staffPermission);
         }
-
-        createFirstStaff(requestInfo, staffPermissionList, attendanceRegisters);
     }
 
     public void enrichUpdateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegistersListFromDB) {
@@ -79,20 +66,11 @@ public class EnrichementService {
         }
     }
 
-    private void createFirstStaff(RequestInfo requestInfo, List<StaffPermission> staffPermissionList, List<AttendanceRegister> attendanceRegisters) {
-        StaffPermissionRequest staffPermissionRequest = StaffPermissionRequest.builder().requestInfo(requestInfo).staff(staffPermissionList).build();
-        StaffPermissionRequest staffPermissionResponse;
-
-        try {
-            staffPermissionResponse = staffService.createAttendanceStaff(staffPermissionRequest);
-        } catch (Exception e) {
-            throw new CustomException("CREATE_STAFF", "Error in creating staff");
-        }
-
-        for (int i = 0; i < attendanceRegisters.size(); i++) {
-            String registerId = String.valueOf(attendanceRegisters.get(i).getId());
+    public void enrichStaffInRegister(List<AttendanceRegister> attendanceRegisters, StaffPermissionRequest staffPermissionResponse) {
+        for (AttendanceRegister attendanceRegister: attendanceRegisters) {
+            String registerId = String.valueOf(attendanceRegister.getId());
             List<StaffPermission> staff = staffPermissionResponse.getStaff().stream().filter(st -> registerId.equals(st.getRegisterId())).collect(Collectors.toList());
-            attendanceRegisters.get(i).setStaff(staff);
+            attendanceRegister.setStaff(staff);
         }
     }
 
