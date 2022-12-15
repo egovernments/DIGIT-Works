@@ -3,17 +3,19 @@ package org.egov.web.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class AttendanceStaffSearchCriteria {
-    @JsonProperty("individualId")
-    private String individualId;
+    @JsonProperty("individualIds")
+    private List<String> individualIds;
 
-    @JsonProperty("registerId")
-    private String registerId;
+    @JsonProperty("registerIds")
+    private List<String> registerIds;
 
     @JsonProperty("limit")
     private Integer limit;

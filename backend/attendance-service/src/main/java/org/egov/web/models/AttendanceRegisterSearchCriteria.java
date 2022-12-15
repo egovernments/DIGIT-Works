@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -15,8 +17,8 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("ids")
+    private List<String> ids;
 
     @JsonProperty("registerNumber")
     private String registerNumber;

@@ -5,7 +5,6 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.repository.AttendanceRepository;
 import org.egov.service.AttendanceService;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MDMSUtils;

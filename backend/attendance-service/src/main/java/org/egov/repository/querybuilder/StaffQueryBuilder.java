@@ -31,18 +31,19 @@ public class StaffQueryBuilder {
     public String getAttendanceStaffSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList){
         StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
 
-        if(!ObjectUtils.isEmpty(criteria.getIndividualId())){
+        if(!ObjectUtils.isEmpty(criteria.getIndividualIds())){
             addClauseIfRequired(query, preparedStmtList);
             query.append(" stf.individual_id = ? ");
-            preparedStmtList.add(criteria.getIndividualId());
+            preparedStmtList.add(criteria.getIndividualIds().get(0));
         }
-        if(!ObjectUtils.isEmpty(criteria.getRegisterId())){
+        if(!ObjectUtils.isEmpty(criteria.getRegisterIds().get(0))){
             addClauseIfRequired(query, preparedStmtList);
             query.append(" stf.register_id = ? ");
-            preparedStmtList.add(criteria.getRegisterId());
+            preparedStmtList.add(criteria.getRegisterIds().get(0));
         }
         return query.toString();
     }
+
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
             query.append(" WHERE ");

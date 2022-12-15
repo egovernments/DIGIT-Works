@@ -1,7 +1,6 @@
 package org.egov.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.repository.rowmapper.StaffQueryBuilder;
 import org.egov.repository.rowmapper.StaffRowMapper;
 import org.egov.web.models.AttendanceStaffSearchCriteria;
 import org.egov.web.models.StaffPermission;
