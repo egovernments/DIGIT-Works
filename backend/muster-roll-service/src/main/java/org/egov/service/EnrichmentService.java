@@ -2,29 +2,25 @@ package org.egov.service;
 
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
-import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.repository.IdGenRepository;
+import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.egov.util.MusterRollServiceConstants.EXIT_EVENT;
+import static org.egov.util.MusterRollServiceConstants.ACTION_REJECT;
 
 @Service
 @Slf4j
@@ -40,7 +36,7 @@ public class EnrichmentService {
     private IdGenRepository idGenRepository;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private MusterRollRepository musterRollRepository;
 
 
     /**
@@ -48,7 +44,7 @@ public class EnrichmentService {
      * @param musterRollRequest
      *
      */
-    public void enrichEstimateMusterRoll(MusterRollRequest musterRollRequest, AttendanceTime attendanceTime) {
+    public void enrichEstimateMusterRoll(MusterRollRequest musterRollRequest) {
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
 
@@ -59,9 +55,6 @@ public class EnrichmentService {
         //status
         musterRoll.setStatus(Status.ACTIVE);
 
-        //calculate attendance
-        calculateAttendance(musterRollRequest,auditDetails,attendanceTime);
-
     }
 
     /**
@@ -69,7 +62,7 @@ public class EnrichmentService {
      * @param musterRollRequest
      *
      */
-    public void enrichCreateMusterRoll(MusterRollRequest musterRollRequest,AttendanceTime attendanceTime) {
+    public void enrichCreateMusterRoll(MusterRollRequest musterRollRequest) {
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
 
@@ -87,121 +80,93 @@ public class EnrichmentService {
         if (musterNumbers != null && !musterNumbers.isEmpty()) {
             String musterRollNumber = musterNumbers.get(0);
             musterRoll.setMusterRollNumber(musterRollNumber);
+        } else {
+            throw new CustomException("MUSTER_NUMBER_NOT_GENERATED","Muster number is not generated from Idgen service");
         }
 
         //status
         musterRoll.setStatus(Status.ACTIVE);
 
-        //calculate attendance
-        calculateAttendance(musterRollRequest,auditDetails,attendanceTime);
+    }
+
+    /**
+     * Enrich update muster roll
+     * @param musterRollRequest
+     */
+    public void enrichUpdateMusterRoll(MusterRollRequest musterRollRequest, MusterRoll existingMusterRoll) {
+        RequestInfo requestInfo = musterRollRequest.getRequestInfo();
+        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
+        Workflow workflow = musterRollRequest.getWorkflow();
+
+
+        if (workflow.getAction().equalsIgnoreCase("VERIFY")) {
+            //VERIFY action can modify the totalAttendance.
+            List<IndividualEntry> individualEntries = existingMusterRoll.getIndividualEntries();
+            List<IndividualEntry> modifiedIndividualEntries = musterRoll.getIndividualEntries();
+            for (IndividualEntry individualEntry : individualEntries) {
+                for (IndividualEntry modifiedIndividualEntry : modifiedIndividualEntries)  {
+                    if (modifiedIndividualEntry.getId().toString().equalsIgnoreCase(individualEntry.getId().toString())) {
+                        individualEntry.setTotalAttendance(modifiedIndividualEntry.getTotalAttendance());
+                        break;
+                    }
+                }
+            }
+
+        }
+        musterRoll = existingMusterRoll;
+        musterRollRequest.setMusterRoll(musterRoll);
+
+        //AuditDetails
+        musterRoll.setAuditDetails(existingMusterRoll.getAuditDetails());
+        AuditDetails auditDetails = musterRollServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), musterRoll, false);
+        musterRoll.setAuditDetails(auditDetails);
+
+        //populate auditDetails in IndividualEntry and AttendanceEntry
+        populateAuditDetailsIndividualEntry(musterRoll);
+
+        if (workflow.getAction().equals(ACTION_REJECT)) {
+            enrichUpdateMusterWorkFlowForActionReject(musterRollRequest);
+        }
 
     }
 
     /**
-     * Calculate the per day attendance and attendance aggregate for each individual
-     * @param musterRollRequest
+     * If the workflow action is 'REJECT' then assignee will be updated
+     * with user id that is having role as 'ORG_STAFF' or 'ORG_ADMIN' (i.e the 'auditDetails.createdBy')
      *
+     * @param request
      */
-    private void calculateAttendance (MusterRollRequest musterRollRequest,AuditDetails auditDetails,AttendanceTime attendanceTime) {
-
-        //fetch the attendance log
-        List<AttendanceLog> attendanceLogList = fetchAttendanceLog(musterRollRequest.getMusterRoll(),musterRollRequest.getRequestInfo());
-
-        //populate the map with key as individualId and value as the corresponding list of exit time
-        Map<String,List<LocalDateTime>> individualAttendanceMap = attendanceLogList.stream()
-                                                                    .filter(log -> log.getType().equalsIgnoreCase(EXIT_EVENT))
-                                                                    .collect(Collectors.groupingBy(
-                                                                         log ->log.getIndividualId(),
-                                                                         LinkedHashMap::new,
-                                                                         Collectors.mapping(log -> Instant.ofEpochMilli(log.getTime().longValue()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDateTime(),Collectors.toList())
-                                                                    ));
-
-
-        //calculate attendance aggregate and per day per individual attendance
-        int EXIT_HOUR_HALF_DAY  = attendanceTime.getExitHourHalfDay();
-        int EXIT_HOUR_FULL_DAY  = attendanceTime.getExitHourFullDay();
-
-        log.info("EnrichmentService::calculateAttendance::From MDMS::EXIT_HOUR_HALF_DAY::"+EXIT_HOUR_HALF_DAY+"::EXIT_HOUR_FULL_DAY::"+EXIT_HOUR_FULL_DAY);
-
-        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
-        LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate();
-        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate();
-
-        log.debug("EnrichmentService::calculateAttendance::startDate::"+startDate+"::endDate::"+endDate);
-
-        List<IndividualEntry> individualEntries = new ArrayList<>();
-
-        for (Map.Entry<String,List<LocalDateTime>> entry : individualAttendanceMap.entrySet()) {
-            IndividualEntry individualEntry = new IndividualEntry();
-            individualEntry.setIndividualId(entry.getKey());
-            List<LocalDateTime> timeStampList = entry.getValue();
-            List<AttendanceEntry> attendanceEntries = new ArrayList<>();
-            LocalDate date = startDate;
-            BigDecimal totalAttendance = BigDecimal.ZERO;
-            while (date.isBefore(endDate) || date.isEqual(endDate)) {
-                AttendanceEntry attendanceEntry = new AttendanceEntry();
-                attendanceEntry.setTime(date.atStartOfDay(ZoneId.of("Asia/Kolkata")).toInstant().toEpochMilli());
-
-                //check if the individual's attendance is logged between startDate and endDate
-                LocalDateTime timeStamp = null;
-                for (LocalDateTime dateTime : timeStampList) {
-                    if (date.isEqual(dateTime.toLocalDate())) {
-                        timeStamp = dateTime;
-                        break;
-                    }
-                }
-
-                //set attendance if present else set as 0 for all days from start to end date
-                if (timeStamp != null) {
-                    if (timeStamp.getHour() == EXIT_HOUR_HALF_DAY) {
-                        attendanceEntry.setAttendance(new BigDecimal("0.5"));
-                    } else if (timeStamp.getHour() == EXIT_HOUR_FULL_DAY) {
-                        attendanceEntry.setAttendance(BigDecimal.ONE);
-                    }
-                } else {
-                    attendanceEntry.setAttendance(BigDecimal.ZERO);
-                }
-
-                //calculate totalAttendance
-                totalAttendance = totalAttendance.add(attendanceEntry.getAttendance());
-
-                date = date.plusDays(1);
-                attendanceEntry.setAuditDetails(auditDetails);
-                attendanceEntries.add(attendanceEntry);
-            }
-
-            individualEntry.setAttendanceEntries(attendanceEntries);
-            log.debug("EnrichmentService::calculateAttendance::Attendance Entry::size::"+attendanceEntries.size());
-            individualEntry.setAuditDetails(auditDetails);
-            individualEntry.setTotalAttendance(totalAttendance);
-            individualEntries.add(individualEntry);
+    private void enrichUpdateMusterWorkFlowForActionReject(MusterRollRequest request) {
+        Workflow workflow = request.getWorkflow();
+        AuditDetails auditDetails = request.getMusterRoll().getAuditDetails();
+        if (auditDetails != null && StringUtils.isNotBlank(auditDetails.getCreatedBy())) {
+            List<String> updatedAssignees = new ArrayList<>();
+            updatedAssignees.add(auditDetails.getCreatedBy());
+            workflow.setAssignees(updatedAssignees);
         }
-        musterRoll.setIndividualEntries(individualEntries);
-        log.debug("EnrichmentService::calculateAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());
-
     }
 
-    private List<AttendanceLog> fetchAttendanceLog(MusterRoll musterRoll, RequestInfo requestInfo){
+    /**
+     * Populate audit details for individualEntry
+     *
+     * @param musterRoll
+     */
+    private void populateAuditDetailsIndividualEntry(MusterRoll musterRoll) {
+       for (IndividualEntry individualEntry : musterRoll.getIndividualEntries()) {
+           individualEntry.setAuditDetails(musterRoll.getAuditDetails());
+           populateAuditDetailsAttendanceEntry(individualEntry);
+       }
+    }
 
-        StringBuilder uri = new StringBuilder();
-        uri.append(config.getAttendanceLogHost()).append(config.getAttendanceLogEndpoint());
-
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
-                .queryParam("tenantId",musterRoll.getTenantId())
-                .queryParam("registerId",musterRoll.getRegisterId())
-                .queryParam("fromTime",musterRoll.getStartDate())
-                .queryParam("toTime",musterRoll.getEndDate().doubleValue())
-                .queryParam("status",Status.ACTIVE);
-
-        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-
-        AttendanceLogResponse attendanceLogResponse = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceLogResponse.class);
-
-        if (attendanceLogResponse == null || attendanceLogResponse.getAttendance() == null) {
-            throw new CustomException("ATTENDANCE_LOG_EMPTY","No attendance log found for this register and date range");
+    /**
+     * Populate audit details for attendanceEntry
+     *
+     * @param individualEntry
+     */
+    private void populateAuditDetailsAttendanceEntry(IndividualEntry individualEntry) {
+        for (AttendanceEntry attendanceEntry : individualEntry.getAttendanceEntries()) {
+            attendanceEntry.setAuditDetails(individualEntry.getAuditDetails());
         }
-
-        return attendanceLogResponse.getAttendance();
     }
 
     /**

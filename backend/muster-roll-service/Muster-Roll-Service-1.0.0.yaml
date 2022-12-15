@@ -38,7 +38,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MusterRollResponse'
-  
+
   /muster-roll/v1/_update:
     post:
       tags:
@@ -55,7 +55,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MusterRollResponse'
-  
+
   /muster-roll/v1/_search:
     post:
       tags:
@@ -67,11 +67,13 @@ paths:
               $ref: '#/components/schemas/RequestInfoWrapper'
       parameters:
         - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/parameters/tenantId'
-        - name: id
-          description: Id of the muster roll
+        - name: ids
+          description: Ids of the muster roll
           in: query
           schema:
-            type: string
+            type: array
+            items:
+              type: string
         - name: musterRollNumber
           description: (Custom-formatted) Muster roll number
           in: query
@@ -154,6 +156,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/IndividualEntry'
+        additionalDetails:
+          type: object
+          description: This can be used to store skillset that is a requirement for Mukta. This is an updatable field from the user's input.
       required:
         - tenantId
         - registerId
@@ -163,6 +168,9 @@ components:
       type: object
       readOnly: true
       properties:
+        Id:
+          type: string
+          description: Id of the IndividualEntry
         individualId:
           type: string
           description: Reference of the attendee from the Individual Registry.
@@ -184,6 +192,9 @@ components:
       readOnly: true
       description: This computed data will also be stored as part of the muster roll db.
       properties:
+        Id:
+          type: string
+          description: Id of the AttendanceEntry
         time:
           type: number
           readOnly: true
@@ -193,6 +204,9 @@ components:
           type: number
           example: 0
           description: It is the computed attendance value based on the entry and exit events fetched from the Attendance service. The muster roll service will still allow the user to override the value of this attendance.
+        additionalDetails:
+          type: object
+          description: This can be used to store skillset that is a requirement for Mukta. This is an updatable field from the user's input.
 
     MusterRollRequest:
       type: object
@@ -217,7 +231,7 @@ components:
                 description: ' uuid of the users in the system to assign workflow to the specific user intead of a all the users with the gien role.'
           required:
             - action
-    
+
     MusterRollResponse:
       type: object
       properties:

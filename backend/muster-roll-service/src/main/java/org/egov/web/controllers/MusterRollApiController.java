@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,7 +64,8 @@ public class MusterRollApiController {
     public ResponseEntity<MusterRollResponse> attendanceV1SearchPOST(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute MusterRollSearchCriteria searchCriteria) {
         List<MusterRoll> musterRolls = musterRollService.searchMusterRolls(requestInfoWrapper, searchCriteria);
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(musterRolls).build();
+        MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(musterRolls)
+                                                    .count(!CollectionUtils.isEmpty(musterRolls) ? musterRolls.size() : 0).build();
         return new ResponseEntity<MusterRollResponse>(musterRollResponse, HttpStatus.OK);
     }
 

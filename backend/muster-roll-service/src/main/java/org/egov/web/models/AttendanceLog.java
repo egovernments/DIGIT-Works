@@ -2,6 +2,7 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
+//import digit.models.coremodels.Document;
 import digit.models.coremodels.Document;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
@@ -24,13 +25,16 @@ import java.util.UUID;
 @Builder
 public class AttendanceLog {
     @JsonProperty("id")
-    private String id = null;
+    private UUID id = null;
 
     @JsonProperty("registerId")
     private String registerId = null;
 
     @JsonProperty("individualId")
-    private String individualId = null;
+    private UUID individualId = null;
+
+    @JsonProperty("tenantId")
+    private String tenantId =null;
 
     @JsonProperty("time")
     private Double time = null;
@@ -61,4 +65,3 @@ public class AttendanceLog {
     }
 
 }
-

@@ -12,8 +12,8 @@ import java.util.List;
 @Builder
 public class MusterRollSearchCriteria {
 
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("ids")
+    private List<String> ids;
 
     @JsonProperty("tenantId")
     private String tenantId;
@@ -35,6 +35,5 @@ public class MusterRollSearchCriteria {
 
     @JsonProperty("musterRollStatus")
     private String musterRollStatus;
-
 
 }

@@ -50,6 +50,9 @@ public class MusterRoll {
     @Valid
     private List<IndividualEntry> individualEntries = null;
 
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
+
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
 
