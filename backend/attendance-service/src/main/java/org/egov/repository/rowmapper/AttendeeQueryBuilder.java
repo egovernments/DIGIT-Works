@@ -21,16 +21,19 @@ public class AttendeeQueryBuilder {
     public String getAttendeeSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = new StringBuilder(FETCH_ATTENDANCE_REGISTER_QUERY);
 
+        List<String> ids = searchCriteria.getIds();
+        if (ids != null && !ids.isEmpty()) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" register.id IN (").append(createQuery(ids)).append(")");
+            addToPreparedStatement(preparedStmtList, ids);
+        }
+
         if (StringUtils.isNotBlank(searchCriteria.getTenantId())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" register.tenantid=? ");
             preparedStmtList.add(searchCriteria.getTenantId());
         }
-        if (StringUtils.isNotBlank(searchCriteria.getId())) {
-            addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" register.id=? ");
-            preparedStmtList.add(searchCriteria.getId());
-        }
+
         if (StringUtils.isNotBlank(searchCriteria.getRegisterNumber())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" register.registernumber=? ");
@@ -60,7 +63,7 @@ public class AttendeeQueryBuilder {
             preparedStmtList.add(searchCriteria.getToDate());
         }
 
-        //Get all the registers where the given Individual was registered.
+        //Get all the registers where the given Individual is registered.
         if (StringUtils.isNotBlank(searchCriteria.getAttendeeId())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" attendee.individual_id=? ");

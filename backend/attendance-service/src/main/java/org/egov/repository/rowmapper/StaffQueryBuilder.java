@@ -18,18 +18,14 @@ public class StaffQueryBuilder {
             "ON (register.id=staff.register_id) ";
 
 
-    public String getStaffSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, List<String> registerIds) {
+    public String getStaffSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = new StringBuilder(FETCH_ATTENDANCE_REGISTER_QUERY);
 
-        if (StringUtils.isNotBlank(searchCriteria.getId())) {
+        List<String> ids = searchCriteria.getIds();
+        if (ids != null && !ids.isEmpty()) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" register.id=? ");
-            preparedStmtList.add(searchCriteria.getId());
-        //if the search was based on attendeeId, fetch the staffs for those registers where the attendeeId is registered
-        } else if (registerIds != null && !registerIds.isEmpty()) {
-            addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" register.id IN (").append(createQuery(registerIds)).append(")");
-            addToPreparedStatement(preparedStmtList, registerIds);
+            queryBuilder.append(" register.id IN (").append(createQuery(ids)).append(")");
+            addToPreparedStatement(preparedStmtList, ids);
         }
 
         if (StringUtils.isNotBlank(searchCriteria.getTenantId())) {
@@ -64,6 +60,13 @@ public class StaffQueryBuilder {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" register.enddate=? ");
             preparedStmtList.add(searchCriteria.getToDate());
+        }
+
+        //Get all the registers where the given Staff is registered.
+        if (StringUtils.isNotBlank(searchCriteria.getStaffId())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" staff.individual_id=? ");
+            preparedStmtList.add(searchCriteria.getStaffId());
         }
 
         queryBuilder.append(" ORDER BY register.name ASC ");
