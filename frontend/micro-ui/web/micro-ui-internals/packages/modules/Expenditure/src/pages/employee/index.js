@@ -30,6 +30,7 @@ const App = ({ path }) => {
     const location = useLocation();
     const locationCheck =
         window.location.href.includes("/employee/ws/new-application");
+    const ViewBillsMenuComponent = Digit?.ComponentRegistryService?.getComponent("ViewBillsMenu");
     const getBreadCrumbStyles = (screenType) => {
         // Defining 4 types for now -> create,view,inbox,search
 

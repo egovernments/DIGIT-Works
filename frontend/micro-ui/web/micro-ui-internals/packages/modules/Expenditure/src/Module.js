@@ -4,6 +4,7 @@ import { useRouteMatch } from "react-router-dom";
 import EmployeeApp from "./pages/employee"
 import billInboxFilter from "./components/BillInbox/NewInboxFilter"
 import ExpenditureCard from "./components/ExpenditureCard";
+import ViewBillsMenu from "./pages/employee/viewBills/viewBillsMenu";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
     const moduleCode = ["Expenditure"];
@@ -25,7 +26,8 @@ const ExpenditureModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
     ExpenditureModule,
     billInboxFilter,
-    ExpenditureCard
+    ExpenditureCard,
+    ViewBillsMenu
 };
 
 export const initExpenditureComponents = () => {
