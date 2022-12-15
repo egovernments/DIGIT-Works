@@ -29,6 +29,17 @@ public class AttendanceServiceConfiguration {
     private String idgenAttendanceRegisterNumberName;
     @Value("${egov.idgen.attendance.register.number.format}")
     private String idgenAttendanceRegisterNumberFormat;
+    //MDMS
+    @Value("${egov.mdms.host}")
+    private String mdmsHost;
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsEndPoint;
+    //Topic
+    @Value("${attendance-register.kafka.create.topic}")
+    private String saveAttendanceRegisterTopic;
+    @Value("${attendance-register.kafka.update.topic}")
+    private String updateAttendanceRegisterTopic;
+
 
     @PostConstruct
     public void initialize() {
@@ -62,3 +73,5 @@ public class AttendanceServiceConfiguration {
     private Integer attendanceLogMaxLimit;
 
 }
+
+

@@ -5,6 +5,8 @@ import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 /**
  * AttendanceRegisterRequest
  */
@@ -21,7 +23,7 @@ public class AttendanceRegisterRequest {
     private RequestInfo requestInfo = null;
 
     @JsonProperty("attendanceRegister")
-    private AttendanceRegister attendanceRegister = null;
+    private List<AttendanceRegister> attendanceRegister = null;
 
 
 }
