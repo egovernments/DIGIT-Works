@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import org.egov.common.contract.response.ResponseInfo;
 import digit.models.coremodels.RequestInfoWrapper;
-import org.egov.service.AttendanceService;
+import org.egov.service.AttendanceRegisterService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterRequest;
@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.egov.web.models.AttendanceRegisterResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -38,13 +37,13 @@ public class AttendanceApiController {
     private ResponseInfoFactory responseInfoCreator;
 
     @Autowired
-    private AttendanceService attendanceService;
+    private AttendanceRegisterService attendanceRegisterService;
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> attendanceV1CreatePOST(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendanceRegisterRequest attendanceRegisterRequest) {
-        AttendanceRegisterRequest enrichedAttendanceRegisterRequest = attendanceService.createAttendanceRegister(attendanceRegisterRequest);
+        AttendanceRegisterRequest enrichedAttendanceRegisterRequest = attendanceRegisterService.createAttendanceRegister(attendanceRegisterRequest);
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceRegisterRequest.getRequestInfo(), true);
         AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(enrichedAttendanceRegisterRequest.getAttendanceRegister()).build();
@@ -53,7 +52,7 @@ public class AttendanceApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> attendanceV1SearchPOST(@Valid @ModelAttribute AttendanceRegisterSearchCriteria searchCriteria, @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-        List<AttendanceRegister> attendanceRegisterList = attendanceService.searchAttendanceRegister(requestInfoWrapper, searchCriteria);
+        List<AttendanceRegister> attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, searchCriteria);
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(attendanceRegisterList).build();
         return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse, HttpStatus.OK);
@@ -61,7 +60,7 @@ public class AttendanceApiController {
 
     @RequestMapping(value = "/_update", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> attendanceV1UpdatePOST(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendanceRegisterRequest attendanceRegisterRequest) {
-        AttendanceRegisterRequest enrichedAttendanceRegisterRequest = attendanceService.updateAttendanceRegister(attendanceRegisterRequest);
+        AttendanceRegisterRequest enrichedAttendanceRegisterRequest = attendanceRegisterService.updateAttendanceRegister(attendanceRegisterRequest);
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceRegisterRequest.getRequestInfo(), true);
         AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(enrichedAttendanceRegisterRequest.getAttendanceRegister()).build();

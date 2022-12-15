@@ -16,7 +16,7 @@ import java.util.*;
 
 @Service
 @Slf4j
-public class AttendanceService {
+public class AttendanceRegisterService {
     @Autowired
     private AttendanceServiceValidator attendanceServiceValidator;
 
