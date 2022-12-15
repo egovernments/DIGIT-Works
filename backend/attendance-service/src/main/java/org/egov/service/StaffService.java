@@ -42,7 +42,7 @@ public class StaffService {
         //TODO Returning Dummy Response
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
-        StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo).staff((StaffPermission) staffPermissionRequest.getStaff()).build();
+        StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo).staff(staffPermissionRequest.getStaff()).build();
         return staffPermissionResponse;
     }
     public StaffPermissionRequest createFirstStaff(RequestInfo requestInfo, List<AttendanceRegister> attendanceRegisters) {
