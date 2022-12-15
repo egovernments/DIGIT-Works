@@ -12,7 +12,7 @@ const MobileInbox = ({data, isLoading, isSearch, searchFields, onFilterChange, o
           {!isSearch && <ApplicationLinks classNameForMobileView="linksWrapperForMobileInbox" linkPrefix={parentRoute} isMobile={true} />}
           <ApplicationCard
             t={t}
-            data={data}
+            data={data.table}
             onFilterChange={onFilterChange}
             isLoading={isLoading}
             isSearch={isSearch}

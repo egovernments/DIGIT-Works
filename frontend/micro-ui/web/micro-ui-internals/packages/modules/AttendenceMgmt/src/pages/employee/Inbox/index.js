@@ -75,7 +75,7 @@ const Inbox = ({isInbox, parentRoute, filterComponent, searchComponent,initialSt
         handleSubmit(handleFilterChange)();
     }
     
-    const handleFilterChange = (filterParam) => { console.log('Write filter/search logic', filterParam);};
+    const handleFilterChange = (filterParam) => { };
     
     const getData = () => {
       if (dummyTableData?.length == 0 ) {

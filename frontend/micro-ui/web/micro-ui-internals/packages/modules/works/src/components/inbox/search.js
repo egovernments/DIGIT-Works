@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 const SearchApplication = ({type, onClose, onSearch, isFstpOperator, searchParams, searchFields, isInboxPage }) => {
   const { t } = useTranslation();
-  const { handleSubmit, reset, watch, control, register, formState } = useForm();
+  const { handleSubmit, reset, watch, control, register, formState,getValues } = useForm();
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data, isFetched } = Digit.Hooks.useCustomMDMS(
     tenant,
@@ -49,6 +49,13 @@ const SearchApplication = ({type, onClose, onSearch, isFstpOperator, searchParam
   };
 
   const clearSearch = () => {
+
+    let form = getValues();
+    for (var key in form) {
+      form[key] = ""
+    }
+    onSearch(form)
+
     reset({estimateNumber:"", department:"", typeOfWork:""});
   };
 

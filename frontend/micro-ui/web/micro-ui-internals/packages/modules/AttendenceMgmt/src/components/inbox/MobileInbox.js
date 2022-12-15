@@ -24,7 +24,7 @@ const MobileInbox = (props) => {
     }
 
     return data?.map((row) => ({
-        ["Muster Roll ID"]: (
+        [t("ATM_MUSTER_ROLL_ID")]: (
             <div>
                 <span className="link">
                   <Link to={`viewAttendance?mustorRollId=${row.mustorRollId}`}>
@@ -33,11 +33,11 @@ const MobileInbox = (props) => {
                 </span>
             </div> 
         ),
-        ["Name of the Work"]: row?.work || t("ES_COMMON_NA"),
-        ["Attendance Week"]: row.week || t("ES_COMMON_NA"),
-        ["IA/IP"]: row?.iaip || t("ES_COMMON_NA"),
-        ["Number of Individuals"]: row?.individualCount || t("ES_COMMON_NA"),
-        ["SLA (days)"]: row?.slaDays || t("ES_COMMON_NA"),
+        [t("WORKS_NAME_OF_WORK")]: row?.work || t("ES_COMMON_NA"),
+        [t("ATM_ATTENDANCE_WEEK")]: row.week || t("ES_COMMON_NA"),
+        [t("ATM_IA_AP")]: row?.iaip || t("ES_COMMON_NA"),
+        [t("ATM_NO_OF_INDIVIDUALS")]: row?.individualCount || t("ES_COMMON_NA"),
+        [t("ATM_SLA")]: row?.slaDays || t("ES_COMMON_NA"),
     }));
   }, [data]);
 
@@ -85,7 +85,7 @@ const MobileInbox = (props) => {
           <div className="searchBox">
             {isSearch && (
               <SearchAction
-                text="SEARCH"
+                text={t("CS_INBOX_SEARCH")}
                 handleActionClick={() => {
                   setType("SEARCH");
                   setPopup(true);
@@ -94,7 +94,7 @@ const MobileInbox = (props) => {
             )}
             {isFilter && (
               <FilterAction
-                text="FILTER"
+                text={t("ACTION_FILTER")}
                 handleActionClick={() => {
                   setType("FILTER");
                   setPopup(true);

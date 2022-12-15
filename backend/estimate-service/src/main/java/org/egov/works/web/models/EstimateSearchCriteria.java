@@ -1,5 +1,6 @@
 package org.egov.works.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -55,6 +56,9 @@ public class EstimateSearchCriteria {
     private Integer limit;
     @JsonProperty("offset")
     private Integer offset;
+
+    @JsonIgnore
+    private Boolean isCountCall = false;
 
 
     public enum SortOrder {

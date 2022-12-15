@@ -106,7 +106,7 @@ const SearchApplication = ({type, onClose, onSearch, isFstpOperator, searchParam
                     isRequired: false,
                     pattern: "^[a-zA-Z0-9-_\/]*$",
                     type: "text",
-                    title: t("ERR_INVALID_ESTIMATE_NO"),
+                    title: t("ERR_INVALID_CONTRACT_ID"),
                   })}
                 /> 
               </div>

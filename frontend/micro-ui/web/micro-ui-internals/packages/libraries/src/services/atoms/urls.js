@@ -5,6 +5,7 @@ const Urls = {
   localization: `/localization/messages/v1/_search`,
   location: {
     localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
+    wards: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Ward`,
     revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
   },
 
@@ -25,7 +26,7 @@ const Urls = {
   UserProfileUpdate: "/user/profile/_update",
   EmployeeSearch: "/egov-hrms/employees/_search",
 
-  InboxSearch: "/works-inbox-service/v1/_search",
+  InboxSearch: "/works-inbox-service/v2/_search",
 
   UserSearch: "/user/_search",
   UserLogout: "/user/_logout",

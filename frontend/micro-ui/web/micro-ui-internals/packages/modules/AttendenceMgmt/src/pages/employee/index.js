@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Switch, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -11,25 +10,24 @@ const AttendanceBreadCrumbs = ({ location }) => {
   const crumbs = [
     {
       path: "/works-ui/employee",
-      content: "AMP",
+      content: t("ATM_AMP"),
       show: true,
     },
     {
-      path: `${window.contextPath}/employee/attendencemgmt/inbox`,
-      content: fromScreen ? `${t(fromScreen)} / AM` : "AM",
+      path: `/${window.contextPath}/employee/attendencemgmt/inbox`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("ATM_AM")}` : t("ATM_AM"),
       show: location.pathname.includes("/attendencemgmt/inbox") ? true : false,
       isBack: fromScreen && true,
     },
     {
       path: `/${window.contextPath}/employee/attendencemgmt/view-attendance`,
-      content: fromScreen ? `${t(fromScreen)} / VIEW ATTENDANCE` : "VIEW ATTENDANCE",
+      content: fromScreen ? `${t(fromScreen)} / / ${t("ATM_VIEW_ATTENDENCE")}` : t("ATM_VIEW_ATTENDENCE"),
       show: location.pathname.includes("/attendencemgmt/view-attendance") ? true : false,
       isBack: fromScreen && true,
     },
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
-
-}
+};
 
 const App = ({ path }) => {
   const location = useLocation();
@@ -39,25 +37,19 @@ const App = ({ path }) => {
   return (
     <Switch>
       <AppContainer className="ground-container">
-          <React.Fragment>
-              <AttendanceBreadCrumbs location={location} />
-          </React.Fragment>
-          <PrivateRoute path={`${path}/view-attendance`} component={ViewAttendanceApp} />
-          <PrivateRoute 
-              path={`${path}/inbox`} 
-              component={ () => (
-                  <Inbox 
-                      isInbox 
-                      parentRoute={path}
-                      filterComponent="AttendenceInboxFilter" 
-                      searchComponent="AttendenceInboxSearch"
-                      initialStates={{}}
-                  />
-              )} />
+        <React.Fragment>
+          <AttendanceBreadCrumbs location={location} />
+        </React.Fragment>
+        <PrivateRoute path={`${path}/view-attendance`} component={ViewAttendanceApp} />
+        <PrivateRoute
+          path={`${path}/inbox`}
+          component={() => (
+            <Inbox isInbox parentRoute={path} filterComponent="AttendenceInboxFilter" searchComponent="AttendenceInboxSearch" initialStates={{}} />
+          )}
+        />
       </AppContainer>
     </Switch>
   );
 };
 
 export default App;
-
