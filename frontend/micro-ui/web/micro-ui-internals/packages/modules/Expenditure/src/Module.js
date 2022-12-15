@@ -5,6 +5,9 @@ import EmployeeApp from "./pages/employee"
 import billInboxFilter from "./components/BillInbox/NewInboxFilter"
 import ExpenditureCard from "./components/ExpenditureCard";
 import ViewBillsMenu from "./pages/employee/viewBills/viewBillsMenu";
+import ViewPOBills from "./pages/employee/viewBills/viewPOBills";
+import ViewSHGBills from "./pages/employee/viewBills/viewSHGBills";
+import ViewWOBills from "./pages/employee/viewBills/viewWOBills";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
     const moduleCode = ["Expenditure"];
@@ -27,7 +30,10 @@ const componentsToRegister = {
     ExpenditureModule,
     billInboxFilter,
     ExpenditureCard,
-    ViewBillsMenu
+    ViewBillsMenu,
+    ViewPOBills,
+    ViewSHGBills,
+    ViewWOBills
 };
 
 export const initExpenditureComponents = () => {

@@ -47,7 +47,7 @@ const ExpenditureCard = () => {
       },
       {
         label: t("EXP_VIEW_BILLS"),
-        link: `/${window?.contextPath}/employee/expenditure/view-bills`,
+        link: `/${window?.contextPath}/employee/expenditure/view-bills/menu`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       }
     ],
