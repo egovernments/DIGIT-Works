@@ -16,7 +16,7 @@ import LOIInbox from "./LOIInbox";
 import HandleDownloadPdf from "../../components/HandleDownloadPdf";
 import ModifyEstimate from "../../components/ModifyEstimate";
 import Checklist from "./Checklist/index";
-
+import ChecklistInbox from './ChecklistInbox'
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
 
@@ -151,6 +151,13 @@ const App = ({ path }) => {
               <Inbox parentRoute={path} businessService="WORKS" filterComponent="WORKS_INBOX_FILTER" initialStates={{}} isInbox={true} />
             )}
           />
+          <PrivateRoute
+            path={`${path}/checklistinbox`}
+            component={() => (
+              <ChecklistInbox parentRoute={path} businessService="WORKS" filterComponent="CHECKLIST_INBOX_FILTER" initialStates={{}} isInbox={true} />
+            )}
+          />
+          
           <PrivateRoute
             path={`${path}/LOIInbox`}
             component={() => (
