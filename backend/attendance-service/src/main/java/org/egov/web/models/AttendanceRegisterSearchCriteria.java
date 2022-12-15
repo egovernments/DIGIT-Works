@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,8 +22,8 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("ids")
+    private List<String> ids;
 
     @JsonProperty("registerNumber")
     private String registerNumber;
