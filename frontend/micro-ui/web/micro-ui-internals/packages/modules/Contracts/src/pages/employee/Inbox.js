@@ -5,33 +5,26 @@ import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 import { useForm, Controller } from "react-hook-form";
 
-const Inbox = ({
-  parentRoute,
-  businessService = "WORKS",
-  initialStates = {},
-  filterComponent,
-  isInbox
-}) => {
+const Inbox = ({ parentRoute, businessService = "WORKS", initialStates = {}, filterComponent, isInbox }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const [enableSarch, setEnableSearch] = useState(() => (isInbox ? {} : { enabled: false }));
   const [sortParams, setSortParams] = useState(initialStates?.sortParams || [{ id: "applicationDate", desc: false }]);
   const [setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState] = useState(false);
   const [searchParams, setSearchParams] = useState(() => {
-    return initialStates?.searchParams || {
-      offset: 0,
-      limit: 10,
-      sortBy: "department",
-      sortOrder: "DESC",
-    }
+    return (
+      initialStates?.searchParams || {
+        offset: 0,
+        limit: 10,
+        sortBy: "department",
+        sortOrder: "DESC",
+      }
+    );
   });
-  const [payload, setPayload] = useState({offset: 0,
-    limit: 10,
-    sortBy: "department",
-    sortOrder: "DESC",});
+  const [payload, setPayload] = useState({ offset: 0, limit: 10, sortBy: "department", sortOrder: "DESC" });
   const { register, control, handleSubmit, setValue, getValues } = useForm({
     defaultValues: {
-      offset: 0, 
+      offset: 0,
       limit: 10,
       sortBy: "department",
       sortOrder: "DESC",
@@ -46,9 +39,9 @@ const Inbox = ({
   const config = {
     enabled: !!(payload && Object.keys(payload).length > 0),
   };
-  
+
   //API Call useEstimateInbox
- const { isFetching, isLoading, data, ...rest }=Digit.Hooks.works.useInbox({
+  const { isFetching, isLoading, data, ...rest } = Digit.Hooks.works.useInbox({
     tenantId,
     _filters: payload,
     config: config,
@@ -67,28 +60,28 @@ const Inbox = ({
     setValue("sortOrder", args.desc ? "DESC" : "ASC");
   }, []);
 
-  const onPageSizeChange=(e)=> {
+  const onPageSizeChange = (e) => {
     setValue("limit", Number(e.target.value));
     handleSubmit(handleFilterChange)();
-  }
+  };
 
-  const nextPage=()=> {
+  const nextPage = () => {
     setValue("offset", getValues("offset") + getValues("limit"));
     handleSubmit(handleFilterChange)();
-  }
-  const previousPage=()=> {
+  };
+  const previousPage = () => {
     setValue("offset", getValues("offset") - getValues("limit"));
     handleSubmit(handleFilterChange)();
-  }
+  };
 
   const handleFilterChange = (filterParam) => {
     let _new = { ...searchParams, ...filterParam };
 
     setPayload(
       Object.keys(_new)
-      .filter((k) => _new[k])
-      .reduce((acc, key) => ({ ...acc, [key]: typeof _new[key] === "object" ? _new[key].code : _new[key] }), {})
-      );
+        .filter((k) => _new[k])
+        .reduce((acc, key) => ({ ...acc, [key]: typeof _new[key] === "object" ? _new[key].code : _new[key] }), {})
+    );
 
     setSetSearchFieldsBackToOriginalState(true);
     setSearchParams({ ..._new });
@@ -111,7 +104,7 @@ const Inbox = ({
         implementingAuthority: "Organisation",
         orgnName: "Maa Bhagavati SHG",
         officerIncharge: "S.A Bhasha",
-        agreemntAmount: "3553600.00",
+        agreemntAmount: "35,53,600.00",
         sla:"15 days",
         status:"Approved"
       }]
@@ -121,27 +114,21 @@ const Inbox = ({
     if (args.length === 0) return;
     setSortParams(args);
   }, []);
-  const { isLoading: hookLoading, isError, error, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
-    null,
-    tenantId,
-    paginationParams,
-    null
-);
-  
+  const { isLoading: hookLoading, isError, error, data: employeeData } = Digit.Hooks.hrms.useHRMSSearch(null, tenantId, paginationParams, null);
+
   const getData = () => {
-    if (result.data.contracts?.length == 0 ) {
-      return { display: "ES_COMMON_NO_DATA" }
+    if (result.data.contracts?.length == 0) {
+      return { display: "ES_COMMON_NO_DATA" };
     } else if (result?.data.contracts?.length > 0) {
-      return result?.data.contracts
+      return result?.data.contracts;
     } else {
       return [];
     }
-  }
+  };
 
   const isResultsOk = () => {
     return result?.data.contracts?.length > 0 ? true : false;
-  }
-  
+  };
 
   if (isMobile) {
     return (
@@ -164,7 +151,12 @@ const Inbox = ({
   } else {
     return (
       <div>
-        {isInbox && <Header>{t("WORKS_CONTRACTS_INBOX")}{result?.totalCount ? <p className="inbox-count">{result?.totalCount}</p> : null}</Header>}
+        {isInbox && (
+          <Header>
+            {t("WORKS_CONTRACTS_INBOX")}
+            {result?.totalCount ? <p className="inbox-count">{result?.totalCount}</p> : null}
+          </Header>
+        )}
 
         <DesktopInbox
           businessService={businessService}

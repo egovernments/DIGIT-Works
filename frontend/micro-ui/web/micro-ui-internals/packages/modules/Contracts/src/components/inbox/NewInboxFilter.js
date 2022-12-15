@@ -1,25 +1,28 @@
-import React, {useMemo} from "react";
-import { Dropdown, DatePicker, CloseSvg, SubmitBar, FilterIcon, RefreshIcon, TextInput} from "@egovernments/digit-ui-react-components";
+import React, {useMemo, useState} from "react";
+import { Dropdown, DatePicker, CloseSvg, SubmitBar, FilterIcon, RefreshIcon, TextInput, CardLabelError} from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { Controller, useForm} from 'react-hook-form'
 
 const Filter = ({ onFilterChange, ...props }) => {
   const { t } = useTranslation();
-  const {register,control,getValues,reset} = useForm()
+  const {register, control, getValues, reset, setValue, formState: { errors, ...rest }, trigger} = useForm()
   const currentContractType = useMemo(()=>[
     { code: "WORKS_WORK_ORDER", name: "WORKS_WORK_ORDER"},
     { code: "WORKS_PURCHASE_ORDER", name: "WORKS_PURCHASE_ORDER"}
-],[t])
-  
-  const applyLocalFilters = () => {
-    let form=getValues();
+  ],[t])
+  const [contractFromDate, setContractFromDate] = useState()
+  const applyLocalFilters = async () => {
+    const fieldsToValidate = ['fileNo','estimateId']
+    let form = await trigger(fieldsToValidate)
+    if (form){
     for(var key in form){
       if(form[key]=== undefined){
         delete form[key]
       }
     }
     onFilterChange(form)
+  }
   };
 
   const clearAll = () => {
@@ -69,7 +72,11 @@ const Filter = ({ onFilterChange, ...props }) => {
                   return (
                   <DatePicker 
                   date={props.value} 
-                  onChange={props.onChange}       
+                  onChange={(val)=>{
+                    props.onChange(val);
+                    setContractFromDate(val)
+                  }}
+                  max={Digit.Utils.date.getDate()}     
                   />
                   );
                 }}
@@ -86,8 +93,10 @@ const Filter = ({ onFilterChange, ...props }) => {
                 render={(props) => {
                   return (
                   <DatePicker 
+                  min={contractFromDate}  
                   date={props.value} 
-                  onChange={props.onChange}       
+                  onChange={props.onChange}
+                  max={Digit.Utils.date.getDate()}
                   />
                   );
                 }}
@@ -119,34 +128,32 @@ const Filter = ({ onFilterChange, ...props }) => {
               <div className="filter-label" style={{ fontWeight: "normal" }}>
                 {t("WORKS_FILE_NO")}:
               </div>
-              <TextInput 
+              <div className='field'>
+                <TextInput 
                   name="fileNo" 
-                  inputRef={register()} 
-                  {...(validation = {
-                    isRequired: false,
-                    pattern: "^[a-zA-Z0-9-_\/]*$",
-                    type: "text",
-                    title: t("ERR_INVALID_ESTIMATE_NO"),
-                  })}
+                  inputRef={register({ pattern: /^[a-zA-Z0-9-_\/]*$/ , required: true })}
+                  style={{"marginBottom":"4px"}}
                 />
+                  {errors && errors?.fileNo?.type === "pattern" && (
+                  <CardLabelError >{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+              </div>
             </div>
             <div>
-              <div className="filter-label" style={{ fontWeight: "normal" }}>
+              <div className="filter-label" style={{ fontWeight: "normal", marginTop:"20px" }}>
                 {t("WORKS_ESTIMATE_ID")}:
               </div>
-              <TextInput 
+              <div className='field'>
+                <TextInput
                   name="estimateId" 
-                  inputRef={register()} 
-                  {...(validation = {
-                    isRequired: false,
-                    pattern: "^[a-zA-Z0-9-_\/]*$",
-                    type: "text",
-                    title: t("ERR_INVALID_ESTIMATE_NO"),
-                  })}
+                  inputRef={register({ pattern: /^[a-zA-Z0-9-_\/]*$/ })}
+                  style={{"marginBottom":"4px"}}
                 />
+                  {errors && errors?.estimateId?.type === "pattern" && (
+                  <CardLabelError >{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+              </div>
             </div>
             <div>
-              <SubmitBar onSubmit={() => applyLocalFilters()} label={t("WORKS_COMMON_APPLY")} />
+              <SubmitBar onSubmit={() => applyLocalFilters()} label={t("WORKS_COMMON_APPLY")} style={{marginTop:"20px"}}/>
             </div>
           </div>
         </div>

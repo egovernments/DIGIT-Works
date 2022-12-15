@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const TextInput = (props) => {
   const user_type = Digit.SessionStorage.get("userType");
-  const [date, setDate] = useState();
+  const [date, setDate] = useState(props?.type==="date"&&props?.value);
   const data = props?.watch
     ? {
         fromDate: props?.watch("fromDate"),

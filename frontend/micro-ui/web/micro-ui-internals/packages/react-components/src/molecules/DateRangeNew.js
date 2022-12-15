@@ -14,7 +14,7 @@ function isStartDateFocused(focusNumber) {
     return focusNumber === 0;
 }
 
-const DateRangeNew = ({ values, onFilterChange, t, labelClass }) => {
+const DateRangeNew = ({ values, onFilterChange, t, labelClass, label, customStyles}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [focusedRange, setFocusedRange] = useState([0, 0]);
     const [selectionRange, setSelectionRange] = useState({
@@ -136,14 +136,14 @@ const DateRangeNew = ({ values, onFilterChange, t, labelClass }) => {
 
     return (
         <>
-            <div className="filter-label" style={{"marginBottom":"1rem"}}>{t(`ES_DSS_DATE_RANGE`)}</div>
+            <div className="filter-label" style={{"marginBottom":"1rem", ...customStyles}}>{label ? label : t(`ES_DSS_DATE_RANGE`)}</div>
             <div className="employee-select-wrap" style={{ "marginBottom": "0" }}  ref={wrapperRef}>
                 <div className="select">
                     <input className="employee-select-wrap--elipses" type="text" value={values?.title ? `${values?.title}` : ""} readOnly />
                     <Calender className="cursorPointer" onClick={() => setIsModalOpen((prevState) => !prevState)} />
                 </div>
                 {isModalOpen && (
-                    <div className="options-card" style={{ overflow: "visible", width: "unset", maxWidth: "fit-content" }}>
+                    <div className="options-card" style={{ overflow: "visible", width: "unset"}}>
                         <DateRange
                             className="pickerShadow"
                             focusedRange={focusedRange}

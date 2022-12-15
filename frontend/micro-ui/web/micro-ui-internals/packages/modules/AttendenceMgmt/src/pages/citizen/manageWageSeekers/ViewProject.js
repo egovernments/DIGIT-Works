@@ -98,7 +98,6 @@ const ViewProject = ({isLoading=false,resultOk=true,data={}}) => {
 
   const handleSubmit = () => {
     setShowToast({ label: "ATM_WAGE_SEEKERS_ADDED" });
-    console.log("project submitted, wage seekers added");
   }
 
   const closeToast = () => {

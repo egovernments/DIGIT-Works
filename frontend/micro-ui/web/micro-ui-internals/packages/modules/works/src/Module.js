@@ -28,7 +28,7 @@ const WorksModule = ({ stateCode, userType, tenants }) => {
 };
 
 const componentsToRegister = {
-  WorksCard,
+  WorkCard:WorksCard,
   WorksModule,
   SearchEstimateApplication,
   SearchApprovedSubEs,
