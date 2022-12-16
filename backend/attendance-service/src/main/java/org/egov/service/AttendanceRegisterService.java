@@ -2,10 +2,9 @@ package org.egov.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
-import org.egov.producer.Producer;
-import org.egov.repository.AttendanceRepository;
+import org.egov.enrichment.RegisterEnrichment;
+import org.egov.kafka.Producer;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -32,10 +30,8 @@ public class AttendanceRegisterService {
     private AttendanceServiceConfiguration attendanceServiceConfiguration;
 
     @Autowired
-    private EnrichementService enrichementService;
+    private RegisterEnrichment registerEnrichment;
 
-    @Autowired
-    private AttendanceRepository repository;
 
     @Autowired
     private StaffService staffService;
@@ -48,10 +44,10 @@ public class AttendanceRegisterService {
      */
     public AttendanceRegisterRequest createAttendanceRegister(AttendanceRegisterRequest request) {
         attendanceServiceValidator.validateCreateAttendanceRegister(request);
-        enrichementService.enrichCreateAttendanceRegister(request);
-        StaffPermissionRequest staffPermissionResponse = staffService.createFirstStaff(request.getRequestInfo(), request.getAttendanceRegister());
-        enrichementService.enrichStaffInRegister(request.getAttendanceRegister(), staffPermissionResponse);
-        producer.push(attendanceServiceConfiguration.getSaveAttendanceRegisterTopic(), request);
+        registerEnrichment.enrichCreateAttendanceRegister(request);
+//        StaffPermissionRequest staffPermissionResponse = staffService.createFirstStaff(request.getRequestInfo(), request.getAttendanceRegister());
+//        registerEnrichment.enrichStaffInRegister(request.getAttendanceRegister(), staffPermissionResponse);
+//        producer.push(attendanceServiceConfiguration.getSaveAttendanceRegisterTopic(), request);
         return request;
     }
 
@@ -65,8 +61,9 @@ public class AttendanceRegisterService {
     public List<AttendanceRegister> searchAttendanceRegister(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
 
         attendanceServiceValidator.validateSearchEstimate(requestInfoWrapper,searchCriteria);
-        List<AttendanceRegister> attendanceRegisterList = repository.getAttendanceRegister(searchCriteria);
-        return attendanceRegisterList;
+//        List<AttendanceRegister> attendanceRegisterList = repository.getAttendanceRegister(searchCriteria);
+//        return attendanceRegisterList;
+        return null;
     }
 
     /**
@@ -79,7 +76,7 @@ public class AttendanceRegisterService {
         attendanceServiceValidator.validateUpdateAttendanceRegisterRequest(attendanceRegisterRequest);
         List<AttendanceRegister> attendanceRegistersFromDB = getAttendanceRegisters(attendanceRegisterRequest);
         attendanceServiceValidator.validateUpdateAgainstDB(attendanceRegisterRequest, attendanceRegistersFromDB);
-        enrichementService.enrichUpdateAttendanceRegister(attendanceRegisterRequest, attendanceRegistersFromDB);
+        registerEnrichment.enrichUpdateAttendanceRegister(attendanceRegisterRequest, attendanceRegistersFromDB);
         producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
 
         return attendanceRegisterRequest;

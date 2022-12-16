@@ -4,7 +4,6 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.repository.AttendanceRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MDMSUtils;
 import org.egov.web.models.AttendanceRegister;
@@ -23,9 +22,6 @@ import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
 @Component
 @Slf4j
 public class AttendanceServiceValidator {
-
-    @Autowired
-    private AttendanceRepository attendanceRepository;
 
     @Autowired
     private MDMSUtils mdmsUtils;

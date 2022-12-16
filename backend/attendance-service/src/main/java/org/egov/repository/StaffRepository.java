@@ -1,6 +1,7 @@
 package org.egov.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.repository.querybuilder.StaffQueryBuilder;
 import org.egov.repository.rowmapper.StaffRowMapper;
 import org.egov.web.models.AttendanceStaffSearchCriteria;
 import org.egov.web.models.StaffPermission;
@@ -30,9 +31,9 @@ public class StaffRepository {
         return attendanceStaffList;
     }
 
-    public List<StaffPermission> getStaffFromRegisterIdsAndIndividualIds(AttendanceStaffSearchCriteria searchCriteria) {
+    public List<StaffPermission> getAllStaff(AttendanceStaffSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getAttendanceStaffFromRegisterIdsAndIndividualIds(searchCriteria, preparedStmtList);
+        String query = queryBuilder.getAttendanceStaffFromRegistersSearchQuery(searchCriteria, preparedStmtList);
         List<StaffPermission> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return attendanceStaffList;
     }

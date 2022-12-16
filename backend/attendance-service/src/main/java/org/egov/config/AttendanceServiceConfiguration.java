@@ -41,11 +41,6 @@ public class AttendanceServiceConfiguration {
     private String updateAttendanceRegisterTopic;
 
 
-    //MDMS
-    @Value("${egov.mdms.host}")
-    private String mdmsHost;
-    @Value("${egov.mdms.search.endpoint}")
-    private String mdmsEndPoint;
 
     //Topic
     @Value("${staff.kafka.create.topic}")

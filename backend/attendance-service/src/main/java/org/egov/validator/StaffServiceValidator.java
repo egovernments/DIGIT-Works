@@ -3,9 +3,10 @@ package org.egov.validator;
 import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.service.AttendanceService;
+import org.egov.service.AttendanceRegisterService;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MDMSUtils;
 import org.egov.web.models.AttendanceRegister;
@@ -31,102 +32,58 @@ public class StaffServiceValidator {
     private MDMSUtils mdmsUtils;
 
     @Autowired
-    private AttendanceService attendanceService;
-
-    @Autowired
-    private AttendanceRepository attendanceRepository;
+    private AttendanceRegisterService attendanceRegisterService;
 
 
 
-    public void validateCreateStaffPermission(StaffPermissionRequest request,List<StaffPermission> staffPermissionList
-            ,List<AttendanceRegister> attendanceRegisterList) {
+    public void validateCreateStaffPermission(StaffPermissionRequest request,List<StaffPermission> staffPermissionListFromDB
+            ,List<AttendanceRegister> attendanceRegisterListFromDB) {
         RequestInfo requestInfo=request.getRequestInfo();
+        List<StaffPermission> staffPermissionListFromRequest=request.getStaffPermissionList();
         Map<String, String> errorMap = new HashMap<>();
 
-            String rootTenantId = staffPermissionList.get(0).getTenantId();
+            String rootTenantId = staffPermissionListFromRequest.get(0).getTenantId();
             //split the tenantId
             rootTenantId = rootTenantId.split("\\.")[0];
 
             Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
 
             //check tenant Id
-            validateMDMSData(staffPermissionList.get(0), mdmsData, errorMap);
+            validateMDMSData(staffPermissionListFromRequest.get(0), mdmsData, errorMap);
 
 
             //validate request-info
             validateRequestInfo(requestInfo, errorMap);
 
+
             //check staff-request
-            validateCreateStaffPermission(staffPermissionList,attendanceRegisterList, errorMap);
+            validateCreateStaffPermission(request,staffPermissionListFromDB,attendanceRegisterListFromDB, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
 
-    public void validateCreateStaffPermissionRequestParameters(StaffPermissionRequest staffPermissionRequest){
-        List<StaffPermission> staffPermissionList = staffPermissionRequest.getStaffPermissionList();
-
-        //validate if all staff in the list have the same tenant id
-        String baseTenantId=staffPermissionList.get(0).getTenantId();
-        for(StaffPermission staffPermission:staffPermissionList) {
-            if (StringUtils.isBlank(staffPermission.getTenantId())) {
-                throw new CustomException("TENANT_ID", "Tenant id is mandatory");
-            }
-            if (!staffPermission.getTenantId().equals(baseTenantId)) {
-                throw new CustomException("TENANT_ID", "All Staff to be enrolled must have the same tenant id. Please raise new request for different tenant id");
-            }
-        }
-
-        //validate request parameters for each staff object
-        for (StaffPermission staffPermission : staffPermissionList) {
-            if (staffPermission == null) {
-                throw new CustomException("STAFF", "Staff is mandatory");
-            }
-            if (StringUtils.isBlank(staffPermission.getRegisterId())) {
-                throw new CustomException("REGISTER_ID", "Register id is mandatory");
-            }
-
-            if (StringUtils.isBlank(staffPermission.getUserId())) {
-                throw new CustomException("USER_ID", "User id is mandatory");
-            }
-
-        }
-    }
-
-    public void validateDeleteStaffPermission(StaffPermissionRequest request) {
+    public void validateDeleteStaffPermission(StaffPermissionRequest request,List<StaffPermission> staffPermissionListFromDB
+            ,List<AttendanceRegister> attendanceRegisterListFromDB) {
         Map<String, String> errorMap = new HashMap<>();
-        List<StaffPermission> staffPermissionList = request.getStaffPermissionList();
         RequestInfo requestInfo = request.getRequestInfo();
+        List<StaffPermission> staffPermissionListFromRequest=request.getStaffPermissionList();
 
-
-        //validate if all staff in the list have the same tenant id
-        String baseTenantId=staffPermissionList.get(0).getTenantId();
-        for(StaffPermission staffPermission:staffPermissionList) {
-            if (StringUtils.isBlank(staffPermission.getTenantId())) {
-                throw new CustomException("TENANT_ID", "Tenant id is mandatory");
-            }
-            if (!staffPermission.getTenantId().equals(baseTenantId)) {
-                throw new CustomException("TENANT_ID", "All Staff to be deenrolled must have the same tenant id. Please raise new request for different tenant id");
-            }
-        }
-
-        String rootTenantId = staffPermissionList.get(0).getTenantId();
+        String rootTenantId = staffPermissionListFromRequest.get(0).getTenantId();
         //split the tenantId
         rootTenantId = rootTenantId.split("\\.")[0];
 
         Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
 
         //check tenant Id
-        validateMDMSData(staffPermissionList.get(0), mdmsData, errorMap);
+        validateMDMSData(staffPermissionListFromRequest.get(0), mdmsData, errorMap);
 
 
         //validate request-info
         validateRequestInfo(requestInfo, errorMap);
 
         //check staff-request
-        validateDeleteStaffPermission(request, errorMap);
-
-
+        validateDeleteStaffPermission(request,staffPermissionListFromDB,attendanceRegisterListFromDB, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -147,55 +104,16 @@ public class StaffServiceValidator {
         }
     }
 
-    private void validateCreateStaffPermission(List<StaffPermission> staffPermissionList, List<AttendanceRegister> attendanceRegisterList,
-                                               Map<String, String> errorMap) {
 
-        //check if the register id exists
-
-        // check if staff tenant id is same as register tenant id
-        /*if (!getAttendanceRegisters.get(0).getTenantId().equals(staffPermissionList.get(0).getTenantId()))
-            throw new CustomException("TENANT_ID", "Staff tenant id is not same as register tenant id");*/
-
-        // staff cannot be added to register if register's end date has passed
-        Date currentDT = new Date();
-        BigDecimal enrollmentDate = new BigDecimal(currentDT.getTime());
-        for (AttendanceRegister attendanceRegister : attendanceRegisterList) {
-
-            int dateComparisonResult = attendanceRegister.getEndDate().compareTo(enrollmentDate.doubleValue());
-            if (dateComparisonResult < 0) {
-                throw new CustomException("END_DATE", "Staff cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
-            }
-        }
-
-
-            //check is staff user id exists in staff table for the given register id. If yes check the deenrollment date
-            List<StaffPermission> staffPermissionListForAttendanceRegister = attendanceRegister.getStaff();
-            if (staffPermissionListForAttendanceRegister != null) {
-                for (StaffPermission staffPermission : staffPermissionList) {//list of staff from request
-                    for (StaffPermission staff : staffPermissionListForAttendanceRegister) {  //list of staff from searched register
-                        if (staff.getUserId().equals(staffPermission.getUserId()) && attendanceRegister.getId().toString().equals(staffPermission.getRegisterId())) {
-                            if (staff.getDenrollmentDate() == null) {
-                                throw new CustomException("USER_id", "Staff is already enrolled in the register");
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-    }
-
-
-    private void validateDeleteStaffPermission(StaffPermissionRequest staffPermissionRequest, Map<String, String> errorMap) {
-        RequestInfo requestInfo = staffPermissionRequest.getRequestInfo();
+    public void validateStaffPermissionRequestParameters(StaffPermissionRequest staffPermissionRequest){
         List<StaffPermission> staffPermissionList = staffPermissionRequest.getStaffPermissionList();
-        Set<String> registerIds = new HashSet<>();
 
-        boolean staff_exists = false;
-        boolean staff_deenrolled = true;
+        String baseTenantId=staffPermissionList.get(0).getTenantId();
+        for(StaffPermission staffPermission:staffPermissionList) {
 
-        for (StaffPermission staffPermission : staffPermissionList) {
-            if (staffPermission == null) {
+            //validate request parameters for each staff object
+
+            if (ObjectUtils.isEmpty(staffPermission)) {
                 throw new CustomException("STAFF", "Staff is mandatory");
             }
             if (StringUtils.isBlank(staffPermission.getRegisterId())) {
@@ -206,55 +124,144 @@ public class StaffServiceValidator {
                 throw new CustomException("USER_ID", "User id is mandatory");
             }
 
-            registerIds.add(staffPermission.getRegisterId());
+            if (StringUtils.isBlank(staffPermission.getTenantId())) {
+                throw new CustomException("TENANT_ID", "Tenant id is mandatory");
+            }
+
+            //validate if all staff in the list have the same tenant id
+            if (!staffPermission.getTenantId().equals(baseTenantId)) {
+                throw new CustomException("TENANT_ID", "All Staff to be enrolled or de enrolled must have the same tenant id. Please raise new request for different tenant id");
+            }
+
         }
 
-        AttendanceRegisterSearchCriteria criteria = AttendanceRegisterSearchCriteria.builder().ids(registerIds)
-                .tenantId(staffPermissionList.get(0).getTenantId()).build();
-
-        //check if Staff user id exists in staff registry //TODO after staff registry implementation
-/*        try{
-            UUID uuid=UUID.fromString(staffPermission.getUserId());
-
-        } catch (IllegalArgumentException exception){
-            throw new CustomException("USER_ID", "USER_ID is not in UUID format");
-        }*/
-
-
-        //check if the register id exists
-        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-        List<AttendanceRegister> getAttendanceRegisters = attendanceService.searchAttendanceRegister(requestInfoWrapper, criteria);
-        if (getAttendanceRegisters.size() == 0) {
-            throw new CustomException("REGISTER_ID", "Attendance Registers with given register ids does not exist for tenantId");
+        //check for duplicate staff objects (with same registerId and userId)
+        //1. create unique identity list
+        //2. check for duplicate entries
+        List<String> uniqueIds=new ArrayList<>();
+        for(StaffPermission staffPermission:staffPermissionList){
+            uniqueIds.add(staffPermission.getRegisterId()+" "+staffPermission.getUserId());
         }
-//        AttendanceRegister attendanceRegister= getAttendanceRegisters.get(0);
-
-        for (AttendanceRegister attendanceRegister : getAttendanceRegisters) {
-            //check is staff user id exists in staff table. If yes check if the deenrollment date is not null
-            List<StaffPermission> staffPermissionListForAttendanceRegister = attendanceRegister.getStaff();
-            if (staffPermissionListForAttendanceRegister != null) {
-                for (StaffPermission staffFromRequest : staffPermissionList) {
-                    for (StaffPermission staffForAttendanceRegister : staffPermissionListForAttendanceRegister) {
-                        if (staffFromRequest.getUserId().equals(staffForAttendanceRegister.getUserId())) {
-                            staff_exists = true;
-                            if (staffForAttendanceRegister.getDenrollmentDate() == null) {
-                                staff_deenrolled = false;
-                                break;
-                            }
-                        }
-                        if (!staff_exists)
-                            throw new CustomException("USER_ID", "Staff with the given user id is not linked with the given register id");
-                        if (staff_deenrolled)
-                            throw new CustomException("USER_ID", "Staff with the given user id is already de enrolled from the register");
-                        if (staffPermissionList.size() <= 1)
-                            errorMap.put("MIN_STAFF_REQUIRED", "Atleast one staff should be associated" +
-                                    "with the register. Current number of staff in register : " + staffPermissionList.size());
-                    }
-                }
+        for(String id:uniqueIds){
+            long count = uniqueIds.stream().filter(uniqueId -> id.equals(uniqueId)).count();
+            if(count>1){
+                throw new CustomException("STAFF", "Duplicate Staff Objects present in request");
             }
         }
     }
 
+    private void validateCreateStaffPermission(StaffPermissionRequest request,List<StaffPermission> staffPermissionListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB,
+                                               Map<String, String> errorMap) {
+        List<StaffPermission> staffPermissionListFromRequest=request.getStaffPermissionList();
+
+        // check if staff tenant id is same as register tenant id
+        for(AttendanceRegister attendanceRegister:attendanceRegisterListFromDB){
+            for(StaffPermission staffFromRequest:staffPermissionListFromRequest){
+                if(!staffFromRequest.getTenantId().equals(attendanceRegister.getTenantId())){
+                    throw new CustomException("TENANT_ID"
+                            , "Staff TENANT_ID for staff : "+staffFromRequest.getUserId()+" is not same as TENANT_ID of register");
+                }
+            }
+        }
+
+        // staff cannot be added to register if register's end date has passed
+        Date currentDT = new Date();
+        BigDecimal enrollmentDate = new BigDecimal(currentDT.getTime());
+        for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
+
+            int dateComparisonResult = attendanceRegister.getEndDate().compareTo(enrollmentDate.doubleValue());
+            if (dateComparisonResult < 0) {
+                throw new CustomException("END_DATE", "Staff cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
+            }
+        }
+
+        //check is staff user id exists in staff table for the given register id. If yes check the deenrollment date
+        if (staffPermissionListFromDB != null) {
+            for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {//list of staff from request
+                for (StaffPermission staffFromDB : staffPermissionListFromDB) {  //list of staff from DB
+                    if (staffFromRequest.getUserId().equals(staffFromDB.getUserId()) && staffFromRequest.getRegisterId().equals(staffFromDB.getRegisterId())) {
+                        if (staffFromDB.getDenrollmentDate() == 0) {
+                            throw new CustomException("USER_id", "Staff "+staffFromDB.getUserId()+" is already enrolled in the register "+staffFromDB.getRegisterId());
+                        }
+                    }
+                }
+            }
+        }
+
+        }
+
+
+
+    private void validateDeleteStaffPermission(StaffPermissionRequest staffPermissionRequest
+            ,List<StaffPermission> staffPermissionListFromDB,List<AttendanceRegister>attendanceRegisterListFromDB, Map<String, String> errorMap) {
+        RequestInfo requestInfo = staffPermissionRequest.getRequestInfo();
+        List<StaffPermission> staffPermissionListFromRequest = staffPermissionRequest.getStaffPermissionList();
+
+        boolean staffExists = false;
+        boolean staffDeenrolled = true;
+
+
+        //check is staff user id exists in staff table. If yes check if the de enrollment date is not null
+        for (StaffPermission staffPermissionFromRequest : staffPermissionListFromRequest) {
+            for (StaffPermission staffPermissionFromDB : staffPermissionListFromDB) {
+                if (staffPermissionFromRequest.getRegisterId().equals(staffPermissionFromDB.getRegisterId()) &&
+                        staffPermissionFromRequest.getUserId().equals(staffPermissionFromDB.getUserId())) {
+                    staffExists = true;
+                    if (staffPermissionFromDB.getDenrollmentDate() == 0) {
+                        staffDeenrolled = false;
+                        break;
+                    }
+                }
+            }
+            if (!staffExists)
+                throw new CustomException("USER_ID", "Staff with the given user id: "+staffPermissionFromRequest.getUserId()+" is not linked with the given register id");//handled
+            if (staffDeenrolled)
+                throw new CustomException("USER_ID", "Staff with the given user id : "+staffPermissionFromRequest.getUserId()+" is already de enrolled from the register");
+        }
+
+
+        //staff list size associated with the register (At least one staff should remain with a register before de enrollment)
+        //initialize request and DB hashmaps with registerId as key
+        HashMap<String,Integer> staffCountInEachRegisterIdFromRequest=new HashMap<>();
+        HashMap<String,Integer> staffCountInEachRegisterIdFromDB=new HashMap<>();
+        for(AttendanceRegister attendanceRegister:attendanceRegisterListFromDB){
+           staffCountInEachRegisterIdFromRequest.put(attendanceRegister.getId().toString(),0);
+           staffCountInEachRegisterIdFromDB.put(attendanceRegister.getId().toString(),0);
+        }
+
+
+        //<registerId,staffCount> from staffRequest - number of de enrollments from each register
+        for(StaffPermission staffPermissionFromRequest:staffPermissionListFromRequest){
+            String staffRegisterId=staffPermissionFromRequest.getRegisterId().toString();
+            if(staffCountInEachRegisterIdFromRequest.containsKey(staffRegisterId)){
+                int count=staffCountInEachRegisterIdFromRequest.get(staffRegisterId);
+                count++;
+                staffCountInEachRegisterIdFromRequest.put(staffRegisterId,count);
+            }
+        }
+
+
+        //<registerId,staffCount> from StaffDB data number od staff enrolled to each register in db
+        for(StaffPermission staffPermissionFromDB : staffPermissionListFromDB){
+            String staffRegisterId=staffPermissionFromDB.getRegisterId().toString();
+            if(staffCountInEachRegisterIdFromDB.containsKey(staffRegisterId) && staffPermissionFromDB.getDenrollmentDate()==0){
+                int count=staffCountInEachRegisterIdFromDB.get(staffRegisterId);
+                count++;
+                staffCountInEachRegisterIdFromDB.put(staffRegisterId,count);
+            }
+        }
+
+        //match the regitser ids between request and db. subtract the staff, If <1 throw error
+        for(String registerId:staffCountInEachRegisterIdFromRequest.keySet()){
+            if(staffCountInEachRegisterIdFromDB.containsKey(registerId)){
+                int result=staffCountInEachRegisterIdFromDB.get(registerId)-staffCountInEachRegisterIdFromRequest.get(registerId);
+                if(result<1){
+                    throw new CustomException("MIN_STAFF_REQUIRED", "Atleast one staff should be associated" +
+                            "with the register. Number of staff in register id : "+registerId+" after de enrollment operation would be "+result);
+                }
+            }
+        }
+    }
 
 
     private void validateMDMSData(StaffPermission staffPermission, Object mdmsData, Map<String, String> errorMap) {

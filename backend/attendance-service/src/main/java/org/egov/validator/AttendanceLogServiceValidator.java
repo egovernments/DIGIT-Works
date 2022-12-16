@@ -246,7 +246,7 @@ public class AttendanceLogServiceValidator {
         AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria
                 .builder()
                 .tenantId(tenantId)
-                .id(registerId)
+                .ids(Collections.singletonList(registerId))
                 .build();
         List<AttendanceRegister> attendanceRegister = attendanceRegisterRepository.getRegister(searchCriteria);
         if(attendanceRegister == null || attendanceRegister.isEmpty()){
@@ -257,8 +257,8 @@ public class AttendanceLogServiceValidator {
     private void validateLoggedInUser(String userUUID,String registerId){
         AttendanceStaffSearchCriteria searchCriteria = AttendanceStaffSearchCriteria
                 .builder()
-                .individualId(userUUID)
-                .registerId(registerId)
+                .individualIds(Collections.singletonList(userUUID))
+                .registerIds(Collections.singletonList(registerId))
                 .build();
         List<StaffPermission> attendanceStaff = attendanceStaffRepository.getActiveStaff(searchCriteria);
         if(attendanceStaff == null || attendanceStaff.isEmpty()){

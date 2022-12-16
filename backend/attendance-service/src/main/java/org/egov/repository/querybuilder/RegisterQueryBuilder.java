@@ -36,7 +36,7 @@ public class RegisterQueryBuilder {
             List<String> registerIds=searchCriteria.getIds();
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.id IN (").append(createQuery(registerIds)).append(")");
-            preparedStmtList.add(registerIds);
+            preparedStmtList.addAll(registerIds);
         }
 
         return query.toString();

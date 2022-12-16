@@ -1,10 +1,9 @@
-package org.egov.service;
+package org.egov.enrichment;
 
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
-import org.egov.repository.AttendanceRepository;
 import org.egov.repository.IdGenRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.AttendanceServiceUtil;
@@ -13,13 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class EnrichementService {
+public class RegisterEnrichment {
 
     @Autowired
     private AttendanceServiceUtil attendanceServiceUtil;
@@ -27,8 +25,7 @@ public class EnrichementService {
     private IdGenRepository idGenRepository;
     @Autowired
     private AttendanceServiceConfiguration config;
-    @Autowired
-    private AttendanceRepository attendanceRepository;
+
 
     public void enrichCreateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
         RequestInfo requestInfo = attendanceRegisterRequest.getRequestInfo();
@@ -69,7 +66,7 @@ public class EnrichementService {
     public void enrichStaffInRegister(List<AttendanceRegister> attendanceRegisters, StaffPermissionRequest staffPermissionResponse) {
         for (AttendanceRegister attendanceRegister: attendanceRegisters) {
             String registerId = String.valueOf(attendanceRegister.getId());
-            List<StaffPermission> staff = staffPermissionResponse.getStaff().stream().filter(st -> registerId.equals(st.getRegisterId())).collect(Collectors.toList());
+            List<StaffPermission> staff = staffPermissionResponse.getStaffPermissionList().stream().filter(st -> registerId.equals(st.getRegisterId())).collect(Collectors.toList());
             attendanceRegister.setStaff(staff);
         }
     }
