@@ -118,24 +118,18 @@ public class StaffService {
 
     public List<AttendanceRegister> getAttendanceRegisterList(List<String> registerIds,List<StaffPermission> staffPermissionList,String tenantId){
 
-        Set<String> uniqueRegisterIds=new HashSet<>(registerIds);
-        boolean register_exists=false;
+        Set<String> uniqueRegisterIdsFromRequest=new HashSet<>(registerIds);
+
         AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria=AttendanceRegisterSearchCriteria
                 .builder().ids(registerIds).tenantId(tenantId).build();
+
         List<AttendanceRegister> attendanceRegisterList=registerRepository.getRegister(attendanceRegisterSearchCriteria);
 
-        List<String> registerIdsFromDB=attendanceRegisterList.stream().map(register->register.getId().toString())
-                .collect(Collectors.toList());
+        Set<String> uniqueRegisterIdsFromDB= attendanceRegisterList.stream().map(register -> register.getId().toString()).collect(Collectors.toSet());
 
-        //check if all register ids exist in db
-        for(String idFromRequest:uniqueRegisterIds){
-            for(String idFromDB:registerIdsFromDB){
-                if(idFromRequest.equals(idFromDB)){
-                    register_exists=true;
-                    break;
-                }
-            }
-            if(!register_exists){
+        //check if all register ids from request exist in db
+        for(String idFromRequest:uniqueRegisterIdsFromRequest){
+            if(!uniqueRegisterIdsFromDB.contains(idFromRequest)){
                 throw new CustomException("REGISTER_ID", "Attendance Registers with register id : "+idFromRequest+" does not exist for tenantId");
             }
         }
