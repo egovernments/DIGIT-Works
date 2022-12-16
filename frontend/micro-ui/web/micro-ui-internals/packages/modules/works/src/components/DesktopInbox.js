@@ -12,7 +12,7 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
   const { t } = useTranslation();
   const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));
   const GetCell = (value) => <span className="cell-text">{value}</span>;
-
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const GetMobCell = (value) => <span className="sla-cell">{value}</span>;
     const inboxColumns = useMemo(
       () => [
@@ -27,7 +27,7 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
                 {row.original?.estimateNumber ? (
                   <span className={"link"}>
                     <Link
-                      to={`view-estimate?tenantId=${row.original?.tenantId}&estimateNumber=${row.original?.estimateNumber}`}>
+                      to={`view-estimate?tenantId=${tenantId}&estimateNumber=${row.original?.estimateNumber}`}>
                       {row.original?.estimateNumber || "NA"}
                     </Link>
                   </span> 
@@ -39,7 +39,7 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
         {
           Header: t("WORKS_DEPARTMENT"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.department}`))),
+          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.department}`)) || t("NA")),
         },
         // {
         //   Header: t("WORKS_ADMIN_SANCTION_NUMBER"),
@@ -49,37 +49,37 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
         {
           Header: t("WORKS_FUND"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(t(`ES_COMMON_FUND_${row?.fund}`))),
+          accessor: (row) => (GetCell(t(`ES_COMMON_FUND_${row?.fund}`)) || t("NA")),
         },
         {
           Header: t("WORKS_FUNCTION"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.function}`))),
+          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.function}`)) || t("NA")),
         },
         {
           Header: t("WORKS_BUDGET_HEAD"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.budgetHead}`))),
+          accessor: (row) => (GetCell(t(`ES_COMMON_${row?.budgetHead}`)) || t("NA")),
         },        
         {
           Header: t("WORKS_CREATED_BY"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.createdBy)),
+          accessor: (row) => (GetCell(row?.createdBy || t("NA")) ),
         },
         {
           Header: t("WORKS_OWNER"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.owner)),
+          accessor: (row) => (GetCell(row?.owner || t("NA") ) ),
         },
         {
           Header: t("WORKS_STATUS"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.estimateStatus)),
+          accessor: (row) => (GetCell(row?.status || t("NA"))),
         },
         {
           Header: t("WORKS_TOTAL_AMOUNT"),
           disableSortBy: true,
-          accessor: (row) => (GetCell(row?.totalAmount)),
+          accessor: (row) => (GetCell(row?.totalAmount || t("NA")) ),
         },
     ],[])
     let result;
@@ -99,9 +99,10 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
       );
     } else if (resultOk) {
     result= (
+      <div style={{overflowX:"scroll"}}>
     <ApplicationTable
       t={t}
-      data={data}
+      data={data.table}
       columns={inboxColumns}
       getCellProps={(cellInfo) => {
         return {
@@ -122,6 +123,7 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
       sortParams={props.sortParams}
       totalRecords={props.totalRecords}
     />
+      </div>
   )
   }else
   {
@@ -144,7 +146,7 @@ return (
           </div>
         </div>
        )}
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1,overflow:"hidden" }}>
       <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}

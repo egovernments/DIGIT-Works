@@ -27,7 +27,7 @@ const WorksCard = () => {
         count: 21,
         label: t("INBOX"),
         link: `/${window?.contextPath}/employee/works/inbox`,
-      }
+      },
     ],
     links: [
       {
@@ -74,6 +74,11 @@ const WorksCard = () => {
       {
         label: t("WORKS_DASHBOARD"),
         link: `/${window?.contextPath}/employee/`,
+        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+      },
+      {
+        label: t("WORKS_CHECKLIST_INBOX"),
+        link: `/${window?.contextPath}/employee/works/checklistinbox`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
     ],

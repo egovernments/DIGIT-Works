@@ -1,10 +1,11 @@
 {
-  "name": "@egovernments/digit-ui-css",
-  "version": "1.4.126",
+  "name": "@egovernments/digit-ui-works-css",
+  "version": "0.0.1",
   "license": "MIT",
+  "author": "Jagankumar <jagan.kumar@egov.org.in>",
   "main": "dist/index.css",
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "cssConfig": {
     "prefix": ""

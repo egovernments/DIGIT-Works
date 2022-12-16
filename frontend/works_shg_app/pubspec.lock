@@ -29,6 +29,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.9.0"
+  auto_route:
+    dependency: "direct main"
+    description:
+      name: auto_route
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.4"
+  auto_route_generator:
+    dependency: "direct dev"
+    description:
+      name: auto_route_generator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.3"
   bloc:
     dependency: transitive
     description:
@@ -180,8 +194,10 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/digit_components"
-      relative: true
-    source: path
+      ref: hlm-1067-ui-component-for-language-selection
+      resolved-ref: "4037e8e49d4ab3e22c823a4416795382fea500c2"
+      url: "https://github.com/egovernments/health-campaign-field-worker-app"
+    source: git
     version: "0.0.1"
   fake_async:
     dependency: transitive
@@ -471,6 +487,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.3"
+  petitparser:
+    dependency: transitive
+    description:
+      name: petitparser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.1.0"
   platform:
     dependency: transitive
     description:
@@ -721,6 +744,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0+2"
+  xml:
+    dependency: transitive
+    description:
+      name: xml
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.1.0"
   yaml:
     dependency: transitive
     description:

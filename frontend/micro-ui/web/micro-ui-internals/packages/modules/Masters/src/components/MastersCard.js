@@ -1,12 +1,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard, ArrowRightInbox, WSICon } from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, PTIcon } from "@egovernments/digit-ui-react-components";
 
 const MastersCard = () => {
   const { t } = useTranslation();
 
   const propsForModuleCard = {
-    Icon: <WSICon />,
+    Icon: <PTIcon />,
     moduleName: t("ACTION_TEST_MASTERS"),
     kpis: [],
     links: [

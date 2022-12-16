@@ -2,6 +2,7 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import MastersCard from "./components/MastersCard";
+import ProjectCard from "./components/ProjectCard";
 import { default as EmployeeApp } from "./pages/employee";
 import SearchOrganization from "./pages/employee/Master/SearchOrganization";
 import CreateOrganization from "./pages/employee/Master/CreateOrganization";
@@ -24,6 +25,7 @@ export const MastersModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
   MastersModule,
   MastersCard,
+  ProjectCard,
   SearchOrganization,
   CreateOrganization
 };

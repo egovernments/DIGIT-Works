@@ -31,9 +31,10 @@ const Filter = ({ onFilterChange, ...props }) => {
   Fund?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_FUND_${item?.code}`)}))
 
   const applyLocalFilters = () => {
+    
     let form=getValues();
     for(var key in form){
-      if(form[key]=== undefined){
+      if(form[key]=== undefined){     
         delete form[key]
       }
     }
@@ -41,13 +42,21 @@ const Filter = ({ onFilterChange, ...props }) => {
   };
 
   const clearAll = () => {
+    
+    let form = getValues();
+    for (var key in form) {
+      form[key]=""
+    }
+    onFilterChange(form)
+
+    //after triggering the api call changing the UI
     reset(
       {
-        estimateFromDate:"",
-        estimateToDate:"",
-        fund:"",
-        function:"",
-        budgetHead:"",
+        fromProposalDate: "",
+        toProposalDate: "",
+        fund: "",
+        function: "",
+        budgetHead: "",
       });
   };
 

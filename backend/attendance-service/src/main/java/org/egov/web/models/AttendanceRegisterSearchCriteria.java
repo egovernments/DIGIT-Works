@@ -1,15 +1,9 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiParam;
-import lombok.*;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import lombok.*;
+
 
 @Getter
 @Setter
@@ -41,5 +35,11 @@ public class AttendanceRegisterSearchCriteria {
 
     @JsonProperty("attendeeId")
     private String attendeeId;
+
+    @JsonProperty("limit")
+    private Integer limit;
+
+    @JsonProperty("offset")
+    private Integer offset;
 
 }
