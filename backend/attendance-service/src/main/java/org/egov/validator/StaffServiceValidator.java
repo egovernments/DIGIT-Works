@@ -175,7 +175,7 @@ public class StaffServiceValidator {
             }
         }
 
-        //check is staff user id exists in staff table for the given register id. If yes check the deenrollment date
+        //check is staff user id exists in staff table for the given register id. If yes check the deenrollment date. If staffId does not exist new staff can still be enrolled to the register
         if (staffPermissionListFromDB != null) {
             for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {//list of staff from request
                 for (StaffPermission staffFromDB : staffPermissionListFromDB) {  //list of staff from DB
