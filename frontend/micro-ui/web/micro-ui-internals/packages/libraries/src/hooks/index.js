@@ -255,6 +255,8 @@ import useViewContractDetails from "./contracts/useViewContractDetails";
 import useViewAttendance from "./attendance/useViewAttendance";
 import useLocation from "./useLocation";
 import useViewPOBill from "./bills/useviewPOBill";
+import useviewSHGBill from "./bills/useviewSHGBill";
+import useviewWOBill from "./bills/useviewWOBill";
 
 const works = {
   useViewEstimateDetails,
@@ -514,7 +516,9 @@ const attendance = {
 };
 
 const bills = {
-  useViewPOBill
+  useViewPOBill,
+  useviewSHGBill,
+  useviewWOBill
 }
 
 const Hooks = {

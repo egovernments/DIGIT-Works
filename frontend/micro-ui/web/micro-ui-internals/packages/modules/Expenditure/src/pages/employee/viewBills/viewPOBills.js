@@ -11,12 +11,12 @@ const viewPOBills = () => {
     <React.Fragment>
       <div className={"employee-main-application-details"}>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("ATM_VIEW_ATTENDENCE")}</Header>
+          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("EXP_VIEW_BILL")}</Header>
         </div>
         <ApplicationDetails
           applicationDetails={applicationDetails}
           isLoading={false} //will come from backend
-          applicationData={applicationData}s
+          applicationData={applicationData}
           moduleCode="Expenditure"
           isDataLoading={false}
           workflowDetails=""
