@@ -41,8 +41,6 @@ const RegisterWageSeeker = () => {
   const configs = ConfigWageSeekerRegistrationForm({selectFile, uploadedFile, setUploadedFile, error});
 
   const onSubmit = (data) => {
-    console.log(data);
-    console.log('Submitted file', uploadedFile)
   };
 
   return (
