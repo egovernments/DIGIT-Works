@@ -6,7 +6,6 @@ import CreateContract from "./CreateContract";
 import Inbox from "./Inbox";
 import SearchContracts from "./SearchContract";
 import ViewContract from "./ViewContract";
-import BILLInbox from "../../../../Expenditure/src/pages/employee/billInbox";
 
 const ContractsBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
