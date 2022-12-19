@@ -444,7 +444,7 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               mdmsConfig: {
                 masterName: "Bank",
                 moduleName: "finance",
-                localePrefix: "FINANCE",
+                localePrefix: "COMMON",
               },
             },
           },
