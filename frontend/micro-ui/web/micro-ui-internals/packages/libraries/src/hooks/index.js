@@ -250,6 +250,7 @@ import useApplicationActionsLOI from "./works/useApplicationActions";
 import useApplicationActionsEstimate from "./works/useUpdateEstimate";
 import useUpdateEstimate from "./works/useUpdateEstimate";
 import useWorksInbox from "./works/useInbox";
+import useKickoffInbox from "./works/useKickoffInbox";
 import useViewContractDetails from "./contracts/useViewContractDetails";
 import useViewAttendance from "./attendance/useViewAttendance";
 import useLocation from "./useLocation";
@@ -268,6 +269,7 @@ const works = {
   useApplicationActionsEstimate,
   useSearchApprovedEstimates,
   useInbox: useWorksInbox,
+  useKickoffInbox
 };
 
 const contracts = {

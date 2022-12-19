@@ -29,9 +29,49 @@ public class AttendanceServiceConfiguration {
     private String idgenAttendanceRegisterNumberName;
     @Value("${egov.idgen.attendance.register.number.format}")
     private String idgenAttendanceRegisterNumberFormat;
+    //MDMS
+    @Value("${egov.mdms.host}")
+    private String mdmsHost;
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsEndPoint;
+    //Topic
+    @Value("${attendance-register.kafka.create.topic}")
+    private String saveAttendanceRegisterTopic;
+    @Value("${attendance-register.kafka.update.topic}")
+    private String updateAttendanceRegisterTopic;
+
 
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
     }
+    // kafka topics
+    @Value("${attendance.service.log.kafka.create.topic}")
+    private String createAttendanceLogTopic;
+
+    @Value("${attendance.service.log.kafka.update.topic}")
+    private String updateAttendanceLogTopic;
+
+    // service integration config
+    @Value("${attendance.service.individual.service.integration.required}")
+    private String individualServiceIntegrationRequired;
+
+    @Value("${attendance.service.staff.service.integration.required}")
+    private String staffServiceIntegrationRequired;
+
+    @Value("${attendance.service.document.id.verification.required}")
+    private String documentIdVerificationRequired;
+
+    //search config
+    @Value("${attendance.service.log.default.offset}")
+    private Integer attendanceLogDefaultOffset;
+
+    @Value("${attendance.service.log.default.limit}")
+    private Integer attendanceLogDefaultLimit;
+
+    @Value("${attendance.service.log.search.max.limit}")
+    private Integer attendanceLogMaxLimit;
+
 }
+
+
