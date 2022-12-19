@@ -26,8 +26,6 @@ const enabledModules = [
   "HRMS",
   "AttendenceMgmt",
   "Contracts",
-  // "Engagement",
-  "Masters",
   "Expenditure",
   "Masters",
   "Estimate",
@@ -78,7 +76,6 @@ const initDigitUI = () => {
   initContractsComponents();
   initExpenditureComponents();
   initMastersComponents();
-  initExpenditureComponents();
   const moduleReducers = (initData) => initData;
 
   window.Digit.Customizations = {
