@@ -7,6 +7,7 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * This computed data will also be stored as part of the muster roll db.
@@ -21,6 +22,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class AttendanceEntry {
+
+    @JsonProperty("id")
+    private UUID id = null;
+
     @JsonProperty("time")
     private Long time = null;
 
