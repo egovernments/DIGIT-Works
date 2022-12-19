@@ -15,3 +15,4 @@ ENV WEB_DIR=/var/web/works-shg-app
 #RUN mkdir -p ${WEB_DIR}
 COPY --from=build /app/build/web/ ${WEB_DIR}/
 COPY --from=build /app/docker/nginx.conf /etc/nginx/conf.d/default.conf
+
