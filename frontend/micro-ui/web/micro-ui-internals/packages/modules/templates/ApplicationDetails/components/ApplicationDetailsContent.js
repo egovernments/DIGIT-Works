@@ -37,6 +37,7 @@ import SubWorkTableDetails from "./SubWorkTableDetails";
 import WeekAttendence from "../../../AttendenceMgmt/src/pageComponents/WeekAttendence";
 import reducer, { initialTableState } from "../../../AttendenceMgmt/src/config/attendenceTableReducer";
 import AttendanceDateRange from "../../../AttendenceMgmt/src/pageComponents/AttendanceDateRange";
+import StatusTableWithRadio from "../../../Expenditure/src/components/StatusTableWithRadio";
 
 function ApplicationDetailsContent({
   applicationDetails,
@@ -301,6 +302,12 @@ function ApplicationDetailsContent({
                 })}
             </StatusTable>
           </div>
+          {detail?.additionalDetails?.statusWithRadio ? (
+            <StatusTableWithRadio
+              config={detail?.additionalDetails?.statusWithRadio?.radioConfig}
+              customClass={detail?.additionalDetails?.statusWithRadio?.customClass}
+            ></StatusTableWithRadio>
+          ) : null}
           {detail?.additionalDetails?.dateRange ? (
             <AttendanceDateRange
               t={t}

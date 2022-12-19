@@ -16,10 +16,26 @@ const transformViewDataToApplicationDetails = {
         values: [
           { title: "EXP_VENDOR", value: "Sri Ganesha Enterprises" },
           { title: "EXP_VENDOR_ID", value: "VDR/2021-22/09/0001" },
-          { title: "EXP_CREATED_DATE", value: "28-09-2022" },
           { title: "EXP_BILL_AMOUNT", value: "5500" },
         ],
         additionalDetails : {
+            statusWithRadio : {
+              customClass : "border-none",
+              radioConfig : {
+                options : [
+                  {
+                    name : "BillAmount",
+                    value : "SHG",
+                    key : "SHG"
+                  },
+                  {
+                    name : "BillAmount",
+                    value : "Vendor",
+                    key : "Vendor"
+                  }
+                ]
+              },
+            },
             documentsWithUrl : [
                 {
                     title : "Upload Files",
