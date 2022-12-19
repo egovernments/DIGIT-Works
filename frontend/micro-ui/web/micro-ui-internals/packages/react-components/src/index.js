@@ -226,6 +226,8 @@ import UploadPitPhoto from "./molecules/UploadPitPhoto";
 import { DownloadBtnCommon } from "./atoms/svgindex";
 import ToggleSwitch from "./atoms/ToggleSwitch";
 import WeekPicker from "./atoms/WeekPicker";
+import TotalValue from "./atoms/TotalValue";
+
 export {
   Phone,
   Body,
@@ -312,6 +314,7 @@ export {
   PopupHeadingLabel,
   ToggleSwitch,
   ULBHomeCard,
+  TotalValue,
   // Icons
   GetApp,
   ArrowLeft,
