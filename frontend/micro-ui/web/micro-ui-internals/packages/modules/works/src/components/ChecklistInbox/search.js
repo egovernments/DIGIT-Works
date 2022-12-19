@@ -70,7 +70,7 @@ const SearchApplication = ({type, onClose, onSearch, isFstpOperator, searchParam
               </div>
               <div style={{margin:"5px"}}>
                 <div className="filter-label" style={{ fontWeight: "normal" }}>
-                  {t("WORKS_NAME_OF_WORK")}:
+                  {t("WORKS_NAME_OF_WORK")}
                 </div>
                 <TextInput
                   name="nameofwork"
@@ -85,7 +85,7 @@ const SearchApplication = ({type, onClose, onSearch, isFstpOperator, searchParam
               </div>
               <div style={{margin:"5px"}}>
                 <div className="filter-label" style={{ fontWeight: "normal" }}>
-                  {t("ATM_WIN_CODE")}:
+                  {t("ATM_WIN_CODE")}
                 </div>
                 <Controller
                   control={control}
