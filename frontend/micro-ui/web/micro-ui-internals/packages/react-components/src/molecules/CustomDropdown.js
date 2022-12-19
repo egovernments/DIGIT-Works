@@ -63,7 +63,7 @@ or
       },
  *
  */
-const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyle, disable, type }) => {
+const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyle, disable, type, additionalWrapperClass="" }) => {
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
     config?.mdmsConfig?.moduleName,
@@ -102,6 +102,7 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
               defaultValue={value}
               t={t}
               errorStyle={errorStyle}
+              additionalWrapperClass={additionalWrapperClass}
             />
           ) : (
             <Dropdown
@@ -119,6 +120,7 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
               defaultValue={value || config.defaultValue}
               t={t}
               errorStyle={errorStyle}
+              optionCardStyles={config?.optionsCustomStyle}
             />
           )}
       {/* </LabelFieldPair> */}
