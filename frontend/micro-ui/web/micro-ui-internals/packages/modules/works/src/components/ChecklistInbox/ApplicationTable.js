@@ -31,6 +31,8 @@ const ApplicationTable = ({
       onSort={onSort}
       sortParams={sortParams}
       totalRecords={totalRecords}
+      customTableWrapperClassName="table-wrapper attendence-table"
+
     />
   );
 };

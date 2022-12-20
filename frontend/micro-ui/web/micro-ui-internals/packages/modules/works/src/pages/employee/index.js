@@ -99,6 +99,12 @@ const BILLSBreadCrumbs = ({ location }) => {
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_LOI_INBOX")}` : t("WORKS_LOI_INBOX"),
       show: location.pathname.includes("/works/loiinbox") ? true : false,
       isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/works/checklistinbox`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CHECKLIST_INBOX")}` : t("WORKS_CHECKLIST_INBOX"),
+      show: location.pathname.includes("/works/checklistinbox") ? true : false,
+      isBack: fromScreen && true,
     }
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
@@ -111,7 +117,7 @@ const App = ({ path }) => {
   const locationCheck = window.location.href.includes("/employee/ws/new-application");
   const getBreadCrumbStyles = (screenType) => {
     // Defining 4 types for now -> create,view,inbox,search
-
+    
     switch (true) {
       case screenType?.includes("/create"):
         return { marginLeft: "10px" };
@@ -125,7 +131,7 @@ const App = ({ path }) => {
         return { marginLeft: "5px" };
 
       default:
-        return { marginLeft: "8px" };
+        return { marginLeft: "0px" };
     }
   };
   useEffect(() => {

@@ -11,7 +11,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
       text: t("WORKS_SEARCH_CHECKLISTS"),
       link: `/works-ui/employee/works/search-checklists`,
       businessService: "WORKS",
-      roles: ["EST_CREATOR"],
+      roles: [],
     },
   ];
 

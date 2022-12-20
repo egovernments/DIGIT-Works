@@ -43,7 +43,7 @@ const Filter = ({ onFilterChange, ...props }) => {
           <div className="heading" style={{ alignItems: "center" }}>
             <div className="filter-label" style={{ display: "flex", alignItems: "center" }}>
               <FilterIcon/>
-              <span style={{ marginLeft: "8px", fontWeight: "normal" }}>{t("ES_COMMON_FILTER_BY")}:</span>
+              <span style={{ marginLeft: "8px", fontWeight: "normal" }}>{t("ES_COMMON_FILTER_BY")}</span>
             </div>
             <div className="clearAll" onClick={clearAll}>
               {t("ES_COMMON_CLEAR_ALL")}
@@ -62,7 +62,7 @@ const Filter = ({ onFilterChange, ...props }) => {
           <div style={{marginTop:"20px"}}>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("WORKS_WO_ISSUED_FROM_DATE")}:
+                {t("WORKS_WO_ISSUED_FROM_DATE")}
               </div>
               <Controller
                 name={`woIssueFromDate`}
@@ -80,7 +80,7 @@ const Filter = ({ onFilterChange, ...props }) => {
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("WORKS_WO_ISSUED_TO_DATE")}:
+                {t("WORKS_WO_ISSUED_TO_DATE")}
               </div>
               <Controller
                 name={`woIssueToDate`}
@@ -98,7 +98,7 @@ const Filter = ({ onFilterChange, ...props }) => {
             </div>
             <div>
             <div className="filter-label" style={{ fontWeight: "normal" }}>
-              {t("WORKS_WO_ACCEPTED_FROM_DATE")}:
+              {t("WORKS_WO_ACCEPTED_FROM_DATE")}
             </div>
             <Controller
               name={`woAcceptedFromDate`}
@@ -116,7 +116,7 @@ const Filter = ({ onFilterChange, ...props }) => {
           </div>
           <div>
             <div className="filter-label" style={{ fontWeight: "normal" }}>
-              {t("WORKS_WO_ACCEPTED_TO_DATE")}:
+              {t("WORKS_WO_ACCEPTED_TO_DATE")}
             </div>
             <Controller
               name={`woAcceptedToDate`}
