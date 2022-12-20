@@ -494,6 +494,11 @@ components:
         userId:
           type: string
           description: Identifier of the user of the system
+        tenantId:
+          type: string
+          format: string
+          example: pb.amritsar
+          description: Tenant Id to which the staff belongs
         enrollmentDate:
           readOnly: true
           type: number
@@ -512,11 +517,14 @@ components:
         requestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         staff:
-          allOf:
-          - $ref: '#/components/schemas/StaffPermission'
-          - required:
-            - registerId
-            - userId
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/StaffPermission'
+            - required:
+              - registerId
+              - userId
+              - tenantId
 
     StaffPermissionResponse:
       type: object
@@ -524,7 +532,9 @@ components:
         responseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         staff:
-          $ref: '#/components/schemas/StaffPermission'
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffPermission'
 
     AttendanceLog:
       type: object
