@@ -46,8 +46,7 @@ const ApplicationDetails = (props) => {
     showTimeLine = true,
     oldValue,
     isInfoLabel = false,
-    clearDataDetails,
-    groupElements = false
+    clearDataDetails
   } = props;
   
   useEffect(() => {
