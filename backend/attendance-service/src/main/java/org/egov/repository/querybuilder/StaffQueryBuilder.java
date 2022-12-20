@@ -1,6 +1,6 @@
 package org.egov.repository.querybuilder;
 
-import org.egov.models.AttendanceStaffSearchCriteria;
+import org.egov.models.StaffSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -22,7 +22,7 @@ public class StaffQueryBuilder {
             "stf.lastmodifiedtime " +
             "FROM eg_wms_attendance_staff stf ";
 
-    public String getActiveAttendanceStaffSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getActiveAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(getAttendanceStaffSearchQuery(criteria, preparedStmtList));
         addClauseIfRequired(query, preparedStmtList);
         query.append(" stf.deenrollment_date is null ");
@@ -30,7 +30,7 @@ public class StaffQueryBuilder {
         return query.toString();
     }
 
-    public String getAttendanceStaffSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
 
         if (!ObjectUtils.isEmpty(criteria.getIndividualIds())) {
@@ -48,7 +48,7 @@ public class StaffQueryBuilder {
         return query.toString();
     }
 
-    public String getAttendanceStaffFromRegistersSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getAttendanceStaffFromRegistersSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
 
         if (!ObjectUtils.isEmpty(criteria.getRegisterIds())) {
@@ -79,7 +79,7 @@ public class StaffQueryBuilder {
     }
 
 
-    private void addLimitAndOffset(StringBuilder query, AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList) {
+    private void addLimitAndOffset(StringBuilder query, StaffSearchCriteria criteria, List<Object> preparedStmtList) {
         query.append(" OFFSET ? ");
         preparedStmtList.add(criteria.getOffset());
 

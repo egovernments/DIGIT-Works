@@ -2,7 +2,7 @@ package org.egov.repository.querybuilder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
-import org.egov.models.AttendanceLogSearchCriteria;
+import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

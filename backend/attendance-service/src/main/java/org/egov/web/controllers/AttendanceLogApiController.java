@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiParam;
 import org.egov.service.AttendanceLogService;
 import org.egov.web.models.AttendanceLogRequest;
 import org.egov.web.models.AttendanceLogResponse;
-import org.egov.models.AttendanceLogSearchCriteria;
+import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

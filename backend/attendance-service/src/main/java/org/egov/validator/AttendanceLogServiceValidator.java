@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
-import org.egov.models.AttendanceAttendeeSearchCriteria;
-import org.egov.models.AttendanceLogSearchCriteria;
-import org.egov.models.AttendanceRegisterSearchCriteria;
-import org.egov.models.AttendanceStaffSearchCriteria;
+import org.egov.models.AttendeeSearchCriteria;
+import org.egov.web.models.AttendanceLogSearchCriteria;
+import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.models.StaffSearchCriteria;
 import org.egov.repository.AttendanceLogRepository;
 import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
@@ -182,7 +182,7 @@ public class AttendanceLogServiceValidator {
     }
 
     private List<IndividualEntry> fetchAllAttendeesEnrolledInARegister(String registerId) {
-        AttendanceAttendeeSearchCriteria searchCriteria = AttendanceAttendeeSearchCriteria
+        AttendeeSearchCriteria searchCriteria = AttendeeSearchCriteria
                 .builder()
                 .registerId(registerId)
                 .build();
@@ -262,7 +262,7 @@ public class AttendanceLogServiceValidator {
     }
 
     private void validateLoggedInUser(String userUUID, String registerId) {
-        AttendanceStaffSearchCriteria searchCriteria = AttendanceStaffSearchCriteria
+        StaffSearchCriteria searchCriteria = StaffSearchCriteria
                 .builder()
                 .individualIds(Collections.singletonList(userUUID))
                 .registerIds(Collections.singletonList(registerId))

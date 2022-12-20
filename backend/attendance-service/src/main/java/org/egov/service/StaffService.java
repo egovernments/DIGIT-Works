@@ -13,7 +13,7 @@ import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.validator.StaffServiceValidator;
 import org.egov.web.models.AttendanceRegister;
-import org.egov.models.AttendanceStaffSearchCriteria;
+import org.egov.models.StaffSearchCriteria;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ public class StaffService {
         List<String> registerIds = extractRegisterIdsFromRequest(staffPermissionRequest);
 
         //db call to get the staffList data whose de enrollment date is null
-        AttendanceStaffSearchCriteria staffSearchCriteria = AttendanceStaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
+        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
         List<StaffPermission> staffPermissionListFromDB = staffRepository.getActiveStaff(staffSearchCriteria);
 
         //db call to get registers from db and use them to validate request registers
@@ -110,7 +110,7 @@ public class StaffService {
         attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
         // db call to get staff data
-        AttendanceStaffSearchCriteria staffSearchCriteria = AttendanceStaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
+        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
         List<StaffPermission> staffPermissionListFromDB = staffRepository.getAllStaff(staffSearchCriteria);
 
         //validator call by passing staff request and the data from db call

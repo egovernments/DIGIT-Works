@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceStaffSearchCriteria {
+public class StaffSearchCriteria {
     @JsonProperty("individualIds")
     private List<String> individualIds;
 

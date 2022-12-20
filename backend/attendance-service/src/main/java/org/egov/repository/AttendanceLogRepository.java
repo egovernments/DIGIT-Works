@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.repository.querybuilder.AttendanceLogQueryBuilder;
 import org.egov.repository.rowmapper.AttendanceLogRowMapper;
 import org.egov.web.models.AttendanceLog;
-import org.egov.models.AttendanceLogSearchCriteria;
+import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

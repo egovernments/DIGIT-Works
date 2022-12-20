@@ -5,7 +5,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendanceLogEnrichment;
 import org.egov.kafka.Producer;
-import org.egov.models.AttendanceLogSearchCriteria;
+import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.repository.AttendanceLogRepository;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceLogServiceValidator;

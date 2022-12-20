@@ -1,7 +1,7 @@
 package org.egov.repository.querybuilder;
 
 import org.egov.tracer.model.CustomException;
-import org.egov.models.AttendanceAttendeeSearchCriteria;
+import org.egov.models.AttendeeSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -24,7 +24,7 @@ public class AttendeeQueryBuilder {
             "att.lastmodifiedtime " +
             "FROM eg_wms_attendance_attendee att ";
 
-    public String getAttendanceAttendeeSearchQuery(AttendanceAttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getAttendanceAttendeeSearchQuery(AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(ATTENDANCE_ATTENDEE_SELECT_QUERY);
 
         List<String> ids = criteria.getIds();
@@ -69,7 +69,7 @@ public class AttendeeQueryBuilder {
         return query.toString();
     }
 
-    private void addLimitAndOffset(StringBuilder query, AttendanceAttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
+    private void addLimitAndOffset(StringBuilder query, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
         query.append(" OFFSET ? ");
         preparedStmtList.add(criteria.getOffset());
 
