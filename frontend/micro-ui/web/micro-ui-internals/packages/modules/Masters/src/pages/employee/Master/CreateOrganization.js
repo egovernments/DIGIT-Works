@@ -18,7 +18,7 @@ const CreateOrganization = ({parentRoute}) => {
           </React.Fragment>
         ) :
         <CreateOrganizationSuccess isSuccess={createOrgStatus} setCreateOrgStatus={setCreateOrgStatus}/> 
-       }
+       } 
     </React.Fragment>
   )
 }
