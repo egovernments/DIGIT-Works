@@ -65,7 +65,7 @@ public class StaffService {
         staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
 
         //extract registerIds and staffUserIds from client request
-        String rootTenantId = staffPermissionRequest.getStaff().get(0).getTenantId();
+        String tenantId = staffPermissionRequest.getStaff().get(0).getTenantId();
         List<String> staffIds = extractStaffIdsFromRequest(staffPermissionRequest);
         List<String> registerIds = extractRegisterIdsFromRequest(staffPermissionRequest);
 
@@ -75,8 +75,8 @@ public class StaffService {
 
         //db call to get registers from db and use them to validate request registers
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(staffPermissionRequest.getRequestInfo()).build();
-        List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, rootTenantId);
-        attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, rootTenantId);
+        List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+        attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
         //validator call by passing staff request and the data from db call
         staffServiceValidator.validateCreateStaffPermission(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
@@ -100,14 +100,14 @@ public class StaffService {
         staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
 
         //extract registerIds and staffUserIds from client request
-        String rootTenantId = staffPermissionRequest.getStaff().get(0).getTenantId();
+        String tenantId = staffPermissionRequest.getStaff().get(0).getTenantId();
         List<String> staffIds = extractStaffIdsFromRequest(staffPermissionRequest);
         List<String> registerIds = extractRegisterIdsFromRequest(staffPermissionRequest);
 
         //db call to get registers from db and use them to validate request registers
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(staffPermissionRequest.getRequestInfo()).build();
-        List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, rootTenantId);
-        attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, rootTenantId);
+        List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+        attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
         // db call to get staff data
         AttendanceStaffSearchCriteria staffSearchCriteria = AttendanceStaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
