@@ -50,6 +50,7 @@ function ApplicationDetailsContent({
   paymentsList,
   oldValue,
   isInfoLabel = false,
+  noBoxShadow = false
 }) {
   const { t } = useTranslation();
   const [state, dispatch] = useReducer(reducer, initialTableState);
@@ -185,8 +186,15 @@ function ApplicationDetailsContent({
       return "";
     }
   };
+
+  const getCardStyles = () => {
+    let styles = { position: "relative" }
+    if (noBoxShadow) styles = { ...styles, boxShadow: "none" };
+    return styles;
+  };
+
   return (
-    <Card style={{ position: "relative" }} className={"employeeCard-override"}>
+    <Card style={getCardStyles()} className={"employeeCard-override"}>
       {isInfoLabel ? (
         <InfoDetails
           t={t}
