@@ -201,6 +201,7 @@ import InboxComposer from "./hoc/InboxComposer";
 import CityMohalla from "./molecules/CityMohalla";
 import DashboardBox from "./molecules/DashboardBox";
 import DetailsCard from "./molecules/DetailsCard";
+import WorkflowModal from "./molecules/WorkflowModal";
 import FilterAction from "./molecules/FilterAction";
 import FormStep from "./molecules/FormStep";
 import CustomDropdown from "./molecules/CustomDropdown";
@@ -284,6 +285,7 @@ export {
   TextInputCard,
   CityMohalla,
   DetailsCard,
+  WorkflowModal,
   Label,
   Table,
   PopUp,
