@@ -143,7 +143,7 @@ public class AttendanceLogServiceValidator {
                 for (IndividualEntry attendee : lst) {
                     Instant instantAttendanceAttendeeLogTime = Instant.ofEpochMilli(attendanceLog.getTime().longValue());
                     Instant instantEnrollmentDate = Instant.ofEpochMilli(attendee.getEnrollmentDate().longValue());
-                    if (Double.valueOf(0.0).equals(attendee.getDenrollmentDate())) {
+                    if (attendee.getDenrollmentDate()==null) {
                         if (instantAttendanceAttendeeLogTime.compareTo(instantEnrollmentDate) >= 0) {
                             eligibleAttendanceAttendeeIdSet.add(attendee.getIndividualId());
                         }

@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class AttendanceLog {
     private String tenantId = null;
 
     @JsonProperty("time")
-    private Double time = null;
+    private BigDecimal time = null;
 
     @JsonProperty("type")
     private String type = null;
