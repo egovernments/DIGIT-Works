@@ -1,8 +1,8 @@
 import React from "react";
 
-const TotalValue = ({showTopHorizontalLine, showBottomHorizontalLine, label, value, customStyles={}}) => {
+const TotalValue = ({showTopHorizontalLine, showBottomHorizontalLine, label, value, customClass=""}) => {
     return (
-        <div className="total-value-wrapper" style={customStyles}>
+        <div className={`total-value-wrapper ${customClass}`}>
             {showTopHorizontalLine && <hr className="horizontal-line"></hr>}
                 <div className="total-wrapper">
                     <span className="label">{label}</span>
