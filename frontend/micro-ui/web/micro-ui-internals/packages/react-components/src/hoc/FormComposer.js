@@ -226,6 +226,7 @@ export const FormComposer = (props) => {
                   hintText={populators.hintText}
                   maxFilesAllowed={populators.maxFilesAllowed}
                   extraStyleName={{ padding: "0.5rem" }}
+                  customClass={populators?.customClass}
                 />
               );
             }}

@@ -131,22 +131,16 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               },
             },
           },
-          {   
-            label: ("PHOTOGRAPH"),
-            populators: (
-              <UploadFile
-                id={"upload_photo"}
-                onUpload={selectFile}
-                onDelete={() => {
-                    setUploadedFile(null);
-                }}
-                showHint={true}
-                message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
-                accept= "image/*, .pdf, .png, .jpeg, .jpg"
-                iserror={error}
-                customClass="upload-margin-bottom"
-              />
-            ),
+          {
+            type:"multiupload",
+            label: t("PHOTOGRAPH"),
+            populators:{
+                name: "photograph",
+                allowedMaxSizeInMB:2,
+                maxFilesAllowed:2,
+                allowedFileTypes : /(.*?)(jpeg|jpg|png|pdf|image)$/i,
+                customClass : "upload-margin-bottom"
+            }
           },
           {
             inline: true,
