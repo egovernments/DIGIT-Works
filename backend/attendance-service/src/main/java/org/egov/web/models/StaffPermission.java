@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
-import java.util.UUID;
+
+import java.math.BigDecimal;
 
 /**
  * StaffPermission
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Builder
 public class StaffPermission {
     @JsonProperty("id")
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("tenantId")
     private String tenantId = null;
@@ -31,16 +32,17 @@ public class StaffPermission {
     private String userId = null;
 
     @JsonProperty("enrollmentDate")
-    private Double enrollmentDate = null;
+    private BigDecimal enrollmentDate = null;
 
     @JsonProperty("denrollmentDate")
-    private Double denrollmentDate = null;
+    private BigDecimal denrollmentDate = null;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
+
 
 }
 

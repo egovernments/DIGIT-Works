@@ -5,6 +5,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendanceLogEnrichment;
 import org.egov.kafka.Producer;
+import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.repository.AttendanceLogRepository;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceLogServiceValidator;
@@ -35,6 +36,7 @@ public class AttendanceLogService {
 
     @Autowired
     private AttendanceLogRepository attendanceLogRepository;
+
     /**
      * Create Attendance Log
      *
@@ -63,7 +65,7 @@ public class AttendanceLogService {
      */
     public AttendanceLogResponse searchAttendanceLog(RequestInfoWrapper requestInfoWrapper, AttendanceLogSearchCriteria searchCriteria) {
         //Validate the incoming request
-        attendanceLogServiceValidator.validateSearchAttendanceLogRequest(requestInfoWrapper,searchCriteria);
+        attendanceLogServiceValidator.validateSearchAttendanceLogRequest(requestInfoWrapper, searchCriteria);
         //Enrich the incoming request
         attendanceLogEnricher.enrichAttendanceLogSearchRequest(requestInfoWrapper.getRequestInfo(), searchCriteria);
         //Fetch attendance logs from registry
