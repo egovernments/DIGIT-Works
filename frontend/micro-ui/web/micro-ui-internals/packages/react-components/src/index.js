@@ -228,7 +228,6 @@ import { DownloadBtnCommon } from "./atoms/svgindex";
 import ToggleSwitch from "./atoms/ToggleSwitch";
 import WeekPicker from "./atoms/WeekPicker";
 import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
-
 export {
   Phone,
   Body,
