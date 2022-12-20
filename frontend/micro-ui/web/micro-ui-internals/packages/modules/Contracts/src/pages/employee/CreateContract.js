@@ -1,11 +1,66 @@
-import React, { Fragment, useState } from "react";
-import { Toast } from "@egovernments/digit-ui-react-components";
+import React, { Fragment, useState, useEffect } from "react";
+import { Toast,WorkflowModal } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import CreateContractForm from "../../components/CreateContract/CreateContractForm";
+import getModalConfig from "../../../utils/getModalConfig";
+
+
 
 const CreateContract = (props) => {
   const [showToast, setShowToast] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [createFormData,setCreateFormData] = useState(null)
+
+  const [config, setConfig] = useState({});
+  const [approvers, setApprovers] = useState([]);
+  const [selectedApprover, setSelectedApprover] = useState({});
+
+  const [department, setDepartment] = useState([]);
+  const [selectedDept, setSelectedDept] = useState({})
+
+  const [designation, setDesignation] = useState([]);
+  const [selectedDesignation, setSelectedDesignation] = useState({})
+
+  const rolesForThisAction = "EST_CHECKER" //hardcoded for now
+
+  const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getCurrentTenantId(),
+    "common-masters",
+    [
+      {
+        "name": "Designation"
+      },
+      {
+        "name": "Department"
+      }
+    ]
+  );
+
+  mdmsData?.["common-masters"]?.Designation?.map(designation => {
+    designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
+  })
+
+  mdmsData?.["common-masters"]?.Department?.map(department => {
+    department.i18nKey = `ES_COMMON_${department?.code}`
+  })
+
+  useEffect(() => {
+
+    //setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
+    //setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees : [])
+    setDepartment(mdmsData?.["common-masters"]?.Department)
+    setDesignation(mdmsData?.["common-masters"]?.Designation)
+  }, [mdmsData]);
+
+
+  const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept || selectedDesignation) });
+
+
+  employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
+
+  useEffect(() => {
+    setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : [])
+  }, [employeeDatav1])
 
   const { t } = useTranslation();
   //To Call create contract API by using requestInfo,contract(payload,workflow)
@@ -22,8 +77,31 @@ const CreateContract = (props) => {
   });
 
   const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
+  
+  useEffect(() => {
+   
+    setConfig(
+      getModalConfig({
+        t,
+        approvers,
+        selectedApprover,
+        setSelectedApprover,
+        designation,
+        selectedDesignation,
+        setSelectedDesignation,
+        department,
+        selectedDept,
+        setSelectedDept,
+        approverLoading
+      })
+    )
+
+  }, [approvers, designation, department])
+  
 
   const onFormSubmit = async (_data) => {
+    //first do whatever processing you want on form data then pass it over to modal's onSubmit function
+    setCreateFormData((prevState) => _data)
     setShowModal(true);
     //      use below code for create contract API CALL
 
@@ -63,9 +141,25 @@ const CreateContract = (props) => {
     //     })
   };
 
+  const onModalSubmit = (data) => {
+    
+    //console.log(createFormData);
+    //console.log(sessionFormData);
+    //here you can handle the data submitted in the modal and call the api
+    //access comments from data and details such as dept,desig,approver are stored locally in this comp
+  }
+
   return (
     <Fragment>
-      {showModal && <div>Popup</div>}
+      {/* here render the newly created modal component */}
+      {showModal && <WorkflowModal 
+                      closeModal={()=>setShowModal(false)}
+                      onSubmit={onModalSubmit}
+                      config={config}
+                      sessionFormData={sessionFormData}
+                      setSessionFormData={setSessionFormData}
+                    />
+      }
       <CreateContractForm onFormSubmit={onFormSubmit} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} />
       {showToast && (
         <Toast
