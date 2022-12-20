@@ -132,7 +132,6 @@ const DesktopInbox = ({ tableConfig, resultOk, filterComponent, columns, isLoadi
     // else if (resultOk) {
        else if(true){ // for static screen purposes
         result = (
-            <div style={{overflowX:"scroll"}}>
             <ApplicationTable
                 t={t}
                 //data={data.table}
@@ -157,7 +156,6 @@ const DesktopInbox = ({ tableConfig, resultOk, filterComponent, columns, isLoadi
                 sortParams={props.sortParams}
                 totalRecords={props.totalRecords}
             />
-            </div>
         )
     } else {
         result = null

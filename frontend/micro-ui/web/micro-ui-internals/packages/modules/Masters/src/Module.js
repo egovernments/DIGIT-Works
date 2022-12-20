@@ -6,6 +6,7 @@ import ProjectCard from "./components/ProjectCard";
 import { default as EmployeeApp } from "./pages/employee";
 import SearchOrganization from "./pages/employee/Master/SearchOrganization";
 import CreateOrganization from "./pages/employee/Master/CreateOrganization";
+import RegisterWageSeeker from "./pages/employee/registerWageSeeker/index";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["Masters"];
@@ -27,7 +28,8 @@ const componentsToRegister = {
   MastersCard,
   ProjectCard,
   SearchOrganization,
-  CreateOrganization
+  CreateOrganization,
+  RegisterWageSeeker,
 };
 
 export const initMastersComponents = () => {
