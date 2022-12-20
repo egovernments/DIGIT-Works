@@ -35,6 +35,7 @@ public class AttendanceLogService {
 
     @Autowired
     private AttendanceLogRepository attendanceLogRepository;
+
     /**
      * Create Attendance Log
      *
@@ -63,7 +64,7 @@ public class AttendanceLogService {
      */
     public AttendanceLogResponse searchAttendanceLog(RequestInfoWrapper requestInfoWrapper, AttendanceLogSearchCriteria searchCriteria) {
         //Validate the incoming request
-        attendanceLogServiceValidator.validateSearchAttendanceLogRequest(requestInfoWrapper,searchCriteria);
+        attendanceLogServiceValidator.validateSearchAttendanceLogRequest(requestInfoWrapper, searchCriteria);
         //Enrich the incoming request
         attendanceLogEnricher.enrichAttendanceLogSearchRequest(requestInfoWrapper.getRequestInfo(), searchCriteria);
         //Fetch attendance logs from registry

@@ -15,7 +15,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegister>> {
@@ -49,7 +52,7 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
 
             AttendanceRegister attendanceRegister = AttendanceRegister.builder()
                     .additionalDetails(additionalDetails)
-                    .id(UUID.fromString(id))
+                    .id(id)
                     .tenantId(tenantId)
                     .status(Status.fromValue(status))
                     .registerNumber(registerNumber)

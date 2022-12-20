@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.util.Collections;
 
 @Controller
 @RequestMapping("/staff/v1")
@@ -43,7 +41,7 @@ public class StaffApiController {
         StaffPermissionRequest enrichedRequest = staffService.createAttendanceStaff(staffPermissionRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
         StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo)
-                .staffPermissionResponseList(enrichedRequest.getStaffPermissionList()).build();
+                .staff(enrichedRequest.getStaff()).build();
         return new ResponseEntity<StaffPermissionResponse>(staffPermissionResponse, HttpStatus.OK);
     }
 
@@ -52,7 +50,7 @@ public class StaffApiController {
         StaffPermissionRequest enrichedRequest = staffService.deleteAttendanceStaff(staffPermissionRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
         StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo)
-                .staffPermissionResponseList(enrichedRequest.getStaffPermissionList()).build();
+                .staff(enrichedRequest.getStaff()).build();
         return new ResponseEntity<StaffPermissionResponse>(staffPermissionResponse, HttpStatus.OK);
     }
 

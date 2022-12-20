@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.util.AttendanceServiceUtil;
-import org.egov.web.models.AttendanceLogSearchCriteria;
-import org.egov.web.models.Document;
 import org.egov.web.models.AttendanceLog;
 import org.egov.web.models.AttendanceLogRequest;
+import org.egov.web.models.AttendanceLogSearchCriteria;
+import org.egov.web.models.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,16 +22,17 @@ public class AttendanceLogEnrichment {
     private AttendanceServiceUtil attendanceServiceUtil;
     @Autowired
     private AttendanceServiceConfiguration config;
+
     public void enrichAttendanceLogCreateRequest(AttendanceLogRequest attendanceLogRequest) {
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
         String byUser = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
-        AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(byUser,null,true);
-        for(AttendanceLog attendanceLog : attendanceLogs){
+        AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(byUser, null, true);
+        for (AttendanceLog attendanceLog : attendanceLogs) {
             attendanceLog.setAuditDetails(auditDetails);
             UUID attendanceLogId = UUID.randomUUID();
             attendanceLog.setId(attendanceLogId);
             List<Document> documentIds = attendanceLog.getDocumentIds();
-            for(Document documentId : documentIds){
+            for (Document documentId : documentIds) {
                 documentId.setId(String.valueOf(UUID.randomUUID()));
             }
         }
@@ -40,13 +41,13 @@ public class AttendanceLogEnrichment {
     public void enrichAttendanceLogUpdateRequest(AttendanceLogRequest attendanceLogRequest) {
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
         String byUser = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
-        for(AttendanceLog attendanceLog : attendanceLogs){
-            AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(byUser,attendanceLog.getAuditDetails(),false);
+        for (AttendanceLog attendanceLog : attendanceLogs) {
+            AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(byUser, attendanceLog.getAuditDetails(), false);
             attendanceLog.setAuditDetails(auditDetails);
             // enrich the documentId if not present
             List<Document> documentIds = attendanceLog.getDocumentIds();
-            for(Document documentId : documentIds){
-                if(documentId.getId() == null){
+            for (Document documentId : documentIds) {
+                if (documentId.getId() == null) {
                     documentId.setId(String.valueOf(UUID.randomUUID()));
                 }
             }

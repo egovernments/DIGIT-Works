@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * AttendanceRegister
@@ -23,7 +22,7 @@ import java.util.UUID;
 @Builder
 public class AttendanceRegister {
     @JsonProperty("id")
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("tenantId")
     private String tenantId = null;

@@ -6,6 +6,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.Collection;
 import java.util.List;
+
 @Component
 public class RegisterQueryBuilder {
 
@@ -22,18 +23,19 @@ public class RegisterQueryBuilder {
             "reg.createdtime, " +
             "reg.lastmodifiedtime " +
             "FROM eg_wms_attendance_register reg ";
+
     public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList) {
 
         StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
 
-        if(!ObjectUtils.isEmpty(searchCriteria.getTenantId())){
+        if (!ObjectUtils.isEmpty(searchCriteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.tenantid = ? ");
             preparedStmtList.add(searchCriteria.getTenantId());
         }
 
-        if(!ObjectUtils.isEmpty(searchCriteria.getIds())){
-            List<String> registerIds=searchCriteria.getIds();
+        if (!ObjectUtils.isEmpty(searchCriteria.getIds())) {
+            List<String> registerIds = searchCriteria.getIds();
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.id IN (").append(createQuery(registerIds)).append(")");
             preparedStmtList.addAll(registerIds);
@@ -52,10 +54,10 @@ public class RegisterQueryBuilder {
         return builder.toString();
     }
 
-    private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
-        if(preparedStmtList.isEmpty()){
+    private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
+        if (preparedStmtList.isEmpty()) {
             query.append(" WHERE ");
-        }else{
+        } else {
             query.append(" AND ");
         }
     }

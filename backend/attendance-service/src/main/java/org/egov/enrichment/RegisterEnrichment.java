@@ -7,7 +7,10 @@ import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.IdGenRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.AttendanceServiceUtil;
-import org.egov.web.models.*;
+import org.egov.web.models.AttendanceRegister;
+import org.egov.web.models.AttendanceRegisterRequest;
+import org.egov.web.models.StaffPermission;
+import org.egov.web.models.StaffPermissionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -36,9 +39,9 @@ public class RegisterEnrichment {
                 , config.getIdgenAttendanceRegisterNumberName(), config.getIdgenAttendanceRegisterNumberFormat(), attendanceRegisters.size());
 
         for (int i = 0; i < attendanceRegisters.size(); i++) {
-            AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null,true);
+            AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
             attendanceRegisters.get(i).setAuditDetails(auditDetails);
-            attendanceRegisters.get(i).setId(UUID.randomUUID());
+            attendanceRegisters.get(i).setId(UUID.randomUUID().toString());
 
             if (registerNumbers != null && !registerNumbers.isEmpty()) {
                 attendanceRegisters.get(i).setRegisterNumber(registerNumbers.get(i));
@@ -50,7 +53,7 @@ public class RegisterEnrichment {
         RequestInfo requestInfo = attendanceRegisterRequest.getRequestInfo();
         List<AttendanceRegister> attendanceRegistersListInUpdateReq = attendanceRegisterRequest.getAttendanceRegister();
 
-        for (AttendanceRegister attendanceRegisterInUpdateReq: attendanceRegistersListInUpdateReq) {
+        for (AttendanceRegister attendanceRegisterInUpdateReq : attendanceRegistersListInUpdateReq) {
             String registerId = String.valueOf(attendanceRegisterInUpdateReq.getId());
             AttendanceRegister attendanceRegisterFromDB = attendanceRegistersListFromDB.stream().filter(ar -> registerId.equals(String.valueOf(ar.getId()))).findFirst().orElse(null);
 
@@ -64,9 +67,9 @@ public class RegisterEnrichment {
     }
 
     public void enrichStaffInRegister(List<AttendanceRegister> attendanceRegisters, StaffPermissionRequest staffPermissionResponse) {
-        for (AttendanceRegister attendanceRegister: attendanceRegisters) {
+        for (AttendanceRegister attendanceRegister : attendanceRegisters) {
             String registerId = String.valueOf(attendanceRegister.getId());
-            List<StaffPermission> staff = staffPermissionResponse.getStaffPermissionList().stream().filter(st -> registerId.equals(st.getRegisterId())).collect(Collectors.toList());
+            List<StaffPermission> staff = staffPermissionResponse.getStaff().stream().filter(st -> registerId.equals(st.getRegisterId())).collect(Collectors.toList());
             attendanceRegister.setStaff(staff);
         }
     }

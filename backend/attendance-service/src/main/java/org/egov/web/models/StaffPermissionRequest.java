@@ -23,7 +23,7 @@ public class StaffPermissionRequest {
     private RequestInfo requestInfo = null;
 
     @JsonProperty("staff")
-    private List<StaffPermission> staffPermissionList = null;
+    private List<StaffPermission> staff = null;
 
 
 }

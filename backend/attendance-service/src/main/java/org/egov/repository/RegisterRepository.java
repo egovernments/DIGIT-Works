@@ -31,4 +31,5 @@ public class RegisterRepository {
         List<AttendanceRegister> attendanceRegisterList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return attendanceRegisterList;
     }
+
 }

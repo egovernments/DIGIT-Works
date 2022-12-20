@@ -12,9 +12,14 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 @Component
 public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>> {
 
@@ -22,15 +27,14 @@ public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>>
     private ObjectMapper mapper;
 
     @Override
-    public List<StaffPermission> extractData(ResultSet rs) throws SQLException, DataAccessException
-    {
+    public List<StaffPermission> extractData(ResultSet rs) throws SQLException, DataAccessException {
         Map<String, StaffPermission> attendanceStaffMap = new LinkedHashMap<>();
         while (rs.next()) {
             String id = rs.getString("id");
             String individuaId = rs.getString("individual_id");
             String registerId = rs.getString("register_id");
-            Double enrollmentDate = rs.getDouble("enrollment_date");
-            Double deenrollmentDate = rs.getDouble("deenrollment_date");
+            BigDecimal enrollmentDate = rs.getBigDecimal("enrollment_date");
+            BigDecimal deenrollmentDate = rs.getBigDecimal("deenrollment_date");
             String createdby = rs.getString("createdby");
             String lastmodifiedby = rs.getString("lastmodifiedby");
             Long createdtime = rs.getLong("createdtime");
@@ -44,7 +48,7 @@ public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>>
 
             StaffPermission attendanceStaff = StaffPermission.builder()
                     .additionalDetails(additionalDetails)
-                    .id(UUID.fromString(id))
+                    .id(id)
                     .userId(individuaId)
                     .registerId(registerId)
                     .additionalDetails(additionalDetails)

@@ -2,9 +2,9 @@ package org.egov.web.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
 import org.egov.common.contract.response.ResponseInfo;
-import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.service.AttendanceRegisterService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.AttendanceRegister;
@@ -47,7 +47,7 @@ public class AttendanceApiController {
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceRegisterRequest.getRequestInfo(), true);
         AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(enrichedAttendanceRegisterRequest.getAttendanceRegister()).build();
-        return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse,HttpStatus.OK);
+        return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
@@ -64,7 +64,7 @@ public class AttendanceApiController {
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceRegisterRequest.getRequestInfo(), true);
         AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(enrichedAttendanceRegisterRequest.getAttendanceRegister()).build();
-        return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse,HttpStatus.OK);
+        return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse, HttpStatus.OK);
     }
 
 

@@ -41,7 +41,6 @@ public class AttendanceServiceConfiguration {
     private String updateAttendanceRegisterTopic;
 
 
-
     //Topic
     @Value("${staff.kafka.create.topic}")
     private String saveStaffTopic;
@@ -61,6 +60,7 @@ public class AttendanceServiceConfiguration {
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
     }
+
     // kafka topics
     @Value("${attendance.service.log.kafka.create.topic}")
     private String createAttendanceLogTopic;

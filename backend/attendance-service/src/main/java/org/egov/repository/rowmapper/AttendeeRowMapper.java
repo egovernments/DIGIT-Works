@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+
 @Component
 public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntry>> {
 
@@ -24,39 +25,39 @@ public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntr
     @Override
     public List<IndividualEntry> extractData(ResultSet rs) throws SQLException, DataAccessException {
         Map<String, IndividualEntry> attendanceAttendeeMap = new LinkedHashMap<>();
-            while (rs.next()) {
-                String id = rs.getString("id");
-                String registerId = rs.getString("register_id");
-                String individuaId = rs.getString("individual_id");
-                Double enrollmentDate = rs.getDouble("enrollment_date");
-                Double deenrollmentDate = rs.getDouble("deenrollment_date");
-                String createdby = rs.getString("createdby");
-                String lastmodifiedby = rs.getString("lastmodifiedby");
-                Long createdtime = rs.getLong("createdtime");
-                Long lastmodifiedtime = rs.getLong("lastmodifiedtime");
+        while (rs.next()) {
+            String id = rs.getString("id");
+            String registerId = rs.getString("register_id");
+            String individuaId = rs.getString("individual_id");
+            Double enrollmentDate = rs.getDouble("enrollment_date");
+            Double deenrollmentDate = rs.getDouble("deenrollment_date");
+            String createdby = rs.getString("createdby");
+            String lastmodifiedby = rs.getString("lastmodifiedby");
+            Long createdtime = rs.getLong("createdtime");
+            Long lastmodifiedtime = rs.getLong("lastmodifiedtime");
 
-                AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
-                        .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
-                        .build();
+            AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
+                    .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
+                    .build();
 
-                JsonNode additionalDetails = getAdditionalDetail("additionaldetails", rs);
+            JsonNode additionalDetails = getAdditionalDetail("additionaldetails", rs);
 
-                IndividualEntry attendanceAttendee = IndividualEntry.builder()
-                        .additionalDetails(additionalDetails)
-                        .id(UUID.fromString(id))
-                        .individualId(UUID.fromString(individuaId))
-                        .registerId(UUID.fromString(registerId))
-                        .additionalDetails(additionalDetails)
-                        .enrollmentDate(enrollmentDate)
-                        .denrollmentDate(deenrollmentDate)
-                        .auditDetails(auditDetails)
-                        .build();
+            IndividualEntry attendanceAttendee = IndividualEntry.builder()
+                    .additionalDetails(additionalDetails)
+                    .id(UUID.fromString(id))
+                    .individualId(UUID.fromString(individuaId))
+                    .registerId(UUID.fromString(registerId))
+                    .additionalDetails(additionalDetails)
+                    .enrollmentDate(enrollmentDate)
+                    .denrollmentDate(deenrollmentDate)
+                    .auditDetails(auditDetails)
+                    .build();
 
-                if (!attendanceAttendeeMap.containsKey(id)) {
-                    attendanceAttendeeMap.put(id, attendanceAttendee);
-                }
+            if (!attendanceAttendeeMap.containsKey(id)) {
+                attendanceAttendeeMap.put(id, attendanceAttendee);
             }
-            return new ArrayList<>(attendanceAttendeeMap.values());
+        }
+        return new ArrayList<>(attendanceAttendeeMap.values());
 
     }
 

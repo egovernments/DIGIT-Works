@@ -1,6 +1,8 @@
 package org.egov.service;
 
+import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.StaffEnrichmentService;
 import org.egov.kafka.Producer;
@@ -8,16 +10,17 @@ import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.ResponseInfoFactory;
+import org.egov.validator.AttendanceServiceValidator;
 import org.egov.validator.StaffServiceValidator;
-import org.egov.web.models.*;
+import org.egov.web.models.AttendanceRegister;
+import org.egov.web.models.AttendanceStaffSearchCriteria;
+import org.egov.web.models.StaffPermission;
+import org.egov.web.models.StaffPermissionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -38,12 +41,18 @@ public class StaffService {
     private RegisterRepository registerRepository;
 
 
-
     @Autowired
     private Producer producer;
 
     @Autowired
     private AttendanceServiceConfiguration serviceConfiguration;
+
+    @Autowired
+    private AttendanceRegisterService attendanceRegisterService;
+
+    @Autowired
+    private AttendanceServiceValidator attendanceServiceValidator;
+
 
     /**
      * Create attendance staff
@@ -56,22 +65,21 @@ public class StaffService {
         staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
 
         //extract registerIds and staffUserIds from client request
-        List<String> staffIds=new ArrayList<>();
-        List<String> registerIds=new ArrayList<>();
-        List<StaffPermission> staffPermissionListFromRequest=staffPermissionRequest.getStaffPermissionList();
-        String rootTenantId=staffPermissionRequest.getStaffPermissionList().get(0).getTenantId();
-        for(StaffPermission staffPermission:staffPermissionListFromRequest){
-            staffIds.add(staffPermission.getUserId());
-            registerIds.add(staffPermission.getRegisterId());
-        }
+        String rootTenantId = staffPermissionRequest.getStaff().get(0).getTenantId();
+        List<String> staffIds = extractStaffIdsFromRequest(staffPermissionRequest);
+        List<String> registerIds = extractRegisterIdsFromRequest(staffPermissionRequest);
 
         //db call to get the staffList data whose de enrollment date is null
-        AttendanceStaffSearchCriteria staffSearchCriteria=AttendanceStaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
-        List<StaffPermission> staffPermissionListFromDB=staffRepository.getActiveStaff(staffSearchCriteria);
-        List<AttendanceRegister> attendanceRegisterListFromDB=getAttendanceRegisterList(registerIds,staffPermissionListFromRequest,rootTenantId);
+        AttendanceStaffSearchCriteria staffSearchCriteria = AttendanceStaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
+        List<StaffPermission> staffPermissionListFromDB = staffRepository.getActiveStaff(staffSearchCriteria);
+
+        //db call to get registers from db and use them to validate request registers
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(staffPermissionRequest.getRequestInfo()).build();
+        List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, rootTenantId);
+        attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, rootTenantId);
 
         //validator call by passing staff request and the data from db call
-        staffServiceValidator.validateCreateStaffPermission(staffPermissionRequest,staffPermissionListFromDB,attendanceRegisterListFromDB);
+        staffServiceValidator.validateCreateStaffPermission(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
 
         //enrichment call by passing staff request and data from db call
         staffEnrichmentService.enrichCreateStaffPermission(staffPermissionRequest);
@@ -92,49 +100,68 @@ public class StaffService {
         staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
 
         //extract registerIds and staffUserIds from client request
-        String rootTenantId=staffPermissionRequest.getStaffPermissionList().get(0).getTenantId();
-        List<StaffPermission> staffPermissionListFromRequest=staffPermissionRequest.getStaffPermissionList();
-        List<String> staffIds=new ArrayList<>();
-        List<String> registerIds=new ArrayList<>();
-        for(StaffPermission staffPermission:staffPermissionListFromRequest){
-            staffIds.add(staffPermission.getUserId());
-            registerIds.add(staffPermission.getRegisterId());
-        }
+        String rootTenantId = staffPermissionRequest.getStaff().get(0).getTenantId();
+        List<String> staffIds = extractStaffIdsFromRequest(staffPermissionRequest);
+        List<String> registerIds = extractRegisterIdsFromRequest(staffPermissionRequest);
 
-        //db call to get the staffList data
-        List<AttendanceRegister> attendanceRegisterListFromDB=getAttendanceRegisterList(registerIds,staffPermissionListFromRequest,rootTenantId);
-        AttendanceStaffSearchCriteria staffSearchCriteria=AttendanceStaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
-        List<StaffPermission> staffPermissionListFromDB=staffRepository.getAllStaff(staffSearchCriteria);
+        //db call to get registers from db and use them to validate request registers
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(staffPermissionRequest.getRequestInfo()).build();
+        List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, rootTenantId);
+        attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, rootTenantId);
+
+        // db call to get staff data
+        AttendanceStaffSearchCriteria staffSearchCriteria = AttendanceStaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
+        List<StaffPermission> staffPermissionListFromDB = staffRepository.getAllStaff(staffSearchCriteria);
 
         //validator call by passing staff request and the data from db call
-        staffServiceValidator.validateDeleteStaffPermission(staffPermissionRequest,staffPermissionListFromDB,attendanceRegisterListFromDB);
+        staffServiceValidator.validateDeleteStaffPermission(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
 
-        staffEnrichmentService.enrichDeleteStaffPermission(staffPermissionRequest,staffPermissionListFromDB);
+        staffEnrichmentService.enrichDeleteStaffPermission(staffPermissionRequest, staffPermissionListFromDB);
 
         producer.push(serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
-        return  staffPermissionRequest;
+        return staffPermissionRequest;
     }
 
 
-    public List<AttendanceRegister> getAttendanceRegisterList(List<String> registerIds,List<StaffPermission> staffPermissionList,String tenantId){
+    public StaffPermissionRequest createFirstStaff(RequestInfo requestInfo, List<AttendanceRegister> attendanceRegisters) { //check enroll
+        List<StaffPermission> staffPermissionList = new ArrayList<>();
 
-        Set<String> uniqueRegisterIdsFromRequest=new HashSet<>(registerIds);
+        for (AttendanceRegister attendanceRegister : attendanceRegisters) {
+            StaffPermission staffPermission = StaffPermission.builder().userId(requestInfo.getUserInfo().getUuid())
+                    .tenantId(attendanceRegister.getTenantId())
+                    .registerId(String.valueOf(attendanceRegister.getId())).build();
 
-        AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria=AttendanceRegisterSearchCriteria
-                .builder().ids(registerIds).tenantId(tenantId).build();
-
-        List<AttendanceRegister> attendanceRegisterList=registerRepository.getRegister(attendanceRegisterSearchCriteria);
-
-        Set<String> uniqueRegisterIdsFromDB= attendanceRegisterList.stream().map(register -> register.getId().toString()).collect(Collectors.toSet());
-
-        //check if all register ids from request exist in db
-        for(String idFromRequest:uniqueRegisterIdsFromRequest){
-            if(!uniqueRegisterIdsFromDB.contains(idFromRequest)){
-                throw new CustomException("REGISTER_ID", "Attendance Registers with register id : "+idFromRequest+" does not exist for tenantId");
-            }
+            staffPermissionList.add(staffPermission);
         }
+        StaffPermissionRequest staffPermissionRequest = StaffPermissionRequest.builder().requestInfo(requestInfo).staff(staffPermissionList).build();
+        StaffPermissionRequest staffPermissionResponse;
 
-        return attendanceRegisterList;
+        try {
+            staffPermissionResponse = createAttendanceStaff(staffPermissionRequest);
+        } catch (Exception e) {
+            throw new CustomException("CREATE_STAFF", "Error in creating staff");
+        }
+        return staffPermissionResponse;
+
     }
+
+    private List<String> extractRegisterIdsFromRequest(StaffPermissionRequest staffPermissionRequest) {
+        List<StaffPermission> staffPermissionListFromRequest = staffPermissionRequest.getStaff();
+        List<String> registerIds = new ArrayList<>();
+        for (StaffPermission staffPermission : staffPermissionListFromRequest) {
+            registerIds.add(staffPermission.getRegisterId());
+        }
+        return registerIds;
+    }
+
+    private List<String> extractStaffIdsFromRequest(StaffPermissionRequest staffPermissionRequest) {
+        List<StaffPermission> staffPermissionListFromRequest = staffPermissionRequest.getStaff();
+        List<String> staffIds = new ArrayList<>();
+        for (StaffPermission staffPermission : staffPermissionListFromRequest) {
+            staffIds.add(staffPermission.getUserId());
+        }
+        return staffIds;
+    }
+
 
 }

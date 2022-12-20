@@ -1,8 +1,6 @@
 package org.egov.repository.querybuilder;
 
-import org.apache.kafka.common.protocol.types.Field;
 import org.egov.web.models.AttendanceStaffSearchCriteria;
-import org.egov.web.models.StaffPermission;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -23,25 +21,26 @@ public class StaffQueryBuilder {
             "stf.createdtime, " +
             "stf.lastmodifiedtime " +
             "FROM eg_wms_attendance_staff stf ";
-    public String getActiveAttendanceStaffSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList){
-        StringBuilder query = new StringBuilder(getAttendanceStaffSearchQuery(criteria,preparedStmtList));
+
+    public String getActiveAttendanceStaffSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList) {
+        StringBuilder query = new StringBuilder(getAttendanceStaffSearchQuery(criteria, preparedStmtList));
         addClauseIfRequired(query, preparedStmtList);
         query.append(" stf.deenrollment_date is null ");
 
         return query.toString();
     }
 
-    public String getAttendanceStaffSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList){
+    public String getAttendanceStaffSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
 
-        if(!ObjectUtils.isEmpty(criteria.getIndividualIds())){
-            List<String> staffUserIds=criteria.getIndividualIds();
+        if (!ObjectUtils.isEmpty(criteria.getIndividualIds())) {
+            List<String> staffUserIds = criteria.getIndividualIds();
             addClauseIfRequired(query, preparedStmtList);
             query.append(" stf.individual_id IN (").append(createQuery(staffUserIds)).append(")");
             preparedStmtList.addAll(criteria.getIndividualIds());
         }
-        if(!ObjectUtils.isEmpty(criteria.getRegisterIds())){
-            List<String> registerIds=criteria.getRegisterIds();
+        if (!ObjectUtils.isEmpty(criteria.getRegisterIds())) {
+            List<String> registerIds = criteria.getRegisterIds();
             addClauseIfRequired(query, preparedStmtList);
             query.append(" stf.register_id IN (").append(createQuery(registerIds)).append(")");
             preparedStmtList.addAll(criteria.getRegisterIds());
@@ -49,23 +48,22 @@ public class StaffQueryBuilder {
         return query.toString();
     }
 
-    public String getAttendanceStaffFromRegistersSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList){
+    public String getAttendanceStaffFromRegistersSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
 
-        if(!ObjectUtils.isEmpty(criteria.getRegisterIds())){
-            List<String> registerIds=criteria.getRegisterIds();
+        if (!ObjectUtils.isEmpty(criteria.getRegisterIds())) {
+            List<String> registerIds = criteria.getRegisterIds();
             addClauseIfRequired(query, preparedStmtList);
             query.append(" stf.register_id IN (").append(createQuery(registerIds)).append(")");
-            System.out.println("Register ids : "+criteria.getRegisterIds());  // remove later
             preparedStmtList.addAll(criteria.getRegisterIds());
         }
         return query.toString();
     }
 
-    private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
-        if(preparedStmtList.isEmpty()){
+    private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
+        if (preparedStmtList.isEmpty()) {
             query.append(" WHERE ");
-        }else{
+        } else {
             query.append(" AND ");
         }
     }
