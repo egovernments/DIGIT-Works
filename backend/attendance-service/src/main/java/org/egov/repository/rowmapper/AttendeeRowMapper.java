@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -29,8 +30,8 @@ public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntr
             String id = rs.getString("id");
             String registerId = rs.getString("register_id");
             String individuaId = rs.getString("individual_id");
-            Double enrollmentDate = rs.getDouble("enrollment_date");
-            Double deenrollmentDate = rs.getDouble("deenrollment_date");
+            BigDecimal enrollmentDate = rs.getBigDecimal("enrollment_date");
+            BigDecimal deenrollmentDate = rs.getBigDecimal("deenrollment_date");
             String createdby = rs.getString("createdby");
             String lastmodifiedby = rs.getString("lastmodifiedby");
             Long createdtime = rs.getLong("createdtime");

@@ -165,7 +165,7 @@ public class StaffServiceValidator {
         // staff cannot be added to register if register's end date has passed
         BigDecimal enrollmentDate = new BigDecimal(System.currentTimeMillis());
         for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
-            int dateComparisonResult = attendanceRegister.getEndDate().compareTo(enrollmentDate.doubleValue());
+            int dateComparisonResult = attendanceRegister.getEndDate().compareTo(enrollmentDate);
             if (dateComparisonResult < 0) {
                 throw new CustomException("END_DATE", "Staff cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
             }

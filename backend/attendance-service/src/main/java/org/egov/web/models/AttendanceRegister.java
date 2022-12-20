@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,10 +35,10 @@ public class AttendanceRegister {
     private String name = null;
 
     @JsonProperty("startDate")
-    private Double startDate = null;
+    private BigDecimal startDate = null;
 
     @JsonProperty("endDate")
-    private Double endDate = null;
+    private BigDecimal endDate = null;
 
     @JsonProperty("status")
     private Status status = Status.ACTIVE;

@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,8 +37,8 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
             String tenantId = rs.getString("tenantid");
             String registerNumber = rs.getString("registernumber");
             String name = rs.getString("name");
-            Double startDate = rs.getDouble("startdate");
-            Double endDate = rs.getDouble("enddate");
+            BigDecimal startDate = rs.getBigDecimal("startdate");
+            BigDecimal endDate = rs.getBigDecimal("enddate");
             String status = rs.getString("status");
             String createdby = rs.getString("createdby");
             String lastmodifiedby = rs.getString("lastmodifiedby");
