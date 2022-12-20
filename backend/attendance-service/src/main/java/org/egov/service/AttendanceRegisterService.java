@@ -42,7 +42,7 @@ public class AttendanceRegisterService {
     private StaffService staffService;
 
     @Autowired
-    private RegisterRepository repository;
+    private RegisterRepository registerRepository;
 
     /**
      * Create Attendance register
@@ -69,7 +69,7 @@ public class AttendanceRegisterService {
     public List<AttendanceRegister> searchAttendanceRegister(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
 
         attendanceServiceValidator.validateSearchEstimate(requestInfoWrapper, searchCriteria);
-        List<AttendanceRegister> attendanceRegisterList = repository.getRegister(searchCriteria);
+        List<AttendanceRegister> attendanceRegisterList = registerRepository.getRegister(searchCriteria);
         return attendanceRegisterList;
     }
 
