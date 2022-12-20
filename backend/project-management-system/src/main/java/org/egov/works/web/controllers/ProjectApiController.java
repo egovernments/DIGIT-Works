@@ -3,6 +3,8 @@ package org.egov.works.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import org.egov.works.service.ProjectService;
+import org.egov.works.util.ResponseInfoFactory;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.egov.common.contract.response.ResponseInfo;
+import digit.models.coremodels.RequestInfoWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -31,6 +35,12 @@ public class ProjectApiController {
     private final HttpServletRequest request;
 
     @Autowired
+    private ProjectService projectService;
+
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
+
+    @Autowired
     public ProjectApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
@@ -38,7 +48,10 @@ public class ProjectApiController {
 
     @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<ProjectResponse> projectV1CreatePost(@ApiParam(value = "Details for the new Project.", required = true) @Valid @RequestBody ProjectRequest project) {
-        return new ResponseEntity<ProjectResponse>(HttpStatus.NOT_IMPLEMENTED);
+        ProjectRequest enrichedProjectRequest = projectService.createProject(project);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(project.getRequestInfo(), true);
+        ProjectResponse projectResponse = ProjectResponse.builder().responseInfo(responseInfo).project(enrichedProjectRequest.getProjects()).build();
+        return new ResponseEntity<ProjectResponse>(projectResponse,HttpStatus.OK);
     }
 
     @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
