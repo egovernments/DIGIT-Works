@@ -55,7 +55,6 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
   // );
   let { loiNumber, estimateNumber } = Digit.Hooks.useQueryParams();
    const [config, setConfig] = useState({});
-   const [defaultValues, setDefaultValues] = useState({});
    const [approvers, setApprovers] = useState([]);
    const [selectedApprover, setSelectedApprover] = useState({});
    
