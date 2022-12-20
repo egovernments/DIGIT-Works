@@ -29,7 +29,7 @@ public class AttendanceLogEnrichment {
         AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(byUser, null, true);
         for (AttendanceLog attendanceLog : attendanceLogs) {
             attendanceLog.setAuditDetails(auditDetails);
-            UUID attendanceLogId = UUID.randomUUID();
+            String attendanceLogId = String.valueOf(UUID.randomUUID());
             attendanceLog.setId(attendanceLogId);
             List<Document> documentIds = attendanceLog.getDocumentIds();
             for (Document documentId : documentIds) {

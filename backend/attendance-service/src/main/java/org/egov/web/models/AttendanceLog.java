@@ -23,13 +23,13 @@ import java.util.UUID;
 @Builder
 public class AttendanceLog {
     @JsonProperty("id")
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("registerId")
     private String registerId = null;
 
     @JsonProperty("individualId")
-    private UUID individualId = null;
+    private String individualId = null;
 
     @JsonProperty("tenantId")
     private String tenantId = null;

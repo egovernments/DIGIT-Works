@@ -50,8 +50,8 @@ public class AttendanceLogRowMapper implements ResultSetExtractor<List<Attendanc
             JsonNode additionalDetails = getAdditionalDetail("logAdditionalDetails", rs);
 
             AttendanceLog attendanceLog = AttendanceLog.builder()
-                    .id(UUID.fromString(id))
-                    .individualId(UUID.fromString(individualId))
+                    .id(id)
+                    .individualId(individualId)
                     .tenantId(tenantId)
                     .registerId(registerId)
                     .status(Status.fromValue(status))

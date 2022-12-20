@@ -123,7 +123,7 @@ public class AttendanceLogServiceValidator {
         List<IndividualEntry> fetchAttendanceAttendeeLst = fetchAllAttendeesEnrolledInARegister(registerId);
 
         // Convert the fetched Attendee List into a Map with individualId as key and corresponding Attendee list as value.
-        Map<UUID, List<IndividualEntry>> attendanceAttendeeListMap = fetchAttendanceAttendeeLst
+        Map<String, List<IndividualEntry>> attendanceAttendeeListMap = fetchAttendanceAttendeeLst
                 .stream()
                 .collect(Collectors.groupingBy(IndividualEntry::getIndividualId));
 
@@ -131,13 +131,13 @@ public class AttendanceLogServiceValidator {
         identifyUnassociatedAndIneligibleAttendees(attendanceLogRequest, attendanceAttendeeListMap);
     }
 
-    private void identifyUnassociatedAndIneligibleAttendees(AttendanceLogRequest attendanceLogRequest, Map<UUID, List<IndividualEntry>> attendanceAttendeeListMap) {
-        List<UUID> unassociatedAttendees = new ArrayList<>();
-        Set<UUID> eligibleAttendanceAttendeeIdSet = new HashSet<>();
+    private void identifyUnassociatedAndIneligibleAttendees(AttendanceLogRequest attendanceLogRequest, Map<String, List<IndividualEntry>> attendanceAttendeeListMap) {
+        List<String> unassociatedAttendees = new ArrayList<>();
+        Set<String> eligibleAttendanceAttendeeIdSet = new HashSet<>();
 
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
         for (AttendanceLog attendanceLog : attendanceLogs) {
-            UUID givenIndividualId = attendanceLog.getIndividualId();
+            String givenIndividualId = attendanceLog.getIndividualId();
             if (attendanceAttendeeListMap.containsKey(givenIndividualId)) {
                 List<IndividualEntry> lst = attendanceAttendeeListMap.get(givenIndividualId);
                 for (IndividualEntry attendee : lst) {
@@ -165,7 +165,7 @@ public class AttendanceLogServiceValidator {
         }
 
         //find ineligible list
-        Set<UUID> inEligibleAttendanceAttendeeIdSet = new HashSet<>();
+        Set<String> inEligibleAttendanceAttendeeIdSet = new HashSet<>();
         for (AttendanceLog attendanceLog : attendanceLogs) {
             if (!eligibleAttendanceAttendeeIdSet.contains(attendanceLog.getIndividualId())) {
                 inEligibleAttendanceAttendeeIdSet.add(attendanceLog.getIndividualId());

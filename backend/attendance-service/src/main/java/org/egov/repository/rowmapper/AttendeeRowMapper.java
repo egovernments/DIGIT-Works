@@ -44,9 +44,9 @@ public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntr
 
             IndividualEntry attendanceAttendee = IndividualEntry.builder()
                     .additionalDetails(additionalDetails)
-                    .id(UUID.fromString(id))
-                    .individualId(UUID.fromString(individuaId))
-                    .registerId(UUID.fromString(registerId))
+                    .id(id)
+                    .individualId(individuaId)
+                    .registerId(registerId)
                     .additionalDetails(additionalDetails)
                     .enrollmentDate(enrollmentDate)
                     .denrollmentDate(deenrollmentDate)
