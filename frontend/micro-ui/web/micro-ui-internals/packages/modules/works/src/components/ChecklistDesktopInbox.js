@@ -8,7 +8,53 @@ import { Link } from "react-router-dom";
 import { convertEpochToDateDMY } from "../utils";
 
 const DesktopInbox = ({ tableConfig, resultOk, filterComponent, columns, isLoading, setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState, ...props }) => {
-    
+    const dummyDataForTable = [
+        {
+            workOrderId: "1136/TO/DB/FLOOD/10-11",
+            woIssuedDate: "08/09/2010",
+            woAcceptedDate: "08/09/2010",
+            nameOfWork: "Providing CC Drain in Birla Gaddah(akshaynagar colony) in 27th ward",
+            agencyName: "S.K. Om Birla",
+            status: "complete"
+            //sending dummy data(here for now I'm calling estimates inbox just to test the inbox table, for every item in estimate inbox respnse I'm showing the same dummy data)
+        },
+        {
+            workOrderId: "1136/TO/DB/FLOOD/10-11",
+            woIssuedDate: "08/09/2010",
+            woAcceptedDate: "08/09/2010",
+            nameOfWork: "Providing CC Drain in Birla Gaddah(akshaynagar colony) in 27th ward",
+            agencyName: "S.K. Om Birla",
+            status: "complete"
+            //sending dummy data(here for now I'm calling estimates inbox just to test the inbox table, for every item in estimate inbox respnse I'm showing the same dummy data)
+        },
+        {
+            workOrderId: "1136/TO/DB/FLOOD/10-11",
+            woIssuedDate: "08/09/2010",
+            woAcceptedDate: "08/09/2010",
+            nameOfWork: "Providing CC Drain in Birla Gaddah(akshaynagar colony) in 27th ward",
+            agencyName: "S.K. Om Birla",
+            status: "complete"
+            //sending dummy data(here for now I'm calling estimates inbox just to test the inbox table, for every item in estimate inbox respnse I'm showing the same dummy data)
+        },
+        {
+            workOrderId: "1136/TO/DB/FLOOD/10-11",
+            woIssuedDate: "08/09/2010",
+            woAcceptedDate: "08/09/2010",
+            nameOfWork: "Providing CC Drain in Birla Gaddah(akshaynagar colony) in 27th ward",
+            agencyName: "S.K. Om Birla",
+            status: "complete"
+            //sending dummy data(here for now I'm calling estimates inbox just to test the inbox table, for every item in estimate inbox respnse I'm showing the same dummy data)
+        },
+        {
+            workOrderId: "1136/TO/DB/FLOOD/10-11",
+            woIssuedDate: "08/09/2010",
+            woAcceptedDate: "08/09/2010",
+            nameOfWork: "Providing CC Drain in Birla Gaddah(akshaynagar colony) in 27th ward",
+            agencyName: "S.K. Om Birla",
+            status: "complete"
+            //sending dummy data(here for now I'm calling estimates inbox just to test the inbox table, for every item in estimate inbox respnse I'm showing the same dummy data)
+        }
+    ]
     const { data } = props;
     
     const { t } = useTranslation();
@@ -69,7 +115,8 @@ const DesktopInbox = ({ tableConfig, resultOk, filterComponent, columns, isLoadi
     let result;
     if (isLoading) {
         result = <Loader />;
-    } else if (data?.display && !resultOk) {
+    } 
+    else if (data?.display && !resultOk) {
         result = (
             <Card style={{ marginTop: 20 }}>
                 {t(data?.display)
@@ -81,12 +128,14 @@ const DesktopInbox = ({ tableConfig, resultOk, filterComponent, columns, isLoadi
                     ))}
             </Card>
         );
-    } else if (resultOk) {
+    } 
+    // else if (resultOk) {
+       else if(true){ // for static screen purposes
         result = (
-            <div style={{overflowX:"scroll"}}>
             <ApplicationTable
                 t={t}
-                data={data.table}
+                //data={data.table}
+                data={dummyDataForTable} //for static screen
                 columns={inboxColumns}
                 getCellProps={(cellInfo) => {
                     return {
@@ -107,7 +156,6 @@ const DesktopInbox = ({ tableConfig, resultOk, filterComponent, columns, isLoadi
                 sortParams={props.sortParams}
                 totalRecords={props.totalRecords}
             />
-            </div>
         )
     } else {
         result = null
