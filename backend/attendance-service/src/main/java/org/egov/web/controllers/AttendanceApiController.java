@@ -10,7 +10,7 @@ import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterRequest;
 import org.egov.web.models.AttendanceRegisterResponse;
-import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.models.AttendanceRegisterSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

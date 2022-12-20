@@ -1,6 +1,6 @@
 package org.egov.repository.querybuilder;
 
-import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.models.AttendanceRegisterSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 

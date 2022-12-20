@@ -1,4 +1,4 @@
-package org.egov.web.models;
+package org.egov.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

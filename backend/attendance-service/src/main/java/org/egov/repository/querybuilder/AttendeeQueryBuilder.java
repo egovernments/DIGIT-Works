@@ -1,7 +1,7 @@
 package org.egov.repository.querybuilder;
 
 import org.egov.tracer.model.CustomException;
-import org.egov.web.models.AttendanceAttendeeSearchCriteria;
+import org.egov.models.AttendanceAttendeeSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 

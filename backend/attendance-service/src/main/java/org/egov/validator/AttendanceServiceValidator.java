@@ -9,7 +9,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.util.MDMSUtils;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterRequest;
-import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.models.AttendanceRegisterSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;

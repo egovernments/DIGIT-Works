@@ -11,7 +11,7 @@ import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterRequest;
-import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.models.AttendanceRegisterSearchCriteria;
 import org.egov.web.models.StaffPermissionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

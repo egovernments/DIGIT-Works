@@ -1,7 +1,8 @@
-package org.egov.web.models;
+package org.egov.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.egov.web.models.Status;
 
 import java.util.List;
 

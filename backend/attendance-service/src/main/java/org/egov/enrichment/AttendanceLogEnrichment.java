@@ -7,7 +7,7 @@ import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.util.AttendanceServiceUtil;
 import org.egov.web.models.AttendanceLog;
 import org.egov.web.models.AttendanceLogRequest;
-import org.egov.web.models.AttendanceLogSearchCriteria;
+import org.egov.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

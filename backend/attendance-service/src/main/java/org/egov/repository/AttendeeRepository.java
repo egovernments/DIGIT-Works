@@ -2,7 +2,7 @@ package org.egov.repository;
 
 import org.egov.repository.querybuilder.AttendeeQueryBuilder;
 import org.egov.repository.rowmapper.AttendeeRowMapper;
-import org.egov.web.models.AttendanceAttendeeSearchCriteria;
+import org.egov.models.AttendanceAttendeeSearchCriteria;
 import org.egov.web.models.IndividualEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
