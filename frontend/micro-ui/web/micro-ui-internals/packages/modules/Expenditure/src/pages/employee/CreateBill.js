@@ -11,6 +11,8 @@ Based on type of contract - SHG_WORK_ORDER, DEPT_WORK_ORDER, DEPT_PURCHASE_ORDER
   Organisation (SHG)
   department - work order
   department - purchase order
+On click of proceed, show success bar
+add in collapsible component
 */
 const CreateBill = () => {
   const { t } = useTranslation()
