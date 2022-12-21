@@ -9,11 +9,40 @@ const transformViewDataToApplicationDetails = {
           { title: "EXP_CREATED_DATE", value: "28-09-2022" },
           { title: "EXP_STATUS", value: "To Approve" },
         ],
+      };
+      const MusterRollDetails_1 = {
+        expandAndCollapse : {
+          groupComponents : true,
+          headerLabel : "Muster Roll 1- ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)",
+          headerValue : "Rs 30000",
+          groupHeader : "EXP_MUSTER_ROLL_DETAILS"
+        },
         additionalDetails : {
           table : {
             mustorRollTable : true
           },
-      }
+        }
+      };
+      const MusterRollDetails_2 = {
+        expandAndCollapse : {
+          groupComponents : true,
+          headerLabel : "Muster Roll 2 - ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)",
+          headerValue : "Rs 30000"
+        },
+      };
+      const MusterRollDetails_3 = {
+        expandAndCollapse : {
+          groupComponents : true,
+          headerLabel : "Muster Roll 3 - ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)",
+          headerValue : "Rs 30000"
+        },
+      };
+      const MusterRollDetails_4 = {
+        expandAndCollapse : {
+          groupComponents : true,
+          headerLabel : "Muster Roll 4 - ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)",
+          headerValue : "Rs 30000"
+        },
       };
       const ViewVendorBill = {
         title: "EXP_VIEW_VENDOR_BILLS",
@@ -65,7 +94,7 @@ const transformViewDataToApplicationDetails = {
             ],
         }
       };
-      const applicationDetails = { applicationDetails: [BillDetails, ViewVendorBill] };
+      const applicationDetails = { applicationDetails: [BillDetails,MusterRollDetails_1, MusterRollDetails_2, MusterRollDetails_3, MusterRollDetails_4, ViewVendorBill] };
       return {
         applicationDetails,
         applicationData: { regNo: 111, HosName: "Name", DOR: "10-10-2020" }, //dummy data

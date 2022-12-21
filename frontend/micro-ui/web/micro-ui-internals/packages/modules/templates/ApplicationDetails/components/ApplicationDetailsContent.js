@@ -4,6 +4,7 @@ import {
   CardSectionHeader,
   CardSubHeader,
   CheckPoint,
+  CollapseAndExpandGroups,
   ConnectingCheckPoints,
   Loader,
   Row,
@@ -200,7 +201,8 @@ function ApplicationDetailsContent({
         />
       ) : null}
       {applicationDetails?.applicationDetails?.map((detail, index) => (
-        <React.Fragment key={index}>
+        <CollapseAndExpandGroups groupElements={detail?.expandAndCollapse?.groupComponents} groupHeader={detail?.expandAndCollapse?.groupHeader} headerLabel={detail?.expandAndCollapse?.headerLabel} headerValue={detail?.expandAndCollapse?.headerValue} customClass={detail?.expandAndCollapse?.customClass}>
+          <React.Fragment key={index}>
           <div style={getMainDivStyles()}>
             {index === 0 && !detail.asSectionHeader ? (
               <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
@@ -398,6 +400,7 @@ function ApplicationDetailsContent({
           {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
           {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
         </React.Fragment>
+        </CollapseAndExpandGroups>
       ))}
       {showTimeLine && workflowDetails?.data?.timeline?.length > 0 && (
         <React.Fragment>
