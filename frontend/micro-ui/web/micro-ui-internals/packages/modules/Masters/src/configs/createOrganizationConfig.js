@@ -143,7 +143,7 @@ export const createOrganizationConfig = () => {
                     isMandatory: true,
                     key: "ulb",
                     type: "dropdown",
-                    label: t("ULB"),
+                    label: t("ES_COMMON_ULB"),
                     disable: true,
                     populators: {
                         name: "ulb",
@@ -166,7 +166,7 @@ export const createOrganizationConfig = () => {
                 ],
             },
             {
-                head: "Financial Details",
+                head: t("MASTERS_FINANCIAL_DETAILS"),
                 body: [
                 {
                     inline: true,
