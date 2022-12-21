@@ -1,9 +1,10 @@
 package org.egov.repository.querybuilder;
 
-import org.egov.web.models.AttendanceStaffSearchCriteria;
+import org.egov.models.StaffSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -20,38 +21,65 @@ public class StaffQueryBuilder {
             "stf.createdtime, " +
             "stf.lastmodifiedtime " +
             "FROM eg_wms_attendance_staff stf ";
-    public String getActiveAttendanceStaffSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList){
-        StringBuilder query = new StringBuilder(getAttendanceStaffSearchQuery(criteria,preparedStmtList));
+
+    public String getActiveAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
+        StringBuilder query = new StringBuilder(getAttendanceStaffSearchQuery(criteria, preparedStmtList));
         addClauseIfRequired(query, preparedStmtList);
         query.append(" stf.deenrollment_date is null ");
 
         return query.toString();
     }
 
-    public String getAttendanceStaffSearchQuery(AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList){
+    public String getAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
 
-        if(!ObjectUtils.isEmpty(criteria.getIndividualId())){
+        if (!ObjectUtils.isEmpty(criteria.getIndividualIds())) {
+            List<String> staffUserIds = criteria.getIndividualIds();
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" stf.individual_id = ? ");
-            preparedStmtList.add(criteria.getIndividualId());
+            query.append(" stf.individual_id IN (").append(createQuery(staffUserIds)).append(")");
+            preparedStmtList.addAll(criteria.getIndividualIds());
         }
-        if(!ObjectUtils.isEmpty(criteria.getRegisterId())){
+        if (!ObjectUtils.isEmpty(criteria.getRegisterIds())) {
+            List<String> registerIds = criteria.getRegisterIds();
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" stf.register_id = ? ");
-            preparedStmtList.add(criteria.getRegisterId());
+            query.append(" stf.register_id IN (").append(createQuery(registerIds)).append(")");
+            preparedStmtList.addAll(criteria.getRegisterIds());
         }
         return query.toString();
     }
-    private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
-        if(preparedStmtList.isEmpty()){
+
+    public String getAttendanceStaffFromRegistersSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
+        StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
+
+        if (!ObjectUtils.isEmpty(criteria.getRegisterIds())) {
+            List<String> registerIds = criteria.getRegisterIds();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" stf.register_id IN (").append(createQuery(registerIds)).append(")");
+            preparedStmtList.addAll(criteria.getRegisterIds());
+        }
+        return query.toString();
+    }
+
+    private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
+        if (preparedStmtList.isEmpty()) {
             query.append(" WHERE ");
-        }else{
+        } else {
             query.append(" AND ");
         }
     }
 
-    private void addLimitAndOffset(StringBuilder query, AttendanceStaffSearchCriteria criteria, List<Object> preparedStmtList) {
+    private String createQuery(Collection<String> ids) {
+        StringBuilder builder = new StringBuilder();
+        int length = ids.size();
+        for (int i = 0; i < length; i++) {
+            builder.append(" ? ");
+            if (i != length - 1) builder.append(",");
+        }
+        return builder.toString();
+    }
+
+
+    private void addLimitAndOffset(StringBuilder query, StaffSearchCriteria criteria, List<Object> preparedStmtList) {
         query.append(" OFFSET ? ");
         preparedStmtList.add(criteria.getOffset());
 

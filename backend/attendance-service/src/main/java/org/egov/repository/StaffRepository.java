@@ -3,7 +3,7 @@ package org.egov.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.repository.querybuilder.StaffQueryBuilder;
 import org.egov.repository.rowmapper.StaffRowMapper;
-import org.egov.web.models.AttendanceStaffSearchCriteria;
+import org.egov.models.StaffSearchCriteria;
 import org.egov.web.models.StaffPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,9 +24,16 @@ public class StaffRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<StaffPermission> getActiveStaff(AttendanceStaffSearchCriteria searchCriteria) {
+    public List<StaffPermission> getActiveStaff(StaffSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getActiveAttendanceStaffSearchQuery(searchCriteria, preparedStmtList);
+        List<StaffPermission> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+        return attendanceStaffList;
+    }
+
+    public List<StaffPermission> getAllStaff(StaffSearchCriteria searchCriteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getAttendanceStaffFromRegistersSearchQuery(searchCriteria, preparedStmtList);
         List<StaffPermission> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return attendanceStaffList;
     }

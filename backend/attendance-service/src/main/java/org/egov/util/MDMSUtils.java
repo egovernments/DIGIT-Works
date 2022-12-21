@@ -8,8 +8,6 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.AttendanceRegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,10 +38,10 @@ public class MDMSUtils {
 
     public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
 
-        ModuleDetail attendanceRegisterTenantModuleDetail = getTenantModuleRequestData();
+        ModuleDetail tenantModuleDetail = getTenantModuleRequestData();
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
-        moduleDetails.add(attendanceRegisterTenantModuleDetail);
+        moduleDetails.add(tenantModuleDetail);
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
@@ -58,17 +56,17 @@ public class MDMSUtils {
     }
 
     private ModuleDetail getTenantModuleRequestData() {
-        List<MasterDetail> attendanceRegisterTenantMasterDetails = new ArrayList<>();
+        List<MasterDetail> tenantMasterDetails = new ArrayList<>();
 
-        MasterDetail tenantMasterDetails = MasterDetail.builder().name(MASTER_TENANTS)
+        MasterDetail tenantMasterDetail = MasterDetail.builder().name(MASTER_TENANTS)
                 .filter(filterCode).build();
 
-        attendanceRegisterTenantMasterDetails.add(tenantMasterDetails);
+        tenantMasterDetails.add(tenantMasterDetail);
 
-        ModuleDetail attendanceRegisterTenantModuleDetail = ModuleDetail.builder().masterDetails(attendanceRegisterTenantMasterDetails)
+        ModuleDetail tenantModuleDetail = ModuleDetail.builder().masterDetails(tenantMasterDetails)
                 .moduleName(MDMS_TENANT_MODULE_NAME).build();
 
-        return attendanceRegisterTenantModuleDetail;
+        return tenantModuleDetail;
     }
 
 }

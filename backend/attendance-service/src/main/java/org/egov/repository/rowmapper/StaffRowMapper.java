@@ -12,9 +12,14 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 @Component
 public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>> {
 
@@ -22,43 +27,42 @@ public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>>
     private ObjectMapper mapper;
 
     @Override
-    public List<StaffPermission> extractData(ResultSet rs) throws SQLException, DataAccessException
-        {
-            Map<String, StaffPermission> attendanceStaffMap = new LinkedHashMap<>();
-            while (rs.next()) {
-                String id = rs.getString("id");
-                String individuaId = rs.getString("individual_id");
-                String registerId = rs.getString("register_id");
-                Double enrollmentDate = rs.getDouble("enrollment_date");
-                Double deenrollmentDate = rs.getDouble("deenrollment_date");
-                String createdby = rs.getString("createdby");
-                String lastmodifiedby = rs.getString("lastmodifiedby");
-                Long createdtime = rs.getLong("createdtime");
-                Long lastmodifiedtime = rs.getLong("lastmodifiedtime");
+    public List<StaffPermission> extractData(ResultSet rs) throws SQLException, DataAccessException {
+        Map<String, StaffPermission> attendanceStaffMap = new LinkedHashMap<>();
+        while (rs.next()) {
+            String id = rs.getString("id");
+            String individuaId = rs.getString("individual_id");
+            String registerId = rs.getString("register_id");
+            BigDecimal enrollmentDate = rs.getBigDecimal("enrollment_date");
+            BigDecimal deenrollmentDate = rs.getBigDecimal("deenrollment_date");
+            String createdby = rs.getString("createdby");
+            String lastmodifiedby = rs.getString("lastmodifiedby");
+            Long createdtime = rs.getLong("createdtime");
+            Long lastmodifiedtime = rs.getLong("lastmodifiedtime");
 
-                AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
-                        .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
-                        .build();
+            AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
+                    .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
+                    .build();
 
-                JsonNode additionalDetails = getAdditionalDetail("additionaldetails", rs);
+            JsonNode additionalDetails = getAdditionalDetail("additionaldetails", rs);
 
-                StaffPermission attendanceStaff = StaffPermission.builder()
-                                                    .additionalDetails(additionalDetails)
-                                                    .id(UUID.fromString(id))
-                                                    .userId(individuaId)
-                                                    .registerId(registerId)
-                                                    .additionalDetails(additionalDetails)
-                                                    .enrollmentDate(enrollmentDate)
-                                                    .denrollmentDate(deenrollmentDate)
-                                                    .auditDetails(auditDetails)
-                                                    .build();
+            StaffPermission attendanceStaff = StaffPermission.builder()
+                    .additionalDetails(additionalDetails)
+                    .id(id)
+                    .userId(individuaId)
+                    .registerId(registerId)
+                    .additionalDetails(additionalDetails)
+                    .enrollmentDate(enrollmentDate)
+                    .denrollmentDate(deenrollmentDate)
+                    .auditDetails(auditDetails)
+                    .build();
 
-                if (!attendanceStaffMap.containsKey(id)) {
-                    attendanceStaffMap.put(id, attendanceStaff);
-                }
+            if (!attendanceStaffMap.containsKey(id)) {
+                attendanceStaffMap.put(id, attendanceStaff);
             }
-            return new ArrayList<>(attendanceStaffMap.values());
         }
+        return new ArrayList<>(attendanceStaffMap.values());
+    }
 
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {

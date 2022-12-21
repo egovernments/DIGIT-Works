@@ -38,6 +38,15 @@
     @apply block bg-primary-main h-3 w-3 rounded-full absolute top-6 left-6;
   }
 }
+
+
+@screen sm {
+  .radio-wrap {
+    @apply flex-col;
+    gap : 0px !important;
+  }
+}
+
 .reverse-radio-selection-wrapper{
   div{
     @apply flex flex-row-reverse place-content-between items-center;    ;
