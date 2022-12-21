@@ -109,8 +109,32 @@ export const mustorRollDummyData = {
             },
             aadhar: '8127-9172-0184'
         },
+        "5555-5555-5556": {
+            sno: "10",
+            registrationId: 'ID-1239-1312',
+            individualName: 'Rashmi Ranjan',
+            guardianName: 'Rashmi Ranjan' ,
+            modifiedAmt: '3000',
+            bankAccountDetails : {
+                accountNo : '880182873839',
+                ifsc : 'SBIN0001237'
+            },
+            aadhar: '8127-9172-0184'
+        },
+        "5555-5555-5557": {
+            sno: "11",
+            registrationId: 'ID-1239-1312',
+            individualName: 'Rashmi Ranjan',
+            guardianName: 'Rashmi Ranjan' ,
+            modifiedAmt: '3000',
+            bankAccountDetails : {
+                accountNo : '880182873839',
+                ifsc : 'SBIN0001237'
+            },
+            aadhar: '8127-9172-0184'
+        },
         total: {
-            sno: "ATM_TOTAL",
+            sno: "WF_TOTAL_TASK",
             type: "total",
             modifiedAmt : "36000",
             bankAccountDetails: ""

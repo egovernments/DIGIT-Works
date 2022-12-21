@@ -202,7 +202,7 @@ const records = [
       "fullName": "aaa aa",
       "isLegacyRecord": null
   }]
-const CommissionDetails = () => {
+const CommissionDetails = ({ wrapInCard }) => {
   const { t } = useTranslation()
   let data = {
     applicationDetails: [
@@ -219,23 +219,22 @@ const CommissionDetails = () => {
   }; 
 
   return (
-    <React.Fragment>
-      <Card>
-        <ApplicationDetails
-          isLoading={false} //will come from backend
-          applicationDetails={data}
-          isDataLoading={false}
-          applicationData={data?.certData}
-          moduleCode="Expenditure"
-          showTimeLine={false}
-          noBoxShadow
-        />
-        <div style={{margin: "0px 16px", display: "flex", justifyContent:"space-between"}}>
-            <CardSectionHeader>{"Total Commission  Amount"}</CardSectionHeader>
-            <CardSectionHeader>{"₹ 1,20,000"}</CardSectionHeader>
-        </div>
-      </Card>
-    </React.Fragment>
+    <Card noCardStyle={!wrapInCard} style={{marginTop: '-16px'}}>
+      <ApplicationDetails
+        isLoading={false} //will come from backend
+        applicationDetails={data}
+        isDataLoading={false}
+        applicationData={data?.certData}
+        moduleCode="Expenditure"
+        showTimeLine={false}
+        noBoxShadow
+        sectionHeadStyle={{marginBottom: '1rem'}}
+      />
+      <div style={{margin: "16px", display: "flex", justifyContent:"space-between"}}>
+          <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_COMMISSION_AMT")}</CardSectionHeader>
+          <CardSectionHeader style={{marginBottom: 0}}>{"₹ 1,20,000"}</CardSectionHeader>
+      </div>
+    </Card>
   )
 }
 

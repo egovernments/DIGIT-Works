@@ -22,7 +22,8 @@ const MustorRollDetailsTable = () => {
                 columns={mustorRollDetailsColumns}
                 data={tableRows}
                 totalRecords={tableRows.length}
-                isPaginationRequired={true}
+                isPaginationRequired={false}
+                pageSizeLimit={tableRows.length}
                 getCellProps={(cellInfo) => {
                     let tableProp = {};
                     if(cellInfo?.row?.original?.type === "total") {

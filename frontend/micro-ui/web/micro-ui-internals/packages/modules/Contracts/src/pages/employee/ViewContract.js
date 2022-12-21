@@ -6,8 +6,10 @@ import ApplicationDetailsTemplate  from "../../../../templates/ApplicationDetail
 import ProcessingModal from "@egovernments/digit-ui-module-works/src/components/Modal/ProcessingModal";
 import RejectLOIModal from "@egovernments/digit-ui-module-works/src/components/Modal/RejectLOIModal";
 import getPDFData from "../../../utils/getWorksAcknowledgementData"
+import { useHistory } from "react-router-dom";
 const ViewContract = (props) => {
     const { t } = useTranslation()
+    const history = useHistory()
     const { register, control, watch, handleSubmit, formState: { errors, ...rest }, getValues} = useForm({mode: "onSubmit"});
     const [displayMenu, setDisplayMenu] = useState(false);
     let { contractId } = Digit.Hooks.useQueryParams();
@@ -59,7 +61,10 @@ const ViewContract = (props) => {
         },
         {
             "name":"REJECT"
-        } 
+        } ,
+        {
+            "name":"CREATE_BILL"
+        }
     ]
 
     function onActionSelect(action) {
@@ -68,6 +73,9 @@ const ViewContract = (props) => {
         }
         if(action?.name==="REJECT_LOI"){
             setShowRejectModal(true)
+        }
+        if(action?.name==="CREATE_BILL"){
+            redirectToCreateBill()
         }
     }
 
@@ -81,6 +89,10 @@ const ViewContract = (props) => {
         let rejectionValue=getValues();
         setDisplayMenu(false)
         setShowRejectModal(false)
+    }
+
+    const redirectToCreateBill = () => {
+        history.push(`/${window?.contextPath}/employee/expenditure/create-bill`, { data: {} });
     }
 
     // // call update Contract API to update Contract form values and application staus during workflow action 

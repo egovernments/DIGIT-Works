@@ -47,7 +47,8 @@ const ApplicationDetails = (props) => {
     oldValue,
     isInfoLabel = false,
     clearDataDetails,
-    noBoxShadow
+    noBoxShadow,
+    sectionHeadStyle
   } = props;
   
   useEffect(() => {
@@ -321,6 +322,7 @@ const ApplicationDetails = (props) => {
             oldValue={oldValue}
             isInfoLabel={isInfoLabel}
             noBoxShadow={noBoxShadow}
+            sectionHeadStyle={sectionHeadStyle}
           />
           {showModal ? (
             <ActionModal
