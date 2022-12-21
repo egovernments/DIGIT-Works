@@ -28,23 +28,11 @@ const ExpenditureBreadCrumbs = ({ location }) => {
             isBack: fromScreen && true,
         },
         {
-            path: `/${window.contextPath}/employee/expenditure/view-bills/po`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILLS_PO")}` : t("EXP_VIEW_BILLS_PO"),
-            show: location.pathname.includes("/expenditure/view-bills/po") ? true : false,
+            path: `/${window.contextPath}/employee/expenditure/view-bills/bills`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILLS")}` : t("EXP_VIEW_BILLS"),
+            show: location.pathname.includes("/expenditure/view-bills/bills") ? true : false,
             isBack: fromScreen && true,
         },
-        {
-            path: `/${window.contextPath}/employee/expenditure/view-bills/wo`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILLS_WO")}` : t("EXP_VIEW_BILLS_WO"),
-            show: location.pathname.includes("/expenditure/view-bills/wo") ? true : false,
-            isBack: fromScreen && true,
-        },
-        {
-            path: `/${window.contextPath}/employee/expenditure/view-bills/shg`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILLS_SHG")}` : t("EXP_VIEW_BILLS_SHG"),
-            show: location.pathname.includes("/expenditure/view-bills/shg") ? true : false,
-            isBack: fromScreen && true,
-        }
     ];
     return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 
@@ -55,9 +43,7 @@ const App = ({ path }) => {
     const locationCheck =
         window.location.href.includes("/employee/ws/new-application");
     const ViewBillsMenuComponent = Digit?.ComponentRegistryService?.getComponent("ViewBillsMenu");
-    const ViewPOBillsComponent = Digit?.ComponentRegistryService?.getComponent("ViewPOBills");
-    const ViewSHGBillsComponent = Digit?.ComponentRegistryService?.getComponent("ViewSHGBills");
-    const ViewWOBillsComponent = Digit?.ComponentRegistryService?.getComponent("ViewWOBills");
+    const ViewBillsComponent = Digit?.ComponentRegistryService?.getComponent("ViewBills");
 
     const getBreadCrumbStyles = (screenType) => {
         // Defining 4 types for now -> create,view,inbox,search
@@ -87,9 +73,7 @@ const App = ({ path }) => {
                     </div>
                     <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
                     <PrivateRoute path={`${path}/billinbox`} component={() => <BILLInbox parentRoute={path} businessService="WORKS" filterComponent="billInboxFilter" initialStates={{}} isInbox={true} />}/>
-                    <PrivateRoute path={`${path}/view-bills/po`} component={ViewPOBillsComponent}></PrivateRoute>
-                    <PrivateRoute path={`${path}/view-bills/wo`} component={ViewWOBillsComponent}></PrivateRoute>
-                    <PrivateRoute path={`${path}/view-bills/shg`} component={ViewSHGBillsComponent}></PrivateRoute>
+                    <PrivateRoute path={`${path}/view-bills/bills`} component={ViewBillsComponent}></PrivateRoute>
                     <PrivateRoute path={`${path}/view-bills/menu`} component={ViewBillsMenuComponent}></PrivateRoute>
                 </div>
             </React.Fragment>

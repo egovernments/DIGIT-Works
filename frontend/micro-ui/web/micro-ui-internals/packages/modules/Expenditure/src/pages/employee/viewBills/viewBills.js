@@ -1,11 +1,13 @@
 import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import ApplicationDetails from "../../../../../templates/ApplicationDetails";
 
-const ViewSHGBills = () => {
+const ViewBills = () => {
   const { t } = useTranslation();
-  const { applicationDetails, applicationData, workflowDetails } = Digit.Hooks.bills.useviewSHGBill({}); //pass required inputs when backend service is ready.
+  const billType = useLocation()?.state?.billType;
+  const { applicationDetails, applicationData, workflowDetails } = Digit.Hooks.bills.useViewBills(billType); //pass required inputs when backend service is ready.
 
   return (
     <React.Fragment>
@@ -30,4 +32,4 @@ const ViewSHGBills = () => {
   );
 }
 
-export default ViewSHGBills;
+export default ViewBills;

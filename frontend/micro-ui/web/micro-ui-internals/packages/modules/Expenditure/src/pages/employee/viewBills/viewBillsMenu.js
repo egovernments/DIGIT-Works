@@ -1,29 +1,21 @@
 import React, { Fragment } from "react";
 import { useHistory } from "react-router-dom";
-import ViewPOBills from "./viewPOBills";
-import ViewSHGBills from "./viewSHGBills";
-import ViewWOBills from "./viewWOBills";
 
 const ViewBillsMenu = () => {
     const history = useHistory();
 
     const billsConfigs = {
+        path : `/${window.contextPath}/employee/expenditure/view-bills/bills`,
         view : [
             {
-                component : ViewPOBills,
-                path : `/${window.contextPath}/employee/expenditure/view-bills/po`,
                 key : 'PO',
                 label : 'View PO Bills'
             },
             {
-                component : ViewWOBills,
-                path : `/${window.contextPath}/employee/expenditure/view-bills/wo`,
                 key : 'WO',
                 label : 'View WO Bills'
             },
             {
-                component : ViewSHGBills,
-                path : `/${window.contextPath}/employee/expenditure/view-bills/shg`,
                 key : 'SHG',
                 label : 'View SHG Bills'
             }
@@ -31,7 +23,12 @@ const ViewBillsMenu = () => {
     }
 
     const handleBillMenu = (billType) => {
-        history.push(billType?.path);
+        history.push({
+            pathname : billsConfigs?.path,
+            state : {
+                billType : billType?.key
+            }
+        });
     }
 
     return (
