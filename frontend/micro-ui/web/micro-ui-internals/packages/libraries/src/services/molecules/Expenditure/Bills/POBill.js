@@ -23,14 +23,15 @@ const transformViewDataToApplicationDetails = {
           statusWithRadio : {
             customClass : "border-none",
             radioConfig : {
+              label : "EXP_WHO_SHOULD_THIS_BILL_AMT_PAID_TO",
               options : [
                 {
-                  name : "BillAmount",
+                  name : "SHG",
                   value : "SHG",
                   key : "SHG"
                 },
                 {
-                  name : "BillAmount",
+                  name : "Vendor",
                   value : "Vendor",
                   key : "Vendor"
                 }
@@ -39,7 +40,7 @@ const transformViewDataToApplicationDetails = {
           },
           documentsWithUrl : [
               {
-                  title : "Upload Files",
+                  title : "EXP_UPLOAD_FILES",
                   values : [
                       {
                           url : "",
@@ -65,7 +66,7 @@ const transformViewDataToApplicationDetails = {
         additionalDetails : {
           showTotal : {
             bottomBreakLine : true,
-            label : "Total Vendor Bill",
+            label : "EXP_TOTAL_VENDOR_BILL",
             value : "₹ 1,20,000"
           }
         }

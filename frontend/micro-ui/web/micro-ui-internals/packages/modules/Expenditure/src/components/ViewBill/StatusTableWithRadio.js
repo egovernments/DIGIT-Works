@@ -1,12 +1,14 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const StatusRowWithRadio = ({config, className=""}) => {
+    const {t} = useTranslation();
     const selectOption = (option) => {
 
     }
     return (
         <div className={`row ${className}`}>
-            <h2>Label</h2>
+            <h2>{t(config?.label)}</h2>
             <div className="radio-wrap value status-row-radio">
                 {
                     config?.options?.map((option)=>(

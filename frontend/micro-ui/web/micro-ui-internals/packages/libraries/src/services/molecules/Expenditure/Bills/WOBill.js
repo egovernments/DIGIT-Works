@@ -48,7 +48,7 @@ const transformViewDataToApplicationDetails = {
       additionalDetails : {
         showTotal : {
           bottomBreakLine : true,
-          label : "Total Labour Bill",
+          label : "EXP_TOTAL_LABOUR_BILL",
           value : "₹ 1,20,000"
         }
       }
@@ -66,7 +66,7 @@ const transformViewDataToApplicationDetails = {
       additionalDetails : {
         showTotal : {
           bottomBreakLine : true,
-          label : "Total Commission Amount",
+          label : "EXP_TOTAL_COMMISSION_AMOUNT",
           value : "₹ 1,20,000"
         }
       }
@@ -75,7 +75,7 @@ const transformViewDataToApplicationDetails = {
       additionalDetails : {
         showTotal : {
           bottomBreakLine : true,
-          label : "Total Bill Amount",
+          label : "EXP_TOTAL_BILL_AMOUNT",
           value : "₹ 3,60,000"
         }
       }

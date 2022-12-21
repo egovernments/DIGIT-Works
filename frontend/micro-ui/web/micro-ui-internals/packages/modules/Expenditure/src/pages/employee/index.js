@@ -23,13 +23,13 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         },
         {
             path: `/${window.contextPath}/employee/expenditure/view-bills/menu`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILLS_MNU")}` : t("EXP_VIEW_BILLS_MENU"),
+            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILLS_MENU")}` : t("EXP_VIEW_BILLS_MENU"),
             show: location.pathname.includes("/expenditure/view-bills/menu") ? true : false,
             isBack: fromScreen && true,
         },
         {
             path: `/${window.contextPath}/employee/expenditure/view-bills/bills`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILLS")}` : t("EXP_VIEW_BILLS"),
+            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILL")}` : t("EXP_VIEW_BILL"),
             show: location.pathname.includes("/expenditure/view-bills/bills") ? true : false,
             isBack: fromScreen && true,
         },
