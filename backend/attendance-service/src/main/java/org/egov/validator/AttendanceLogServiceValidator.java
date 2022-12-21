@@ -4,8 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
-import org.egov.repository.AttendeeRepository;
+import org.egov.models.AttendeeSearchCriteria;
+import org.egov.web.models.AttendanceLogSearchCriteria;
+import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.models.StaffSearchCriteria;
 import org.egov.repository.AttendanceLogRepository;
+import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
 import org.egov.tracer.model.CustomException;
@@ -71,21 +75,23 @@ public class AttendanceLogServiceValidator {
     private void validateTenantIdAssociationWithRegisterId(AttendanceLogRequest attendanceLogRequest) {
         String tenantId = attendanceLogRequest.getAttendance().get(0).getTenantId();
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
-        validateTenantIdAssociationWithRegisterId(tenantId,registerId);
+        validateTenantIdAssociationWithRegisterId(tenantId, registerId);
     }
+
     private void validateDocumentIds(AttendanceLogRequest attendanceLogRequest) {
-        if("TRUE".equalsIgnoreCase(config.getDocumentIdVerificationRequired())){
+        if ("TRUE".equalsIgnoreCase(config.getDocumentIdVerificationRequired())) {
             //TODO
             // For now throwing exception. Later implementation will be done
-            throw new CustomException("SERVICE_UNAVAILABLE","Service not integrated yet");
+            throw new CustomException("SERVICE_UNAVAILABLE", "Service not integrated yet");
         }
     }
+
     private void validateAttendanceLogIds(AttendanceLogRequest attendanceLogRequest) {
         List<AttendanceLog> attendance = attendanceLogRequest.getAttendance();
-        List<String> providedAttendanceLogIds = attendance.stream().map(e->String.valueOf(e.getId())).collect(Collectors.toList());
+        List<String> providedAttendanceLogIds = attendance.stream().map(e -> String.valueOf(e.getId())).collect(Collectors.toList());
         List<AttendanceLog> fetchedAttendanceLogList = fetchAttendanceLogsByIds(providedAttendanceLogIds);
         Set<String> fetchedAttendanceLogIds = fetchedAttendanceLogList.stream().map(e -> String.valueOf(e.getId())).collect(Collectors.toSet());
-        for(String providedAttendanceLogId : providedAttendanceLogIds) {
+        for (String providedAttendanceLogId : providedAttendanceLogIds) {
             if (!fetchedAttendanceLogIds.contains(providedAttendanceLogId)) {
                 throw new CustomException("ATTENDANCE_LOG", "Attendance log is not present.");
             }
@@ -97,6 +103,7 @@ public class AttendanceLogServiceValidator {
         AttendanceLogSearchCriteria searchCriteria = AttendanceLogSearchCriteria.builder().ids(ids).build();
         return attendanceLogRepository.getAttendanceLogs(searchCriteria);
     }
+
     private void validateAttendees(AttendanceLogRequest attendanceLogRequest) {
 
         /*
@@ -109,10 +116,10 @@ public class AttendanceLogServiceValidator {
          */
 
 
-        if("TRUE".equalsIgnoreCase(config.getIndividualServiceIntegrationRequired())){
+        if ("TRUE".equalsIgnoreCase(config.getIndividualServiceIntegrationRequired())) {
             //TODO
             // For now throwing exception. Since individual service is under discussion.
-            throw new CustomException("INTEGRATION_UNDERDEVELOPMENT","Individual service integration is under development");
+            throw new CustomException("INTEGRATION_UNDERDEVELOPMENT", "Individual service integration is under development");
         }
 
         // Fetch all attendees for given register_id.
@@ -120,70 +127,70 @@ public class AttendanceLogServiceValidator {
         List<IndividualEntry> fetchAttendanceAttendeeLst = fetchAllAttendeesEnrolledInARegister(registerId);
 
         // Convert the fetched Attendee List into a Map with individualId as key and corresponding Attendee list as value.
-        Map<UUID,List<IndividualEntry>> attendanceAttendeeListMap = fetchAttendanceAttendeeLst
-                                                                            .stream()
-                                                                            .collect(Collectors.groupingBy(IndividualEntry::getIndividualId));
+        Map<String, List<IndividualEntry>> attendanceAttendeeListMap = fetchAttendanceAttendeeLst
+                .stream()
+                .collect(Collectors.groupingBy(IndividualEntry::getIndividualId));
 
         // Identify unassociated(Attendees not associated with given register) and ineligible attendees
-        identifyUnassociatedAndIneligibleAttendees(attendanceLogRequest,attendanceAttendeeListMap);
+        identifyUnassociatedAndIneligibleAttendees(attendanceLogRequest, attendanceAttendeeListMap);
     }
 
-    private void identifyUnassociatedAndIneligibleAttendees(AttendanceLogRequest attendanceLogRequest,Map<UUID,List<IndividualEntry>> attendanceAttendeeListMap) {
-        List<UUID> unassociatedAttendees = new ArrayList<>();
-        Set<UUID> eligibleAttendanceAttendeeIdSet = new HashSet<>();
+    private void identifyUnassociatedAndIneligibleAttendees(AttendanceLogRequest attendanceLogRequest, Map<String, List<IndividualEntry>> attendanceAttendeeListMap) {
+        List<String> unassociatedAttendees = new ArrayList<>();
+        Set<String> eligibleAttendanceAttendeeIdSet = new HashSet<>();
 
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
-        for(AttendanceLog attendanceLog: attendanceLogs){
-            UUID givenIndividualId = attendanceLog.getIndividualId();
-            if(attendanceAttendeeListMap.containsKey(givenIndividualId)){
+        for (AttendanceLog attendanceLog : attendanceLogs) {
+            String givenIndividualId = attendanceLog.getIndividualId();
+            if (attendanceAttendeeListMap.containsKey(givenIndividualId)) {
                 List<IndividualEntry> lst = attendanceAttendeeListMap.get(givenIndividualId);
-                for(IndividualEntry attendee: lst){
+                for (IndividualEntry attendee : lst) {
                     Instant instantAttendanceAttendeeLogTime = Instant.ofEpochMilli(attendanceLog.getTime().longValue());
                     Instant instantEnrollmentDate = Instant.ofEpochMilli(attendee.getEnrollmentDate().longValue());
-                    if(Double.valueOf(0.0).equals(attendee.getDenrollmentDate())){
-                        if(instantAttendanceAttendeeLogTime.compareTo(instantEnrollmentDate) >= 0){
+                    if (attendee.getDenrollmentDate()==null) {
+                        if (instantAttendanceAttendeeLogTime.compareTo(instantEnrollmentDate) >= 0) {
                             eligibleAttendanceAttendeeIdSet.add(attendee.getIndividualId());
                         }
-                    }else{
+                    } else {
                         Instant instantDenrollmentDate = Instant.ofEpochMilli(attendee.getDenrollmentDate().longValue());
-                        if(instantAttendanceAttendeeLogTime.compareTo(instantEnrollmentDate) >= 0 && instantAttendanceAttendeeLogTime.compareTo(instantDenrollmentDate) <= 0){
+                        if (instantAttendanceAttendeeLogTime.compareTo(instantEnrollmentDate) >= 0 && instantAttendanceAttendeeLogTime.compareTo(instantDenrollmentDate) <= 0) {
                             eligibleAttendanceAttendeeIdSet.add(attendee.getIndividualId());
                         }
                     }
                 }
-            }else{
+            } else {
                 unassociatedAttendees.add(givenIndividualId);
             }
 
         }
 
-        if(!unassociatedAttendees.isEmpty()){
-            throw new CustomException("UNENROLLED_ATTENDEES","Attendees are not enrolled against given register");
+        if (!unassociatedAttendees.isEmpty()) {
+            throw new CustomException("UNENROLLED_ATTENDEES", "Attendees are not enrolled against given register");
         }
 
         //find ineligible list
-        Set<UUID> inEligibleAttendanceAttendeeIdSet = new HashSet<>();
-        for(AttendanceLog attendanceLog: attendanceLogs){
-            if(!eligibleAttendanceAttendeeIdSet.contains(attendanceLog.getIndividualId())){
+        Set<String> inEligibleAttendanceAttendeeIdSet = new HashSet<>();
+        for (AttendanceLog attendanceLog : attendanceLogs) {
+            if (!eligibleAttendanceAttendeeIdSet.contains(attendanceLog.getIndividualId())) {
                 inEligibleAttendanceAttendeeIdSet.add(attendanceLog.getIndividualId());
             }
         }
 
-        if(!inEligibleAttendanceAttendeeIdSet.isEmpty()){
-            throw new CustomException("INELIGIBLE_ATTENDEES","Attendees are ineligible for given date range");
+        if (!inEligibleAttendanceAttendeeIdSet.isEmpty()) {
+            throw new CustomException("INELIGIBLE_ATTENDEES", "Attendees are ineligible for given date range");
         }
     }
 
     private List<IndividualEntry> fetchAllAttendeesEnrolledInARegister(String registerId) {
-        AttendanceAttendeeSearchCriteria searchCriteria = AttendanceAttendeeSearchCriteria
-                                                                            .builder()
-                                                                            .registerId(registerId)
-                                                                            .build();
+        AttendeeSearchCriteria searchCriteria = AttendeeSearchCriteria
+                .builder()
+                .registerId(registerId)
+                .build();
 
         return attendanceAttendeeRepository.getAttendees(searchCriteria);
     }
 
-    private void validateLoggedInUser(AttendanceLogRequest attendanceLogRequest ) {
+    private void validateLoggedInUser(AttendanceLogRequest attendanceLogRequest) {
         /*
             For now, we are validating logged-in user on below basis.
             1. Logged-in user should be active user for provided register_id. Query eg_wms_attendance_staff table for same.
@@ -192,27 +199,27 @@ public class AttendanceLogServiceValidator {
             Once Staff service will be available will integrate it for further validation.
          */
 
-        if("TRUE".equalsIgnoreCase(config.getStaffServiceIntegrationRequired())){
+        if ("TRUE".equalsIgnoreCase(config.getStaffServiceIntegrationRequired())) {
             //TODO
             // For now throwing exception. Since Staff service is under development.
-            throw new CustomException("INTEGRATION_UNDERDEVELOPMENT","Staff service integration is under development");
+            throw new CustomException("INTEGRATION_UNDERDEVELOPMENT", "Staff service integration is under development");
         }
 
         String userUUID = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
-        validateLoggedInUser(userUUID,registerId);
+        validateLoggedInUser(userUUID, registerId);
     }
 
     public void validateSearchAttendanceLogRequest(RequestInfoWrapper requestInfoWrapper, AttendanceLogSearchCriteria searchCriteria) {
 
         // Verify given parameters
-        validateSearchAttendanceLogParameters(requestInfoWrapper,searchCriteria);
+        validateSearchAttendanceLogParameters(requestInfoWrapper, searchCriteria);
 
         // Verify TenantId association with register
         validateTenantIdAssociationWithRegisterId(searchCriteria.getTenantId(), searchCriteria.getRegisterId());
 
         // Verify the Logged-in user is associated to the given register.
-        validateLoggedInUser(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid(),searchCriteria.getRegisterId());
+        validateLoggedInUser(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid(), searchCriteria.getRegisterId());
 
 
     }
@@ -224,7 +231,7 @@ public class AttendanceLogServiceValidator {
 
         Map<String, String> errorMap = new HashMap<>();
 
-        validateRequestInfo(requestInfoWrapper.getRequestInfo(),errorMap);
+        validateRequestInfo(requestInfoWrapper.getRequestInfo(), errorMap);
 
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
@@ -242,26 +249,26 @@ public class AttendanceLogServiceValidator {
         }
     }
 
-    private void validateTenantIdAssociationWithRegisterId(String tenantId,String registerId) {
+    private void validateTenantIdAssociationWithRegisterId(String tenantId, String registerId) {
         AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria
                 .builder()
                 .tenantId(tenantId)
-                .id(registerId)
+                .ids(Collections.singletonList(registerId))
                 .build();
         List<AttendanceRegister> attendanceRegister = attendanceRegisterRepository.getRegister(searchCriteria);
-        if(attendanceRegister == null || attendanceRegister.isEmpty()){
+        if (attendanceRegister == null || attendanceRegister.isEmpty()) {
             throw new CustomException("INVALID_TENANTID", "TenantId is not associated with register");
         }
     }
 
-    private void validateLoggedInUser(String userUUID,String registerId){
-        AttendanceStaffSearchCriteria searchCriteria = AttendanceStaffSearchCriteria
+    private void validateLoggedInUser(String userUUID, String registerId) {
+        StaffSearchCriteria searchCriteria = StaffSearchCriteria
                 .builder()
-                .individualId(userUUID)
-                .registerId(registerId)
+                .individualIds(Collections.singletonList(userUUID))
+                .registerIds(Collections.singletonList(registerId))
                 .build();
         List<StaffPermission> attendanceStaff = attendanceStaffRepository.getActiveStaff(searchCriteria);
-        if(attendanceStaff == null || attendanceStaff.isEmpty()){
+        if (attendanceStaff == null || attendanceStaff.isEmpty()) {
             throw new CustomException("UNAUTHORISED_USER", "User is not authorised");
         }
     }
@@ -278,7 +285,7 @@ public class AttendanceLogServiceValidator {
         }
     }
 
-    private void validateAttendanceLogRequest(AttendanceLogRequest attendanceLogRequest){
+    private void validateAttendanceLogRequest(AttendanceLogRequest attendanceLogRequest) {
 
         Map<String, String> errorMap = new HashMap<>();
         // Validate the Request Info object
@@ -286,7 +293,7 @@ public class AttendanceLogServiceValidator {
         validateRequestInfo(requestInfo, errorMap);
 
         // Validate the Attendance Log parameters
-        validateAttendanceLogParameters(attendanceLogRequest.getAttendance(),errorMap);
+        validateAttendanceLogParameters(attendanceLogRequest.getAttendance(), errorMap);
 
         // Throw exception if required parameters are missing
         if (!errorMap.isEmpty())
@@ -298,7 +305,7 @@ public class AttendanceLogServiceValidator {
             throw new CustomException("ATTENDANCE", "Attendance array is mandatory");
         }
 
-        for(AttendanceLog attendeeLog : attendance){
+        for (AttendanceLog attendeeLog : attendance) {
             if (StringUtils.isBlank(attendeeLog.getTenantId())) {
                 errorMap.put("ATTENDANCE.TENANTID", "TenantId is mandatory");
             }

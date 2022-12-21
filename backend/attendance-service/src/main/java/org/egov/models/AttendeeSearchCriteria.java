@@ -1,4 +1,4 @@
-package org.egov.web.models;
+package org.egov.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceAttendeeSearchCriteria {
+public class AttendeeSearchCriteria {
 
     @JsonProperty("id")
     private List<String> ids;

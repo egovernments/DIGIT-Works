@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AttendanceServiceUtil {
-    public AuditDetails getAuditDetails(String by, AuditDetails auditDetails,  Boolean isCreate) {
+    public AuditDetails getAuditDetails(String by, AuditDetails auditDetails, Boolean isCreate) {
         Long time = System.currentTimeMillis();
         if (isCreate)
             return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();

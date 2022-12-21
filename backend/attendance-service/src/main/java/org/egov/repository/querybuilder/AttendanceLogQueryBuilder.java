@@ -132,6 +132,6 @@ public class AttendanceLogQueryBuilder {
 //            preparedStmtList.add(id);
 //        });
 
-       preparedStmtList.addAll(ids);
+        preparedStmtList.addAll(ids);
     }
 }

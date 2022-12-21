@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -36,7 +37,7 @@ public class AttendanceLogRowMapper implements ResultSetExtractor<List<Attendanc
             String tenantId = rs.getString("logTenantId");
             String registerId = rs.getString("logRegisterId");
             String status = rs.getString("logStatus");
-            Double time = rs.getDouble("logTime");
+            BigDecimal time = rs.getBigDecimal("logTime");
             String eventType = rs.getString("logEventType");
             String createdby = rs.getString("logCreatedBy");
             String lastmodifiedby = rs.getString("logLastModifiedBy");
@@ -50,8 +51,8 @@ public class AttendanceLogRowMapper implements ResultSetExtractor<List<Attendanc
             JsonNode additionalDetails = getAdditionalDetail("logAdditionalDetails", rs);
 
             AttendanceLog attendanceLog = AttendanceLog.builder()
-                    .id(UUID.fromString(id))
-                    .individualId(UUID.fromString(individualId))
+                    .id(id)
+                    .individualId(individualId)
                     .tenantId(tenantId)
                     .registerId(registerId)
                     .status(Status.fromValue(status))
