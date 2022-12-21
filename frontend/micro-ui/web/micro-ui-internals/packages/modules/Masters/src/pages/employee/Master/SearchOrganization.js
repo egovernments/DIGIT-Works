@@ -10,10 +10,15 @@ const SearchOrganization = ({parentRoute}) => {
   const createOrgHandler = () => {
     history.push(`${parentRoute}/create-organization`, { data: {test: true} });
   }
+
+  const handleViewOrganisation = () => {
+    history.push(`${parentRoute}/view-organization`);
+  }
   
   return (
     <div>
       <ButtonSelector theme="border" label={t("MASTERS_ADD_NEW_ORGANISATION")} onSubmit={createOrgHandler} />
+      <ButtonSelector theme="border" label={t("MASTERS_VIEW_COMMUNITY_ORG")} onSubmit={handleViewOrganisation} />
     </div>
   )
 }

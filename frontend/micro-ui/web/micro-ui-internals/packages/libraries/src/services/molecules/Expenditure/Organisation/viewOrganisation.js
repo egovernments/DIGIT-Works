@@ -30,8 +30,7 @@ const transformViewDataToApplicationDetails = {
           { title: "MASTERS_BANK_ACCOUNT_TYPE", value: "Current" },
           { title: "MASTERS_ACC_NO", value: "918756789876" },
           { title: "MASTERS_BANK_NAME", value: "State Bank of India" },
-          { title: "MASTERS_BANK_BRANCH", value: "918756789876" },
-          { title: "MASTERS_BANK_NAME", value: "22 College Road, Ward 11, Dhenkanal" },
+          { title: "MASTERS_BANK_BRANCH", value: "22 College Road, Ward 11, Dhenkanal" },
           { title: "MASTERS_IFSC", value: "HJUI009898" },
         ],
       };
@@ -51,7 +50,6 @@ const transformViewDataToApplicationDetails = {
       return {
         applicationDetails,
         applicationData: { regNo: 111, HosName: "Name", DOR: "10-10-2020" }, //dummy data
-        workflowDetails,
       };
     },
   };

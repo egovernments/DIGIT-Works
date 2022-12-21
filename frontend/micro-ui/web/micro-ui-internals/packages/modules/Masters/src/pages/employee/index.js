@@ -39,6 +39,7 @@ const App = ({ path }) => {
   const SearchOrganization = Digit?.ComponentRegistryService?.getComponent("SearchOrganization");
   const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganization");
   const RegisterWageSeekerComponent = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
+  const ViewOrganisationComponent = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
 
   return (
     <Switch>
@@ -49,6 +50,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/search-organization`} component={() => <SearchOrganization parentRoute={path}/>} />
         <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganization parentRoute={path}/>} />
         <PrivateRoute path={`${path}/wage-seeker-registration`} component={RegisterWageSeekerComponent} />
+        <PrivateRoute path={`${path}/view-organization`} component={ViewOrganisationComponent} />
       </AppContainer>
     </Switch>
   );

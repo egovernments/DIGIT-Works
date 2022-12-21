@@ -513,7 +513,7 @@ const attendance = {
   useViewAttendance,
 };
 
-const bills = {
+const masters = {
   useViewOrg
 }
 
@@ -581,7 +581,7 @@ const Hooks = {
   contracts,
   attendance,
   useLocation,
-  bills
+  masters
 };
 
 export default Hooks;
