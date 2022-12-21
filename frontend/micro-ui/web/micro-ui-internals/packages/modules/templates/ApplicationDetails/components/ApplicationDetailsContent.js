@@ -37,7 +37,8 @@ import SubWorkTableDetails from "./SubWorkTableDetails";
 import WeekAttendence from "../../../AttendenceMgmt/src/pageComponents/WeekAttendence";
 import reducer, { initialTableState } from "../../../AttendenceMgmt/src/config/attendenceTableReducer";
 import AttendanceDateRange from "../../../AttendenceMgmt/src/pageComponents/AttendanceDateRange";
-import StatusTableWithRadio from "../../../Expenditure/src/components/StatusTableWithRadio";
+import MustorRollDetailsTable from "../../../Expenditure/src/components/ViewBill/MustorRollDetailsTable";
+import StatusTableWithRadio from "../../../Expenditure/src/components/ViewBill/StatusTableWithRadio";
 
 function ApplicationDetailsContent({
   applicationDetails,
@@ -317,14 +318,19 @@ function ApplicationDetailsContent({
             ></AttendanceDateRange>
           ) : null}
           {detail?.additionalDetails?.table
-            ? detail?.additionalDetails?.table.weekTable.tableHeader && (
+            ? detail?.additionalDetails?.table?.weekTable?.tableHeader && (
                 <>
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
-                    {t(detail?.additionalDetails?.table.weekTable.tableHeader)}
+                    {t(detail?.additionalDetails?.table?.weekTable?.tableHeader)}
                   </CardSectionHeader>
                   {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} />}
                 </>
               )
+            : null}
+            {detail?.additionalDetails?.table
+              ? detail?.additionalDetails?.table?.mustorRollTable && (
+                <MustorRollDetailsTable></MustorRollDetailsTable>
+                )
             : null}
           {detail?.additionalDetails?.inspectionReport && (
             <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} />

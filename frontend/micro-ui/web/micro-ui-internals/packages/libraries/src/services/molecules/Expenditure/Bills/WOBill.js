@@ -9,6 +9,11 @@ const transformViewDataToApplicationDetails = {
           { title: "EXP_CREATED_DATE", value: "28-09-2022" },
           { title: "EXP_STATUS", value: "To Approve" },
         ],
+        additionalDetails : {
+          table : {
+            mustorRollTable : true
+          },
+      }
       };
       const ViewVendorBill = {
         title: "EXP_VIEW_VENDOR_BILLS",
