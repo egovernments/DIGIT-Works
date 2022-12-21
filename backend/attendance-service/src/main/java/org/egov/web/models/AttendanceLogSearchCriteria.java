@@ -1,14 +1,9 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiParam;
 import lombok.*;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.egov.web.models.Status;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -17,6 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class AttendanceLogSearchCriteria {
+
+    @JsonProperty("id")
+    private List<String> ids;
 
     @JsonProperty("tenantId")
     private String tenantId;
@@ -35,5 +33,11 @@ public class AttendanceLogSearchCriteria {
 
     @JsonProperty("status")
     private Status status;
+
+    @JsonProperty("limit")
+    private Integer limit;
+
+    @JsonProperty("offset")
+    private Integer offset;
 
 }

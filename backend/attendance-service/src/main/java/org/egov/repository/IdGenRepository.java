@@ -1,6 +1,5 @@
 package org.egov.repository;
 
-
 import digit.models.coremodels.IdGenerationRequest;
 import digit.models.coremodels.IdGenerationResponse;
 import digit.models.coremodels.IdRequest;
@@ -21,14 +20,11 @@ import java.util.Map;
 @Repository
 public class IdGenRepository {
 
-
     @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
     private AttendanceServiceConfiguration config;
-
-
 
     /**
      * Call iDgen to generateIds
@@ -59,6 +55,5 @@ public class IdGenRepository {
         }
         return response;
     }
-
 
 }

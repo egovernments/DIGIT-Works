@@ -5,6 +5,8 @@ import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 /**
  * StaffPermissionResponse
  */
@@ -21,7 +23,7 @@ public class StaffPermissionResponse {
     private ResponseInfo responseInfo = null;
 
     @JsonProperty("staff")
-    private StaffPermission staff = null;
+    private List<StaffPermission> staff = null;
 
 
 }

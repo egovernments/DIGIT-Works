@@ -1,16 +1,19 @@
 package org.egov.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.config.AttendanceServiceConfiguration;
+import org.egov.enrichment.AttendanceLogEnrichment;
+import org.egov.kafka.Producer;
+import org.egov.web.models.AttendanceLogSearchCriteria;
+import org.egov.repository.AttendanceLogRepository;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceLogServiceValidator;
-import org.egov.validator.AttendanceServiceValidator;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -21,15 +24,33 @@ public class AttendanceLogService {
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
+
+    @Autowired
+    private AttendanceLogEnrichment attendanceLogEnricher;
+
+    @Autowired
+    private Producer producer;
+
+    @Autowired
+    private AttendanceServiceConfiguration config;
+
+    @Autowired
+    private AttendanceLogRepository attendanceLogRepository;
+
     /**
      * Create Attendance Log
      *
      * @param attendanceLogRequest
-     * @return
+     * @return attendanceLogResponse
      */
     public AttendanceLogResponse createAttendanceLog(AttendanceLogRequest attendanceLogRequest) {
-        //TODO Returning Dummy Response
-
+        //Validate the incoming request
+        attendanceLogServiceValidator.validateCreateAttendanceLogRequest(attendanceLogRequest);
+        //Enrich the incoming request
+        attendanceLogEnricher.enrichAttendanceLogCreateRequest(attendanceLogRequest);
+        // Push the request object to the topic for persister to listen and persist
+        producer.push(config.getCreateAttendanceLogTopic(), attendanceLogRequest);
+        // Create the response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceLogRequest.getRequestInfo(), true);
         AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogRequest.getAttendance()).build();
         return attendanceLogResponse;
@@ -38,16 +59,20 @@ public class AttendanceLogService {
     /**
      * Search attendace logs based on given search criteria
      *
-     * @param requestInfo
+     * @param requestInfoWrapper
      * @param searchCriteria
-     * @return
+     * @return attendanceLogResponse
      */
-    public AttendanceLogResponse searchAttendanceLog(RequestInfo requestInfo, AttendanceLogSearchCriteria searchCriteria) {
-        //TODO Returning Dummy Response
-
-        AttendanceLog attendanceLog = new AttendanceLog();
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
-        AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(Collections.singletonList(attendanceLog)).build();
+    public AttendanceLogResponse searchAttendanceLog(RequestInfoWrapper requestInfoWrapper, AttendanceLogSearchCriteria searchCriteria) {
+        //Validate the incoming request
+        attendanceLogServiceValidator.validateSearchAttendanceLogRequest(requestInfoWrapper, searchCriteria);
+        //Enrich the incoming request
+        attendanceLogEnricher.enrichAttendanceLogSearchRequest(requestInfoWrapper.getRequestInfo(), searchCriteria);
+        //Fetch attendance logs from registry
+        List<AttendanceLog> attendanceLogs = attendanceLogRepository.getAttendanceLogs(searchCriteria);
+        // Create the response
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogs).build();
         return attendanceLogResponse;
     }
 
@@ -55,11 +80,16 @@ public class AttendanceLogService {
      * Update the given attendance log details
      *
      * @param attendanceLogRequest
-     * @return
+     * @return AttendanceLogResponse
      */
     public AttendanceLogResponse updateAttendanceLog(AttendanceLogRequest attendanceLogRequest) {
-        //TODO Returning Dummy Response
-
+        //Validate the incoming request
+        attendanceLogServiceValidator.validateUpdateAttendanceLogRequest(attendanceLogRequest);
+        //Enrich the incoming request
+        attendanceLogEnricher.enrichAttendanceLogUpdateRequest(attendanceLogRequest);
+        // Push the request object to the topic for persister to listen and persist
+        producer.push(config.getUpdateAttendanceLogTopic(), attendanceLogRequest);
+        // Create the response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceLogRequest.getRequestInfo(), true);
         AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogRequest.getAttendance()).build();
         return attendanceLogResponse;

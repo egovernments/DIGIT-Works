@@ -201,6 +201,7 @@ import InboxComposer from "./hoc/InboxComposer";
 import CityMohalla from "./molecules/CityMohalla";
 import DashboardBox from "./molecules/DashboardBox";
 import DetailsCard from "./molecules/DetailsCard";
+import WorkflowModal from "./molecules/WorkflowModal";
 import FilterAction from "./molecules/FilterAction";
 import FormStep from "./molecules/FormStep";
 import CustomDropdown from "./molecules/CustomDropdown";
@@ -226,6 +227,7 @@ import UploadPitPhoto from "./molecules/UploadPitPhoto";
 import { DownloadBtnCommon } from "./atoms/svgindex";
 import ToggleSwitch from "./atoms/ToggleSwitch";
 import WeekPicker from "./atoms/WeekPicker";
+import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
 export {
   Phone,
   Body,
@@ -282,6 +284,7 @@ export {
   TextInputCard,
   CityMohalla,
   DetailsCard,
+  WorkflowModal,
   Label,
   Table,
   PopUp,
@@ -312,6 +315,7 @@ export {
   PopupHeadingLabel,
   ToggleSwitch,
   ULBHomeCard,
+  CollapseAndExpandGroups,
   // Icons
   GetApp,
   ArrowLeft,

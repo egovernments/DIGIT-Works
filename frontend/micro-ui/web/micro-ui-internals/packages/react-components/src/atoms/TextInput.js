@@ -27,6 +27,11 @@ const TextInput = (props) => {
             className={`${user_type ? "employee-card-input-error" : "card-input-error"} ${props.disable && "disabled"}`}
             placeholder={props.placeholder}
             onChange={(event) => {
+              if(props?.type === "number" && props?.maxlength) {
+                if(event.target.value.length > props?.maxlength) {
+                  event.target.value = event.target.value.slice(0,-1);
+                }
+              }
               if (props?.onChange) {
                 props?.onChange(event);
               }
@@ -59,6 +64,11 @@ const TextInput = (props) => {
             className={`${user_type ? "employee-card-input" : "citizen-card-input"} ${props.disable && "disabled"} focus-visible ${props.errorStyle && "employee-card-input-error"}`}
             placeholder={props.placeholder}
             onChange={(event) => {
+              if(props?.type === "number" && props?.maxlength) {
+                if(event.target.value.length > props?.maxlength) {
+                  event.target.value = event.target.value.slice(0,-1);
+                }
+              }
               if (props?.onChange) {
                 props?.onChange(event);
               }

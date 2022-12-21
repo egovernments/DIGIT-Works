@@ -18,6 +18,7 @@
 @import "./components/attendencetable.scss";
 
 @import "./pages/employee/index.scss";
+@import "./components/uploadcomponents.scss";
 
 .display-none {
   display: none;
@@ -673,4 +674,60 @@ input[type="number"] {
 
 .header-left-margin {
   margin-left: 22px;
+}
+
+.expand-collapse-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+}
+
+.expand-collapse-header {
+  height: 3rem;
+  background-color: #f2f2f2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 0 1rem;
+  position: relative;
+  font-weight: bolder;
+}
+
+.icon-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translate(0%,-50%);
+  cursor: pointer;
+}
+
+.expand-collapse-header .label{
+  display: block;
+  text-align: left;
+}
+
+.expand-collapse-header .value{
+  display: block;
+  text-align: right;
+  margin-right: 2rem;
+}
+
+.toggling-wrapper {
+  flex: 1;
+  transition: 0.2s ease-in-out;
+}
+
+.toggling-wrapper.collapse {
+  flex: none;
+  overflow: hidden;
+  height: 0;
+  transition: 0.2s ease-in-out;
+}
+
+@screen sm {
+  .employeeCard {
+    .card-section-header {
+      @apply mb-md;
+    }
+  }
 }

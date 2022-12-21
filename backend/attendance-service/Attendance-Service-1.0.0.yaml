@@ -274,6 +274,7 @@ paths:
       - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/parameters/tenantId'
       - name: registerId
         in: query
+        required: true
         description: Id of the register
         schema:
           type: string
@@ -290,6 +291,13 @@ paths:
       - name: individualIds
         in: query
         description: List of individual ids
+        schema:
+          type: array
+          items:
+            type: string
+      - name: ids
+        in: query
+        description: List of ids
         schema:
           type: array
           items:
@@ -472,13 +480,6 @@ components:
           items:
             $ref: '#/components/schemas/IndividualEntry'
 
-    PermissionLevel:
-      type: string
-      enum:
-      - FILL_ATTENDANCE
-      - MANAGE_PERMISSIONS
-      - VIEW
-
     StaffPermission:
       type: object
       properties:
@@ -493,6 +494,11 @@ components:
         userId:
           type: string
           description: Identifier of the user of the system
+        tenantId:
+          type: string
+          format: string
+          example: pb.amritsar
+          description: Tenant Id to which the staff belongs
         enrollmentDate:
           readOnly: true
           type: number
@@ -511,11 +517,14 @@ components:
         requestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         staff:
-          allOf:
-          - $ref: '#/components/schemas/StaffPermission'
-          - required:
-            - registerId
-            - userId
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/StaffPermission'
+            - required:
+              - registerId
+              - userId
+              - tenantId
 
     StaffPermissionResponse:
       type: object
@@ -523,7 +532,9 @@ components:
         responseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         staff:
-          $ref: '#/components/schemas/StaffPermission'
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffPermission'
 
     AttendanceLog:
       type: object
@@ -540,6 +551,10 @@ components:
           type: string
           format: uuid
           description: The individual for which the attendance is being marked
+        tenantId:
+          type: string
+          example: pb.amritsar
+          description: Tenant Id of the register
         time:
           type: number
           format: timestamp
@@ -563,6 +578,7 @@ components:
       required:
       - registerId
       - individualId
+      - tenantId
       - time
       - type
     
@@ -591,9 +607,3 @@ components:
       properties:
         requestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
-
-
-servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/rushang.dhanesha/Attendance-Service/1.0.0

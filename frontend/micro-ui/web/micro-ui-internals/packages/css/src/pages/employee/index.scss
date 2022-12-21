@@ -493,3 +493,23 @@
     margin-right: 16px;
   }
 }
+
+.total-value-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.total-wrapper {
+  margin: 1rem 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-weight: bolder;
+}
+
+.total-wrapper .label {
+  text-align: left;
+}
+
+.total-wrapper .value {
+  text-align: right;
+}

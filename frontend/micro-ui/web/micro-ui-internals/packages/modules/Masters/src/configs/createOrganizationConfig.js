@@ -285,7 +285,7 @@ export const createOrganizationConfig = () => {
                     isMandatory: true,
                     key: "designatiom",
                     type: "dropdown",
-                    label: t("ATM_DESIGNATION"),
+                    label: t("DESIGNATION"),
                     disable: false,
                     populators: {
                         name: "designatiom",
