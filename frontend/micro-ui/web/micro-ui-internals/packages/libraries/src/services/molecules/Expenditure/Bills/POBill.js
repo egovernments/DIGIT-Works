@@ -61,7 +61,16 @@ const transformViewDataToApplicationDetails = {
           ],
       }
       };
-      const applicationDetails = { applicationDetails: [BillDetails, ViewVendorBill] };
+      const TotalVendorBill = {
+        additionalDetails : {
+          showTotal : {
+            bottomBreakLine : true,
+            label : "Total Vendor Bill",
+            value : "₹ 1,20,000"
+          }
+        }
+      };
+      const applicationDetails = { applicationDetails: [BillDetails, ViewVendorBill, TotalVendorBill] };
       return {
         applicationDetails,
         applicationData: { regNo: 111, HosName: "Name", DOR: "10-10-2020" }, //dummy data

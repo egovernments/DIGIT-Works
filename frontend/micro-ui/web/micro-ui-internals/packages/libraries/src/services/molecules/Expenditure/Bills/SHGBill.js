@@ -45,9 +45,13 @@ const transformViewDataToApplicationDetails = {
         },
       };
       const TotalLabourBill = {
-        values: [
-          { title: "Total Labour Bill", value: "₹ 1,20,000" },
-        ],
+        additionalDetails : {
+          showTotal : {
+            bottomBreakLine : true,
+            label : "Total Labour Bill",
+            value : "₹ 1,20,000"
+          }
+        }
       };
       const AddVendorBill = {
         title: "EXP_VIEW_VENDOR_BILLS",
@@ -99,6 +103,15 @@ const transformViewDataToApplicationDetails = {
             ],
         }
       };
+      const TotalVendorBill = {
+        additionalDetails : {
+          showTotal : {
+            bottomBreakLine : true,
+            label : "Total Vendor Bill",
+            value : "₹ 1,20,000"
+          }
+        }
+      };
       const CommissionDetails = {
         title: "EXP_COMMISSION_DETAILS",
         asSectionHeader: true,
@@ -108,7 +121,25 @@ const transformViewDataToApplicationDetails = {
           { title: "EXP_COMMISSION_AMOUNT", value: "Rs. 48949" },
         ],
       };
-      const applicationDetails = { applicationDetails: [BillDetails,MusterRollDetails_1, MusterRollDetails_2, MusterRollDetails_3, MusterRollDetails_4, TotalLabourBill, AddVendorBill, CommissionDetails] };
+      const TotalCommissionAmount = {
+        additionalDetails : {
+          showTotal : {
+            bottomBreakLine : true,
+            label : "Total Commission Amount",
+            value : "₹ 1,20,000"
+          }
+        }
+      };
+      const TotalBillAmount = {
+        additionalDetails : {
+          showTotal : {
+            bottomBreakLine : true,
+            label : "Total Bill Amount",
+            value : "₹ 3,60,000"
+          }
+        }
+      };
+      const applicationDetails = { applicationDetails: [BillDetails,MusterRollDetails_1, MusterRollDetails_2, MusterRollDetails_3, MusterRollDetails_4, TotalLabourBill, AddVendorBill, TotalVendorBill, CommissionDetails,TotalCommissionAmount, TotalBillAmount] };
       return {
         applicationDetails,
         applicationData: { regNo: 111, HosName: "Name", DOR: "10-10-2020" }, //dummy data

@@ -44,6 +44,15 @@ const transformViewDataToApplicationDetails = {
         headerValue : "Rs 30000"
       },
     };
+    const TotalLabourBill = {
+      additionalDetails : {
+        showTotal : {
+          bottomBreakLine : true,
+          label : "Total Labour Bill",
+          value : "₹ 1,20,000"
+        }
+      }
+    };
     const CommissionDetails = {
       title: "EXP_COMMISSION_DETAILS",
       asSectionHeader: true,
@@ -53,7 +62,25 @@ const transformViewDataToApplicationDetails = {
         { title: "EXP_COMMISSION_AMOUNT", value: "Rs. 48949" },
       ],
     };
-    const applicationDetails = { applicationDetails: [BillDetails,MusterRollDetails_1, MusterRollDetails_2, MusterRollDetails_3, MusterRollDetails_4, CommissionDetails] };
+    const TotalCommissionAmount = {
+      additionalDetails : {
+        showTotal : {
+          bottomBreakLine : true,
+          label : "Total Commission Amount",
+          value : "₹ 1,20,000"
+        }
+      }
+    };
+    const TotalBillAmount = {
+      additionalDetails : {
+        showTotal : {
+          bottomBreakLine : true,
+          label : "Total Bill Amount",
+          value : "₹ 3,60,000"
+        }
+      }
+    };
+    const applicationDetails = { applicationDetails: [BillDetails,MusterRollDetails_1, MusterRollDetails_2, MusterRollDetails_3, MusterRollDetails_4, TotalLabourBill, CommissionDetails, TotalCommissionAmount, TotalBillAmount] };
     return {
       applicationDetails,
       applicationData: { regNo: 111, HosName: "Name", DOR: "10-10-2020" }, //dummy data

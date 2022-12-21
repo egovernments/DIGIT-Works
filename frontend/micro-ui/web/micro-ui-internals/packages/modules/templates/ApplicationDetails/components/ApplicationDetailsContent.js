@@ -40,6 +40,7 @@ import reducer, { initialTableState } from "../../../AttendenceMgmt/src/config/a
 import AttendanceDateRange from "../../../AttendenceMgmt/src/pageComponents/AttendanceDateRange";
 import MustorRollDetailsTable from "../../../Expenditure/src/components/ViewBill/MustorRollDetailsTable";
 import StatusTableWithRadio from "../../../Expenditure/src/components/ViewBill/StatusTableWithRadio";
+import ShowTotalValue from "../../../Expenditure/src/components/ViewBill/ShowTotalValue";
 
 function ApplicationDetailsContent({
   applicationDetails,
@@ -334,6 +335,7 @@ function ApplicationDetailsContent({
                 <MustorRollDetailsTable></MustorRollDetailsTable>
                 )
             : null}
+            {detail?.additionalDetails?.showTotal && <ShowTotalValue topBreakLine={detail?.additionalDetails?.showTotal?.topBreakLine} bottomBreakLine={detail?.additionalDetails?.showTotal?.bottomBreakLine} label={detail?.additionalDetails?.showTotal?.label} value={detail?.additionalDetails?.showTotal?.value}></ShowTotalValue>}
           {detail?.additionalDetails?.inspectionReport && (
             <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} />
           )}
