@@ -57,7 +57,7 @@ const transformViewDataToApplicationDetails = {
   };
   
   //Write Service to fetch records
-  export const fetchOrganisationDetailsDetails = () => {
+  export const fetchOrganisationDetails = () => {
     return transformViewDataToApplicationDetails.genericPropertyDetails();
   };
   
