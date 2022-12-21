@@ -8,7 +8,7 @@ const CollapseAndExpandGroups = ({children, groupElements=false, groupHeader="",
     const [collapse, setCollapse] = useState(false);
     return (
         <div className={`expand-collapse-wrapper ${customClass}`}>
-             <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(groupHeader)}</CardSubHeader>
+            {groupHeader && <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(groupHeader)}</CardSubHeader>}
             {groupElements && <div className="expand-collapse-header">
                     <span className="label">{headerLabel}</span>
                     <span className="value">{headerValue}</span>

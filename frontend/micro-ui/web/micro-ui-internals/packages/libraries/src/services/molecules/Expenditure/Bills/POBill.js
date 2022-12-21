@@ -20,29 +20,46 @@ const transformViewDataToApplicationDetails = {
           { title: "EXP_BILL_AMOUNT", value: "5500" },
         ],
         additionalDetails : {
-            documentsWithUrl : [
+          statusWithRadio : {
+            customClass : "border-none",
+            radioConfig : {
+              options : [
                 {
-                    title : "Upload Files",
-                    values : [
-                        {
-                            url : "",
-                            title : "Document 1",
-                            documentType : "pdf",
-                        },
-                        {
-                            url : "",
-                            title : "Document 2",
-                            documentType : "pdf",
-                        },
-                        {
-                            url : "",
-                            title : "Document 3",
-                            documentType : "pdf",
-                        }
-                    ]
+                  name : "BillAmount",
+                  value : "SHG",
+                  key : "SHG"
+                },
+                {
+                  name : "BillAmount",
+                  value : "Vendor",
+                  key : "Vendor"
                 }
-            ]
-        }
+              ]
+            },
+          },
+          documentsWithUrl : [
+              {
+                  title : "Upload Files",
+                  values : [
+                      {
+                          url : "",
+                          title : "Document 1",
+                          documentType : "pdf",
+                      },
+                      {
+                          url : "",
+                          title : "Document 2",
+                          documentType : "pdf",
+                      },
+                      {
+                          url : "",
+                          title : "Document 3",
+                          documentType : "pdf",
+                      }
+                  ]
+              }
+          ],
+      }
       };
       const applicationDetails = { applicationDetails: [BillDetails, ViewVendorBill] };
       return {

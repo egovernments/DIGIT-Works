@@ -44,7 +44,12 @@ const transformViewDataToApplicationDetails = {
           headerValue : "Rs 30000"
         },
       };
-      const ViewVendorBill = {
+      const TotalLabourBill = {
+        values: [
+          { title: "Total Labour Bill", value: "₹ 1,20,000" },
+        ],
+      };
+      const AddVendorBill = {
         title: "EXP_VIEW_VENDOR_BILLS",
         asSectionHeader: true,
         values: [
@@ -94,7 +99,16 @@ const transformViewDataToApplicationDetails = {
             ],
         }
       };
-      const applicationDetails = { applicationDetails: [BillDetails,MusterRollDetails_1, MusterRollDetails_2, MusterRollDetails_3, MusterRollDetails_4, ViewVendorBill] };
+      const CommissionDetails = {
+        title: "EXP_COMMISSION_DETAILS",
+        asSectionHeader: true,
+        values: [
+          { title: "EXP_NAME_OF_SHG", value: "Maa Bhagwati SHG" },
+          { title: "EXP_COMMISSION_PERCENTAGE", value: "7.5%" },
+          { title: "EXP_COMMISSION_AMOUNT", value: "Rs. 48949" },
+        ],
+      };
+      const applicationDetails = { applicationDetails: [BillDetails,MusterRollDetails_1, MusterRollDetails_2, MusterRollDetails_3, MusterRollDetails_4, TotalLabourBill, AddVendorBill, CommissionDetails] };
       return {
         applicationDetails,
         applicationData: { regNo: 111, HosName: "Name", DOR: "10-10-2020" }, //dummy data
