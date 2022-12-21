@@ -5,6 +5,7 @@ import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -20,19 +21,19 @@ import java.util.UUID;
 @Builder
 public class IndividualEntry {
     @JsonProperty("id")
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("registerId")
-    private UUID registerId = null;
+    private String registerId = null;
 
     @JsonProperty("individualId")
-    private UUID individualId = null;
+    private String individualId = null;
 
     @JsonProperty("enrollmentDate")
-    private Double enrollmentDate = null;
+    private BigDecimal enrollmentDate = null;
 
     @JsonProperty("denrollmentDate")
-    private Double denrollmentDate = null;
+    private BigDecimal denrollmentDate = null;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;

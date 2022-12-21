@@ -1,21 +1,21 @@
 package org.egov.validator;
 
 import com.jayway.jsonpath.JsonPath;
+import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.repository.AttendanceRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MDMSUtils;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterRequest;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
-import digit.models.coremodels.RequestInfoWrapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
 import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
@@ -23,9 +23,6 @@ import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
 @Component
 @Slf4j
 public class AttendanceServiceValidator {
-
-    @Autowired
-    private AttendanceRepository attendanceRepository;
 
     @Autowired
     private MDMSUtils mdmsUtils;
@@ -55,7 +52,7 @@ public class AttendanceServiceValidator {
     }
 
     public void validateUpdateAttendanceRegisterRequest(AttendanceRegisterRequest request) {
-        Map<String, String > errorMap = new HashMap<>();
+        Map<String, String> errorMap = new HashMap<>();
         List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
         RequestInfo requestInfo = request.getRequestInfo();
 
@@ -69,7 +66,7 @@ public class AttendanceServiceValidator {
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
 
         for (int i = 0; i < attendanceRegisters.size(); i++) {
-            if (attendanceRegisters.get(i).getId() ==null) {
+            if (attendanceRegisters.get(i).getId() == null) {
                 errorMap.put("ATTENDANCE_REGISTER_ID", "Attendance register id is mandatory");
             }
 
@@ -146,4 +143,23 @@ public class AttendanceServiceValidator {
         }
     }
 
+    public void validateRegisterAgainstDB(List<String> registerIds, List<AttendanceRegister> attendanceRegisterListFromDB, String tenantId) {
+
+        Set<String> uniqueRegisterIdsFromRequest = new HashSet<>(registerIds);
+
+        AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria
+                .builder().ids(registerIds).tenantId(tenantId).build();
+
+        Set<String> uniqueRegisterIdsFromDB = attendanceRegisterListFromDB.stream()
+                .map(register -> register.getId()).collect(Collectors.toSet());
+
+        //check if all register ids from request exist in db
+        for (String idFromRequest : uniqueRegisterIdsFromRequest) {
+            if (!uniqueRegisterIdsFromDB.contains(idFromRequest)) {
+                throw new CustomException("REGISTER_ID", "Attendance Registers with register id : " + idFromRequest + " does not exist for tenantId");
+            }
+        }
+
+
+    }
 }

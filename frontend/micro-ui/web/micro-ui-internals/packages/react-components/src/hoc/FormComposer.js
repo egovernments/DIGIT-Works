@@ -130,6 +130,8 @@ export const FormComposer = (props) => {
                   max={populators.max}
                   disable={disable}
                   style={type === "date" ? { paddingRight: "3px" } : ""}
+                  maxlength={populators?.validation?.maxlength}
+                  minlength={populators?.validation?.minlength}
                 />
               )}
               name={populators.name}
@@ -224,6 +226,7 @@ export const FormComposer = (props) => {
                   hintText={populators.hintText}
                   maxFilesAllowed={populators.maxFilesAllowed}
                   extraStyleName={{ padding: "0.5rem" }}
+                  customClass={populators?.customClass}
                 />
               );
             }}

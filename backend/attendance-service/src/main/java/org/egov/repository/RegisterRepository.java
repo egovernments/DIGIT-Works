@@ -28,7 +28,8 @@ public class RegisterRepository {
     public List<AttendanceRegister> getRegister(AttendanceRegisterSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList);
-        List<AttendanceRegister> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-        return attendanceStaffList;
+        List<AttendanceRegister> attendanceRegisterList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+        return attendanceRegisterList;
     }
+
 }
