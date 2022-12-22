@@ -21,7 +21,7 @@ const ViewBills = () => {
           applicationData={applicationData}s
           moduleCode="Expenditure"
           isDataLoading={false}
-          workflowDetails=""
+          workflowDetails={workflowDetails}
           showTimeLine={true}
           timelineStatusPrefix={""}
           businessService={""}

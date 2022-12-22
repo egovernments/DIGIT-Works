@@ -17,7 +17,9 @@ import configRejectModal from "./configRejectModal"
 import configAttendanceApproveModal from "./configAttendanceApproveModal";
 import configAttendanceCheckModal from "./configAttendanceCheckModal";
 import configAttendanceRejectModal from "./configAttendanceRejectModal";
-
+import configViewBillApproveModal from "./configViewBillApproveModal";
+import configViewBillCheckModal from "./configViewBillCheckModal";
+import configViewBillRejectModal from "./configViewBillRejectModal";
 
 export {
   configAttendanceRejectModal,
@@ -38,5 +40,8 @@ export {
   configBPAApproverApplication,
   configNOCApproverApplication,
   configWSApproverApplication,
-  configWSDisConnectApplication
+  configWSDisConnectApplication,
+  configViewBillRejectModal,
+  configViewBillCheckModal,
+  configViewBillApproveModal
 };
