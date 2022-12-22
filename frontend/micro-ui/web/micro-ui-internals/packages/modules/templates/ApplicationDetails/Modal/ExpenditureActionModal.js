@@ -120,26 +120,46 @@ const ExpenditureActionModal = ({ t, action, tenantId, state, id, closeModal, su
     }
   }, [approvers,designation,department]);
 
+  const dummy_exp_response = {
+    CHECK : {
+      header: "Bill Forwarded Successfully",
+      id: "Bill/2021-22/09/0001",
+      info: "Bill ID",
+      message: "Bill has been successfully created and forwarded for approval.",
+      responseData:{},
+      requestData:{}, 
+      links : []
+    },
+    REJECT :  {
+      header: "Bill Rejected Successfully",
+      id: "Bill/2021-22/09/0001",
+      info: "Bill ID",
+      message: "Bill has been Rejected.",
+      responseData:{},
+      requestData:{}, 
+      links : []
+    },
+    APPROVE : {
+      header: "Bill Approved Successfully",
+      id: "Bill/2021-22/09/0001",
+      info: "Bill ID",
+      message: "Bill has been approved",
+      responseData:{},
+      requestData:{}, 
+      links : []
+    }
+  }
+
   
   function submit (_data) {
     const workflow = {
       action: action?.action,
       comment: _data?.comments,
+      response : dummy_exp_response,
+      type : "bills",
       assignees: selectedApprover?.uuid ? [selectedApprover?.uuid] : undefined
     }
-
-    if(action?.action.includes("REJECT")) {
-      workflow.assignee = [applicationData?.auditDetails?.createdBy]
-    }
-
-    Object.keys(workflow).forEach(key => {
-      if (workflow[key] === undefined) {
-        delete workflow[key];
-      }
-    });
-    {estimateNumber ? submitAction({estimate:applicationData,workflow}) :
-    submitAction({letterOfIndent:applicationData,workflow})}
-    
+    submitAction({workflow});
   }
 
   const cardStyle = () => {
@@ -157,7 +177,7 @@ const ExpenditureActionModal = ({ t, action, tenantId, state, id, closeModal, su
         action && config?.form ? 
             <WorkflowModal 
                 closeModal={closeModal}
-                onSubmit={submitAction}
+                onSubmit={submit}
                 config={config}>
             </WorkflowModal> : 
         mdmsLoading ? 
