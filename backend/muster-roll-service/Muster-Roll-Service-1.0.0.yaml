@@ -158,7 +158,7 @@ components:
             $ref: '#/components/schemas/IndividualEntry'
         additionalDetails:
           type: object
-          description: This can be used to store skillset that is a requirement for Mukta. This is an updatable field from the user's input.
+          description: This is an updatable field from the user's input.
       required:
         - tenantId
         - registerId
@@ -207,6 +207,61 @@ components:
         additionalDetails:
           type: object
           description: This can be used to store skillset that is a requirement for Mukta. This is an updatable field from the user's input.
+
+    AttendanceLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: System generated unique identifier for the entry
+          readOnly: true
+        registerId:
+          type: string
+          description: Unique identifier of the register
+        individualId:
+          type: string
+          format: uuid
+          description: The individual for which the attendance is being marked
+        tenantId:
+          type: string
+          example: pb.amritsar
+          description: Tenant Id of the register
+        time:
+          type: number
+          format: timestamp
+          description: The timestamp at which the event has been recorded.
+        type:
+          type: string
+          description: Configurable in MDMS. [ENTRY/EXIT/...]
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+          description: The attendance log of the cancelled event can be marked as inactive.
+        documentIds:
+          description: Used to store file store ids. Need to verify validity of them using file store service.
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/Document'
+        additionalDetails:
+          type: object
+      required:
+        - registerId
+        - individualId
+        - tenantId
+        - time
+        - type
+    AttendanceLogResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
+        attendance:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttendanceLog'
 
     MusterRollRequest:
       type: object

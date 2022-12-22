@@ -39,8 +39,8 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
             String registerId = rs.getString("attendanceregisterid");
             String status = rs.getString("status");
             String musterRollStatus = rs.getString("musterrollstatus");
-            Long startDate = rs.getLong("startdate");
-            Long endDate = rs.getLong("enddate");
+            BigDecimal startDate = rs.getBigDecimal("startdate");
+            BigDecimal endDate = rs.getBigDecimal("enddate");
 
             String createdby = rs.getString("createdby");
             String lastmodifiedby = rs.getString("lastmodifiedby");
@@ -53,7 +53,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
 
             JsonNode additionalDetails = getAdditionalDetail("additionaldetails", rs);
 
-            MusterRoll musterRoll = MusterRoll.builder().id(UUID.fromString(id)).tenantId(tenantId).musterRollNumber(musterRollNumber)
+            MusterRoll musterRoll = MusterRoll.builder().id(id).tenantId(tenantId).musterRollNumber(musterRollNumber)
                     .registerId(registerId).status(Status.fromValue(status)).musterRollStatus(musterRollStatus).startDate(startDate)
                     .endDate(endDate).additionalDetails(additionalDetails).auditDetails(auditDetails).build();
 
@@ -89,7 +89,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
                     .build();
 
-            IndividualEntry individualEntry = IndividualEntry.builder().id(UUID.fromString(id)).individualId(individualId)
+            IndividualEntry individualEntry = IndividualEntry.builder().id(id).individualId(individualId)
                     .totalAttendance(totalAttendance).additionalDetails(additionalDetails).auditDetails(auditDetails).build();
 
             if (!individualMap.containsKey(id)) {
@@ -113,7 +113,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
     private void addAttendanceEntry(ResultSet rs, IndividualEntry individualEntry) throws SQLException {
         String id = rs.getString("attendanceId");
         String summaryId = rs.getString("attnSummaryId");
-        Long date = rs.getLong("AttnDate");
+        BigDecimal date = rs.getBigDecimal("AttnDate");
         BigDecimal attendance = rs.getBigDecimal("attendance");
 
         String createdby = rs.getString("attnCreatedBy");
@@ -128,7 +128,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
                     .build();
 
-            AttendanceEntry attendanceEntry = AttendanceEntry.builder().id(UUID.fromString(id)).time(date)
+            AttendanceEntry attendanceEntry = AttendanceEntry.builder().id(id).time(date)
                     .attendance(attendance).additionalDetails(additionalDetails).auditDetails(auditDetails).build();
 
             individualEntry.addAttendanceEntriesItem(attendanceEntry);

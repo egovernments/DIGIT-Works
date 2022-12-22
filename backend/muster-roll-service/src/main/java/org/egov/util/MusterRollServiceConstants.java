@@ -10,10 +10,14 @@ public class MusterRollServiceConstants {
     public static final String MDMS_TENANT_MODULE_NAME = "tenant";
     public static final String MDMS_COMMON_MASTERS_MODULE_NAME = "common-masters";
     public static final String MASTER_MUSTER_ROLL = "MusterRoll";
-    public static final String ENTRY_HOUR = "ENTRY_HOUR";
-    public static final String EXIT_HOUR_HALF_DAY = "EXIT_HOUR_HALF_DAY";
-    public static final String EXIT_HOUR_FULL_DAY = "EXIT_HOUR_FULL_DAY";
+    public static final String HALF_DAY_NUM_HOURS = "HALF_DAY_NUM_HOURS";
+    public static final String FULL_DAY_NUM_HOURS = "FULL_DAY_NUM_HOURS";
+    public static final String ROUND_OFF_HOURS = "ROUND_OFF_HOURS";
+
+    public static final String ENTRY_EVENT = "ENTRY";
     public static final String EXIT_EVENT = "EXIT";
     public static final String VERIFY_ELIGIBLE_ROLES = "JUNIOR_ENGINEER";
+
+    public static final String ZONE = "Asia/Kolkata";
 
 }

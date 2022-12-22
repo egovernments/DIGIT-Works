@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.tracer.model.CustomException;
@@ -38,9 +39,9 @@ public class CalculationService {
     @Autowired
     private MdmsUtil mdmsUtils;
 
-    private int entryHour;
-    private int exitHourHalfDay;
-    private int exitHourFullDay;
+    private int halfDayNumHours;
+    private int fullDayNumHours;
+    private boolean isRoundOffHours;
 
     /**
      * Calculate the per day attendance and attendance aggregate for each individual for create muster roll
@@ -51,46 +52,58 @@ public class CalculationService {
     public void createAttendance(MusterRollRequest musterRollRequest, boolean isCreate) {
 
         //fetch the log events for all individuals in a muster roll
-        Map<String,List<LocalDateTime>> individualAttendanceMap = populateLogEvents(musterRollRequest);
+        List<AttendanceLog> attendanceLogList = fetchAttendanceLogsAndMDMSData(musterRollRequest);
+        Map<String,List<LocalDateTime>> individualEntryAttendanceMap = populateAttendanceLogEvents(attendanceLogList,ENTRY_EVENT);
+        Map<String,List<LocalDateTime>> individualExitAttendanceMap = populateAttendanceLogEvents(attendanceLogList,EXIT_EVENT);
 
-        log.info("EnrichmentService::calculateAttendance::From MDMS::EXIT_HOUR_HALF_DAY::"+exitHourHalfDay+"::EXIT_HOUR_FULL_DAY::"+exitHourFullDay);
+        log.info("EnrichmentService::createAttendance::From MDMS::HALF_DAY_NUM_HOURS::"+halfDayNumHours+"::FULL_DAY_NUM_HOURS::"+fullDayNumHours);
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         AuditDetails auditDetails = musterRoll.getAuditDetails();
-        LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate();
-        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate();
+        LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate().longValue()).atZone(ZoneId.of(ZONE)).toLocalDate();
+        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate().longValue()).atZone(ZoneId.of(ZONE)).toLocalDate();
 
         log.debug("EnrichmentService::calculateAttendance::startDate::"+startDate+"::endDate::"+endDate);
 
         //calculate attendance aggregate and per day per individual attendance
         List<IndividualEntry> individualEntries = new ArrayList<>();
 
-        for (Map.Entry<String,List<LocalDateTime>> entry : individualAttendanceMap.entrySet()) {
+        for (Map.Entry<String,List<LocalDateTime>> entry : individualExitAttendanceMap.entrySet()) {
             IndividualEntry individualEntry = new IndividualEntry();
             if (isCreate) {
-                individualEntry.setId(UUID.randomUUID());
+                individualEntry.setId(UUID.randomUUID().toString());
             }
             individualEntry.setIndividualId(entry.getKey());
-            List<LocalDateTime> timeStampList = entry.getValue();
+            List<LocalDateTime> exitTimestampList = entry.getValue();
+            List<LocalDateTime> entryTimestampList = individualEntryAttendanceMap.get(entry.getKey());
             List<AttendanceEntry> attendanceEntries = new ArrayList<>();
             LocalDate date = startDate;
-            BigDecimal totalAttendance = BigDecimal.ZERO;
+            BigDecimal totalAttendance = new BigDecimal("0.0");
             while (date.isBefore(endDate) || date.isEqual(endDate)) {
                 AttendanceEntry attendanceEntry = new AttendanceEntry();
                 if (isCreate) {
-                    attendanceEntry.setId(UUID.randomUUID());
+                    attendanceEntry.setId(UUID.randomUUID().toString());
                 }
-                attendanceEntry.setTime(date.atStartOfDay(ZoneId.of("Asia/Kolkata")).toInstant().toEpochMilli());
+                attendanceEntry.setTime(new BigDecimal(date.atStartOfDay(ZoneId.of(ZONE)).toInstant().toEpochMilli()));
 
-                //check if the individual's attendance is logged between startDate and endDate
-                LocalDateTime timeStamp = null;
-                for (LocalDateTime dateTime : timeStampList) {
+                //check if the individual's entry attendance is logged between startDate and endDate
+                LocalDateTime entryTimestamp = null;
+                for (LocalDateTime dateTime : entryTimestampList) {
                     if (date.isEqual(dateTime.toLocalDate())) {
-                        timeStamp = dateTime;
+                        entryTimestamp = dateTime;
                         break;
                     }
                 }
 
-                totalAttendance = getTotalAttendance(totalAttendance, attendanceEntry, timeStamp);
+                //check if the individual's exit attendance is logged between startDate and endDate
+                LocalDateTime exitTimestamp = null;
+                for (LocalDateTime dateTime : exitTimestampList) {
+                    if (date.isEqual(dateTime.toLocalDate())) {
+                        exitTimestamp = dateTime;
+                        break;
+                    }
+                }
+
+                totalAttendance = getTotalAttendance(totalAttendance, attendanceEntry, entryTimestamp,exitTimestamp);
 
                 date = date.plusDays(1);
                 attendanceEntry.setAuditDetails(auditDetails);
@@ -112,19 +125,30 @@ public class CalculationService {
      * Calculate the total attendance for the individual
      * @param totalAttendance
      * @param attendanceEntry
-     * @param timeStamp
+     * @param entryTimestamp
+     * @param exitTimestamp
      *
      */
-    private BigDecimal getTotalAttendance(BigDecimal totalAttendance, AttendanceEntry attendanceEntry, LocalDateTime timeStamp) {
+    private BigDecimal getTotalAttendance(BigDecimal totalAttendance, AttendanceEntry attendanceEntry, LocalDateTime entryTimestamp, LocalDateTime exitTimestamp) {
         //set attendance if present else set as 0
-        if (timeStamp != null) {
-            if (timeStamp.getHour() == exitHourHalfDay) {
-                attendanceEntry.setAttendance(new BigDecimal("0.5"));
-            } else if (timeStamp.getHour() == exitHourFullDay) {
-                attendanceEntry.setAttendance(BigDecimal.ONE);
+        if (entryTimestamp != null && exitTimestamp != null) {
+            int workHours = exitTimestamp.getHour() - entryTimestamp.getHour();
+
+            /** IF isRoundOffHours is true,
+             * FullDayAttendance is given if the workHours is more than halfDayNumHours (even if it is less than fullDayNumHours).
+             *  HalfDayAttendance is given if the workHours is less than halfDayNumHours. eg., 6hrs will be considered as fullDayAttendance, 2hrs as halfDayAttendance
+             */
+            attendanceEntry.setAttendance(new BigDecimal("0.5"));
+            if (isRoundOffHours && workHours > halfDayNumHours) {
+                attendanceEntry.setAttendance(new BigDecimal("1.0"));
             }
+
+            if (!isRoundOffHours && workHours >= fullDayNumHours) {
+                attendanceEntry.setAttendance(new BigDecimal("1.0"));
+            }
+
         } else {
-            attendanceEntry.setAttendance(BigDecimal.ZERO);
+            attendanceEntry.setAttendance(new BigDecimal("0.0"));
         }
 
         //calculate totalAttendance
@@ -141,28 +165,36 @@ public class CalculationService {
     public void updateAttendance(MusterRollRequest musterRollRequest) {
 
         //fetch the log events for all individuals in a muster roll
-        Map<String,List<LocalDateTime>> individualAttendanceMap = populateLogEvents(musterRollRequest);
+        List<AttendanceLog> attendanceLogList = fetchAttendanceLogsAndMDMSData(musterRollRequest);
+        Map<String,List<LocalDateTime>> individualEntryAttendanceMap = populateAttendanceLogEvents(attendanceLogList,ENTRY_EVENT);
+        Map<String,List<LocalDateTime>> individualExitAttendanceMap = populateAttendanceLogEvents(attendanceLogList,EXIT_EVENT);
 
-        log.info("EnrichmentService::calculateAttendance::From MDMS::EXIT_HOUR_HALF_DAY::"+exitHourHalfDay+"::EXIT_HOUR_FULL_DAY::"+exitHourFullDay);
+        log.info("EnrichmentService::updateAttendance::From MDMS::HALF_DAY_NUM_HOURS::"+halfDayNumHours+"::FULL_DAY_NUM_HOURS::"+fullDayNumHours);
 
         //calculate attendance aggregate and per day per individual attendance
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         AuditDetails auditDetails = musterRoll.getAuditDetails();
         List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
-        for (Map.Entry<String,List<LocalDateTime>> entry : individualAttendanceMap.entrySet()) {
+        for (Map.Entry<String,List<LocalDateTime>> entry : individualExitAttendanceMap.entrySet()) {
             IndividualEntry individualEntry = individualEntries.stream()
                                                                 .filter(individual -> individual.getIndividualId().equalsIgnoreCase(entry.getKey()))
                                                                 .findFirst().get();
-            List<LocalDateTime> timeStampList = entry.getValue();
+
+            List<LocalDateTime> exitTimestampList = entry.getValue();
+            List<LocalDateTime> entryTimestampList = individualEntryAttendanceMap.get(entry.getKey());
             List<AttendanceEntry> attendanceEntries = individualEntry.getAttendanceEntries();
-            BigDecimal totalAttendance = BigDecimal.ZERO;
+            BigDecimal totalAttendance = new BigDecimal("0.0");
             for (AttendanceEntry attendanceEntry : attendanceEntries) {
-                LocalDate attendanceDate = Instant.ofEpochMilli(attendanceEntry.getTime()).atZone(ZoneId.of(/*serviceConfiguration.getTimeZone()*/"Asia/Kolkata")).toLocalDate();
-                LocalDateTime timeStamp = timeStampList.stream()
+                LocalDate attendanceDate = Instant.ofEpochMilli(attendanceEntry.getTime().longValue()).atZone(ZoneId.of(ZONE)).toLocalDate();
+                LocalDateTime entryTimestamp = entryTimestampList.stream()
                                                         .filter(dateTime -> dateTime.toLocalDate().isEqual(attendanceDate))
                                                         .findFirst().orElse(null);
-                if (timeStamp != null) {
-                    totalAttendance = getTotalAttendance(totalAttendance, attendanceEntry, timeStamp);
+                LocalDateTime exitTimestamp = exitTimestampList.stream()
+                        .filter(dateTime -> dateTime.toLocalDate().isEqual(attendanceDate))
+                        .findFirst().orElse(null);
+
+                if (entryTimestamp != null && exitTimestamp != null) {
+                    totalAttendance = getTotalAttendance(totalAttendance, attendanceEntry, entryTimestamp,exitTimestamp );
                     attendanceEntry.setAuditDetails(auditDetails);
                 }
             }
@@ -173,11 +205,11 @@ public class CalculationService {
     }
 
     /**
-     * Populate the attendance log events from attendance service and the attendance entry , exit time from MDMS
+     * Fetch the attendance logs and the halfDayNumHours, fullDayNumHours from MDMS
      * @param musterRollRequest
-     * @return Map<String,List<LocalDateTime>>
+     * @return List<AttendanceLog>
      */
-    private Map<String,List<LocalDateTime>> populateLogEvents(MusterRollRequest musterRollRequest) {
+    private List<AttendanceLog> fetchAttendanceLogsAndMDMSData(MusterRollRequest musterRollRequest) {
 
         //fetch the attendance log
         List<AttendanceLog> attendanceLogList = getAttendanceLogs(musterRollRequest.getMusterRoll(),musterRollRequest.getRequestInfo());
@@ -188,19 +220,28 @@ public class CalculationService {
         Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
         populateAttendanceTime(mdmsData);
 
+        return attendanceLogList;
+    }
+
+    /**
+     * The method returns a map with key as individualId and value as list of entry or exit timestamp
+     * @param attendanceLogList
+     * @param event
+     * @return
+     */
+
+    private Map<String,List<LocalDateTime>> populateAttendanceLogEvents(List<AttendanceLog> attendanceLogList, String event) {
         //populate the map with key as individualId and value as the corresponding list of exit time
         Map<String,List<LocalDateTime>> individualAttendanceMap = attendanceLogList.stream()
-                .filter(log -> log.getType().equalsIgnoreCase(EXIT_EVENT))
+                .filter(attendanceLog -> attendanceLog.getType().equalsIgnoreCase(event))
                 .collect(Collectors.groupingBy(
-                        log -> log.getIndividualId().toString(),
-                        LinkedHashMap::new,
-                        Collectors.mapping(log -> Instant.ofEpochMilli(log.getTime().longValue()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDateTime(),Collectors.toList())
+                        attendanceLog -> attendanceLog.getIndividualId(), //key
+                        LinkedHashMap::new, // populate the map
+                        Collectors.mapping(attendanceLog -> Instant.ofEpochMilli(attendanceLog.getTime().longValue()).atZone(ZoneId.of(ZONE)).toLocalDateTime(),Collectors.toList()) //value is the list of timestamp
                 ));
 
         return individualAttendanceMap;
     }
-
-
 
     /**
      * Fetch the exit attendance log events for all individuals in an attendance register between the startDate and endDate
@@ -217,7 +258,7 @@ public class CalculationService {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
                 .queryParam("tenantId",musterRoll.getTenantId())
                 .queryParam("registerId",musterRoll.getRegisterId())
-                .queryParam("fromTime",musterRoll.getStartDate())
+                .queryParam("fromTime",musterRoll.getStartDate().longValue())
                 .queryParam("toTime",musterRoll.getEndDate().doubleValue())
                 .queryParam("status",Status.ACTIVE);
 
@@ -256,14 +297,14 @@ public class CalculationService {
                 String code = codeValueMap.get("code");
                 String value = codeValueMap.get("value");
                 switch (code) {
-                    case ENTRY_HOUR :
-                        entryHour = Integer.parseInt(value);
+                    case HALF_DAY_NUM_HOURS :
+                        halfDayNumHours = Integer.parseInt(value);
                         break;
-                    case EXIT_HOUR_HALF_DAY :
-                        exitHourHalfDay =Integer.parseInt(value);
+                    case FULL_DAY_NUM_HOURS :
+                        fullDayNumHours =Integer.parseInt(value);
                         break;
-                    case EXIT_HOUR_FULL_DAY :
-                        exitHourFullDay = Integer.parseInt(value);
+                    case ROUND_OFF_HOURS :
+                        isRoundOffHours = BooleanUtils.toBoolean(value);
                         break;
                 }
 

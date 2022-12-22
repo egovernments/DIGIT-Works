@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -155,7 +156,7 @@ public class MusterRollValidator {
         }
 
         //Check if the startDate is Monday - UI sends the epoch time in IST
-        LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate()).atZone(ZoneId.of(/*serviceConfiguration.getTimeZone()*/"Asia/Kolkata")).toLocalDate();
+        LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate().longValue()).atZone(ZoneId.of(ZONE)).toLocalDate();
         if (startDate.getDayOfWeek() != DayOfWeek.MONDAY) {
             throw new CustomException("START_DATE_MONDAY","StartDate should be Monday");
         }
@@ -165,7 +166,7 @@ public class MusterRollValidator {
 
         //Set the endDate as SUNDAY
         LocalDate endDate = startDate.plusDays(6);
-        musterRoll.setEndDate(endDate.atStartOfDay(ZoneId.of(/*serviceConfiguration.getTimeZone()*/"Asia/Kolkata")).toInstant().toEpochMilli());
+        musterRoll.setEndDate(new BigDecimal(endDate.atStartOfDay(ZoneId.of(ZONE)).toInstant().toEpochMilli()));
 
     }
 
@@ -178,9 +179,6 @@ public class MusterRollValidator {
         }
         if (musterRoll.getId() == null) {
             throw new CustomException("MUSTER_ROLL_ID","MusterRollId is mandatory");
-        }
-        if (musterRoll.getMusterRollNumber() == null) {
-            throw new CustomException("MUSTER_ROLL_NUMBER","MusterRollNumber is mandatory");
         }
 
         if (workflow.getAction().equalsIgnoreCase("VERIFY")) {

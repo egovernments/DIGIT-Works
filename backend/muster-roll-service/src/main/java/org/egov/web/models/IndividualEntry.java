@@ -32,7 +32,7 @@ import lombok.Builder;
 public class IndividualEntry {
 
     @JsonProperty("id")
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("individualId")
     private String individualId = null;

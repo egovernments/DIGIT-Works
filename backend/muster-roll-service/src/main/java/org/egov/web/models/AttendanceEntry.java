@@ -24,10 +24,10 @@ import java.util.UUID;
 public class AttendanceEntry {
 
     @JsonProperty("id")
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("time")
-    private Long time = null;
+    private BigDecimal time = null;
 
     @JsonProperty("attendance")
     private BigDecimal attendance = null;

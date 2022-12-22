@@ -3,6 +3,7 @@ package org.egov.web.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -25,15 +26,21 @@ public class MusterRollSearchCriteria {
     private String registerId;
 
     @JsonProperty("fromDate")
-    private Long fromDate;
+    private BigDecimal fromDate;
 
     @JsonProperty("toDate")
-    private Double toDate;
+    private BigDecimal toDate;
 
     @JsonProperty("status")
     private Status status;
 
     @JsonProperty("musterRollStatus")
     private String musterRollStatus;
+
+    @JsonProperty("limit")
+    private Integer limit;
+
+    @JsonProperty("offset")
+    private Integer offset;
 
 }

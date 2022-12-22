@@ -67,7 +67,7 @@ public class EnrichmentService {
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
 
         //Id
-        musterRoll.setId(UUID.randomUUID());
+        musterRoll.setId(UUID.randomUUID().toString());
 
         //Audit details
         AuditDetails auditDetails = musterRollServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), musterRoll, true);
@@ -81,7 +81,7 @@ public class EnrichmentService {
             String musterRollNumber = musterNumbers.get(0);
             musterRoll.setMusterRollNumber(musterRollNumber);
         } else {
-            throw new CustomException("MUSTER_NUMBER_NOT_GENERATED","Muster number is not generated from Idgen service");
+            throw new CustomException("MUSTER_NUMBER_NOT_GENERATED","Error occurred while generating muster roll numbers from IdGen service");
         }
 
         //status
@@ -105,7 +105,7 @@ public class EnrichmentService {
             List<IndividualEntry> modifiedIndividualEntries = musterRoll.getIndividualEntries();
             for (IndividualEntry individualEntry : individualEntries) {
                 for (IndividualEntry modifiedIndividualEntry : modifiedIndividualEntries)  {
-                    if (modifiedIndividualEntry.getId().toString().equalsIgnoreCase(individualEntry.getId().toString())) {
+                    if (modifiedIndividualEntry.getId().equalsIgnoreCase(individualEntry.getId())) {
                         individualEntry.setTotalAttendance(modifiedIndividualEntry.getTotalAttendance());
                         break;
                     }

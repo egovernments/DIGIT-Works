@@ -114,7 +114,7 @@ public class MusterRollService {
     public void checkMusterRollExists(MusterRoll musterRoll) {
         MusterRollSearchCriteria searchCriteria = MusterRollSearchCriteria.builder().tenantId(musterRoll.getTenantId())
                 .registerId(musterRoll.getRegisterId()).fromDate(musterRoll.getStartDate())
-                .toDate(musterRoll.getEndDate().doubleValue()).build();
+                .toDate(musterRoll.getEndDate()).build();
         List<MusterRoll> musterRolls = musterRollRepository.getMusterRoll(searchCriteria);
         if (!CollectionUtils.isEmpty(musterRolls)) {
             throw new CustomException("DUPLICATE_MUSTER_ROLL","Muster roll already exists for this register and date");

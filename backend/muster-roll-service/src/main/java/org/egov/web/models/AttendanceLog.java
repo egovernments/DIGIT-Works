@@ -8,6 +8,7 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,19 +26,19 @@ import java.util.UUID;
 @Builder
 public class AttendanceLog {
     @JsonProperty("id")
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("registerId")
     private String registerId = null;
 
     @JsonProperty("individualId")
-    private UUID individualId = null;
+    private String individualId = null;
 
     @JsonProperty("tenantId")
     private String tenantId =null;
 
     @JsonProperty("time")
-    private Double time = null;
+    private BigDecimal time = null;
 
     @JsonProperty("type")
     private String type = null;
