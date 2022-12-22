@@ -168,11 +168,11 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               options : [
                 {
                   name : "Yes",
-                  code : "YES"
+                  code : "COMMON_YES"
                 },
                 {
                   name : "No",
-                  code : "NO"
+                  code : "COMMON_NO"
                 }
               ]
             },
@@ -215,11 +215,11 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               options : [
                 {
                   name : "Yes",
-                  code : "YES"
+                  code : "COMMON_YES"
                 },
                 {
                   name : "No",
-                  code : "NO"
+                  code : "COMMON_NO"
                 }
               ]
             },
@@ -245,11 +245,11 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               options : [
                 {
                   name : "Yes",
-                  code : "YES"
+                  code : "COMMON_YES"
                 },
                 {
                   name : "No",
-                  code : "NO"
+                  code : "COMMON_NO"
                 },
               ]
             },
@@ -279,11 +279,11 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               options : [
                 {
                   name : "Yes",
-                  code : "YES"
+                  code : "COMMON_YES"
                 },
                 {
                   name : "No",
-                  code : "NO"
+                  code : "COMMON_NO"
                 }
               ]
             },
@@ -368,12 +368,12 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               },
               options: [
                 {
-                  code: "ABC",
-                  name: "ABC",
+                  name: "Yes",
+                  code: "COMMON_YES",
                 },
                 {
-                  code: "XYZ",
-                  name: "XYZ",
+                  name: "No",
+                  code: "COMMON_NO",
                 }
               ],
             },
