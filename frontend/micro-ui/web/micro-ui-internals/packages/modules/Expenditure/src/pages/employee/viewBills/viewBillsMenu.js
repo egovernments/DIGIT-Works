@@ -35,7 +35,7 @@ const ViewBillsMenu = () => {
         <React.Fragment>
             {
                 billsConfigs?.view?.map((billType)=>(
-                    <div key={billType?.key} onClick={()=>handleBillMenu(billType)}>{billType.label}</div>
+                    <div key={billType?.key} onClick={()=>handleBillMenu(billType)} className="bills-menu-options">{billType.label}</div>
                 ))
             }
         </React.Fragment>

@@ -148,57 +148,7 @@ const ApplicationDetails = (props) => {
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
     const performedAction = data?.workflow?.action
     setIsEnableLoader(true);
-
-    //dummy response for Bills
-    if(data?.workflow?.type === "bills") {
-      if(performedAction === "CHECK") {
-        const state = data?.workflow?.response?.CHECK;
-        history.push(`/${window.contextPath}/employee/works/response`, state)
-      }else if(performedAction === "REJECT") {
-        const state = data?.workflow?.response?.REJECT;
-        history.push(`/${window.contextPath}/employee/works/response`, state)
-      }else if(performedAction === "APPROVE") {
-        const state = data?.workflow?.response?.APPROVE;
-        history.push(`/${window.contextPath}/employee/works/response`, state)
-      }
-    }else{
-      if(performedAction === "CHECK") {
-        const state = {
-          header: "Weekly Attendence Checked & Forwarded",
-          id: "B2191212 | 21-09-2022 - 28-09-2022",
-          info: "Registered ID and Week",
-          message: "Attendence has been approved for mentioned week.",
-          responseData:data,
-          requestData:{}, 
-          links : []
-        }
-        history.push(`/${window.contextPath}/employee/works/response`, state)
-      }else if(performedAction === "REJECT") {
-        const state = {
-          header: "Weekly Attendence Rejected",
-          id: "B2191212 | 21-09-2022 - 28-09-2022",
-          info: "Registered ID and Week",
-          message: "Attendence has been rejected for mentioned week.",
-          responseData:data,
-          requestData:{}, 
-          links : [] 
-        }
-        history.push(`/${window.contextPath}/employee/works/response`, state)
-      }else if(performedAction === "APPROVE") {
-        const state = {
-          header: "Weekly Attendence Approved",
-          id: "B2191212 | 21-09-2022 - 28-09-2022",
-          info: "Registered ID and Week",
-          message: "Attendence has been approved for mentioned week.",
-          responseData:data,
-          requestData:{}, 
-          links : [] 
-        }
-        history.push(`/${window.contextPath}/employee/works/response`, state)
-      }
-    }
-    
-    
+       
     if (mutate) {
       setIsEnableLoader(true);
       mutate(data, {

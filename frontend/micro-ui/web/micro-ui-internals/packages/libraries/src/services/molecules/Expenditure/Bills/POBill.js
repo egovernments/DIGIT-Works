@@ -26,12 +26,12 @@ const transformViewDataToApplicationDetails = {
               label : "EXP_WHO_SHOULD_THIS_BILL_AMT_PAID_TO",
               options : [
                 {
-                  name : "SHG",
+                  name : "BillAmount",
                   value : "SHG",
                   key : "SHG"
                 },
                 {
-                  name : "Vendor",
+                  name : "BillAmount",
                   value : "Vendor",
                   key : "Vendor"
                 }
