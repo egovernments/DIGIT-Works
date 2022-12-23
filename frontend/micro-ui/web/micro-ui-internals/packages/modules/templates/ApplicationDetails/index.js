@@ -148,18 +148,16 @@ const ApplicationDetails = (props) => {
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
     const performedAction = data?.workflow?.action
     setIsEnableLoader(true);
-       
+
     if (mutate) {
       setIsEnableLoader(true);
       mutate(data, {
         onError: (error, variables) => {
-          
           setIsEnableLoader(false);
           setShowToast({ key: "error", error });
           setTimeout(closeToast, 5000);
         },
         onSuccess: (data, variables) => {
-          
           setIsEnableLoader(false);
           //just history.push to the response component from here and show relevant details
           if(data?.letterOfIndents?.[0]){

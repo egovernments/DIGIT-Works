@@ -60,7 +60,7 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
     }
 
     const removeFile = (state, payload) => {
-        const __indexOfItemToDelete = state.findIndex(e => e[0] === payload.file.name)
+        const __indexOfItemToDelete = state.findIndex(e => e[1].fileStoreId.fileStoreId === payload.fileStoreId.fileStoreId)
         const mutatedState = state.filter((e, index) => index !== __indexOfItemToDelete)
         return [...mutatedState]
     }
