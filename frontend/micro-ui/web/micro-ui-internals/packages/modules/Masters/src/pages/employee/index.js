@@ -10,7 +10,7 @@ const MastersBreadCrumb = ({ location }) => {
   const crumbs = [
     {
         path: "/works-ui/employee",
-        content: "Masters",
+        content: t("MASTERS_MASTERS"),
         show: true,
     },
     {
