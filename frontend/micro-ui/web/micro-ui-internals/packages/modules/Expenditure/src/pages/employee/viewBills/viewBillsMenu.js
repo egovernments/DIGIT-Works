@@ -1,23 +1,25 @@
 import React, { Fragment } from "react";
 import { useHistory } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const ViewBillsMenu = () => {
     const history = useHistory();
+    const { t } = useTranslation();
 
     const billsConfigs = {
         path : `/${window.contextPath}/employee/expenditure/view-bills/bills`,
         view : [
             {
                 key : 'PO',
-                label : 'View PO Bills'
+                label : t("EXP_VIEW_PO_BILLS")
             },
             {
                 key : 'WO',
-                label : 'View WO Bills'
+                label : t("EXP_VIEW_WO_BILLS")
             },
             {
                 key : 'SHG',
-                label : 'View SHG Bills'
+                label : t("EXP_VIEW_SHG_BILLS")
             }
         ]
     }
