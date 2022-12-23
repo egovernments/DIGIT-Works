@@ -92,9 +92,15 @@ const ViewContract = (props) => {
     }
 
     const redirectToCreateBill = () => {
-        history.push(`/${window?.contextPath}/employee/expenditure/create-bill`, { data: {} });
+        history.push(`/${window?.contextPath}/employee/expenditure/create-bill`, { contractType: getContractType() });
     }
 
+    const getContractType = () => {
+        const contractType = String(applicationDetails?.applicationData?.contractType).replace(" ", "_")
+        const implementingAuthority = String(applicationDetails?.applicationData?.implementingAuthority).replace(" ", "_")
+        return implementingAuthority + '_' + contractType
+    }
+    
     // // call update Contract API to update Contract form values and application staus during workflow action 
     // const {
     //     isLoading: updatingApplication,
