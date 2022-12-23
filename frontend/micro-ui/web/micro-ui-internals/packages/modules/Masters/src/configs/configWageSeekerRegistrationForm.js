@@ -167,11 +167,11 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               },
               options : [
                 {
-                  name : "Yes",
+                  name : "COMMON_YES",
                   code : "COMMON_YES"
                 },
                 {
-                  name : "No",
+                  name : "COMMON_NO",
                   code : "COMMON_NO"
                 }
               ]
@@ -214,11 +214,11 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               },
               options : [
                 {
-                  name : "Yes",
+                  name : "COMMON_YES",
                   code : "COMMON_YES"
                 },
                 {
-                  name : "No",
+                  name : "COMMON_NO",
                   code : "COMMON_NO"
                 }
               ]
@@ -244,13 +244,13 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               required: true,
               options : [
                 {
-                  name : "Yes",
+                  name : "COMMON_YES",
                   code : "COMMON_YES"
                 },
                 {
-                  name : "No",
+                  name : "COMMON_NO",
                   code : "COMMON_NO"
-                },
+                }
               ]
             },
           },
@@ -278,11 +278,11 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               },
               options : [
                 {
-                  name : "Yes",
+                  name : "COMMON_YES",
                   code : "COMMON_YES"
                 },
                 {
-                  name : "No",
+                  name : "COMMON_NO",
                   code : "COMMON_NO"
                 }
               ]
@@ -366,16 +366,16 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              options: [
+              options : [
                 {
-                  name: "Yes",
-                  code: "COMMON_YES",
+                  name : "COMMON_YES",
+                  code : "COMMON_YES"
                 },
                 {
-                  name: "No",
-                  code: "COMMON_NO",
+                  name : "COMMON_NO",
+                  code : "COMMON_NO"
                 }
-              ],
+              ]
             },
           },
         ],
