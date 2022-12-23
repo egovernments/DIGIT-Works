@@ -17,11 +17,11 @@ export const addVendorBillConfig = () => {
 
     return {
         label: {
-            submit: "Proceed"
+            submit: t("CS_COMMON_PROCEED")
         }, 
         form: [
             {
-                head: "Add Vendor Bill", //t("EXP_ADD_VENDOR_BILL"),
+                head: t("EXP_ADD_VENDOR_BILL"),
                 body: [
                 {
                     isMandatory: true,
@@ -70,7 +70,7 @@ export const addVendorBillConfig = () => {
                         mdmsConfig: {
                             masterName: "OrganisationType",
                             moduleName: "works",
-                            localePrefix: "MASTERS",
+                            localePrefix: "EXP",
                         }
                     },
                 },

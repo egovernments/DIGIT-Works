@@ -10,7 +10,7 @@ const MustorRollDetails = ({ wrapInCard }) => {
   return (
     <React.Fragment>
        <Card noCardStyle={!wrapInCard} style={{margin: '0px 16px'}}>
-          <CardSectionHeader style={{marginBottom: '1rem'}}>{t("EXP_MUSTOR_ROLL_DETAILS")}</CardSectionHeader>
+          <CardSectionHeader style={{marginBottom: '1rem'}}>{t("EXP_MUSTER_ROLL_DETAILS")}</CardSectionHeader>
           {
             mustorRollIds.map(id => {
               return (

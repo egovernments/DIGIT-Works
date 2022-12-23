@@ -21,7 +21,7 @@ const renderBankAccountDetails = (value) => {
 
 export const mustorRollDetailsTableColumns = (t) => [
     {
-        Header: "S. No",
+        Header: t("EXP_SNO"),
         accessor: "sno",
         Cell: ({value, row}) => {
             
@@ -32,30 +32,30 @@ export const mustorRollDetailsTableColumns = (t) => [
           },
     },
     {
-      Header: "Registration ID",
+      Header: t("EXP_REG_ID"),
       accessor: (row) => (GetCell(row?.registrationId)),
     },
     {
-        Header: "Name of the Individual",
+        Header:t("EXP_NAME_OF_THE_INDIVIDUAL"),
         accessor: (row) => (GetCell(row?.individualName)),
     },
     {
-        Header: "Father / Guardian’ Name",
+        Header: t("EXP_FATHER_GUARDIAN_NAME"),
         accessor: (row) => (GetCell(row?.guardianName)),
     },
     {
-        Header: "Modified Amount (Rs)",
+        Header: t("EXP_MODIFIED_AMT_RS"),
         accessor: (row) => (GetCell(row?.modifiedAmt)),
     },
     {
-        Header: "Bank Account Details",
+        Header: t("EXP_BANK_ACCOUNT_DETAILS"),
         accessor: "bankAccountDetails",
         Cell: ({ value }) => {
             return renderBankAccountDetails(value);
         }
     },
     {
-        Header: "Aadhar Number",
+        Header: t("EXP_AADHAR_NO"),
         accessor: (row) => (GetCell(row?.aadhar)),
     }    
 ]

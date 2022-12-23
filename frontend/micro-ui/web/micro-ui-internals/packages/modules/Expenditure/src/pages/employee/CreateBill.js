@@ -32,7 +32,7 @@ const CreateBill = () => {
           <CommissionDetails/>
           <BreakLine/>
           <div style={{margin: "32px 16px", display: "flex", justifyContent:"space-between"}}>
-            <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_BILL_AMT")}</CardSectionHeader>
+            <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_BILL_AMOUNT")}</CardSectionHeader>
             <CardSectionHeader style={{marginBottom: 0}}>{"₹ 3,60,000"}</CardSectionHeader>
           </div>
         </Card>
@@ -47,11 +47,11 @@ const CreateBill = () => {
           <CommissionDetails/>
           <BreakLine/>
           <div style={{margin: "32px 16px", display: "flex", justifyContent:"space-between"}}>
-            <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_BILL_AMT")}</CardSectionHeader>
+            <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_BILL_AMOUNT")}</CardSectionHeader>
             <CardSectionHeader style={{marginBottom: 0}}>{"₹ 3,60,000"}</CardSectionHeader>
           </div>
           <ActionBar>
-            <SubmitBar onSubmit={handleProceed} label="Proceed" />
+            <SubmitBar onSubmit={handleProceed} label={t("CS_COMMON_PROCEED")} />
           </ActionBar>
         </Card>
       )

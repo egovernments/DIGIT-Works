@@ -11,13 +11,13 @@ const CreateBillSuccess = ({isSuccess}) => {
         <Card>
             <Banner 
                 successful={isSuccess}
-                message={`${isSuccess ? "Bill Forwarded Sucessfully" : "Failed to forward the Bill"}`}
-                info={`${isSuccess ? "Bill ID" : ""}`}
+                message={`${isSuccess ? t("EXP_BILL_CREATION_SUCCESS") : t("EXP_BILL_CREATION_FAILURE")}`}
+                info={`${isSuccess ? t("EXP_BILL_ID") : ""}`}
                 applicationNumber={`${isSuccess ? "Bill/2021-22/09/0001" : ""}`}
                 whichSvg={`${isSuccess ? "tick" : null}`}
             />
 
-            {isSuccess && <CardText>{"Bill has been successfully created and forwarded for approval"}</CardText>}
+            {isSuccess && <CardText>{t("EXP_BILL_CREATION_SUCCESS_MESSAGE")}</CardText>}
 
             <ActionBar>
                 <Link to={`/${window.contextPath}/employee`}>
