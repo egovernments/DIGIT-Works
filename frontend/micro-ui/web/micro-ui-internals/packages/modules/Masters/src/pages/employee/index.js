@@ -31,6 +31,12 @@ const MastersBreadCrumb = ({ location }) => {
       show: location.pathname.includes("/masters/wage-seeker-registration") ? true : false,
       isBack: fromScreen && true,
     },
+    {
+      path: `/${window.contextPath}/employee/masters/view-organization`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_VIEW_COMMUNITY_ORG")}` : `${t("MASTERS_VIEW_COMMUNITY_ORG")}`,
+      show: location.pathname.includes("/masters/view-organization") ? true : false,
+      isBack: fromScreen && true,
+    },
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 };

@@ -5,7 +5,7 @@ import ApplicationDetails from "../../../../../templates/ApplicationDetails";
 
 const ViewOrganisation = () => {
   const { t } = useTranslation();
-  const { applicationDetails, applicationData } = Digit.Hooks.masters.useViewOrg({}); //pass required inputs when backend service is ready.
+  const { applicationDetails, applicationData, workflowDetails } = Digit.Hooks.masters.useViewOrg({}); //pass required inputs when backend service is ready.
 
   return (
     <React.Fragment>
@@ -19,11 +19,11 @@ const ViewOrganisation = () => {
           applicationData={applicationData}s
           moduleCode="Masters"
           isDataLoading={false}
-          workflowDetails=""
+          workflowDetails={workflowDetails}
           showTimeLine={true}
           timelineStatusPrefix={""}
           businessService={""}
-          forcedActionPrefix={"EXP"}
+          forcedActionPrefix={"MASTERS"}
         />
       </div>
     </React.Fragment>
