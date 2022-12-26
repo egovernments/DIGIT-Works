@@ -31,8 +31,8 @@ public class EstimateRepository {
      */
     public List<Estimate> getEstimate(EstimateSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        if (searchCriteria.getIsCountCall() == null) {
-            searchCriteria.setIsCountCall(Boolean.FALSE);
+        if (searchCriteria.getIsCountNeeded() == null) {
+            searchCriteria.setIsCountNeeded(Boolean.FALSE);
         }
         String query = queryBuilder.getEstimateQuery(searchCriteria, preparedStmtList);
         List<Estimate> estimateList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
