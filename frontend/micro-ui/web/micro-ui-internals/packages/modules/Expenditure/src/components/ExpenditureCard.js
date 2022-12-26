@@ -25,7 +25,7 @@ const ExpenditureCard = () => {
       {
         //Pass Count Value from Inbox API here
         count: 21,
-        label: t("INBOX"),
+        label: t("WORKS_INBOX"),
         link: `/${window?.contextPath}/employee/expenditure/billinbox`,
       }
     ],
