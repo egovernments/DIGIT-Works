@@ -41,7 +41,7 @@ public class InboxQueryBuilder implements QueryBuilderInterface {
         Map<String, Object> params = inboxRequest.getInbox().getModuleSearchCriteria();
         Map<String, Object> baseEsQuery = getBaseESQueryBody(inboxRequest, isPaginationRequired);
 
-        if(isPaginationRequired) {
+        if (isPaginationRequired) {
             // Adds sort clause to the inbox ES query only in case pagination is present, else not
             String sortClauseFieldPath = configuration.getSortParam().getPath();
             SortParam.Order sortOrder = inboxRequest.getInbox().getModuleSearchCriteria().containsKey(SORT_ORDER_CONSTANT) ? SortParam.Order.valueOf((String) inboxRequest.getInbox().getModuleSearchCriteria().get(SORT_ORDER_CONSTANT)) : configuration.getSortParam().getOrder();
@@ -72,7 +72,7 @@ public class InboxQueryBuilder implements QueryBuilderInterface {
     }
 
     private void addSourceFilterToBaseQuery(Map<String, Object> baseEsQuery, List<String> sourceFilterPathList) {
-        if(!CollectionUtils.isEmpty(sourceFilterPathList))
+        if (!CollectionUtils.isEmpty(sourceFilterPathList))
             baseEsQuery.put(SOURCE_KEY, sourceFilterPathList);
     }
 
@@ -87,67 +87,67 @@ public class InboxQueryBuilder implements QueryBuilderInterface {
     }
 
     private void addProcessSearchCriteriaToBaseQuery(ProcessInstanceSearchCriteria processSearchCriteria, Map<String, String> nameToPathMap, Map<String, SearchParam.Operator> nameToOperator, List<Object> mustClauseList) {
-        if(!ObjectUtils.isEmpty(processSearchCriteria.getTenantId())){
+        if (!ObjectUtils.isEmpty(processSearchCriteria.getTenantId())) {
             String key = "tenantId";
             Map<String, Object> mustClauseChild = null;
             Map<String, Object> params = new HashMap<>();
             params.put(key, processSearchCriteria.getTenantId());
             mustClauseChild = (Map<String, Object>) prepareMustClauseChild(params, key, nameToPathMap, nameToOperator);
-            if(CollectionUtils.isEmpty(mustClauseChild)){
+            if (CollectionUtils.isEmpty(mustClauseChild)) {
                 log.info("Error occurred while preparing filter for must clause. Filter for key " + key + " will not be added.");
-            }else {
+            } else {
                 mustClauseList.add(mustClauseChild);
             }
         }
 
-        if(!ObjectUtils.isEmpty(processSearchCriteria.getStatus())){
+        if (!ObjectUtils.isEmpty(processSearchCriteria.getStatus())) {
             String key = "status";
             Map<String, Object> mustClauseChild = null;
             Map<String, Object> params = new HashMap<>();
             params.put(key, processSearchCriteria.getStatus());
             mustClauseChild = (Map<String, Object>) prepareMustClauseChild(params, key, nameToPathMap, nameToOperator);
-            if(CollectionUtils.isEmpty(mustClauseChild)){
+            if (CollectionUtils.isEmpty(mustClauseChild)) {
                 log.info("Error occurred while preparing filter for must clause. Filter for key " + key + " will not be added.");
-            }else {
+            } else {
                 mustClauseList.add(mustClauseChild);
             }
         }
 
-        if(!ObjectUtils.isEmpty(processSearchCriteria.getAssignee())){
+        if (!ObjectUtils.isEmpty(processSearchCriteria.getAssignee())) {
             String key = "assignee";
             Map<String, Object> mustClauseChild = null;
             Map<String, Object> params = new HashMap<>();
             params.put(key, processSearchCriteria.getAssignee());
             mustClauseChild = (Map<String, Object>) prepareMustClauseChild(params, key, nameToPathMap, nameToOperator);
-            if(CollectionUtils.isEmpty(mustClauseChild)){
+            if (CollectionUtils.isEmpty(mustClauseChild)) {
                 log.info("Error occurred while preparing filter for must clause. Filter for key " + key + " will not be added.");
-            }else {
+            } else {
                 mustClauseList.add(mustClauseChild);
             }
         }
 
-        if(!ObjectUtils.isEmpty(processSearchCriteria.getFromDate())){
+        if (!ObjectUtils.isEmpty(processSearchCriteria.getFromDate())) {
             String key = "fromDate";
             Map<String, Object> mustClauseChild = null;
             Map<String, Object> params = new HashMap<>();
             params.put(key, processSearchCriteria.getFromDate());
             mustClauseChild = (Map<String, Object>) prepareMustClauseChild(params, key, nameToPathMap, nameToOperator);
-            if(CollectionUtils.isEmpty(mustClauseChild)){
+            if (CollectionUtils.isEmpty(mustClauseChild)) {
                 log.info("Error occurred while preparing filter for must clause. Filter for key " + key + " will not be added.");
-            }else {
+            } else {
                 mustClauseList.add(mustClauseChild);
             }
         }
 
-        if(!ObjectUtils.isEmpty(processSearchCriteria.getToDate())){
+        if (!ObjectUtils.isEmpty(processSearchCriteria.getToDate())) {
             String key = "toDate";
             Map<String, Object> mustClauseChild = null;
             Map<String, Object> params = new HashMap<>();
             params.put(key, processSearchCriteria.getToDate());
             mustClauseChild = (Map<String, Object>) prepareMustClauseChild(params, key, nameToPathMap, nameToOperator);
-            if(CollectionUtils.isEmpty(mustClauseChild)){
+            if (CollectionUtils.isEmpty(mustClauseChild)) {
                 log.info("Error occurred while preparing filter for must clause. Filter for key " + key + " will not be added.");
-            }else {
+            } else {
                 mustClauseList.add(mustClauseChild);
             }
         }
@@ -157,7 +157,7 @@ public class InboxQueryBuilder implements QueryBuilderInterface {
 
     private void addModuleSearchCriteriaToBaseQuery(Map<String, Object> params, Map<String, String> nameToPathMap, Map<String, SearchParam.Operator> nameToOperator, List<Object> mustClauseList) {
         params.keySet().forEach(key -> {
-            if(!(key.equals(SORT_ORDER_CONSTANT) || key.equals(SORT_BY_CONSTANT))) {
+            if (!(key.equals(SORT_ORDER_CONSTANT) || key.equals(SORT_BY_CONSTANT))) {
                 Map<String, Object> mustClauseChild = null;
                 mustClauseChild = (Map<String, Object>) prepareMustClauseChild(params, key, nameToPathMap, nameToOperator);
                 if (CollectionUtils.isEmpty(mustClauseChild)) {
@@ -181,7 +181,7 @@ public class InboxQueryBuilder implements QueryBuilderInterface {
         Map<String, Object> baseEsQuery = getESQuery(inboxRequest, Boolean.FALSE);
         Long currenTimeInMillis = System.currentTimeMillis();
         Long lteParam = currenTimeInMillis;
-        Long slotLimit = businessServiceSla - 40 * (businessServiceSla/100);
+        Long slotLimit = businessServiceSla - 40 * (businessServiceSla / 100);
         Long gteParam = currenTimeInMillis - slotLimit;
 
         appendNearingSlaCountClause(baseEsQuery, gteParam, lteParam);
@@ -210,7 +210,7 @@ public class InboxQueryBuilder implements QueryBuilderInterface {
         baseEsQuery.put("aggs", aggsNode);
     }
 
-    private Map<String, Object> getBaseESQueryBody(InboxRequest inboxRequest, Boolean isPaginationRequired){
+    private Map<String, Object> getBaseESQueryBody(InboxRequest inboxRequest, Boolean isPaginationRequired) {
         Map<String, Object> baseEsQuery = new HashMap<>();
         Map<String, Object> boolQuery = new HashMap<>();
         Map<String, Object> mustClause = new HashMap<>();
@@ -221,8 +221,9 @@ public class InboxQueryBuilder implements QueryBuilderInterface {
         innerBoolBody.put("must", new ArrayList<>());
 
         // Prepare base ES query
-        if(isPaginationRequired) {
-            baseEsQuery.put("from", inboxRequest.getInbox().getOffset());
+        if (isPaginationRequired) {
+            if (inboxRequest.getInbox().getOffset() != null)
+                baseEsQuery.put("from", inboxRequest.getInbox().getOffset());
             baseEsQuery.put("size", inboxRequest.getInbox().getLimit());
         }
         baseEsQuery.put("query", boolQuery);
@@ -230,12 +231,12 @@ public class InboxQueryBuilder implements QueryBuilderInterface {
         return baseEsQuery;
     }
 
-    private Object prepareMustClauseChild(Map<String, Object> params, String key, Map<String, String> nameToPathMap, Map<String, SearchParam.Operator> nameToOperatorMap){
+    private Object prepareMustClauseChild(Map<String, Object> params, String key, Map<String, String> nameToPathMap, Map<String, SearchParam.Operator> nameToOperatorMap) {
 
         SearchParam.Operator operator = nameToOperatorMap.get(key);
-        if(operator == null || operator.equals(SearchParam.Operator.EQUAL)){
+        if (operator == null || operator.equals(SearchParam.Operator.EQUAL)) {
             // Add terms clause in case the search criteria has a list of values
-            if(params.get(key) instanceof List){
+            if (params.get(key) instanceof List) {
                 Map<String, Object> termsClause = new HashMap<>();
                 termsClause.put("terms", new HashMap<>());
                 Map<String, Object> innerTermsClause = (Map<String, Object>) termsClause.get("terms");
@@ -243,25 +244,23 @@ public class InboxQueryBuilder implements QueryBuilderInterface {
                 return termsClause;
             }
             // Add term clause in case the search criteria has a single value
-            else{
+            else {
                 Map<String, Object> termClause = new HashMap<>();
                 termClause.put("term", new HashMap<>());
                 Map<String, Object> innerTermClause = (Map<String, Object>) termClause.get("term");
                 innerTermClause.put(addDataPathToSearchParamKey(key, nameToPathMap), params.get(key));
                 return termClause;
             }
-        }
-        else {
+        } else {
             Map<String, Object> rangeClause = new HashMap<>();
             rangeClause.put("range", new HashMap<>());
             Map<String, Object> innerTermClause = (Map<String, Object>) rangeClause.get("range");
             Map<String, Object> comparatorMap = new HashMap<>();
 
-            if (operator.equals(SearchParam.Operator.LTE)){
-                comparatorMap.put("lte",params.get(key));
-            }
-            else if (operator.equals(SearchParam.Operator.GTE)){
-                comparatorMap.put("gte",params.get(key));
+            if (operator.equals(SearchParam.Operator.LTE)) {
+                comparatorMap.put("lte", params.get(key));
+            } else if (operator.equals(SearchParam.Operator.GTE)) {
+                comparatorMap.put("gte", params.get(key));
             }
             innerTermClause.put(addDataPathToSearchParamKey(key, nameToPathMap), comparatorMap);
             return rangeClause;
@@ -269,7 +268,7 @@ public class InboxQueryBuilder implements QueryBuilderInterface {
 
     }
 
-    private String addDataPathToSearchParamKey(String key, Map<String, String> nameToPathMap){
+    private String addDataPathToSearchParamKey(String key, Map<String, String> nameToPathMap) {
 
         String path = nameToPathMap.get(key);
 
