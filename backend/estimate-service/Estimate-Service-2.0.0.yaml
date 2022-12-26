@@ -371,9 +371,3 @@ components:
       allOf:
         - $ref: '#/components/schemas/EstimateRequest'
         - description: 'All create events will be added to this topic. Persister and Indexer will read the events from it.'
-
-
-servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/rushang.dhanesha/Estimate-Service/1.0.0
