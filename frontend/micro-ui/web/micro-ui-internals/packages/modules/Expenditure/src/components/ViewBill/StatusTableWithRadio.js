@@ -24,7 +24,7 @@ const StatusRowWithRadio = ({config, className=""}) => {
                                 />
                                 <span className="radio-btn-checkmark"></span>
                             </span>
-                            <label>{(option?.key)}</label>
+                            <label>{t(option?.code)}</label>
                       </div>
                     ))
                 }
