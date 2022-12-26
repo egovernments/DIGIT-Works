@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect, useCallback, useMemo, useState } from "react";
-import { SearchForm, Table, Card, Loader, Header, AddNewIcon, AddIcon } from "@egovernments/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header, AddIcon } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { AddFilled } from "@egovernments/digit-ui-react-components";
 
 const dummySearchOptions  = [
   {
@@ -15,6 +16,7 @@ const dummySearchOptions  = [
 const SearchOrganisationApplication = ({tenantId, onSubmit, data, resultOk, isLoading, onClearSearch,showTable}) => {
 
     const { t } = useTranslation(); 
+    const history = useHistory();
     const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
       defaultValues: {
         offset: 0,
@@ -62,7 +64,7 @@ const SearchOrganisationApplication = ({tenantId, onSubmit, data, resultOk, isLo
                 {row.original?.org_id ? (
                   <span className={"link"}>
                     <Link
-                      to={`view-contract?tenantId=${row.original?.tenantId}&contractId=${row.original?.org_id}`}>
+                      to={`view-organization?orgID=${row.original?.org_id}`}>
                       {row.original?.org_id || t("ES_COMMON_NA")}
                     </Link>
                   </span> 
@@ -152,6 +154,10 @@ const SearchOrganisationApplication = ({tenantId, onSubmit, data, resultOk, isLo
               </div>)}
         }
     ],[]);
+    
+    const handleCreateNewOrg = () => {
+      history.push(`/${window.contextPath}/employee/masters/create-organization`);
+    }
 
   return (
     <>
@@ -160,7 +166,7 @@ const SearchOrganisationApplication = ({tenantId, onSubmit, data, resultOk, isLo
               <SearchFields {...{ register, control, reset, t, onClearSearch, dummySearchOptions }} />
           </SearchForm>
           <div className="create-new-org">
-            <button className="create-new-org-btn"><AddIcon fill="#94ab46" /> Add New Community Organisation</button>
+            <button className="create-new-org-btn" onClick={handleCreateNewOrg}> <AddFilled />Add New Community Organisation</button>
           </div>
           {showTable ? isLoading ? <Loader/> : data?.display && !resultOk ? (
               <Card style={{ marginTop: 20 }}>
