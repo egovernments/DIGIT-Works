@@ -254,6 +254,7 @@ import useKickoffInbox from "./works/useKickoffInbox";
 import useViewContractDetails from "./contracts/useViewContractDetails";
 import useViewAttendance from "./attendance/useViewAttendance";
 import useLocation from "./useLocation";
+import useViewOrg from "./bills/useViewOrg";
 
 const works = {
   useViewEstimateDetails,
@@ -512,6 +513,10 @@ const attendance = {
   useViewAttendance,
 };
 
+const masters = {
+  useViewOrg
+}
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -575,7 +580,8 @@ const Hooks = {
   works,
   contracts,
   attendance,
-  useLocation
+  useLocation,
+  masters
 };
 
 export default Hooks;

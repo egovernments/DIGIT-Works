@@ -10,7 +10,7 @@ const SearchOrganization = ({parentRoute}) => {
   const createOrgHandler = () => {
     history.push(`${parentRoute}/create-organization`, { data: {test: true} });
   }
-  
+
   return (
     <div>
       <ButtonSelector theme="border" label={t("MASTERS_ADD_NEW_ORGANISATION")} onSubmit={createOrgHandler} />
