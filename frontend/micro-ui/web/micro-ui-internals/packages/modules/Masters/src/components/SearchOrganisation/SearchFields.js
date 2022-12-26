@@ -7,7 +7,7 @@ const SearchFields = ({ register, control, reset, t, onClearSearch, dummySearchO
     return (
         <>
             <SearchField>
-                <label>{t("MASTERS_ORGANISATION")}</label>
+                <label>{t("MASTERS_MASTERS")}</label>
                 <Controller
                     control={control}
                     name="nameOfTheOrg"
@@ -33,7 +33,7 @@ const SearchFields = ({ register, control, reset, t, onClearSearch, dummySearchO
                         sortOrder: "DESC"
                     });
                     onClearSearch(false)
-                }}>{t(`CLEAR_SEARCH_LINk`)}</p>
+                }}>{t(`MASTERS_CLEAR_SEARCH_LINK`)}</p>
                 <SubmitBar label={t("WORKS_COMMON_SEARCH")} submit />
                 </div>
             </SearchField>

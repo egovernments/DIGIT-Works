@@ -161,12 +161,12 @@ const SearchOrganisationApplication = ({tenantId, onSubmit, data, resultOk, isLo
 
   return (
     <>
-          <Header styles={{ fontSize: "32px" }}>{t("MASTERS_SEARCH_ORG")}</Header>
-          <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} >
+          <Header styles={{ fontSize: "32px" }}>{t("MASTERS_SEARCH")}</Header>
+          <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} > 
               <SearchFields {...{ register, control, reset, t, onClearSearch, dummySearchOptions }} />
           </SearchForm>
           <div className="create-new-org">
-            <button className="create-new-org-btn" onClick={handleCreateNewOrg}> <AddFilled />Add New Community Organisation</button>
+            <button className="create-new-org-btn" onClick={handleCreateNewOrg}> <AddFilled />{t("MASTERS_ADD_NEW_COMMUNITY_ORG")}</button>
           </div>
           {showTable ? isLoading ? <Loader/> : data?.display && !resultOk ? (
               <Card style={{ marginTop: 20 }}>
