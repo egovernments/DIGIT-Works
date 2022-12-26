@@ -236,8 +236,8 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/digit_components"
-      ref: hlm-1422-ui-language-selection-screen
-      resolved-ref: "19cb8c404e7ce2c49df4059af817b2d5992e6707"
+      ref: main-parallel
+      resolved-ref: "6295e3e170ff890597f07b1619b5439b55f01d09"
       url: "https://github.com/egovernments/health-campaign-field-worker-app"
     source: git
     version: "0.0.1"
