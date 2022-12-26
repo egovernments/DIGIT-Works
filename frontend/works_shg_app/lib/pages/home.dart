@@ -16,16 +16,16 @@ class HomePage extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 30, 16, 16),
             child: Align(
               alignment: Alignment.topCenter,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  LabeledField(
-                      label: 'Works Mgmt',
-                      child: ButtonLink('Work Order', null))
-                ],
-              ),
+              child: LabeledField(
+                  label: 'Works Mgmt',
+                  child: Column(
+                    children: [
+                      ButtonLink(
+                          'Work Order',
+                              () => context.router
+                              .push(const WorkOrderPageRoute())),
+                    ],
+                  )),
             ),
           ),
           DigitCard(
