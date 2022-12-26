@@ -25,6 +25,7 @@ const SearchOrganization = () => {
       }
     }
 
+    //will update this to some api service based on search, once api integration starts
     const result = {
       status: "success",
       isSuccess: true,
