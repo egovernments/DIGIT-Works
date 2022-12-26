@@ -62,12 +62,15 @@ class AttendanceInboxPage extends StatelessWidget {
                   ? 145.0
                   : (constraints.maxWidth / 4);
               var tableData = getAttendanceData(tableList);
-              return DigitTable(
-                headerList: headerList,
-                tableData: tableData,
-                leftColumnWidth: width,
-                rightColumnWidth: width * 7,
-                height: 58 + (52.0 * tableData.length),
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DigitTable(
+                  headerList: headerList,
+                  tableData: tableData,
+                  leftColumnWidth: width,
+                  rightColumnWidth: width * 7,
+                  height: 58 + (52.0 * tableData.length),
+                ),
               );
             })
           ])
