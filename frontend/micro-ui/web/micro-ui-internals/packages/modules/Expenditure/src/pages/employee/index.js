@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
 import BILLInbox from "./billInbox";
+import CreateBill from "./CreateBill";
 
 const ExpenditureBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
@@ -33,6 +34,11 @@ const ExpenditureBreadCrumbs = ({ location }) => {
             show: location.pathname.includes("/expenditure/view-bills/bills") ? true : false,
             isBack: fromScreen && true,
         },
+            path: `/${window.contextPath}/employee/expenditure/create-bill`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_CREATE_BILL")}` : t("EXP_CREATE_BILL"),
+            show: location.pathname.includes("/expenditure/create-bill") ? true : false,
+            isBack: fromScreen && true,
+        }
     ];
     return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 
@@ -75,6 +81,7 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/billinbox`} component={() => <BILLInbox parentRoute={path} businessService="WORKS" filterComponent="billInboxFilter" initialStates={{}} isInbox={true} />}/>
                     <PrivateRoute path={`${path}/view-bills/bills`} component={ViewBillsComponent}></PrivateRoute>
                     <PrivateRoute path={`${path}/view-bills/menu`} component={ViewBillsMenuComponent}></PrivateRoute>
+                    <PrivateRoute path={`${path}/create-bill`} component={() => <CreateBill parentRoute={path} />}/>
                 </div>
             </React.Fragment>
         </Switch>

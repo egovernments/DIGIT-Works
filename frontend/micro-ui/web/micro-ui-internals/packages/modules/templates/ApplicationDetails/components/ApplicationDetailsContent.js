@@ -54,6 +54,8 @@ function ApplicationDetailsContent({
   paymentsList,
   oldValue,
   isInfoLabel = false,
+  noBoxShadow = false,
+  sectionHeadStyle = false
 }) {
   const { t } = useTranslation();
   const [state, dispatch] = useReducer(reducer, initialTableState);
@@ -189,8 +191,15 @@ function ApplicationDetailsContent({
       return "";
     }
   };
+
+  const getCardStyles = () => {
+    let styles = { position: "relative" }
+    if (noBoxShadow) styles = { ...styles, boxShadow: "none" };
+    return styles;
+  };
+
   return (
-    <Card style={{ position: "relative" }} className={"employeeCard-override"}>
+    <Card style={getCardStyles()} className={"employeeCard-override"}>
       {isInfoLabel ? (
         <InfoDetails
           t={t}
@@ -212,8 +221,8 @@ function ApplicationDetailsContent({
                 <CardSectionHeader
                   style={
                     index == 0 && checkLocation
-                      ? { marginBottom: "16px", fontSize: "24px" }
-                      : { marginBottom: "16px", marginTop: "32px", fontSize: "24px" }
+                      ? { marginBottom: "16px", fontSize: "24px" } :
+                      (sectionHeadStyle ? sectionHeadStyle : { marginBottom: "16px", marginTop: "32px", fontSize: "24px" })
                   }
                 >
                   {isNocLocation ? `${t(detail.title)}` : t(detail.title)}

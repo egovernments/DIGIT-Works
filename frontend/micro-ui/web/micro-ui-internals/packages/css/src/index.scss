@@ -687,9 +687,11 @@ input[type="number"] {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  padding: 1rem;
+  padding: 12px ;
   position: relative;
   font-weight: bolder;
+  border: 1px solid #828282;
+  border-radius: 4px;
 }
 
 .icon-toggle {

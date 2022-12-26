@@ -255,6 +255,7 @@ import useViewContractDetails from "./contracts/useViewContractDetails";
 import useViewAttendance from "./attendance/useViewAttendance";
 import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
+import useViewOrg from "./bills/useViewOrg";
 
 const works = {
   useViewEstimateDetails,
@@ -515,6 +516,8 @@ const attendance = {
 
 const bills = {
   useViewBills
+const masters = {
+  useViewOrg
 }
 
 const Hooks = {
@@ -582,6 +585,7 @@ const Hooks = {
   attendance,
   useLocation,
   bills
+  masters
 };
 
 export default Hooks;

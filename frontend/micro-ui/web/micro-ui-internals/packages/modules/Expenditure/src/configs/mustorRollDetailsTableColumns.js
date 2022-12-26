@@ -36,7 +36,7 @@ export const mustorRollDetailsTableColumns = (t) => [
       accessor: (row) => (GetCell(row?.registrationId)),
     },
     {
-        Header: t("EXP_NAME_OF_THE_INDIVIDUAL"),
+        Header:t("EXP_NAME_OF_THE_INDIVIDUAL"),
         accessor: (row) => (GetCell(row?.individualName)),
     },
     {

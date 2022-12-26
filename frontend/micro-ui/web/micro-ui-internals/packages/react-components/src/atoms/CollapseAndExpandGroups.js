@@ -5,7 +5,7 @@ import { ArrowCollapseDown, ArrowCollapseUp } from "./svgindex";
 
 const CollapseAndExpandGroups = ({children, groupElements=false, groupHeader="", headerLabel="", headerValue="", customClass=""}) => {
     const {t} = useTranslation();
-    const [collapse, setCollapse] = useState(false);
+    const [collapse, setCollapse] = useState(true);
     return (
         <div className={`expand-collapse-wrapper ${customClass}`}>
             {groupHeader && <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(groupHeader)}</CardSubHeader>}
