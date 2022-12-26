@@ -147,9 +147,6 @@ public class AttendanceServiceValidator {
 
         Set<String> uniqueRegisterIdsFromRequest = new HashSet<>(registerIds);
 
-        AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria
-                .builder().ids(registerIds).tenantId(tenantId).build();
-
         Set<String> uniqueRegisterIdsFromDB = attendanceRegisterListFromDB.stream()
                 .map(register -> register.getId()).collect(Collectors.toSet());
 
@@ -159,7 +156,6 @@ public class AttendanceServiceValidator {
                 throw new CustomException("REGISTER_ID", "Attendance Registers with register id : " + idFromRequest + " does not exist for tenantId");
             }
         }
-
 
     }
 }

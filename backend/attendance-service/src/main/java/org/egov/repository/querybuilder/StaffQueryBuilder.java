@@ -19,7 +19,8 @@ public class StaffQueryBuilder {
             "stf.createdby, " +
             "stf.lastmodifiedby, " +
             "stf.createdtime, " +
-            "stf.lastmodifiedtime " +
+            "stf.lastmodifiedtime, " +
+            "stf.tenantid " +
             "FROM eg_wms_attendance_staff stf ";
 
     public String getActiveAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {

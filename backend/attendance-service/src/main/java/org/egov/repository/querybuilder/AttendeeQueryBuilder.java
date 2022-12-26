@@ -5,6 +5,7 @@ import org.egov.models.AttendeeSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
@@ -21,28 +22,25 @@ public class AttendeeQueryBuilder {
             "att.createdby, " +
             "att.lastmodifiedby, " +
             "att.createdtime, " +
-            "att.lastmodifiedtime " +
+            "att.lastmodifiedtime, " +
+            "att.tenantid " +
             "FROM eg_wms_attendance_attendee att ";
 
     public String getAttendanceAttendeeSearchQuery(AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(ATTENDANCE_ATTENDEE_SELECT_QUERY);
 
-        List<String> ids = criteria.getIds();
-        if (ids != null && !ids.isEmpty()) {
+        List<String> individualIds=criteria.getIndividualIds();
+        if (individualIds!=null && !individualIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" log.id IN (").append(createQuery(ids)).append(")");
-            addToPreparedStatement(preparedStmtList, ids);
+            query.append(" att.individual_id IN (").append(createQuery(individualIds)).append(")");
+            addToPreparedStatement(preparedStmtList, individualIds);
         }
 
-        if (!ObjectUtils.isEmpty(criteria.getIndividualId())) {
+        List<String> registerIds=criteria.getRegisterIds();
+        if (registerIds!=null && !registerIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" att.individual_id = ? ");
-            preparedStmtList.add(criteria.getIndividualId());
-        }
-        if (!ObjectUtils.isEmpty(criteria.getRegisterId())) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" att.register_id = ? ");
-            preparedStmtList.add(criteria.getRegisterId());
+            query.append(" att.register_id IN (").append(createQuery(registerIds)).append(")");
+            addToPreparedStatement(preparedStmtList, registerIds);
         }
 
         if (criteria.getEnrollmentDate() != null) {
@@ -50,7 +48,7 @@ public class AttendeeQueryBuilder {
 
             //If user does not specify toDate, take today's date as toDate by default.
             if (criteria.getDenrollmentDate() == null) {
-                criteria.setDenrollmentDate(new Double(Instant.now().toEpochMilli()));
+                criteria.setDenrollmentDate((new BigDecimal(Instant.now().toEpochMilli())));
             }
 
             query.append(" att.enrollment_date BETWEEN ? AND ?");
@@ -65,6 +63,26 @@ public class AttendeeQueryBuilder {
         }
 
         addLimitAndOffset(query, criteria, preparedStmtList);
+
+        return query.toString();
+    }
+
+    public String getAttendeeFromRegisterIdsAndIndividualIdsSearchQuery(AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
+        StringBuilder query = new StringBuilder(ATTENDANCE_ATTENDEE_SELECT_QUERY);
+
+        List<String> individualIds=criteria.getIndividualIds();
+        if (individualIds!=null && !individualIds.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" att.individual_id IN (").append(createQuery(individualIds)).append(")");
+            addToPreparedStatement(preparedStmtList, individualIds);
+        }
+
+        List<String> registerIds=criteria.getRegisterIds();
+        if (registerIds!=null && !registerIds.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" att.register_id IN (").append(createQuery(registerIds)).append(")");
+            addToPreparedStatement(preparedStmtList, registerIds);
+        }
 
         return query.toString();
     }
@@ -96,8 +114,6 @@ public class AttendeeQueryBuilder {
     }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+        preparedStmtList.addAll(ids);
     }
 }

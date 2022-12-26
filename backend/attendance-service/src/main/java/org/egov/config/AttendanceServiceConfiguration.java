@@ -47,6 +47,12 @@ public class AttendanceServiceConfiguration {
     @Value("${staff.kafka.update.topic}")
     private String updateStaffTopic;
 
+    //Topic
+    @Value("${attendee.kafka.create.topic}")
+    private String saveAttendeeTopic;
+    @Value("${attendee.kafka.update.topic}")
+    private String updateAttendeeTopic;
+
 
     //search config
     @Value("${staff.default.offset}")

@@ -184,7 +184,7 @@ public class AttendanceLogServiceValidator {
     private List<IndividualEntry> fetchAllAttendeesEnrolledInARegister(String registerId) {
         AttendeeSearchCriteria searchCriteria = AttendeeSearchCriteria
                 .builder()
-                .registerId(registerId)
+                .registerIds(Collections.singletonList(registerId))
                 .build();
 
         return attendanceAttendeeRepository.getAttendees(searchCriteria);
