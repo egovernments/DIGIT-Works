@@ -34,6 +34,7 @@ const ExpenditureBreadCrumbs = ({ location }) => {
             show: location.pathname.includes("/expenditure/view-bills/bills") ? true : false,
             isBack: fromScreen && true,
         },
+        {
             path: `/${window.contextPath}/employee/expenditure/create-bill`,
             content: fromScreen ? `${t(fromScreen)} / ${t("EXP_CREATE_BILL")}` : t("EXP_CREATE_BILL"),
             show: location.pathname.includes("/expenditure/create-bill") ? true : false,

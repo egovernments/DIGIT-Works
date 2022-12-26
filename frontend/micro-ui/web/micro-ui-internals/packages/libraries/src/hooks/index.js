@@ -516,6 +516,7 @@ const attendance = {
 
 const bills = {
   useViewBills
+}
 const masters = {
   useViewOrg
 }
@@ -584,7 +585,7 @@ const Hooks = {
   contracts,
   attendance,
   useLocation,
-  bills
+  bills,
   masters
 };
 
