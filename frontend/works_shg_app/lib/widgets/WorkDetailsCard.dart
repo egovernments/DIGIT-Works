@@ -18,33 +18,24 @@ class WorkDetailsCard extends StatelessWidget {
             ? context.router
                 .push(SHGInboxRoute(musterDetails: [detailsList[i]]))
             : null,
-        child: DigitCard(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: detailsList[i].length,
-              itemBuilder: (BuildContext context, int labelIndex) {
-                return Column(
-                  children: [
-                    getItemWidget(context,
-                        title: detailsList[i]
-                            .keys
-                            .elementAt(labelIndex)
-                            .toString(),
-                        description: detailsList[i]
-                            .values
-                            .elementAt(labelIndex)
-                            .toString())
-                  ],
-                );
-              })
-        ])),
+        child: DigitCard(child: getCardDetails(context, detailsList[i])),
       ));
     }
     return Column(
       children: list,
+    );
+  }
+
+  Widget getCardDetails(
+      BuildContext context, Map<String, dynamic> cardDetails) {
+    var labelList = <Widget>[];
+    for (int j = 0; j < cardDetails.length; j++) {
+      labelList.add(getItemWidget(context,
+          title: cardDetails.keys.elementAt(j).toString(),
+          description: cardDetails.values.elementAt(j).toString()));
+    }
+    return Column(
+      children: labelList,
     );
   }
 
