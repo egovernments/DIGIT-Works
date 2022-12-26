@@ -254,6 +254,7 @@ import useKickoffInbox from "./works/useKickoffInbox";
 import useViewContractDetails from "./contracts/useViewContractDetails";
 import useViewAttendance from "./attendance/useViewAttendance";
 import useLocation from "./useLocation";
+import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
 
 const works = {
@@ -513,6 +514,8 @@ const attendance = {
   useViewAttendance,
 };
 
+const bills = {
+  useViewBills
 const masters = {
   useViewOrg
 }
@@ -581,6 +584,7 @@ const Hooks = {
   contracts,
   attendance,
   useLocation,
+  bills
   masters
 };
 

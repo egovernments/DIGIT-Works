@@ -5,7 +5,7 @@ import { Switch, useLocation } from "react-router-dom";
 import BILLInbox from "./billInbox";
 import CreateBill from "./CreateBill";
 
-const ContractsBreadCrumbs = ({ location }) => {
+const ExpenditureBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
 
     const search = useLocation().search;
@@ -23,6 +23,17 @@ const ContractsBreadCrumbs = ({ location }) => {
             isBack: fromScreen && true,
         },
         {
+            path: `/${window.contextPath}/employee/expenditure/view-bills/menu`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILLS_MENU")}` : t("EXP_VIEW_BILLS_MENU"),
+            show: location.pathname.includes("/expenditure/view-bills/menu") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/expenditure/view-bills/bills`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILL")}` : t("EXP_VIEW_BILL"),
+            show: location.pathname.includes("/expenditure/view-bills/bills") ? true : false,
+            isBack: fromScreen && true,
+        },
             path: `/${window.contextPath}/employee/expenditure/create-bill`,
             content: fromScreen ? `${t(fromScreen)} / ${t("EXP_CREATE_BILL")}` : t("EXP_CREATE_BILL"),
             show: location.pathname.includes("/expenditure/create-bill") ? true : false,
@@ -37,6 +48,9 @@ const App = ({ path }) => {
     const location = useLocation();
     const locationCheck =
         window.location.href.includes("/employee/ws/new-application");
+    const ViewBillsMenuComponent = Digit?.ComponentRegistryService?.getComponent("ViewBillsMenu");
+    const ViewBillsComponent = Digit?.ComponentRegistryService?.getComponent("ViewBills");
+
     const getBreadCrumbStyles = (screenType) => {
         // Defining 4 types for now -> create,view,inbox,search
 
@@ -61,10 +75,12 @@ const App = ({ path }) => {
             <React.Fragment>
                 <div>
                     <div style={getBreadCrumbStyles(window.location.href)}>
-                        <ContractsBreadCrumbs location={location} />
+                        <ExpenditureBreadCrumbs location={location} />
                     </div>
                     <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
                     <PrivateRoute path={`${path}/billinbox`} component={() => <BILLInbox parentRoute={path} businessService="WORKS" filterComponent="billInboxFilter" initialStates={{}} isInbox={true} />}/>
+                    <PrivateRoute path={`${path}/view-bills/bills`} component={ViewBillsComponent}></PrivateRoute>
+                    <PrivateRoute path={`${path}/view-bills/menu`} component={ViewBillsMenuComponent}></PrivateRoute>
                     <PrivateRoute path={`${path}/create-bill`} component={() => <CreateBill parentRoute={path} />}/>
                 </div>
             </React.Fragment>
