@@ -61,6 +61,13 @@
     .value {
       width: 50%;
       @apply text-heading-s;
+      &.status-row-radio {
+        display: flex;
+        div {
+          margin-right: 1rem;
+          width: 50%;
+        }
+      }
     }
 
     .caption {
@@ -73,6 +80,17 @@
     border: none;
     padding: 0;
     margin: 0;
+  }
+  &.status-radio-table {
+    margin-top: 1rem;
+    .row {  
+      span {
+        width: 24px;
+        display: block;
+        float: left;
+        border-radius: 50%;
+      }
+    }
   }
 }
 

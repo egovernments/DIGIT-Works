@@ -46,7 +46,9 @@ const ApplicationDetails = (props) => {
     showTimeLine = true,
     oldValue,
     isInfoLabel = false,
-    clearDataDetails
+    clearDataDetails,
+    noBoxShadow,
+    sectionHeadStyle
   } = props;
   
   useEffect(() => {
@@ -147,43 +149,8 @@ const ApplicationDetails = (props) => {
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
     const performedAction = data?.workflow?.action
-    
     setIsEnableLoader(true);
-    // if(performedAction === "CHECK") {
-    //   const state = {
-    //     header: "Weekly Attendence Checked & Forwarded",
-    //     id: "B2191212 | 21-09-2022 - 28-09-2022",
-    //     info: "Registered ID and Week",
-    //     message: "Attendence has been approved for mentioned week.",
-    //     responseData:data,
-    //     requestData:{}, 
-    //     links : []
-    //   }
-    //   history.push(`/${window.contextPath}/employee/works/response`, state)
-    // }else if(performedAction === "REJECT") {
-    //   const state = {
-    //     header: "Weekly Attendence Rejected",
-    //     id: "B2191212 | 21-09-2022 - 28-09-2022",
-    //     info: "Registered ID and Week",
-    //     message: "Attendence has been rejected for mentioned week.",
-    //     responseData:data,
-    //     requestData:{}, 
-    //     links : [] 
-    //   }
-    //   history.push(`/${window.contextPath}/employee/works/response`, state)
-    // }else if(performedAction === "APPROVE") {
-    //   const state = {
-    //     header: "Weekly Attendence Approved",
-    //     id: "B2191212 | 21-09-2022 - 28-09-2022",
-    //     info: "Registered ID and Week",
-    //     message: "Attendence has been approved for mentioned week.",
-    //     responseData:data,
-    //     requestData:{}, 
-    //     links : [] 
-    //   }
-    //   history.push(`/${window.contextPath}/employee/works/response`, state)
-    // }
-    
+
     if (mutate) {
       setIsEnableLoader(true);
       mutate(data, {
@@ -317,6 +284,8 @@ const ApplicationDetails = (props) => {
             showTimeLine={showTimeLine}
             oldValue={oldValue}
             isInfoLabel={isInfoLabel}
+            noBoxShadow={noBoxShadow}
+            sectionHeadStyle={sectionHeadStyle}
           />
           {showModal ? (
             <ActionModal
