@@ -58,7 +58,7 @@ public class EstimateSearchCriteria {
     private Integer offset;
 
     @JsonIgnore
-    private Boolean isCountCall = false;
+    private Boolean isCountNeeded = false;
 
 
     public enum SortOrder {
