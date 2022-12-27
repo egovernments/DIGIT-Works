@@ -685,14 +685,15 @@ input[type="number"] {
 }
 
 .expand-collapse-header {
-  height: 3rem;
   background-color: #f2f2f2;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  padding: 0 1rem;
+  padding: 12px ;
   position: relative;
   font-weight: bolder;
+  border: 1px solid #828282;
+  border-radius: 4px;
 }
 
 .icon-toggle {
@@ -717,6 +718,8 @@ input[type="number"] {
 .toggling-wrapper {
   flex: 1;
   transition: 0.2s ease-in-out;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
 
 .toggling-wrapper.collapse {
@@ -732,4 +735,10 @@ input[type="number"] {
       @apply mb-md;
     }
   }
+}
+
+.bills-menu-options {
+  cursor: pointer;
+  margin: 1rem;
+  text-decoration: underline;
 }

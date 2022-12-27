@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,7 +24,7 @@ import java.util.UUID;
 @Builder
 public class MusterRoll {
     @JsonProperty("id")
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("tenantId")
     private String tenantId = null;
@@ -41,14 +42,17 @@ public class MusterRoll {
     private String musterRollStatus = null;
 
     @JsonProperty("startDate")
-    private Long startDate = null;
+    private BigDecimal startDate = null;
 
     @JsonProperty("endDate")
-    private Long endDate = null;
+    private BigDecimal endDate = null;
 
     @JsonProperty("individualEntries")
     @Valid
     private List<IndividualEntry> individualEntries = null;
+
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;

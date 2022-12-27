@@ -6,8 +6,10 @@ import ApplicationDetailsTemplate  from "../../../../templates/ApplicationDetail
 import ProcessingModal from "@egovernments/digit-ui-module-works/src/components/Modal/ProcessingModal";
 import RejectLOIModal from "@egovernments/digit-ui-module-works/src/components/Modal/RejectLOIModal";
 import getPDFData from "../../../utils/getWorksAcknowledgementData"
+import { useHistory } from "react-router-dom";
 const ViewContract = (props) => {
     const { t } = useTranslation()
+    const history = useHistory()
     const { register, control, watch, handleSubmit, formState: { errors, ...rest }, getValues} = useForm({mode: "onSubmit"});
     const [displayMenu, setDisplayMenu] = useState(false);
     let { contractId } = Digit.Hooks.useQueryParams();
@@ -59,7 +61,16 @@ const ViewContract = (props) => {
         },
         {
             "name":"REJECT"
-        } 
+        } ,
+        {
+            "name":"CREATE_BILL_SHG_WO"
+        },
+        {
+            "name":"CREATE_BILL_DEPT_WO"
+        },
+        {
+            "name":"CREATE_BILL_DEPT_PO"
+        }
     ]
 
     function onActionSelect(action) {
@@ -68,6 +79,18 @@ const ViewContract = (props) => {
         }
         if(action?.name==="REJECT_LOI"){
             setShowRejectModal(true)
+        }
+         // if(action?.name==="CREATE_BILL"){
+        //     redirectToCreateBill()
+        // }
+        if(action?.name==="CREATE_BILL_SHG_WO"){
+            redirectToCreateBill('Organisation_Work_Order')
+        }
+        if(action?.name==="CREATE_BILL_DEPT_WO"){
+            redirectToCreateBill('Department_Work_Order')
+        }
+        if(action?.name==="CREATE_BILL_DEPT_PO"){
+            redirectToCreateBill('Department_Purchase_Order')
         }
     }
 
@@ -83,6 +106,17 @@ const ViewContract = (props) => {
         setShowRejectModal(false)
     }
 
+    //Passing Type for testing purpose, ideally will be generated based on applicationDetails
+    const redirectToCreateBill = (contractType) => {
+        history.push(`/${window?.contextPath}/employee/expenditure/create-bill`, { contractType /*getContractType()*/  });
+    }
+
+    const getContractType = () => {
+        const contractType = String(applicationDetails?.applicationData?.contractType).replace(" ", "_")
+        const implementingAuthority = String(applicationDetails?.applicationData?.implementingAuthority).replace(" ", "_")
+        return implementingAuthority + '_' + contractType
+    }
+    
     // // call update Contract API to update Contract form values and application staus during workflow action 
     // const {
     //     isLoading: updatingApplication,
