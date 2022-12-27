@@ -41,7 +41,7 @@ const EstimateCard = () => {
       {
         //Pass Count Value from Inbox API here
         count: isLoading ? "-" : data?.totalCount,
-        label: t("INBOX"),
+        label: t("WORKS_INBOX"),
         link: `/${window?.contextPath}/employee/works/inbox`,
       }
     ],

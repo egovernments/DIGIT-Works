@@ -167,12 +167,12 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               },
               options : [
                 {
-                  name : "Yes",
-                  code : "YES"
+                  name : "COMMON_YES",
+                  code : "COMMON_YES"
                 },
                 {
-                  name : "No",
-                  code : "NO"
+                  name : "COMMON_NO",
+                  code : "COMMON_NO"
                 }
               ]
             },
@@ -214,12 +214,12 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               },
               options : [
                 {
-                  name : "Yes",
-                  code : "YES"
+                  name : "COMMON_YES",
+                  code : "COMMON_YES"
                 },
                 {
-                  name : "No",
-                  code : "NO"
+                  name : "COMMON_NO",
+                  code : "COMMON_NO"
                 }
               ]
             },
@@ -244,13 +244,13 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               required: true,
               options : [
                 {
-                  name : "Yes",
-                  code : "YES"
+                  name : "COMMON_YES",
+                  code : "COMMON_YES"
                 },
                 {
-                  name : "No",
-                  code : "NO"
-                },
+                  name : "COMMON_NO",
+                  code : "COMMON_NO"
+                }
               ]
             },
           },
@@ -278,12 +278,12 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               },
               options : [
                 {
-                  name : "Yes",
-                  code : "YES"
+                  name : "COMMON_YES",
+                  code : "COMMON_YES"
                 },
                 {
-                  name : "No",
-                  code : "NO"
+                  name : "COMMON_NO",
+                  code : "COMMON_NO"
                 }
               ]
             },
@@ -366,16 +366,16 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              options: [
+              options : [
                 {
-                  code: "ABC",
-                  name: "ABC",
+                  name : "COMMON_YES",
+                  code : "COMMON_YES"
                 },
                 {
-                  code: "XYZ",
-                  name: "XYZ",
+                  name : "COMMON_NO",
+                  code : "COMMON_NO"
                 }
-              ],
+              ]
             },
           },
         ],

@@ -5,6 +5,7 @@ ThemeData get theme => ThemeData(
     highlightColor: createMaterialColor(const Color(0XFFC7E0F1)),
     backgroundColor:
         createMaterialColor(const Color.fromRGBO(238, 238, 238, 1)),
+    primaryColor: const Color.fromRGBO(244, 119, 56, 1),
     hintColor: const Color.fromRGBO(177, 180, 182, 1),
     primaryColorDark: const Color.fromRGBO(11, 12, 12, 1),
     primaryColorLight: const Color.fromRGBO(80, 90, 95, 1),
@@ -14,20 +15,26 @@ ThemeData get theme => ThemeData(
       backgroundColor: Color(0xff0B4B66),
       centerTitle: false,
     ),
-    textTheme: const TextTheme(
-        headline1: TextStyle(
+    textTheme: TextTheme(
+        headline1: const TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 32,
             fontFamily: 'Roboto Condensed',
             fontStyle: FontStyle.normal,
             color: Color.fromRGBO(11, 12, 12, 1)),
-        headline2: TextStyle(fontWeight: FontWeight.w700, fontSize: 24),
-        button: TextStyle(
+        headline2: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24),
+        button: const TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 19,
             color: Colors.white), // Elevated Button(Orange)
-        subtitle1: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
-        subtitle2: TextStyle(
+        displayMedium: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            fontFamily: 'Roboto Condensed',
+            fontStyle: FontStyle.normal,
+            color: Color.fromRGBO(11, 12, 12, 1)),
+        subtitle1: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
+        subtitle2: const TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 16,
             color: Color.fromRGBO(

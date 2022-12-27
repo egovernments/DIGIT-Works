@@ -4,6 +4,7 @@ import {
   CardSectionHeader,
   CardSubHeader,
   CheckPoint,
+  CollapseAndExpandGroups,
   ConnectingCheckPoints,
   Loader,
   Row,
@@ -37,6 +38,9 @@ import SubWorkTableDetails from "./SubWorkTableDetails";
 import WeekAttendence from "../../../AttendenceMgmt/src/pageComponents/WeekAttendence";
 import reducer, { initialTableState } from "../../../AttendenceMgmt/src/config/attendenceTableReducer";
 import AttendanceDateRange from "../../../AttendenceMgmt/src/pageComponents/AttendanceDateRange";
+import MustorRollDetailsTable from "../../../Expenditure/src/components/ViewBill/MustorRollDetailsTable";
+import StatusTableWithRadio from "../../../Expenditure/src/components/ViewBill/StatusTableWithRadio";
+import ShowTotalValue from "../../../Expenditure/src/components/ViewBill/ShowTotalValue";
 
 function ApplicationDetailsContent({
   applicationDetails,
@@ -50,6 +54,8 @@ function ApplicationDetailsContent({
   paymentsList,
   oldValue,
   isInfoLabel = false,
+  noBoxShadow = false,
+  sectionHeadStyle = false
 }) {
   const { t } = useTranslation();
   const [state, dispatch] = useReducer(reducer, initialTableState);
@@ -185,8 +191,15 @@ function ApplicationDetailsContent({
       return "";
     }
   };
+
+  const getCardStyles = () => {
+    let styles = { position: "relative" }
+    if (noBoxShadow) styles = { ...styles, boxShadow: "none" };
+    return styles;
+  };
+
   return (
-    <Card style={{ position: "relative" }} className={"employeeCard-override"}>
+    <Card style={getCardStyles()} className={"employeeCard-override"}>
       {isInfoLabel ? (
         <InfoDetails
           t={t}
@@ -198,7 +211,8 @@ function ApplicationDetailsContent({
         />
       ) : null}
       {applicationDetails?.applicationDetails?.map((detail, index) => (
-        <React.Fragment key={index}>
+        <CollapseAndExpandGroups groupElements={detail?.expandAndCollapse?.groupComponents} groupHeader={detail?.expandAndCollapse?.groupHeader} headerLabel={detail?.expandAndCollapse?.headerLabel} headerValue={detail?.expandAndCollapse?.headerValue} customClass={detail?.expandAndCollapse?.customClass}>
+          <React.Fragment key={index}>
           <div style={getMainDivStyles()}>
             {index === 0 && !detail.asSectionHeader ? (
               <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
@@ -207,8 +221,8 @@ function ApplicationDetailsContent({
                 <CardSectionHeader
                   style={
                     index == 0 && checkLocation
-                      ? { marginBottom: "16px", fontSize: "24px" }
-                      : { marginBottom: "16px", marginTop: "32px", fontSize: "24px" }
+                      ? { marginBottom: "16px", fontSize: "24px" } :
+                      (sectionHeadStyle ? sectionHeadStyle : { marginBottom: "16px", marginTop: "32px", fontSize: "24px" })
                   }
                 >
                   {isNocLocation ? `${t(detail.title)}` : t(detail.title)}
@@ -301,6 +315,12 @@ function ApplicationDetailsContent({
                 })}
             </StatusTable>
           </div>
+          {detail?.additionalDetails?.statusWithRadio ? (
+            <StatusTableWithRadio
+              config={detail?.additionalDetails?.statusWithRadio?.radioConfig}
+              customClass={detail?.additionalDetails?.statusWithRadio?.customClass}
+            ></StatusTableWithRadio>
+          ) : null}
           {detail?.additionalDetails?.dateRange ? (
             <AttendanceDateRange
               t={t}
@@ -310,15 +330,21 @@ function ApplicationDetailsContent({
             ></AttendanceDateRange>
           ) : null}
           {detail?.additionalDetails?.table
-            ? detail?.additionalDetails?.table.weekTable.tableHeader && (
+            ? detail?.additionalDetails?.table?.weekTable?.tableHeader && (
                 <>
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
-                    {t(detail?.additionalDetails?.table.weekTable.tableHeader)}
+                    {t(detail?.additionalDetails?.table?.weekTable?.tableHeader)}
                   </CardSectionHeader>
                   {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} />}
                 </>
               )
             : null}
+            {detail?.additionalDetails?.table
+              ? detail?.additionalDetails?.table?.mustorRollTable && (
+                <MustorRollDetailsTable></MustorRollDetailsTable>
+                )
+            : null}
+            {detail?.additionalDetails?.showTotal && <ShowTotalValue topBreakLine={detail?.additionalDetails?.showTotal?.topBreakLine} bottomBreakLine={detail?.additionalDetails?.showTotal?.bottomBreakLine} label={detail?.additionalDetails?.showTotal?.label} value={detail?.additionalDetails?.showTotal?.value}></ShowTotalValue>}
           {detail?.additionalDetails?.inspectionReport && (
             <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} />
           )}
@@ -385,6 +411,7 @@ function ApplicationDetailsContent({
           {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
           {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
         </React.Fragment>
+        </CollapseAndExpandGroups>
       ))}
       {showTimeLine && workflowDetails?.data?.timeline?.length > 0 && (
         <React.Fragment>

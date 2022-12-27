@@ -94,7 +94,7 @@ public class EstimateService {
      * @return Count of List of matching estimate application
      */
     public Integer countAllEstimateApplications(EstimateSearchCriteria criteria) {
-        criteria.setIsCountCall(Boolean.TRUE);
+        criteria.setIsCountNeeded(Boolean.TRUE);
         return estimateRepository.getEstimateCount(criteria);
     }
 }
