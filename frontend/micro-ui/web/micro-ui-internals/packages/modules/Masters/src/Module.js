@@ -7,6 +7,7 @@ import { default as EmployeeApp } from "./pages/employee";
 import SearchOrganization from "./pages/employee/Master/SearchOrganization";
 import CreateOrganization from "./pages/employee/Master/CreateOrganization";
 import RegisterWageSeeker from "./pages/employee/registerWageSeeker/index";
+import SearchOrganisationApplication from "./components/SearchOrganisation";
 import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
@@ -31,6 +32,7 @@ const componentsToRegister = {
   SearchOrganization,
   CreateOrganization,
   RegisterWageSeeker,
+  SearchOrganisationApplication,
   ViewOrganisation
 };
 
