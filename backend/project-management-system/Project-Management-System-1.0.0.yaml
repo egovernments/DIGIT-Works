@@ -1571,7 +1571,7 @@ definitions:
         description: Unique ID of project type from master data
         minLength: 2
         maxLength: 64
-      subprojectType:
+      projectSubType:
         type: string
         description: Unique ID of subproject type from master data
         minLength: 2
