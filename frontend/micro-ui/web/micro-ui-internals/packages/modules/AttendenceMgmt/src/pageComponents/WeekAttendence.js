@@ -221,6 +221,13 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
         },
       },
       {
+        Header: () => <p>{t("ATM_SKILL")}</p>,
+        accessor: "skill",
+        Cell: ({ value, column, row }) => {
+          return String(t(value));
+        },
+      },
+      {
         Header: () => <p>{t("ATM_AMOUNT_IN_RS")}</p>,
         accessor: "amountInRs",
         Cell: ({ value, column, row }) => {
