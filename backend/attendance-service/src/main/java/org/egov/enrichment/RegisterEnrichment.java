@@ -7,10 +7,7 @@ import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.IdGenRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.AttendanceServiceUtil;
-import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.AttendanceRegisterRequest;
-import org.egov.web.models.StaffPermission;
-import org.egov.web.models.StaffPermissionRequest;
+import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -83,5 +80,19 @@ public class RegisterEnrichment {
 
         return idResponses.stream()
                 .map(IdResponse::getId).collect(Collectors.toList());
+    }
+
+
+    public void enrichSearchRegisterRequest(RequestInfo requestInfo, AttendanceRegisterSearchCriteria searchCriteria) {
+
+        if (searchCriteria.getLimit() == null)
+            searchCriteria.setLimit(config.getAttendanceRegisterDefaultLimit());
+
+        if (searchCriteria.getOffset() == null)
+            searchCriteria.setOffset(config.getAttendanceRegisterDefaultOffset());
+
+        if (searchCriteria.getLimit() != null && searchCriteria.getLimit() > config.getAttendanceRegisterMaxLimit())
+            searchCriteria.setLimit(config.getAttendanceRegisterMaxLimit());
+
     }
 }
