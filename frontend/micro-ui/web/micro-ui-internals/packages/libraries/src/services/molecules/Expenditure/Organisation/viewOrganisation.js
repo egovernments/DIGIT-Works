@@ -13,7 +13,7 @@ const transformViewDataToApplicationDetails = {
         ],
       };
       const LocationDetails = {
-        title: "MASTERS_COMMUNITY_ORG_DETAILS",
+        title: "MASTERS_LOCATION_DETAILS",
         asSectionHeader: true,
         values: [
           { title: "MASTERS_LOCALITY", value: "23 College Road" },
