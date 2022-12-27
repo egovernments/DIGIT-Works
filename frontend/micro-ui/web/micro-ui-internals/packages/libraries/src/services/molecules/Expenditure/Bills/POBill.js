@@ -28,12 +28,14 @@ const transformViewDataToApplicationDetails = {
                 {
                   name : "BillAmount",
                   value : "SHG",
-                  key : "SHG"
+                  key : "SHG",
+                  code : "EXP_SHG"
                 },
                 {
                   name : "BillAmount",
                   value : "Vendor",
-                  key : "Vendor"
+                  key : "Vendor",
+                  code : "EXP_VENDOR"
                 }
               ]
             },

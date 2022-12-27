@@ -1,0 +1,140 @@
+{
+  "RequestInfo": {
+    "apiId": "muster-roll",
+    "action": "",
+    "did": 1,
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "requesterId": "",
+    "ts": 1513579888683,
+    "ver": "1.0.0",
+    "authToken": "94ecb06f-8e5b-4798-af8f-56a987560209",
+    "userInfo": {
+      "uuid": "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011"
+    }
+  },
+  "BusinessServices": [
+    {
+      "tenantId": "pb",
+      "businessService": "MUKTAWORKS",
+      "business": "Mukta Works",
+      "businessServiceSla": 432000000,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": true,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SUBMIT",
+              "nextState": "SUBMITTED",
+              "roles": [
+                "ORG_STAFF",
+                "ORG_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "SUBMITTED",
+          "applicationStatus": "SUBMITTED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "action": "VERIFY",
+              "nextState": "VERIFIED",
+              "roles": [
+                "JUNIOR_ENGINEER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "JUNIOR_ENGINEER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "VERIFIED",
+          "applicationStatus": "VERIFIED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "action": "APPROVE",
+              "nextState": "APPROVED",
+              "roles": [
+                "MUNICIPAL_ENGINEER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "MUNICIPAL_ENGINEER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "APPROVED",
+          "applicationStatus": "APPROVED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false
+        },
+        {
+          "sla": null,
+          "state": "REJECTED",
+          "applicationStatus": "REJECTED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "action": "RESUBMIT",
+              "nextState": "SUBMITTED",
+              "roles": [
+                "ORG_ADMIN",
+                "ORG_STAFF"
+              ]
+            },
+            {
+              "action": "CLOSEAFTERREJECTION",
+              "nextState": "CLOSED",
+              "roles": [
+                "ORG_STAFF",
+                "ORG_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "CLOSED",
+          "applicationStatus": "CLOSED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false
+        }
+      ]
+    }
+  ]
+}

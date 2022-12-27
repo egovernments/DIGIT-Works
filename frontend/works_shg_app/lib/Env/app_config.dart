@@ -24,10 +24,14 @@ dynamic get apiBaseUrl {
   return _config[_baseUrl];
 }
 
+class EnvironmentVariables {
+  static const String baseUrl = "https://works-dev.digit.org/";
+}
+
 Map<String, dynamic> devConstants = {
   _baseUrl: kIsWeb
       ? "https://works-dev.digit.org/"
-      : const String.fromEnvironment('BASE_URL'),
+      : String.fromEnvironment('BASE_URL'),
   // "https://works-qa.digit.org/works-shg-app/",
 };
 
