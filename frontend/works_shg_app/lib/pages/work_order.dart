@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:works_shg_app/data/fake_work_details.dart';
+import 'package:works_shg_app/data/fake_work_orders.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 
 import '../widgets/Back.dart';
@@ -17,14 +17,14 @@ class WorkOrderPage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            'Work Orders (${fakeWorkDetails.length})',
+            'Work Orders (${fakeWorkOrderDetails.length})',
             style: Theme.of(context).textTheme.displayMedium,
             textAlign: TextAlign.left,
           ),
         ),
         WorkDetailsCard(
-          fakeWorkDetails,
-          isSHGInbox: true,
+          fakeWorkOrderDetails,
+          isSHGInbox: false,
         )
       ])),
     );
