@@ -1,6 +1,7 @@
 package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
@@ -31,8 +32,8 @@ public class Project {
     @JsonProperty("projectType")
     private String projectType = null;
 
-    @JsonProperty("subprojectType")
-    private String subprojectType = null;
+    @JsonProperty("projectSubType")
+    private String projectSubType = null;
 
     @JsonProperty("department")
     private String department = null;
