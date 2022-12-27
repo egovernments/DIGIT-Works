@@ -11,48 +11,31 @@ class WorkDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: detailsList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Column(children: [
-              GestureDetector(
-                onTap: () => isSHGInbox
-                    ? context.router.push(
-                        SHGInboxRoute(musterDetails: [detailsList[index]]))
-                    : null,
-                child: DigitCard(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: detailsList[index].length,
-                          itemBuilder: (BuildContext context, int labelIndex) {
-                            return Column(
-                              children: [
-                                getItemWidget(context,
-                                    title: detailsList[index]
-                                        .keys
-                                        .elementAt(labelIndex)
-                                        .toString(),
-                                    description: detailsList[index]
-                                        .values
-                                        .elementAt(labelIndex)
-                                        .toString())
-                              ],
-                            );
-                          })
-                    ])),
-              )
-            ]);
-          },
-        );
-      },
+    var list = <Widget>[];
+    for (int i = 0; i < detailsList.length; i++) {
+      list.add(GestureDetector(
+        onTap: () => isSHGInbox
+            ? context.router
+                .push(SHGInboxRoute(musterDetails: [detailsList[i]]))
+            : null,
+        child: DigitCard(child: getCardDetails(context, detailsList[i])),
+      ));
+    }
+    return Column(
+      children: list,
+    );
+  }
+
+  Widget getCardDetails(
+      BuildContext context, Map<String, dynamic> cardDetails) {
+    var labelList = <Widget>[];
+    for (int j = 0; j < cardDetails.length; j++) {
+      labelList.add(getItemWidget(context,
+          title: cardDetails.keys.elementAt(j).toString(),
+          description: cardDetails.values.elementAt(j).toString()));
+    }
+    return Column(
+      children: labelList,
     );
   }
 

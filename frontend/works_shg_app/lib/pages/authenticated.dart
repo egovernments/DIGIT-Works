@@ -14,7 +14,7 @@ class AuthenticatedPageWrapper extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       drawer: Container(
-        margin: const EdgeInsets.only(top: kToolbarHeight * 2),
+        margin: const EdgeInsets.only(top: kToolbarHeight),
         child: const Drawer(child: SideBar()),
       ),
       body: MultiBlocProvider(
