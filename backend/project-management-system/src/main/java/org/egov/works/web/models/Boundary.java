@@ -20,6 +20,10 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class Boundary {
+
+    @JsonProperty("id")
+    private String id = null;
+
     @JsonProperty("code")
     private String code = null;
 
