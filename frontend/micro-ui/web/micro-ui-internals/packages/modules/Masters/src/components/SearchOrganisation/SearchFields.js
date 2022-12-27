@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 import { Controller, useWatch } from "react-hook-form";
 import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader } from "@egovernments/digit-ui-react-components";
 
-const SearchFields = ({ register, control, reset, t, onClearSearch, dummySearchOptions }) => {
+const SearchFields = ({ register, control, reset, t, onClearSearch, options }) => {
     const tenant = Digit.ULBService.getStateId()
     return (
         <>
@@ -13,7 +13,7 @@ const SearchFields = ({ register, control, reset, t, onClearSearch, dummySearchO
                     name="nameOfTheOrg"
                     render={(props) => (
                         <Dropdown
-                            option={dummySearchOptions}
+                            option={options}
                             selected={props?.value}
                             optionKey={"name"}
                             t={t}

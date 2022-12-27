@@ -7,7 +7,7 @@ const SearchOrganization = () => {
     const SearchOrganisationApplication = Digit.ComponentRegistryService.getComponent("SearchOrganisationApplication");
     const [showToast, setShowToast] = useState(null);
     const [showTable, setShowTable] = useState(true);
-    const [selectedOrg, setSelectedOrg] = useState([]);
+    const [selectedOrg, setSelectedOrg] = useState(null);
 
     const onClearSearch = (isShow = true) => {
         setShowTable(isShow);
@@ -29,30 +29,49 @@ const SearchOrganization = () => {
     const result = {
       status: "success",
       isSuccess: true,
-      totalCount: 10,
+      totalCount: 1,
       isLoading: false,
       data:{
         Organisation1: [
           {
             org_id : "DXTYUIOPO89",
             name_of_org : "Organisation1",
-            type_of_org : "TypeA",
-            org_category : "CategoryA",
+            type_of_org : "Community",
+            org_category : "Social",
             no_of_members : "10",
-            district : "DistrictA"
+            district : "Dhenkanal"
+          },
+          {
+            org_id : "DXTYUIOPO23",
+            name_of_org : "Organisation1",
+            type_of_org : "SHG",
+            org_category : "Social",
+            no_of_members : "20",
+            district : "Dhenkanal"
+          },
+          {
+            org_id : "DXTYUIO2289",
+            name_of_org : "Organisation1",
+            type_of_org : "Community",
+            org_category : "Social",
+            no_of_members : "10",
+            district : "Dhenkanal"
           }
         ]
       }
     }
 
     const getData = () => {
-      if (result?.data?.Organisation1?.length == 0 ) {
-        return { display: "ES_COMMON_NO_DATA" }
-      } else if (result?.data?.Organisation1?.length > 0) {
-        return result?.data?.Organisation1;
-      } else {
-        return [];
+      if(selectedOrg) {
+        if (result?.data?.Organisation1?.length == 0) {
+          return { display: "ES_COMMON_NO_DATA" }
+        } else if (result?.data?.Organisation1?.length > 0) {
+          return result?.data?.Organisation1;
+        } else {
+          return [];
+        }
       }
+      return [];
     }
   
     const isResultsOk = () => {

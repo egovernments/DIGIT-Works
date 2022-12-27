@@ -6,9 +6,9 @@ import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 import { AddFilled } from "@egovernments/digit-ui-react-components";
 
-const dummySearchOptions  = [
+const options  = [
   {
-    name : "Organisation1",
+    name : "MASTERS_ORG_1",
     code : "MASTERS_ORG_1"
   }
 ];
@@ -163,7 +163,7 @@ const SearchOrganisationApplication = ({tenantId, onSubmit, data, resultOk, isLo
     <>
           <Header styles={{ fontSize: "32px" }}>{t("MASTERS_SEARCH")}</Header>
           <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} > 
-              <SearchFields {...{ register, control, reset, t, onClearSearch, dummySearchOptions }} />
+              <SearchFields {...{ register, control, reset, t, onClearSearch, options }} />
           </SearchForm>
           <div className="create-new-org">
             <button className="create-new-org-btn" onClick={handleCreateNewOrg}> <AddFilled />{t("MASTERS_ADD_NEW_COMMUNITY_ORG")}</button>
