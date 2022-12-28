@@ -187,6 +187,7 @@ export const WorksSearch = {
             applicationDetails: details,
             processInstancesDetails: workflowDetails?.ProcessInstances,
             applicationData:estimate,
+            workflowDetails: workflowDetails
         }
     },
     workflowDataDetails: async (tenantId, businessIds) => {
@@ -283,5 +284,1223 @@ export const WorksSearch = {
             processInstancesDetails: workflowDetails?.ProcessInstances,
             applicationData:loi,
         }
-    }
+    },
+    viewProjectClosureScreen: (tenantId) => {
+        //dummy estimate data
+        const result = {
+            "applicationDetails": [
+                {
+                    "title": " ",
+                    "asSectionHeader": true,
+                    "values": [
+                        {
+                            "title": "WORKS_ESTIMATE_ID",
+                            "value": "EP/2022-23/12/000174"
+                        },
+                        {
+                            "title": "WORKS_STATUS",
+                            "value": "Checked"
+                        }
+                    ]
+                },
+                {
+                    "title": "WORKS_ESTIMATE_DETAILS",
+                    "asSectionHeader": true,
+                    "values": [
+                        {
+                            "title": "WORKS_DATE_PROPOSAL",
+                            "value": "13/12/2022"
+                        },
+                        {
+                            "title": "WORKS_DEPARTMENT",
+                            "value": "Street Lights"
+                        },
+                        {
+                            "title": "WORKS_LOR",
+                            "value": "123123"
+                        },
+                        {
+                            "title": "WORKS_ELECTION_WARD",
+                            "value": "NA"
+                        },
+                        {
+                            "title": "WORKS_LOCATION",
+                            "value": "NA"
+                        },
+                        {
+                            "title": "WORKS_WORK_CATEGORY",
+                            "value": "Engineering"
+                        },
+                        {
+                            "title": "WORKS_BENEFICIERY",
+                            "value": "General"
+                        },
+                        {
+                            "title": "WORKS_WORK_NATURE",
+                            "value": "Operation & Maintenance"
+                        },
+                        {
+                            "title": "WORKS_WORK_TYPE",
+                            "value": "Road"
+                        },
+                        {
+                            "title": "WORKS_SUB_TYPE_WORK",
+                            "value": "Road Forming"
+                        },
+                        {
+                            "title": "WORKS_MODE_OF_INS",
+                            "value": "Nomination"
+                        }
+                    ]
+                },
+                {
+                    "title": "WORKS_FINANCIAL_DETAILS",
+                    "asSectionHeader": true,
+                    "values": [
+                        {
+                            "title": "WORKS_FUND",
+                            "value": "General Fund"
+                        },
+                        {
+                            "title": "WORKS_FUNCTION",
+                            "value": "Municipal Body"
+                        },
+                        {
+                            "title": "WORKS_BUDGET_HEAD",
+                            "value": "ADM"
+                        },
+                        {
+                            "title": "WORKS_SCHEME",
+                            "value": "15th CFC-15th Central Finance Commission"
+                        },
+                        {
+                            "title": "WORKS_SUB_SCHEME",
+                            "value": "Drinking Water Supply (including Rain Water Harvesting & Recycling)"
+                        }
+                    ]
+                },
+                {
+                    "title": "WORKS_WORK_DETAILS",
+                    "asSectionHeader": true,
+                    "isTable": true,
+                    "headers": [
+                        "S.No",
+                        "Name of the Work",
+                        "Estimate Amount (₹)"
+                    ],
+                    "tableRows": [
+                        [
+                            1,
+                            "work",
+                            "12,312"
+                        ],
+                        [
+                            "",
+                            "Total Amount",
+                            "12,312"
+                        ]
+                    ],
+                    "state": {
+                        "id": "7a376942-12b6-48ad-8054-9883c53b18d7",
+                        "tenantId": "pb.amritsar",
+                        "estimateNumber": "EP/2022-23/12/000174",
+                        "adminSanctionNumber": null,
+                        "proposalDate": 1670920740935,
+                        "status": "ACTIVE",
+                        "estimateStatus": "CHECKED",
+                        "subject": "Construct new schools v2",
+                        "requirementNumber": "123123",
+                        "description": "Construct new schools",
+                        "department": "DEPT_1",
+                        "location": "",
+                        "workCategory": "Engineering",
+                        "beneficiaryType": "General",
+                        "natureOfWork": "Operation & Maintenance",
+                        "typeOfWork": "Road",
+                        "subTypeOfWork": "RD01",
+                        "entrustmentMode": "Nomination",
+                        "fund": "01",
+                        "function": "0001",
+                        "budgetHead": "01",
+                        "scheme": "15th CFC",
+                        "subScheme": "15th CFC-01",
+                        "totalAmount": null,
+                        "estimateDetails": [
+                            {
+                                "id": "9dfa2d69-497a-487c-ae42-ab0edbf7724e",
+                                "estimateDetailNumber": "EP/2022-23/12/000174/000155",
+                                "name": "work",
+                                "amount": 12312,
+                                "additionalDetails": null
+                            }
+                        ],
+                        "auditDetails": {
+                            "createdBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                            "lastModifiedBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                            "createdTime": 1670920740935,
+                            "lastModifiedTime": 1672053008013
+                        },
+                        "additionalDetails": {
+                            "formData": [
+                                {
+                                    "name": "work",
+                                    "amount": 12312
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "title": "",
+                    "asSectionHeader": true,
+                    "additionalDetails": {
+                        "documents": [
+                            {
+                                "title": "WORKS_RELEVANT_DOCS",
+                                "BS": "Works"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "processInstancesDetails": [
+                {
+                    "id": "1b9a428d-5c1c-4219-a878-015217aa9d94",
+                    "tenantId": "pb.amritsar",
+                    "businessService": "estimate-approval-2",
+                    "businessId": "EP/2022-23/12/000174",
+                    "action": "CHECK",
+                    "moduleName": "estimate-service",
+                    "state": {
+                        "auditDetails": null,
+                        "uuid": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                        "tenantId": "pb",
+                        "businessServiceId": "52e2c4e0-f12c-4c75-aef3-1535bc8edac0",
+                        "sla": null,
+                        "state": "CHECKED",
+                        "applicationStatus": "CHECKED",
+                        "docUploadRequired": false,
+                        "isStartState": false,
+                        "isTerminateState": false,
+                        "isStateUpdatable": null,
+                        "actions": [
+                            {
+                                "auditDetails": null,
+                                "uuid": "a952bc13-07ef-4384-9214-9c7c3e974ec8",
+                                "tenantId": "pb",
+                                "currentState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                                "action": "TECHNICALSANCATION",
+                                "nextState": "e41d89f8-0977-4b43-9193-3e17c1257ff6",
+                                "roles": [
+                                    "EST_TECH_SANC"
+                                ],
+                                "active": null
+                            },
+                            {
+                                "auditDetails": null,
+                                "uuid": "c788321f-dc5b-4dc8-a6e6-bd78c6a769fb",
+                                "tenantId": "pb",
+                                "currentState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                                "action": "REJECT",
+                                "nextState": "af66155b-f5ac-447f-947b-f56539c4d671",
+                                "roles": [
+                                    "EST_TECH_SANC"
+                                ],
+                                "active": null
+                            }
+                        ]
+                    },
+                    "comment": null,
+                    "documents": null,
+                    "assigner": {
+                        "id": 109,
+                        "userName": "Nipsyyyy",
+                        "name": "Nipun ",
+                        "type": "EMPLOYEE",
+                        "mobileNumber": "9667076655",
+                        "emailId": "",
+                        "roles": [
+                            {
+                                "id": null,
+                                "name": "Employee",
+                                "code": "EMPLOYEE",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "EST CREATOR",
+                                "code": "EST_CREATOR",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "EST_CHECKER",
+                                "code": "EST_CHECKER",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "LOI APPROVER",
+                                "code": "LOI_APPROVER",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "EST TECH SANC",
+                                "code": "EST_TECH_SANC",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "EST FIN SANC",
+                                "code": "EST_FIN_SANC",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "LOI CREATOR",
+                                "code": "LOI_CREATOR",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "SUPER USER",
+                                "code": "SUPERUSER",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "EST TECH SANC",
+                                "code": "EST_ADMIN_SANC",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "LOI CHECKER",
+                                "code": "LOI_CHECKER",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "HRMS Admin",
+                                "code": "HRMS_ADMIN",
+                                "tenantId": "pb.amritsar"
+                            }
+                        ],
+                        "tenantId": "pb.amritsar",
+                        "uuid": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda"
+                    },
+                    "assignes": [
+                        {
+                            "id": 109,
+                            "userName": "Nipsyyyy",
+                            "name": "Nipun ",
+                            "type": "EMPLOYEE",
+                            "mobileNumber": "9667076655",
+                            "emailId": "",
+                            "roles": [
+                                {
+                                    "id": null,
+                                    "name": "Employee",
+                                    "code": "EMPLOYEE",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST CREATOR",
+                                    "code": "EST_CREATOR",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST_CHECKER",
+                                    "code": "EST_CHECKER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI APPROVER",
+                                    "code": "LOI_APPROVER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST TECH SANC",
+                                    "code": "EST_TECH_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST FIN SANC",
+                                    "code": "EST_FIN_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI CREATOR",
+                                    "code": "LOI_CREATOR",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "SUPER USER",
+                                    "code": "SUPERUSER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST TECH SANC",
+                                    "code": "EST_ADMIN_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI CHECKER",
+                                    "code": "LOI_CHECKER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "HRMS Admin",
+                                    "code": "HRMS_ADMIN",
+                                    "tenantId": "pb.amritsar"
+                                }
+                            ],
+                            "tenantId": "pb.amritsar",
+                            "uuid": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda"
+                        }
+                    ],
+                    "nextActions": [
+                        {
+                            "auditDetails": null,
+                            "uuid": "c788321f-dc5b-4dc8-a6e6-bd78c6a769fb",
+                            "tenantId": "pb",
+                            "currentState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                            "action": "REJECT",
+                            "nextState": "af66155b-f5ac-447f-947b-f56539c4d671",
+                            "roles": [
+                                "EST_TECH_SANC"
+                            ],
+                            "active": null
+                        },
+                        {
+                            "auditDetails": null,
+                            "uuid": "a952bc13-07ef-4384-9214-9c7c3e974ec8",
+                            "tenantId": "pb",
+                            "currentState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                            "action": "TECHNICALSANCATION",
+                            "nextState": "e41d89f8-0977-4b43-9193-3e17c1257ff6",
+                            "roles": [
+                                "EST_TECH_SANC"
+                            ],
+                            "active": null
+                        }
+                    ],
+                    "stateSla": null,
+                    "businesssServiceSla": -793324953,
+                    "previousStatus": null,
+                    "entity": null,
+                    "auditDetails": {
+                        "createdBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                        "lastModifiedBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                        "createdTime": 1672053008038,
+                        "lastModifiedTime": 1672053008038
+                    },
+                    "rating": 0,
+                    "escalated": false
+                },
+                {
+                    "id": "0a618d8b-8604-4aae-8e70-c45e3fccdf51",
+                    "tenantId": "pb.amritsar",
+                    "businessService": "estimate-approval-2",
+                    "businessId": "EP/2022-23/12/000174",
+                    "action": "CREATE",
+                    "moduleName": "estimate-service",
+                    "state": {
+                        "auditDetails": null,
+                        "uuid": "67d17040-0c49-40a1-b932-a7b5a5266557",
+                        "tenantId": "pb",
+                        "businessServiceId": "52e2c4e0-f12c-4c75-aef3-1535bc8edac0",
+                        "sla": null,
+                        "state": "CREATED",
+                        "applicationStatus": "CREATED",
+                        "docUploadRequired": false,
+                        "isStartState": true,
+                        "isTerminateState": false,
+                        "isStateUpdatable": null,
+                        "actions": [
+                            {
+                                "auditDetails": null,
+                                "uuid": "568b7e7d-d88f-4079-bb02-3dc9a37c56ea",
+                                "tenantId": "pb",
+                                "currentState": "67d17040-0c49-40a1-b932-a7b5a5266557",
+                                "action": "CHECK",
+                                "nextState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                                "roles": [
+                                    "EST_CHECKER"
+                                ],
+                                "active": null
+                            },
+                            {
+                                "auditDetails": null,
+                                "uuid": "1a6d9f29-893d-49d9-870f-6e007a6820e8",
+                                "tenantId": "pb",
+                                "currentState": "67d17040-0c49-40a1-b932-a7b5a5266557",
+                                "action": "REJECT",
+                                "nextState": "af66155b-f5ac-447f-947b-f56539c4d671",
+                                "roles": [
+                                    "EST_CHECKER"
+                                ],
+                                "active": null
+                            }
+                        ]
+                    },
+                    "comment": "string",
+                    "documents": null,
+                    "assigner": {
+                        "id": 109,
+                        "userName": "Nipsyyyy",
+                        "name": "Nipun ",
+                        "type": "EMPLOYEE",
+                        "mobileNumber": "9667076655",
+                        "emailId": "",
+                        "roles": [
+                            {
+                                "id": null,
+                                "name": "Employee",
+                                "code": "EMPLOYEE",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "EST CREATOR",
+                                "code": "EST_CREATOR",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "EST_CHECKER",
+                                "code": "EST_CHECKER",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "LOI APPROVER",
+                                "code": "LOI_APPROVER",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "EST TECH SANC",
+                                "code": "EST_TECH_SANC",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "EST FIN SANC",
+                                "code": "EST_FIN_SANC",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "LOI CREATOR",
+                                "code": "LOI_CREATOR",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "SUPER USER",
+                                "code": "SUPERUSER",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "EST TECH SANC",
+                                "code": "EST_ADMIN_SANC",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "LOI CHECKER",
+                                "code": "LOI_CHECKER",
+                                "tenantId": "pb.amritsar"
+                            },
+                            {
+                                "id": null,
+                                "name": "HRMS Admin",
+                                "code": "HRMS_ADMIN",
+                                "tenantId": "pb.amritsar"
+                            }
+                        ],
+                        "tenantId": "pb.amritsar",
+                        "uuid": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda"
+                    },
+                    "assignes": [
+                        {
+                            "id": 109,
+                            "userName": "Nipsyyyy",
+                            "name": "Nipun ",
+                            "type": "EMPLOYEE",
+                            "mobileNumber": "9667076655",
+                            "emailId": "",
+                            "roles": [
+                                {
+                                    "id": null,
+                                    "name": "Employee",
+                                    "code": "EMPLOYEE",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST CREATOR",
+                                    "code": "EST_CREATOR",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST_CHECKER",
+                                    "code": "EST_CHECKER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI APPROVER",
+                                    "code": "LOI_APPROVER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST TECH SANC",
+                                    "code": "EST_TECH_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST FIN SANC",
+                                    "code": "EST_FIN_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI CREATOR",
+                                    "code": "LOI_CREATOR",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "SUPER USER",
+                                    "code": "SUPERUSER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST TECH SANC",
+                                    "code": "EST_ADMIN_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI CHECKER",
+                                    "code": "LOI_CHECKER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "HRMS Admin",
+                                    "code": "HRMS_ADMIN",
+                                    "tenantId": "pb.amritsar"
+                                }
+                            ],
+                            "tenantId": "pb.amritsar",
+                            "uuid": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda"
+                        }
+                    ],
+                    "nextActions": [
+                        {
+                            "auditDetails": null,
+                            "uuid": "568b7e7d-d88f-4079-bb02-3dc9a37c56ea",
+                            "tenantId": "pb",
+                            "currentState": "67d17040-0c49-40a1-b932-a7b5a5266557",
+                            "action": "CHECK",
+                            "nextState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                            "roles": [
+                                "EST_CHECKER"
+                            ],
+                            "active": null
+                        },
+                        {
+                            "auditDetails": null,
+                            "uuid": "1a6d9f29-893d-49d9-870f-6e007a6820e8",
+                            "tenantId": "pb",
+                            "currentState": "67d17040-0c49-40a1-b932-a7b5a5266557",
+                            "action": "REJECT",
+                            "nextState": "af66155b-f5ac-447f-947b-f56539c4d671",
+                            "roles": [
+                                "EST_CHECKER"
+                            ],
+                            "active": null
+                        }
+                    ],
+                    "stateSla": null,
+                    "businesssServiceSla": -793324953,
+                    "previousStatus": null,
+                    "entity": null,
+                    "auditDetails": {
+                        "createdBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                        "lastModifiedBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                        "createdTime": 1670920740971,
+                        "lastModifiedTime": 1670920740971
+                    },
+                    "rating": 0,
+                    "escalated": false
+                }
+            ],
+            "applicationData": {
+                "id": "7a376942-12b6-48ad-8054-9883c53b18d7",
+                "tenantId": "pb.amritsar",
+                "estimateNumber": "EP/2022-23/12/000174",
+                "adminSanctionNumber": null,
+                "proposalDate": 1670920740935,
+                "status": "ACTIVE",
+                "estimateStatus": "CHECKED",
+                "subject": "Construct new schools v2",
+                "requirementNumber": "123123",
+                "description": "Construct new schools",
+                "department": "DEPT_1",
+                "location": "",
+                "workCategory": "Engineering",
+                "beneficiaryType": "General",
+                "natureOfWork": "Operation & Maintenance",
+                "typeOfWork": "Road",
+                "subTypeOfWork": "RD01",
+                "entrustmentMode": "Nomination",
+                "fund": "01",
+                "function": "0001",
+                "budgetHead": "01",
+                "scheme": "15th CFC",
+                "subScheme": "15th CFC-01",
+                "totalAmount": null,
+                "estimateDetails": [
+                    {
+                        "id": "9dfa2d69-497a-487c-ae42-ab0edbf7724e",
+                        "estimateDetailNumber": "EP/2022-23/12/000174/000155",
+                        "name": "work",
+                        "amount": 12312,
+                        "additionalDetails": null
+                    }
+                ],
+                "auditDetails": {
+                    "createdBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                    "lastModifiedBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                    "createdTime": 1670920740935,
+                    "lastModifiedTime": 1672053008013
+                },
+                "additionalDetails": {
+                    "formData": [
+                        {
+                            "name": "work",
+                            "amount": 12312
+                        }
+                    ]
+                }
+            },
+            "workflowDetails": {
+                "ResponseInfo": null,
+                "ProcessInstances": [
+                    {
+                        "id": "1b9a428d-5c1c-4219-a878-015217aa9d94",
+                        "tenantId": "pb.amritsar",
+                        "businessService": "estimate-approval-2",
+                        "businessId": "EP/2022-23/12/000174",
+                        "action": "CHECK",
+                        "moduleName": "estimate-service",
+                        "state": {
+                            "auditDetails": null,
+                            "uuid": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                            "tenantId": "pb",
+                            "businessServiceId": "52e2c4e0-f12c-4c75-aef3-1535bc8edac0",
+                            "sla": null,
+                            "state": "CHECKED",
+                            "applicationStatus": "CHECKED",
+                            "docUploadRequired": false,
+                            "isStartState": false,
+                            "isTerminateState": false,
+                            "isStateUpdatable": null,
+                            "actions": [
+                                {
+                                    "auditDetails": null,
+                                    "uuid": "a952bc13-07ef-4384-9214-9c7c3e974ec8",
+                                    "tenantId": "pb",
+                                    "currentState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                                    "action": "TECHNICALSANCATION",
+                                    "nextState": "e41d89f8-0977-4b43-9193-3e17c1257ff6",
+                                    "roles": [
+                                        "EST_TECH_SANC"
+                                    ],
+                                    "active": null
+                                },
+                                {
+                                    "auditDetails": null,
+                                    "uuid": "c788321f-dc5b-4dc8-a6e6-bd78c6a769fb",
+                                    "tenantId": "pb",
+                                    "currentState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                                    "action": "REJECT",
+                                    "nextState": "af66155b-f5ac-447f-947b-f56539c4d671",
+                                    "roles": [
+                                        "EST_TECH_SANC"
+                                    ],
+                                    "active": null
+                                }
+                            ]
+                        },
+                        "comment": null,
+                        "documents": null,
+                        "assigner": {
+                            "id": 109,
+                            "userName": "Nipsyyyy",
+                            "name": "Nipun ",
+                            "type": "EMPLOYEE",
+                            "mobileNumber": "9667076655",
+                            "emailId": "",
+                            "roles": [
+                                {
+                                    "id": null,
+                                    "name": "Employee",
+                                    "code": "EMPLOYEE",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST CREATOR",
+                                    "code": "EST_CREATOR",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST_CHECKER",
+                                    "code": "EST_CHECKER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI APPROVER",
+                                    "code": "LOI_APPROVER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST TECH SANC",
+                                    "code": "EST_TECH_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST FIN SANC",
+                                    "code": "EST_FIN_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI CREATOR",
+                                    "code": "LOI_CREATOR",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "SUPER USER",
+                                    "code": "SUPERUSER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST TECH SANC",
+                                    "code": "EST_ADMIN_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI CHECKER",
+                                    "code": "LOI_CHECKER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "HRMS Admin",
+                                    "code": "HRMS_ADMIN",
+                                    "tenantId": "pb.amritsar"
+                                }
+                            ],
+                            "tenantId": "pb.amritsar",
+                            "uuid": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda"
+                        },
+                        "assignes": [
+                            {
+                                "id": 109,
+                                "userName": "Nipsyyyy",
+                                "name": "Nipun ",
+                                "type": "EMPLOYEE",
+                                "mobileNumber": "9667076655",
+                                "emailId": "",
+                                "roles": [
+                                    {
+                                        "id": null,
+                                        "name": "Employee",
+                                        "code": "EMPLOYEE",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "EST CREATOR",
+                                        "code": "EST_CREATOR",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "EST_CHECKER",
+                                        "code": "EST_CHECKER",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "LOI APPROVER",
+                                        "code": "LOI_APPROVER",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "EST TECH SANC",
+                                        "code": "EST_TECH_SANC",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "EST FIN SANC",
+                                        "code": "EST_FIN_SANC",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "LOI CREATOR",
+                                        "code": "LOI_CREATOR",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "SUPER USER",
+                                        "code": "SUPERUSER",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "EST TECH SANC",
+                                        "code": "EST_ADMIN_SANC",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "LOI CHECKER",
+                                        "code": "LOI_CHECKER",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "HRMS Admin",
+                                        "code": "HRMS_ADMIN",
+                                        "tenantId": "pb.amritsar"
+                                    }
+                                ],
+                                "tenantId": "pb.amritsar",
+                                "uuid": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda"
+                            }
+                        ],
+                        "nextActions": [
+                            {
+                                "auditDetails": null,
+                                "uuid": "c788321f-dc5b-4dc8-a6e6-bd78c6a769fb",
+                                "tenantId": "pb",
+                                "currentState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                                "action": "REJECT",
+                                "nextState": "af66155b-f5ac-447f-947b-f56539c4d671",
+                                "roles": [
+                                    "EST_TECH_SANC"
+                                ],
+                                "active": null
+                            },
+                            {
+                                "auditDetails": null,
+                                "uuid": "a952bc13-07ef-4384-9214-9c7c3e974ec8",
+                                "tenantId": "pb",
+                                "currentState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                                "action": "TECHNICALSANCATION",
+                                "nextState": "e41d89f8-0977-4b43-9193-3e17c1257ff6",
+                                "roles": [
+                                    "EST_TECH_SANC"
+                                ],
+                                "active": null
+                            }
+                        ],
+                        "stateSla": null,
+                        "businesssServiceSla": -793324953,
+                        "previousStatus": null,
+                        "entity": null,
+                        "auditDetails": {
+                            "createdBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                            "lastModifiedBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                            "createdTime": 1672053008038,
+                            "lastModifiedTime": 1672053008038
+                        },
+                        "rating": 0,
+                        "escalated": false
+                    },
+                    {
+                        "id": "0a618d8b-8604-4aae-8e70-c45e3fccdf51",
+                        "tenantId": "pb.amritsar",
+                        "businessService": "estimate-approval-2",
+                        "businessId": "EP/2022-23/12/000174",
+                        "action": "CREATE",
+                        "moduleName": "estimate-service",
+                        "state": {
+                            "auditDetails": null,
+                            "uuid": "67d17040-0c49-40a1-b932-a7b5a5266557",
+                            "tenantId": "pb",
+                            "businessServiceId": "52e2c4e0-f12c-4c75-aef3-1535bc8edac0",
+                            "sla": null,
+                            "state": "CREATED",
+                            "applicationStatus": "CREATED",
+                            "docUploadRequired": false,
+                            "isStartState": true,
+                            "isTerminateState": false,
+                            "isStateUpdatable": null,
+                            "actions": [
+                                {
+                                    "auditDetails": null,
+                                    "uuid": "568b7e7d-d88f-4079-bb02-3dc9a37c56ea",
+                                    "tenantId": "pb",
+                                    "currentState": "67d17040-0c49-40a1-b932-a7b5a5266557",
+                                    "action": "CHECK",
+                                    "nextState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                                    "roles": [
+                                        "EST_CHECKER"
+                                    ],
+                                    "active": null
+                                },
+                                {
+                                    "auditDetails": null,
+                                    "uuid": "1a6d9f29-893d-49d9-870f-6e007a6820e8",
+                                    "tenantId": "pb",
+                                    "currentState": "67d17040-0c49-40a1-b932-a7b5a5266557",
+                                    "action": "REJECT",
+                                    "nextState": "af66155b-f5ac-447f-947b-f56539c4d671",
+                                    "roles": [
+                                        "EST_CHECKER"
+                                    ],
+                                    "active": null
+                                }
+                            ]
+                        },
+                        "comment": "string",
+                        "documents": null,
+                        "assigner": {
+                            "id": 109,
+                            "userName": "Nipsyyyy",
+                            "name": "Nipun ",
+                            "type": "EMPLOYEE",
+                            "mobileNumber": "9667076655",
+                            "emailId": "",
+                            "roles": [
+                                {
+                                    "id": null,
+                                    "name": "Employee",
+                                    "code": "EMPLOYEE",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST CREATOR",
+                                    "code": "EST_CREATOR",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST_CHECKER",
+                                    "code": "EST_CHECKER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI APPROVER",
+                                    "code": "LOI_APPROVER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST TECH SANC",
+                                    "code": "EST_TECH_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST FIN SANC",
+                                    "code": "EST_FIN_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI CREATOR",
+                                    "code": "LOI_CREATOR",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "SUPER USER",
+                                    "code": "SUPERUSER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "EST TECH SANC",
+                                    "code": "EST_ADMIN_SANC",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LOI CHECKER",
+                                    "code": "LOI_CHECKER",
+                                    "tenantId": "pb.amritsar"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "HRMS Admin",
+                                    "code": "HRMS_ADMIN",
+                                    "tenantId": "pb.amritsar"
+                                }
+                            ],
+                            "tenantId": "pb.amritsar",
+                            "uuid": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda"
+                        },
+                        "assignes": [
+                            {
+                                "id": 109,
+                                "userName": "Nipsyyyy",
+                                "name": "Nipun ",
+                                "type": "EMPLOYEE",
+                                "mobileNumber": "9667076655",
+                                "emailId": "",
+                                "roles": [
+                                    {
+                                        "id": null,
+                                        "name": "Employee",
+                                        "code": "EMPLOYEE",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "EST CREATOR",
+                                        "code": "EST_CREATOR",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "EST_CHECKER",
+                                        "code": "EST_CHECKER",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "LOI APPROVER",
+                                        "code": "LOI_APPROVER",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "EST TECH SANC",
+                                        "code": "EST_TECH_SANC",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "EST FIN SANC",
+                                        "code": "EST_FIN_SANC",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "LOI CREATOR",
+                                        "code": "LOI_CREATOR",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "SUPER USER",
+                                        "code": "SUPERUSER",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "EST TECH SANC",
+                                        "code": "EST_ADMIN_SANC",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "LOI CHECKER",
+                                        "code": "LOI_CHECKER",
+                                        "tenantId": "pb.amritsar"
+                                    },
+                                    {
+                                        "id": null,
+                                        "name": "HRMS Admin",
+                                        "code": "HRMS_ADMIN",
+                                        "tenantId": "pb.amritsar"
+                                    }
+                                ],
+                                "tenantId": "pb.amritsar",
+                                "uuid": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda"
+                            }
+                        ],
+                        "nextActions": [
+                            {
+                                "auditDetails": null,
+                                "uuid": "568b7e7d-d88f-4079-bb02-3dc9a37c56ea",
+                                "tenantId": "pb",
+                                "currentState": "67d17040-0c49-40a1-b932-a7b5a5266557",
+                                "action": "CHECK",
+                                "nextState": "e970bdf2-a968-4be5-b0fe-bc6584e62829",
+                                "roles": [
+                                    "EST_CHECKER"
+                                ],
+                                "active": null
+                            },
+                            {
+                                "auditDetails": null,
+                                "uuid": "1a6d9f29-893d-49d9-870f-6e007a6820e8",
+                                "tenantId": "pb",
+                                "currentState": "67d17040-0c49-40a1-b932-a7b5a5266557",
+                                "action": "REJECT",
+                                "nextState": "af66155b-f5ac-447f-947b-f56539c4d671",
+                                "roles": [
+                                    "EST_CHECKER"
+                                ],
+                                "active": null
+                            }
+                        ],
+                        "stateSla": null,
+                        "businesssServiceSla": -793324953,
+                        "previousStatus": null,
+                        "entity": null,
+                        "auditDetails": {
+                            "createdBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                            "lastModifiedBy": "be99b2c2-5780-4b1c-8e41-e3f8a972ebda",
+                            "createdTime": 1670920740971,
+                            "lastModifiedTime": 1670920740971
+                        },
+                        "rating": 0,
+                        "escalated": false
+                    }
+                ],
+                "totalCount": 0
+            }
+        }
+        return result
+    },
 }
