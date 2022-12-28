@@ -21,13 +21,13 @@ export const MastersModule = ({ stateCode, userType, tenants }) => {
     language,
   });
 
-  useEffect(() => {
-    Digit.LocalizationService.getLocale({
-      modules: [`rainmaker-${tenantId}`],
-      locale: language,
-      tenantId: tenantId,
-    })
-  }, [])
+  // useEffect(() => {
+  //   Digit.LocalizationService.getLocale({
+  //     modules: [`rainmaker-${tenantId}`],
+  //     locale: language,
+  //     tenantId: tenantId,
+  //   })
+  // }, [])
 
   if (isLoading) {
     return <Loader />;
