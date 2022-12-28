@@ -1,5 +1,5 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouteMatch } from "react-router-dom";
 import MastersCard from "./components/MastersCard";
 import ProjectCard from "./components/ProjectCard";
@@ -13,12 +13,22 @@ import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
 export const MastersModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["Masters"];
   const { path, url } = useRouteMatch();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({
     stateCode,
     moduleCode,
     language,
   });
+
+  useEffect(() => {
+    Digit.LocalizationService.getLocale({
+      modules: [`rainmaker-${tenantId}`],
+      locale: language,
+      tenantId: tenantId,
+    })
+  }, [])
+
   if (isLoading) {
     return <Loader />;
   }
