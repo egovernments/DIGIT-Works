@@ -81,6 +81,7 @@ CREATE TABLE eg_pms_locality(
 id                           character varying(64),
 code                         character varying(64),
 address_id                   character varying(64),
+parent_id                    character varying(64),
 name                         character varying(64),
 latitude                     character varying(64),
 longitude                    character varying(64),
@@ -88,14 +89,6 @@ materializedPath             character varying(256),
 
 CONSTRAINT pk_eg_pms_locality PRIMARY KEY (id),
 CONSTRAINT fk_eg_pms_locality FOREIGN KEY (address_id) REFERENCES eg_pms_address (id)
-);
-
-CREATE TABLE eg_pms_children(
-id                           character varying(64),
-locality_id                  character varying(64),
-
-CONSTRAINT pk_eg_pms_children PRIMARY KEY (id),
-CONSTRAINT fk_eg_pms_children FOREIGN KEY (locality_id) REFERENCES eg_pms_locality (id)
 );
 
 
