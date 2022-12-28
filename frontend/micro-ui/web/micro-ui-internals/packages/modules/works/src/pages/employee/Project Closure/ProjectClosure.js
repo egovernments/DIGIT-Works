@@ -1,8 +1,9 @@
-import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader } from '@egovernments/digit-ui-react-components'
+import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar } from '@egovernments/digit-ui-react-components'
 import React, { Fragment,useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from "react-router-dom";
 import ApplicationDetailsContent from '../../../../../templates/ApplicationDetails/components/ApplicationDetailsContent';
+import ProjectClosureDetails from './ProjectClosureDetails';
 
 const configNavItems = [
     {
@@ -89,7 +90,7 @@ const ProjectClosure = () => {
             </div>
 
             {/* Here render the applicationDetails based on activeLink */}
-              {isLoading ? <Loader /> : <ApplicationDetailsContent
+              {/* {isLoading ? <Loader /> : <ApplicationDetailsContent
                   applicationDetails={applicationDetails}
                   workflowDetails={workflowDetails}
                   isDataLoading={isLoading}
@@ -101,8 +102,14 @@ const ProjectClosure = () => {
                   showTimeLine={true}
                   //oldValue={oldValue}
                   isInfoLabel={false}
-              />}
-              
+              />} */}
+
+              < ProjectClosureDetails 
+                activeLink={activeLink}
+              />
+              <ActionBar>
+                  <SubmitBar onSubmit={()=>{console.log("project Closed")}} label={t("WORKS_CLOSE_PROJECT")} />
+              </ActionBar>
           </div>
 
 
