@@ -71,7 +71,7 @@ public class Project {
     private Object additionalDetails = null;
 
     @JsonProperty("isDeleted")
-    private Boolean isDeleted = null;
+    private Boolean isDeleted = false;
 
     @JsonProperty("rowVersion")
     private Integer rowVersion = null;

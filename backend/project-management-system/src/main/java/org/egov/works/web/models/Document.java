@@ -1,5 +1,6 @@
 package org.egov.works.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
@@ -22,6 +23,9 @@ public class Document {
     @JsonProperty("id")
     private String id = null;
 
+    @JsonIgnore
+    private String projectid = null;
+
     @JsonProperty("documentType")
     private String documentType = null;
 
@@ -30,6 +34,9 @@ public class Document {
 
     @JsonProperty("documentUid")
     private String documentUid = null;
+
+    @JsonProperty("status")
+    private String status = null;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
