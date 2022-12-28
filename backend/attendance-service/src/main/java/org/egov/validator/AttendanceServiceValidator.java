@@ -134,13 +134,22 @@ public class AttendanceServiceValidator {
             errorMap.put("INVALID_TENANT", "The tenant: " + attendanceRegisters.get(0).getTenantId() + " is not present in MDMS");
     }
 
-    public void validateSearchEstimate(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
-        if (searchCriteria == null || requestInfoWrapper == null || requestInfoWrapper.getRequestInfo() == null) {
-            throw new CustomException("ATTENDANCE_REGISTER_SEARCH_CRITERIA_REQUEST", "Attendance register search criteria request is mandatory");
+    public void validateSearchRegisterRequest(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
+        if (searchCriteria == null || requestInfoWrapper == null) {
+            throw new CustomException("REGISTER_SEARCH_CRITERIA_REQUEST", "Register search criteria request is mandatory");
         }
+
+        Map<String, String> errorMap = new HashMap<>();
+
+        validateRequestInfo(requestInfoWrapper.getRequestInfo(),errorMap);
+
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
+
+        // Throw exception if required parameters are missing
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
     }
 
     public void validateRegisterAgainstDB(List<String> registerIds, List<AttendanceRegister> attendanceRegisterListFromDB, String tenantId) {

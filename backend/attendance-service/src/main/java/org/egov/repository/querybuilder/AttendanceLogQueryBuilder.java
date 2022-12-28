@@ -5,6 +5,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
@@ -68,7 +69,7 @@ public class AttendanceLogQueryBuilder {
 
             //If user does not specify toDate, take today's date as toDate by default.
             if (criteria.getToTime() == null) {
-                criteria.setToTime(new Double(Instant.now().toEpochMilli()));
+                criteria.setToTime(BigDecimal.valueOf(Instant.now().toEpochMilli()));
             }
 
             query.append(" log.time BETWEEN ? AND ?");
@@ -95,9 +96,23 @@ public class AttendanceLogQueryBuilder {
             preparedStmtList.add(criteria.getStatus());
         }
 
+        addOrderByClause(query, criteria);
+
         addLimitAndOffset(query, criteria, preparedStmtList);
 
         return query.toString();
+    }
+
+    private void addOrderByClause(StringBuilder queryBuilder, AttendanceLogSearchCriteria criteria) {
+
+        //default
+        if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
+            queryBuilder.append(" ORDER BY log.lastmodifiedtime ");
+        }
+
+        if (criteria.getSortOrder() == AttendanceLogSearchCriteria.SortOrder.ASC)
+            queryBuilder.append(" ASC ");
+        else queryBuilder.append(" DESC ");
     }
 
     private void addLimitAndOffset(StringBuilder queryBuilder, AttendanceLogSearchCriteria criteria, List<Object> preparedStmtList) {
