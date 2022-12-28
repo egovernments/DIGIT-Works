@@ -7,7 +7,12 @@ import ApplicationDetailsContent from '../../../../../templates/ApplicationDetai
 
 const ProjectClosureDetails = ({activeLink}) => {
     const { t } = useTranslation()
+    //estimation
     let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewProjectClosureDetails("pb.amritsar");
+
+    //contracts
+
+    let { isLoading:isContractLoading, isError:isContractError, data: applicationDetailsContract, error:errorContract } = Digit.Hooks.contracts.useViewContractDetails(t, "tenantId", "contractId", "subEstimateNumber", { enabled:true });
 
     let workflowDetails = Digit.Hooks.useWorkflowDetails(
         {
@@ -35,7 +40,17 @@ const ProjectClosureDetails = ({activeLink}) => {
               //oldValue={oldValue}
               isInfoLabel={false}
           />:null}
-          {activeLink ==="Contracts" ? <div>{activeLink}</div>:null}
+          {activeLink === "Contracts" ? isContractLoading ? <Loader /> : <ApplicationDetailsContent
+              applicationDetails={applicationDetailsContract}
+              isDataLoading={isContractLoading}
+              applicationData={applicationDetailsContract?.applicationData}
+              workflowDetails={applicationDetailsContract?.workflowDetails}
+              statusAttribute={"status"}
+              moduleCode="contracts"
+              showTimeLine={true}
+              timelineStatusPrefix=""
+              isInfoLabel={false}
+          /> :null}
           {activeLink === "FieldSurvey" ? <div>{activeLink}</div> : null}
           {activeLink === "Billing" ? <div>{activeLink}</div> : null}
           {activeLink === "Closure Checklist" ? <div>{activeLink}</div> : null}
