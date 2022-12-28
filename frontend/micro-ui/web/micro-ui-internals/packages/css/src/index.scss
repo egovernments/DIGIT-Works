@@ -735,6 +735,26 @@ input[type="number"] {
   }
 }
 
+.create-new-org {
+  height: 4rem;
+  padding: 1rem;
+  position: relative;
+}
+
+.create-new-org-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #94ab46;
+  padding: 6px;
+  color: #94ab46;
+  display: flex;
+  align-items: center;
+  svg {
+    margin-right: 10px;
+  }
+}
 .bills-menu-options {
   cursor: pointer;
   margin: 1rem;
