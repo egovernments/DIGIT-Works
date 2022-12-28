@@ -32,7 +32,7 @@ public class ProjectValidator {
         RequestInfo requestInfo = request.getRequestInfo();
 
         validateRequestInfo(requestInfo, errorMap);
-        validateProjectRequest(projects, errorMap);
+        validateProjectRequest(projects, errorMap, true);
 
         String tenantId = projects.get(0).getTenantId();
         String rootTenantId = tenantId.split("\\.")[0];
@@ -45,7 +45,38 @@ public class ProjectValidator {
             throw new CustomException(errorMap);
     }
 
-    private void validateProjectRequest(List<Project> projects, Map<String, String> errorMap) {
+    public void valiateSearchProject(ProjectRequest project, Integer limit, Integer offset, String tenantId) {
+        Map<String, String> errorMap = new HashMap<>();
+        List<Project> projects = project.getProjects();
+        RequestInfo requestInfo = project.getRequestInfo();
+
+        validateRequestInfo(requestInfo, errorMap);
+        validateProjectRequest(projects, errorMap, false);
+        validateProjectRequestParams(limit, offset, tenantId);
+
+        Object mdmsData = mdmsUtils.mDMSCall(project, tenantId.split("\\.")[0]);
+
+        validateMDMSData(projects, mdmsData,  errorMap);
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
+
+    private void validateProjectRequestParams(Integer limit, Integer offset, String tenantId) {
+        if (limit == null) {
+            throw new CustomException("CREATE_PROJECT", "limit is mandatory");
+        }
+
+        if (offset == null) {
+            throw new CustomException("CREATE_PROJECT", "offset is mandatory");
+        }
+
+        if (StringUtils.isBlank(tenantId)) {
+            throw new CustomException("CREATE_PROJECT", "tenantId is mandatory");
+        }
+    }
+
+    private void validateProjectRequest(List<Project> projects, Map<String, String> errorMap, Boolean isCreate) {
         if (projects == null || projects.size() == 0) {
             throw new CustomException("CREATE_PROJECT", "Projects are mandatory");
         }
@@ -54,8 +85,12 @@ public class ProjectValidator {
             if (project == null) {
                 throw new CustomException("PROJECT", "Project is mandatory");
             }
-            if (StringUtils.isBlank(project.getTenantId())) {
-                throw new CustomException("TENANT_ID", "Tenant is mandatory");
+            if (isCreate && project.getTenantId() == null) {
+                throw new CustomException("TENANT_ID", "Tenant ID is mandatory");
+            }
+            if (!isCreate && StringUtils.isBlank(project.getId()) && StringUtils.isBlank(project.getProjectType()) && StringUtils.isBlank(project.getProjectSubType()) && StringUtils.isBlank(project.getReferenceID())
+                    && project.getStartDate() == 0 && project.getEndDate() == 0 && StringUtils.isBlank(project.getDepartment())) {
+                throw new CustomException("PROJECT_SEARCH_FIELDS", "Any one project search field is required");
             }
             if (StringUtils.isBlank(project.getProjectType()) && StringUtils.isNotBlank(project.getProjectSubType())) {
                 errorMap.put("PROJECT", "Project Type must be present for Project sub type");
@@ -124,5 +159,4 @@ public class ProjectValidator {
             }
         }
     }
-
 }
