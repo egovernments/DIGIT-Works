@@ -39,11 +39,13 @@ public class ProjectEnrichment {
             project.getAddress().setAuditDetails(auditDetails);
             project.getAddress().setId(UUID.randomUUID().toString());
 
-            project.getAddress().getLocality().setId(UUID.randomUUID().toString());
+            if (project.getAddress().getLocality() != null) {
+                project.getAddress().getLocality().setId(UUID.randomUUID().toString());
 
-            List<Boundary> children = project.getAddress().getLocality().getChildren();
-            for (Boundary child: children) {
-                child.setId(UUID.randomUUID().toString());
+                List<Boundary> children = project.getAddress().getLocality().getChildren();
+                for (Boundary child: children) {
+                    child.setId(UUID.randomUUID().toString());
+                }
             }
         }
 
