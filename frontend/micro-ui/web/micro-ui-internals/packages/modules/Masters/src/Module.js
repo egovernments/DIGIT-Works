@@ -25,7 +25,7 @@ export const MastersModule = ({ stateCode, userType, tenants }) => {
     Digit.LocalizationService.getLocale({
       modules: [`rainmaker-${tenantId}`],
       locale: language,
-      tenantId: tenantId,
+      tenantId: stateCode,
     })
   }, [])
 

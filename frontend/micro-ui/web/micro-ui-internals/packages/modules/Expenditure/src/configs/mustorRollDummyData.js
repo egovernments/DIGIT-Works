@@ -6,7 +6,7 @@ export const mustorRollDummyData = {
             registrationId: 'ID-1239-1312',
             individualName: 'Rashmi Ranjan',
             guardianName: 'Rashmi Ranjan' ,
-            modifiedAmt: '3000',
+            modifiedAmt: '3,000',
             bankAccountDetails : {
                 accountNo : '880182873839',
                 ifsc : 'SBIN0001237'
@@ -18,7 +18,7 @@ export const mustorRollDummyData = {
             registrationId: 'ID-1239-1312',
             individualName: 'Rashmi Ranjan',
             guardianName: 'Rashmi Ranjan' ,
-            modifiedAmt: '3000',
+            modifiedAmt: '3,000',
             bankAccountDetails : {
                 accountNo : '880182873839',
                 ifsc : 'SBIN0001237'
@@ -30,7 +30,7 @@ export const mustorRollDummyData = {
             registrationId: 'ID-1239-1312',
             individualName: 'Rashmi Ranjan',
             guardianName: 'Rashmi Ranjan' ,
-            modifiedAmt: '3000',
+            modifiedAmt: '3,000',
             bankAccountDetails : {
                 accountNo : '880182873839',
                 ifsc : 'SBIN0001237'
@@ -42,7 +42,7 @@ export const mustorRollDummyData = {
             registrationId: 'ID-1239-1312',
             individualName: 'Rashmi Ranjan',
             guardianName: 'Rashmi Ranjan' ,
-            modifiedAmt: '3000',
+            modifiedAmt: '3,000',
             bankAccountDetails : {
                 accountNo : '880182873839',
                 ifsc : 'SBIN0001237'
@@ -54,7 +54,7 @@ export const mustorRollDummyData = {
             registrationId: 'ID-1239-1312',
             individualName: 'Rashmi Ranjan',
             guardianName: 'Rashmi Ranjan' ,
-            modifiedAmt: '3000',
+            modifiedAmt: '3,000',
             bankAccountDetails : {
                 accountNo : '880182873839',
                 ifsc : 'SBIN0001237'
@@ -66,7 +66,7 @@ export const mustorRollDummyData = {
             registrationId: 'ID-1239-1312',
             individualName: 'Rashmi Ranjan',
             guardianName: 'Rashmi Ranjan' ,
-            modifiedAmt: '3000',
+            modifiedAmt: '3,000',
             bankAccountDetails : {
                 accountNo : '880182873839',
                 ifsc : 'SBIN0001237'
@@ -78,7 +78,7 @@ export const mustorRollDummyData = {
             registrationId: 'ID-1239-1312',
             individualName: 'Rashmi Ranjan',
             guardianName: 'Rashmi Ranjan' ,
-            modifiedAmt: '3000',
+            modifiedAmt: '3,000',
             bankAccountDetails : {
                 accountNo : '880182873839',
                 ifsc : 'SBIN0001237'
@@ -90,7 +90,7 @@ export const mustorRollDummyData = {
             registrationId: 'ID-1239-1312',
             individualName: 'Rashmi Ranjan',
             guardianName: 'Rashmi Ranjan' ,
-            modifiedAmt: '3000',
+            modifiedAmt: '3,000',
             bankAccountDetails : {
                 accountNo : '880182873839',
                 ifsc : 'SBIN0001237'
@@ -102,7 +102,7 @@ export const mustorRollDummyData = {
             registrationId: 'ID-1239-1312',
             individualName: 'Rashmi Ranjan',
             guardianName: 'Rashmi Ranjan' ,
-            modifiedAmt: '3000',
+            modifiedAmt: '3,000',
             bankAccountDetails : {
                 accountNo : '880182873839',
                 ifsc : 'SBIN0001237'
@@ -114,7 +114,7 @@ export const mustorRollDummyData = {
             registrationId: 'ID-1239-1312',
             individualName: 'Rashmi Ranjan',
             guardianName: 'Rashmi Ranjan' ,
-            modifiedAmt: '3000',
+            modifiedAmt: '3,000',
             bankAccountDetails : {
                 accountNo : '880182873839',
                 ifsc : 'SBIN0001237'
@@ -126,7 +126,7 @@ export const mustorRollDummyData = {
             registrationId: 'ID-1239-1312',
             individualName: 'Rashmi Ranjan',
             guardianName: 'Rashmi Ranjan' ,
-            modifiedAmt: '3000',
+            modifiedAmt: '3,000',
             bankAccountDetails : {
                 accountNo : '880182873839',
                 ifsc : 'SBIN0001237'
@@ -136,7 +136,7 @@ export const mustorRollDummyData = {
         total: {
             sno: "WF_TOTAL_TASK",
             type: "total",
-            modifiedAmt : "36000",
+            modifiedAmt : "36,000",
             bankAccountDetails: ""
         },
     }

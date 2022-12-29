@@ -81,6 +81,7 @@ export const addVendorBillConfig = () => {
                         name: "upload_files",
                         allowedMaxSizeInMB:2,
                         maxFilesAllowed:3,
+                        hintText:t("WORKS_DOC_UPLOAD_HINT_2MB"),
                         allowedFileTypes : /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
                     }
                 }

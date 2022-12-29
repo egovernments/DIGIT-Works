@@ -2,6 +2,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { Card, CardSectionHeader, CollapseAndExpandGroups } from '@egovernments/digit-ui-react-components'
 import MustorRollDetailsTable from './MustorRollDetailsTable'
+import { formatter } from '../../../../../libraries/src/utils/dss'
 
 const mustorRollIds = ['Muster Roll 1- ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)', 'Muster Roll 2- ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)', 'Muster Roll 3- ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)', 'Muster Roll 4- ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)']
 const MustorRollDetails = ({ wrapInCard }) => {
@@ -14,7 +15,7 @@ const MustorRollDetails = ({ wrapInCard }) => {
           {
             mustorRollIds.map(id => {
               return (
-              <CollapseAndExpandGroups key={id} groupElements={true} headerLabel="Muster Roll 1- ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)" headerValue="₹ 30000">
+              <CollapseAndExpandGroups key={id} groupElements={true} headerLabel="Muster Roll 1- ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)" headerValue="₹ 30,000">
                 <div style={{marginTop: '16px'}}>
                   <MustorRollDetailsTable />
                 </div>
@@ -25,7 +26,7 @@ const MustorRollDetails = ({ wrapInCard }) => {
           
           <div style={{margin: "32px 0px", display: "flex", justifyContent:"space-between"}}>
               <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_LABOUR_BILL")}</CardSectionHeader>
-              <CardSectionHeader style={{marginBottom: 0}}>{"₹ 1,20,000"}</CardSectionHeader>
+              <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${formatter(120000, 'number')}`}</CardSectionHeader>
           </div>
        </Card>
     </React.Fragment>

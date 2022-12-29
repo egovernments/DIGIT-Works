@@ -210,20 +210,7 @@ const UploadFile = (props) => {
                 <RemoveableTag extraStyles={extraStyles} key={index} text={file[0]} onClick={(e) => props?.removeTargetedFile(fileDetailsData, e)} />
               </div>
             })}
-          {!hasFile || props.error ? (
-            <h2 className="file-upload-status">{props.message}</h2>
-          ) : (
-            <div className="tag-container" style={extraStyles ? extraStyles?.tagContainerStyles : null}>
-              <div className="tag" style={extraStyles ? extraStyles?.tagStyles : null}>
-                <span className="text" style={extraStyles ? extraStyles?.textStyles : null}>
-                   {(typeof inpRef.current.files[0]?.name !== "undefined") && !(props?.file)  ? inpRef.current.files[0]?.name : props.file?.name} 
-                </span>
-                <span onClick={() => handleDelete()} style={extraStyles ? extraStyles?.closeIconStyles : null}>
-                  <Close style={props.Multistyle} className="close" />
-                </span>
-              </div>
-            </div>
-          )}
+          {props?.uploadedFiles.length === 0 && <h2 className="file-upload-status">{props.message}</h2>}
         </div>
         <input
           className={props.disabled ? "disabled" : "" + "input-mirror-selector-button"}
