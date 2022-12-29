@@ -12,7 +12,7 @@ const ProjectClosureDetails = ({activeLink}) => {
 
     //contracts
 
-    let { isLoading:isContractLoading, isError:isContractError, data: applicationDetailsContract, error:errorContract } = Digit.Hooks.contracts.useViewContractDetails(t, "tenantId", "contractId", "subEstimateNumber", { enabled:true });
+    let { isLoading: isContractLoading, isError: isContractError, data: applicationDetailsContract, error: errorContract } = Digit.Hooks.contracts.useViewContractDetailsClosureScreen(t, "tenantId", "contractId", "subEstimateNumber", { enabled:true });
 
     let workflowDetails = Digit.Hooks.useWorkflowDetails(
         {

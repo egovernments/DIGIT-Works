@@ -27,7 +27,7 @@ const ProjectCard = () => {
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {
-        label: t("WORKS_PROJECT_CLOUSURE"),
+        label: t("WORKS_PROJECT_CLOSURE"),
         link: `/${window?.contextPath}/employee/works/projectclosure`,
         roles: [],
       },

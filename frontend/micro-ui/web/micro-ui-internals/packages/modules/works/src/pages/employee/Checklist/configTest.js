@@ -1,5 +1,5 @@
-import { RadioButtons, MultiUploadWrapper,CheckBox } from "@egovernments/digit-ui-react-components";
-import { Controller,useForm } from "react-hook-form";
+import { RadioButtons, MultiUploadWrapper, CheckBox } from "@egovernments/digit-ui-react-components";
+import { Controller, useForm } from "react-hook-form";
 import React from "react";
 
 const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
@@ -266,7 +266,7 @@ const closureChecklistConfig = {
 //     e && setFile(e.file);
 // }
 
-const getConfig = (question,t,index) => {
+const getConfig = (question, t, index) => {
 
     switch (question.type) {
         //Yes / No
@@ -275,7 +275,7 @@ const getConfig = (question,t,index) => {
                 isMandatory: true,
                 key: question.uuid,
                 type: "radio",
-                label: `${index+1}. ${question?.questionStatement}`,
+                label: `${index + 1}. ${question?.questionStatement}`,
                 disable: false,
                 populators: {
                     name: question.uuid,
@@ -305,18 +305,18 @@ const getConfig = (question,t,index) => {
                 populators: { name: question.uuid, error: "Required", validation: { required: true } },
             }
         case "upload":
-        return {    
-            type:"multiupload",
-            label: `${index + 1}. ${question?.questionStatement}`,
-            populators:{
-                name: question.uuid,
-                allowedMaxSizeInMB:2,
-                maxFilesAllowed:4,
-                hintText:t("WORKS_DOC_UPLOAD_HINT_2MB"),
-                allowedFileTypes : /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
-                
+            return {
+                type: "multiupload",
+                label: `${index + 1}. ${question?.questionStatement}`,
+                populators: {
+                    name: question.uuid,
+                    allowedMaxSizeInMB: 2,
+                    maxFilesAllowed: 4,
+                    hintText: t("WORKS_DOC_UPLOAD_HINT_2MB"),
+                    allowedFileTypes: /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
+
+                }
             }
-        }
 
         default:
             return {
@@ -345,20 +345,26 @@ const getConfig = (question,t,index) => {
     }
 }
 
-export const configChecklist = (t, setShowForm,showForm) => {
+export const configChecklistTest = (t, setShowForm, showForm) => {
     const handleChange = (props) => {
-        setShowForm((prevState)=>!prevState)
+        setShowForm((prevState) => !prevState)
     }
     return {
-        form:[
+        form: [
             //every object in this array is a section and incase of multiple cards every section is rendered in a separate card
+            //now we want to render a horizontal navigation above the Card to render different sections based on the active link in the horizontal nav
+            //so we have to add multiple sub sections somehow inside the body property, the way it is done is by adding the navLink property 
+            // finally -> so every object in this form array will always be a separate card when showMultiple cards prop is true the only difference will be if navLink is set to be some applicable link it'll be part of horizontal nav flow otherwise it'll just be a separate card 
+            // Note -> you will have to send the list of all the links as a direct prop to formComposer
             {
                 head: t("WORKS_KICKOFF_CHECKLIST"),
-                body: surveyConfig.questions.map((question,index)=> getConfig(question,t,index))
+                body: surveyConfig.questions.map((question, index) => getConfig(question, t, index)),
+                navLink:"Kickoff Checklist"
             },
             {
+                navLink:"Closure Checklist",
                 head: t("WORKS_CLOSURE_CHECKLIST"),
-                body:showForm ? [
+                body: showForm ? [
                     {
                         populators: (
                             <CheckBox
@@ -370,20 +376,49 @@ export const configChecklist = (t, setShowForm,showForm) => {
                         hideContainer: true
                     },
                     ...closureChecklistConfig.questions.map((question, index) => getConfig(question, t, index))
-                ]:[
-                        {
-                            populators: (
-                                <CheckBox
-                                    onChange={handleChange}
-                                    checked={showForm}
-                                    label={t("WORKS_PROJECT_COMPLETED")}
-                                    name={"Checkbox"}
-                                />
-                            ),
-                            hideContainer: true
-                        },
+                ] : [
+                    {
+                        populators: (
+                            <CheckBox
+                                onChange={handleChange}
+                                checked={showForm}
+                                label={t("WORKS_PROJECT_COMPLETED")}
+                                name={"Checkbox"}
+                            />
+                        ),
+                        hideContainer: true
+                    },
                 ],
-            }
+            },
+            // {
+            //     //navLink: "Closure",
+            //     head: t("WORKS_CLOSURE_CHECKLIST"),
+            //     body: showForm ? [
+            //         {
+            //             populators: (
+            //                 <CheckBox
+            //                     onChange={handleChange}
+            //                     checked={showForm}
+            //                     label={t("WORKS_PROJECT_COMPLETED")}
+            //                 />
+            //             ),
+            //             hideContainer: true
+            //         },
+            //         ...closureChecklistConfig.questions.map((question, index) => getConfig(question, t, index))
+            //     ] : [
+            //         {
+            //             populators: (
+            //                 <CheckBox
+            //                     onChange={handleChange}
+            //                     checked={showForm}
+            //                     label={t("WORKS_PROJECT_COMPLETED")}
+            //                     name={"Checkbox"}
+            //                 />
+            //             ),
+            //             hideContainer: true
+            //         },
+            //     ],
+            // }
         ]
     }
 }
