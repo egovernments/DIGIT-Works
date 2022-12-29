@@ -1,6 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:works_shg_app/utils/Constants/I18KeyConstants.dart';
 
 import '../blocs/auth/auth.dart';
 import '../blocs/localization/app_localization.dart';
@@ -24,15 +25,17 @@ class LoginPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  AppLocalizations.of(context).translate('CORE_COMMON_LOGIN'),
+                  AppLocalizations.of(context).translate(i18.login.loginLabel),
                   style: theme.textTheme.displayMedium,
                 ),
                 DigitTextField(
-                  label: 'User ID',
+                  label: AppLocalizations.of(context)
+                      .translate(i18.login.loginUserName),
                   controller: userIdController,
                 ),
                 DigitTextField(
-                  label: 'Password',
+                  label: AppLocalizations.of(context)
+                      .translate(i18.login.loginPassword),
                   controller: passwordController,
                 ),
                 const SizedBox(height: 16),
@@ -48,21 +51,26 @@ class LoginPage extends StatelessWidget {
                                   ),
                                 );
                           },
-                    child: const Center(
-                      child: Text('Login'),
+                    child: Center(
+                      child: Text(AppLocalizations.of(context)
+                          .translate(i18.login.loginLabel)),
                     ),
                   ),
                 ),
                 TextButton(
                   onPressed: () => DigitDialog.show(
                     context,
-                    title: 'Forgot Password?',
+                    title: AppLocalizations.of(context)
+                        .translate(i18.login.forgotPassword),
                     content:
                         'Please contact the administrator if you have forgotten your password',
-                    primaryActionLabel: 'OK',
+                    primaryActionLabel:
+                        AppLocalizations.of(context).translate(i18.common.oK),
                     primaryAction: () => Navigator.pop(context),
                   ),
-                  child: const Center(child: Text('Forgot Password?')),
+                  child: Center(
+                      child: Text(AppLocalizations.of(context)
+                          .translate(i18.login.forgotPassword))),
                 ),
               ],
             ),

@@ -4,7 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:works_shg_app/utils/constants.dart';
+import 'package:works_shg_app/Env/app_config.dart';
 
 import '../../../models/UserDetails/user_details_model.dart';
 
@@ -24,7 +24,7 @@ class AuthRepository {
       };
       var formData = FormData.fromMap(body);
       final response =
-          await Dio(BaseOptions(baseUrl: Constants.baseURL, headers: headers))
+          await Dio(BaseOptions(baseUrl: apiBaseUrl, headers: headers))
               .post(url, queryParameters: queryParameters, data: formData);
 
       return UserDetailsModel.fromJson(

@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import "package:dio/dio.dart";
+import 'package:works_shg_app/Env/app_config.dart';
 
 import '../models/request_info/request_info_model.dart';
-import '../utils/constants.dart';
 
 class Client {
   Dio init() {
     final Dio dio = Dio();
     dio.interceptors.add(ApiInterceptors());
-    dio.options.baseUrl = Constants.baseURL;
+    dio.options.baseUrl = apiBaseUrl;
 
     return dio;
   }
