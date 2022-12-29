@@ -32,7 +32,7 @@ class EnvironmentVariables {
 
 Map<String, dynamic> devConstants = {
   _baseUrl: kIsWeb
-      ? window.location.origin
+      ? '${window.location.origin}/'
       : const String.fromEnvironment('BASE_URL'),
   // "https://works-qa.digit.org/works-shg-app/",
 };
