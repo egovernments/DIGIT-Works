@@ -39,6 +39,16 @@ class AppConfig with _$AppConfig {
 }
 
 @freezed
+class LanguagesList with _$LanguagesList {
+  factory LanguagesList({
+    @JsonKey(name: 'languages') required List<Languages>? languages,
+  }) = _LanguagesList;
+
+  factory LanguagesList.fromJson(Map<String, dynamic> json) =>
+      _$LanguagesListFromJson(json);
+}
+
+@freezed
 class Languages with _$Languages {
   factory Languages({
     required String label,

@@ -1,7 +1,10 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:works_shg_app/router/app_router.dart';
+import 'package:works_shg_app/utils/Constants/I18KeyConstants.dart';
 import 'package:works_shg_app/widgets/ButtonLink.dart';
+
+import '../blocs/localization/app_localization.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,10 +23,14 @@ class HomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   LabeledField(
-                      label: 'Works Mgmt',
-                      child: ButtonLink('Work Order', null))
+                      label: AppLocalizations.of(context)
+                          .translate(i18.home.worksMgmt),
+                      child: ButtonLink(
+                          AppLocalizations.of(context)
+                              .translate(i18.home.workOrder),
+                          null))
                 ],
               ),
             ),
@@ -34,17 +41,22 @@ class HomePage extends StatelessWidget {
             child: Align(
               alignment: Alignment.topCenter,
               child: LabeledField(
-                  label: 'Attendance Inbox',
+                  label: AppLocalizations.of(context)
+                      .translate(i18.home.attendanceMgmt),
                   child: Column(
                     children: [
                       ButtonLink(
-                          'Manage Attendance',
+                          AppLocalizations.of(context)
+                              .translate(i18.home.manageWageSeekers),
                           () => context.router
                               .push(const AttendanceInboxRoute())),
                       ButtonLink(
-                          'Register Individual (Wage seeker)', () => null),
+                          AppLocalizations.of(context)
+                              .translate(i18.home.registerIndividual),
+                          () => null),
                       ButtonLink(
-                          'Muster Roll',
+                          AppLocalizations.of(context)
+                              .translate(i18.home.musterRoll),
                           () => context.router
                               .push(const ViewMusterRollsRoute())),
                     ],

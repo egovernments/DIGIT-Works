@@ -13,9 +13,12 @@ import 'package:works_shg_app/router/app_router.dart';
 import 'Env/app_config.dart';
 import 'blocs/app_bloc_observer.dart';
 import 'blocs/app_config/app_config.dart';
+import 'blocs/app_initilization/app_initilization.dart';
 import 'blocs/auth/auth.dart';
 import 'blocs/localization/app_localization.dart';
 import 'blocs/localization/localization.dart';
+import 'data/remote_client.dart';
+import 'data/repositories/remote/mdms.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -52,9 +55,17 @@ class MainApplication extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Client client = Client();
+
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthBloc(const AuthState())),
+        BlocProvider(
+          create: (context) => AppInitializationBloc(
+            const AppInitializationState(),
+            MdmsRepository(client.init()),
+          )..add(const AppInitializationSetupEvent(selectedLangIndex: 0)),
+          lazy: false,
+        ),
         BlocProvider(
           create: (context) => LocalizationBloc(
             const LocalizationState(),
@@ -65,12 +76,14 @@ class MainApplication extends StatelessWidget {
             )),
           lazy: false,
         ),
+        BlocProvider(create: (context) => AuthBloc(const AuthState())),
         BlocProvider(
           create: (_) => ApplicationConfigBloc(const ApplicationConfigState())
             ..add(const ApplicationConfigEvent.onfetchConfig()),
         ),
       ],
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+        print(state);
         return MaterialApp.router(
           supportedLocales: const [
             Locale('en', 'IN'),
@@ -84,6 +97,16 @@ class MainApplication extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
           ],
+          localeResolutionCallback: (locale, supportedLocales) {
+            for (var supportedLocaleLanguage in supportedLocales) {
+              if (supportedLocaleLanguage.languageCode ==
+                      locale?.languageCode &&
+                  supportedLocaleLanguage.countryCode == locale?.countryCode) {
+                return supportedLocaleLanguage;
+              }
+            }
+            return supportedLocales.first;
+          },
           theme: DigitTheme.instance.mobileTheme,
           routeInformationParser: appRouter.defaultRouteParser(),
           routerDelegate: AutoRouterDelegate.declarative(
