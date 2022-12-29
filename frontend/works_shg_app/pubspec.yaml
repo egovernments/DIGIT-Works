@@ -64,6 +64,7 @@ dependencies:
   dart_mappable: ^1.2.0
   isar: ^3.0.5
   isar_flutter_libs: ^3.0.5
+  kt_dart: ^0.10.0
   flutter_localizations:
     sdk: flutter
 

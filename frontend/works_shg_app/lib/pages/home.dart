@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 
+import '../blocs/localization/app_localization.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -20,10 +22,13 @@ class HomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   LabeledField(
                       label: 'Works Mgmt',
-                      child: ButtonLink('Work Order', null))
+                      child: ButtonLink(
+                          AppLocalizations.of(context)
+                              .translate('ACTION_TEST_WORK_ORDER'),
+                          null))
                 ],
               ),
             ),
@@ -38,7 +43,8 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     children: [
                       ButtonLink(
-                          'Manage Attendance',
+                          AppLocalizations.of(context)
+                              .translate('MANAGE_WAGE_SEEKERS'),
                           () => context.router
                               .push(const AttendanceInboxRoute())),
                       ButtonLink(

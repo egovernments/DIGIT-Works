@@ -6,7 +6,9 @@ import '../blocs/auth/auth.dart';
 import '../blocs/localization/app_localization.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
+  var userIdController = TextEditingController();
+  var passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +27,14 @@ class LoginPage extends StatelessWidget {
                   AppLocalizations.of(context).translate('CORE_COMMON_LOGIN'),
                   style: theme.textTheme.displayMedium,
                 ),
-                const DigitTextField(label: 'User ID'),
-                const DigitTextField(label: 'Password'),
+                DigitTextField(
+                  label: 'User ID',
+                  controller: userIdController,
+                ),
+                DigitTextField(
+                  label: 'Password',
+                  controller: passwordController,
+                ),
                 const SizedBox(height: 16),
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) => DigitElevatedButton(
@@ -34,9 +42,9 @@ class LoginPage extends StatelessWidget {
                         ? null
                         : () {
                             context.read<AuthBloc>().add(
-                                  const AuthLoginEvent(
-                                    userId: '',
-                                    password: '',
+                                  AuthLoginEvent(
+                                    userId: userIdController.text,
+                                    password: passwordController.text,
                                   ),
                                 );
                           },
