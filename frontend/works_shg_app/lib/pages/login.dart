@@ -1,12 +1,15 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:works_shg_app/utils/Constants/I18KeyConstants.dart';
 
 import '../blocs/auth/auth.dart';
 import '../blocs/localization/app_localization.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
+  var userIdController = TextEditingController();
+  var passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +25,19 @@ class LoginPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  AppLocalizations.of(context).translate('CORE_COMMON_LOGIN'),
+                  AppLocalizations.of(context).translate(i18.login.loginLabel),
                   style: theme.textTheme.displayMedium,
                 ),
-                const DigitTextField(label: 'User ID'),
-                const DigitTextField(label: 'Password'),
+                DigitTextField(
+                  label: AppLocalizations.of(context)
+                      .translate(i18.login.loginUserName),
+                  controller: userIdController,
+                ),
+                DigitTextField(
+                  label: AppLocalizations.of(context)
+                      .translate(i18.login.loginPassword),
+                  controller: passwordController,
+                ),
                 const SizedBox(height: 16),
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) => DigitElevatedButton(
@@ -34,27 +45,32 @@ class LoginPage extends StatelessWidget {
                         ? null
                         : () {
                             context.read<AuthBloc>().add(
-                                  const AuthLoginEvent(
-                                    userId: '',
-                                    password: '',
+                                  AuthLoginEvent(
+                                    userId: userIdController.text,
+                                    password: passwordController.text,
                                   ),
                                 );
                           },
-                    child: const Center(
-                      child: Text('Login'),
+                    child: Center(
+                      child: Text(AppLocalizations.of(context)
+                          .translate(i18.login.loginLabel)),
                     ),
                   ),
                 ),
                 TextButton(
                   onPressed: () => DigitDialog.show(
                     context,
-                    title: 'Forgot Password?',
+                    title: AppLocalizations.of(context)
+                        .translate(i18.login.forgotPassword),
                     content:
                         'Please contact the administrator if you have forgotten your password',
-                    primaryActionLabel: 'OK',
+                    primaryActionLabel:
+                        AppLocalizations.of(context).translate(i18.common.oK),
                     primaryAction: () => Navigator.pop(context),
                   ),
-                  child: const Center(child: Text('Forgot Password?')),
+                  child: Center(
+                      child: Text(AppLocalizations.of(context)
+                          .translate(i18.login.forgotPassword))),
                 ),
               ],
             ),

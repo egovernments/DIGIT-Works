@@ -52,6 +52,18 @@ Map<String, dynamic> _$$_AppConfigToJson(_$_AppConfig instance) =>
       'LOCALIZATION_MODULES': instance.localizationModules,
     };
 
+_$_LanguagesList _$$_LanguagesListFromJson(Map<String, dynamic> json) =>
+    _$_LanguagesList(
+      languages: (json['languages'] as List<dynamic>?)
+          ?.map((e) => Languages.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$_LanguagesListToJson(_$_LanguagesList instance) =>
+    <String, dynamic>{
+      'languages': instance.languages,
+    };
+
 _$_Languages _$$_LanguagesFromJson(Map<String, dynamic> json) => _$_Languages(
       label: json['label'] as String,
       value: json['value'] as String,

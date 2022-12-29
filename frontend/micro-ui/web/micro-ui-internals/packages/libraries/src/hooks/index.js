@@ -253,6 +253,7 @@ import useUpdateEstimate from "./works/useUpdateEstimate";
 import useWorksInbox from "./works/useInbox";
 import useKickoffInbox from "./works/useKickoffInbox";
 import useViewContractDetails from "./contracts/useViewContractDetails";
+import useViewContractDetailsClosureScreen from "./contracts/useViewContractDetailsClosureScreen";
 import useViewAttendance from "./attendance/useViewAttendance";
 import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
@@ -277,6 +278,7 @@ const works = {
 
 const contracts = {
   useViewContractDetails,
+  useViewContractDetailsClosureScreen
 };
 
 const pgr = {

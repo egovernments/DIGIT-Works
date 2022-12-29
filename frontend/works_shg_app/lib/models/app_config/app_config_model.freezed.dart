@@ -572,6 +572,157 @@ abstract class _AppConfig implements AppConfig {
       throw _privateConstructorUsedError;
 }
 
+LanguagesList _$LanguagesListFromJson(Map<String, dynamic> json) {
+  return _LanguagesList.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LanguagesList {
+  @JsonKey(name: 'languages')
+  List<Languages>? get languages => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LanguagesListCopyWith<LanguagesList> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LanguagesListCopyWith<$Res> {
+  factory $LanguagesListCopyWith(
+          LanguagesList value, $Res Function(LanguagesList) then) =
+      _$LanguagesListCopyWithImpl<$Res, LanguagesList>;
+  @useResult
+  $Res call({@JsonKey(name: 'languages') List<Languages>? languages});
+}
+
+/// @nodoc
+class _$LanguagesListCopyWithImpl<$Res, $Val extends LanguagesList>
+    implements $LanguagesListCopyWith<$Res> {
+  _$LanguagesListCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? languages = freezed,
+  }) {
+    return _then(_value.copyWith(
+      languages: freezed == languages
+          ? _value.languages
+          : languages // ignore: cast_nullable_to_non_nullable
+              as List<Languages>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_LanguagesListCopyWith<$Res>
+    implements $LanguagesListCopyWith<$Res> {
+  factory _$$_LanguagesListCopyWith(
+          _$_LanguagesList value, $Res Function(_$_LanguagesList) then) =
+      __$$_LanguagesListCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({@JsonKey(name: 'languages') List<Languages>? languages});
+}
+
+/// @nodoc
+class __$$_LanguagesListCopyWithImpl<$Res>
+    extends _$LanguagesListCopyWithImpl<$Res, _$_LanguagesList>
+    implements _$$_LanguagesListCopyWith<$Res> {
+  __$$_LanguagesListCopyWithImpl(
+      _$_LanguagesList _value, $Res Function(_$_LanguagesList) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? languages = freezed,
+  }) {
+    return _then(_$_LanguagesList(
+      languages: freezed == languages
+          ? _value._languages
+          : languages // ignore: cast_nullable_to_non_nullable
+              as List<Languages>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$_LanguagesList implements _LanguagesList {
+  _$_LanguagesList(
+      {@JsonKey(name: 'languages') required final List<Languages>? languages})
+      : _languages = languages;
+
+  factory _$_LanguagesList.fromJson(Map<String, dynamic> json) =>
+      _$$_LanguagesListFromJson(json);
+
+  final List<Languages>? _languages;
+  @override
+  @JsonKey(name: 'languages')
+  List<Languages>? get languages {
+    final value = _languages;
+    if (value == null) return null;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'LanguagesList(languages: $languages)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_LanguagesList &&
+            const DeepCollectionEquality()
+                .equals(other._languages, _languages));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_languages));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_LanguagesListCopyWith<_$_LanguagesList> get copyWith =>
+      __$$_LanguagesListCopyWithImpl<_$_LanguagesList>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_LanguagesListToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LanguagesList implements LanguagesList {
+  factory _LanguagesList(
+      {@JsonKey(name: 'languages')
+          required final List<Languages>? languages}) = _$_LanguagesList;
+
+  factory _LanguagesList.fromJson(Map<String, dynamic> json) =
+      _$_LanguagesList.fromJson;
+
+  @override
+  @JsonKey(name: 'languages')
+  List<Languages>? get languages;
+  @override
+  @JsonKey(ignore: true)
+  _$$_LanguagesListCopyWith<_$_LanguagesList> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 Languages _$LanguagesFromJson(Map<String, dynamic> json) {
   return _Languages.fromJson(json);
 }

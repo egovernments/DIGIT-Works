@@ -18,7 +18,7 @@ import ModifyEstimate from "../../components/ModifyEstimate";
 import Checklist from "./Checklist/index";
 import ChecklistInbox from './ChecklistInbox'
 import ProjectClosure from "./Project Closure/ProjectClosure";
-
+import ChecklistSampleForm from "./Checklist/SampleFormTest";
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
 
@@ -186,6 +186,8 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/response`} component={() => <Response {...{ path }} />} />
           <PrivateRoute path={`${path}/checklist`} component={() => <Checklist {...{ path }} />} />
+          <PrivateRoute path={`${path}/sampleForm`} component={() => <ChecklistSampleForm {...{ path }} />} />
+          
           <PrivateRoute path={`${path}/download`} component={()=> <HandleDownloadPdf {...{path}}/>}/>
         </div>
       </React.Fragment>

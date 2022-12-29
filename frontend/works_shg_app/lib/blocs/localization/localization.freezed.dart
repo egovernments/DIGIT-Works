@@ -148,7 +148,9 @@ class __$$OnLoadLocalizationEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$OnLoadLocalizationEvent implements OnLoadLocalizationEvent {
+class _$OnLoadLocalizationEvent
+    with DiagnosticableTreeMixin
+    implements OnLoadLocalizationEvent {
   const _$OnLoadLocalizationEvent(
       {required this.module, required this.tenantId, required this.locale});
 
@@ -160,8 +162,18 @@ class _$OnLoadLocalizationEvent implements OnLoadLocalizationEvent {
   final String locale;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'LocalizationEvent.onLoadLocalization(module: $module, tenantId: $tenantId, locale: $locale)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'LocalizationEvent.onLoadLocalization'))
+      ..add(DiagnosticsProperty('module', module))
+      ..add(DiagnosticsProperty('tenantId', tenantId))
+      ..add(DiagnosticsProperty('locale', locale));
   }
 
   @override
@@ -370,7 +382,9 @@ class __$$_LocalizationStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_LocalizationState implements _LocalizationState {
+class _$_LocalizationState
+    with DiagnosticableTreeMixin
+    implements _LocalizationState {
   const _$_LocalizationState(
       {this.localization, this.isLocalizationLoadCompleted = false});
 
@@ -381,8 +395,18 @@ class _$_LocalizationState implements _LocalizationState {
   final bool isLocalizationLoadCompleted;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'LocalizationState(localization: $localization, isLocalizationLoadCompleted: $isLocalizationLoadCompleted)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'LocalizationState'))
+      ..add(DiagnosticsProperty('localization', localization))
+      ..add(DiagnosticsProperty(
+          'isLocalizationLoadCompleted', isLocalizationLoadCompleted));
   }
 
   @override

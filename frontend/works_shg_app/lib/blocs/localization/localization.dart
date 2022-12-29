@@ -1,11 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:universal_html/html.dart' as html;
 
 import '../../data/remote_client.dart';
 import '../../data/repositories/remote/localization.dart';
 import '../../models/localization/localization_model.dart';
+import '../../services/local_storage.dart';
+import 'app_localization.dart';
 
 part 'localization.freezed.dart';
 
@@ -22,18 +28,32 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
   ) async {
     Client client = Client();
 
-    LocalizationModel result =
-        await LocalizationRepository(client.init()).search(
-      url: 'localization/messages/v1/_search',
-      queryParameters: {
-        "module": "rainmaker-common,rainmaker-pb,rainmaker-works",
-        "locale": event.locale,
-        "tenantId": "pb",
-      },
-    );
+    if (html.window.localStorage[event.locale] != null) {
+      await AppLocalizations(
+        Locale(event.locale.split('_').first, event.locale.split('_').last),
+      ).load();
+    } else {
+      LocalizationModel result =
+          await LocalizationRepository(client.init()).search(
+        url: 'localization/messages/v1/_search',
+        queryParameters: {
+          "module": event.module,
+          "locale": event.locale,
+          "tenantId": "pb",
+        },
+      );
 
-    emit(state.copyWith(localization: result));
-    await Future.delayed(const Duration(seconds: 1));
+      if (kIsWeb) {
+        html.window.localStorage[event.locale ?? ''] =
+            jsonEncode(result.messages.map((e) => e.toJson()).toList());
+      } else {
+        await storage.write(
+            key: event.locale ?? '',
+            value: jsonEncode(result.messages.map((e) => e.toJson()).toList()));
+      }
+      final List<LocalizationMessageModel> newLocalizationList =
+          <LocalizationMessageModel>[];
+    }
   }
 }
 
