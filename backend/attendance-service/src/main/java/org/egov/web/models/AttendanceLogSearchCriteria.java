@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.web.models.Status;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -13,7 +14,7 @@ import java.util.List;
 @Builder
 public class AttendanceLogSearchCriteria {
 
-    @JsonProperty("id")
+    @JsonProperty("ids")
     private List<String> ids;
 
     @JsonProperty("tenantId")
@@ -23,10 +24,10 @@ public class AttendanceLogSearchCriteria {
     private String registerId;
 
     @JsonProperty("fromTime")
-    private Long fromTime;
+    private BigDecimal fromTime;
 
     @JsonProperty("toTime")
-    private Double toTime;
+    private BigDecimal toTime;
 
     @JsonProperty("individualIds")
     private List<String> individualIds;
@@ -39,5 +40,20 @@ public class AttendanceLogSearchCriteria {
 
     @JsonProperty("offset")
     private Integer offset;
+
+    @JsonProperty("sortBy")
+    private SortBy sortBy;
+
+    @JsonProperty("sortOrder")
+    private SortOrder sortOrder;
+
+    public enum SortOrder {
+        ASC,
+        DESC
+    }
+
+    public enum SortBy {
+        lastModifiedTime
+    }
 
 }

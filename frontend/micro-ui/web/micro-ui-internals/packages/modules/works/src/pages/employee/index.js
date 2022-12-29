@@ -17,6 +17,8 @@ import HandleDownloadPdf from "../../components/HandleDownloadPdf";
 import ModifyEstimate from "../../components/ModifyEstimate";
 import Checklist from "./Checklist/index";
 import ChecklistInbox from './ChecklistInbox'
+import ProjectClosure from "./Project Closure/ProjectClosure";
+
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
 
@@ -169,6 +171,10 @@ const App = ({ path }) => {
             component={() => (
               <LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />
             )}
+          />
+          <PrivateRoute
+            path={`${path}/projectclosure`}
+            component={() => <ProjectClosure />}
           />
 
           <PrivateRoute path={`${path}/search-estimate`} component={() => <SearchEstimate />} />

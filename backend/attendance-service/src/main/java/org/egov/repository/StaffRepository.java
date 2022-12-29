@@ -3,7 +3,7 @@ package org.egov.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.repository.querybuilder.StaffQueryBuilder;
 import org.egov.repository.rowmapper.StaffRowMapper;
-import org.egov.models.StaffSearchCriteria;
+import org.egov.web.models.StaffSearchCriteria;
 import org.egov.web.models.StaffPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

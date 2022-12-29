@@ -56,14 +56,14 @@ public class AttendanceLogEnrichment {
 
     public void enrichAttendanceLogSearchRequest(RequestInfo requestInfo, AttendanceLogSearchCriteria searchCriteria) {
 
-        if (searchCriteria.getLimit() == null)
-            searchCriteria.setLimit(config.getAttendanceLogDefaultLimit());
-
-        if (searchCriteria.getOffset() == null)
-            searchCriteria.setOffset(config.getAttendanceLogDefaultOffset());
-
-        if (searchCriteria.getLimit() != null && searchCriteria.getLimit() > config.getAttendanceLogMaxLimit())
-            searchCriteria.setLimit(config.getAttendanceLogMaxLimit());
+//        if (searchCriteria.getLimit() == null)
+//            searchCriteria.setLimit(config.getAttendanceLogDefaultLimit());
+//
+//        if (searchCriteria.getOffset() == null)
+//            searchCriteria.setOffset(config.getAttendanceLogDefaultOffset());
+//
+//        if (searchCriteria.getLimit() != null && searchCriteria.getLimit() > config.getAttendanceLogMaxLimit())
+//            searchCriteria.setLimit(config.getAttendanceLogMaxLimit());
 
     }
 }

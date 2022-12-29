@@ -29,7 +29,6 @@ public class AttendeeService {
      */
     public AttendeeCreateResponse createAttendee(AttendeeCreateRequest attendeeCreateRequest) {
         //TODO Returning Dummy Response
-
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeCreateRequest.getRequestInfo(), true);
         AttendeeCreateResponse attendeeCreateResponse = AttendeeCreateResponse.builder().responseInfo(responseInfo).attendees(attendeeCreateRequest.getAttendees()).build();
         return attendeeCreateResponse;
@@ -43,7 +42,6 @@ public class AttendeeService {
      */
     public AttendeeDeleteResponse deleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest) {
         //TODO Returning Dummy Response
-
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeDeleteRequest.getRequestInfo(), true);
         AttendeeDeleteResponse attendeeDeleteResponse = AttendeeDeleteResponse.builder().responseInfo(responseInfo).attendees(attendeeDeleteRequest.getAttendees()).build();
         return attendeeDeleteResponse;

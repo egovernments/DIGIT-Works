@@ -1,9 +1,15 @@
 package org.egov.repository.querybuilder;
 
+import org.apache.commons.lang3.StringUtils;
+import org.egov.tracer.model.CustomException;
+import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.web.models.Status;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,14 +40,86 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(searchCriteria.getTenantId());
         }
 
-        if (!ObjectUtils.isEmpty(searchCriteria.getIds())) {
-            List<String> registerIds = searchCriteria.getIds();
+        List<String> registerIds = searchCriteria.getIds();
+        if (registerIds != null && !registerIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.id IN (").append(createQuery(registerIds)).append(")");
             preparedStmtList.addAll(registerIds);
         }
 
+        if (!ObjectUtils.isEmpty(searchCriteria.getRegisterNumber())) {
+            String registerNumber = searchCriteria.getRegisterNumber();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.registernumber = ? ");
+            preparedStmtList.add(registerNumber);
+        }
+
+        if (!ObjectUtils.isEmpty(searchCriteria.getName())) {
+            String name = searchCriteria.getName();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.name = ? ");
+            preparedStmtList.add(name);
+        }
+
+        if (!ObjectUtils.isEmpty(searchCriteria.getName())) {
+            String name = searchCriteria.getName();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.name = ? ");
+            preparedStmtList.add(name);
+        }
+
+        if (searchCriteria.getFromDate() != null) {
+            addClauseIfRequired(query, preparedStmtList);
+
+            //If user does not specify toDate, take today's date as toDate by default.
+            if (searchCriteria.getToDate() == null) {
+                searchCriteria.setToDate(BigDecimal.valueOf(Instant.now().toEpochMilli()));
+            }
+
+            query.append(" reg.startdate BETWEEN ? AND ?");
+            preparedStmtList.add(searchCriteria.getFromDate());
+            preparedStmtList.add(searchCriteria.getToDate());
+
+        } else {
+            //if only toDate is provided as parameter without fromDate parameter, throw an exception.
+            if (searchCriteria.getToDate() != null) {
+                throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify toDate without a fromDate");
+            }
+        }
+
+        if (!ObjectUtils.isEmpty(searchCriteria.getStatus())) {
+            Status status = searchCriteria.getStatus();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.status = ? ");
+            preparedStmtList.add(status.toString());
+        }
+
+        addOrderByClause(query, searchCriteria);
+
+        addLimitAndOffset(query, searchCriteria, preparedStmtList);
+
         return query.toString();
+    }
+
+    private void addOrderByClause(StringBuilder queryBuilder, AttendanceRegisterSearchCriteria criteria) {
+
+        //default
+        if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
+            queryBuilder.append(" ORDER BY reg.lastmodifiedtime ");
+        }
+
+        if (criteria.getSortOrder() == AttendanceRegisterSearchCriteria.SortOrder.ASC)
+            queryBuilder.append(" ASC ");
+        else queryBuilder.append(" DESC ");
+    }
+
+    private void addLimitAndOffset(StringBuilder queryBuilder, AttendanceRegisterSearchCriteria criteria, List<Object> preparedStmtList) {
+        queryBuilder.append(" OFFSET ? ");
+        preparedStmtList.add(criteria.getOffset());
+
+        queryBuilder.append(" LIMIT ? ");
+        preparedStmtList.add(criteria.getLimit());
+
     }
 
     private String createQuery(Collection<String> ids) {
