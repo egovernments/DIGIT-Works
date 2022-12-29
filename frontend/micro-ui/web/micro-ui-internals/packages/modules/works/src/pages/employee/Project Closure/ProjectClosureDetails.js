@@ -3,6 +3,7 @@ import React, { Fragment, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from "react-router-dom";
 import ApplicationDetailsContent from '../../../../../templates/ApplicationDetails/components/ApplicationDetailsContent';
+import ApplicationDetails from "../../../../../templates/ApplicationDetails";
 
 
 const ProjectClosureDetails = ({activeLink}) => {
@@ -12,8 +13,11 @@ const ProjectClosureDetails = ({activeLink}) => {
 
     //contracts
 
-    let { isLoading:isContractLoading, isError:isContractError, data: applicationDetailsContract, error:errorContract } = Digit.Hooks.contracts.useViewContractDetails(t, "tenantId", "contractId", "subEstimateNumber", { enabled:true });
+    let { isLoading: isContractLoading, isError: isContractError, data: applicationDetailsContract, error: errorContract } = Digit.Hooks.contracts.useViewContractDetailsClosureScreen(t, "tenantId", "contractId", "subEstimateNumber", { enabled:true });
 
+
+    const { applicationDetails: applicationDetailsBills, applicationData: applicationDataBills, workflowDetails: workflowDetailsBills } = Digit.Hooks.bills.useViewBills('SHG'); //pass required inputs when backend service is ready.
+    
     let workflowDetails = Digit.Hooks.useWorkflowDetails(
         {
             tenantId: "pb.amritsar",
@@ -52,7 +56,18 @@ const ProjectClosureDetails = ({activeLink}) => {
               isInfoLabel={false}
           /> :null}
           {activeLink === "FieldSurvey" ? <div>{activeLink}</div> : null}
-          {activeLink === "Billing" ? <div>{activeLink}</div> : null}
+          {activeLink === "Billing" ? <ApplicationDetails
+              applicationDetails={applicationDetailsBills}
+              isLoading={false} //will come from backend
+              applicationData={applicationDataBills} 
+              moduleCode="Expenditure"
+              isDataLoading={false}
+              workflowDetails={workflowDetailsBills}
+              showTimeLine={false}
+              timelineStatusPrefix={""}
+              businessService={""}
+              forcedActionPrefix={"EXP"}
+          /> : null}
           {activeLink === "Closure Checklist" ? <div>{activeLink}</div> : null}
 
     </Fragment>

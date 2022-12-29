@@ -230,6 +230,7 @@ import { DownloadBtnCommon } from "./atoms/svgindex";
 import ToggleSwitch from "./atoms/ToggleSwitch";
 import WeekPicker from "./atoms/WeekPicker";
 import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
+import HorizontalNav from "./atoms/HorizontalNav";
 export {
   Phone,
   Body,
@@ -318,6 +319,7 @@ export {
   ToggleSwitch,
   ULBHomeCard,
   CollapseAndExpandGroups,
+  HorizontalNav,
   // Icons
   GetApp,
   ArrowLeft,

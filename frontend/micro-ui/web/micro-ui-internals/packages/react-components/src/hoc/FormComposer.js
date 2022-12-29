@@ -21,6 +21,7 @@ import MobileNumber from "../atoms/MobileNumber";
 import _ from "lodash";
 import CustomDropdown from "../molecules/CustomDropdown";
 import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
+import HorizontalNav  from "../atoms/HorizontalNav"
 
 const wrapperStyles = {
   // "display":"flex",
@@ -547,16 +548,54 @@ export const FormComposer = (props) => {
     }
   };
 
+  const [activeLink, setActiveLink] = useState(props.horizontalNavConfig?props.horizontalNavConfig?.[0].name:null)
+  
   return (
     <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
-      {props.showMultipleCards ? (
-        props.config?.map((section, index, array) => (
-          <Card style={getCardStyles()}>
+      <HorizontalNav configNavItems={props.horizontalNavConfig?props.horizontalNavConfig:null} showNav={props?.horizontalNavConfig?true:false} activeLink={activeLink} setActiveLink={setActiveLink}>
+        {props.showMultipleCards ? (
+          props.config?.map((section, index, array) => {
+            return section.navLink ? section?.navLink===activeLink ? (
+              <Card style={getCardStyles()}>
+                {!props.childrenAtTheBottom && props.children}
+                {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
+                {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
+                {props.text && <CardText>{props.text}</CardText>}
+                {formFields(section, index, array)}
+                {props.childrenAtTheBottom && props.children}
+                {props.submitInForm && (
+                  <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
+                )}
+                {props.secondaryActionLabel && (
+                  <div className="primary-label-btn" style={{ margin: "20px auto 0 auto" }} onClick={onSecondayActionClick}>
+                    {props.secondaryActionLabel}
+                  </div>
+                )}
+              </Card>
+            ) : null : <Card style={getCardStyles()}>
+              {!props.childrenAtTheBottom && props.children}
+              {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
+              {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
+              {props.text && <CardText>{props.text}</CardText>}
+              {formFields(section, index, array)}
+              {props.childrenAtTheBottom && props.children}
+              {props.submitInForm && (
+                <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
+              )}
+              {props.secondaryActionLabel && (
+                <div className="primary-label-btn" style={{ margin: "20px auto 0 auto" }} onClick={onSecondayActionClick}>
+                  {props.secondaryActionLabel}
+                </div>
+              )}
+            </Card>
+          })
+        ) : (
+          <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
             {!props.childrenAtTheBottom && props.children}
             {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
             {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
             {props.text && <CardText>{props.text}</CardText>}
-            {formFields(section, index, array)}
+            {formFieldsAll}
             {props.childrenAtTheBottom && props.children}
             {props.submitInForm && (
               <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
@@ -567,25 +606,8 @@ export const FormComposer = (props) => {
               </div>
             )}
           </Card>
-        ))
-      ) : (
-        <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
-          {!props.childrenAtTheBottom && props.children}
-          {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
-          {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
-          {props.text && <CardText>{props.text}</CardText>}
-          {formFieldsAll}
-          {props.childrenAtTheBottom && props.children}
-          {props.submitInForm && (
-            <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
-          )}
-          {props.secondaryActionLabel && (
-            <div className="primary-label-btn" style={{ margin: "20px auto 0 auto" }} onClick={onSecondayActionClick}>
-              {props.secondaryActionLabel}
-            </div>
-          )}
-        </Card>
-      )}
+        )}
+      </HorizontalNav>
       {!props.submitInForm && props.label && (
         <ActionBar>
           <SubmitBar label={t(props.label)} submit="submit" disabled={isDisabled} />

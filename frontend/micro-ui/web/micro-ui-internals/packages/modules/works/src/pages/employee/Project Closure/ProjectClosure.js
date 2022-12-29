@@ -1,9 +1,8 @@
-import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar } from '@egovernments/digit-ui-react-components'
+import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav } from '@egovernments/digit-ui-react-components'
 import React, { Fragment,useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation } from "react-router-dom";
-import ApplicationDetailsContent from '../../../../../templates/ApplicationDetails/components/ApplicationDetailsContent';
 import ProjectClosureDetails from './ProjectClosureDetails';
+
 
 const configNavItems = [
     {
@@ -42,23 +41,7 @@ const ProjectClosure = () => {
             }
         },
     );
-    const setActive = (item) => {
-        setActiveLink(item.name)
-    }
 
-    const MenuItem = ({ item }) => {
-        let itemComponent = item.name;;
-        
-        const Item = () => (
-            <span className="menu-item">
-                <div className="menu-label">{itemComponent}</div>
-            </span>
-        );
-        
-            return (
-                    <Item />
-            );
-    };
 
   return (
     <Fragment>
@@ -81,34 +64,22 @@ const ProjectClosure = () => {
             </Card>
 
               
-            <div className="horizontal-nav">
+            {/* <div className="horizontal-nav">
                 {configNavItems?.map((item, index) => (
                     <div className={`sidebar-list ${activeLink===item.name?"active":""}`} key={index} onClick={()=>setActive(item)}>
                         <MenuItem item={item} />
                     </div>
                 ))}
-            </div>
+            </div> */}
 
             {/* Here render the applicationDetails based on activeLink */}
-              {/* {isLoading ? <Loader /> : <ApplicationDetailsContent
-                  applicationDetails={applicationDetails}
-                  workflowDetails={workflowDetails}
-                  isDataLoading={isLoading}
-                  applicationData={applicationDetails?.applicationData}
-                  //businessService={businessService}
-                  timelineStatusPrefix={"PR"}
-                  statusAttribute={"status"}
-                  //paymentsList={paymentsList}
-                  showTimeLine={true}
-                  //oldValue={oldValue}
-                  isInfoLabel={false}
-              />} */}
-
+            <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>  
               < ProjectClosureDetails 
                 activeLink={activeLink}
               />
+            </HorizontalNav>
               <ActionBar>
-                  <SubmitBar onSubmit={()=>{console.log("project Closed")}} label={t("WORKS_CLOSE_PROJECT")} />
+                  <SubmitBar onSubmit={() => { console.log("project Closed") }} label={t("WORKS_CLOSE_PROJECT")} />
               </ActionBar>
           </div>
 
