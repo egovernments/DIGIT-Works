@@ -13,7 +13,7 @@ const CommissionDetails = ({ wrapInCard }) => {
           values: [
           { title: `${t("EXP_NAME_OF_SHG")}`, value: 'Maa Bhagawati SHG' },
           { title: `${t("EXP_COMMISSION_PERCENTAGE")}`, value: '7.5%' },
-          { title: `${t("EXP_COMMISSION_AMOUNT")}`, value: 'Rs. 48949'}
+          { title: `${t("EXP_COMMISSION_AMOUNT")}`, value: '₹ 48,949'}
           ],
     }]
   }; 
@@ -32,7 +32,7 @@ const CommissionDetails = ({ wrapInCard }) => {
       />
       <div style={{margin: "16px", display: "flex", justifyContent:"space-between"}}>
           <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_COMMISSION_AMOUNT")}</CardSectionHeader>
-          <CardSectionHeader style={{marginBottom: 0}}>{"₹ 1,20,000"}</CardSectionHeader>
+          <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${Digit.Utils.dss.formatter(120000, 'number')}`}</CardSectionHeader>
       </div>
     </Card>
   )

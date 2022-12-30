@@ -33,7 +33,7 @@ const AddVendorBill = (props) => {
                 {!noBreakLine && <BreakLine />}
                 <div style={{margin: "32px 16px", display: "flex", justifyContent:"space-between"}}>
                     <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_VENDOR_BILL")}</CardSectionHeader>
-                    <CardSectionHeader style={{marginBottom: 0}}>{"₹ 1,20,000"}</CardSectionHeader>
+                    <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${Digit.Utils.dss.formatter(120000, 'number')}`}</CardSectionHeader>
                 </div>
             </Card>
         </React.Fragment>
