@@ -2,7 +2,6 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { FormComposer, LinkLabel, Card, CardSectionHeader, BreakLine } from "@egovernments/digit-ui-react-components";
 import { addVendorBillConfig } from '../../configs/addVendorBillConfig';
-import { formatter } from '../../../../../libraries/src/utils/dss';
 
 const AddVendorBill = (props) => {
     const { t } = useTranslation()
@@ -34,7 +33,7 @@ const AddVendorBill = (props) => {
                 {!noBreakLine && <BreakLine />}
                 <div style={{margin: "32px 16px", display: "flex", justifyContent:"space-between"}}>
                     <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_VENDOR_BILL")}</CardSectionHeader>
-                    <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${formatter(120000, 'number')}`}</CardSectionHeader>
+                    <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${Digit.Utils.dss.formatter(120000, 'number')}`}</CardSectionHeader>
                 </div>
             </Card>
         </React.Fragment>

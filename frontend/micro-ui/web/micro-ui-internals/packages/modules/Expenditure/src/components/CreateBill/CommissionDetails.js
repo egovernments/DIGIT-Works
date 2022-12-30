@@ -2,7 +2,6 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { CardSectionHeader, Card} from "@egovernments/digit-ui-react-components";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
-import { formatter } from '../../../../../libraries/src/utils/dss';
 
 const CommissionDetails = ({ wrapInCard }) => {
   const { t } = useTranslation()
@@ -33,7 +32,7 @@ const CommissionDetails = ({ wrapInCard }) => {
       />
       <div style={{margin: "16px", display: "flex", justifyContent:"space-between"}}>
           <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_COMMISSION_AMOUNT")}</CardSectionHeader>
-          <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${formatter(120000, 'number')}`}</CardSectionHeader>
+          <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${Digit.Utils.dss.formatter(120000, 'number')}`}</CardSectionHeader>
       </div>
     </Card>
   )

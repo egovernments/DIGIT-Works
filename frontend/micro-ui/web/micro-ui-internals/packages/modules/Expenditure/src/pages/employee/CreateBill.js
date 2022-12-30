@@ -6,7 +6,6 @@ import MustorRollDetails from '../../components/CreateBill/MustorRollDetails'
 import CommissionDetails from '../../components/CreateBill/CommissionDetails'
 import CreateBillSuccess from '../../components/CreateBill/CreateBillSuccess'
 import { useLocation } from 'react-router-dom'
-import { formatter } from '../../../../../libraries/src/utils/dss'
 
 const CreateBill = () => {
   const { t } = useTranslation()
@@ -33,7 +32,7 @@ const CreateBill = () => {
           <BreakLine/>
           <div style={{margin: "32px 16px", display: "flex", justifyContent:"space-between"}}>
             <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_BILL_AMOUNT")}</CardSectionHeader>
-            <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${formatter(360000, 'number')}`}</CardSectionHeader>
+            <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${Digit.Utils.dss.formatter(360000, 'number')}`}</CardSectionHeader>
           </div>
         </Card>
       )
@@ -48,7 +47,7 @@ const CreateBill = () => {
           <BreakLine/>
           <div style={{margin: "32px 16px", display: "flex", justifyContent:"space-between"}}>
             <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_BILL_AMOUNT")}</CardSectionHeader>
-            <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${formatter(360000, 'number')}`}</CardSectionHeader>
+            <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${Digit.Utils.dss.formatter(360000, 'number')}`}</CardSectionHeader>
           </div>
           <ActionBar>
             <SubmitBar onSubmit={handleProceed} label={t("CS_COMMON_PROCEED")} />
