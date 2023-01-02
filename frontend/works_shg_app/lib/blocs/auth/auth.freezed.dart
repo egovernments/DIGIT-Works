@@ -111,7 +111,7 @@ class __$$AuthLoginEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthLoginEvent implements AuthLoginEvent {
+class _$AuthLoginEvent with DiagnosticableTreeMixin implements AuthLoginEvent {
   const _$AuthLoginEvent({required this.userId, required this.password});
 
   @override
@@ -120,8 +120,17 @@ class _$AuthLoginEvent implements AuthLoginEvent {
   final String password;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthEvent.login(userId: $userId, password: $password)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthEvent.login'))
+      ..add(DiagnosticsProperty('userId', userId))
+      ..add(DiagnosticsProperty('password', password));
   }
 
   @override
@@ -236,12 +245,20 @@ class __$$AuthLogoutEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthLogoutEvent implements AuthLogoutEvent {
+class _$AuthLogoutEvent
+    with DiagnosticableTreeMixin
+    implements AuthLogoutEvent {
   const _$AuthLogoutEvent();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthEvent.logout()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'AuthEvent.logout'));
   }
 
   @override
@@ -326,6 +343,7 @@ mixin _$AuthState {
   bool get loading => throw _privateConstructorUsedError;
   String? get accessToken => throw _privateConstructorUsedError;
   String? get refreshToken => throw _privateConstructorUsedError;
+  UserRequestModel? get userRequestModel => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $AuthStateCopyWith<AuthState> get copyWith =>
@@ -341,7 +359,10 @@ abstract class $AuthStateCopyWith<$Res> {
       {bool initialized,
       bool loading,
       String? accessToken,
-      String? refreshToken});
+      String? refreshToken,
+      UserRequestModel? userRequestModel});
+
+  $UserRequestModelCopyWith<$Res>? get userRequestModel;
 }
 
 /// @nodoc
@@ -361,6 +382,7 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
     Object? loading = null,
     Object? accessToken = freezed,
     Object? refreshToken = freezed,
+    Object? userRequestModel = freezed,
   }) {
     return _then(_value.copyWith(
       initialized: null == initialized
@@ -379,7 +401,23 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
           ? _value.refreshToken
           : refreshToken // ignore: cast_nullable_to_non_nullable
               as String?,
+      userRequestModel: freezed == userRequestModel
+          ? _value.userRequestModel
+          : userRequestModel // ignore: cast_nullable_to_non_nullable
+              as UserRequestModel?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $UserRequestModelCopyWith<$Res>? get userRequestModel {
+    if (_value.userRequestModel == null) {
+      return null;
+    }
+
+    return $UserRequestModelCopyWith<$Res>(_value.userRequestModel!, (value) {
+      return _then(_value.copyWith(userRequestModel: value) as $Val);
+    });
   }
 }
 
@@ -394,7 +432,11 @@ abstract class _$$_AuthStateCopyWith<$Res> implements $AuthStateCopyWith<$Res> {
       {bool initialized,
       bool loading,
       String? accessToken,
-      String? refreshToken});
+      String? refreshToken,
+      UserRequestModel? userRequestModel});
+
+  @override
+  $UserRequestModelCopyWith<$Res>? get userRequestModel;
 }
 
 /// @nodoc
@@ -412,6 +454,7 @@ class __$$_AuthStateCopyWithImpl<$Res>
     Object? loading = null,
     Object? accessToken = freezed,
     Object? refreshToken = freezed,
+    Object? userRequestModel = freezed,
   }) {
     return _then(_$_AuthState(
       initialized: null == initialized
@@ -430,18 +473,23 @@ class __$$_AuthStateCopyWithImpl<$Res>
           ? _value.refreshToken
           : refreshToken // ignore: cast_nullable_to_non_nullable
               as String?,
+      userRequestModel: freezed == userRequestModel
+          ? _value.userRequestModel
+          : userRequestModel // ignore: cast_nullable_to_non_nullable
+              as UserRequestModel?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$_AuthState extends _AuthState {
+class _$_AuthState extends _AuthState with DiagnosticableTreeMixin {
   const _$_AuthState(
       {this.initialized = false,
       this.loading = false,
       this.accessToken,
-      this.refreshToken})
+      this.refreshToken,
+      this.userRequestModel})
       : super._();
 
   @override
@@ -454,10 +502,24 @@ class _$_AuthState extends _AuthState {
   final String? accessToken;
   @override
   final String? refreshToken;
+  @override
+  final UserRequestModel? userRequestModel;
 
   @override
-  String toString() {
-    return 'AuthState(initialized: $initialized, loading: $loading, accessToken: $accessToken, refreshToken: $refreshToken)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthState(initialized: $initialized, loading: $loading, accessToken: $accessToken, refreshToken: $refreshToken, userRequestModel: $userRequestModel)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthState'))
+      ..add(DiagnosticsProperty('initialized', initialized))
+      ..add(DiagnosticsProperty('loading', loading))
+      ..add(DiagnosticsProperty('accessToken', accessToken))
+      ..add(DiagnosticsProperty('refreshToken', refreshToken))
+      ..add(DiagnosticsProperty('userRequestModel', userRequestModel));
   }
 
   @override
@@ -471,12 +533,14 @@ class _$_AuthState extends _AuthState {
             (identical(other.accessToken, accessToken) ||
                 other.accessToken == accessToken) &&
             (identical(other.refreshToken, refreshToken) ||
-                other.refreshToken == refreshToken));
+                other.refreshToken == refreshToken) &&
+            (identical(other.userRequestModel, userRequestModel) ||
+                other.userRequestModel == userRequestModel));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, initialized, loading, accessToken, refreshToken);
+  int get hashCode => Object.hash(runtimeType, initialized, loading,
+      accessToken, refreshToken, userRequestModel);
 
   @JsonKey(ignore: true)
   @override
@@ -490,7 +554,8 @@ abstract class _AuthState extends AuthState {
       {final bool initialized,
       final bool loading,
       final String? accessToken,
-      final String? refreshToken}) = _$_AuthState;
+      final String? refreshToken,
+      final UserRequestModel? userRequestModel}) = _$_AuthState;
   const _AuthState._() : super._();
 
   @override
@@ -501,6 +566,8 @@ abstract class _AuthState extends AuthState {
   String? get accessToken;
   @override
   String? get refreshToken;
+  @override
+  UserRequestModel? get userRequestModel;
   @override
   @JsonKey(ignore: true)
   _$$_AuthStateCopyWith<_$_AuthState> get copyWith =>

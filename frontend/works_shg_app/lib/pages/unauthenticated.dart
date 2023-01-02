@@ -28,9 +28,9 @@ class UnauthenticatedPageWrapper extends StatelessWidget {
             if (state.isInitializationCompleted &&
                 state.digitRowCardItems != null &&
                 state.digitRowCardItems!.isNotEmpty) {
-              return AutoRouter();
+              return const AutoRouter();
             } else {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             }
           }),
         ));
