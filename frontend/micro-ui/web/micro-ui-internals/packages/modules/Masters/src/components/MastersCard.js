@@ -19,7 +19,7 @@ const MastersCard = () => {
         label: t("COMMON_REGISTER_WAGESEEKER"),
         link: `/${window.contextPath}/employee/masters/wage-seeker-registration`,
         roles: [],
-      }
+      },
     ],
   };
   return <EmployeeModuleCard {...propsForModuleCard} />;

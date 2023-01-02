@@ -744,17 +744,19 @@ input[type="number"] {
 }
 
 .create-new-org-btn {
+  width: 322px;
+  height: 40px;
   position: absolute;
   top: 0;
-  right: 0;
+  right: 1rem;
   background: white;
-  border: 1px solid #94ab46;
+  border: 1px solid #F47738;
   padding: 6px;
-  color: #94ab46;
+  color: #F47738;
   display: flex;
   align-items: center;
   svg {
-    margin-right: 10px;
+    margin: 0 15px;
   }
 }
 .bills-menu-options {
