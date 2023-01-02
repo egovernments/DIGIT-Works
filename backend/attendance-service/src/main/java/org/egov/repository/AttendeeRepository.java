@@ -28,11 +28,4 @@ public class AttendeeRepository {
         List<IndividualEntry> attendanceStaffList = jdbcTemplate.query(query, attendeeRowMapper, preparedStmtList.toArray());
         return attendanceStaffList;
     }
-
-    public List<IndividualEntry> getAttendeesFromRegisterIdsAndIndividualIds(AttendeeSearchCriteria searchCriteria) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getAttendeeFromRegisterIdsAndIndividualIdsSearchQuery(searchCriteria, preparedStmtList);
-        List<IndividualEntry> attendanceStaffList = jdbcTemplate.query(query, attendeeRowMapper, preparedStmtList.toArray());
-        return attendanceStaffList;
-    }
 }

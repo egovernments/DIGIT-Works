@@ -63,7 +63,7 @@ public class AttendeeService {
 
         //db call to get the attendeeList data
         AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).individualIds(attendeeIds).build();
-        List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendeesFromRegisterIdsAndIndividualIds(attendeeSearchCriteria);
+        List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendees(attendeeSearchCriteria);
 
         //db call to get registers from db and use them to validate request registers
         digit.models.coremodels.RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(attendeeCreateRequest.getRequestInfo()).build();
@@ -100,7 +100,7 @@ public class AttendeeService {
 
         //db call to get the attendeeList data
         AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).individualIds(attendeeIds).build();
-        List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendeesFromRegisterIdsAndIndividualIds(attendeeSearchCriteria);
+        List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendees(attendeeSearchCriteria);
 
         //db call to get registers from db and use them to validate request registers
         digit.models.coremodels.RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(attendeeDeleteRequest.getRequestInfo()).build();

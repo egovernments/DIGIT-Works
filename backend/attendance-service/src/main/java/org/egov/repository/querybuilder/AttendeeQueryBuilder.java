@@ -72,27 +72,6 @@ public class AttendeeQueryBuilder {
 
         return query.toString();
     }
-
-    public String getAttendeeFromRegisterIdsAndIndividualIdsSearchQuery(AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(ATTENDANCE_ATTENDEE_SELECT_QUERY);
-
-        List<String> individualIds=criteria.getIndividualIds();
-        if (individualIds!=null && !individualIds.isEmpty()) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" att.individual_id IN (").append(createQuery(individualIds)).append(")");
-            addToPreparedStatement(preparedStmtList, individualIds);
-        }
-
-        List<String> registerIds=criteria.getRegisterIds();
-        if (registerIds!=null && !registerIds.isEmpty()) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" att.register_id IN (").append(createQuery(registerIds)).append(")");
-            addToPreparedStatement(preparedStmtList, registerIds);
-        }
-
-        return query.toString();
-    }
-
     private void addLimitAndOffset(StringBuilder query, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
         query.append(" OFFSET ? ");
         preparedStmtList.add(criteria.getOffset());
