@@ -44,4 +44,14 @@ public class ProjectService {
         List<Project> projects = projectRepository.getProjects(project, limit, offset, tenantId, lastChangedSince, includeDeleted);
         return projects;
     }
+
+    public ProjectRequest updateProject(ProjectRequest project) {
+        projectValidator.validateUpdateProjectRequest(project);
+        List<Project> projectsFromDB = searchProject(project, projectConfiguration.getMaxLimit(), projectConfiguration.getMaxOffset(), project.getProjects().get(0).getTenantId(), null, false);
+        projectValidator.validateUpdateAgainstDB(project.getProjects(), projectsFromDB);
+        projectEnrichment.enrichUpdateProject(project, projectsFromDB);
+        producer.push(projectConfiguration.getUpdateProjectTopic(), project);
+
+        return project;
+    }
 }

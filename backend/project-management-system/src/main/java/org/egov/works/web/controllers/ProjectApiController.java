@@ -65,7 +65,11 @@ public class ProjectApiController {
 
     @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
     public ResponseEntity<ProjectResponse> projectV1UpdatePost(@ApiParam(value = "Details for the new Project.", required = true) @Valid @RequestBody ProjectRequest project) {
-        return new ResponseEntity<ProjectResponse>(HttpStatus.NOT_IMPLEMENTED);
+        ProjectRequest enrichedProjectRequest = projectService.updateProject(project);
+
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(project.getRequestInfo(), true);
+        ProjectResponse projectResponse = ProjectResponse.builder().responseInfo(responseInfo).project(enrichedProjectRequest.getProjects()).build();
+        return new ResponseEntity<ProjectResponse>(projectResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/beneficiary/v1/_create", method = RequestMethod.POST)
