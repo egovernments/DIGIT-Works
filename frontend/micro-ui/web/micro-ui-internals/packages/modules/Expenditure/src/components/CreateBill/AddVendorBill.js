@@ -5,8 +5,8 @@ import { addVendorBillConfig } from '../../configs/addVendorBillConfig';
 
 const AddVendorBill = (props) => {
     const { t } = useTranslation()
-    const { noBreakLine, wrapInCard } = props
-    const config = addVendorBillConfig();
+    const { noBreakLine, wrapInCard, contractType } = props
+    const config = addVendorBillConfig(contractType);
     const onSubmit = (data) => {
         //TODO: based on API response, pass as true/false
         props.setbillCreated(true)

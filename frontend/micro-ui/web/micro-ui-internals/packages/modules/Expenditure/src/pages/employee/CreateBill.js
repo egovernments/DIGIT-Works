@@ -26,7 +26,7 @@ const CreateBill = () => {
         <Card>
           <MustorRollDetails/>
           <BreakLine />
-          <AddVendorBill noBreakLine setbillCreated={setbillCreated}/>
+          <AddVendorBill noBreakLine setbillCreated={setbillCreated} contractType={contractType}/>
           <BreakLine />
           <CommissionDetails/>
           <BreakLine/>
@@ -59,7 +59,7 @@ const CreateBill = () => {
     case 'Department_Purchase_Order':
       uiTobeRendered = (
         <Card>
-          <AddVendorBill setbillCreated={setbillCreated}/>
+          <AddVendorBill setbillCreated={setbillCreated} contractType={contractType}/>
         </Card>
       )
       break

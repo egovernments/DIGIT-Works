@@ -11,9 +11,9 @@ const CommissionDetails = ({ wrapInCard }) => {
           title: t("EXP_COMMISSION_DETAILS"),
           asSectionHeader: true,
           values: [
-          { title: `${t("EXP_NAME_OF_SHG")}`, value: 'Maa Bhagawati SHG' },
-          { title: `${t("EXP_COMMISSION_PERCENTAGE")}`, value: '7.5%' },
-          { title: `${t("EXP_COMMISSION_AMOUNT")}`, value: '₹ 48,949'}
+          { title: "EXP_NAME_OF_SHG", value: 'Maa Bhagawati SHG' },
+          { title: "EXP_COMMISSION_PERCENTAGE", value: '7.5%' },
+          { title: "EXP_COMMISSION_AMOUNT", value: '₹ 48,949'}
           ],
     }]
   }; 
