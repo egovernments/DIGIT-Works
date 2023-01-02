@@ -59,7 +59,7 @@ const transformViewDataToApplicationDetails = {
         values: [
           { title: "EXP_VENDOR", value: "Sri Ganesha Enterprises" },
           { title: "EXP_VENDOR_ID", value: "VDR/2021-22/09/0001" },
-          { title: "EXP_BILL_AMOUNT", value: "₹ 5,500" },
+          { title: "EXP_BILL_AMOUNT", value: "5,500" },
         ],
         additionalDetails : {
             statusWithRadio : {
