@@ -227,7 +227,7 @@ public class AttendanceRegisterService {
     }
 
     private Set<String> fetchRegistersAssociatedToLoggedInAttendeeUser(String uuid) {
-        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().individualId(uuid).build();
+        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().individualIds(Collections.singletonList(uuid)).build();
         List<IndividualEntry> attendees = attendeeRepository.getAttendees(attendeeSearchCriteria);
         return attendees.stream().map(e->e.getRegisterId()).collect(Collectors.toSet());
     }
