@@ -27,4 +27,9 @@ public class ProjectConfiguration {
     private String saveProjectTopic;
     @Value("${project.management.system.kafka.update.topic}")
     private String updateProjectTopic;
+    //search config
+    @Value("${project.max.offset}")
+    private Integer maxOffset;
+    @Value("${project.max.limit}")
+    private Integer maxLimit;
 }

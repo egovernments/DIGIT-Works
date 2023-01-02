@@ -6,16 +6,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.util.MDMSUtils;
-import org.egov.works.web.models.Project;
-import org.egov.works.web.models.ProjectRequest;
-import org.egov.works.web.models.Target;
+import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.egov.works.util.ProjectConstants.*;
 
@@ -32,7 +29,7 @@ public class ProjectValidator {
         RequestInfo requestInfo = request.getRequestInfo();
 
         validateRequestInfo(requestInfo, errorMap);
-        validateProjectRequest(projects, errorMap, true);
+        validateProjectRequest(projects, errorMap, false);
 
         String tenantId = projects.get(0).getTenantId();
         String rootTenantId = tenantId.split("\\.")[0];
@@ -51,7 +48,7 @@ public class ProjectValidator {
         RequestInfo requestInfo = project.getRequestInfo();
 
         validateRequestInfo(requestInfo, errorMap);
-        validateProjectRequest(projects, errorMap, false);
+        validateProjectRequest(projects, errorMap, true);
         validateProjectRequestParams(limit, offset, tenantId);
 
         Object mdmsData = mdmsUtils.mDMSCall(project, tenantId.split("\\.")[0]);
@@ -62,38 +59,67 @@ public class ProjectValidator {
             throw new CustomException(errorMap);
     }
 
+    public void validateUpdateProjectRequest(ProjectRequest request) {
+        Map<String, String> errorMap = new HashMap<>();
+        List<Project> projects = request.getProjects();
+        RequestInfo requestInfo = request.getRequestInfo();
+
+        validateRequestInfo(requestInfo, errorMap);
+        validateProjectRequest(projects, errorMap, false);
+
+        String tenantId = projects.get(0).getTenantId();
+        String rootTenantId = tenantId.split("\\.")[0];
+
+        for (Project project: projects) {
+            if (StringUtils.isBlank(project.getId())) {
+                throw new CustomException("UPDATE_PROJECT", "Project Id is mandatory");
+            }
+        }
+
+        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+
+        validateMDMSData(projects, mdmsData,  errorMap);
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
+
     private void validateProjectRequestParams(Integer limit, Integer offset, String tenantId) {
         if (limit == null) {
-            throw new CustomException("CREATE_PROJECT", "limit is mandatory");
+            throw new CustomException("SEARCH_PROJECT", "limit is mandatory");
         }
 
         if (offset == null) {
-            throw new CustomException("CREATE_PROJECT", "offset is mandatory");
+            throw new CustomException("SEARCH_PROJECT", "offset is mandatory");
         }
 
         if (StringUtils.isBlank(tenantId)) {
-            throw new CustomException("CREATE_PROJECT", "tenantId is mandatory");
+            throw new CustomException("SEARCH_PROJECT", "tenantId is mandatory");
         }
     }
 
-    private void validateProjectRequest(List<Project> projects, Map<String, String> errorMap, Boolean isCreate) {
+    private void validateProjectRequest(List<Project> projects, Map<String, String> errorMap, Boolean isSearch) {
         if (projects == null || projects.size() == 0) {
-            throw new CustomException("CREATE_PROJECT", "Projects are mandatory");
+            throw new CustomException("PROJECT", "Projects are mandatory");
         }
 
         for (Project project: projects) {
             if (project == null) {
                 throw new CustomException("PROJECT", "Project is mandatory");
             }
-            if (isCreate && project.getTenantId() == null) {
+            if (!isSearch && project.getTenantId() == null) {
                 throw new CustomException("TENANT_ID", "Tenant ID is mandatory");
             }
-            if (!isCreate && StringUtils.isBlank(project.getId()) && StringUtils.isBlank(project.getProjectType()) && StringUtils.isBlank(project.getProjectSubType()) && StringUtils.isBlank(project.getReferenceID())
+            if (isSearch && StringUtils.isBlank(project.getId()) && StringUtils.isBlank(project.getProjectType()) && StringUtils.isBlank(project.getProjectSubType()) && StringUtils.isBlank(project.getReferenceID())
                     && project.getStartDate() == 0 && project.getEndDate() == 0 && StringUtils.isBlank(project.getDepartment())) {
                 throw new CustomException("PROJECT_SEARCH_FIELDS", "Any one project search field is required");
             }
             if (StringUtils.isBlank(project.getProjectType()) && StringUtils.isNotBlank(project.getProjectSubType())) {
                 errorMap.put("PROJECT", "Project Type must be present for Project sub type");
+            }
+
+            if (!isSearch && !project.getTenantId().equals(projects.get(0).getTenantId())) {
+                throw new CustomException("MULTIPLE_TENANTS", "All registers must have same tenant Id. Please create new request for different tentant id");
             }
         }
     }
@@ -158,5 +184,61 @@ public class ProjectValidator {
                     errorMap.put("INVALID_BENEFICIARY_TYPE", "The beneficiary Type: " + target.getBeneficiaryType() + " is not present in MDMS");
             }
         }
+    }
+
+    public void validateUpdateAgainstDB(List<Project> projectsFromRequest, List<Project> projectsFromDB) {
+        if (CollectionUtils.isEmpty(projectsFromDB)) {
+            throw new CustomException("INVALID_PROJECT_MODIFY", "The records that you are trying to update does not exists in the system");
+        }
+
+        for (Project project: projectsFromRequest) {
+            Project projectFromDB = projectsFromDB.stream().filter(p -> p.getId().equals(project.getId())).findFirst().orElse(null);
+
+            if (projectFromDB == null) {
+                throw new CustomException("INVALID_PROJECT_MODIFY", "The project id " + project.getId() + " that you are trying to update does not exists for the project");
+            }
+
+            Set<String> targetIdsFromDB = projectFromDB.getTargets().stream().map(Target :: getId).collect(Collectors.toSet());
+            for (Target target: project.getTargets()) {
+                if (StringUtils.isNotBlank(target.getId()) && !targetIdsFromDB.contains(target.getId())) {
+                    throw new CustomException("INVALID_PROJECT_MODIFY", "The target id " + target.getId() + " that you are trying to update does not exists for the project");
+                }
+            }
+
+            Set<String> documentIdsFromDB = projectFromDB.getDocuments().stream().map(Document:: getId).collect(Collectors.toSet());
+            for (Document document: project.getDocuments()) {
+                if (StringUtils.isNotBlank(document.getId()) && !documentIdsFromDB.contains(document.getId())) {
+                    throw new CustomException("INVALID_PROJECT_MODIFY", "The document id " + document.getId() + " that you are trying to update does not exists for the project");
+                }
+            }
+
+            if (projectFromDB.getAddress() != null && StringUtils.isBlank(project.getAddress().getId())) {
+                throw new CustomException("INVALID_PROJECT_MODIFY", "The address with id " + projectFromDB.getAddress().getId() + " already exists for the project");
+            }
+
+            if (projectFromDB.getAddress() != null && StringUtils.isNotBlank(project.getAddress().getId()) && !projectFromDB.getAddress().getId().equals(project.getAddress().getId())) {
+                throw new CustomException("INVALID_PROJECT_MODIFY", "The address id " + project.getAddress().getId() + " that you are trying to update does not exists for the project");
+            }
+
+            if (project.getAddress().getLocality() != null) {
+                Boundary locality = projectFromDB.getAddress().getLocality();
+                if (locality == null && StringUtils.isNotBlank(project.getAddress().getLocality().getId())) {
+                    throw new CustomException("INVALID_PROJECT_MODIFY", "The locality id " + project.getAddress().getLocality().getId() + " that you are trying to update does not exists for the project");
+                }
+
+                if (StringUtils.isNotBlank(project.getAddress().getLocality().getId()) && locality != null && !locality.getId().equals(project.getAddress().getLocality().getId())) {
+                    throw new CustomException("INVALID_PROJECT_MODIFY", "The locality id " + project.getAddress().getLocality().getId() + " that you are trying to update does not exists for the project");
+                }
+
+                Set<String> childrenIds = locality.getChildren().stream().map(Boundary:: getId).collect(Collectors.toSet());
+                for (Boundary child: project.getAddress().getLocality().getChildren()) {
+                    if (StringUtils.isNotBlank(child.getId()) && !childrenIds.contains(child.getId())) {
+                        throw new CustomException("INVALID_PROJECT_MODIFY", "The children id " + child.getId() + " that you are trying to update does not exists for the project");
+                    }
+                }
+            }
+
+        }
+
     }
 }
