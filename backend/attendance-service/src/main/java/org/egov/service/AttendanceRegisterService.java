@@ -57,9 +57,9 @@ public class AttendanceRegisterService {
     public AttendanceRegisterRequest createAttendanceRegister(AttendanceRegisterRequest request) {
         attendanceServiceValidator.validateCreateAttendanceRegister(request);
         registerEnrichment.enrichCreateAttendanceRegister(request);
+        producer.push(attendanceServiceConfiguration.getSaveAttendanceRegisterTopic(), request);
         StaffPermissionRequest staffPermissionResponse = staffService.createFirstStaff(request.getRequestInfo(), request.getAttendanceRegister());
         registerEnrichment.enrichStaffInRegister(request.getAttendanceRegister(), staffPermissionResponse);
-        producer.push(attendanceServiceConfiguration.getSaveAttendanceRegisterTopic(), request);
         return request;
     }
 

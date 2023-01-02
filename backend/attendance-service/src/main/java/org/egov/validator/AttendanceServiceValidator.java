@@ -10,10 +10,12 @@ import org.egov.util.MDMSUtils;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterRequest;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.web.models.StaffPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -83,6 +85,20 @@ public class AttendanceServiceValidator {
         if (CollectionUtils.isEmpty(attendanceRegisterList) || attendanceRegisterRequest.getAttendanceRegister().size() != attendanceRegisterList.size()) {
             throw new CustomException("INVALID_REGISTER_MODIFY", "The record that you are trying to update does not exists in the system");
         }
+
+        Set<String> registerIdsFromDB = attendanceRegisterList.stream().map(AttendanceRegister:: getId).collect(Collectors.toSet());
+        for (AttendanceRegister attendanceRegister: attendanceRegisterRequest.getAttendanceRegister()) {
+            if (!registerIdsFromDB.contains(attendanceRegister.getId())) {
+                throw new CustomException("INVALID_REGISTER_MODIFY", "The register Id " + attendanceRegister.getId() + " that you are trying to update does not exists in the system");
+            }
+
+            if (attendanceRegister.getStaff() != null) {
+                Set<String> staffIdsFromDB = attendanceRegister.getStaff().stream().map(StaffPermission:: getId).collect(Collectors.toSet());
+                if (!staffIdsFromDB.contains(attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid())) {
+                    throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register");
+                }
+            }
+        }
     }
 
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
@@ -114,6 +130,9 @@ public class AttendanceServiceValidator {
             }
             if (attendanceRegisters.get(i).getStartDate() == null) {
                 errorMap.put("START_DATE", "Start date is mandatory");
+            }
+            if (attendanceRegisters.get(i).getStartDate().compareTo(attendanceRegisters.get(i).getEndDate()) > 0) {
+                errorMap.put("DATE", "Start date should be less than end date");
             }
         }
     }
