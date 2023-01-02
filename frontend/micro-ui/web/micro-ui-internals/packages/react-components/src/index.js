@@ -178,7 +178,8 @@ import {
   FirenocIcon,
   CreateEstimateIcon,
   GotoInboxIcon,
-  AddFilled
+  AddFilled,
+  NoResultsFoundIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -231,6 +232,7 @@ import ToggleSwitch from "./atoms/ToggleSwitch";
 import WeekPicker from "./atoms/WeekPicker";
 import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
 import HorizontalNav from "./atoms/HorizontalNav";
+import NoResultsFound from "./atoms/NoResultsFound";
 export {
   Phone,
   Body,
@@ -320,6 +322,7 @@ export {
   ULBHomeCard,
   CollapseAndExpandGroups,
   HorizontalNav,
+  NoResultsFound,
   // Icons
   GetApp,
   ArrowLeft,
@@ -378,7 +381,7 @@ export {
   FilterFormField,
   SortAction,
   CustomDropdown,
-
+  NoResultsFoundIcon,
   // hoc
   FormComposer,
   ResponseComposer,
