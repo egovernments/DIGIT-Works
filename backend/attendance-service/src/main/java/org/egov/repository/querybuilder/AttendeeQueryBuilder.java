@@ -1,9 +1,8 @@
 package org.egov.repository.querybuilder;
 
 import org.egov.tracer.model.CustomException;
-import org.egov.models.AttendeeSearchCriteria;
+import org.egov.web.models.AttendeeSearchCriteria;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.time.Instant;

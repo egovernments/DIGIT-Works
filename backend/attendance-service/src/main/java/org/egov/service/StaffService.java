@@ -13,7 +13,7 @@ import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.validator.StaffServiceValidator;
 import org.egov.web.models.AttendanceRegister;
-import org.egov.models.StaffSearchCriteria;
+import org.egov.web.models.StaffSearchCriteria;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
 import org.springframework.beans.factory.annotation.Autowired;

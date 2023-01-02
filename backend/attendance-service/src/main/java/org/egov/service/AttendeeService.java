@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendeeEnrichmentService;
 import org.egov.kafka.Producer;
-import org.egov.models.AttendeeSearchCriteria;
+import org.egov.web.models.AttendeeSearchCriteria;
 import org.egov.repository.AttendeeRepository;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;

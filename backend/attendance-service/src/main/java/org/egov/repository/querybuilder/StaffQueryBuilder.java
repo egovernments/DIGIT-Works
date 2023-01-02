@@ -1,6 +1,6 @@
 package org.egov.repository.querybuilder;
 
-import org.egov.models.StaffSearchCriteria;
+import org.egov.web.models.StaffSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
