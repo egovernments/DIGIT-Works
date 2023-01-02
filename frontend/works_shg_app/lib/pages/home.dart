@@ -28,9 +28,10 @@ class HomePage extends StatelessWidget {
                       label: AppLocalizations.of(context)
                           .translate(i18.home.worksMgmt),
                       child: ButtonLink(
-                          AppLocalizations.of(context)
-                              .translate(i18.home.workOrder),
-                          null))
+                        AppLocalizations.of(context)
+                            .translate(i18.home.workOrder),
+                        () => context.router.push(const WorkOrderPageRoute()),
+                      ))
                 ],
               ),
             ),
