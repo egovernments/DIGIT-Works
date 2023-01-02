@@ -28,6 +28,13 @@ public class AttendeeQueryBuilder {
     public String getAttendanceAttendeeSearchQuery(AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(ATTENDANCE_ATTENDEE_SELECT_QUERY);
 
+        List<String> ids=criteria.getIds();
+        if (ids!=null && !ids.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" att.id IN (").append(createQuery(ids)).append(")");
+            addToPreparedStatement(preparedStmtList, ids);
+        }
+
         List<String> individualIds=criteria.getIndividualIds();
         if (individualIds!=null && !individualIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
@@ -35,8 +42,8 @@ public class AttendeeQueryBuilder {
             addToPreparedStatement(preparedStmtList, individualIds);
         }
 
-        List<String> registerIds=criteria.getRegisterIds();
-        if (registerIds!=null && !registerIds.isEmpty()) {
+        List<String> registerIds = criteria.getRegisterIds();
+        if (registerIds != null && !registerIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" att.register_id IN (").append(createQuery(registerIds)).append(")");
             addToPreparedStatement(preparedStmtList, registerIds);
@@ -47,12 +54,12 @@ public class AttendeeQueryBuilder {
 
             //If user does not specify toDate, take today's date as toDate by default.
             if (criteria.getDenrollmentDate() == null) {
-                criteria.setDenrollmentDate((new BigDecimal(Instant.now().toEpochMilli())));
+                criteria.setDenrollmentDate(BigDecimal.valueOf(Instant.now().toEpochMilli()));
             }
 
             query.append(" att.enrollment_date BETWEEN ? AND ?");
             preparedStmtList.add(criteria.getEnrollmentDate());
-            preparedStmtList.add(criteria.getEnrollmentDate());
+            preparedStmtList.add(criteria.getDenrollmentDate());
 
         } else {
             //if only toDate is provided as parameter without fromDate parameter, throw an exception.

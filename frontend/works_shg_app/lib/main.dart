@@ -5,13 +5,21 @@ import 'package:digit_components/theme/digit_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:works_shg_app/router/app_navigator_observer.dart';
 import 'package:works_shg_app/router/app_router.dart';
 
 import 'Env/app_config.dart';
 import 'blocs/app_bloc_observer.dart';
+import 'blocs/app_config/app_config.dart';
+import 'blocs/app_initilization/app_initilization.dart';
 import 'blocs/auth/auth.dart';
+import 'blocs/localization/app_localization.dart';
+import 'blocs/localization/localization.dart';
+import 'blocs/user/user_search.dart';
+import 'data/remote_client.dart';
+import 'data/repositories/remote/mdms.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -48,19 +56,71 @@ class MainApplication extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Client client = Client();
+
     return MultiBlocProvider(
       providers: [
+        BlocProvider(
+          create: (context) => AppInitializationBloc(
+            const AppInitializationState(),
+            MdmsRepository(client.init()),
+          )..add(const AppInitializationSetupEvent(selectedLangIndex: 0)),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => LocalizationBloc(
+            const LocalizationState(),
+          )..add(const LocalizationEvent.onLoadLocalization(
+              module: 'rainmaker-common',
+              tenantId: 'pb',
+              locale: 'en_IN',
+            )),
+          lazy: false,
+        ),
         BlocProvider(create: (context) => AuthBloc(const AuthState())),
+        BlocProvider(
+          create: (_) => ApplicationConfigBloc(const ApplicationConfigState())
+            ..add(const ApplicationConfigEvent.onfetchConfig()),
+        ),
+        BlocProvider(
+          create: (_) => UserSearchBloc()..add(const SearchUserEvent()),
+        ),
       ],
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+        print(state);
         return MaterialApp.router(
+          supportedLocales: const [
+            Locale('en', 'IN'),
+            Locale('hi', 'IN'),
+            Locale.fromSubtags(languageCode: 'pn'),
+          ],
+          locale: const Locale('en', 'IN'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+          ],
+          localeResolutionCallback: (locale, supportedLocales) {
+            for (var supportedLocaleLanguage in supportedLocales) {
+              if (supportedLocaleLanguage.languageCode ==
+                      locale?.languageCode &&
+                  supportedLocaleLanguage.countryCode == locale?.countryCode) {
+                return supportedLocaleLanguage;
+              }
+            }
+            return supportedLocales.first;
+          },
           theme: DigitTheme.instance.mobileTheme,
           routeInformationParser: appRouter.defaultRouteParser(),
           routerDelegate: AutoRouterDelegate.declarative(
             appRouter,
             navigatorObservers: () => [AppRouterObserver()],
             routes: (handler) => [
-              const LandingRoute(),
+              if (state.isAuthenticated)
+                const AuthenticatedRouteWrapper()
+              else
+                const UnauthenticatedRouteWrapper(),
             ],
           ),
         );

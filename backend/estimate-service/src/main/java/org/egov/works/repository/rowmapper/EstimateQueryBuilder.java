@@ -50,7 +50,7 @@ public class EstimateQueryBuilder {
 
     public String getEstimateQuery(EstimateSearchCriteria searchCriteria, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = null;
-        if(!searchCriteria.getIsCountCall())
+        if(!searchCriteria.getIsCountNeeded())
             queryBuilder = new StringBuilder(FETCH_ESTIMATE_QUERY);
         else
             queryBuilder = new StringBuilder(ESTIMATE_COUNT_QUERY);
@@ -125,7 +125,7 @@ public class EstimateQueryBuilder {
         //TODO -estimateType
 
         //addLimitAndOffset(queryBuilder, searchCriteria, preparedStmtList);
-        if(!searchCriteria.getIsCountCall()){
+        if(!searchCriteria.getIsCountNeeded()){
             addOrderByClause(queryBuilder, searchCriteria);
             return addPaginationWrapper(queryBuilder.toString(), preparedStmtList, searchCriteria);
         }

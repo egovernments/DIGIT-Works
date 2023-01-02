@@ -351,6 +351,7 @@ export const configChecklist = (t, setShowForm,showForm) => {
     }
     return {
         form:[
+            //every object in this array is a section and incase of multiple cards every section is rendered in a separate card
             {
                 head: t("WORKS_KICKOFF_CHECKLIST"),
                 body: surveyConfig.questions.map((question,index)=> getConfig(question,t,index))

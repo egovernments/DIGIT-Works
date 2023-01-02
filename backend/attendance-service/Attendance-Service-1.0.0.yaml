@@ -63,11 +63,13 @@ paths:
               $ref: '#/components/schemas/RequestInfoWrapper'
       parameters:
       - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/parameters/tenantId'
-      - name: id
-        description: Id of the register
+      - name: ids
+        description: List of register ids
         in: query
         schema:
-          type: string
+          type: array
+          items:
+            type: string
       - name: registerNumber
         description: Custom formatted Register id
         in: query

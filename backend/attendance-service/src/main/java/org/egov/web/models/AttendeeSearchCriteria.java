@@ -13,10 +13,13 @@ import java.util.List;
 @Builder
 public class AttendeeSearchCriteria {
 
-    @JsonProperty("individualId")
+    @JsonProperty("ids")
+    private List<String> ids;
+
+    @JsonProperty("individualIds")
     private List<String> individualIds;
 
-    @JsonProperty("registerId")
+    @JsonProperty("registerIds")
     private List<String> registerIds;
 
     @JsonProperty("enrollmentDate")

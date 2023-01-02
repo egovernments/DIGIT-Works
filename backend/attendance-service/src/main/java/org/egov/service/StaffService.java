@@ -71,7 +71,7 @@ public class StaffService {
 
         //db call to get the staffList data whose de enrollment date is null
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
-        List<StaffPermission> staffPermissionListFromDB = staffRepository.getActiveStaff(staffSearchCriteria);
+        List<StaffPermission> staffPermissionListFromDB = getActiveStaff(staffSearchCriteria);
 
         //db call to get registers from db and use them to validate request registers
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(staffPermissionRequest.getRequestInfo()).build();
@@ -87,6 +87,10 @@ public class StaffService {
         //push to producer
         producer.push(serviceConfiguration.getSaveStaffTopic(), staffPermissionRequest);
         return staffPermissionRequest;
+    }
+
+    public List<StaffPermission> getActiveStaff(StaffSearchCriteria staffSearchCriteria){
+        return staffRepository.getActiveStaff(staffSearchCriteria);
     }
 
     /**
@@ -111,7 +115,7 @@ public class StaffService {
 
         // db call to get staff data
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
-        List<StaffPermission> staffPermissionListFromDB = staffRepository.getAllStaff(staffSearchCriteria);
+        List<StaffPermission> staffPermissionListFromDB = getAllStaff(staffSearchCriteria);
 
         //validator call by passing staff request and the data from db call
         staffServiceValidator.validateDeleteStaffPermission(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
@@ -122,6 +126,9 @@ public class StaffService {
         return staffPermissionRequest;
     }
 
+    public List<StaffPermission> getAllStaff(StaffSearchCriteria staffSearchCriteria){
+        return staffRepository.getAllStaff(staffSearchCriteria);
+    }
 
     public StaffPermissionRequest createFirstStaff(RequestInfo requestInfo, List<AttendanceRegister> attendanceRegisters) { //check enroll
         List<StaffPermission> staffPermissionList = new ArrayList<>();

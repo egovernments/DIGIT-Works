@@ -84,15 +84,26 @@ public class AttendanceServiceConfiguration {
     @Value("${attendance.service.document.id.verification.required}")
     private String documentIdVerificationRequired;
 
-    //search config
-    @Value("${attendance.service.log.default.offset}")
-    private Integer attendanceLogDefaultOffset;
+    //attendance service log search config
 
-    @Value("${attendance.service.log.default.limit}")
-    private Integer attendanceLogDefaultLimit;
+    //@Value("${attendance.service.log.default.offset}")
+    //private Integer attendanceLogDefaultOffset;
 
-    @Value("${attendance.service.log.search.max.limit}")
-    private Integer attendanceLogMaxLimit;
+    //@Value("${attendance.service.log.default.limit}")
+    //private Integer attendanceLogDefaultLimit;
+
+    //@Value("${attendance.service.log.search.max.limit}")
+    //private Integer attendanceLogMaxLimit;
+
+    //attendance service register search config
+    @Value("${attendance-register.default.offset}")
+    private Integer attendanceRegisterDefaultOffset;
+
+    @Value("${attendance-register.default.limit}")
+    private Integer attendanceRegisterDefaultLimit;
+
+    @Value("${attendance-register.search.max.limit}")
+    private Integer attendanceRegisterMaxLimit;
 
 }
 

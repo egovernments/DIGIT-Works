@@ -16,9 +16,11 @@
 @import "./components/table.scss";
 @import "./components/filters.scss";
 @import "./components/attendencetable.scss";
+@import "./pages/works/horizontalNav.scss";
 
 @import "./pages/employee/index.scss";
 @import "./components/uploadcomponents.scss";
+
 
 .display-none {
   display: none;
@@ -683,14 +685,15 @@ input[type="number"] {
 }
 
 .expand-collapse-header {
-  height: 3rem;
   background-color: #f2f2f2;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  padding: 0 1rem;
+  padding: 12px ;
   position: relative;
   font-weight: bolder;
+  border: 1px solid #828282;
+  border-radius: 4px;
 }
 
 .icon-toggle {
@@ -715,6 +718,8 @@ input[type="number"] {
 .toggling-wrapper {
   flex: 1;
   transition: 0.2s ease-in-out;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
 
 .toggling-wrapper.collapse {
@@ -730,4 +735,30 @@ input[type="number"] {
       @apply mb-md;
     }
   }
+}
+
+.create-new-org {
+  height: 4rem;
+  padding: 1rem;
+  position: relative;
+}
+
+.create-new-org-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #94ab46;
+  padding: 6px;
+  color: #94ab46;
+  display: flex;
+  align-items: center;
+  svg {
+    margin-right: 10px;
+  }
+}
+.bills-menu-options {
+  cursor: pointer;
+  margin: 1rem;
+  text-decoration: underline;
 }

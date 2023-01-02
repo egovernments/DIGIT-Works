@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiParam;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.MusterRollService;
 import org.egov.util.ResponseInfoCreator;
+import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
 import org.egov.web.models.MusterRollSearchCriteria;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
+import java.util.List;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
 
@@ -41,8 +44,16 @@ public class MusterRollApiController {
     @Autowired
     private ResponseInfoCreator responseInfoCreator;
 
+    @RequestMapping(value = "/_estimate", method = RequestMethod.POST)
+    public ResponseEntity<MusterRollResponse> musterRollV1EstimatePost(@ApiParam(value = "Request object to provide the estimate of the muster roll", required = true) @Valid @RequestBody MusterRollRequest body) {
+        MusterRollRequest musterRollRequest = musterRollService.estimateMusterRoll(body);
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(Collections.singletonList(musterRollRequest.getMusterRoll())).build();
+        return new ResponseEntity<MusterRollResponse>(musterRollResponse, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
-    public ResponseEntity<MusterRollResponse> musterRollV1CreatePost(@ApiParam(value = "", required = true) @Valid @RequestBody MusterRollRequest body) {
+    public ResponseEntity<MusterRollResponse> musterRollV1CreatePost(@ApiParam(value = "Request object to create the muster roll", required = true) @Valid @RequestBody MusterRollRequest body) {
         MusterRollRequest musterRollRequest = musterRollService.createMusterRoll(body);
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(Collections.singletonList(musterRollRequest.getMusterRoll())).build();
@@ -51,14 +62,15 @@ public class MusterRollApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<MusterRollResponse> attendanceV1SearchPOST(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute MusterRollSearchCriteria searchCriteria) {
-        MusterRollResponse musterRollResponse = musterRollService.searchMusterRolls(requestInfoWrapper, searchCriteria);
+        List<MusterRoll> musterRolls = musterRollService.searchMusterRolls(requestInfoWrapper, searchCriteria);
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        musterRollResponse.setResponseInfo(responseInfo);
+        MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(musterRolls)
+                                                    .count(!CollectionUtils.isEmpty(musterRolls) ? musterRolls.size() : 0).build();
         return new ResponseEntity<MusterRollResponse>(musterRollResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_update", method = RequestMethod.POST)
-    public ResponseEntity<MusterRollResponse> musterRollV1UpdatePost(@ApiParam(value = "", required = true) @Valid @RequestBody MusterRollRequest body) {
+    public ResponseEntity<MusterRollResponse> musterRollV1UpdatePost(@ApiParam(value = "Request object to update the muster roll", required = true) @Valid @RequestBody MusterRollRequest body) {
         MusterRollRequest musterRollRequest = musterRollService.updateMusterRoll(body);
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(Collections.singletonList(musterRollRequest.getMusterRoll())).build();

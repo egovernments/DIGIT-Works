@@ -494,6 +494,12 @@
   }
 }
 
+.status-row-radio-wrapper {
+  margin-right: 1rem;
+  input[type="radio"] {
+    margin-right: 1rem;
+  }
+}
 .total-value-wrapper {
   display: flex;
   flex-direction: column;

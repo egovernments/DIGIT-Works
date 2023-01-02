@@ -14,6 +14,7 @@ export const initialTableState = {
       actualWorkingDays : 4,
       amountInRs : 3000,
       modifiedWorkingDays : 5,
+      skill : 'Carpenter',
       modifiedAmountInRs : 4000,
       bankAccountDetails : {
         accountNo : '1232323432423',
@@ -31,6 +32,7 @@ export const initialTableState = {
       actualWorkingDays : 4,
       amountInRs : 3000,
       modifiedWorkingDays : 5,
+      skill : 'Mason',
       modifiedAmountInRs : 4000,
       bankAccountDetails : {
         accountNo : '1232323432423',
@@ -46,6 +48,7 @@ export const initialTableState = {
       guardian_name: "Rashmi Ranjan",
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
       actualWorkingDays : 4,
+      skill : 'Carpenter',
       amountInRs : 3000,
       modifiedWorkingDays : 5,
       modifiedAmountInRs : 4000,
@@ -63,6 +66,7 @@ export const initialTableState = {
       guardian_name: "Rashmi Ranjan",
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
       actualWorkingDays : 4,
+      skill : 'Electrician',
       amountInRs : 3000,
       modifiedWorkingDays : 5,
       modifiedAmountInRs : 4000,
@@ -81,6 +85,7 @@ export const initialTableState = {
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
       actualWorkingDays : 4,
       amountInRs : 3000,
+      skill : 'Mason',
       modifiedWorkingDays : 5,
       modifiedAmountInRs : 4000,
       bankAccountDetails : {
@@ -97,6 +102,7 @@ export const initialTableState = {
       guardian_name: "Rashmi Ranjan",
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
       actualWorkingDays : 4,
+      skill : 'Labour',
       amountInRs : 3000,
       modifiedWorkingDays : 5,
       modifiedAmountInRs : 4000,
@@ -114,6 +120,7 @@ export const initialTableState = {
       guardian_name: "Rashmi Ranjan",
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
       actualWorkingDays : 4,
+      skill : 'Carpenter',
       amountInRs : 3000,
       modifiedWorkingDays : 5,
       modifiedAmountInRs : 4000,
@@ -131,6 +138,7 @@ export const initialTableState = {
       guardian_name: "Rashmi Ranjan",
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
       actualWorkingDays : 4,
+      skill : 'Mason',
       amountInRs : 3000,
       modifiedWorkingDays : 5,
       modifiedAmountInRs : 4000,
@@ -148,6 +156,7 @@ export const initialTableState = {
       guardian_name: "Rashmi Ranjan",
       attendence: ["zero", "zero", "zero", "zero", "zero", "zero", "zero"],
       actualWorkingDays : 4,
+      skill : 'Mason',
       amountInRs : 3000,
       modifiedWorkingDays : 5,
       modifiedAmountInRs : 4000,
@@ -217,8 +226,9 @@ export const initialTableState = {
       guardian_name: "DNR", //do not render
       attendence: [0, 0, 0, 0, 0, 0, 0],
       actualWorkingDays : "36",
+      skill : "",
       amountInRs : "27000",
-      modifiedWorkingDays : "45", // do not render
+      modifiedWorkingDays : "",
       modifiedAmountInRs : "36000",
       bankAccountDetails : "",
       aadharNumber : ""

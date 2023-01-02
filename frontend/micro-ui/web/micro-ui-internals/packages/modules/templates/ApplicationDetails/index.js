@@ -46,7 +46,10 @@ const ApplicationDetails = (props) => {
     showTimeLine = true,
     oldValue,
     isInfoLabel = false,
-    clearDataDetails
+    clearDataDetails,
+    noBoxShadow,
+    sectionHeadStyle,
+    showActionBar = true
   } = props;
   
   useEffect(() => {
@@ -147,54 +150,17 @@ const ApplicationDetails = (props) => {
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
     const performedAction = data?.workflow?.action
-    
     setIsEnableLoader(true);
-    if(performedAction === "CHECK") {
-      const state = {
-        header: "Weekly Attendence Checked & Forwarded",
-        id: "B2191212 | 21-09-2022 - 28-09-2022",
-        info: "Registered ID and Week",
-        message: "Attendence has been approved for mentioned week.",
-        responseData:data,
-        requestData:{}, 
-        links : []
-      }
-      history.push(`/${window.contextPath}/employee/works/response`, state)
-    }else if(performedAction === "REJECT") {
-      const state = {
-        header: "Weekly Attendence Rejected",
-        id: "B2191212 | 21-09-2022 - 28-09-2022",
-        info: "Registered ID and Week",
-        message: "Attendence has been rejected for mentioned week.",
-        responseData:data,
-        requestData:{}, 
-        links : [] 
-      }
-      history.push(`/${window.contextPath}/employee/works/response`, state)
-    }else if(performedAction === "APPROVE") {
-      const state = {
-        header: "Weekly Attendence Approved",
-        id: "B2191212 | 21-09-2022 - 28-09-2022",
-        info: "Registered ID and Week",
-        message: "Attendence has been approved for mentioned week.",
-        responseData:data,
-        requestData:{}, 
-        links : [] 
-      }
-      history.push(`/${window.contextPath}/employee/works/response`, state)
-    }
-    
+
     if (mutate) {
       setIsEnableLoader(true);
       mutate(data, {
         onError: (error, variables) => {
-          
           setIsEnableLoader(false);
           setShowToast({ key: "error", error });
           setTimeout(closeToast, 5000);
         },
         onSuccess: (data, variables) => {
-          
           setIsEnableLoader(false);
           //just history.push to the response component from here and show relevant details
           if(data?.letterOfIndents?.[0]){
@@ -319,6 +285,8 @@ const ApplicationDetails = (props) => {
             showTimeLine={showTimeLine}
             oldValue={oldValue}
             isInfoLabel={isInfoLabel}
+            noBoxShadow={noBoxShadow}
+            sectionHeadStyle={sectionHeadStyle}
           />
           {showModal ? (
             <ActionModal
@@ -347,7 +315,7 @@ const ApplicationDetails = (props) => {
             />
           ) : null}
           <ApplicationDetailsToast t={t} showToast={showToast} closeToast={closeToast} businessService={businessService} />
-          <ApplicationDetailsActionBar
+          {showActionBar && <ApplicationDetailsActionBar
             workflowDetails={workflowDetails}
             displayMenu={displayMenu}
             onActionSelect={onActionSelect}
@@ -356,7 +324,7 @@ const ApplicationDetails = (props) => {
             forcedActionPrefix={forcedActionPrefix}
             ActionBarStyle={ActionBarStyle}
             MenuStyle={MenuStyle}
-          />
+          />}
         </React.Fragment>
       ) : (
         <Loader />
