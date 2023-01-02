@@ -37,7 +37,7 @@ dependencies:
       ref: main-parallel
       path: ./packages/digit_components
   universal_html: ^2.0.8
-  flutter_secure_storage: ^4.2.0
+  flutter_secure_storage: ^7.0.1
   http: ^0.13.3
   url_strategy: ^0.2.0
   url_launcher: ^6.0.9
@@ -65,6 +65,7 @@ dependencies:
   isar: ^3.0.5
   isar_flutter_libs: ^3.0.5
   kt_dart: ^0.10.0
+  flutter_spinkit: ^5.1.0
   flutter_localizations:
     sdk: flutter
 

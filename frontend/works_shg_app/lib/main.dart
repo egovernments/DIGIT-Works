@@ -17,6 +17,7 @@ import 'blocs/app_initilization/app_initilization.dart';
 import 'blocs/auth/auth.dart';
 import 'blocs/localization/app_localization.dart';
 import 'blocs/localization/localization.dart';
+import 'blocs/user/user_search.dart';
 import 'data/remote_client.dart';
 import 'data/repositories/remote/mdms.dart';
 
@@ -80,6 +81,9 @@ class MainApplication extends StatelessWidget {
         BlocProvider(
           create: (_) => ApplicationConfigBloc(const ApplicationConfigState())
             ..add(const ApplicationConfigEvent.onfetchConfig()),
+        ),
+        BlocProvider(
+          create: (_) => UserSearchBloc()..add(const SearchUserEvent()),
         ),
       ],
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {

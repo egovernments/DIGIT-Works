@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/utils/Constants/I18KeyConstants.dart';
+import 'package:works_shg_app/widgets/loaders.dart';
 
 import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/localization/localization.dart';
@@ -25,7 +26,7 @@ class LanguageSelectionPage extends StatelessWidget {
             BlocBuilder<AppInitializationBloc, AppInitializationState>(
               builder: (context, state) {
                 return state.isInitializationCompleted == false
-                    ? const CircularProgressIndicator()
+                    ? Loaders.circularLoader()
                     : state.digitRowCardItems != null &&
                             state.isInitializationCompleted
                         ? DigitLanguageCard(
@@ -50,8 +51,6 @@ class LanguageSelectionPage extends StatelessWidget {
                                       module: 'rainmaker-common',
                                       tenantId: 'pb',
                                       locale: data.value));
-                              print('data');
-                              print(data);
                             },
                             languageSubmitLabel: AppLocalizations.of(context)
                                 .translate(i18.common.continueLabel),

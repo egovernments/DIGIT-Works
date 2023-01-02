@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:universal_html/html.dart' as html;
 
 import '../../models/localization/localization_model.dart';
 import '../../services/local_storage.dart';
@@ -25,7 +25,7 @@ class AppLocalizations {
   Future<List<LocalizationMessageModel>> getLocalizationLabels() async {
     dynamic localLabelResponse;
     if (kIsWeb) {
-      localLabelResponse = window.localStorage[locale!.languageCode ?? ''];
+      localLabelResponse = html.window.localStorage[locale!.languageCode ?? ''];
     } else {
       localLabelResponse = await storage.read(key: locale!.languageCode ?? '');
     }
