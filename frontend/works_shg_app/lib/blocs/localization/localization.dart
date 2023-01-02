@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:works_shg_app/services/urls.dart';
 
 import '../../data/remote_client.dart';
 import '../../data/repositories/remote/localization.dart';
@@ -35,7 +36,7 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
     } else {
       LocalizationModel result =
           await LocalizationRepository(client.init()).search(
-        url: 'localization/messages/v1/_search',
+        url: Urls.initServices.localizationSearch,
         queryParameters: {
           "module": event.module,
           "locale": event.locale,

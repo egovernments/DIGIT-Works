@@ -10,7 +10,10 @@ import '../../blocs/app_config/app_config.dart';
 import '../../models/app_config/app_config_model.dart';
 
 class SideBar extends StatelessWidget {
-  const SideBar({super.key});
+  final String? userName;
+  final String? mobileNumber;
+  const SideBar(
+      {super.key, required this.userName, required this.mobileNumber});
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -24,11 +27,11 @@ class SideBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Carlos',
+                userName.toString(),
                 style: theme.textTheme.displayMedium,
               ),
               Text(
-                '+258 6387387',
+                mobileNumber.toString(),
                 style: theme.textTheme.labelSmall,
               ),
             ],

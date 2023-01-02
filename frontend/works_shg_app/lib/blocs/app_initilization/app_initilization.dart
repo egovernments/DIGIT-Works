@@ -10,10 +10,10 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
+import 'package:works_shg_app/services/urls.dart';
 
 import '../../data/repositories/remote/mdms.dart';
 import '../../services/local_storage.dart';
-import '../../utils/constants.dart';
 
 part 'app_initilization.freezed.dart';
 
@@ -34,7 +34,7 @@ class AppInitializationBloc
     AppInitializationEmitter emit,
   ) async {
     InitMdmsModel result = await mdmsRepository.initMdmsRegistry(
-      Constants.mdmsApiEndPoint,
+      Urls.initServices.mdms,
       {
         "MdmsCriteria": {
           "tenantId": "pb",
@@ -83,6 +83,10 @@ class AppInitializationBloc
     } else {
       await storage.write(
           key: 'initData' ?? '', value: jsonEncode(result.toJson()));
+      await storage.write(
+          key: 'StateInfo' ?? '', value: jsonEncode(ss.toJson()));
+      await storage.write(
+          key: 'languages' ?? '', value: jsonEncode(ss.languages));
     }
 
     dynamic localInitData;
@@ -100,7 +104,8 @@ class AppInitializationBloc
 
     if (localInitData != null &&
         localInitData.trim().isNotEmpty &&
-        localStateData != null) {
+        localStateData != null &&
+        localLanguageData != null) {
       initMdmsModelData = InitMdmsModel.fromJson(jsonDecode(localInitData));
       stateInfoListModel =
           StateInfoListModel.fromJson(jsonDecode(localStateData));
