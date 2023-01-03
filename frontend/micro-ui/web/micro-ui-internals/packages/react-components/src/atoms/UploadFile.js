@@ -230,7 +230,7 @@ const UploadFile = (props) => {
         />
       </div>
       {props.iserror && <p style={{color: "red"}}>{props.iserror}</p>}
-      {props?.showHintBelow && <p className="cell-text">{t(props?.hintText)}</p>}
+      {props?.showHintBelow && <p className="cell-text" style={{paddingTop: '3px'}}>{t(props?.hintText)}</p>}
     </Fragment>
   );
 };

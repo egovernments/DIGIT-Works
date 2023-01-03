@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import _ from "lodash";
 
 const Vendors = [
     {
@@ -12,8 +13,25 @@ const Vendors = [
         i18nKey: 'vendor2'
     }
 ]
-export const addVendorBillConfig = () => {
+export const addVendorBillConfig = (contractType) => {
     const { t } = useTranslation()
+
+    const { data } = Digit.Hooks.useCustomMDMS(
+        Digit.ULBService.getStateId(),
+        'works',
+        [{ name: 'BillAmountPaidTo' }],
+        {
+          select: (data) => {
+            const optionsData = _.get(data, 'works.BillAmountPaidTo', []);
+            const fllteredData = optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `EXP_${opt.code}` }));
+            return {
+                'Organisation_Work_Order' : fllteredData.filter(opt => (opt?.code === 'ORGANISATION' || opt?.code === 'VENDOR')),
+                'Department_Purchase_Order': fllteredData.filter(opt => (opt?.code === 'DEPARTMENT' || opt?.code === 'VENDOR'))
+            }
+          },
+          enabled: true,
+        }
+      );
 
     return {
         label: {
@@ -67,11 +85,7 @@ export const addVendorBillConfig = () => {
                         name: "amount_paid_to",
                         optionsKey: "name",
                         error: t("WORKS_REQUIRED_ERR"),
-                        mdmsConfig: {
-                            masterName: "OrganisationType",
-                            moduleName: "works",
-                            localePrefix: "EXP",
-                        }
+                        options : data && data[contractType]
                     },
                 },
                 {
