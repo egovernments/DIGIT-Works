@@ -1,17 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import _ from "lodash";
 import { createOrganizationConfig } from '../../../../Masters/src/configs/createOrganizationConfig'
 import { FormComposer } from '@egovernments/digit-ui-react-components'
 import { useTranslation } from 'react-i18next'
 
-const CreateOrganizationForm = ({setCreateOrgStatus}) => {
+const CreateOrganizationForm = ({setCreateOrgStatus, sessionFormData, setSessionFormData}) => {
     const { t } = useTranslation();
 
     const [selectedWard, setSelectedWard] = useState('')
-    const userInfo = Digit.UserService.getUser();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const ULB = Digit.Utils.pt.getCityLocale(tenantId);
-    const city = userInfo && userInfo?.info?.permanentCity;
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
+
+    const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
+        tenantId, 'Ward', 
+        {
+            select: (data) => {
+                const wards = []
+                const localities = {}
+                data?.TenantBoundary[0]?.boundary.forEach((item) => {
+                    localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }))
+                    wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
+                });
+               return {
+                    wards, localities
+               }
+            },
+        })
+    
+    const filteredLocalities = isLoading ? [] : wardsAndLocalities?.localities[selectedWard]
     
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
@@ -24,17 +41,20 @@ const CreateOrganizationForm = ({setCreateOrgStatus}) => {
       'district': ULBOptions[0]
     }
 
-    // useEffect(() => {
-    //     console.log('$$$')
-    // }, [selectedWard])
-
-    const onFormValueChange = (setValue, formData, formState, reset) => {
-        if(formData.ward) {
-            setSelectedWard(formData?.ward?.code)
-        }
+    const onFormValueChange = (setValue, formData, formState) => {
+        if (!_.isEqual(sessionFormData, formData)) {
+            const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
+            if(formData.ward) {
+                setSelectedWard(formData?.ward?.code)
+            }
+            if (difference?.ward) {
+                setValue("locality", '');
+            }
+            setSessionFormData({ ...sessionFormData, ...formData });
+          }
     }
 
-    const config = createOrganizationConfig(selectedWard);
+    const config = createOrganizationConfig(wardsAndLocalities, filteredLocalities);
 
     const onSubmit = (data) => {
         //TODO: based on API response, pass as true/false

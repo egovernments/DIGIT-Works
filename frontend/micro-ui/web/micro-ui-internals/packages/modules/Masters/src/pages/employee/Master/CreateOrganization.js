@@ -8,13 +8,16 @@ const CreateOrganization = ({parentRoute}) => {
   const { t } = useTranslation()
   const [createOrgStatus, setCreateOrgStatus] = useState(null)
 
+  const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
+  const [sessionFormData, setSessionFormData] = orgSession;
+
   return (
     <React.Fragment>
        {createOrgStatus === null ? 
         (
           <React.Fragment>
             <Header>{t("MASTERS_CREATE_ORGANISATION")}</Header>
-            <CreateOrganizationForm setCreateOrgStatus={setCreateOrgStatus}/>
+            <CreateOrganizationForm setCreateOrgStatus={setCreateOrgStatus} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData}/>
           </React.Fragment>
         ) :
         <CreateOrganizationSuccess isSuccess={createOrgStatus} setCreateOrgStatus={setCreateOrgStatus}/> 

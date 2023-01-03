@@ -1,30 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-export const createOrganizationConfig = (selectedWard) => {
+export const createOrganizationConfig = (wardsAndLocalities, filteredLocalities) => {
     const { t } = useTranslation()
 
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
-    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
-
-    const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
-        tenantId, 'Ward', 
-        {
-            select: (data) => {
-                const wards = []
-                const localities = {}
-                data?.TenantBoundary[0]?.boundary.forEach((item) => {
-                    localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }))
-                    wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
-                });
-               return {
-                    wards, localities
-               }
-            },
-        })
-    
-    const filteredLocalities = isLoading ? [] : wardsAndLocalities?.localities[selectedWard]
     
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
