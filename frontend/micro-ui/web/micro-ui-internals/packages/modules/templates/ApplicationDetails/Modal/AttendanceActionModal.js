@@ -1,6 +1,7 @@
 import { Loader, Modal, FormComposer } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { configAttendanceApproveModal, configAttendanceRejectModal, configAttendanceCheckModal } from "../config";
+import _ from "lodash";
 
 const Heading = (props) => {
   return <h1 className={props.className ? `heading-m ${props.className}` : "heading-m"}>{props.label}</h1>;
