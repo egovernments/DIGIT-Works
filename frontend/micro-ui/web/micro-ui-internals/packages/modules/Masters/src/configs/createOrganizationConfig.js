@@ -1,28 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-export const createOrganizationConfig = () => {
+export const createOrganizationConfig = (selectedWard) => {
     const { t } = useTranslation()
 
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
 
-    const {data: localityOptions } = Digit.Hooks.useLocation(
-            tenantId, 'Locality', 
-            {
-                select: (data) => {
-                    return data?.TenantBoundary[0]?.boundary.map((item) => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }));
-                },
-            })
-
-    const {data: wardOptions } = Digit.Hooks.useLocation(
+    const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
         tenantId, 'Ward', 
         {
             select: (data) => {
-                return data?.TenantBoundary[0]?.boundary.map((item) => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }));
+                const wards = []
+                const localities = {}
+                data?.TenantBoundary[0]?.boundary.forEach((item) => {
+                    localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }))
+                    wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
+                });
+               return {
+                    wards, localities
+               }
             },
         })
+    
+    const filteredLocalities = isLoading ? [] : wardsAndLocalities?.localities[selectedWard]
     
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
@@ -112,31 +114,15 @@ export const createOrganizationConfig = () => {
                 head: t("ES_NEW_APPLICATION_LOCATION_DETAILS"),
                 body: [
                 {
-                    isMandatory: false,
-                    key: "locality",
-                    type: "dropdown",
-                    label: t("ES_INBOX_LOCALITY"),
-                    disable: false,
-                    populators: {
-                        name: "locality",
-                        optionsKey: "i18nKey",
-                        error: t("WORKS_REQUIRED_ERR"),
-                        required: false,
-                        options: localityOptions
-                    },
-                },
-                {
                     isMandatory: true,
-                    key: "ward",
+                    key: "district",
                     type: "dropdown",
-                    label: t("PDF_STATIC_LABEL_ESTIMATE_WARD"),
-                    disable: false,
+                    label: t("PDF_STATIC_LABEL_ESTIMATE_DISTRICT"),
+                    disable: true,
                     populators: {
-                        name: "ward",
+                        name: "district",
                         optionsKey: "i18nKey",
-                        error: t("WORKS_REQUIRED_ERR"),
-                        required: true,
-                        options: wardOptions
+                        options: districtOptions
                     },
                 },
                 {
@@ -153,14 +139,30 @@ export const createOrganizationConfig = () => {
                 },
                 {
                     isMandatory: true,
-                    key: "district",
+                    key: "ward",
                     type: "dropdown",
-                    label: t("PDF_STATIC_LABEL_ESTIMATE_DISTRICT"),
-                    disable: true,
+                    label: t("PDF_STATIC_LABEL_ESTIMATE_WARD"),
+                    disable: false,
                     populators: {
-                        name: "district",
+                        name: "ward",
                         optionsKey: "i18nKey",
-                        options: districtOptions
+                        error: t("WORKS_REQUIRED_ERR"),
+                        required: true,
+                        options: wardsAndLocalities?.wards
+                    },
+                },
+                {
+                    isMandatory: false,
+                    key: "locality",
+                    type: "dropdown",
+                    label: t("ES_INBOX_LOCALITY"),
+                    disable: false,
+                    populators: {
+                        name: "locality",
+                        optionsKey: "i18nKey",
+                        error: t("WORKS_REQUIRED_ERR"),
+                        required: false,
+                        options: filteredLocalities
                     },
                 }
                 ],

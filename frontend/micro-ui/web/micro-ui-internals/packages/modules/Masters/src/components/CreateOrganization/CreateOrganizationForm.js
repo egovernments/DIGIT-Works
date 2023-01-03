@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import _ from "lodash";
 import { createOrganizationConfig } from '../../../../Masters/src/configs/createOrganizationConfig'
 import { FormComposer } from '@egovernments/digit-ui-react-components'
 import { useTranslation } from 'react-i18next'
@@ -6,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 const CreateOrganizationForm = ({setCreateOrgStatus}) => {
     const { t } = useTranslation();
 
+    const [selectedWard, setSelectedWard] = useState('')
     const userInfo = Digit.UserService.getUser();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const ULB = Digit.Utils.pt.getCityLocale(tenantId);
@@ -21,8 +23,18 @@ const CreateOrganizationForm = ({setCreateOrgStatus}) => {
       'ulb': ULBOptions[0],
       'district': ULBOptions[0]
     }
-  
-    const config = createOrganizationConfig();
+
+    // useEffect(() => {
+    //     console.log('$$$')
+    // }, [selectedWard])
+
+    const onFormValueChange = (setValue, formData, formState, reset) => {
+        if(formData.ward) {
+            setSelectedWard(formData?.ward?.code)
+        }
+    }
+
+    const config = createOrganizationConfig(selectedWard);
 
     const onSubmit = (data) => {
         //TODO: based on API response, pass as true/false
@@ -40,6 +52,7 @@ const CreateOrganizationForm = ({setCreateOrgStatus}) => {
             noBreakLine={true}
             sectionHeadStyle={{marginTop: '1rem', marginBottom: '2rem'}}
             defaultValues={defaultValues}
+            onFormValueChange={onFormValueChange}
         /> 
         </React.Fragment>
     )
