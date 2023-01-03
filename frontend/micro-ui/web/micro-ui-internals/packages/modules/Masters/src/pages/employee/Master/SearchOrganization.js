@@ -6,14 +6,13 @@ const SearchOrganization = () => {
     const { t } = useTranslation();
     const SearchOrganisationApplication = Digit.ComponentRegistryService.getComponent("SearchOrganisationApplication");
     const [showToast, setShowToast] = useState(null);
-    const [showTable, setShowTable] = useState(true);
+    const [showTable, setShowTable] = useState(false);
     const [selectedOrg, setSelectedOrg] = useState(null);
 
     const onClearSearch = (isShow = true) => {
         setShowTable(isShow);
     }
   const onSubmit = async (data) => {
-    setShowTable(true);
       if(!data?.nameOfTheOrg){
         setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
         setTimeout(() => {
@@ -21,6 +20,7 @@ const SearchOrganization = () => {
         }, 3000);
         return
       }else{
+        setShowTable(true);
         setSelectedOrg(data?.nameOfTheOrg);
       }
     }

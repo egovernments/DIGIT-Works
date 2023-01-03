@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
-import { AddFilled } from "@egovernments/digit-ui-react-components";
+import { AddFilled, NoResultsFound } from "@egovernments/digit-ui-react-components";
 
 const options  = [
   {
@@ -14,7 +14,6 @@ const options  = [
 ];
 
 const SearchOrganisationApplication = ({tenantId, onSubmit, data, resultOk, isLoading, onClearSearch,showTable}) => {
-
     const { t } = useTranslation(); 
     const history = useHistory();
     const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
@@ -168,17 +167,7 @@ const SearchOrganisationApplication = ({tenantId, onSubmit, data, resultOk, isLo
           <div className="create-new-org">
             <button className="create-new-org-btn" onClick={handleCreateNewOrg}> <AddFilled />{t("MASTERS_ADD_NEW_COMMUNITY_ORG")}</button>
           </div>
-          {showTable ? isLoading ? <Loader/> : data?.display && !resultOk ? (
-              <Card style={{ marginTop: 20 }}>
-                {t(data?.display)
-                  .split("\\n")
-                  .map((text, index) => (
-                    <p key={index} style={{ textAlign: "center" }}>
-                      {text}
-                    </p>
-                  ))}
-              </Card>
-            ) : resultOk ? (
+          {showTable ? isLoading ? <Loader/> : resultOk ? (
             <div>
               <Table
                 t={t}
@@ -204,7 +193,7 @@ const SearchOrganisationApplication = ({tenantId, onSubmit, data, resultOk, isLo
                 disableSort={false}
                 sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
               />
-           </div>): null : null
+           </div>): <NoResultsFound></NoResultsFound> : null
         }
 
     </>
