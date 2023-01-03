@@ -15,6 +15,7 @@ import { initContractsComponents } from "@egovernments/digit-ui-module-contracts
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { HRMSModule, initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
+import { initProjectComponents } from  "@egovernments/digit-ui-module-project";
 import "@egovernments/digit-ui-works-css/example/index.css";
 
 // import * as comps from "@egovernments/digit-ui-react-components";
@@ -80,6 +81,8 @@ const initDigitUI = () => {
   initContractsComponents();
   initExpenditureComponents();
   initMastersComponents();
+  initProjectComponents();
+
   const moduleReducers = (initData) => initData;
 
   window.Digit.Customizations = {
