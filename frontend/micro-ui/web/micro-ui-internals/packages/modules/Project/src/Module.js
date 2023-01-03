@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useRouteMatch } from "react-router-dom";
 import ProjectCard from "./components/ProjectCard";
 import { default as EmployeeApp } from "./pages/employee";
+import CreateProject from "./pages/employee/CreateProject/index";
 
 export const ProjectModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["Project"];
@@ -31,7 +32,8 @@ export const ProjectModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
     ProjectModule,
-    ProjectCard
+    ProjectCard,
+    CreateProject
 };
 
 export const initProjectComponents = () => {

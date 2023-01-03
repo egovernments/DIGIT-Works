@@ -10,7 +10,11 @@ const ProjectCard = () => {
     moduleName: t("WORKS_PROJECT"),
     kpis: [],
     links: [
-
+      {
+        label: t("WORKS_CREATE_PROJECT"),
+        link: `/${window?.contextPath}/employee/project/create-project`,
+        roles: [],
+      },
     ],
   };
   return <EmployeeModuleCard {...propsForModuleCard} />;

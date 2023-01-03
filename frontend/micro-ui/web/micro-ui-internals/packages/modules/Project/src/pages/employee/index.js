@@ -10,7 +10,7 @@ const ProjectBreadCrumb = ({ location }) => {
   const crumbs = [
     {
         path: "/works-ui/employee",
-        content: t("MASTERS_MASTERS"),
+        content: t("PROJECT_PROJECT"),
         show: true,
     },
     // {
@@ -24,21 +24,15 @@ const ProjectBreadCrumb = ({ location }) => {
 };
 
 const App = ({ path }) => {
-  const SearchOrganization = Digit?.ComponentRegistryService?.getComponent("SearchOrganization");
-  const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganization");
-  const RegisterWageSeekerComponent = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
-  const ViewOrganisationComponent = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
+  const CreateProjectComponent = Digit?.ComponentRegistryService?.getComponent("CreateProject");
 
   return (
     <Switch>
       <AppContainer className="ground-container">
         <React.Fragment>
-          <MastersBreadCrumb location={location} />
+          <ProjectBreadCrumb location={location} />
         </React.Fragment>
-        <PrivateRoute path={`${path}/search-organization`} component={() => <SearchOrganization parentRoute={path}/>} />
-        <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganization parentRoute={path}/>} />
-        <PrivateRoute path={`${path}/wage-seeker-registration`} component={RegisterWageSeekerComponent} />
-        <PrivateRoute path={`${path}/view-organization`} component={ViewOrganisationComponent} />
+        <PrivateRoute path={`${path}/create-project`} component={() => <CreateProjectComponent parentRoute={path}/>} />
       </AppContainer>
     </Switch>
   );
