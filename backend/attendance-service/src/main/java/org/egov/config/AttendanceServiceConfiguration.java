@@ -35,21 +35,21 @@ public class AttendanceServiceConfiguration {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
     //Topic
-    @Value("${attendance.service.register.kafka.create.topic}")
+    @Value("${attendance.register.kafka.create.topic}")
     private String saveAttendanceRegisterTopic;
-    @Value("${attendance.service.register.kafka.update.topic}")
+    @Value("${attendance.register.kafka.update.topic}")
     private String updateAttendanceRegisterTopic;
 
     //Topic
-    @Value("${attendance.service.staff.kafka.create.topic}")
+    @Value("${attendance.staff.kafka.create.topic}")
     private String saveStaffTopic;
-    @Value("${attendance.service.staff.kafka.update.topic}")
+    @Value("${attendance.staff.kafka.update.topic}")
     private String updateStaffTopic;
 
     //Topic
-    @Value("${attendance.service.attendee.kafka.create.topic}")
+    @Value("${attendance.attendee.kafka.create.topic}")
     private String saveAttendeeTopic;
-    @Value("${attendance.service.attendee.kafka.update.topic}")
+    @Value("${attendance.attendee.kafka.update.topic}")
     private String updateAttendeeTopic;
 
     @PostConstruct
@@ -58,20 +58,20 @@ public class AttendanceServiceConfiguration {
     }
 
     // kafka topics
-    @Value("${attendance.service.log.kafka.create.topic}")
+    @Value("${attendance.log.kafka.create.topic}")
     private String createAttendanceLogTopic;
 
-    @Value("${attendance.service.log.kafka.update.topic}")
+    @Value("${attendance.log.kafka.update.topic}")
     private String updateAttendanceLogTopic;
 
     // service integration config
-    @Value("${attendance.service.individual.service.integration.required}")
+    @Value("${attendance.individual.service.integration.required}")
     private String individualServiceIntegrationRequired;
 
-    @Value("${attendance.service.staff.service.integration.required}")
+    @Value("${attendance.staff.service.integration.required}")
     private String staffServiceIntegrationRequired;
 
-    @Value("${attendance.service.document.id.verification.required}")
+    @Value("${attendance.document.id.verification.required}")
     private String documentIdVerificationRequired;
 
     //attendance service log search config
@@ -86,13 +86,13 @@ public class AttendanceServiceConfiguration {
     //private Integer attendanceLogMaxLimit;
 
     //attendance service register search config
-    @Value("${attendance.service.register.default.offset}")
+    @Value("${attendance.register.default.offset}")
     private Integer attendanceRegisterDefaultOffset;
 
-    @Value("${attendance.service.register.default.limit}")
+    @Value("${attendance.register.default.limit}")
     private Integer attendanceRegisterDefaultLimit;
 
-    @Value("${attendance.service.register.search.max.limit}")
+    @Value("${attendance.register.search.max.limit}")
     private Integer attendanceRegisterMaxLimit;
 
 }
