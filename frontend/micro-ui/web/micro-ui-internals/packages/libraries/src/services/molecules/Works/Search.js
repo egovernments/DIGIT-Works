@@ -312,45 +312,49 @@ export const WorksSearch = {
                             "value": "13/12/2022"
                         },
                         {
-                            "title": "WORKS_DEPARTMENT",
-                            "value": "Street Lights"
-                        },
-                        {
                             "title": "WORKS_LOR",
                             "value": "123123"
                         },
+                    ]
+                },
+                {
+                    "title": "WORKS_LOCATION_DETAILS",
+                    "asSectionHeader": true,
+                    "values": [
                         {
-                            "title": "WORKS_ELECTION_WARD",
-                            "value": "NA"
+                            "title": "Location",
+                            "value": "Venkata Ramana Colony, gate no 1"
                         },
                         {
-                            "title": "WORKS_LOCATION",
-                            "value": "NA"
+                            "title": "Locality",
+                            "value": "Venkata Ramana Colony"
                         },
                         {
-                            "title": "WORKS_WORK_CATEGORY",
-                            "value": "Engineering"
+                            "title": "Ward*",
+                            "value": "Ward No 23"
                         },
                         {
-                            "title": "WORKS_BENEFICIERY",
-                            "value": "General"
+                            "title": "ULB*",
+                            "value": "Patna"
                         },
                         {
-                            "title": "WORKS_WORK_NATURE",
-                            "value": "Operation & Maintenance"
+                            "title": "Geo Location",
+                            "value": "Patna"
+                        },
+                    ]
+                },
+                {
+                    "title": "WORKS_WORK_DETAILS",
+                    "asSectionHeader": true,
+                    "values": [
+                        {
+                            "title": "Nature of Work*",
+                            "value": "General Fund"
                         },
                         {
-                            "title": "WORKS_WORK_TYPE",
-                            "value": "Road"
+                            "title": "Type of Work*",
+                            "value": "General Fund"
                         },
-                        {
-                            "title": "WORKS_SUB_TYPE_WORK",
-                            "value": "Road Forming"
-                        },
-                        {
-                            "title": "WORKS_MODE_OF_INS",
-                            "value": "Nomination"
-                        }
                     ]
                 },
                 {
@@ -358,25 +362,9 @@ export const WorksSearch = {
                     "asSectionHeader": true,
                     "values": [
                         {
-                            "title": "WORKS_FUND",
+                            "title": "Chart of Accountants*",
                             "value": "General Fund"
                         },
-                        {
-                            "title": "WORKS_FUNCTION",
-                            "value": "Municipal Body"
-                        },
-                        {
-                            "title": "WORKS_BUDGET_HEAD",
-                            "value": "ADM"
-                        },
-                        {
-                            "title": "WORKS_SCHEME",
-                            "value": "15th CFC-15th Central Finance Commission"
-                        },
-                        {
-                            "title": "WORKS_SUB_SCHEME",
-                            "value": "Drinking Water Supply (including Rain Water Harvesting & Recycling)"
-                        }
                     ]
                 },
                 {
@@ -1503,4 +1491,59 @@ export const WorksSearch = {
         }
         return result
     },
+    viewProjectClosureScreenBills:(tenantId)=> {
+        const result = {
+            "applicationDetails": [
+                {
+                    "title": " ",
+                    "asSectionHeader": true,
+                    "values": [
+                        {
+                            "title": "Created By",
+                            "value": "EP/2022-23/12/000174"
+                        },
+                        {
+                            "title": "Status",
+                            "value": "Checked"
+                        },
+                        {
+                            "title": "Labour Cost",
+                            "value": "Checked"
+                        },
+                        {
+                            "title": "Material Cost",
+                            "value": "Checked"
+                        },
+                        {
+                            "title": "Commission",
+                            "value": "Checked"
+                        },
+                        {
+                            "title": "Cess",
+                            "value": "Checked"
+                        },
+                        {
+                            "title": "Royalty",
+                            "value": "Checked"
+                        },
+                        {
+                            "title": "Others",
+                            "value": "Checked"
+                        },
+                        {
+                            "title": "Total",
+                            "value": "Checked"
+                        }
+                    ]
+                },
+            ],
+            CollapseConfig: {
+                collapseAll: true,
+                groupHeader: "",
+                headerLabel: "Bill 1- ID(CTR/2022-23/08/0004) - Type(Work Order)- Date(20-09-2022)",
+                headerValue: "₹ 19,08,500"
+            },
+        }
+        return result;
+    }
 }
