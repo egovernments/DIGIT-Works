@@ -30,20 +30,23 @@ class MusterRollSearchBloc
 
     dynamic localUserDetails;
     String? accessToken;
+    String? tenantId;
 
     if (kIsWeb) {
       localUserDetails = html.window.localStorage['userRequest' ?? ''];
       accessToken = html.window.localStorage['accessToken' ?? ''];
+      tenantId = html.window.localStorage['tenantId' ?? ''];
     } else {
       localUserDetails = await storage.read(key: 'userRequest' ?? '');
       accessToken = await storage.read(key: 'accessToken' ?? '');
+      tenantId = await storage.read(key: 'tenantId' ?? '');
     }
 
     MusterRollsModel musterRollsModel =
         await MusterRollRepository(client.init()).searchMusterRolls(
             url: Urls.musterRollServices.searchMusterRolls,
             queryParameters: {
-          "tenantId": "pb"
+          "tenantId": jsonDecode(tenantId.toString())
         },
             body: {
           "RequestInfo": {
