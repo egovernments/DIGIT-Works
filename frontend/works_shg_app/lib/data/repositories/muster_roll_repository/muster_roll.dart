@@ -4,13 +4,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-
-import '../../../models/UserDetails/user_details_model.dart';
+import 'package:works_shg_app/models/muster_rolls/muster_roll_model.dart';
 
 class MusterRollRepository {
   final Dio _client;
   MusterRollRepository(this._client);
-  Future<UserDetailsModel> searchMusterRolls({
+  Future<MusterRollsModel> searchMusterRolls({
     Map<String, String>? queryParameters,
     dynamic body,
     required String url,
@@ -20,7 +19,7 @@ class MusterRollRepository {
       final response =
           await _client.post(url, queryParameters: queryParameters, data: body);
 
-      return UserDetailsModel.fromJson(
+      return MusterRollsModel.fromJson(
         json.decode(response.toString()),
       );
     } on DioError catch (ex) {

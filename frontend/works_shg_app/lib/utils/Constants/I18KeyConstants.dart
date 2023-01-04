@@ -31,7 +31,7 @@ class Common {
   String get transgender => 'CORE_COMMON_GENDER_TRANSGENDER';
   String get backToHome => 'CORE_COMMON_BACK_HOME_BUTTON';
   String get worksSHGLabel => 'CORE_COMMON_MGRAM_SEVA_LABEL';
-  String get home => 'CORE_COMMON_HOME';
+  String get home => 'ACTION_TEST_HOME';
   String get editProfile => 'CORE_COMMON_EDIT_PROFILE';
   String get language => 'CORE_COMMON_LANGUAGE';
 }

@@ -23,6 +23,7 @@ class AppLocalizations {
       AppLocalizationsDelegate();
 
   Future<List<LocalizationMessageModel>> getLocalizationLabels() async {
+    print(locale);
     dynamic localLabelResponse;
     if (kIsWeb) {
       localLabelResponse = html.window.localStorage[locale!.languageCode ?? ''];
@@ -48,15 +49,11 @@ class AppLocalizations {
     return true;
   }
 
-  String translate(
+  translate(
     String localizedValues,
   ) {
     var index =
         localizedStrings.indexWhere((medium) => medium.code == localizedValues);
-    return index != -1
-        ? localizedStrings
-            .firstWhere((element) => element.code == localizedValues)
-            .message
-        : localizedValues;
+    return index != -1 ? localizedStrings[index].message : localizedValues;
   }
 }

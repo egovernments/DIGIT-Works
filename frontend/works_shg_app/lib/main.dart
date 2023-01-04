@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
 import 'package:works_shg_app/router/app_navigator_observer.dart';
 import 'package:works_shg_app/router/app_router.dart';
 
@@ -84,6 +85,10 @@ class MainApplication extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => UserSearchBloc()..add(const SearchUserEvent()),
+        ),
+        BlocProvider(
+          create: (_) =>
+              MusterRollSearchBloc()..add(const SearchMusterRollEvent()),
         ),
       ],
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {

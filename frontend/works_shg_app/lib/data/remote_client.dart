@@ -3,10 +3,8 @@ import 'dart:async';
 import "package:dio/dio.dart";
 import 'package:works_shg_app/Env/app_config.dart';
 
-import '../models/request_info/request_info_model.dart';
-
 class Client {
-  Dio init() {
+  Dio init({dynamic requestInfo}) {
     final Dio dio = Dio();
     dio.interceptors.add(ApiInterceptors());
     dio.options.baseUrl = apiBaseUrl;
@@ -16,25 +14,14 @@ class Client {
 }
 
 class ApiInterceptors extends Interceptor {
+  dynamic request;
+
   @override
   Future<dynamic> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    options.data = {
-      ...options.data,
-      "RequestInfo": {
-        ...const RequestInfoModel(
-          apiId: 'Rainmaker',
-          ver: ".01",
-          ts: "",
-          action: "_search",
-          did: "1",
-          key: "",
-          msgId: "20170310130900|en_IN",
-        ).toJson(),
-      },
-    };
+    options.data = options.data;
     super.onRequest(options, handler);
   }
 

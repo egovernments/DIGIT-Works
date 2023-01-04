@@ -34,8 +34,8 @@ class HomePage extends StatelessWidget {
                           child: ButtonLink(
                               AppLocalizations.of(context)
                                   .translate(i18.home.workOrder),
-                              () => context.router
-                                  .push(const WorkOrderPageRoute())),
+                              () =>
+                                  context.router.push(const WorkOrderRoute())),
                         )
                       ],
                     ),
@@ -71,9 +71,7 @@ class HomePage extends StatelessWidget {
                 )
               ],
             )
-          : Container(
-              child: Text('Unauthenticated'),
-            );
+          : const Text('Unauthenticated');
     }));
   }
 }

@@ -13,6 +13,7 @@ import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 import 'package:works_shg_app/services/urls.dart';
 
 import '../../data/repositories/remote/mdms.dart';
+import '../../models/request_info/request_info_model.dart';
 import '../../services/local_storage.dart';
 
 part 'app_initilization.freezed.dart';
@@ -59,6 +60,17 @@ class AppInitializationBloc
               ],
             },
           ],
+        },
+        "RequestInfo": {
+          ...const RequestInfoModel(
+            apiId: 'Rainmaker',
+            ver: ".01",
+            ts: "",
+            action: "_search",
+            did: "1",
+            key: "",
+            msgId: "20170310130900|en_IN",
+          ).toJson(),
         },
       },
     );
