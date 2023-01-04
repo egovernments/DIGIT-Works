@@ -214,7 +214,7 @@ const UploadFile = (props) => {
         </div>
         <input
           className={props.disabled ? "disabled" : "" + "input-mirror-selector-button"}
-          style={extraStyles ? { ...extraStyles?.inputStyles, ...props?.inputStyles } : { ...props?.inputStyles }}
+          style={{...(extraStyles ? { ...extraStyles?.inputStyles, ...props?.inputStyles } : { ...props?.inputStyles }), cursor: 'pointer'}}
           ref={inpRef}
           type="file"
           id={props.id || `document-${getRandomId()}`}
