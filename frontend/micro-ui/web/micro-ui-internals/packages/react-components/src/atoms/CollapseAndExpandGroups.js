@@ -7,8 +7,8 @@ const CollapseAndExpandGroups = ({children, groupElements=false, groupHeader="",
     const {t} = useTranslation();
     const [collapse, setCollapse] = useState(true);
     return (
-        <div className={`expand-collapse-wrapper ${customClass}`}>
-            {groupHeader && <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(groupHeader)}</CardSubHeader>}
+        <div className={groupElements?`expand-collapse-wrapper ${customClass}`: `${customClass}`}>
+            {groupHeader && <CardSubHeader style={{ marginBottom: "0px", fontSize: "24px" }}>{t(groupHeader)}</CardSubHeader>}
             {groupElements && <div className="expand-collapse-header">
                     <span className="label">{headerLabel}</span>
                     <span className="value">{headerValue}</span>

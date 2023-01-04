@@ -309,12 +309,6 @@ export const ContractSearch = {
     // const user = users?.[0]
 
     const contractDetails = {
-      expandAndCollapse: {
-        groupComponents: true,
-        headerLabel: "Contract 1- ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)",
-        headerValue: "Rs 30000",
-        groupHeader: ""
-      },
       title: "WORKS_CONTRACT_DETAILS",
       asSectionHeader: true,
       values: [
@@ -336,23 +330,11 @@ export const ContractSearch = {
     // const agreementAmount = subEs?.amount + ((parseInt(loi?.negotiatedPercentage) * subEs?.amount) / 100)
 
     const financialDetails = {
-      expandAndCollapse: {
-        groupComponents: true,
-        headerLabel: "Contract 1- ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)",
-        headerValue: "Rs 30000",
-        groupHeader: ""
-      },
       title: "WORKS_FINANCIAL_DETAILS",
       asSectionHeader: true,
       values: [{ title: "WORKS_AGREEMENT_AMT", value: contract.agreementAmount || t("NA") }],
     };
     const agreementDetails = {
-      expandAndCollapse: {
-        groupComponents: true,
-        headerLabel: "Contract 1- ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)",
-        headerValue: "Rs 30000",
-        groupHeader: ""
-      },
       title: "WORKS_AGGREEMENT_DETAILS",
       asSectionHeader: true,
       values: [
@@ -370,12 +352,6 @@ export const ContractSearch = {
     const files = additionalDetails?.filesAttached;
 
     const documentDetails = {
-      expandAndCollapse: {
-        groupComponents: true,
-        headerLabel: "Contract 1- ID (MSR/2022-23/08/0004) - Date (20-09-2022-27/09-2022)",
-        headerValue: "Rs 30000",
-        groupHeader: ""
-      },
       title: "",
       asSectionHeader: true,
       additionalDetails: {
@@ -402,6 +378,12 @@ export const ContractSearch = {
       // processInstancesDetails: workflowDetails?.ProcessInstances,
       applicationData: contract,
       workflowDetails: workflowDataDetails,
+      CollapseConfig:{
+        collapseAll:true,
+        groupHeader:"",
+        headerLabel:"Contract 1- ID(CTR/2022-23/08/0004) - Type(Work Order)- Date(20-09-2022)",
+        headerValue:"₹ 19,08,500"
+      },
     };
   }
 };
