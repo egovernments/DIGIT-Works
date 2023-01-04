@@ -48,6 +48,8 @@ public class ProjectEnrichment {
                 List<Boundary> children = project.getAddress().getLocality().getChildren();
                 for (Boundary child: children) {
                     child.setId(UUID.randomUUID().toString());
+                    child.setParentid(project.getAddress().getLocality().getId());
+                    child.setAddressid(project.getAddress().getId());
                 }
             }
         }
@@ -100,10 +102,15 @@ public class ProjectEnrichment {
             }
 
             if (project.getAddress().getLocality() != null) {
+                if (StringUtils.isBlank(project.getAddress().getLocality().getId())) {
+                    project.getAddress().getLocality().setId(UUID.randomUUID().toString());
+                }
                 for (Boundary child: project.getAddress().getLocality().getChildren()) {
                     if (StringUtils.isBlank(child.getId())) {
                         child.setId(UUID.randomUUID().toString());
                     }
+                    child.setParentid(project.getAddress().getLocality().getId());
+                    child.setAddressid(project.getAddress().getId());
                 }
             }
         }

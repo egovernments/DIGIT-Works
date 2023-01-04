@@ -25,10 +25,10 @@ public class Boundary {
     @JsonProperty("id")
     private String id = null;
 
-    @JsonIgnore
+    @JsonProperty("parentid")
     private String parentid = null;
 
-    @JsonIgnore
+    @JsonProperty("addressid")
     private String addressid = null;
 
     @JsonProperty("code")
