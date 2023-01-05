@@ -92,7 +92,7 @@ public class AttendanceLogQueryBuilder {
 
         if (criteria.getStatus() != null) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" log.logStatus=? ");
+            query.append(" log.status=? ");
             preparedStmtList.add(criteria.getStatus().toString());
         }
 
