@@ -41,8 +41,8 @@ uom                          character varying(256),
 uom_value                    NUMERIC,
 additional_details           JSONB,
 CONSTRAINT pk_eg_wms_estimate_detail PRIMARY KEY (id),
-CONSTRAINT uk_eg_wms_estimate_detail UNIQUE (name),
-CONSTRAINT uk_eg_wms_estimate_detail UNIQUE (description),
+CONSTRAINT uk_eg_wms_estimate_detail_name UNIQUE (name),
+CONSTRAINT uk_eg_wms_estimate_detail_description UNIQUE (description),
 CONSTRAINT fk_eg_wms_estimate_detail FOREIGN KEY (estimate_id) REFERENCES eg_wms_estimate (id)
 );
 
