@@ -1,6 +1,6 @@
 export const dummyTableData = [
     {
-        mustorRollId: 'ABAC-3134-1334',
+        mustorRollId: 'MR/2022-23/01/05/000156',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',

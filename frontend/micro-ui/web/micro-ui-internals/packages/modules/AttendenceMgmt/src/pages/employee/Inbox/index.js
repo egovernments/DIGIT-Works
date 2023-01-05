@@ -99,6 +99,7 @@ const Inbox = ({isInbox, parentRoute, filterComponent, searchComponent,initialSt
               onSearch={handleFilterChange}
               isLoading={isLoading}
               sortParams={sortParams}
+              tenantId={tenantId}
              /> : 
             (<React.Fragment>
                 {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
@@ -123,6 +124,7 @@ const Inbox = ({isInbox, parentRoute, filterComponent, searchComponent,initialSt
                     sortParams={sortParams}
                     defaultSearchParams={initialStates.searchParams}
                     isLoading={isLoading}
+                    tenantId={tenantId}
                  /> 
             </React.Fragment>)
         }
