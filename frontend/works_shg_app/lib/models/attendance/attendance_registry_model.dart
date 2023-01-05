@@ -8,12 +8,13 @@ part 'attendance_registry_model.g.dart';
 @freezed
 class AttendenceRegistersModel with _$AttendenceRegistersModel {
   const factory AttendenceRegistersModel({
-    @JsonKey(name: 'attendanceRegister') List<AttendenceRegister>? attendenceRegister,
+    @JsonKey(name: 'attendanceRegister')
+        List<AttendenceRegister>? attendenceRegister,
   }) = _AttendenceRegistersModel;
 
   factory AttendenceRegistersModel.fromJson(
-      Map<String, dynamic> json,
-      ) =>
+    Map<String, dynamic> json,
+  ) =>
       _$AttendenceRegistersModelFromJson(json);
 }
 
@@ -26,15 +27,13 @@ class AttendenceRegister with _$AttendenceRegister {
     String? name,
     int? startDate,
     int? endDate,
-    @JsonKey(name: 'staff')
-    List<StaffEntries>? staffEntries,
-    @JsonKey(name: 'attendees')
-    List<AttendeesEntries>? attendeesEntries,
+    @JsonKey(name: 'staff') List<StaffEntries>? staffEntries,
+    @JsonKey(name: 'attendees') List<AttendeesEntries>? attendeesEntries,
   }) = _AttendenceRegister;
 
   factory AttendenceRegister.fromJson(
-      Map<String, dynamic> json,
-      ) =>
+    Map<String, dynamic> json,
+  ) =>
       _$AttendenceRegisterFromJson(json);
 }
 
@@ -45,20 +44,20 @@ class StaffEntries with _$StaffEntries {
   }) = _StaffEntries;
 
   factory StaffEntries.fromJson(
-      Map<String, dynamic> json,
-      ) =>
+    Map<String, dynamic> json,
+  ) =>
       _$StaffEntriesFromJson(json);
 }
 
 @freezed
 class AttendeesEntries with _$AttendeesEntries {
-  const factory AttendeesEntries(
-      {String? id,
-        }) = _AttendeesEntries;
+  const factory AttendeesEntries({
+    String? id,
+  }) = _AttendeesEntries;
 
   factory AttendeesEntries.fromJson(
-      Map<String, dynamic> json,
-      ) =>
+    Map<String, dynamic> json,
+  ) =>
       _$AttendeesEntriesFromJson(json);
 }
 
@@ -66,12 +65,12 @@ class AttendeesEntries with _$AttendeesEntries {
 class AuditDetails with _$AuditDetails {
   const factory AuditDetails(
       {String? createdBy,
-        String? lastModifiedBy,
-        int? createdTime,
-        int? lastModifiedTime}) = _AuditDetails;
+      String? lastModifiedBy,
+      int? createdTime,
+      int? lastModifiedTime}) = _AuditDetails;
 
   factory AuditDetails.fromJson(
-      Map<String, dynamic> json,
-      ) =>
+    Map<String, dynamic> json,
+  ) =>
       _$AuditDetailsFromJson(json);
 }

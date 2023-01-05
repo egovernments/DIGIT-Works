@@ -5,6 +5,9 @@ import 'package:works_shg_app/router/app_router.dart';
 import '../blocs/attendance/create_attendence_register.dart';
 import '../blocs/localization/app_localization.dart';
 import 'package:works_shg_app/utils/Constants/I18KeyConstants.dart';
+import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+
+import '../utils/global_variables.dart';
 
 class WorkDetailsCard extends StatelessWidget {
   final List<Map<String, dynamic>> detailsList;
@@ -63,7 +66,9 @@ class WorkDetailsCard extends StatelessWidget {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => {},
-                          child: const Text('REJECT'),
+                          child: Text(
+                            '${AppLocalizations.of(context).translate(i18.common.decline)}',
+                          ),
                           style: ButtonStyle(
                             alignment: Alignment.center,
                             textStyle: MaterialStateProperty.all(TextStyle(
@@ -81,23 +86,29 @@ class WorkDetailsCard extends StatelessWidget {
                             onPressed: state.loading
                                 ? null
                                 : () {
-                              print("JK");
-                              print(state);
-                              print(cardDetails.values.elementAt(3).toString());
-                              print(cardDetails);
                                     context
                                         .read<AttendenceRegisterCreateBloc>()
                                         .add(
                                           CreateAttendenceRegisterEvent(
-                                            tenantId:"pb.amritsar",
-                                              registerNumber:cardDetails.values.elementAt(0).toString(),
-                                            name:cardDetails.values.elementAt(1).toString(),
-                                            startDate: DateTime.now().millisecondsSinceEpoch,
-                                            endDate: DateTime.fromMillisecondsSinceEpoch(110030000).millisecondsSinceEpoch,
+                                            tenantId:
+                                                '${GlobalVariables.getTenantId()}',
+                                            registerNumber: cardDetails.values
+                                                .elementAt(0)
+                                                .toString(),
+                                            name: cardDetails.values
+                                                .elementAt(1)
+                                                .toString(),
+                                            startDate: DateTime.now()
+                                                .millisecondsSinceEpoch,
+                                            endDate: DateTime.now()
+                                                    .millisecondsSinceEpoch +
+                                                110030000,
                                           ),
                                         );
                                   },
-                            child: const Text('ACCEPT'),
+                            child: Text(
+                              '${AppLocalizations.of(context).translate(i18.common.accept)}',
+                            ),
                             style: ButtonStyle(
                               alignment: Alignment.center,
                             ),

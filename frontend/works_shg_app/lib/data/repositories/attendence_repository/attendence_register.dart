@@ -12,11 +12,12 @@ class AttendenceRegisterRepository {
   Future<AttendenceRegistersModel> createAttendenceRegisters({
     dynamic body,
     required String url,
+    required Options options
   }) async {
     try {
       // var formData = FormData.fromMap(body);
       final response =
-          await _client.post(url,  data: body);
+          await _client.post(url,  data: body,options:options);
 
       return AttendenceRegistersModel.fromJson(
         json.decode(response.toString()),

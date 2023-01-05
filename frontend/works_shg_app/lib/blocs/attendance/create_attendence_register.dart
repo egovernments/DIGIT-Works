@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -12,26 +13,34 @@ import 'package:works_shg_app/services/urls.dart';
 
 import '../../data/remote_client.dart';
 import '../../services/local_storage.dart';
+import '../../utils/global_variables.dart';
 
 part 'create_attendence_register.freezed.dart';
 
-typedef AttendenceRegisterCreateEmitter = Emitter<AttendenceRegisterCreateState>;
+typedef AttendenceRegisterCreateEmitter
+    = Emitter<AttendenceRegisterCreateState>;
 
 class AttendenceRegisterCreateBloc
     extends Bloc<AttendenceRegisterCreateEvent, AttendenceRegisterCreateState> {
-  AttendenceRegisterCreateBloc() : super(const AttendenceRegisterCreateState()) {
+  AttendenceRegisterCreateBloc()
+      : super(const AttendenceRegisterCreateState()) {
     on<CreateAttendenceRegisterEvent>(_onCreate);
   }
 
-  FutureOr<void> _onCreate(
-      AttendenceRegisterCreateEvent event, AttendenceRegisterCreateEmitter emit) async {
+  FutureOr<void> _onCreate(AttendenceRegisterCreateEvent event,
+      AttendenceRegisterCreateEmitter emit) async {
     Client client = Client();
     emit(state.copyWith(loading: true));
     print(event);
     AttendenceRegistersModel attendenceRegistersModel =
-    await AttendenceRegisterRepository(client.init()).createAttendenceRegisters(
-        url: Urls.attendenceRegisterServices.CreateAttendenceRegister,
-        body: {
+        await AttendenceRegisterRepository(client.init())
+            .createAttendenceRegisters(
+                url: Urls.attendenceRegisterServices.CreateAttendenceRegister,
+                options: Options(extra: {
+                  "userInfo": GlobalVariables.getUserInfo(),
+                  "accessToken": GlobalVariables.getAuthToken()
+                }),
+                body: {
           "attendanceRegister": [
             {
               "id": "",
@@ -46,7 +55,8 @@ class AttendenceRegisterCreateBloc
           ]
         });
     await Future.delayed(const Duration(seconds: 1));
-    emit(state.copyWith(attendenceRegistersModel: attendenceRegistersModel, loading: false));
+    emit(state.copyWith(
+        attendenceRegistersModel: attendenceRegistersModel, loading: false));
   }
 }
 
@@ -58,9 +68,6 @@ class AttendenceRegisterCreateEvent with _$AttendenceRegisterCreateEvent {
     required String name,
     required int startDate,
     required int endDate,
-
-
-
   }) = CreateAttendenceRegisterEvent;
 }
 

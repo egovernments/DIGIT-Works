@@ -34,6 +34,8 @@ class Common {
   String get home => 'ACTION_TEST_HOME';
   String get editProfile => 'CORE_COMMON_EDIT_PROFILE';
   String get language => 'CORE_COMMON_LANGUAGE';
+  String get decline => 'CORE_BUTTON_DECLINE';
+  String get accept => 'CORE_BUTTON_ACCEPT';
 }
 
 class Home {
