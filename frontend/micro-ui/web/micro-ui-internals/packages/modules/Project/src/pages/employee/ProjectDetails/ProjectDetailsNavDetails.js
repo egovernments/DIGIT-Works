@@ -19,7 +19,7 @@ const ProjectDetailsNavDetails = ({activeLink}) => {
                     moduleCode="Project"
                     isDataLoading={false}
                     workflowDetails={workflowDetails}
-                    showTimeLine={true}
+                    showTimeLine={false}
                     timelineStatusPrefix={""}
                     businessService={""}
                     forcedActionPrefix={"PROJECT"}
@@ -35,7 +35,7 @@ const ProjectDetailsNavDetails = ({activeLink}) => {
                     moduleCode="Project"
                     isDataLoading={false}
                     workflowDetails={workflowDetails}
-                    showTimeLine={true}
+                    showTimeLine={false}
                     timelineStatusPrefix={""}
                     businessService={""}
                     forcedActionPrefix={"PROJECT"}

@@ -1,8 +1,8 @@
 const transformViewDataToApplicationDetails = {
   genericPropertyDetails: () => {
     const DepartmentDetails = {
-      title: "",
-      asSectionHeader: true,
+      title: " ",
+      asSectionHeader: false,
       values: [
         { title: "PROJECT_OWNING_DEPT", value: "Housing and Urban Development Department" },
         { title: "PROJECT_EXECUTING_DEPT", value: "Housing and Urban Development Department" },
