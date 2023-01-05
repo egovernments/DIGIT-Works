@@ -1,7 +1,7 @@
-DROP TABLE IF EXISTS eg_wms_estimate;
+DROP TABLE IF EXISTS eg_wms_estimate_amount_detail;
 DROP TABLE IF EXISTS eg_wms_estimate_detail;
 DROP TABLE IF EXISTS eg_wms_estimate_address;
-DROP TABLE IF EXISTS eg_wms_estimate_amount_detail;
+DROP TABLE IF EXISTS eg_wms_estimate;
 
 
 CREATE TABLE eg_wms_estimate(
