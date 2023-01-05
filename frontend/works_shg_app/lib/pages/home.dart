@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
                               AppLocalizations.of(context)
                                   .translate(i18.home.workOrder),
                               () => context.router
-                                  .push(const WorkOrderPageRoute())),
+                                  .push(const WorkOrderRoute())),
                         )
                       ],
                     ),

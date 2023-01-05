@@ -24,7 +24,7 @@ class WorkOrderPage extends StatelessWidget {
         ),
         WorkDetailsCard(
           fakeWorkOrderDetails,
-          isSHGInbox: false,
+          isWorkOrderInbox: true,
         )
       ])),
     );

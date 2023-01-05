@@ -27,45 +27,19 @@ class AttendenceRegisterCreateBloc
       AttendenceRegisterCreateEvent event, AttendenceRegisterCreateEmitter emit) async {
     Client client = Client();
     emit(state.copyWith(loading: true));
-
-    dynamic localUserDetails;
-    String? accessToken;
-print(kIsWeb);
-    if (kIsWeb) {
-      localUserDetails = html.window.localStorage['userRequest' ?? ''];
-      accessToken = html.window.localStorage['accessToken' ?? ''];
-    } else {
-      localUserDetails = await storage.read(key: 'userRequest' ?? '');
-      accessToken = await storage.read(key: 'accessToken' ?? '');
-    }
-    print(accessToken);
-    print(await storage.read(key: 'accessToken' ?? ''));
-print(accessToken.toString());
+    print(event);
     AttendenceRegistersModel attendenceRegistersModel =
     await AttendenceRegisterRepository(client.init()).createAttendenceRegisters(
         url: Urls.attendenceRegisterServices.CreateAttendenceRegister,
         body: {
-          "RequestInfo": {
-            ...RequestInfoModel(
-              apiId: 'asset-services',
-              ver: ".01",
-              ts: "",
-              action: "_search",
-              did: "1",
-              key: "",
-              msgId: "search with from and to values",
-                authToken: "618ce212-ac49-4db9-94bd-63910e787a97"
-            ).toJson(),
-            "userInfo": jsonDecode(localUserDetails)
-          },
           "attendanceRegister": [
             {
               "id": "",
-              "tenantId": "pb.amritsar",
-              "registerNumber": "",
-              "name": "register800",
-              "startDate": 1640995200000,
-              "endDate": 1703980800000,
+              "tenantId": event.tenantId,
+              "registerNumber": event.registerNumber,
+              "name": event.name,
+              "startDate": event.startDate,
+              "endDate": event.endDate,
               "staff": [],
               "attendees": []
             }
@@ -78,7 +52,16 @@ print(accessToken.toString());
 
 @freezed
 class AttendenceRegisterCreateEvent with _$AttendenceRegisterCreateEvent {
-  const factory AttendenceRegisterCreateEvent.search() = CreateAttendenceRegisterEvent;
+  const factory AttendenceRegisterCreateEvent.create({
+    required String tenantId,
+    required String registerNumber,
+    required String name,
+    required int startDate,
+    required int endDate,
+
+
+
+  }) = CreateAttendenceRegisterEvent;
 }
 
 @freezed

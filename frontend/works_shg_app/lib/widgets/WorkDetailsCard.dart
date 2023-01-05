@@ -9,9 +9,14 @@ import 'package:works_shg_app/utils/Constants/I18KeyConstants.dart';
 class WorkDetailsCard extends StatelessWidget {
   final List<Map<String, dynamic>> detailsList;
   final bool isAttendanceInbox;
+  final bool isWorkOrderInbox;
   final bool isSHGInbox;
+
   const WorkDetailsCard(this.detailsList,
-      {this.isAttendanceInbox = false, this.isSHGInbox = false, super.key});
+      {this.isAttendanceInbox = false,
+      this.isWorkOrderInbox = false,
+      this.isSHGInbox = false,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,55 +43,76 @@ class WorkDetailsCard extends StatelessWidget {
           title: cardDetails.keys.elementAt(j).toString(),
           description: cardDetails.values.elementAt(j).toString()));
     }
-    // labelList.add(TextButton(
-    //   onPressed: () => DigitDialog.show(
-    //     context,
-    //     title: AppLocalizations.of(context).translate(i18.login.forgotPassword),
-    //     content:
-    //         'Please contact the administrator if you have forgotten your password',
-    //     primaryActionLabel:
-    //         AppLocalizations.of(context).translate(i18.common.oK),
-    //     primaryAction: () => Navigator.pop(context),
-    //   ),
-    //   child: Center(
-    //       child: Text(AppLocalizations.of(context)
-    //           .translate(i18.login.forgotPassword))),
-    // ));
-
-    labelList.add(Row(
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        OutlinedButton(
-          onPressed: () => DigitDialog.show(
-            context,
-            title: 'Warning',
-            content: 'Are you sure to decline this Work Order?',
-            primaryActionLabel: 'Confirm',
-            primaryAction: () => Navigator.pop(context),
-            secondaryActionLabel: 'GoBack',
-            secondaryAction: () => Navigator.pop(context),
-          ),
-          child: const Text('REJECT'),
-        ),
-        const SizedBox(height: 48),
-        BlocBuilder<AttendenceRegisterCreateBloc, AttendenceRegisterCreateState>(
-          builder: (context, state) => DigitElevatedButton(
-            onPressed: state.loading
-                ? null
-                : () {
-              context.read<AttendenceRegisterCreateBloc>().add(
-                CreateAttendenceRegisterEvent(
-
-                ),
-              );
-            },
-            child: Center(
-              child: Text("ACCEPT"),
-            ),
-          ),
-        ),
-      ],
-    ));
+    if (isWorkOrderInbox) {
+      labelList.add(Row(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          LayoutBuilder(builder: (context, constraints) {
+            return new Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.center,
+                  width: constraints.maxWidth > 760
+                      ? MediaQuery.of(context).size.width / 2
+                      : MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => {},
+                          child: const Text('REJECT'),
+                          style: ButtonStyle(
+                            alignment: Alignment.center,
+                            textStyle: MaterialStateProperty.all(TextStyle(
+                                color: Theme.of(context).primaryColor)),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        width: MediaQuery.of(context).size.width / 3,
+                        child: Expanded(
+                            child: BlocBuilder<AttendenceRegisterCreateBloc,
+                                AttendenceRegisterCreateState>(
+                          builder: (context, state) => ElevatedButton(
+                            onPressed: state.loading
+                                ? null
+                                : () {
+                              print("JK");
+                              print(state);
+                              print(cardDetails.values.elementAt(3).toString());
+                              print(cardDetails);
+                                    context
+                                        .read<AttendenceRegisterCreateBloc>()
+                                        .add(
+                                          CreateAttendenceRegisterEvent(
+                                            tenantId:"pb.amritsar",
+                                              registerNumber:cardDetails.values.elementAt(0).toString(),
+                                            name:cardDetails.values.elementAt(1).toString(),
+                                            startDate: DateTime.now().millisecondsSinceEpoch,
+                                            endDate: DateTime.fromMillisecondsSinceEpoch(110030000).millisecondsSinceEpoch,
+                                          ),
+                                        );
+                                  },
+                            child: const Text('ACCEPT'),
+                            style: ButtonStyle(
+                              alignment: Alignment.center,
+                            ),
+                          ),
+                        )),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            );
+          }),
+        ],
+      ));
+    }
     return Column(
       children: labelList,
     );

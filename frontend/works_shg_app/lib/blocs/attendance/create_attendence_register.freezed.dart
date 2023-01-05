@@ -16,38 +16,53 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AttendenceRegisterCreateEvent {
+  String get tenantId => throw _privateConstructorUsedError;
+  String get registerNumber => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  int get startDate => throw _privateConstructorUsedError;
+  int get endDate => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() search,
+    required TResult Function(String tenantId, String registerNumber,
+            String name, int startDate, int endDate)
+        create,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? search,
+    TResult? Function(String tenantId, String registerNumber, String name,
+            int startDate, int endDate)?
+        create,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? search,
+    TResult Function(String tenantId, String registerNumber, String name,
+            int startDate, int endDate)?
+        create,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(CreateAttendenceRegisterEvent value) search,
+    required TResult Function(CreateAttendenceRegisterEvent value) create,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(CreateAttendenceRegisterEvent value)? search,
+    TResult? Function(CreateAttendenceRegisterEvent value)? create,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(CreateAttendenceRegisterEvent value)? search,
+    TResult Function(CreateAttendenceRegisterEvent value)? create,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $AttendenceRegisterCreateEventCopyWith<AttendenceRegisterCreateEvent>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -57,6 +72,13 @@ abstract class $AttendenceRegisterCreateEventCopyWith<$Res> {
           $Res Function(AttendenceRegisterCreateEvent) then) =
       _$AttendenceRegisterCreateEventCopyWithImpl<$Res,
           AttendenceRegisterCreateEvent>;
+  @useResult
+  $Res call(
+      {String tenantId,
+      String registerNumber,
+      String name,
+      int startDate,
+      int endDate});
 }
 
 /// @nodoc
@@ -69,14 +91,56 @@ class _$AttendenceRegisterCreateEventCopyWithImpl<$Res,
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tenantId = null,
+    Object? registerNumber = null,
+    Object? name = null,
+    Object? startDate = null,
+    Object? endDate = null,
+  }) {
+    return _then(_value.copyWith(
+      tenantId: null == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
+              as String,
+      registerNumber: null == registerNumber
+          ? _value.registerNumber
+          : registerNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      startDate: null == startDate
+          ? _value.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as int,
+      endDate: null == endDate
+          ? _value.endDate
+          : endDate // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
 }
 
 /// @nodoc
-abstract class _$$CreateAttendenceRegisterEventCopyWith<$Res> {
+abstract class _$$CreateAttendenceRegisterEventCopyWith<$Res>
+    implements $AttendenceRegisterCreateEventCopyWith<$Res> {
   factory _$$CreateAttendenceRegisterEventCopyWith(
           _$CreateAttendenceRegisterEvent value,
           $Res Function(_$CreateAttendenceRegisterEvent) then) =
       __$$CreateAttendenceRegisterEventCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String tenantId,
+      String registerNumber,
+      String name,
+      int startDate,
+      int endDate});
 }
 
 /// @nodoc
@@ -88,6 +152,39 @@ class __$$CreateAttendenceRegisterEventCopyWithImpl<$Res>
       _$CreateAttendenceRegisterEvent _value,
       $Res Function(_$CreateAttendenceRegisterEvent) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tenantId = null,
+    Object? registerNumber = null,
+    Object? name = null,
+    Object? startDate = null,
+    Object? endDate = null,
+  }) {
+    return _then(_$CreateAttendenceRegisterEvent(
+      tenantId: null == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
+              as String,
+      registerNumber: null == registerNumber
+          ? _value.registerNumber
+          : registerNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      startDate: null == startDate
+          ? _value.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as int,
+      endDate: null == endDate
+          ? _value.endDate
+          : endDate // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
 }
 
 /// @nodoc
@@ -95,54 +192,97 @@ class __$$CreateAttendenceRegisterEventCopyWithImpl<$Res>
 class _$CreateAttendenceRegisterEvent
     with DiagnosticableTreeMixin
     implements CreateAttendenceRegisterEvent {
-  const _$CreateAttendenceRegisterEvent();
+  const _$CreateAttendenceRegisterEvent(
+      {required this.tenantId,
+      required this.registerNumber,
+      required this.name,
+      required this.startDate,
+      required this.endDate});
+
+  @override
+  final String tenantId;
+  @override
+  final String registerNumber;
+  @override
+  final String name;
+  @override
+  final int startDate;
+  @override
+  final int endDate;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendenceRegisterCreateEvent.search()';
+    return 'AttendenceRegisterCreateEvent.create(tenantId: $tenantId, registerNumber: $registerNumber, name: $name, startDate: $startDate, endDate: $endDate)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-        DiagnosticsProperty('type', 'AttendenceRegisterCreateEvent.search'));
+    properties
+      ..add(DiagnosticsProperty('type', 'AttendenceRegisterCreateEvent.create'))
+      ..add(DiagnosticsProperty('tenantId', tenantId))
+      ..add(DiagnosticsProperty('registerNumber', registerNumber))
+      ..add(DiagnosticsProperty('name', name))
+      ..add(DiagnosticsProperty('startDate', startDate))
+      ..add(DiagnosticsProperty('endDate', endDate));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CreateAttendenceRegisterEvent);
+            other is _$CreateAttendenceRegisterEvent &&
+            (identical(other.tenantId, tenantId) ||
+                other.tenantId == tenantId) &&
+            (identical(other.registerNumber, registerNumber) ||
+                other.registerNumber == registerNumber) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.startDate, startDate) ||
+                other.startDate == startDate) &&
+            (identical(other.endDate, endDate) || other.endDate == endDate));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(
+      runtimeType, tenantId, registerNumber, name, startDate, endDate);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CreateAttendenceRegisterEventCopyWith<_$CreateAttendenceRegisterEvent>
+      get copyWith => __$$CreateAttendenceRegisterEventCopyWithImpl<
+          _$CreateAttendenceRegisterEvent>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() search,
+    required TResult Function(String tenantId, String registerNumber,
+            String name, int startDate, int endDate)
+        create,
   }) {
-    return search();
+    return create(tenantId, registerNumber, name, startDate, endDate);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? search,
+    TResult? Function(String tenantId, String registerNumber, String name,
+            int startDate, int endDate)?
+        create,
   }) {
-    return search?.call();
+    return create?.call(tenantId, registerNumber, name, startDate, endDate);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? search,
+    TResult Function(String tenantId, String registerNumber, String name,
+            int startDate, int endDate)?
+        create,
     required TResult orElse(),
   }) {
-    if (search != null) {
-      return search();
+    if (create != null) {
+      return create(tenantId, registerNumber, name, startDate, endDate);
     }
     return orElse();
   }
@@ -150,27 +290,27 @@ class _$CreateAttendenceRegisterEvent
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(CreateAttendenceRegisterEvent value) search,
+    required TResult Function(CreateAttendenceRegisterEvent value) create,
   }) {
-    return search(this);
+    return create(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(CreateAttendenceRegisterEvent value)? search,
+    TResult? Function(CreateAttendenceRegisterEvent value)? create,
   }) {
-    return search?.call(this);
+    return create?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(CreateAttendenceRegisterEvent value)? search,
+    TResult Function(CreateAttendenceRegisterEvent value)? create,
     required TResult orElse(),
   }) {
-    if (search != null) {
-      return search(this);
+    if (create != null) {
+      return create(this);
     }
     return orElse();
   }
@@ -178,8 +318,27 @@ class _$CreateAttendenceRegisterEvent
 
 abstract class CreateAttendenceRegisterEvent
     implements AttendenceRegisterCreateEvent {
-  const factory CreateAttendenceRegisterEvent() =
-      _$CreateAttendenceRegisterEvent;
+  const factory CreateAttendenceRegisterEvent(
+      {required final String tenantId,
+      required final String registerNumber,
+      required final String name,
+      required final int startDate,
+      required final int endDate}) = _$CreateAttendenceRegisterEvent;
+
+  @override
+  String get tenantId;
+  @override
+  String get registerNumber;
+  @override
+  String get name;
+  @override
+  int get startDate;
+  @override
+  int get endDate;
+  @override
+  @JsonKey(ignore: true)
+  _$$CreateAttendenceRegisterEventCopyWith<_$CreateAttendenceRegisterEvent>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
