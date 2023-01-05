@@ -29,7 +29,7 @@ const SubWorkTableDetails = ({data}) => {
     }
     const renderHeader = (headers) => {
         return headers?.map((key, index) => {
-            return <th key={index} style={getStyles(key)} > {key} </th>
+            return <th key={index} style={getStyles(key)} > {t(key)} </th>
         })
     }
 
