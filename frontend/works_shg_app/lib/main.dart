@@ -17,6 +17,7 @@ import 'Env/app_config.dart';
 import 'blocs/app_bloc_observer.dart';
 import 'blocs/app_config/app_config.dart';
 import 'blocs/app_initilization/app_initilization.dart';
+import 'blocs/attendance/create_attendence_register.dart';
 import 'blocs/auth/auth.dart';
 import 'blocs/localization/app_localization.dart';
 import 'blocs/localization/localization.dart';
@@ -72,6 +73,7 @@ class MainApplication extends StatelessWidget {
           lazy: false,
         ),
         BlocProvider(create: (context) => AuthBloc(const AuthState())),
+        BlocProvider(create: (context) => AttendenceRegisterCreateBloc()),
         BlocProvider(
           create: (_) => ApplicationConfigBloc(const ApplicationConfigState())
             ..add(const ApplicationConfigEvent.onfetchConfig()),
