@@ -1,6 +1,10 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/router/app_router.dart';
+import '../blocs/attendance/create_attendence_register.dart';
+import '../blocs/localization/app_localization.dart';
+import 'package:works_shg_app/utils/Constants/I18KeyConstants.dart';
 
 class WorkDetailsCard extends StatelessWidget {
   final List<Map<String, dynamic>> detailsList;
@@ -34,6 +38,55 @@ class WorkDetailsCard extends StatelessWidget {
           title: cardDetails.keys.elementAt(j).toString(),
           description: cardDetails.values.elementAt(j).toString()));
     }
+    // labelList.add(TextButton(
+    //   onPressed: () => DigitDialog.show(
+    //     context,
+    //     title: AppLocalizations.of(context).translate(i18.login.forgotPassword),
+    //     content:
+    //         'Please contact the administrator if you have forgotten your password',
+    //     primaryActionLabel:
+    //         AppLocalizations.of(context).translate(i18.common.oK),
+    //     primaryAction: () => Navigator.pop(context),
+    //   ),
+    //   child: Center(
+    //       child: Text(AppLocalizations.of(context)
+    //           .translate(i18.login.forgotPassword))),
+    // ));
+
+    labelList.add(Row(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        OutlinedButton(
+          onPressed: () => DigitDialog.show(
+            context,
+            title: 'Warning',
+            content: 'Are you sure to decline this Work Order?',
+            primaryActionLabel: 'Confirm',
+            primaryAction: () => Navigator.pop(context),
+            secondaryActionLabel: 'GoBack',
+            secondaryAction: () => Navigator.pop(context),
+          ),
+          child: const Text('REJECT'),
+        ),
+        const SizedBox(height: 48),
+        BlocBuilder<AttendenceRegisterCreateBloc, AttendenceRegisterCreateState>(
+          builder: (context, state) => DigitElevatedButton(
+            onPressed: state.loading
+                ? null
+                : () {
+              context.read<AttendenceRegisterCreateBloc>().add(
+                CreateAttendenceRegisterEvent(
+
+                ),
+              );
+            },
+            child: Center(
+              child: Text("ACCEPT"),
+            ),
+          ),
+        ),
+      ],
+    ));
     return Column(
       children: labelList,
     );
