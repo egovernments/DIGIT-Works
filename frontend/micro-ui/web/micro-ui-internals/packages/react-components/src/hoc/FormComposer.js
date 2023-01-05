@@ -571,8 +571,8 @@ export const FormComposer = (props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
-      {props.showMultipleCardsWithoutNavs ? (
-          props.config?.map((section, index, array) => {
+      {props?.showMultipleCardsWithoutNavs ? (
+          props?.config?.map((section, index, array) => {
             return !section.navLink && (
               <Card style={getCardStyles()}>
                 {renderFormFields(props, section, index, array)}
@@ -582,7 +582,7 @@ export const FormComposer = (props) => {
         ) :  (         
           <Card style={getCardStyles()}>
             {
-              props.config?.map((section, index, array) => {
+              props?.config?.map((section, index, array) => {
                 return !section.navLink && (
                     <>
                       {renderFormFields(props, section, index, array)}
@@ -595,8 +595,8 @@ export const FormComposer = (props) => {
       }
       { props?.showNavs && props.horizontalNavConfig && (
            <HorizontalNav configNavItems={props.horizontalNavConfig?props.horizontalNavConfig:null} showNav={true} activeLink={activeLink} setActiveLink={setActiveLink}>
-           {props.showMultipleCardsInNavs ? (
-             props.config?.map((section, index, array) => {
+           {props?.showMultipleCardsInNavs ? (
+             props?.config?.map((section, index, array) => {
                return section.navLink ? section?.navLink===activeLink ? (
                  <Card style={getCardStyles()}>
                     {renderFormFields(props, section, index, array)}
@@ -607,7 +607,7 @@ export const FormComposer = (props) => {
              ( 
                  <Card style={getCardStyles()}>
                    {
-                     props.config?.map((section, index, array) => {
+                     props?.config?.map((section, index, array) => {
                        return section.navLink ? section?.navLink===activeLink ? (
                          <>
                           {renderFormFields(props, section, index, array)}
