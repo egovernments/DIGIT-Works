@@ -1,5 +1,6 @@
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_id ON eg_wms_estimate (id);
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_tenant_id ON eg_wms_estimate (tenant_id);
+CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_estimate_number ON eg_wms_estimate (estimate_number);
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_project_id ON eg_wms_estimate (project_id);
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_proposal_date ON eg_wms_estimate (proposal_date);
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_status ON eg_wms_estimate (status);

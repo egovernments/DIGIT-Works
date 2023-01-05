@@ -31,6 +31,9 @@ public class Estimate {
     @JsonProperty("tenantId")
     private String tenantId = null;
 
+    @JsonProperty("estimateNumber")
+    private String estimateNumber = null;
+
     @JsonProperty("projectId")
     private String projectId = null;
 

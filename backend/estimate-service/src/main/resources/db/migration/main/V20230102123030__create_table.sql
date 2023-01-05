@@ -8,6 +8,7 @@ CREATE TABLE eg_wms_estimate(
 
 id                           character varying(256),
 tenant_id                    character varying(64) NOT NULL,
+estimate_number              character varying(128) NOT NULL,
 project_id                   character varying(256) NOT NULL,
 proposal_date                bigint NOT NULL,
 status                       character varying(64) NOT NULL,

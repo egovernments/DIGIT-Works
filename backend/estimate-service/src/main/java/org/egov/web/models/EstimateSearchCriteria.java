@@ -20,6 +20,9 @@ public class EstimateSearchCriteria {
     @JsonProperty("tenantId")
     private String tenantId = null;//mand
 
+    @JsonProperty("estimateNumber")
+    private String estimateNumber = null;
+
     @JsonProperty("projectId")
     private String projectId = null;
 
