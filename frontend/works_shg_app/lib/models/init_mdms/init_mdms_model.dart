@@ -48,10 +48,11 @@ class CommonMastersModel with _$CommonMastersModel {
 @freezed
 class StateInfoListModel with _$StateInfoListModel {
   const factory StateInfoListModel({
-    final String? bannerURL,
+    final String? bannerUrl,
     final String? code,
     final bool? hasLocalisation,
     final List<Languages>? languages,
+    final List<LocalizationModules>? localizationModules,
     final String? logoUrl,
     final String? logoUrlWhite,
     final String? statelogo,

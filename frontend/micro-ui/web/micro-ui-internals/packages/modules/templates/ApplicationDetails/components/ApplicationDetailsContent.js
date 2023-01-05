@@ -130,7 +130,7 @@ function ApplicationDetailsContent({
     window.location.href.includes("employee/tl") || window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc");
   const isNocLocation = window.location.href.includes("employee/noc");
   const isBPALocation = window.location.href.includes("employee/obps");
-  const isWS = window.location.href.includes("employee/ws");
+  const isWS = window.location.href.includes("employee/ws") || window.location.href.includes("employee/works") ;
 
   const getRowStyles = () => {
     if (window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc")) {
@@ -199,6 +199,7 @@ function ApplicationDetailsContent({
   };
 
   return (
+    <CollapseAndExpandGroups groupElements={applicationDetails?.CollapseConfig?.collapseAll} groupHeader={applicationDetails?.CollapseConfig?.groupHeader} headerLabel={applicationDetails?.CollapseConfig?.headerLabel} headerValue={applicationDetails?.CollapseConfig?.headerValue}>
     <Card style={getCardStyles()} className={"employeeCard-override"}>
       {isInfoLabel ? (
         <InfoDetails
@@ -456,6 +457,7 @@ function ApplicationDetailsContent({
         </React.Fragment>
       )}
     </Card>
+    </CollapseAndExpandGroups>
   );
 }
 

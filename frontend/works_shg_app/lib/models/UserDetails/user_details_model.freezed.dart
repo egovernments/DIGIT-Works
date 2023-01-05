@@ -653,8 +653,6 @@ RolesModel _$RolesModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$RolesModel {
-  @JsonKey(name: 'UserRequest')
-  UserRequestModel? get userRequestModel => throw _privateConstructorUsedError;
   String? get code => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get tenantId => throw _privateConstructorUsedError;
@@ -671,13 +669,7 @@ abstract class $RolesModelCopyWith<$Res> {
           RolesModel value, $Res Function(RolesModel) then) =
       _$RolesModelCopyWithImpl<$Res, RolesModel>;
   @useResult
-  $Res call(
-      {@JsonKey(name: 'UserRequest') UserRequestModel? userRequestModel,
-      String? code,
-      String? name,
-      String? tenantId});
-
-  $UserRequestModelCopyWith<$Res>? get userRequestModel;
+  $Res call({String? code, String? name, String? tenantId});
 }
 
 /// @nodoc
@@ -693,16 +685,11 @@ class _$RolesModelCopyWithImpl<$Res, $Val extends RolesModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userRequestModel = freezed,
     Object? code = freezed,
     Object? name = freezed,
     Object? tenantId = freezed,
   }) {
     return _then(_value.copyWith(
-      userRequestModel: freezed == userRequestModel
-          ? _value.userRequestModel
-          : userRequestModel // ignore: cast_nullable_to_non_nullable
-              as UserRequestModel?,
       code: freezed == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -717,18 +704,6 @@ class _$RolesModelCopyWithImpl<$Res, $Val extends RolesModel>
               as String?,
     ) as $Val);
   }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $UserRequestModelCopyWith<$Res>? get userRequestModel {
-    if (_value.userRequestModel == null) {
-      return null;
-    }
-
-    return $UserRequestModelCopyWith<$Res>(_value.userRequestModel!, (value) {
-      return _then(_value.copyWith(userRequestModel: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
@@ -739,14 +714,7 @@ abstract class _$$_RolesModelCopyWith<$Res>
       __$$_RolesModelCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(name: 'UserRequest') UserRequestModel? userRequestModel,
-      String? code,
-      String? name,
-      String? tenantId});
-
-  @override
-  $UserRequestModelCopyWith<$Res>? get userRequestModel;
+  $Res call({String? code, String? name, String? tenantId});
 }
 
 /// @nodoc
@@ -760,16 +728,11 @@ class __$$_RolesModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userRequestModel = freezed,
     Object? code = freezed,
     Object? name = freezed,
     Object? tenantId = freezed,
   }) {
     return _then(_$_RolesModel(
-      userRequestModel: freezed == userRequestModel
-          ? _value.userRequestModel
-          : userRequestModel // ignore: cast_nullable_to_non_nullable
-              as UserRequestModel?,
       code: freezed == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -789,18 +752,11 @@ class __$$_RolesModelCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_RolesModel implements _RolesModel {
-  const _$_RolesModel(
-      {@JsonKey(name: 'UserRequest') this.userRequestModel,
-      this.code,
-      this.name,
-      this.tenantId});
+  const _$_RolesModel({this.code, this.name, this.tenantId});
 
   factory _$_RolesModel.fromJson(Map<String, dynamic> json) =>
       _$$_RolesModelFromJson(json);
 
-  @override
-  @JsonKey(name: 'UserRequest')
-  final UserRequestModel? userRequestModel;
   @override
   final String? code;
   @override
@@ -810,7 +766,7 @@ class _$_RolesModel implements _RolesModel {
 
   @override
   String toString() {
-    return 'RolesModel(userRequestModel: $userRequestModel, code: $code, name: $name, tenantId: $tenantId)';
+    return 'RolesModel(code: $code, name: $name, tenantId: $tenantId)';
   }
 
   @override
@@ -818,8 +774,6 @@ class _$_RolesModel implements _RolesModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_RolesModel &&
-            (identical(other.userRequestModel, userRequestModel) ||
-                other.userRequestModel == userRequestModel) &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.tenantId, tenantId) ||
@@ -828,8 +782,7 @@ class _$_RolesModel implements _RolesModel {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, userRequestModel, code, name, tenantId);
+  int get hashCode => Object.hash(runtimeType, code, name, tenantId);
 
   @JsonKey(ignore: true)
   @override
@@ -847,17 +800,13 @@ class _$_RolesModel implements _RolesModel {
 
 abstract class _RolesModel implements RolesModel {
   const factory _RolesModel(
-      {@JsonKey(name: 'UserRequest') final UserRequestModel? userRequestModel,
-      final String? code,
+      {final String? code,
       final String? name,
       final String? tenantId}) = _$_RolesModel;
 
   factory _RolesModel.fromJson(Map<String, dynamic> json) =
       _$_RolesModel.fromJson;
 
-  @override
-  @JsonKey(name: 'UserRequest')
-  UserRequestModel? get userRequestModel;
   @override
   String? get code;
   @override

@@ -2,9 +2,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.egov.works</groupId>
-    <artifactId>estimate-service</artifactId>
+    <artifactId>estimate-service-old</artifactId>
     <packaging>jar</packaging>
-    <name>estimate-service</name>
+    <name>estimate-service-old</name>
     <version>1.0.0</version>
     <properties>
         <java.version>1.8</java.version>

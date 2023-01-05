@@ -63,10 +63,6 @@ Map<String, dynamic> _$$_UserRequestModelToJson(_$_UserRequestModel instance) =>
 
 _$_RolesModel _$$_RolesModelFromJson(Map<String, dynamic> json) =>
     _$_RolesModel(
-      userRequestModel: json['UserRequest'] == null
-          ? null
-          : UserRequestModel.fromJson(
-              json['UserRequest'] as Map<String, dynamic>),
       code: json['code'] as String?,
       name: json['name'] as String?,
       tenantId: json['tenantId'] as String?,
@@ -74,7 +70,6 @@ _$_RolesModel _$$_RolesModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$_RolesModelToJson(_$_RolesModel instance) =>
     <String, dynamic>{
-      'UserRequest': instance.userRequestModel,
       'code': instance.code,
       'name': instance.name,
       'tenantId': instance.tenantId,

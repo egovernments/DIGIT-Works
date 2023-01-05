@@ -7,18 +7,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
 import 'package:works_shg_app/router/app_navigator_observer.dart';
 import 'package:works_shg_app/router/app_router.dart';
+import 'package:works_shg_app/utils/constants.dart';
+import 'package:works_shg_app/widgets/loaders.dart';
 
 import 'Env/app_config.dart';
 import 'blocs/app_bloc_observer.dart';
 import 'blocs/app_config/app_config.dart';
 import 'blocs/app_initilization/app_initilization.dart';
+import 'blocs/attendance/create_attendence_register.dart';
 import 'blocs/auth/auth.dart';
 import 'blocs/localization/app_localization.dart';
 import 'blocs/localization/localization.dart';
 import 'blocs/user/user_search.dart';
 import 'data/remote_client.dart';
+import 'data/repositories/remote/localization.dart';
 import 'data/repositories/remote/mdms.dart';
 
 void main() {
@@ -67,17 +72,8 @@ class MainApplication extends StatelessWidget {
           )..add(const AppInitializationSetupEvent(selectedLangIndex: 0)),
           lazy: false,
         ),
-        BlocProvider(
-          create: (context) => LocalizationBloc(
-            const LocalizationState(),
-          )..add(const LocalizationEvent.onLoadLocalization(
-              module: 'rainmaker-common',
-              tenantId: 'pb',
-              locale: 'en_IN',
-            )),
-          lazy: false,
-        ),
         BlocProvider(create: (context) => AuthBloc(const AuthState())),
+        BlocProvider(create: (context) => AttendenceRegisterCreateBloc()),
         BlocProvider(
           create: (_) => ApplicationConfigBloc(const ApplicationConfigState())
             ..add(const ApplicationConfigEvent.onfetchConfig()),
@@ -85,45 +81,87 @@ class MainApplication extends StatelessWidget {
         BlocProvider(
           create: (_) => UserSearchBloc()..add(const SearchUserEvent()),
         ),
+        BlocProvider(
+          create: (_) =>
+              MusterRollSearchBloc()..add(const SearchMusterRollEvent()),
+        ),
       ],
-      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-        print(state);
-        return MaterialApp.router(
-          supportedLocales: const [
-            Locale('en', 'IN'),
-            Locale('hi', 'IN'),
-            Locale.fromSubtags(languageCode: 'pn'),
-          ],
-          locale: const Locale('en', 'IN'),
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-          ],
-          localeResolutionCallback: (locale, supportedLocales) {
-            for (var supportedLocaleLanguage in supportedLocales) {
-              if (supportedLocaleLanguage.languageCode ==
-                      locale?.languageCode &&
-                  supportedLocaleLanguage.countryCode == locale?.countryCode) {
-                return supportedLocaleLanguage;
-              }
-            }
-            return supportedLocales.first;
-          },
-          theme: DigitTheme.instance.mobileTheme,
-          routeInformationParser: appRouter.defaultRouteParser(),
-          routerDelegate: AutoRouterDelegate.declarative(
-            appRouter,
-            navigatorObservers: () => [AppRouterObserver()],
-            routes: (handler) => [
-              if (state.isAuthenticated)
-                const AuthenticatedRouteWrapper()
-              else
-                const UnauthenticatedRouteWrapper(),
-            ],
-          ),
-        );
+      child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
+          builder: (context, appInitState) {
+        return appInitState.isInitializationCompleted &&
+                appInitState.initMdmsModel != null
+            ? BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+                return BlocProvider(
+                    create: (appInitState.initMdmsModel != null &&
+                            appInitState
+                                    .stateInfoListModel?.localizationModules !=
+                                null)
+                        ? (context) => LocalizationBloc(
+                              const LocalizationState(),
+                              LocalizationRepository(client.init()),
+                            )..add(LocalizationEvent.onLoadLocalization(
+                                module:
+                                    // appInitState
+                                    //         .stateInfoListModel?.localizationModules
+                                    //         ?.map((e) => e.value.toString())
+                                    //         .join(',')
+                                    //         .toString() ??
+                                    'rainmaker-common',
+                                tenantId: appInitState.initMdmsModel!.tenant!
+                                    .tenantListModel!.first.code
+                                    .toString(),
+                                locale: appInitState.digitRowCardItems!
+                                    .firstWhere((e) => e.isSelected)
+                                    .value,
+                              ))
+                        : (context) => LocalizationBloc(
+                              const LocalizationState(),
+                              LocalizationRepository(client.init()),
+                            ),
+                    child: MaterialApp.router(
+                      supportedLocales: appInitState.initMdmsModel != null
+                          ? appInitState.digitRowCardItems!.map((e) {
+                              final results = e.value.split('_');
+
+                              return results.isNotEmpty
+                                  ? Locale(results.first, results.last)
+                                  : const Locale('en', 'IN');
+                            })
+                          : [],
+                      locale: const Locale('en', 'IN'),
+                      localizationsDelegates: const [
+                        AppLocalizations.delegate,
+                        GlobalWidgetsLocalizations.delegate,
+                        GlobalCupertinoLocalizations.delegate,
+                        GlobalMaterialLocalizations.delegate,
+                      ],
+                      localeResolutionCallback: (locale, supportedLocales) {
+                        for (var supportedLocaleLanguage in supportedLocales) {
+                          if (supportedLocaleLanguage.languageCode ==
+                                  locale?.languageCode &&
+                              supportedLocaleLanguage.countryCode ==
+                                  locale?.countryCode) {
+                            return supportedLocaleLanguage;
+                          }
+                        }
+                        return supportedLocales.first;
+                      },
+                      theme: DigitTheme.instance.mobileTheme,
+                      scaffoldMessengerKey: scaffoldMessengerKey,
+                      routeInformationParser: appRouter.defaultRouteParser(),
+                      routerDelegate: AutoRouterDelegate.declarative(
+                        appRouter,
+                        navigatorObservers: () => [AppRouterObserver()],
+                        routes: (handler) => [
+                          if (authState.isAuthenticated)
+                            const AuthenticatedRouteWrapper()
+                          else
+                            const UnauthenticatedRouteWrapper(),
+                        ],
+                      ),
+                    ));
+              })
+            : Loaders.circularLoader();
       }),
     );
   }

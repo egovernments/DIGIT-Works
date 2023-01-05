@@ -55,13 +55,12 @@ class _$AppRouter extends RootStackRouter {
         child: const AttendanceInboxPage(),
       );
     },
-    WorkOrderPageRoute.name:(routeData) {
+    WorkOrderRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: const WorkOrderPage(),
       );
     },
-
     ViewMusterRollsRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
@@ -120,13 +119,13 @@ class _$AppRouter extends RootStackRouter {
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
-              ViewMusterRollsRoute.name,
-              path: 'muster-rolls',
+              WorkOrderRoute.name,
+              path: 'work-orders',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
-              WorkOrderPageRoute.name,
-              path: 'work-orders',
+              ViewMusterRollsRoute.name,
+              path: 'muster-rolls',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -226,6 +225,18 @@ class AttendanceInboxRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [WorkOrderPage]
+class WorkOrderRoute extends PageRouteInfo<void> {
+  const WorkOrderRoute()
+      : super(
+          WorkOrderRoute.name,
+          path: 'work-orders',
+        );
+
+  static const String name = 'WorkOrderRoute';
+}
+
+/// generated route for
 /// [ViewMusterRollsPage]
 class ViewMusterRollsRoute extends PageRouteInfo<void> {
   const ViewMusterRollsRoute()
@@ -235,18 +246,6 @@ class ViewMusterRollsRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'ViewMusterRollsRoute';
-}
-
-/// generated route for
-/// [WorkOrderPage]
-class WorkOrderPageRoute extends PageRouteInfo<void> {
-  const WorkOrderPageRoute()
-      : super(
-    WorkOrderPageRoute.name,
-    path: 'work-orders',
-  );
-
-  static const String name = 'WorkOrderPageRoute';
 }
 
 /// generated route for
