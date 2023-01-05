@@ -1,7 +1,7 @@
 import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { createProjectHeaderConfig, createProjectSectionConfig } from "../../../configs/createProjectHeaderConfig";
+import { createProjectSectionConfig } from "../../../configs/createProjectHeaderConfig";
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
@@ -45,8 +45,7 @@ const CreateProject = () => {
     const handleHasSubProjectOptions = (option) => {
       setSelectedProjectType(option);
     }
-    const createProjectHeaderFormConfig = createProjectHeaderConfig(hasSubProjectOptions, handleHasSubProjectOptions);
-    const createProjectSectionFormConfig = createProjectSectionConfig();
+    const createProjectSectionFormConfig = createProjectSectionConfig(hasSubProjectOptions, handleHasSubProjectOptions);
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
@@ -64,25 +63,8 @@ const CreateProject = () => {
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
             <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("MASTERS_CREATE_PROJECT")}</Header>
           </div>
-          {createProjectHeaderFormConfig?.form && (
-            <FormComposer
-              label={"MASTERS_CREATE_PROJECT"}
-              config={createProjectHeaderFormConfig?.form.map((config) => {
-                return {
-                  ...config,
-                  body: config?.body.filter((a) => !a.hideInEmployee),
-                };
-              })}
-              onSubmit={onSubmit}
-              submitInForm={false}
-              fieldStyle={{ marginRight: 0 }}
-              inline={false}
-              className="card-no-margin"
-              defaultValues={createProjectHeaderFormConfig?.defaultValues}
-            />
-          )}
           {
-            selectedProjectType && createProjectSectionFormConfig?.form && (
+            createProjectSectionFormConfig?.form && (
               <FormComposer
                 label={"MASTERS_CREATE_PROJECT"}
                 config={createProjectSectionFormConfig?.form.map((config) => {
@@ -100,7 +82,8 @@ const CreateProject = () => {
                 showWrapperContainers={false}
                 isDescriptionBold={false}
                 noBreakLine={true}
-                showMultipleCards={true}
+                showMultipleCardsWithoutNavs={false}
+                showMultipleCardsInNavs={false}
                 horizontalNavConfig={navTypeConfig}
             />
            )}

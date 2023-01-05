@@ -1,15 +1,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const createProjectHeaderConfig =  (hasSubProjectOptions, handleHasSubProjectOptions) => {
+export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubProjectOptions) => {
   const { t } = useTranslation();
 
   return {
     defaultValues : {
-        dateOfProposal : "",
-        projectName : "",
-        projectDesc : "",
-        hasSubProjects : ""
+
     },
     form: [
       { 
@@ -70,20 +67,8 @@ export const createProjectHeaderConfig =  (hasSubProjectOptions, handleHasSubPro
                         }
                     </div>
         }
-    ]
-    }
-    ]
-  };
-};
-
-export const createProjectSectionConfig =  () => {
-  const { t } = useTranslation();
-
-  return {
-    defaultValues : {
-
-    },
-    form: [
+      ]
+      },
       {
         navLink:"Project_Details",
         head: t("PROJECT DETAILS"),
