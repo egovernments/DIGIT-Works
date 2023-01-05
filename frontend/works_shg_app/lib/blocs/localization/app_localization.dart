@@ -52,7 +52,6 @@ class AppLocalizations {
 
   Future<bool> load() async {
     if (scaffoldMessengerKey.currentContext != null) {
-      print('context');
       localizedStrings = BlocProvider.of<LocalizationBloc>(
                   scaffoldMessengerKey.currentContext!)
               .state
@@ -60,7 +59,6 @@ class AppLocalizations {
           [];
       return true;
     } else {
-      print('no Context');
       return false;
     }
   }
@@ -68,7 +66,6 @@ class AppLocalizations {
   translate(
     String localizedValues,
   ) {
-    print('transalte');
     var index =
         localizedStrings.indexWhere((medium) => medium.code == localizedValues);
     return index != -1 ? localizedStrings[index].message : localizedValues;

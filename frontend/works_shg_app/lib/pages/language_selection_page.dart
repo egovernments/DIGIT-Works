@@ -50,7 +50,8 @@ class LanguageSelectionPage extends StatelessWidget {
                               context.read<LocalizationBloc>().add(
                                   OnLoadLocalizationEvent(
                                       module: 'rainmaker-common',
-                                      tenantId: 'pb',
+                                      tenantId: state.stateInfoListModel!.code
+                                          .toString(),
                                       locale: data.value));
                             },
                             languageSubmitLabel: AppLocalizations.of(context)
