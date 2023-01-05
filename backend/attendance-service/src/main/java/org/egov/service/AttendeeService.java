@@ -75,7 +75,7 @@ public class AttendeeService {
         attendeeServiceValidator.validateCreateAttendee(attendeeCreateRequest, attendeeListFromDB, attendanceRegisterListFromDB);
 
         //enrichment call by passing attendee request and data from db call
-        attendeeEnrichmentService.enrichCreateAttendee(attendeeCreateRequest,attendeeListFromDB);
+        attendeeEnrichmentService.enrichAttendeeOnCreate(attendeeCreateRequest,attendeeListFromDB);
 
         //push to producer
         producer.push(attendanceServiceConfiguration.getSaveAttendeeTopic(), attendeeCreateRequest);
@@ -112,7 +112,7 @@ public class AttendeeService {
         attendeeServiceValidator.validateDeleteAttendee(attendeeDeleteRequest, attendeeListFromDB, attendanceRegisterListFromDB);
 
         //enrichment call by passing attendee request and data from db call
-        attendeeEnrichmentService.enrichDeleteAttendee(attendeeDeleteRequest,attendeeListFromDB);
+        attendeeEnrichmentService.enrichAttendeeOnDelete(attendeeDeleteRequest,attendeeListFromDB);
 
         //push to producer
         producer.push(attendanceServiceConfiguration.getUpdateAttendeeTopic(), attendeeDeleteRequest);

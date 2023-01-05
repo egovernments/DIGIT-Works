@@ -19,42 +19,42 @@ public class AttendeeEnrichmentService {
     @Autowired
     private AttendanceServiceUtil attendanceServiceUtil;
 
-    public void enrichCreateAttendee(AttendeeCreateRequest attendeeCreateRequest, List<IndividualEntry> attendeeListFromDB) {
+    public void enrichAttendeeOnCreate(AttendeeCreateRequest attendeeCreateRequest, List<IndividualEntry> attendeeListFromDB) {
         RequestInfo requestInfo = attendeeCreateRequest.getRequestInfo();
         List<IndividualEntry> attendeeListFromRequest = attendeeCreateRequest.getAttendees();
 
-        for (IndividualEntry attendeeFromRequest : attendeeListFromRequest) {
-            AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), attendeeFromRequest.getAuditDetails(), true);
-            attendeeFromRequest.setAuditDetails(auditDetails);
-            attendeeFromRequest.setId(UUID.randomUUID().toString());
-            attendeeFromRequest.setDenrollmentDate(null);
-            if (attendeeFromRequest.getEnrollmentDate() == null) {
+        for (IndividualEntry attendee : attendeeListFromRequest) {
+            AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), attendee.getAuditDetails(), true);
+            attendee.setAuditDetails(auditDetails);
+            attendee.setId(UUID.randomUUID().toString());
+            attendee.setDenrollmentDate(null);
+            if (attendee.getEnrollmentDate() == null) {
                 BigDecimal enrollmentDate = new BigDecimal(System.currentTimeMillis());
-                attendeeFromRequest.setEnrollmentDate(enrollmentDate);
+                attendee.setEnrollmentDate(enrollmentDate);
             }
 
         }
     }
 
-    public void enrichDeleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest, List<IndividualEntry> attendeesFromDB) {
+    public void enrichAttendeeOnDelete(AttendeeDeleteRequest attendeeDeleteRequest, List<IndividualEntry> attendeesFromDB) {
         RequestInfo requestInfo = attendeeDeleteRequest.getRequestInfo();
         List<IndividualEntry> attendeesListFromRequest = attendeeDeleteRequest.getAttendees();
 
-        for (IndividualEntry attendeeFromRequest : attendeesListFromRequest) {
+        for (IndividualEntry attendee : attendeesListFromRequest) {
             for (IndividualEntry attendeeFromDB : attendeesFromDB) {
-                if (attendeeFromDB.getIndividualId().equals(attendeeFromRequest.getIndividualId())
-                        && attendeeFromDB.getRegisterId().equals(attendeeFromRequest.getRegisterId())) {
+                if (attendeeFromDB.getIndividualId().equals(attendee.getIndividualId())
+                        && attendeeFromDB.getRegisterId().equals(attendee.getRegisterId())) {
 
-                    attendeeFromRequest.setId(attendeeFromDB.getId());
-                    attendeeFromRequest.setEnrollmentDate(attendeeFromDB.getEnrollmentDate());
+                    attendee.setId(attendeeFromDB.getId());
+                    attendee.setEnrollmentDate(attendeeFromDB.getEnrollmentDate());
 
                     AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), attendeeFromDB.getAuditDetails(), false);
-                    attendeeFromRequest.setAuditDetails(auditDetails);
+                    attendee.setAuditDetails(auditDetails);
 
 
-                    if (attendeeFromRequest.getDenrollmentDate() == null) {
+                    if (attendee.getDenrollmentDate() == null) {
                         BigDecimal deEnrollmentDate = new BigDecimal(System.currentTimeMillis());
-                        attendeeFromRequest.setDenrollmentDate(deEnrollmentDate);
+                        attendee.setDenrollmentDate(deEnrollmentDate);
                     }
                 }
             }
