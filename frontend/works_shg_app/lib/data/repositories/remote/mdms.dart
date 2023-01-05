@@ -10,12 +10,18 @@ class MdmsRepository {
   final Dio _client;
   MdmsRepository(this._client);
 
-  Future<InitMdmsModel> initMdmsRegistry(
-    String apiEndPoint,
-    Map body,
-  ) async {
+  Future<InitMdmsModel> initMdmsRegistry({
+    required String apiEndPoint,
+    required String tenantId,
+    required List<Map> moduleDetails,
+  }) async {
     try {
-      var response = await _client.post(apiEndPoint, data: body);
+      var response = await _client.post(apiEndPoint, data: {
+        "MdmsCriteria": {
+          "tenantId": tenantId,
+          "moduleDetails": moduleDetails,
+        },
+      });
 
       return InitMdmsModel.fromJson(
         json.decode(response.toString())['MdmsRes'],

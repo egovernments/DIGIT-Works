@@ -36,7 +36,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       "grant_type": "password"
     });
     await Future.delayed(const Duration(seconds: 1));
-    dynamic localAuthDetails;
     if (kIsWeb) {
       html.window.localStorage['accessToken' ?? ''] =
           jsonEncode(userDetailsModel.access_token);
@@ -67,6 +66,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   FutureOr<void> _onLogout(AuthLogoutEvent event, AuthEmitter emit) async {
+    storage.deleteAll();
     emit(state.copyWith(accessToken: null));
   }
 }
