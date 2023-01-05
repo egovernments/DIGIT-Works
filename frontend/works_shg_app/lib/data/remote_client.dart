@@ -16,6 +16,8 @@ class Client {
 }
 
 class ApiInterceptors extends Interceptor {
+  dynamic request;
+
   @override
   Future<dynamic> onRequest(
     RequestOptions options,
@@ -24,15 +26,17 @@ class ApiInterceptors extends Interceptor {
     options.data = {
       ...options.data,
       "RequestInfo": {
-        ...const RequestInfoModel(
-          apiId: 'Rainmaker',
+        ...RequestInfoModel(
+          apiId: options.extra['apiId'] ?? 'Rainmaker',
           ver: ".01",
           ts: "",
-          action: "_search",
+          action: options.extra['action'] ?? "_search",
           did: "1",
           key: "",
-          msgId: "20170310130900|en_IN",
+          msgId: options.extra['msgId'] ?? "20170310130900|en_IN",
+          authToken: options.extra['accessToken'],
         ).toJson(),
+        "userInfo": options.extra['userInfo']
       },
     };
     super.onRequest(options, handler);

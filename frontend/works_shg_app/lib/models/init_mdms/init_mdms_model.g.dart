@@ -56,11 +56,14 @@ Map<String, dynamic> _$$_CommonMastersModelToJson(
 _$_StateInfoListModel _$$_StateInfoListModelFromJson(
         Map<String, dynamic> json) =>
     _$_StateInfoListModel(
-      bannerURL: json['bannerURL'] as String?,
+      bannerUrl: json['bannerUrl'] as String?,
       code: json['code'] as String?,
       hasLocalisation: json['hasLocalisation'] as bool?,
       languages: (json['languages'] as List<dynamic>?)
           ?.map((e) => Languages.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      localizationModules: (json['localizationModules'] as List<dynamic>?)
+          ?.map((e) => LocalizationModules.fromJson(e as Map<String, dynamic>))
           .toList(),
       logoUrl: json['logoUrl'] as String?,
       logoUrlWhite: json['logoUrlWhite'] as String?,
@@ -71,10 +74,11 @@ _$_StateInfoListModel _$$_StateInfoListModelFromJson(
 Map<String, dynamic> _$$_StateInfoListModelToJson(
         _$_StateInfoListModel instance) =>
     <String, dynamic>{
-      'bannerURL': instance.bannerURL,
+      'bannerUrl': instance.bannerUrl,
       'code': instance.code,
       'hasLocalisation': instance.hasLocalisation,
       'languages': instance.languages,
+      'localizationModules': instance.localizationModules,
       'logoUrl': instance.logoUrl,
       'logoUrlWhite': instance.logoUrlWhite,
       'statelogo': instance.statelogo,

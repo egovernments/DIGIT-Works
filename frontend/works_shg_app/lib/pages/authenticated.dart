@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:location/location.dart';
 import 'package:works_shg_app/blocs/user/user_search.dart';
 
+import '../blocs/muster_rolls/search_muster_roll.dart';
 import '../widgets/SideBar.dart';
 
 class AuthenticatedPageWrapper extends StatelessWidget {
@@ -38,6 +39,10 @@ class AuthenticatedPageWrapper extends StatelessWidget {
           BlocProvider(
             create: (_) => UserSearchBloc()..add(const SearchUserEvent()),
           ),
+          BlocProvider(
+            create: (_) =>
+                MusterRollSearchBloc()..add(const SearchMusterRollEvent()),
+          )
         ],
         child: BlocBuilder<UserSearchBloc, UserSearchState>(
             builder: (context, state) {
