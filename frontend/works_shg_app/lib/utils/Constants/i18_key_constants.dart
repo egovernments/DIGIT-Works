@@ -3,6 +3,8 @@ library i18;
 Login login = const Login();
 Common common = const Common();
 Home home = const Home();
+WorkOrder workOrder = const WorkOrder();
+
 
 class Login {
   const Login();
@@ -36,6 +38,11 @@ class Common {
   String get language => 'CORE_COMMON_LANGUAGE';
   String get decline => 'CORE_BUTTON_DECLINE';
   String get accept => 'CORE_BUTTON_ACCEPT';
+  String get confirm => 'CORE_BUTTON_CONFIRM';
+  String get back => 'CORE_BUTTON_BACK';
+
+  String get warning => 'CORE_MSG_WARNING';
+
 }
 
 class Home {
@@ -46,4 +53,9 @@ class Home {
   String get worksMgmt => 'WORKS_MGMT';
   String get attendanceMgmt => 'ACTION_TEST_ATTENDENCEMGMT';
   String get musterRoll => 'ACTION_TEST_MUSTER_ROLL';
+}
+
+class WorkOrder {
+  const WorkOrder();
+  String get warningMsg => 'WRNG_MSG_WORKORDER';
 }

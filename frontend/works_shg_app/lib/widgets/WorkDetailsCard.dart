@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/widgets/atoms/button_group.dart';
-
+import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import '../blocs/attendance/create_attendence_register.dart';
+import '../blocs/localization/app_localization.dart';
 import '../utils/global_variables.dart';
 
 class WorkDetailsCard extends StatelessWidget {
@@ -59,7 +60,15 @@ class WorkDetailsCard extends StatelessWidget {
                 builder: (context, state) => ButtonGroup(
                       outlinedButtonLabel,
                       elevatedButtonLabel,
-                      outLinedCallBack: () {},
+                      outLinedCallBack: () => DigitDialog.show(
+                        context,
+                        title: AppLocalizations.of(context).translate(i18.common.warning),
+                        content: AppLocalizations.of(context).translate(i18.workOrder.warningMsg),
+                        primaryActionLabel: AppLocalizations.of(context).translate(i18.common.confirm),
+                        primaryAction: () => Navigator.pop(context),
+                        secondaryActionLabel: AppLocalizations.of(context).translate(i18.common.back),
+                        secondaryAction: () => Navigator.pop(context),
+                      ),
                       elevatedCallBack: state.loading
                           ? null
                           : () {
