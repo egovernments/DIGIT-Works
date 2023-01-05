@@ -2,14 +2,15 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/router/app_router.dart';
-import '../blocs/attendance/create_attendence_register.dart';
-import '../blocs/localization/app_localization.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/widgets/atoms/button_group.dart';
 
+import '../blocs/attendance/create_attendence_register.dart';
 import '../utils/global_variables.dart';
 
 class WorkDetailsCard extends StatelessWidget {
   final List<Map<String, dynamic>> detailsList;
+  final String outlinedButtonLabel;
+  final String elevatedButtonLabel;
   final bool isAttendanceInbox;
   final bool isWorkOrderInbox;
   final bool isSHGInbox;
@@ -18,6 +19,8 @@ class WorkDetailsCard extends StatelessWidget {
       {this.isAttendanceInbox = false,
       this.isWorkOrderInbox = false,
       this.isSHGInbox = false,
+      this.elevatedButtonLabel = '',
+      this.outlinedButtonLabel = '',
       super.key});
 
   @override
@@ -46,81 +49,41 @@ class WorkDetailsCard extends StatelessWidget {
           description: cardDetails.values.elementAt(j).toString()));
     }
     if (isWorkOrderInbox) {
-      labelList.add(Row(
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          LayoutBuilder(builder: (context, constraints) {
-            return new Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  alignment: Alignment.center,
-                  width: constraints.maxWidth > 760
-                      ? MediaQuery.of(context).size.width / 2
-                      : MediaQuery.of(context).size.width,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => {},
-                          child: Text(
-                            '${AppLocalizations.of(context).translate(i18.common.decline)}',
-                          ),
-                          style: ButtonStyle(
-                            alignment: Alignment.center,
-                            textStyle: MaterialStateProperty.all(TextStyle(
-                                color: Theme.of(context).primaryColor)),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        width: MediaQuery.of(context).size.width / 3,
-                        child: Expanded(
-                            child: BlocBuilder<AttendenceRegisterCreateBloc,
-                                AttendenceRegisterCreateState>(
-                          builder: (context, state) => ElevatedButton(
-                            onPressed: state.loading
-                                ? null
-                                : () {
-                                    context
-                                        .read<AttendenceRegisterCreateBloc>()
-                                        .add(
-                                          CreateAttendenceRegisterEvent(
-                                            tenantId:
-                                                '${GlobalVariables.getTenantId()}',
-                                            registerNumber: cardDetails.values
-                                                .elementAt(0)
-                                                .toString(),
-                                            name: cardDetails.values
-                                                .elementAt(1)
-                                                .toString(),
-                                            startDate: DateTime.now()
-                                                .millisecondsSinceEpoch,
-                                            endDate: DateTime.now()
-                                                    .millisecondsSinceEpoch +
-                                                110030000,
-                                          ),
-                                        );
-                                  },
-                            child: Text(
-                              '${AppLocalizations.of(context).translate(i18.common.accept)}',
-                            ),
-                            style: ButtonStyle(
-                              alignment: Alignment.center,
-                            ),
-                          ),
-                        )),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            );
-          }),
-        ],
+      labelList.add(Container(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            BlocBuilder<AttendenceRegisterCreateBloc,
+                    AttendenceRegisterCreateState>(
+                builder: (context, state) => ButtonGroup(
+                      outlinedButtonLabel,
+                      elevatedButtonLabel,
+                      outLinedCallBack: () {},
+                      elevatedCallBack: state.loading
+                          ? null
+                          : () {
+                              context.read<AttendenceRegisterCreateBloc>().add(
+                                    CreateAttendenceRegisterEvent(
+                                      tenantId:
+                                          '${GlobalVariables.getTenantId()}',
+                                      registerNumber: cardDetails.values
+                                          .elementAt(0)
+                                          .toString(),
+                                      name: cardDetails.values
+                                          .elementAt(1)
+                                          .toString(),
+                                      startDate:
+                                          DateTime.now().millisecondsSinceEpoch,
+                                      endDate: DateTime.now()
+                                              .millisecondsSinceEpoch +
+                                          110030000,
+                                    ),
+                                  );
+                            },
+                    ))
+          ],
+        ),
       ));
     }
     return Column(
