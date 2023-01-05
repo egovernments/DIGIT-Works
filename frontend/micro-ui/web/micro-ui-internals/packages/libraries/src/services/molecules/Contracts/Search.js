@@ -309,21 +309,12 @@ export const ContractSearch = {
     // const user = users?.[0]
 
     const contractDetails = {
-      title: "WORKS_CONTRACT_DETAILS",
+      title: " ",
       asSectionHeader: true,
       values: [
         { title: "WORKS_CONTRACT_ID", value: contract?.contractId || t("NA") },
         // { title: "WORKS_DATE_CREATED", value: convertEpochToDate(contract?.auditDetails?.createdTime) || t("NA") },
         { title: "WORKS_DATE_CREATED", value: contract?.contractDate || t("NA") },
-        { title: "WORKS_NAME_OF_WORK", value: contract?.nameOfTheWork || t("NA") },
-        { title: "WORKS_ESTIMATE_NO", value: contract?.estimateNumber },
-        // { title: "WORKS_SUB_ESTIMATE_NO", value: estimate?.estimateDetails?.filter(subEs => subEs?.estimateDetailNumber === subEstimateNumber)?.[0]?.name || t("NA") },
-        { title: "WORKS_SUB_ESTIMATE_NO", value: contract?.subEstimateNumber || t("NA") },
-        { title: "WORKS_FILE_NO", value: contract?.fileNumber || t("NA") },
-        { title: "WORKS_FILE_DATE", value: contract?.fileDate || t("NA") },
-        // { title: "WORKS_FILE_DATE", value: convertEpochToDate(contract?.fileDate) || t("NA") },
-        { title: "WORKS_CONTRACT_TYPE", value: contract?.contractType || t("NA") },
-        { title: "WORKS_STATUS", value: contract?.status || t("NA") },
       ],
     };
 
@@ -332,21 +323,20 @@ export const ContractSearch = {
     const financialDetails = {
       title: "WORKS_FINANCIAL_DETAILS",
       asSectionHeader: true,
-      values: [{ title: "WORKS_AGREEMENT_AMT", value: contract.agreementAmount || t("NA") }],
+      values: [{ title: "WORKS_CONTRACT_TYPE", value: "Work Order" || t("NA") },
+        { title: "WORKS_AGREEMENT_AMT", value: contract.agreementAmount || t("NA") }],
+      
     };
     const agreementDetails = {
       title: "WORKS_AGGREEMENT_DETAILS",
       asSectionHeader: true,
       values: [
-        { title: "WORKS_IMPLEMENT_AUTH", value: contract?.implementingAuthority || t("NA") },
+        { title: "WORKS_EXECUTING_AUTH", value: contract?.implementingAuthority || t("NA") },
         { title: "WORKS_NAME_OF_ORGN", value: contract?.nameOfOrgn || t("NA") },
         { title: "WORKS_ORGN_ID", value: contract?.orgnId || t("NA") },
-        { title: "WORKS_PREPARED_BY", value: contract?.preparedBy || t("NA") },
-        { title: "WORKS_ADD_SECURITY_DP", value: contract?.additionalSecurityDeposit || t("NA") },
-        { title: "WORKS_BANK_G", value: contract?.bankGuarantee || t("NA") },
-        { title: "WORKS_EMD", value: contract?.emdAmount || t("NA") },
-        { title: "WORKS_INCHARGE_ENGG", value: contract?.engineerIncharge || t("NA") },
-        // { title: "WORKS_INCHARGE_ENGG", value: additionalDetails?.oic?.nameOfEmp || t("NA") },
+        { title: "WORKS_CONT_PERIOD", value: contract?.preparedBy || t("NA") },
+        { title: "WORKS_OFFICER_INCHARGE_DES", value: contract?.additionalSecurityDeposit || t("NA") },
+        { title: "ATM_ENGG_INCHARGE", value: contract?.bankGuarantee || t("NA") },
       ],
     };
     const files = additionalDetails?.filesAttached;
