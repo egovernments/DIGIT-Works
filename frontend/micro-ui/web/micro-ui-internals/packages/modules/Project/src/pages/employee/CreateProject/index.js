@@ -5,22 +5,27 @@ import { createProjectSectionConfig } from "../../../configs/createProjectHeader
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
-      name:"Project_Details"
+      name:"Project_Details",
+      code:"Project_Details",
   },
   {
-      name:"Financial_Details"
+      name:"Financial_Details",
+      code:"Financial_Details",
   }
 ];
 
 const whenHasSubProjectsHorizontalNavConfig =  [
   {
-      name: "Project_Details"
+    name:"Project_Details",
+    code:"Project_Details",
   },
   {
-      name: "Financial_Details"
+      name:"Financial_Details",
+      code:"Financial_Details",
   },
   {
-      name: "Sub_Project_Details"
+      name: "Sub_Project_Details",
+      code:"Sub_Project_Details",
   }
 ];
 
