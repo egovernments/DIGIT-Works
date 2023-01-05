@@ -107,6 +107,12 @@ const BILLSBreadCrumbs = ({ location }) => {
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CHECKLIST_INBOX")}` : t("WORKS_CHECKLIST_INBOX"),
       show: location.pathname.includes("/works/checklistinbox") ? true : false,
       isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/works/projectclosure`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_PROJECT_CLOSURE")}` : t("WORKS_PROJECT_CLOSURE"),
+      show: location.pathname.includes("/works/projectclosure") ? true : false,
+      isBack: fromScreen && true,
     }
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;

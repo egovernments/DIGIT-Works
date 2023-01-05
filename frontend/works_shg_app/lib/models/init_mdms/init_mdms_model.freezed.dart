@@ -574,10 +574,12 @@ StateInfoListModel _$StateInfoListModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$StateInfoListModel {
-  String? get bannerURL => throw _privateConstructorUsedError;
+  String? get bannerUrl => throw _privateConstructorUsedError;
   String? get code => throw _privateConstructorUsedError;
   bool? get hasLocalisation => throw _privateConstructorUsedError;
   List<Languages>? get languages => throw _privateConstructorUsedError;
+  List<LocalizationModules>? get localizationModules =>
+      throw _privateConstructorUsedError;
   String? get logoUrl => throw _privateConstructorUsedError;
   String? get logoUrlWhite => throw _privateConstructorUsedError;
   String? get statelogo => throw _privateConstructorUsedError;
@@ -596,10 +598,11 @@ abstract class $StateInfoListModelCopyWith<$Res> {
       _$StateInfoListModelCopyWithImpl<$Res, StateInfoListModel>;
   @useResult
   $Res call(
-      {String? bannerURL,
+      {String? bannerUrl,
       String? code,
       bool? hasLocalisation,
       List<Languages>? languages,
+      List<LocalizationModules>? localizationModules,
       String? logoUrl,
       String? logoUrlWhite,
       String? statelogo,
@@ -619,19 +622,20 @@ class _$StateInfoListModelCopyWithImpl<$Res, $Val extends StateInfoListModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? bannerURL = freezed,
+    Object? bannerUrl = freezed,
     Object? code = freezed,
     Object? hasLocalisation = freezed,
     Object? languages = freezed,
+    Object? localizationModules = freezed,
     Object? logoUrl = freezed,
     Object? logoUrlWhite = freezed,
     Object? statelogo = freezed,
     Object? qrCodeURL = freezed,
   }) {
     return _then(_value.copyWith(
-      bannerURL: freezed == bannerURL
-          ? _value.bannerURL
-          : bannerURL // ignore: cast_nullable_to_non_nullable
+      bannerUrl: freezed == bannerUrl
+          ? _value.bannerUrl
+          : bannerUrl // ignore: cast_nullable_to_non_nullable
               as String?,
       code: freezed == code
           ? _value.code
@@ -645,6 +649,10 @@ class _$StateInfoListModelCopyWithImpl<$Res, $Val extends StateInfoListModel>
           ? _value.languages
           : languages // ignore: cast_nullable_to_non_nullable
               as List<Languages>?,
+      localizationModules: freezed == localizationModules
+          ? _value.localizationModules
+          : localizationModules // ignore: cast_nullable_to_non_nullable
+              as List<LocalizationModules>?,
       logoUrl: freezed == logoUrl
           ? _value.logoUrl
           : logoUrl // ignore: cast_nullable_to_non_nullable
@@ -674,10 +682,11 @@ abstract class _$$_StateInfoListModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? bannerURL,
+      {String? bannerUrl,
       String? code,
       bool? hasLocalisation,
       List<Languages>? languages,
+      List<LocalizationModules>? localizationModules,
       String? logoUrl,
       String? logoUrlWhite,
       String? statelogo,
@@ -695,19 +704,20 @@ class __$$_StateInfoListModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? bannerURL = freezed,
+    Object? bannerUrl = freezed,
     Object? code = freezed,
     Object? hasLocalisation = freezed,
     Object? languages = freezed,
+    Object? localizationModules = freezed,
     Object? logoUrl = freezed,
     Object? logoUrlWhite = freezed,
     Object? statelogo = freezed,
     Object? qrCodeURL = freezed,
   }) {
     return _then(_$_StateInfoListModel(
-      bannerURL: freezed == bannerURL
-          ? _value.bannerURL
-          : bannerURL // ignore: cast_nullable_to_non_nullable
+      bannerUrl: freezed == bannerUrl
+          ? _value.bannerUrl
+          : bannerUrl // ignore: cast_nullable_to_non_nullable
               as String?,
       code: freezed == code
           ? _value.code
@@ -721,6 +731,10 @@ class __$$_StateInfoListModelCopyWithImpl<$Res>
           ? _value._languages
           : languages // ignore: cast_nullable_to_non_nullable
               as List<Languages>?,
+      localizationModules: freezed == localizationModules
+          ? _value._localizationModules
+          : localizationModules // ignore: cast_nullable_to_non_nullable
+              as List<LocalizationModules>?,
       logoUrl: freezed == logoUrl
           ? _value.logoUrl
           : logoUrl // ignore: cast_nullable_to_non_nullable
@@ -745,21 +759,23 @@ class __$$_StateInfoListModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_StateInfoListModel implements _StateInfoListModel {
   const _$_StateInfoListModel(
-      {this.bannerURL,
+      {this.bannerUrl,
       this.code,
       this.hasLocalisation,
       final List<Languages>? languages,
+      final List<LocalizationModules>? localizationModules,
       this.logoUrl,
       this.logoUrlWhite,
       this.statelogo,
       this.qrCodeURL})
-      : _languages = languages;
+      : _languages = languages,
+        _localizationModules = localizationModules;
 
   factory _$_StateInfoListModel.fromJson(Map<String, dynamic> json) =>
       _$$_StateInfoListModelFromJson(json);
 
   @override
-  final String? bannerURL;
+  final String? bannerUrl;
   @override
   final String? code;
   @override
@@ -768,6 +784,15 @@ class _$_StateInfoListModel implements _StateInfoListModel {
   @override
   List<Languages>? get languages {
     final value = _languages;
+    if (value == null) return null;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<LocalizationModules>? _localizationModules;
+  @override
+  List<LocalizationModules>? get localizationModules {
+    final value = _localizationModules;
     if (value == null) return null;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
@@ -784,7 +809,7 @@ class _$_StateInfoListModel implements _StateInfoListModel {
 
   @override
   String toString() {
-    return 'StateInfoListModel(bannerURL: $bannerURL, code: $code, hasLocalisation: $hasLocalisation, languages: $languages, logoUrl: $logoUrl, logoUrlWhite: $logoUrlWhite, statelogo: $statelogo, qrCodeURL: $qrCodeURL)';
+    return 'StateInfoListModel(bannerUrl: $bannerUrl, code: $code, hasLocalisation: $hasLocalisation, languages: $languages, localizationModules: $localizationModules, logoUrl: $logoUrl, logoUrlWhite: $logoUrlWhite, statelogo: $statelogo, qrCodeURL: $qrCodeURL)';
   }
 
   @override
@@ -792,13 +817,15 @@ class _$_StateInfoListModel implements _StateInfoListModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_StateInfoListModel &&
-            (identical(other.bannerURL, bannerURL) ||
-                other.bannerURL == bannerURL) &&
+            (identical(other.bannerUrl, bannerUrl) ||
+                other.bannerUrl == bannerUrl) &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.hasLocalisation, hasLocalisation) ||
                 other.hasLocalisation == hasLocalisation) &&
             const DeepCollectionEquality()
                 .equals(other._languages, _languages) &&
+            const DeepCollectionEquality()
+                .equals(other._localizationModules, _localizationModules) &&
             (identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl) &&
             (identical(other.logoUrlWhite, logoUrlWhite) ||
                 other.logoUrlWhite == logoUrlWhite) &&
@@ -812,10 +839,11 @@ class _$_StateInfoListModel implements _StateInfoListModel {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      bannerURL,
+      bannerUrl,
       code,
       hasLocalisation,
       const DeepCollectionEquality().hash(_languages),
+      const DeepCollectionEquality().hash(_localizationModules),
       logoUrl,
       logoUrlWhite,
       statelogo,
@@ -838,10 +866,11 @@ class _$_StateInfoListModel implements _StateInfoListModel {
 
 abstract class _StateInfoListModel implements StateInfoListModel {
   const factory _StateInfoListModel(
-      {final String? bannerURL,
+      {final String? bannerUrl,
       final String? code,
       final bool? hasLocalisation,
       final List<Languages>? languages,
+      final List<LocalizationModules>? localizationModules,
       final String? logoUrl,
       final String? logoUrlWhite,
       final String? statelogo,
@@ -851,13 +880,15 @@ abstract class _StateInfoListModel implements StateInfoListModel {
       _$_StateInfoListModel.fromJson;
 
   @override
-  String? get bannerURL;
+  String? get bannerUrl;
   @override
   String? get code;
   @override
   bool? get hasLocalisation;
   @override
   List<Languages>? get languages;
+  @override
+  List<LocalizationModules>? get localizationModules;
   @override
   String? get logoUrl;
   @override

@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:works_shg_app/blocs/localization/localization.dart';
 
 import '../../models/localization/localization_model.dart';
 import '../../services/local_storage.dart';
@@ -22,12 +24,14 @@ class AppLocalizations {
   static const LocalizationsDelegate<AppLocalizations> delegate =
       AppLocalizationsDelegate();
 
-  Future<List<LocalizationMessageModel>> getLocalizationLabels() async {
+  List<LocalizationMessageModel>? getLocalizationLabels() {
     dynamic localLabelResponse;
     if (kIsWeb) {
-      localLabelResponse = html.window.localStorage[locale!.languageCode ?? ''];
+      localLabelResponse = html.window
+          .localStorage['${locale!.languageCode}_${locale!.countryCode}' ?? ''];
     } else {
-      localLabelResponse = await storage.read(key: locale!.languageCode ?? '');
+      localLabelResponse = storage.read(
+          key: '${locale!.languageCode}_${locale!.countryCode}' ?? '');
     }
 
     if (localLabelResponse != null && localLabelResponse.trim().isNotEmpty) {
@@ -35,28 +39,35 @@ class AppLocalizations {
           .map<LocalizationMessageModel>(
               (e) => LocalizationMessageModel.fromJson(e))
           .toList();
+    } else {
+      localizedStrings = BlocProvider.of<LocalizationBloc>(
+                  scaffoldMessengerKey.currentContext!)
+              .state
+              .localization ??
+          [];
+
+      return localizedStrings;
     }
-    return localizedStrings;
   }
 
   Future<bool> load() async {
-    await getLocalizationLabels();
-
-    if (scaffoldMessengerKey.currentContext == null) {
+    if (scaffoldMessengerKey.currentContext != null) {
+      localizedStrings = BlocProvider.of<LocalizationBloc>(
+                  scaffoldMessengerKey.currentContext!)
+              .state
+              .localization ??
+          [];
+      return true;
+    } else {
       return false;
     }
-    return true;
   }
 
-  String translate(
+  translate(
     String localizedValues,
   ) {
     var index =
         localizedStrings.indexWhere((medium) => medium.code == localizedValues);
-    return index != -1
-        ? localizedStrings
-            .firstWhere((element) => element.code == localizedValues)
-            .message
-        : localizedValues;
+    return index != -1 ? localizedStrings[index].message : localizedValues;
   }
 }

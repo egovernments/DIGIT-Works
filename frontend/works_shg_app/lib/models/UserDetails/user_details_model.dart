@@ -47,7 +47,6 @@ class UserRequestModel with _$UserRequestModel {
 @freezed
 class RolesModel with _$RolesModel {
   const factory RolesModel({
-    @JsonKey(name: 'UserRequest') UserRequestModel? userRequestModel,
     String? code,
     String? name,
     String? tenantId,

@@ -1,8 +1,10 @@
-class i18 {
-  static Login login = const Login();
-  static Common common = const Common();
-  static Home home = const Home();
-}
+library i18;
+
+Login login = const Login();
+Common common = const Common();
+Home home = const Home();
+WorkOrder workOrder = const WorkOrder();
+
 
 class Login {
   const Login();
@@ -31,9 +33,16 @@ class Common {
   String get transgender => 'CORE_COMMON_GENDER_TRANSGENDER';
   String get backToHome => 'CORE_COMMON_BACK_HOME_BUTTON';
   String get worksSHGLabel => 'CORE_COMMON_MGRAM_SEVA_LABEL';
-  String get home => 'CORE_COMMON_HOME';
+  String get home => 'ACTION_TEST_HOME';
   String get editProfile => 'CORE_COMMON_EDIT_PROFILE';
   String get language => 'CORE_COMMON_LANGUAGE';
+  String get decline => 'CORE_BUTTON_DECLINE';
+  String get accept => 'CORE_BUTTON_ACCEPT';
+  String get confirm => 'CORE_BUTTON_CONFIRM';
+  String get back => 'CORE_BUTTON_BACK';
+
+  String get warning => 'CORE_MSG_WARNING';
+
 }
 
 class Home {
@@ -44,4 +53,9 @@ class Home {
   String get worksMgmt => 'WORKS_MGMT';
   String get attendanceMgmt => 'ACTION_TEST_ATTENDENCEMGMT';
   String get musterRoll => 'ACTION_TEST_MUSTER_ROLL';
+}
+
+class WorkOrder {
+  const WorkOrder();
+  String get warningMsg => 'WRNG_MSG_WORKORDER';
 }

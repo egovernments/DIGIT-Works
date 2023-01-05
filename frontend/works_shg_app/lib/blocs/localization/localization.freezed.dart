@@ -277,7 +277,8 @@ abstract class OnLoadLocalizationEvent implements LocalizationEvent {
 
 /// @nodoc
 mixin _$LocalizationState {
-  LocalizationModel? get localization => throw _privateConstructorUsedError;
+  List<LocalizationMessageModel>? get localization =>
+      throw _privateConstructorUsedError;
   bool get isLocalizationLoadCompleted => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -292,9 +293,8 @@ abstract class $LocalizationStateCopyWith<$Res> {
       _$LocalizationStateCopyWithImpl<$Res, LocalizationState>;
   @useResult
   $Res call(
-      {LocalizationModel? localization, bool isLocalizationLoadCompleted});
-
-  $LocalizationModelCopyWith<$Res>? get localization;
+      {List<LocalizationMessageModel>? localization,
+      bool isLocalizationLoadCompleted});
 }
 
 /// @nodoc
@@ -317,24 +317,12 @@ class _$LocalizationStateCopyWithImpl<$Res, $Val extends LocalizationState>
       localization: freezed == localization
           ? _value.localization
           : localization // ignore: cast_nullable_to_non_nullable
-              as LocalizationModel?,
+              as List<LocalizationMessageModel>?,
       isLocalizationLoadCompleted: null == isLocalizationLoadCompleted
           ? _value.isLocalizationLoadCompleted
           : isLocalizationLoadCompleted // ignore: cast_nullable_to_non_nullable
               as bool,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $LocalizationModelCopyWith<$Res>? get localization {
-    if (_value.localization == null) {
-      return null;
-    }
-
-    return $LocalizationModelCopyWith<$Res>(_value.localization!, (value) {
-      return _then(_value.copyWith(localization: value) as $Val);
-    });
   }
 }
 
@@ -347,10 +335,8 @@ abstract class _$$_LocalizationStateCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {LocalizationModel? localization, bool isLocalizationLoadCompleted});
-
-  @override
-  $LocalizationModelCopyWith<$Res>? get localization;
+      {List<LocalizationMessageModel>? localization,
+      bool isLocalizationLoadCompleted});
 }
 
 /// @nodoc
@@ -369,9 +355,9 @@ class __$$_LocalizationStateCopyWithImpl<$Res>
   }) {
     return _then(_$_LocalizationState(
       localization: freezed == localization
-          ? _value.localization
+          ? _value._localization
           : localization // ignore: cast_nullable_to_non_nullable
-              as LocalizationModel?,
+              as List<LocalizationMessageModel>?,
       isLocalizationLoadCompleted: null == isLocalizationLoadCompleted
           ? _value.isLocalizationLoadCompleted
           : isLocalizationLoadCompleted // ignore: cast_nullable_to_non_nullable
@@ -386,10 +372,19 @@ class _$_LocalizationState
     with DiagnosticableTreeMixin
     implements _LocalizationState {
   const _$_LocalizationState(
-      {this.localization, this.isLocalizationLoadCompleted = false});
+      {final List<LocalizationMessageModel>? localization,
+      this.isLocalizationLoadCompleted = false})
+      : _localization = localization;
 
+  final List<LocalizationMessageModel>? _localization;
   @override
-  final LocalizationModel? localization;
+  List<LocalizationMessageModel>? get localization {
+    final value = _localization;
+    if (value == null) return null;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey()
   final bool isLocalizationLoadCompleted;
@@ -414,8 +409,8 @@ class _$_LocalizationState
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_LocalizationState &&
-            (identical(other.localization, localization) ||
-                other.localization == localization) &&
+            const DeepCollectionEquality()
+                .equals(other._localization, _localization) &&
             (identical(other.isLocalizationLoadCompleted,
                     isLocalizationLoadCompleted) ||
                 other.isLocalizationLoadCompleted ==
@@ -423,8 +418,10 @@ class _$_LocalizationState
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, localization, isLocalizationLoadCompleted);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_localization),
+      isLocalizationLoadCompleted);
 
   @JsonKey(ignore: true)
   @override
@@ -436,11 +433,11 @@ class _$_LocalizationState
 
 abstract class _LocalizationState implements LocalizationState {
   const factory _LocalizationState(
-      {final LocalizationModel? localization,
+      {final List<LocalizationMessageModel>? localization,
       final bool isLocalizationLoadCompleted}) = _$_LocalizationState;
 
   @override
-  LocalizationModel? get localization;
+  List<LocalizationMessageModel>? get localization;
   @override
   bool get isLocalizationLoadCompleted;
   @override
