@@ -15,6 +15,11 @@ const ProjectCard = () => {
         link: `/${window?.contextPath}/employee/project/create-project`,
         roles: [],
       },
+      {
+        label: t("WORKS_PROJECT_DETAILS"),
+        link: `/${window?.contextPath}/employee/project/project-details`,
+        roles: [],
+      },
     ],
   };
   return <EmployeeModuleCard {...propsForModuleCard} />;

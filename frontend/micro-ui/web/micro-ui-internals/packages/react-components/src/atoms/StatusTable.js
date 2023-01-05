@@ -55,9 +55,11 @@ export const Row = (props) => {
 
   return (
     <div style={props.rowContainerStyle} className={`${props.last ? "row last" : "row"} ${props?.className || ""}`}>
-      <h2 style={labelStyle}>{props.label}</h2>
+      <h2 style={labelStyle}>{props.label}{props?.isMandotary && '*'}</h2>
       <div className="value" style={valueStyle}>
-        {value}
+        {
+          props?.isValueLink ? (<a className="status-value-link" href={props?.isValueLink?.href}>{value}</a>) : <p>{value}</p> 
+        }
         {props?.privacy && (
           <span style={{ display: "inline-flex", width: "fit-content", marginLeft: "10px" }}>
             <UnMaskComponent privacy={props?.privacy}></UnMaskComponent>

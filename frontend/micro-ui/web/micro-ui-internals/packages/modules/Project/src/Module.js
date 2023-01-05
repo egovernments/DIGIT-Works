@@ -4,6 +4,7 @@ import { useRouteMatch } from "react-router-dom";
 import ProjectCard from "./components/ProjectCard";
 import { default as EmployeeApp } from "./pages/employee";
 import CreateProject from "./pages/employee/CreateProject/index";
+import ProjectDetails from "./pages/employee/ProjectDetails";
 
 export const ProjectModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["Project"];
@@ -33,7 +34,8 @@ export const ProjectModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
     ProjectModule,
     ProjectCard,
-    CreateProject
+    CreateProject,
+    ProjectDetails
 };
 
 export const initProjectComponents = () => {
