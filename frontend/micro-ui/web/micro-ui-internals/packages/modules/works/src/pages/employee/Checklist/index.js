@@ -30,7 +30,8 @@ const Checklist = (props) => {
             showWrapperContainers={true}
             isDescriptionBold={true}
             noBreakLine={true}
-            showMultipleCards={true}
+            showMultipleCardsWithoutNavs={true}
+            showMultipleCardsInNavs={false}
         />
     </React.Fragment>
   )
