@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:works_shg_app/models/user_search/user_search_model.dart';
 
+import '../../../utils/global_variables.dart';
+
 class UserSearchRepository {
   final Dio _client;
   UserSearchRepository(this._client);
@@ -16,8 +18,13 @@ class UserSearchRepository {
   }) async {
     try {
       // var formData = FormData.fromMap(body);
-      final response =
-          await _client.post(url, queryParameters: queryParameters, data: body);
+      final response = await _client.post(url,
+          queryParameters: queryParameters,
+          data: body,
+          options: Options(extra: {
+            "userInfo": GlobalVariables.getUserInfo(),
+            "accessToken": GlobalVariables.getAuthToken(),
+          }));
 
       return UserSearchModel.fromJson(
         json.decode(response.toString()),

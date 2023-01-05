@@ -1,8 +1,8 @@
-class i18 {
-  static Login login = const Login();
-  static Common common = const Common();
-  static Home home = const Home();
-}
+library i18;
+
+Login login = const Login();
+Common common = const Common();
+Home home = const Home();
 
 class Login {
   const Login();

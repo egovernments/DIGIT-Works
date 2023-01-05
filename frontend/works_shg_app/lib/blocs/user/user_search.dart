@@ -1,16 +1,15 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:universal_html/html.dart' as html;
-import 'package:works_shg_app/data/repositories/user_search_repository/user_search.dart';
-import 'package:works_shg_app/models/request_info/request_info_model.dart';
 import 'package:works_shg_app/models/user_search/user_search_model.dart';
 import 'package:works_shg_app/services/urls.dart';
+import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/remote_client.dart';
+import '../../data/repositories/user_search_repository/user_search.dart';
 import '../../services/local_storage.dart';
 
 part 'user_search.freezed.dart';
@@ -44,21 +43,8 @@ class UserSearchBloc extends Bloc<UserSearchEvent, UserSearchState> {
     }
     UserSearchModel userSearchModel = await UserSearchRepository(client.init())
         .searchUser(url: Urls.userServices.userSearchProfile, body: {
-      "RequestInfo": {
-        ...RequestInfoModel(
-          apiId: 'Rainmaker',
-          ver: ".01",
-          ts: "",
-          action: "_search",
-          did: "1",
-          key: "",
-          msgId: "20170310130900|en_IN",
-          authToken: jsonDecode(accessToken.toString()),
-        ).toJson(),
-        "userInfo": jsonDecode(localUserDetails)
-      },
-      "tenantId": jsonDecode(tenantId.toString()),
-      "uuid": [jsonDecode(uuid.toString())]
+      "tenantId": GlobalVariables.getTenantId(),
+      "uuid": [GlobalVariables.getUUID()]
     });
     await Future.delayed(const Duration(seconds: 1));
     emit(state.copyWith(userSearchModel: userSearchModel, loading: false));

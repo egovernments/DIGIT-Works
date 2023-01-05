@@ -11,9 +11,9 @@ import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 import 'package:works_shg_app/services/urls.dart';
+import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/repositories/remote/mdms.dart';
-import '../../models/request_info/request_info_model.dart';
 import '../../services/local_storage.dart';
 
 part 'app_initilization.freezed.dart';
@@ -35,45 +35,29 @@ class AppInitializationBloc
     AppInitializationEmitter emit,
   ) async {
     InitMdmsModel result = await mdmsRepository.initMdmsRegistry(
-      Urls.initServices.mdms,
-      {
-        "MdmsCriteria": {
-          "tenantId": "pb",
-          "moduleDetails": [
-            {
-              "moduleName": "common-masters",
-              "masterDetails": [
-                {
-                  "name": "StateInfo",
-                },
-              ],
-            },
-            {
-              "moduleName": "tenant",
-              "masterDetails": [
-                {
-                  "name": "tenants",
-                },
-                {
-                  "name": "citymodule",
-                }
-              ],
-            },
-          ],
-        },
-        "RequestInfo": {
-          ...const RequestInfoModel(
-            apiId: 'Rainmaker',
-            ver: ".01",
-            ts: "",
-            action: "_search",
-            did: "1",
-            key: "",
-            msgId: "20170310130900|en_IN",
-          ).toJson(),
-        },
-      },
-    );
+        apiEndPoint: Urls.initServices.mdms,
+        tenantId: 'pb',
+        moduleDetails: [
+          {
+            "moduleName": "common-masters",
+            "masterDetails": [
+              {
+                "name": "StateInfo",
+              },
+            ],
+          },
+          {
+            "moduleName": "tenant",
+            "masterDetails": [
+              {
+                "name": "tenants",
+              },
+              {
+                "name": "citymodule",
+              }
+            ],
+          },
+        ]);
 
     StateInfoListModel ss =
         result.commonMastersModel!.stateInfoListModel!.first.copyWith(
@@ -120,8 +104,8 @@ class AppInitializationBloc
         localLanguageData != null) {
       initMdmsModelData = InitMdmsModel.fromJson(jsonDecode(localInitData));
       stateInfoListModel =
-          StateInfoListModel.fromJson(jsonDecode(localStateData));
-      digitRowCardItems = jsonDecode(localLanguageData)
+          StateInfoListModel.fromJson(GlobalVariables.getStateInfo());
+      digitRowCardItems = GlobalVariables.getLanguages()
           .map<DigitRowCardModel>((e) => DigitRowCardModel.fromJson(e))
           .toList();
     }
