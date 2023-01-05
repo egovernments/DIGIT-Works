@@ -43,30 +43,27 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
           {
             isMandatory: false,
             key: "hasSubProjects",
-            type: "goToDefaultCase",
+            type: "radio",
             label: "PROJECT_SUB_PROJECT",
             disable: false,
-            populators: <div className="radio-wrap flex-row">
-                        {
-                            hasSubProjectOptions?.options?.map((option)=>(
-                                <div key={option?.key} className="mg-sm">
-                                    <span className="radio-btn-wrap">
-                                        <input
-                                            className="radio-btn"
-                                            type="radio"
-                                            value={option?.value}
-                                            checked={hasSubProjectOptions?.options[0]?.value}
-                                            onChange={() => handleHasSubProjectOptions(option)}
-                                            name="hasSubProjects"   
-                                        />
-                                        <span className="radio-btn-checkmark"></span>
-                                    </span>
-                                    <label>{t(option?.code)}</label>
-                            </div>
-                            ))
-                        }
-                    </div>
-        }
+            populators: {
+              name: "hasSubProjects",
+              optionsKey: "name",
+              error: "Required",
+              required: false,
+              defaultValue : "YES",
+              options: [
+                {
+                  code: "COMMON_YES",
+                  name: "COMMON_YES",
+                },
+                {
+                  code: "COMMON_NO",
+                  name: "COMMON_NO",
+                }
+              ],
+            },
+          },
       ]
       },
       {

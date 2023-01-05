@@ -33,30 +33,22 @@ const CreateProject = () => {
     const {t} = useTranslation();
     const [selectedProjectType, setSelectedProjectType] = useState("");
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
-    const hasSubProjectOptions = {
-        options : [
-            {
-                code : "COMMON_YES",
-                name : "COMMON_YES",
-            },
-            {
-                code : "COMMON_NO",
-                name : "COMMON_NO",
-            },
-        ]
+    const [showNavs, setShowNavs] = useState(false);
+    const onFormValueChange = (setValue, formData, formState) => {
+        if(formData?.hasSubProjects) {
+          setSelectedProjectType(formData?.hasSubProjects);
+        }
     }
-    console.log(selectedProjectType);
 
-    const handleHasSubProjectOptions = (option) => {
-      setSelectedProjectType(option);
-    }
-    const createProjectSectionFormConfig = createProjectSectionConfig(hasSubProjectOptions, handleHasSubProjectOptions);
+    const createProjectSectionFormConfig = createProjectSectionConfig();
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
           setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
+          setShowNavs(true);
         }else if(selectedProjectType?.code === "COMMON_NO") {
           setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
+          setShowNavs(true);
         }
     },[selectedProjectType]);
 
@@ -87,9 +79,11 @@ const CreateProject = () => {
                 showWrapperContainers={false}
                 isDescriptionBold={false}
                 noBreakLine={true}
+                showNavs={showNavs}
                 showMultipleCardsWithoutNavs={false}
                 showMultipleCardsInNavs={false}
                 horizontalNavConfig={navTypeConfig}
+                onFormValueChange={onFormValueChange}
             />
            )}
         </div>

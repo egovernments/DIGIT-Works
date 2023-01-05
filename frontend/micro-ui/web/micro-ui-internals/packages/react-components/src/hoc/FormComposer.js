@@ -599,7 +599,7 @@ export const FormComposer = (props) => {
           </Card>
           )
       }
-      { props.horizontalNavConfig && (
+      { props?.showNavs && props.horizontalNavConfig && (
            <HorizontalNav configNavItems={props.horizontalNavConfig?props.horizontalNavConfig:null} showNav={true} activeLink={activeLink} setActiveLink={setActiveLink}>
            {props.showMultipleCardsInNavs ? (
              props.config?.map((section, index, array) => {
