@@ -12,7 +12,6 @@ class MusterRollRepository {
   MusterRollRepository(this._client);
   Future<MusterRollsModel> searchMusterRolls({
     Map<String, String>? queryParameters,
-    Map<String, dynamic>? extras,
     dynamic body,
     required String url,
   }) async {
@@ -20,10 +19,12 @@ class MusterRollRepository {
       // var formData = FormData.fromMap(body);
       final response = await _client.post(url,
           queryParameters: queryParameters,
-          data: body,
+          data: body ?? {},
           options: Options(extra: {
             "userInfo": GlobalVariables.getUserInfo(),
-            "accessToken": GlobalVariables.getAuthToken()
+            "accessToken": GlobalVariables.getAuthToken(),
+            "apiId": "asset-services",
+            "msgId": "search with from and to values"
           }));
 
       return MusterRollsModel.fromJson(
