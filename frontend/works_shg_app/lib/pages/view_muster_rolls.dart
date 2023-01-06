@@ -5,6 +5,7 @@ import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 
 import '../blocs/localization/app_localization.dart';
+import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
 
 class ViewMusterRollsPage extends StatelessWidget {
@@ -20,9 +21,10 @@ class ViewMusterRollsPage extends StatelessWidget {
             state.musterRollsModel!.musterRoll!
                 .map((e) => {
                       "Name of the Work": e.id,
-                      "WIN Code": e.individualEntries!.first.individualId,
+                      "WIN Code": e.registerId,
                       "Muster Roll ID": e.musterRollNumber,
-                      "Dates": e.endDate,
+                      "Dates":
+                          '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
                       "Status": e.status
                     })
                 .toList();
@@ -36,7 +38,7 @@ class ViewMusterRollsPage extends StatelessWidget {
               textAlign: TextAlign.left,
             ),
           ),
-          musterList.length == 0
+          musterList.isEmpty
               ? Text('No Muster Rolls Found')
               : WorkDetailsCard(
                   musterList,
