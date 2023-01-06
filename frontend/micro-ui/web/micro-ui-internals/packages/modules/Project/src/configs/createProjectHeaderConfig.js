@@ -1,8 +1,14 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubProjectOptions) => {
-  const { t } = useTranslation();
+export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities) => {
+  const { t } = useTranslation()
+
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const ULB = Digit.Utils.locale.getCityLocale(tenantId);
+  
+  let ULBOptions = []
+  ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
   return {
     defaultValues : {
@@ -85,9 +91,9 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "Department",
+                moduleName: "works",
+                localePrefix: "WORKS",
               },
             },
           },
@@ -106,53 +112,29 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
+                masterName: "SocialCategory",
                 moduleName: "common-masters",
                 localePrefix: "MASTERS",
               },
             },
           },
           {
-            isMandatory: true,
-            key: "letterRefNoOrReqNo",
-            type: "radioordropdown",
+            inline: true,
             label: "PROJECT_LETTER_REF_OR_REQ_NO",
+            isMandatory: false,
+            key: "letterRefNoOrReqNo",
+            type: "number",
             disable: false,
-            populators: {
-              name: "letterRefNoOrReqNo",
-              optionsKey: "name",
-              error: t("WORKS_REQUIRED_ERR"),
-              required: true,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
-            },
+            populators: { name: "letterRefNoOrReqNo" }
           },
           {
-            isMandatory: true,
-            key: "estimatedCostInRs",
-            type: "radioordropdown",
+            inline: true,
             label: "PROJECT_ESTIMATED_COST_IN_RS",
+            isMandatory: false,
+            key: "estimatedCostInRs",
+            type: "number",
             disable: false,
-            populators: {
-              name: "estimatedCostInRs",
-              optionsKey: "name",
-              error: t("WORKS_REQUIRED_ERR"),
-              required: true,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
-            },
+            populators: { name: "estimatedCostInRs" }
           },
         ]
       },
@@ -175,9 +157,9 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "TypeOfWork",
+                moduleName: "works",
+                localePrefix: "WORKS",
               },
             },
           },
@@ -195,11 +177,7 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
+              options : subTypeOfWorkOptions
             },
           },
           {
@@ -217,9 +195,9 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "NatureOfWork",
+                moduleName: "works",
+                localePrefix: "WORKS",
               },
             },
           },
@@ -258,9 +236,9 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "EntrustmentMode",
+                moduleName: "works",
+                localePrefix: "WORKS",
               },
             },
           },
@@ -283,21 +261,17 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
             isMandatory: true,
             key: "ulb",
             type: "radioordropdown",
-            label: "PROJECT_ULB",
+            label: t("ES_COMMON_ULB"),
             disable: false,
             populators: {
               name: "ulb",
-              optionsKey: "name",
+              optionsKey: "i18nKey",
+              options: ULBOptions,
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
               optionsCustomStyle : {
                 top : "2.5rem"
-              },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
+              }
             },
           },
           {
@@ -308,17 +282,10 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
             disable: false,
             populators: {
               name: "ward",
-              optionsKey: "name",
+              optionsKey: "i18nKey",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
+              options: wardsAndLocalities?.wards
             },
           },
           {
@@ -329,17 +296,10 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
             disable: false,
             populators: {
               name: "locality",
-              optionsKey: "name",
+              optionsKey: "i18nKey",
               error: t("WORKS_REQUIRED_ERR"),
-              required: true,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
+              required: false,
+              options: filteredLocalities
             },
           },
         ]
@@ -380,9 +340,9 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "Fund",
+                moduleName: "finance",
+                localePrefix: "COMMON",
               },
             },
           },
@@ -401,9 +361,9 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "Functions",
+                moduleName: "finance",
+                localePrefix: "COMMON",
               },
             },
           },
@@ -422,20 +382,20 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "BudgetHead",
+                moduleName: "finance",
+                localePrefix: "COMMON",
               },
             },
           },
           {
             isMandatory: true,
-            key: "schema",
+            key: "scheme",
             type: "radioordropdown",
-            label: "PROJECT_SCHEMA",
+            label: "PROJECT_SCHEME",
             disable: false,
             populators: {
-              name: "schema",
+              name: "scheme",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -443,31 +403,27 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "Scheme",
+                moduleName: "finance",
+                localePrefix: "COMMON",
               },
             },
           },
           {
             isMandatory: true,
-            key: "subSchema",
+            key: "subScheme",
             type: "radioordropdown",
             label: "PROJECT_SUB_SCHEMA",
             disable: false,
             populators: {
-              name: "subSchema",
+              name: "subScheme",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
+              options : subSchemaOptions
             },
           },
         ]

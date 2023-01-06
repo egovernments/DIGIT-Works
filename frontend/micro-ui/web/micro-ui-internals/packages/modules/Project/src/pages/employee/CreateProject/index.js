@@ -34,13 +34,56 @@ const CreateProject = () => {
     const [selectedProjectType, setSelectedProjectType] = useState("");
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
     const [showNavs, setShowNavs] = useState(false);
+    const [subTypeOfWorkOptions, setSubTypeOfWorkOptions] = useState([]);
+    const [subSchemaOptions, setSubSchemaOptions] = useState([]);
+    const [selectedWard, setSelectedWard] = useState('');
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const orgSession = Digit.Hooks.useSessionStorage("PROJECT_CREATE", {});
+    const [sessionFormData, setSessionFormData] = orgSession;
+
+    const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
+      tenantId, 'Ward', 
+      {
+          select: (data) => {
+              const wards = []
+              const localities = {}
+              data?.TenantBoundary[0]?.boundary.forEach((item) => {
+                  localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }))
+                  wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
+              });
+             return {
+                  wards, localities
+             }
+          }
+      })
+  
+    const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
+
     const onFormValueChange = (setValue, formData, formState) => {
+        // if (!_.isEqual(sessionFormData, formData)) {
+        //   const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
+        //   if(formData.ward) {
+        //       setSelectedWard(formData?.ward?.code)
+        //   }
+        //   if (difference?.ward) {
+        //       setValue("locality", '');
+        //   }
+        //   setSessionFormData({ ...sessionFormData, ...formData });
+        // }
         if(formData?.hasSubProjects) {
           setSelectedProjectType(formData?.hasSubProjects);
-        }
+        } 
+        if(formData?.typeOfWork) {
+          console.log(formData?.typeOfWork?.subTypes);
+          setSubTypeOfWorkOptions(formData?.typeOfWork?.subTypes);
+        } 
+        if(formData?.scheme) {
+          console.log(formData?.scheme?.subSchemes);
+          setSubSchemaOptions(formData?.scheme?.subSchemes);
+        } 
     }
-
-    const createProjectSectionFormConfig = createProjectSectionConfig();
+    console.log(wardsAndLocalities);
+    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities);
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
