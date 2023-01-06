@@ -574,13 +574,13 @@ export const FormComposer = (props) => {
       {props?.showMultipleCardsWithoutNavs ? (
           props?.config?.map((section, index, array) => {
             return !section.navLink && (
-              <Card style={getCardStyles()}>
+              <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
                 {renderFormFields(props, section, index, array)}
               </Card>
             )
           })
         ) :  (         
-          <Card style={getCardStyles()}>
+          <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
             {
               props?.config?.map((section, index, array) => {
                 return !section.navLink && (
@@ -598,14 +598,14 @@ export const FormComposer = (props) => {
            {props?.showMultipleCardsInNavs ? (
              props?.config?.map((section, index, array) => {
                return section.navLink ? section?.navLink===activeLink ? (
-                 <Card style={getCardStyles()}>
+                 <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
                     {renderFormFields(props, section, index, array)}
                  </Card>
                ) : null : null
              })
            ) :   
              ( 
-                 <Card style={getCardStyles()}>
+                 <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
                    {
                      props?.config?.map((section, index, array) => {
                        return section.navLink ? section?.navLink===activeLink ? (
