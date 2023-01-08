@@ -11,6 +11,7 @@ import org.egov.works.web.models.ProjectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,11 +48,26 @@ public class ProjectService {
 
     public ProjectRequest updateProject(ProjectRequest project) {
         projectValidator.validateUpdateProjectRequest(project);
-        List<Project> projectsFromDB = searchProject(project, projectConfiguration.getMaxLimit(), projectConfiguration.getMaxOffset(), project.getProjects().get(0).getTenantId(), null, false);
+        List<Project> projectsFromDB = searchProject(getSearchProjectRequestForUpdate(project), projectConfiguration.getMaxLimit(), projectConfiguration.getMaxOffset(), project.getProjects().get(0).getTenantId(), null, false);
         projectValidator.validateUpdateAgainstDB(project.getProjects(), projectsFromDB);
         projectEnrichment.enrichUpdateProject(project, projectsFromDB);
         producer.push(projectConfiguration.getUpdateProjectTopic(), project);
 
         return project;
+    }
+
+    private ProjectRequest getSearchProjectRequestForUpdate(ProjectRequest projectRequest) {
+        List<Project> projects = new ArrayList<>();
+        for (Project project: projectRequest.getProjects()) {
+            Project newProject = Project.builder()
+                    .id(project.getId())
+                    .tenantId(project.getTenantId())
+                    .build();
+            projects.add(newProject);
+        }
+        return ProjectRequest.builder()
+                .requestInfo(projectRequest.getRequestInfo())
+                .projects(projects)
+                .build();
     }
 }
