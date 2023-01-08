@@ -29,6 +29,12 @@ public class Project {
     @JsonProperty("tenantId")
     private String tenantId = null;
 
+    @JsonProperty("projectNumber")
+    private String projectNumber = null;
+
+    @JsonProperty("name")
+    private String name = null;
+
     @JsonProperty("projectType")
     private String projectType = null;
 

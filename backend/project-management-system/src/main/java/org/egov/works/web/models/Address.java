@@ -62,7 +62,7 @@ public class Address {
     private String street = null;
 
     @JsonProperty("locality")
-    private Boundary locality = null;
+    private String locality = null;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
