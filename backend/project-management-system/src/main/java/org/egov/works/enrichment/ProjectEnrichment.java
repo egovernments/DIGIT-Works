@@ -1,12 +1,17 @@
 package org.egov.works.enrichment;
 
 import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.IdResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
+import org.egov.works.config.ProjectConfiguration;
+import org.egov.works.repository.IdGenRepository;
 import org.egov.works.util.ProjectServiceUtil;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -19,15 +24,32 @@ public class ProjectEnrichment {
     @Autowired
     private ProjectServiceUtil projectServiceUtil;
 
+    @Autowired
+    private IdGenRepository idGenRepository;
+
+    @Autowired
+    private ProjectConfiguration config;
+
     public void enrichCreateProject(ProjectRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<Project> projects = request.getProjects();
 
+        String rootTenantId = projects.get(0).getTenantId().split("\\.")[0];
+
+        List<String> projectNumbers = getIdList(requestInfo, rootTenantId
+                , config.getIdgenProjectNumberName(), config.getIdgenProjectNumberFormat(), projects.size());
+
+        int i = 0;
         for (Project project: projects) {
 
             AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
             project.setAuditDetails(auditDetails);
             project.setId(UUID.randomUUID().toString());
+
+            if (projectNumbers != null && !projectNumbers.isEmpty()) {
+                projects.get(i).setProjectNumber(projectNumbers.get(i));
+                i++;
+            }
 
             for (Target target: project.getTargets()) {
                 target.setId(UUID.randomUUID().toString());
@@ -39,18 +61,9 @@ public class ProjectEnrichment {
                 document.setAuditDetails(auditDetails);
             }
 
-            project.getAddress().setAuditDetails(auditDetails);
-            project.getAddress().setId(UUID.randomUUID().toString());
-
-            if (project.getAddress().getLocality() != null) {
-                project.getAddress().getLocality().setId(UUID.randomUUID().toString());
-
-                List<Boundary> children = project.getAddress().getLocality().getChildren();
-                for (Boundary child: children) {
-                    child.setId(UUID.randomUUID().toString());
-                    child.setParentid(project.getAddress().getLocality().getId());
-                    child.setAddressid(project.getAddress().getId());
-                }
+            if (project.getAddress() != null) {
+                project.getAddress().setAuditDetails(auditDetails);
+                project.getAddress().setId(UUID.randomUUID().toString());
             }
         }
 
@@ -100,20 +113,18 @@ public class ProjectEnrichment {
                     document.setAuditDetails(auditDetailsDocument);
                 }
             }
-
-            if (project.getAddress().getLocality() != null) {
-                if (StringUtils.isBlank(project.getAddress().getLocality().getId())) {
-                    project.getAddress().getLocality().setId(UUID.randomUUID().toString());
-                }
-                for (Boundary child: project.getAddress().getLocality().getChildren()) {
-                    if (StringUtils.isBlank(child.getId())) {
-                        child.setId(UUID.randomUUID().toString());
-                    }
-                    child.setParentid(project.getAddress().getLocality().getId());
-                    child.setAddressid(project.getAddress().getId());
-                }
-            }
         }
 
+    }
+
+    private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey,
+                                   String idformat, int count) {
+        List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses();
+
+        if (CollectionUtils.isEmpty(idResponses))
+            throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
+
+        return idResponses.stream()
+                .map(IdResponse::getId).collect(Collectors.toList());
     }
 }
