@@ -8,9 +8,9 @@ import java.util.List;
 @Component
 public class DocumentQueryBuilder {
 
-    private static final String FETCH_DOCUMENT_QUERY = "select d.id as document_id, d.project_id as document_projectid, d.documenttype as document_documenttype, " +
-            " d.filestore_id as document_filestore_id, d.documentuid as document_documentuid, d.additionaldetails as document_additionaldetails, d.status as document_status, " +
-            "d.createdby as document_createdby, d.createdtime as document_createdtime, d.lastmodifiedby as document_lastmodifiedby, d.lastmodifiedtime as document_lastmodifiedtime " +
+    private static final String FETCH_DOCUMENT_QUERY = "select d.id as documentId, d.project_id as document_projectId, d.document_type as document_documentType, " +
+            " d.filestore_id as document_filestoreId, d.document_uid as document_documentUid, d.additional_details as document_additionalDetails, d.status as document_status, " +
+            "d.created_by as document_createdBy, d.created_time as document_createdTime, d.last_modified_by as document_lastModifiedBy, d.last_modified_time as document_lastModifiedTime " +
             " from eg_pms_document d ";
 
     public String getDocumentSearchQuery(List<String> projectIds, List<Object> preparedStmtList) {

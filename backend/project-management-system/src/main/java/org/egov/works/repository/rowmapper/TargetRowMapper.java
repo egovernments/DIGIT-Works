@@ -23,28 +23,28 @@ public class TargetRowMapper  implements ResultSetExtractor<List<Target>> {
 
         while (rs.next()) {
 
-            String target_id = rs.getString("target_id");
-            String target_projectid = rs.getString("target_projectid");
-            String target_beneficiarytype = rs.getString("target_beneficiarytype");
-            Integer target_totalno = rs.getInt("target_totalno");
-            Integer target_targetno = rs.getInt("target_targetno");
-            Boolean target_isdeleted = rs.getBoolean("target_isdeleted");
-            String target_createdby = rs.getString("target_createdby");
-            String target_lastmodifiedby = rs.getString("target_lastmodifiedby");
-            Long target_createdtime = rs.getLong("target_createdtime");
-            Long target_lastmodifiedtime = rs.getLong("target_lastmodifiedtime");
+            String target_id = rs.getString("targetId");
+            String target_projectId = rs.getString("target_projectId");
+            String target_beneficiaryType = rs.getString("target_beneficiaryType");
+            Integer target_totalNo = rs.getInt("target_totalNo");
+            Integer target_targetNo = rs.getInt("target_targetNo");
+            Boolean target_isDeleted = rs.getBoolean("target_isDeleted");
+            String target_createdBy = rs.getString("target_createdBy");
+            String target_lastModifiedBy = rs.getString("target_lastModifiedBy");
+            Long target_createdTime = rs.getLong("target_createdTime");
+            Long target_lastModifiedTime = rs.getLong("target_lastModifiedTime");
 
-            AuditDetails targetAuditDetails = AuditDetails.builder().createdBy(target_createdby).createdTime(target_createdtime)
-                    .lastModifiedBy(target_lastmodifiedby).lastModifiedTime(target_lastmodifiedtime)
+            AuditDetails targetAuditDetails = AuditDetails.builder().createdBy(target_createdBy).createdTime(target_createdTime)
+                    .lastModifiedBy(target_lastModifiedBy).lastModifiedTime(target_lastModifiedTime)
                     .build();
 
             Target target = Target.builder()
                     .id(target_id)
-                    .projectid(target_projectid)
-                    .beneficiaryType(target_beneficiarytype)
-                    .totalNo(target_totalno)
-                    .targetNo(target_targetno)
-                    .isDeleted(target_isdeleted)
+                    .projectid(target_projectId)
+                    .beneficiaryType(target_beneficiaryType)
+                    .totalNo(target_totalNo)
+                    .targetNo(target_targetNo)
+                    .isDeleted(target_isDeleted)
                     .auditDetails(targetAuditDetails)
                     .build();
 

@@ -31,29 +31,29 @@ public class DocumentRowMapper implements ResultSetExtractor<List<Document>> {
 
         while (rs.next()) {
 
-            String document_id = rs.getString("document_id");
-            String document_projectid = rs.getString("document_projectid");
-            String document_documenttype = rs.getString("document_documenttype");
-            String document_filestore_id = rs.getString("document_filestore_id");
-            String document_documentuid = rs.getString("document_documentuid");
-            JsonNode document_additionaldetails = getAdditionalDetail("document_additionaldetails", rs);
+            String document_id = rs.getString("documentId");
+            String document_projectId = rs.getString("document_projectId");
+            String document_documentType = rs.getString("document_documentType");
+            String document_filestoreId = rs.getString("document_filestoreId");
+            String document_documentUid = rs.getString("document_documentUid");
+            JsonNode document_additionalDetails = getAdditionalDetail("document_additionalDetails", rs);
             String document_status = rs.getString("document_status");
-            String document_createdby = rs.getString("document_createdby");
-            String document_lastmodifiedby = rs.getString("document_lastmodifiedby");
-            Long document_createdtime = rs.getLong("document_createdtime");
-            Long document_lastmodifiedtime = rs.getLong("document_lastmodifiedtime");
+            String document_createdBy = rs.getString("document_createdBy");
+            String document_lastModifiedBy = rs.getString("document_lastModifiedBy");
+            Long document_createdTime = rs.getLong("document_createdTime");
+            Long document_lastModifiedTime = rs.getLong("document_lastModifiedTime");
 
-            AuditDetails documenttAuditDetails = AuditDetails.builder().createdBy(document_createdby).createdTime(document_createdtime)
-                    .lastModifiedBy(document_lastmodifiedby).lastModifiedTime(document_lastmodifiedtime)
+            AuditDetails documenttAuditDetails = AuditDetails.builder().createdBy(document_createdBy).createdTime(document_createdTime)
+                    .lastModifiedBy(document_lastModifiedBy).lastModifiedTime(document_lastModifiedTime)
                     .build();
 
             Document document = Document.builder()
                     .id(document_id)
-                    .projectid(document_projectid)
-                    .documentType(document_documenttype)
-                    .fileStore(document_filestore_id)
-                    .documentUid(document_documentuid)
-                    .additionalDetails(document_additionaldetails)
+                    .projectid(document_projectId)
+                    .documentType(document_documentType)
+                    .fileStore(document_filestoreId)
+                    .documentUid(document_documentUid)
+                    .additionalDetails(document_additionalDetails)
                     .status(document_status)
                     .auditDetails(documenttAuditDetails)
                     .build();

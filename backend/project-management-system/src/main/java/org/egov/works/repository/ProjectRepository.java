@@ -1,11 +1,9 @@
 package org.egov.works.repository;
 
 import org.egov.works.repository.querybuilder.DocumentQueryBuilder;
-import org.egov.works.repository.querybuilder.LocalityQueryBuilder;
 import org.egov.works.repository.querybuilder.ProjectAddressQueryBuilder;
 import org.egov.works.repository.querybuilder.TargetQueryBuilder;
 import org.egov.works.repository.rowmapper.DocumentRowMapper;
-import org.egov.works.repository.rowmapper.LocalityRowMapper;
 import org.egov.works.repository.rowmapper.ProjectAddressRowMapper;
 import org.egov.works.repository.rowmapper.TargetRowMapper;
 import org.egov.works.web.models.*;
@@ -28,8 +26,6 @@ public class ProjectRepository {
     private TargetQueryBuilder targetQueryBuilder;
     @Autowired
     private DocumentQueryBuilder documentQueryBuilder;
-    @Autowired
-    private LocalityQueryBuilder localityQueryBuilder;
 
     @Autowired
     private ProjectAddressRowMapper rowMapper;
@@ -37,8 +33,6 @@ public class ProjectRepository {
     private TargetRowMapper targetRowMapper;
     @Autowired
     private DocumentRowMapper documentRowMapper;
-    @Autowired
-    private LocalityRowMapper localityRowMapper;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -57,21 +51,14 @@ public class ProjectRepository {
         String queryDocument = documentQueryBuilder.getDocumentSearchQuery(projectIds, preparedStmtListDocument);
         List<Document> documents = jdbcTemplate.query(queryDocument, documentRowMapper, preparedStmtListDocument.toArray());
 
-        HashSet<String> addressIds = getAddressIds(projects);
-        List<Object> preparedStmtListLocality = new ArrayList<>();
-        String queryLocality = localityQueryBuilder.getLocalitySearchQuery(addressIds, preparedStmtListLocality);
-        List<Boundary> localities = jdbcTemplate.query(queryLocality, localityRowMapper, preparedStmtListLocality.toArray());
-
-        List<Project> result = buildProjectSearchResult(projects, targets, documents, localities);
+        List<Project> result = buildProjectSearchResult(projects, targets, documents);
         return result;
     }
 
-    private List<Project> buildProjectSearchResult(List<Project> projects, List<Target> targets, List<Document> documents, List<Boundary> localities) {
+    private List<Project> buildProjectSearchResult(List<Project> projects, List<Target> targets, List<Document> documents) {
         for (Project project: projects) {
             project.setTargets(new ArrayList<>());
             project.setDocuments(new ArrayList<>());
-            project.getAddress().setLocality(new Boundary());
-
 
             for (Target target: targets) {
                 if (target.getProjectid().equals(project.getId())) {
@@ -83,29 +70,8 @@ public class ProjectRepository {
                     project.getDocuments().add(document);
                 }
             }
-            for (Boundary locality: localities) {
-                if (locality.getParentid() == null && locality.getAddressid().equals(project.getAddress().getId())) {
-                    project.getAddress().setLocality(locality);
-                }
-            }
-            for (Boundary children: localities) {
-                if (project.getAddress().getLocality() != null && children.getParentid() != null &&
-                        children.getParentid().equals(project.getAddress().getLocality().getId()) &&
-                        children.getAddressid().equals(project.getAddress().getId())) {
-                    if (project.getAddress().getLocality().getChildren() == null)
-                        project.getAddress().getLocality().setChildren(new ArrayList<>());
-                    project.getAddress().getLocality().getChildren().add(children);
-                }
-            }
         }
         return projects;
     }
 
-    private HashSet<String> getAddressIds(List<Project> projects) {
-        HashSet<String> projectids = new HashSet<>();
-        for (Project project: projects) {
-            projectids.add(project.getAddress().getId());
-        }
-        return projectids;
-    }
 }

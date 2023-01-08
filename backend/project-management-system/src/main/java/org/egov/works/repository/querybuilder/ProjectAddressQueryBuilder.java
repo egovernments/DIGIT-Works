@@ -11,20 +11,20 @@ import java.util.List;
 @Component
 public class ProjectAddressQueryBuilder {
 
-    private static final String FETCH_PROJECT_ADDRESS_QUERY = "SELECT prj.id as project_id, prj.tenantid as project_tenantid, prj.projecttype as project_projecttype, prj.projectsubtype as project_projectsubtype, " +
-            " prj.department as project_department, prj.description as project_description, prj.reference_id as project_referenceid, prj.startdate as project_startdate, prj.enddate as project_enddate, " +
-            "prj.istaskenabled as project_istaskenabled, prj.parent as project_parent, prj.additionaldetails as project_additionaldetails, prj.isdeleted as project_isdeleted, prj.rowversion as project_rowversion, " +
-            " prj.createdby as project_createdby, prj.lastmodifiedby as project_lastmodifiedby, prj.createdtime as project_createdtime, prj.lastmodifiedtime as project_lastmodifiedtime, " +
-            "addr.id as address_id, addr.tenantid as address_tenantid, addr.project_id as address_projectid, addr.doorno as address_doorno, addr.latitude as address_latitude, addr.longitude as address_longitude, addr.locationaccuracy as address_locationaccuracy, " +
-            " addr.type as address_type, addr.addressline1 as address_addressline1, addr.addressline2 as address_addressline2, addr.landmark as address_landmark, addr.city as address_city, addr.pincode as address_pincode, " +
-            " addr.buildingname as address_buildingname, addr.street as address_street, addr.createdby as address_createdby, addr.lastmodifiedby as address_lastmodifiedby, addr.createdtime as address_createdtime, addr.lastmodifiedtime as address_lastmodifiedtime " +
+    private static final String FETCH_PROJECT_ADDRESS_QUERY = "SELECT prj.id as projectId, prj.tenant_id as project_tenantId, prj.project_number as project_projectNumber, prj.name as project_name, prj.project_type as project_projectType, prj.project_subtype as project_projectSubtype, " +
+            " prj.department as project_department, prj.description as project_description, prj.reference_id as project_referenceId, prj.start_date as project_startDate, prj.end_date as project_endDate, " +
+            "prj.is_task_enabled as project_isTaskEnabled, prj.parent as project_parent, prj.additional_details as project_additionalDetails, prj.is_deleted as project_isDeleted, prj.row_version as project_rowVersion, " +
+            " prj.created_by as project_createdBy, prj.last_modified_by as project_lastModifiedBy, prj.created_time as project_createdTime, prj.last_modified_time as project_lastModifiedTime, " +
+            "addr.id as addressId, addr.tenant_id as address_tenantId, addr.project_id as address_projectId, addr.door_no as address_doorNo, addr.latitude as address_latitude, addr.longitude as address_longitude, addr.location_accuracy as address_locationAccuracy, " +
+            " addr.type as address_type, addr.address_line1 as address_addressLine1, addr.address_line2 as address_addressLine2, addr.landmark as address_landmark, addr.city as address_city, addr.pin_code as address_pinCode, " +
+            " addr.building_name as address_buildingName, addr.street as address_street, addr.locality as address_locality, addr.created_by as address_createdBy, addr.last_modified_by as address_lastModifiedBy, addr.created_time as address_createdTime, addr.last_modified_time as address_lastModifiedTime " +
             " " +
             "from eg_pms_project prj " +
             "left join eg_pms_address addr " +
             "on prj.id = addr.project_id ";
 
     private final String paginationWrapper = "SELECT * FROM " +
-            "(SELECT *, DENSE_RANK() OVER (ORDER BY project_lastmodifiedtime DESC , project_id) offset_ FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY project_lastModifiedTime DESC , projectId) offset_ FROM " +
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
@@ -35,57 +35,69 @@ public class ProjectAddressQueryBuilder {
 
         for (Project project: projectRequest.getProjects()) {
 
-            if (project.getId() != null && !project.getId().isEmpty()) {
-                addClauseIfRequired(preparedStmtList, queryBuilder, true);
-                queryBuilder.append("prj.id =? ");
-                preparedStmtList.add(project.getId());
-            }
-
             if (StringUtils.isNotBlank(tenantId)) {
-                addClauseIfRequired(preparedStmtList, queryBuilder, false);
-                queryBuilder.append(" prj.tenantid=? ");
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.tenant_id=? ");
                 preparedStmtList.add(tenantId);
             }
 
+            if (StringUtils.isNotBlank(project.getId())) {
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.id =? ");
+                preparedStmtList.add(project.getId());
+            }
+
+            if (StringUtils.isNotBlank(project.getProjectNumber())) {
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.project_number =? ");
+                preparedStmtList.add(project.getProjectNumber());
+            }
+
+            if (StringUtils.isNotBlank(project.getName())) {
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.name =? ");
+                preparedStmtList.add(project.getName());
+            }
+
             if (StringUtils.isNotBlank(project.getProjectType())) {
-                addClauseIfRequired(preparedStmtList, queryBuilder, false);
-                queryBuilder.append(" prj.projecttype=? ");
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.project_type=? ");
                 preparedStmtList.add(project.getProjectType());
             }
 
             if (StringUtils.isNotBlank(project.getProjectSubType())) {
-                addClauseIfRequired(preparedStmtList, queryBuilder, false);
-                queryBuilder.append(" prj.projectsubtype=? ");
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.project_subtype=? ");
                 preparedStmtList.add(project.getProjectSubType());
             }
 
             if (StringUtils.isNotBlank(project.getReferenceID())) {
-                addClauseIfRequired(preparedStmtList, queryBuilder, false);
+                addClauseIfRequired(preparedStmtList, queryBuilder);
                 queryBuilder.append(" prj.reference_id=? ");
                 preparedStmtList.add(project.getReferenceID());
             }
 
             if (StringUtils.isNotBlank(project.getDepartment())) {
-                addClauseIfRequired(preparedStmtList, queryBuilder, false);
+                addClauseIfRequired(preparedStmtList, queryBuilder);
                 queryBuilder.append(" prj.department=? ");
                 preparedStmtList.add(project.getDepartment());
             }
 
             if (project.getStartDate() != null && project.getStartDate() != 0) {
-                addClauseIfRequired(preparedStmtList, queryBuilder, false);
-                queryBuilder.append(" prj.startdate=? ");
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.start_date=? ");
                 preparedStmtList.add(project.getStartDate());
             }
 
             if (project.getEndDate() != null && project.getEndDate() != 0) {
-                addClauseIfRequired(preparedStmtList, queryBuilder, false);
-                queryBuilder.append(" prj.enddate=? ");
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.end_date=? ");
                 preparedStmtList.add(project.getEndDate());
             }
 
             if (lastChangedSince != null && lastChangedSince != 0) {
-                addClauseIfRequired(preparedStmtList, queryBuilder, false);
-                queryBuilder.append(" ( prj.createdtime > ? OR prj.lastmodifiedtime > ? )");
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" ( prj.created_time > ? OR prj.last_modified_time > ? )");
                 preparedStmtList.add(lastChangedSince);
                 preparedStmtList.add(lastChangedSince);
             }
@@ -101,11 +113,11 @@ public class ProjectAddressQueryBuilder {
     }
 
     private void addIsDeletedCondition(List<Object> preparedStmtList, StringBuilder queryBuilder, Boolean includeDeleted) {
-        addClauseIfRequired(preparedStmtList, queryBuilder, false);
+        addClauseIfRequired(preparedStmtList, queryBuilder);
         if (includeDeleted) {
-            queryBuilder.append(" (prj.isdeleted = true OR prj.isdeleted = false) ");
+            queryBuilder.append(" (prj.is_deleted = true OR prj.is_deleted = false) ");
         } else {
-            queryBuilder.append(" prj.isdeleted = false ");
+            queryBuilder.append(" prj.is_deleted = false ");
         }
     }
 
@@ -115,10 +127,10 @@ public class ProjectAddressQueryBuilder {
         }
     }
 
-    private static void addClauseIfRequired(List<Object> values, StringBuilder queryString, Boolean isFirstAttribute) {
+    private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
         if (values.isEmpty())
             queryString.append(" WHERE ( ");
-        else if (!isFirstAttribute) {
+        else {
             queryString.append(" AND");
         }
     }

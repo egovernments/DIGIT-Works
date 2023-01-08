@@ -8,8 +8,8 @@ import java.util.List;
 @Component
 public class TargetQueryBuilder {
 
-    private static final String FETCH_TARGET_QUERY = "select t.id as target_id, t.project_id as target_projectid, t.beneficiarytype as target_beneficiarytype, t.totalno as target_totalno, t.targetno as target_targetno, " +
-            "t.isdeleted as target_isdeleted, t.createdby as target_createdby, t.createdtime as target_createdtime, t.lastmodifiedby as target_lastmodifiedby, t.lastmodifiedtime as target_lastmodifiedtime " +
+    private static final String FETCH_TARGET_QUERY = "select t.id as targetId, t.project_id as target_projectId, t.beneficiary_type as target_beneficiaryType, t.total_no as target_totalNo, t.target_no as target_targetNo, " +
+            "t.is_deleted as target_isDeleted, t.created_by as target_createdBy, t.created_time as target_createdTime, t.last_modified_by as target_lastModifiedBy, t.last_modified_time as target_lastModifiedTime " +
             " from eg_pms_target t ";
 
     public String getTargetSearchQuery(List<String> projectIds, List<Object> preparedStmtList) {

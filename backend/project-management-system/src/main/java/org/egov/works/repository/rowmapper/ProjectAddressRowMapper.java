@@ -32,7 +32,7 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
 
         Map<String, Project> projectMap = new LinkedHashMap<>();
         while (rs.next()) {
-            String project_id = rs.getString("project_id");
+            String project_id = rs.getString("projectId");
 
             Project project = !projectMap.containsKey(project_id) ? createProjectObj(rs) : projectMap.get(project_id);
 
@@ -45,85 +45,91 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
     }
 
     private Project createProjectObj(ResultSet rs) throws SQLException, DataAccessException {
-        String project_id = rs.getString("project_id");
-        String project_tenantid = rs.getString("project_tenantid");
-        String project_projecttype = rs.getString("project_projecttype");
-        String project_projectsubtype = rs.getString("project_projectsubtype");
+        String project_id = rs.getString("projectId");
+        String project_tenantId = rs.getString("project_tenantId");
+        String project_projectNumber = rs.getString("project_projectNumber");
+        String project_name = rs.getString("project_name");
+        String project_projectType = rs.getString("project_projectType");
+        String project_projectSubtype = rs.getString("project_projectSubtype");
         String project_department = rs.getString("project_department");
         String project_description = rs.getString("project_description");
-        String project_referenceid = rs.getString("project_referenceid");
-        Long project_startdate = rs.getLong("project_startdate");
-        Long project_enddate = rs.getLong("project_enddate");
-        Boolean project_istaskenabled = rs.getBoolean("project_istaskenabled");
+        String project_referenceId = rs.getString("project_referenceId");
+        Long project_startDate = rs.getLong("project_startDate");
+        Long project_endDate = rs.getLong("project_endDate");
+        Boolean project_isTaskEnabled = rs.getBoolean("project_isTaskEnabled");
         String project_parent = rs.getString("project_parent");
-        JsonNode project_additionaldetails = getAdditionalDetail("project_additionaldetails", rs);
-        Boolean project_isdeleted = rs.getBoolean("project_isdeleted");
-        Integer project_rowversion = rs.getInt("project_rowversion");
-        String project_createdby = rs.getString("project_createdby");
-        String project_lastmodifiedby = rs.getString("project_lastmodifiedby");
-        Long project_createdtime = rs.getLong("project_createdtime");
-        Long project_lastmodifiedtime = rs.getLong("project_lastmodifiedtime");
+        JsonNode project_additionalDetails = getAdditionalDetail("project_additionalDetails", rs);
+        Boolean project_isDeleted = rs.getBoolean("project_isDeleted");
+        Integer project_rowVersion = rs.getInt("project_rowVersion");
+        String project_createdBy = rs.getString("project_createdBy");
+        String project_lastModifiedBy = rs.getString("project_lastModifiedBy");
+        Long project_createdTime = rs.getLong("project_createdTime");
+        Long project_lastModifiedTime = rs.getLong("project_lastModifiedTime");
 
-        String address_id = rs.getString("address_id");
-        String address_tenantid = rs.getString("address_tenantid");
-        String address_projectid = rs.getString("address_projectid");
-        String address_doorno = rs.getString("address_doorno");
+        String address_id = rs.getString("addressId");
+        String address_tenantId = rs.getString("address_tenantId");
+        String address_projectId = rs.getString("address_projectId");
+        String address_doorNo = rs.getString("address_doorNo");
         Double address_latitude = rs.getDouble("address_latitude");
         Double address_longitude = rs.getDouble("address_longitude");
-        Double address_locationaccuracy = rs.getDouble("address_locationaccuracy");
+        Double address_locationAccuracy = rs.getDouble("address_locationAccuracy");
         String address_type = rs.getString("address_type");
-        String address_addressline1 = rs.getString("address_addressline1");
-        String address_addressline2 = rs.getString("address_addressline2");
+        String address_addressLine1 = rs.getString("address_addressLine1");
+        String address_addressLine2 = rs.getString("address_addressLine2");
         String address_landmark = rs.getString("address_landmark");
         String address_city = rs.getString("address_city");
-        String address_pincode = rs.getString("address_pincode");
-        String address_buildingname = rs.getString("address_buildingname");
+        String address_pinCode = rs.getString("address_pinCode");
+        String address_buildingName = rs.getString("address_buildingName");
         String address_street = rs.getString("address_street");
-        String address_createdby = rs.getString("address_createdby");
-        String address_lastmodifiedby = rs.getString("address_lastmodifiedby");
-        Long address_createdtime = rs.getLong("address_createdtime");
-        Long address_lastmodifiedtime = rs.getLong("address_lastmodifiedtime");
+        String address_locality = rs.getString("address_locality");
+        String address_createdBy = rs.getString("address_createdBy");
+        String address_lastModifiedBy = rs.getString("address_lastModifiedBy");
+        Long address_createdTime = rs.getLong("address_createdTime");
+        Long address_lastModifiedTime = rs.getLong("address_lastModifiedTime");
 
-        AuditDetails projectAuditDetails = AuditDetails.builder().createdBy(project_createdby).createdTime(project_createdtime)
-                .lastModifiedBy(project_lastmodifiedby).lastModifiedTime(project_lastmodifiedtime)
+        AuditDetails projectAuditDetails = AuditDetails.builder().createdBy(project_createdBy).createdTime(project_createdTime)
+                .lastModifiedBy(project_lastModifiedBy).lastModifiedTime(project_lastModifiedTime)
                 .build();
-        AuditDetails addresstAuditDetails = AuditDetails.builder().createdBy(address_createdby).createdTime(address_createdtime)
-                .lastModifiedBy(address_lastmodifiedby).lastModifiedTime(address_lastmodifiedtime)
+        AuditDetails addresstAuditDetails = AuditDetails.builder().createdBy(address_createdBy).createdTime(address_createdTime)
+                .lastModifiedBy(address_lastModifiedBy).lastModifiedTime(address_lastModifiedTime)
                 .build();
 
         Address address = Address.builder()
                 .id(address_id)
-                .tenantId(address_tenantid)
-                .doorNo(address_doorno)
+                .tenantId(address_tenantId)
+                .doorNo(address_doorNo)
                 .latitude(address_latitude)
                 .longitude(address_longitude)
-                .locationAccuracy(address_locationaccuracy)
+                .locationAccuracy(address_locationAccuracy)
                 .type(address_type)
-                .addressLine1(address_addressline1)
-                .addressLine2(address_addressline2)
+                .addressLine1(address_addressLine1)
+                .addressLine2(address_addressLine2)
                 .landmark(address_landmark)
                 .city(address_city)
-                .pincode(address_pincode)
-                .buildingName(address_buildingname)
+                .pincode(address_pinCode)
+                .buildingName(address_buildingName)
                 .street(address_street)
+                .locality(address_locality)
                 .auditDetails(addresstAuditDetails)
                 .build();
 
         Project project = Project.builder()
                 .id(project_id)
-                .tenantId(project_tenantid)
-                .projectType(project_projecttype)
-                .projectSubType(project_projectsubtype)
+                .tenantId(project_tenantId)
+                .projectNumber(project_projectNumber)
+                .name(project_name)
+                .projectType(project_projectType)
+                .projectSubType(project_projectSubtype)
                 .department(project_department)
                 .description(project_description)
-                .referenceID(project_referenceid)
-                .startDate(project_startdate)
-                .endDate(project_enddate)
-                .isTaskEnabled(project_istaskenabled)
+                .referenceID(project_referenceId)
+                .startDate(project_startDate)
+                .endDate(project_endDate)
+                .isTaskEnabled(project_isTaskEnabled)
                 .parent(project_parent)
-                .additionalDetails(project_additionaldetails)
-                .isDeleted(project_isdeleted)
-                .rowVersion(project_rowversion)
+                .additionalDetails(project_additionalDetails)
+                .isDeleted(project_isDeleted)
+                .rowVersion(project_rowVersion)
                 .address(address)
                 .auditDetails(projectAuditDetails)
                 .build();
