@@ -62,7 +62,6 @@ public class MDMSUtils {
     }
 
     private ModuleDetail getWorksModuleRequestData(ProjectRequest request) {
-       // List<Project> projects = request.getProjects();
         List<MasterDetail> projectWorksMasterDetails = new ArrayList<>();
 
         MasterDetail projectTypeMasterDetails = MasterDetail.builder().name(MASTER_PROJECTTYPE)
@@ -70,10 +69,6 @@ public class MDMSUtils {
                 .build();
         projectWorksMasterDetails.add(projectTypeMasterDetails);
 
-        MasterDetail beneficiaryMasterDetails = MasterDetail.builder().name(MASTER_BENEFICIART_TYPE)
-                .filter(filterActiveTrue)
-                .build();
-        projectWorksMasterDetails.add(beneficiaryMasterDetails);
 
         ModuleDetail projectWorksModuleDetail = ModuleDetail.builder().masterDetails(projectWorksMasterDetails)
                 .moduleName(MDMS_WORKS_MODULE_NAME).build();

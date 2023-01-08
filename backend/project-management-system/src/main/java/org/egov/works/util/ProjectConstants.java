@@ -8,4 +8,12 @@ public class ProjectConstants {
     public static final String MASTER_BENEFICIART_TYPE = "BeneficiaryType";
     public static final String MASTER_DEPARTMENT = "Department";
     public static final String MASTER_PROJECTTYPE = "ProjectType";
+    //location
+    public static final String BOUNDARY_ADMIN_HIERARCHY_CODE = "ADMIN";
+    public static final String MASTER_BOUNDARY_LOCATION = "TenantBoundary";
+    public static final String MDMS_LOCATION_MODULE_NAME = "egov-location";
+
+    //General
+    public static final String SEMICOLON = ":";
+    public static final String DOT = ".";
 }

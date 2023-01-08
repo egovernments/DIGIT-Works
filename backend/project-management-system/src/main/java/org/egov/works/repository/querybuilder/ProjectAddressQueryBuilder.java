@@ -28,6 +28,7 @@ public class ProjectAddressQueryBuilder {
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
+
     public String getProjectSearchQuery(ProjectRequest projectRequest, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = null;
         queryBuilder = new StringBuilder(FETCH_PROJECT_ADDRESS_QUERY);

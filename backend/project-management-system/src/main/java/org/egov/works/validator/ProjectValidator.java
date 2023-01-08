@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.util.LocationUtil;
 import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +24,16 @@ public class ProjectValidator {
     @Autowired
     MDMSUtils mdmsUtils;
 
+    @Autowired
+    LocationUtil locationUtil;
+
     public void validateCreateProjectRequest(ProjectRequest request) {
         Map<String, String> errorMap = new HashMap<>();
         List<Project> projects = request.getProjects();
         RequestInfo requestInfo = request.getRequestInfo();
 
         validateRequestInfo(requestInfo, errorMap);
-        validateProjectRequest(projects, errorMap, false);
+        validateProjectRequest(projects, errorMap);
 
         String tenantId = projects.get(0).getTenantId();
         String rootTenantId = tenantId.split("\\.")[0];
@@ -37,6 +41,10 @@ public class ProjectValidator {
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
 
         validateMDMSData(projects, mdmsData,  errorMap);
+
+        List<String> locationsForValidation = getLocationForValidation(projects);
+        if (locationsForValidation.size() > 0)
+            validateLocation(locationsForValidation, tenantId, requestInfo, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -48,7 +56,7 @@ public class ProjectValidator {
         RequestInfo requestInfo = project.getRequestInfo();
 
         validateRequestInfo(requestInfo, errorMap);
-        validateProjectRequest(projects, errorMap, true);
+        validateSearchProjectRequest(projects, errorMap);
         validateProjectRequestParams(limit, offset, tenantId);
 
         Object mdmsData = mdmsUtils.mDMSCall(project, tenantId.split("\\.")[0]);
@@ -65,7 +73,7 @@ public class ProjectValidator {
         RequestInfo requestInfo = request.getRequestInfo();
 
         validateRequestInfo(requestInfo, errorMap);
-        validateProjectRequest(projects, errorMap, false);
+        validateProjectRequest(projects, errorMap);
 
         String tenantId = projects.get(0).getTenantId();
         String rootTenantId = tenantId.split("\\.")[0];
@@ -79,6 +87,10 @@ public class ProjectValidator {
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
 
         validateMDMSData(projects, mdmsData,  errorMap);
+
+        List<String> locationsForValidation = getLocationForValidation(projects);
+        if (locationsForValidation.size() > 0)
+            validateLocation(locationsForValidation, tenantId, requestInfo, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -98,7 +110,7 @@ public class ProjectValidator {
         }
     }
 
-    private void validateProjectRequest(List<Project> projects, Map<String, String> errorMap, Boolean isSearch) {
+    private void validateProjectRequest(List<Project> projects, Map<String, String> errorMap) {
         if (projects == null || projects.size() == 0) {
             throw new CustomException("PROJECT", "Projects are mandatory");
         }
@@ -107,10 +119,36 @@ public class ProjectValidator {
             if (project == null) {
                 throw new CustomException("PROJECT", "Project is mandatory");
             }
-            if (!isSearch && project.getTenantId() == null) {
+            if (StringUtils.isBlank(project.getTenantId())) {
                 throw new CustomException("TENANT_ID", "Tenant ID is mandatory");
             }
-            if (isSearch && StringUtils.isBlank(project.getId()) && StringUtils.isBlank(project.getProjectType()) && StringUtils.isBlank(project.getProjectSubType()) && StringUtils.isBlank(project.getReferenceID())
+            if (StringUtils.isBlank(project.getName())) {
+                throw new CustomException("PROJECT_NAME", "Project Name is mandatory");
+            }
+            if (StringUtils.isBlank(project.getProjectType())) {
+                throw new CustomException("PROJECT_TYPE", "Project Type is mandatory");
+            }
+            if (StringUtils.isBlank(project.getProjectType()) && StringUtils.isNotBlank(project.getProjectSubType())) {
+                errorMap.put("PROJECT", "Project Type must be present for Project sub type");
+            }
+            if (!project.getTenantId().equals(projects.get(0).getTenantId())) {
+                throw new CustomException("MULTIPLE_TENANTS", "All registers must have same tenant Id. Please create new request for different tentant id");
+            }
+        }
+    }
+
+    private void validateSearchProjectRequest(List<Project> projects, Map<String, String> errorMap) {
+        if (projects == null || projects.size() == 0) {
+            throw new CustomException("PROJECT", "Projects are mandatory");
+        }
+
+        for (Project project: projects) {
+            if (project == null) {
+                throw new CustomException("PROJECT", "Project is mandatory");
+            }
+            if (StringUtils.isBlank(project.getId()) && StringUtils.isBlank(project.getProjectType())
+                    && StringUtils.isBlank(project.getName()) && StringUtils.isBlank(project.getProjectNumber())
+                    && StringUtils.isBlank(project.getProjectSubType()) && StringUtils.isBlank(project.getReferenceID())
                     && project.getStartDate() == 0 && project.getEndDate() == 0 && StringUtils.isBlank(project.getDepartment())) {
                 throw new CustomException("PROJECT_SEARCH_FIELDS", "Any one project search field is required");
             }
@@ -118,7 +156,7 @@ public class ProjectValidator {
                 errorMap.put("PROJECT", "Project Type must be present for Project sub type");
             }
 
-            if (!isSearch && !project.getTenantId().equals(projects.get(0).getTenantId())) {
+            if (!project.getTenantId().equals(projects.get(0).getTenantId())) {
                 throw new CustomException("MULTIPLE_TENANTS", "All registers must have same tenant Id. Please create new request for different tentant id");
             }
         }
@@ -138,21 +176,19 @@ public class ProjectValidator {
 
     private void validateMDMSData(List<Project> projects, Object mdmsData, Map<String, String> errorMap) {
         final String jsonPathForWorksTypeOfProjectList = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_PROJECTTYPE + ".*.code";
-        String jsonPathForWorksSubTypeOfProject = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_PROJECTTYPE + ".[?(@.active==true && @.code == '{code}')].subTypes.[?(@.active==true && @.code=='{subCode}')]";
+        String jsonPathForWorksSubTypeOfProject = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_PROJECTTYPE + ".[?(@.active==true && @.code == '{code}')].projectSubType";
         final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*.code";
-        final String jsonPathForWorksBeneficiaryType = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_BENEFICIART_TYPE + ".*.code";
+        String jsonPathForBeneficiaryOfProject = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_PROJECTTYPE + ".[?(@.active==true && @.code == '{code}')].beneficiary";
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
         final String PLACEHOLDER_CODE = "{code}";
-        final String PLACEHOLDER_SUB_CODE = "{subCode}";
 
         List<Object> deptRes = null;
         List<Object> beneficiaryTypeRes = null;
         List<Object> typeOfProjectRes = null;
         List<Object> tenantRes = null;
-        List<Object> projectSubTypeRes = null;
+        List<List<Object>> projectSubTypeRes = null;
         try {
             deptRes = JsonPath.read(mdmsData, jsonPathForWorksDepartment);
-            beneficiaryTypeRes = JsonPath.read(mdmsData, jsonPathForWorksBeneficiaryType);
             typeOfProjectRes = JsonPath.read(mdmsData, jsonPathForWorksTypeOfProjectList);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
         } catch (Exception e) {
@@ -172,16 +208,55 @@ public class ProjectValidator {
                 errorMap.put("INVALID_DEPARTMENT_CODE", "The department code: " + project.getDepartment() + " is not present in MDMS");
 
             if (isProjectPresentInMDMS && !StringUtils.isBlank(project.getProjectType())) {
-                jsonPathForWorksSubTypeOfProject = jsonPathForWorksSubTypeOfProject.replace(PLACEHOLDER_CODE, project.getProjectType()).replace(PLACEHOLDER_SUB_CODE, project.getProjectSubType());
+                jsonPathForWorksSubTypeOfProject = jsonPathForWorksSubTypeOfProject.replace(PLACEHOLDER_CODE, project.getProjectType());
                 projectSubTypeRes = JsonPath.read(mdmsData, jsonPathForWorksSubTypeOfProject);
 
-                if (!StringUtils.isBlank(project.getProjectSubType()) && CollectionUtils.isEmpty(projectSubTypeRes))
+                if (!StringUtils.isBlank(project.getProjectSubType()) && !projectSubTypeRes.get(0).contains(project.getProjectSubType())) {
                     errorMap.put("INVALID_PROJECT_SUB_TYPE", "The project subtype : " + project.getProjectSubType() + " is not present in MDMS for project type : " + project.getProjectType());
+                }
             }
 
-            for (Target target: project.getTargets()) {
-                if (!StringUtils.isBlank(target.getBeneficiaryType()) && !beneficiaryTypeRes.contains(target.getBeneficiaryType()))
-                    errorMap.put("INVALID_BENEFICIARY_TYPE", "The beneficiary Type: " + target.getBeneficiaryType() + " is not present in MDMS");
+            if (project.getTargets() != null) {
+                for (Target target: project.getTargets()) {
+                    if (isProjectPresentInMDMS && !StringUtils.isBlank(target.getBeneficiaryType())) {
+                        jsonPathForBeneficiaryOfProject = jsonPathForBeneficiaryOfProject.replace(PLACEHOLDER_CODE, project.getProjectType());
+                        beneficiaryTypeRes = JsonPath.read(mdmsData, jsonPathForBeneficiaryOfProject);
+
+                        if (!StringUtils.isBlank(target.getBeneficiaryType()) && !beneficiaryTypeRes.contains(target.getBeneficiaryType())) {
+                            errorMap.put("INVALID_BENEFICIARY_TYPE", "The beneficiary Type : " + target.getBeneficiaryType() + " is not present in MDMS for project type : " + project.getProjectType());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private List<String> getLocationForValidation(List<Project> projects) {
+        List<String> locations = new ArrayList<>();
+        for (Project project: projects) {
+            if (project.getAddress() != null && project.getAddress().getLocality() != null) {
+                locations.add(project.getAddress().getLocality());
+            }
+        }
+        return locations;
+    }
+
+    private void validateLocation(List<String> locations, String tenantId, RequestInfo requestInfo, Map<String, String> errorMap) {
+        final String jsonPathForBoundryLocation = "$.MdmsRes." + MDMS_LOCATION_MODULE_NAME + "." + MASTER_BOUNDARY_LOCATION + ".*";
+
+        if (locations.size() > 0) {
+            Object locResult = locationUtil.getLocationFromMDMS(locations, tenantId, requestInfo, errorMap);
+            if (locResult != null) {
+                List<Object> locRes = JsonPath.read(locResult, jsonPathForBoundryLocation);
+                if (CollectionUtils.isEmpty(locRes))
+                    errorMap.put("LOCATION_NOT_FOUND", "Locations doesn't exist in the system");
+                for (String location: locations) {
+                    if(!locRes.contains(location)) {
+                        errorMap.put("LOCATION_NOT_FOUND", "Location " + location + " doesn't exist in the system");
+                    }
+                }
+            } else {
+                errorMap.put("LOCATION_NOT_FOUND", "Locations doesn't exist in the system");
             }
         }
     }
@@ -218,24 +293,6 @@ public class ProjectValidator {
 
             if (projectFromDB.getAddress() != null && StringUtils.isNotBlank(project.getAddress().getId()) && !projectFromDB.getAddress().getId().equals(project.getAddress().getId())) {
                 throw new CustomException("INVALID_PROJECT_MODIFY", "The address id " + project.getAddress().getId() + " that you are trying to update does not exists for the project");
-            }
-
-            if (project.getAddress().getLocality() != null) {
-                Boundary locality = projectFromDB.getAddress().getLocality();
-                if (locality == null && StringUtils.isNotBlank(project.getAddress().getLocality().getId())) {
-                    throw new CustomException("INVALID_PROJECT_MODIFY", "The locality id " + project.getAddress().getLocality().getId() + " that you are trying to update does not exists for the project");
-                }
-
-                if (StringUtils.isNotBlank(project.getAddress().getLocality().getId()) && locality != null && !locality.getId().equals(project.getAddress().getLocality().getId())) {
-                    throw new CustomException("INVALID_PROJECT_MODIFY", "The locality id " + project.getAddress().getLocality().getId() + " that you are trying to update does not exists for the project");
-                }
-
-                Set<String> childrenIds = locality.getChildren().stream().map(Boundary:: getId).collect(Collectors.toSet());
-                for (Boundary child: project.getAddress().getLocality().getChildren()) {
-                    if (StringUtils.isNotBlank(child.getId()) && !childrenIds.contains(child.getId())) {
-                        throw new CustomException("INVALID_PROJECT_MODIFY", "The children id " + child.getId() + " that you are trying to update does not exists for the project");
-                    }
-                }
             }
 
         }
