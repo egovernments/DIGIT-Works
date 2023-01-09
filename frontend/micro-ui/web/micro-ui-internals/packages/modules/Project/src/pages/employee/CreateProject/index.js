@@ -38,11 +38,17 @@ const CreateProject = () => {
     const [subSchemaOptions, setSubSchemaOptions] = useState([]);
     const [selectedWard, setSelectedWard] = useState('');
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const orgSession = Digit.Hooks.useSessionStorage("PROJECT_CREATE", {});
+    const orgSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
     const [sessionFormData, setSessionFormData] = orgSession;
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+
+    //clear session data on first init
+    useEffect(()=>{
+      setSessionFormData({});
+    },[]);
 
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
-      tenantId, 'Ward', 
+      tenantId, 'Ward',
       {
           select: (data) => {
               const wards = []
@@ -60,29 +66,27 @@ const CreateProject = () => {
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
 
     const onFormValueChange = (setValue, formData, formState) => {
-        // if (!_.isEqual(sessionFormData, formData)) {
-        //   const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
-        //   if(formData.ward) {
-        //       setSelectedWard(formData?.ward?.code)
-        //   }
-        //   if (difference?.ward) {
-        //       setValue("locality", '');
-        //   }
-        //   setSessionFormData({ ...sessionFormData, ...formData });
-        // }
+      console.log(formData, sessionFormData);
+        if (!_.isEqual(sessionFormData, formData)) {
+          const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
+          if(formData.ward) {
+              setSelectedWard(formData?.ward?.code)
+          }
+          if (difference?.ward) {
+              setValue("locality", '');
+          }
+          setSessionFormData({ ...sessionFormData, ...formData });
+        }
         if(formData?.hasSubProjects) {
           setSelectedProjectType(formData?.hasSubProjects);
         } 
         if(formData?.typeOfWork) {
-          console.log(formData?.typeOfWork?.subTypes);
           setSubTypeOfWorkOptions(formData?.typeOfWork?.subTypes);
         } 
         if(formData?.scheme) {
-          console.log(formData?.scheme?.subSchemes);
           setSubSchemaOptions(formData?.scheme?.subSchemes);
         } 
     }
-    console.log(wardsAndLocalities);
     const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities);
 
     useEffect(()=>{

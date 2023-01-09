@@ -285,6 +285,9 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               optionsKey: "i18nKey",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               options: wardsAndLocalities?.wards
             },
           },
@@ -299,6 +302,9 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               optionsKey: "i18nKey",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
               options: filteredLocalities
             },
           },
