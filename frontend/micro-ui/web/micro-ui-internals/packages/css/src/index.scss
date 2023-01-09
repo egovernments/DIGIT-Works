@@ -729,10 +729,19 @@ input[type="number"] {
   transition: 0.2s ease-in-out;
 }
 
+.employeeCard {
+  &:empty {
+    padding: 0px !important;
+  }
+}
+
 @screen sm {
   .employeeCard {
     .card-section-header {
       @apply mb-md;
+    }
+    &:empty {
+      padding: 0px !important;
     }
   }
 }
