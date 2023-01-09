@@ -1,8 +1,8 @@
-import { Card,StatusTable,Row,Header,HorizontalNav,ActionBar,SubmitBar,WorkflowModal } from '@egovernments/digit-ui-react-components'
+import { Card,StatusTable,Row,Header,HorizontalNav,ActionBar,SubmitBar,WorkflowModal,FormComposer } from '@egovernments/digit-ui-react-components'
 import React,{Fragment,useEffect,useState} from 'react'
 import { useTranslation } from 'react-i18next'
 import getModalConfig from './config'
-import CreateEstimateTabDetails from './CreateEstimateTabDetails'
+import { createEstimateConfig } from './createEstimateConfig'
 
 const cardState = {
     "title": " ",
@@ -162,6 +162,8 @@ const CreateEstimate = ({ EstimateSession }) => {
 
     }, [approvers, designation, department])
 
+    const estimateFormConfig = createEstimateConfig(t)
+
   return (
     <Fragment>
           {showModal && <WorkflowModal
@@ -172,8 +174,9 @@ const CreateEstimate = ({ EstimateSession }) => {
               setSessionFormData={setSessionFormData}
           />
           }
-        <Header >{t("ACTION_TEST_CREATE_ESTIMATE")}</Header>
-        <Card className={"employeeCard-override"}>
+        <Header styles={{ marginLeft: "14px" }}>{t("ACTION_TEST_CREATE_ESTIMATE")}</Header>
+        {/* Will fetch projectId from url params and do a search for project to show the below data in card while integrating with the API  */}
+          <Card styles={{ marginLeft: "14px" }}>
             <StatusTable>
                 {cardState.values.map((value)=>{
                     return (
@@ -183,13 +186,30 @@ const CreateEstimate = ({ EstimateSession }) => {
                   
             </StatusTable>
         </Card>
-        <HorizontalNav configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} showNav={true} inFormComposer={false} >
-            <CreateEstimateTabDetails activeLink={activeLink}/>
-        </HorizontalNav>
+        <FormComposer
+            label={"ACTION_TEST_CREATE_ESTIMATE"}
+            config={estimateFormConfig?.form.map((config) => {
+                return {
+                    ...config,
+                    body: config?.body.filter((a) => !a.hideInEmployee),
+                };
+            })}
+            onSubmit={onFormSubmit}
+            submitInForm={false}
+            fieldStyle={{ marginRight: 0 }}
+            inline={false}
+            className="card-no-margin"
+            defaultValues={estimateFormConfig?.defaultValues}
+            showWrapperContainers={false}
+            isDescriptionBold={false}
+            noBreakLine={true}
+            showMultipleCardsWithoutNavs={false}
+            showMultipleCardsInNavs={false}
+            horizontalNavConfig={configNavItems}
+            showNavs={true}  
+        />
 
-        <ActionBar>
-              <SubmitBar onSubmit={onFormSubmit} label={t("ACTION_TEST_CREATE_ESTIMATE")} />
-        </ActionBar>
+
     </Fragment>
   )
 }

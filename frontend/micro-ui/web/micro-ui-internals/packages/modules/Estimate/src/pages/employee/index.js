@@ -44,8 +44,8 @@ const App = ({ path }) => {
     const getBreadCrumbStyles = (screenType) => {
         // Defining 4 types for now -> create,view,inbox,search
         switch (true) {
-            case (screenType?.includes("/works-ui/employee/estimate/create-estimate")):
-                return { marginLeft: "0px" }
+            // case (screenType?.includes("/works-ui/employee/estimate/create-estimate")):
+            //     return { marginLeft: "0px" }
             case (screenType?.includes("/create")):
                 return { marginLeft: "10px" }
 
