@@ -241,6 +241,7 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useSearchWORKS from "./works/useSearchWORKS";
 import useSearchApprovedEstimates from "./works/useSearchApprovedEstimates";
 import useViewEstimateDetails from "./works/useViewEstimateDetails";
+import useViewProjectDetailsInEstimate from './works/useViewProjectDetailsInEstimate'
 import useViewProjectClosureDetails from "./works/useViewProjectClosureDetails";
 import useViewProjectClosureDetailsBills from "./works/useViewProjectClosureBills";
 import useViewLOIDetails from "./works/useViewLOIDetails";
@@ -262,6 +263,7 @@ import useViewOrg from "./bills/useViewOrg";
 
 const works = {
   useViewEstimateDetails,
+  useViewProjectDetailsInEstimate,
   useViewProjectClosureDetails,
   useViewProjectClosureDetailsBills,
   useViewLOIDetails,
