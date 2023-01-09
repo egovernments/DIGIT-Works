@@ -3,7 +3,7 @@ package org.egov.works.service;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.works.config.ProjectConfiguration;
 import org.egov.works.enrichment.ProjectEnrichment;
-import org.egov.works.producer.Producer;
+import org.egov.works.producer.ProjectProducer;
 import org.egov.works.repository.ProjectRepository;
 import org.egov.works.validator.ProjectValidator;
 import org.egov.works.web.models.Project;
@@ -25,7 +25,7 @@ public class ProjectService {
     private ProjectEnrichment projectEnrichment;
 
     @Autowired
-    private Producer producer;
+    private ProjectProducer producer;
 
     @Autowired
     private ProjectConfiguration projectConfiguration;

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class Producer {
+public class ProjectProducer {
 
     @Autowired
     private CustomKafkaTemplate<String, Object> kafkaTemplate;
