@@ -1,7 +1,7 @@
 import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { createProjectSectionConfig } from "../../../configs/createProjectHeaderConfig";
+import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
@@ -66,7 +66,6 @@ const CreateProject = () => {
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
 
     const onFormValueChange = (setValue, formData, formState) => {
-      console.log(formData, sessionFormData);
         if (!_.isEqual(sessionFormData, formData)) {
           const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
           if(formData.ward) {
