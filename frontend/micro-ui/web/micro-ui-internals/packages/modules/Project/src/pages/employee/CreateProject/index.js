@@ -39,12 +39,12 @@ const CreateProject = () => {
     const [selectedWard, setSelectedWard] = useState('');
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const orgSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
-    const [sessionFormData, setSessionFormData] = orgSession;
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
 
     //clear session data on first init
     useEffect(()=>{
-      setSessionFormData({});
+      clearSessionFormData();
     },[]);
 
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
