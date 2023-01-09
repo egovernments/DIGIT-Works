@@ -1,10 +1,12 @@
 package org.egov.repository.querybuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.egov.web.models.Status;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -15,6 +17,9 @@ import java.util.List;
 
 @Component
 public class RegisterQueryBuilder {
+
+    @Autowired
+    private AttendanceServiceConfiguration config;
 
     private static final String ATTENDANCE_REGISTER_SELECT_QUERY = " SELECT reg.id, " +
             "reg.tenantid, " +
@@ -29,6 +34,14 @@ public class RegisterQueryBuilder {
             "reg.createdtime, " +
             "reg.lastmodifiedtime " +
             "FROM eg_wms_attendance_register reg ";
+
+
+    private final String paginationWrapper = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY lastmodifiedtime DESC , id) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
+
 
     public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList) {
 
@@ -52,13 +65,6 @@ public class RegisterQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.registernumber = ? ");
             preparedStmtList.add(registerNumber);
-        }
-
-        if (!ObjectUtils.isEmpty(searchCriteria.getName())) {
-            String name = searchCriteria.getName();
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" reg.name = ? ");
-            preparedStmtList.add(name);
         }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getName())) {
@@ -95,17 +101,48 @@ public class RegisterQueryBuilder {
         }
 
         addOrderByClause(query, searchCriteria);
+        //addLimitAndOffset(query, searchCriteria, preparedStmtList);
+        return addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
+    }
 
-        addLimitAndOffset(query, searchCriteria, preparedStmtList);
+    private String addPaginationWrapper(String query,List<Object> preparedStmtList,
+                                        AttendanceRegisterSearchCriteria criteria){
+        int limit = config.getAttendanceRegisterDefaultLimit();
+        int offset = config.getAttendanceRegisterDefaultOffset();
 
-        return query.toString();
+        String finalQuery = paginationWrapper.replace("{}",query);
+
+        if(criteria.getLimit()!=null && criteria.getLimit()<=config.getAttendanceRegisterMaxLimit())
+            limit = criteria.getLimit();
+
+        if(criteria.getLimit()!=null && criteria.getLimit()>config.getAttendanceRegisterMaxLimit())
+            limit = config.getAttendanceRegisterMaxLimit();
+
+        if(criteria.getOffset()!=null)
+            offset = criteria.getOffset();
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit+offset);
+
+        return finalQuery;
     }
 
     private void addOrderByClause(StringBuilder queryBuilder, AttendanceRegisterSearchCriteria criteria) {
-
         //default
         if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
             queryBuilder.append(" ORDER BY reg.lastmodifiedtime ");
+        } else {
+            switch (AttendanceRegisterSearchCriteria.SortBy.valueOf(criteria.getSortBy().name())) {
+                case fromDate:
+                    queryBuilder.append(" ORDER BY reg.startdate ");
+                    break;
+                case toDate:
+                    queryBuilder.append(" ORDER BY reg.enddate ");
+                    break;
+                default:
+                    queryBuilder.append(" ORDER BY reg.lastmodifiedtime ");
+                    break;
+            }
         }
 
         if (criteria.getSortOrder() == AttendanceRegisterSearchCriteria.SortOrder.ASC)
