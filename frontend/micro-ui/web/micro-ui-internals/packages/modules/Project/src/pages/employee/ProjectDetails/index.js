@@ -41,7 +41,7 @@ const ProjectDetails = () => {
               />
             </HorizontalNav>
             <ActionBar>
-                <SubmitBar onSubmit={() => { console.log("project Closed") }} label={t("WORKS_CLOSE_PROJECT")} />
+                <SubmitBar onSubmit={() => { }} label={t("WORKS_CLOSE_PROJECT")} />
             </ActionBar>
         </div>
     )
