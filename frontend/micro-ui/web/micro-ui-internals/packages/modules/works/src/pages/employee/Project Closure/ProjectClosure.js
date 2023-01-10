@@ -7,18 +7,23 @@ import ProjectClosureDetails from './ProjectClosureDetails';
 const configNavItems = [
     {
         "name":"Estimation",
+        "code":"WORKS_ESTIMATION"
     },
     {
-        "name":"Contracts"
+        "name":"Contracts",
+        "code":"WORKS_CONTRACTS"
     },
     {
-        "name": "FieldSurvey"
+        "name": "FieldSurvey",
+        "code":"WORKS_FIELD_SURVEY"
     },
     {
-        "name": "Billing"
+        "name": "Billing",
+        "code": "WORKS_BILLING"
     },
     {
-        "name": "Closure Checklist"
+        "name": "Closure Checklist",
+        "code": "WORKS_CLOSURE_CHECKLIST"
     },
 
 ]

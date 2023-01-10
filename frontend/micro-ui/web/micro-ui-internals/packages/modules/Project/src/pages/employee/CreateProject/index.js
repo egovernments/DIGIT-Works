@@ -1,26 +1,31 @@
 import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { createProjectSectionConfig } from "../../../configs/createProjectHeaderConfig";
+import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
-      name:"Project_Details"
+      name:"Project_Details",
+      code:"Project_Details",
   },
   {
-      name:"Financial_Details"
+      name:"Financial_Details",
+      code:"Financial_Details",
   }
 ];
 
 const whenHasSubProjectsHorizontalNavConfig =  [
   {
-      name: "Project_Details"
+    name:"Project_Details",
+    code:"Project_Details",
   },
   {
-      name: "Financial_Details"
+      name:"Financial_Details",
+      code:"Financial_Details",
   },
   {
-      name: "Sub_Project_Details"
+      name: "Sub_Project_Details",
+      code:"Sub_Project_Details",
   }
 ];
 
@@ -28,30 +33,68 @@ const CreateProject = () => {
     const {t} = useTranslation();
     const [selectedProjectType, setSelectedProjectType] = useState("");
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
-    const hasSubProjectOptions = {
-        options : [
-            {
-                code : "COMMON_YES",
-                name : "COMMON_YES",
-            },
-            {
-                code : "COMMON_NO",
-                name : "COMMON_NO",
-            },
-        ]
-    }
-    console.log(selectedProjectType);
+    const [showNavs, setShowNavs] = useState(false);
+    const [subTypeOfWorkOptions, setSubTypeOfWorkOptions] = useState([]);
+    const [subSchemaOptions, setSubSchemaOptions] = useState([]);
+    const [selectedWard, setSelectedWard] = useState('');
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const orgSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
 
-    const handleHasSubProjectOptions = (option) => {
-      setSelectedProjectType(option);
+    //clear session data on first init
+    useEffect(()=>{
+      clearSessionFormData();
+    },[]);
+
+    const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
+      tenantId, 'Ward',
+      {
+          select: (data) => {
+              const wards = []
+              const localities = {}
+              data?.TenantBoundary[0]?.boundary.forEach((item) => {
+                  localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }))
+                  wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
+              });
+             return {
+                  wards, localities
+             }
+          }
+      })
+  
+    const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
+
+    const onFormValueChange = (setValue, formData, formState) => {
+        if (!_.isEqual(sessionFormData, formData)) {
+          const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
+          if(formData.ward) {
+              setSelectedWard(formData?.ward?.code)
+          }
+          if (difference?.ward) {
+              setValue("locality", '');
+          }
+          setSessionFormData({ ...sessionFormData, ...formData });
+        }
+        if(formData?.hasSubProjects) {
+          setSelectedProjectType(formData?.hasSubProjects);
+        } 
+        if(formData?.typeOfWork) {
+          setSubTypeOfWorkOptions(formData?.typeOfWork?.subTypes);
+        } 
+        if(formData?.scheme) {
+          setSubSchemaOptions(formData?.scheme?.subSchemes);
+        } 
     }
-    const createProjectSectionFormConfig = createProjectSectionConfig(hasSubProjectOptions, handleHasSubProjectOptions);
+    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities);
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
           setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
+          setShowNavs(true);
         }else if(selectedProjectType?.code === "COMMON_NO") {
           setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
+          setShowNavs(true);
         }
     },[selectedProjectType]);
 
@@ -61,12 +104,12 @@ const CreateProject = () => {
         <React.Fragment>
         <div className={"employee-main-application-details"}>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-            <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("MASTERS_CREATE_PROJECT")}</Header>
+            <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_CREATE_PROJECT")}</Header>
           </div>
           {
             createProjectSectionFormConfig?.form && (
               <FormComposer
-                label={"MASTERS_CREATE_PROJECT"}
+                label={"WORKS_CREATE_PROJECT"}
                 config={createProjectSectionFormConfig?.form.map((config) => {
                   return {
                     ...config,
@@ -82,9 +125,11 @@ const CreateProject = () => {
                 showWrapperContainers={false}
                 isDescriptionBold={false}
                 noBreakLine={true}
+                showNavs={showNavs}
                 showMultipleCardsWithoutNavs={false}
                 showMultipleCardsInNavs={false}
                 horizontalNavConfig={navTypeConfig}
+                onFormValueChange={onFormValueChange}
             />
            )}
         </div>

@@ -1,12 +1,18 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubProjectOptions) => {
-  const { t } = useTranslation();
+export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities) => {
+  const { t } = useTranslation()
+
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const ULB = Digit.Utils.locale.getCityLocale(tenantId);
+  
+  let ULBOptions = []
+  ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
   return {
     defaultValues : {
-
+      dateOfProposal : "01-01-2020"
     },
     form: [
       { 
@@ -15,7 +21,7 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
         body: [
           {
             inline: true,
-            label: "PROJECT_DATE_OF_PROPOSAL",
+            label: "PDF_STATIC_LABEL_ESTIMATE_PROPOSAL_DATE",
             isMandatory: false,
             key: "dateOfProposal",
             type: "date",
@@ -24,12 +30,12 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
           },
           {
             inline: true,
-            label: "PROJECT_NAME",
+            label: "PDF_STATIC_LABEL_ESTIMATE_PROJECT_NAME",
             isMandatory: true,
             key: "projectName",
             type: "text",
             disable: false,
-            populators: { name: "projectName" }
+            populators: { name: "projectName", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
@@ -38,43 +44,40 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
             key: "projectDesc",
             type: "text",
             disable: false,
-            populators: { name: "projectDesc" }
+            populators: { name: "projectDesc", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             isMandatory: false,
             key: "hasSubProjects",
-            type: "goToDefaultCase",
-            label: "PROJECT_SUB_PROJECT",
+            type: "radio",
+            label: "WORKS_HAS_SUB_PROJECT_LABEL",
             disable: false,
-            populators: <div className="radio-wrap flex-row">
-                        {
-                            hasSubProjectOptions?.options?.map((option)=>(
-                                <div key={option?.key} className="mg-sm">
-                                    <span className="radio-btn-wrap">
-                                        <input
-                                            className="radio-btn"
-                                            type="radio"
-                                            value={option?.value}
-                                            checked={hasSubProjectOptions?.options[0]?.value}
-                                            onChange={() => handleHasSubProjectOptions(option)}
-                                            name="hasSubProjects"   
-                                        />
-                                        <span className="radio-btn-checkmark"></span>
-                                    </span>
-                                    <label>{t(option?.code)}</label>
-                            </div>
-                            ))
-                        }
-                    </div>
-        }
+            populators: {
+              name: "hasSubProjects",
+              optionsKey: "name",
+              error: "Required",
+              required: false,
+              defaultValue : "YES",
+              options: [
+                {
+                  code: "COMMON_YES",
+                  name: "COMMON_YES",
+                },
+                {
+                  code: "COMMON_NO",
+                  name: "COMMON_NO",
+                }
+              ],
+            },
+          },
       ]
       },
       {
         navLink:"Project_Details",
-        head: t("PROJECT DETAILS"),
+        head: t("WORKS_PROJECT_DETAILS"),
         body: [
           {
-            isMandatory: true,
+            isMandatory: false,
             key: "owningDepartment",
             type: "radioordropdown",
             label: "PROJECT_OWNING_DEPT",
@@ -83,91 +86,67 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
               name: "owningDepartment",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
-              required: true,
+              required: false,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "Department",
+                moduleName: "works",
+                localePrefix: "ES_COMMON",
               },
             },
           },
           {
-            isMandatory: true,
+            isMandatory: false,
             key: "targetDemocracy",
             type: "radioordropdown",
-            label: "PROJECT_TARGET_DEMOCRACY",
+            label: "PROJECT_TARGET_DEMOGRAPHY",
             disable: false,
             populators: {
               name: "targetDemocracy",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
-              required: true,
+              required: false,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
+                masterName: "SocialCategory",
                 moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                localePrefix: "ES_COMMON",
               },
             },
           },
           {
-            isMandatory: true,
+            inline: true,
+            label: "WORKS_LOR",
+            isMandatory: false,
             key: "letterRefNoOrReqNo",
-            type: "radioordropdown",
-            label: "PROJECT_LETTER_REF_OR_REQ_NO",
+            type: "text",
             disable: false,
-            populators: {
-              name: "letterRefNoOrReqNo",
-              optionsKey: "name",
-              error: t("WORKS_REQUIRED_ERR"),
-              required: true,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
-            },
+            populators: { name: "letterRefNoOrReqNo", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
-            isMandatory: true,
+            inline: true,
+            label: "PROJECT_ESTIMATED_COST",
+            isMandatory: false,
             key: "estimatedCostInRs",
-            type: "radioordropdown",
-            label: "PROJECT_ESTIMATED_COST_IN_RS",
+            type: "number",
             disable: false,
-            populators: {
-              name: "estimatedCostInRs",
-              optionsKey: "name",
-              error: t("WORKS_REQUIRED_ERR"),
-              required: true,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
-            },
+            populators: { name: "estimatedCostInRs" }
           },
         ]
       },
       {
         navLink:"Project_Details",
-        head: t("WORK DETAILS"),
+        head: t("WORKS_WORK_DETAILS"),
         body: [
           {
             isMandatory: true,
             key: "typeOfWork",
             type: "radioordropdown",
-            label: "PROJECT_TYPE_OF_WORK",
+            label: "WORKS_WORK_TYPE",
             disable: false,
             populators: {
               name: "typeOfWork",
@@ -178,38 +157,34 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "TypeOfWork",
+                moduleName: "works",
+                localePrefix: "ES_COMMON",
               },
             },
           },
           {
-            isMandatory: true,
+            isMandatory: false,
             key: "subTypeOfWork",
             type: "radioordropdown",
-            label: "PROJECT_SUB_TYPE_WORK",
+            label: "PDF_STATIC_LABEL_ESTIMATE_SUB_TYPE_OF_WORK",
             disable: false,
             populators: {
               name: "subTypeOfWork",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
-              required: true,
+              required: false,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
+              options : subTypeOfWorkOptions
             },
           },
           {
             isMandatory: true,
             key: "natureOfWork",
             type: "radioordropdown",
-            label: "PROJECT_NATURE_OF_WORK",
+            label: "WORKS_WORK_NATURE",
             disable: false,
             populators: {
               name: "natureOfWork",
@@ -220,9 +195,9 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "NatureOfWork",
+                moduleName: "works",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -247,23 +222,23 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
             populators: { name: "dob" },
           },
           {
-            isMandatory: true,
+            isMandatory: false,
             key: "recommendedModeOfEntrustment",
             type: "radioordropdown",
-            label: "PROJECT_RECOMMENDED_MODE_OF_ENTRUSTMENT",
+            label: "PDF_STATIC_LABEL_ESTIMATE_ENTRUSTMENT",
             disable: false,
             populators: {
               name: "recommendedModeOfEntrustment",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
-              required: true,
+              required: false,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "EntrustmentMode",
+                moduleName: "works",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -271,89 +246,77 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
       },  
       {
         navLink:"Project_Details",
-        head: t("LOCATION DETAILS"),
+        head: t("PDF_STATIC_LABEL_ESTIMATE_LOC_DETAILS"),
         body: [
           {
             inline: true,
-            label: "MASTERS_GEOLOCATION",
+            label: "WORKS_GEO_LOCATION",
             isMandatory: true,
-            key: "Name",
+            key: "geoLocation",
             type: "text",
             disable: false,
-            populators: { name: "Name" }
+            populators: { name: "geoLocation",  error: t("WORKS_REQUIRED_ERR") }
           },
           {
             isMandatory: true,
             key: "ulb",
             type: "radioordropdown",
-            label: "PROJECT_ULB",
+            label: t("ES_COMMON_ULB"),
             disable: false,
             populators: {
               name: "ulb",
-              optionsKey: "name",
+              optionsKey: "i18nKey",
+              options: ULBOptions,
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
               optionsCustomStyle : {
                 top : "2.5rem"
-              },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
+              }
             },
           },
           {
             isMandatory: true,
             key: "ward",
             type: "radioordropdown",
-            label: "PROJECT_WARD",
+            label: "PDF_STATIC_LABEL_ESTIMATE_WARD",
             disable: false,
             populators: {
               name: "ward",
-              optionsKey: "name",
+              optionsKey: "i18nKey",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
+              options: wardsAndLocalities?.wards
             },
           },
           {
             isMandatory: true,
             key: "locality",
             type: "radioordropdown",
-            label: "PROJECT_LOCALITY",
+            label: "WORKS_LOCALITY",
             disable: false,
             populators: {
               name: "locality",
-              optionsKey: "name",
+              optionsKey: "i18nKey",
               error: t("WORKS_REQUIRED_ERR"),
-              required: true,
+              required: false,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
+              options: filteredLocalities
             },
           },
         ]
       },
       {
         navLink:"Project_Details",
-        head: t("UPLOAD FILES"),
+        head: t("WORKS_UPLOAD_FILES"),
         body: [
           {
             type:"multiupload",
-            label: t("PROJECT_UPLOAD_FILES"),
+            label: t("WORKS_UPLOAD_FILES"),
             populators:{
                 name: "photograph",
                 allowedMaxSizeInMB:2,
@@ -366,13 +329,13 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
       },
       {
         navLink:"Financial_Details",
-        head: t("FIN_DETAILS"),
+        head: t("PDF_STATIC_LABEL_ESTIMATE_FINANCIAL_DETAILS"),
         body: [
           {
             isMandatory: true,
             key: "fund",
             type: "radioordropdown",
-            label: "PROJECT_FUND",
+            label: "WORKS_FUND",
             disable: false,
             populators: {
               name: "fund",
@@ -383,9 +346,9 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "Fund",
+                moduleName: "finance",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -393,7 +356,7 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
             isMandatory: true,
             key: "function",
             type: "radioordropdown",
-            label: "PROJECT_FUNCTION",
+            label: "WORKS_FUNCTION",
             disable: false,
             populators: {
               name: "function",
@@ -404,9 +367,9 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "Functions",
+                moduleName: "finance",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -414,7 +377,7 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
             isMandatory: true,
             key: "budgetHead",
             type: "radioordropdown",
-            label: "PROJECT_BUDGET_HEAD",
+            label: "WORKS_BUDGET_HEAD",
             disable: false,
             populators: {
               name: "budgetHead",
@@ -425,20 +388,20 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "BudgetHead",
+                moduleName: "finance",
+                localePrefix: "ES_COMMON",
               },
             },
           },
           {
             isMandatory: true,
-            key: "schema",
+            key: "scheme",
             type: "radioordropdown",
-            label: "PROJECT_SCHEMA",
+            label: "WORKS_SCHEME",
             disable: false,
             populators: {
-              name: "schema",
+              name: "scheme",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -446,31 +409,27 @@ export const createProjectSectionConfig = (hasSubProjectOptions, handleHasSubPro
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                masterName: "Scheme",
+                moduleName: "finance",
+                localePrefix: "ES_COMMON",
               },
             },
           },
           {
             isMandatory: true,
-            key: "subSchema",
+            key: "subScheme",
             type: "radioordropdown",
-            label: "PROJECT_SUB_SCHEMA",
+            label: "WORKS_SUB_SCHEME",
             disable: false,
             populators: {
-              name: "subSchema",
+              name: "subScheme",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              mdmsConfig: {
-                masterName: "WageSeekerSkills",
-                moduleName: "common-masters",
-                localePrefix: "MASTERS",
-              },
+              options : subSchemaOptions
             },
           },
         ]

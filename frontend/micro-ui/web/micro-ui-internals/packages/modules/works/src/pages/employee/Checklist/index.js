@@ -30,6 +30,7 @@ const Checklist = (props) => {
             showWrapperContainers={true}
             isDescriptionBold={true}
             noBreakLine={true}
+            showNavs={true}
             showMultipleCardsWithoutNavs={true}
             showMultipleCardsInNavs={false}
         />
