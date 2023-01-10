@@ -104,12 +104,12 @@ const CreateProject = () => {
         <React.Fragment>
         <div className={"employee-main-application-details"}>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-            <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("MASTERS_CREATE_PROJECT")}</Header>
+            <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_CREATE_PROJECT")}</Header>
           </div>
           {
             createProjectSectionFormConfig?.form && (
               <FormComposer
-                label={"MASTERS_CREATE_PROJECT"}
+                label={"WORKS_CREATE_PROJECT"}
                 config={createProjectSectionFormConfig?.form.map((config) => {
                   return {
                     ...config,

@@ -10,12 +10,12 @@ const ProjectBreadCrumb = ({ location }) => {
   const crumbs = [
     {
         path: "/works-ui/employee",
-        content: t("PROJECT_PROJECT"),
+        content: t("WORKS_WMS"),
         show: true,
     },
     {
         path: `/${window.contextPath}/employee/project/create-project`,
-        content: fromScreen ? `${t(fromScreen)} / ${t("PROJECT_CREATE_PROJECT")}` : t("PROJECT_CREATE_PROJECT"),
+        content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_PROJECT")}` : t("WORKS_CREATE_PROJECT"),
         show: location.pathname.includes("/project/create-project") ? true : false,
         isBack: fromScreen && true,
     }

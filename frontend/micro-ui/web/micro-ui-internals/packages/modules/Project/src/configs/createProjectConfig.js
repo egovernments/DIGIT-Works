@@ -21,7 +21,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
         body: [
           {
             inline: true,
-            label: "PROJECT_DATE_OF_PROPOSAL",
+            label: "PDF_STATIC_LABEL_ESTIMATE_PROPOSAL_DATE",
             isMandatory: false,
             key: "dateOfProposal",
             type: "date",
@@ -30,7 +30,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             inline: true,
-            label: "PROJECT_NAME",
+            label: "PDF_STATIC_LABEL_ESTIMATE_PROJECT_NAME",
             isMandatory: true,
             key: "projectName",
             type: "text",
@@ -50,7 +50,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             isMandatory: false,
             key: "hasSubProjects",
             type: "radio",
-            label: "PROJECT_SUB_PROJECT",
+            label: "WORKS_HAS_SUB_PROJECT_LABEL",
             disable: false,
             populators: {
               name: "hasSubProjects",
@@ -74,7 +74,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Project_Details",
-        head: t("PROJECT DETAILS"),
+        head: t("WORKS_PROJECT_DETAILS"),
         body: [
           {
             isMandatory: false,
@@ -93,7 +93,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               mdmsConfig: {
                 masterName: "Department",
                 moduleName: "works",
-                localePrefix: "WORKS",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -101,7 +101,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             isMandatory: false,
             key: "targetDemocracy",
             type: "radioordropdown",
-            label: "PROJECT_TARGET_DEMOCRACY",
+            label: "PROJECT_TARGET_DEMOGRAPHY",
             disable: false,
             populators: {
               name: "targetDemocracy",
@@ -114,13 +114,13 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               mdmsConfig: {
                 masterName: "SocialCategory",
                 moduleName: "common-masters",
-                localePrefix: "MASTERS",
+                localePrefix: "ES_COMMON",
               },
             },
           },
           {
             inline: true,
-            label: "PROJECT_LETTER_REF_OR_REQ_NO",
+            label: "WORKS_LOR",
             isMandatory: false,
             key: "letterRefNoOrReqNo",
             type: "text",
@@ -129,7 +129,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             inline: true,
-            label: "PROJECT_ESTIMATED_COST_IN_RS",
+            label: "PROJECT_ESTIMATED_COST",
             isMandatory: false,
             key: "estimatedCostInRs",
             type: "number",
@@ -140,13 +140,13 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Project_Details",
-        head: t("WORK DETAILS"),
+        head: t("WORKS_WORK_DETAILS"),
         body: [
           {
             isMandatory: true,
             key: "typeOfWork",
             type: "radioordropdown",
-            label: "PROJECT_TYPE_OF_WORK",
+            label: "WORKS_WORK_TYPE",
             disable: false,
             populators: {
               name: "typeOfWork",
@@ -159,7 +159,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               mdmsConfig: {
                 masterName: "TypeOfWork",
                 moduleName: "works",
-                localePrefix: "WORKS",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -167,7 +167,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             isMandatory: false,
             key: "subTypeOfWork",
             type: "radioordropdown",
-            label: "PROJECT_SUB_TYPE_WORK",
+            label: "PDF_STATIC_LABEL_ESTIMATE_SUB_TYPE_OF_WORK",
             disable: false,
             populators: {
               name: "subTypeOfWork",
@@ -184,7 +184,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             isMandatory: true,
             key: "natureOfWork",
             type: "radioordropdown",
-            label: "PROJECT_NATURE_OF_WORK",
+            label: "WORKS_WORK_NATURE",
             disable: false,
             populators: {
               name: "natureOfWork",
@@ -197,7 +197,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               mdmsConfig: {
                 masterName: "NatureOfWork",
                 moduleName: "works",
-                localePrefix: "WORKS",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -225,7 +225,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             isMandatory: false,
             key: "recommendedModeOfEntrustment",
             type: "radioordropdown",
-            label: "PROJECT_RECOMMENDED_MODE_OF_ENTRUSTMENT",
+            label: "PDF_STATIC_LABEL_ESTIMATE_ENTRUSTMENT",
             disable: false,
             populators: {
               name: "recommendedModeOfEntrustment",
@@ -238,7 +238,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               mdmsConfig: {
                 masterName: "EntrustmentMode",
                 moduleName: "works",
-                localePrefix: "WORKS",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -246,11 +246,11 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },  
       {
         navLink:"Project_Details",
-        head: t("LOCATION DETAILS"),
+        head: t("PDF_STATIC_LABEL_ESTIMATE_LOC_DETAILS"),
         body: [
           {
             inline: true,
-            label: "MASTERS_GEOLOCATION",
+            label: "WORKS_GEO_LOCATION",
             isMandatory: true,
             key: "geoLocation",
             type: "text",
@@ -278,7 +278,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             isMandatory: true,
             key: "ward",
             type: "radioordropdown",
-            label: "PROJECT_WARD",
+            label: "PDF_STATIC_LABEL_ESTIMATE_WARD",
             disable: false,
             populators: {
               name: "ward",
@@ -295,7 +295,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             isMandatory: true,
             key: "locality",
             type: "radioordropdown",
-            label: "PROJECT_LOCALITY",
+            label: "WORKS_LOCALITY",
             disable: false,
             populators: {
               name: "locality",
@@ -312,11 +312,11 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Project_Details",
-        head: t("UPLOAD FILES"),
+        head: t("WORKS_UPLOAD_FILES"),
         body: [
           {
             type:"multiupload",
-            label: t("PROJECT_UPLOAD_FILES"),
+            label: t("WORKS_UPLOAD_FILES"),
             populators:{
                 name: "photograph",
                 allowedMaxSizeInMB:2,
@@ -329,13 +329,13 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Financial_Details",
-        head: t("FIN_DETAILS"),
+        head: t("PDF_STATIC_LABEL_ESTIMATE_FINANCIAL_DETAILS"),
         body: [
           {
             isMandatory: true,
             key: "fund",
             type: "radioordropdown",
-            label: "PROJECT_FUND",
+            label: "WORKS_FUND",
             disable: false,
             populators: {
               name: "fund",
@@ -348,7 +348,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               mdmsConfig: {
                 masterName: "Fund",
                 moduleName: "finance",
-                localePrefix: "COMMON",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -356,7 +356,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             isMandatory: true,
             key: "function",
             type: "radioordropdown",
-            label: "PROJECT_FUNCTION",
+            label: "WORKS_FUNCTION",
             disable: false,
             populators: {
               name: "function",
@@ -369,7 +369,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               mdmsConfig: {
                 masterName: "Functions",
                 moduleName: "finance",
-                localePrefix: "COMMON",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -377,7 +377,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             isMandatory: true,
             key: "budgetHead",
             type: "radioordropdown",
-            label: "PROJECT_BUDGET_HEAD",
+            label: "WORKS_BUDGET_HEAD",
             disable: false,
             populators: {
               name: "budgetHead",
@@ -390,7 +390,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               mdmsConfig: {
                 masterName: "BudgetHead",
                 moduleName: "finance",
-                localePrefix: "COMMON",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -398,7 +398,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             isMandatory: true,
             key: "scheme",
             type: "radioordropdown",
-            label: "PROJECT_SCHEME",
+            label: "WORKS_SCHEME",
             disable: false,
             populators: {
               name: "scheme",
@@ -411,7 +411,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               mdmsConfig: {
                 masterName: "Scheme",
                 moduleName: "finance",
-                localePrefix: "COMMON",
+                localePrefix: "ES_COMMON",
               },
             },
           },
@@ -419,7 +419,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             isMandatory: true,
             key: "subScheme",
             type: "radioordropdown",
-            label: "PROJECT_SUB_SCHEMA",
+            label: "WORKS_SUB_SCHEME",
             disable: false,
             populators: {
               name: "subScheme",
