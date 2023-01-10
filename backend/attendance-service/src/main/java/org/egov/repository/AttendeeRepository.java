@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public class AttendeeRepository {
     @Autowired
-    private AttendeeRowMapper rowMapper;
+    private AttendeeRowMapper attendeeRowMapper;
 
     @Autowired
     private AttendeeQueryBuilder queryBuilder;
@@ -25,7 +25,7 @@ public class AttendeeRepository {
     public List<IndividualEntry> getAttendees(AttendeeSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getAttendanceAttendeeSearchQuery(searchCriteria, preparedStmtList);
-        List<IndividualEntry> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+        List<IndividualEntry> attendanceStaffList = jdbcTemplate.query(query, attendeeRowMapper, preparedStmtList.toArray());
         return attendanceStaffList;
     }
 }
