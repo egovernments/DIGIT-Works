@@ -21,7 +21,7 @@ const ProjectBreadCrumb = ({ location }) => {
     },
     {
         path: `/${window.contextPath}/employee/project/project-details`,
-        content: fromScreen ? `${t(fromScreen)} / ${t("PROJECT_PROJECT_DETAILS")}` : t("PROJECT_PROJECT_DETAILS"),
+        content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_PROJECT_DETAILS")}` : t("WORKS_PROJECT_DETAILS"),
         show: location.pathname.includes("/project/project-details") ? true : false,
         isBack: fromScreen && true,
     },

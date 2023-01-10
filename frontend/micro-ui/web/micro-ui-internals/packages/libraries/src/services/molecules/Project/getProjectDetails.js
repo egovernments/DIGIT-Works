@@ -5,9 +5,9 @@ const transformViewDataToApplicationDetails = {
       asSectionHeader: false,
       values: [
         { title: "PROJECT_OWNING_DEPT", value: "Housing and Urban Development Department" },
-        { title: "PROJECT_EXECUTING_DEPT", value: "Housing and Urban Development Department" },
-        { title: "PROJECT_BENEFICIARY", value: "Local Slums" },
-        { title: "PROJECT_LETTER_REF_REQ_NO", value: "201/A  - 19 December 2021" },
+        { title: "WORKS_EXECUTING_DEPT", value: "Housing and Urban Development Department" },
+        { title: "WORKS_BENEFICIERY", value: "Local Slums" },
+        { title: "WORKS_LOR", value: "201/A  - 19 December 2021" },
         { title: "PROJECT_ESTIMATED_COST", value: "5,00,000" },
       ],
     };
@@ -15,25 +15,24 @@ const transformViewDataToApplicationDetails = {
       title: "PROJECT_WORK_TYPE_DETAILS",
       asSectionHeader: true,
       values: [
-        { title: "PROJECT_TYPE_OF_WORK", value: "Rain Water Harvesting" },
-        { title: "PROJECT_SUB_TYPE_OF_WORK", value: "NA" },
-        { title: "PROJECT_NATURE_OF_WORK", value: "Capital Works" },
-        { title: "PROJECT_LETTER_REF_REQ_NO", value: "201/A  - 19 December 2021" },
-        { title: "PROJECT_RECOMMENDED_MODE_OF_ENTRUSTMENT", value: "Direct Assignment" },
+        { title: "WORKS_WORK_TYPE", value: "Rain Water Harvesting" },
+        { title: "WORKS_SUB_TYPE_WORK", value: "NA" },
+        { title: "WORKS_WORK_NATURE", value: "Capital Works" },
+        { title: "WORKS_MODE_OF_INS", value: "Direct Assignment" },
       ],
     };
     const LocationDetails = {
       title: "PROJECT_LOCATION_DETAILS",
       asSectionHeader: true,
       values: [
-        { title: "PROJECT_LOCALITY", value: "Vivekananda Nagar" },
-        { title: "PROJECT_WARD", value: "1" },
-        { title: "PROJECT_ULB", value: "Jatni Municipality" },
-        { title: "PROJECT_GEO_LOCATION", value: "82.1837913, 19.138134" },
+        { title: "WORKS_LOCALITY", value: "Vivekananda Nagar" },
+        { title: "WORKS_WARD", value: "1" },
+        { title: "PDF_STATIC_LABEL_ESTIMATE_ULB", value: "Jatni Municipality" },
+        { title: "WORKS_GEO_LOCATION", value: "82.1837913, 19.138134" },
       ],
     };
     const Documents = {
-      title: "PROJECT_DOCUMENTS",
+      title: "WORKS_DOCUMENTS",
       asSectionHeader: true,
       additionalDetails : {
           documentsWithUrl : [

@@ -6,26 +6,26 @@ import { createProjectSectionConfig } from "../../../configs/createProjectConfig
 const whenHasProjectsHorizontalNavConfig =  [
   {
       name:"Project_Details",
-      code:"Project_Details",
+      code:"WORKS_PROJECT_DETAILS",
   },
   {
       name:"Financial_Details",
-      code:"Financial_Details",
+      code:"WORKS_FINANCIAL_DETAILS",
   }
 ];
 
 const whenHasSubProjectsHorizontalNavConfig =  [
   {
     name:"Project_Details",
-    code:"Project_Details",
+    code:"WORKS_PROJECT_DETAILS",
   },
   {
       name:"Financial_Details",
-      code:"Financial_Details",
+      code:"WORKS_FINANCIAL_DETAILS",
   },
   {
       name: "Sub_Project_Details",
-      code:"Sub_Project_Details",
+      code:"WORKS_SUB_PROJECT_DETAILS",
   }
 ];
 
