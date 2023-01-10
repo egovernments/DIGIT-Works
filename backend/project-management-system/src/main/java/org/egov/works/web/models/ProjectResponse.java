@@ -25,7 +25,7 @@ public class ProjectResponse {
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty("Project")
+    @JsonProperty("Projects")
     @Valid
     private List<Project> project = new ArrayList<>();
 

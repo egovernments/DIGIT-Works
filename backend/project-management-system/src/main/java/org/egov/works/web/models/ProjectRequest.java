@@ -24,7 +24,7 @@ public class ProjectRequest {
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("project")
+    @JsonProperty("Projects")
     @Valid
     private List<Project> projects = new ArrayList<>();
 
