@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next'
 
 
 
-const HorizontalNav = ({configNavItems,activeLink,setActiveLink,showNav=false,children,customStyle={},customClassName="",inFormComposer=true},navClassName="",navStyles={}) => {
+
+const HorizontalNav = ({ configNavItems, activeLink, setActiveLink, showNav = false, children, customStyle = {}, customClassName = "", inFormComposer = true, navClassName = "", navStyles = {} }) => {
     const { t } = useTranslation()
 
     const setActive = (item) => {

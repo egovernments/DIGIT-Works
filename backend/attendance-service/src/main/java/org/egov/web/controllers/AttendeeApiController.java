@@ -2,7 +2,9 @@ package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.AttendeeService;
+import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
 
 @Controller
 @RequestMapping("/attendee/v1")
@@ -30,15 +31,23 @@ public class AttendeeApiController {
     @Autowired
     private AttendeeService attendeeService;
 
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
+
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<AttendeeCreateResponse> attendanceAttendeeV1CreatePOST(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendeeCreateRequest attendeeCreateRequest) {
-        AttendeeCreateResponse attendeeCreateResponse = attendeeService.createAttendee(attendeeCreateRequest);
+        AttendeeCreateRequest enrichedRequest=attendeeService.createAttendee(attendeeCreateRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeCreateRequest.getRequestInfo(), true);
+        AttendeeCreateResponse attendeeCreateResponse = AttendeeCreateResponse.builder().responseInfo(responseInfo).attendees(enrichedRequest.getAttendees()).build();
         return new ResponseEntity<AttendeeCreateResponse>(attendeeCreateResponse, HttpStatus.OK);
     }
 
+
     @RequestMapping(value = "/_delete", method = RequestMethod.POST)
     public ResponseEntity<AttendeeDeleteResponse> attendanceAttendeeV1DeletePOST(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendeeDeleteRequest attendeeDeleteRequest) {
-        AttendeeDeleteResponse attendeeDeleteResponse = attendeeService.deleteAttendee(attendeeDeleteRequest);
+        AttendeeDeleteRequest enrichedRequest=attendeeService.deleteAttendee(attendeeDeleteRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeDeleteRequest.getRequestInfo(), true);
+        AttendeeDeleteResponse attendeeDeleteResponse = AttendeeDeleteResponse.builder().responseInfo(responseInfo).attendees(enrichedRequest.getAttendees()).build();
         return new ResponseEntity<AttendeeDeleteResponse>(attendeeDeleteResponse, HttpStatus.OK);
     }
 
