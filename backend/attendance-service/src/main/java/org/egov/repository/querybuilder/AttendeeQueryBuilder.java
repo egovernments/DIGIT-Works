@@ -3,7 +3,6 @@ package org.egov.repository.querybuilder;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendeeSearchCriteria;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -22,23 +21,25 @@ public class AttendeeQueryBuilder {
             "att.createdby, " +
             "att.lastmodifiedby, " +
             "att.createdtime, " +
-            "att.lastmodifiedtime " +
+            "att.lastmodifiedtime, " +
+            "att.tenantid " +
             "FROM eg_wms_attendance_attendee att ";
 
     public String getAttendanceAttendeeSearchQuery(AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(ATTENDANCE_ATTENDEE_SELECT_QUERY);
 
-        List<String> ids = criteria.getIds();
-        if (ids != null && !ids.isEmpty()) {
+        List<String> ids=criteria.getIds();
+        if (ids!=null && !ids.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" att.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
 
-        if (!ObjectUtils.isEmpty(criteria.getIndividualId())) {
+        List<String> individualIds=criteria.getIndividualIds();
+        if (individualIds!=null && !individualIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" att.individual_id = ? ");
-            preparedStmtList.add(criteria.getIndividualId());
+            query.append(" att.individual_id IN (").append(createQuery(individualIds)).append(")");
+            addToPreparedStatement(preparedStmtList, individualIds);
         }
 
         List<String> registerIds = criteria.getRegisterIds();
@@ -71,7 +72,6 @@ public class AttendeeQueryBuilder {
 
         return query.toString();
     }
-
     private void addLimitAndOffset(StringBuilder query, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
         query.append(" OFFSET ? ");
         preparedStmtList.add(criteria.getOffset());
@@ -99,8 +99,6 @@ public class AttendeeQueryBuilder {
     }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+        preparedStmtList.addAll(ids);
     }
 }

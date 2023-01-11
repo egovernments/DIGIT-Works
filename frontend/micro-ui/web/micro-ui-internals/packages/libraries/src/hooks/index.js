@@ -241,6 +241,7 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useSearchWORKS from "./works/useSearchWORKS";
 import useSearchApprovedEstimates from "./works/useSearchApprovedEstimates";
 import useViewEstimateDetails from "./works/useViewEstimateDetails";
+import useViewProjectDetailsInEstimate from './works/useViewProjectDetailsInEstimate'
 import useViewProjectClosureDetails from "./works/useViewProjectClosureDetails";
 import useViewProjectClosureDetailsBills from "./works/useViewProjectClosureBills";
 import useViewLOIDetails from "./works/useViewLOIDetails";
@@ -259,9 +260,11 @@ import useViewAttendance from "./attendance/useViewAttendance";
 import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
+import useViewFinancialDetails from "./project/useViewFinancialDetails";
 
 const works = {
   useViewEstimateDetails,
+  useViewProjectDetailsInEstimate,
   useViewProjectClosureDetails,
   useViewProjectClosureDetailsBills,
   useViewLOIDetails,
@@ -527,6 +530,10 @@ const masters = {
   useViewOrg
 }
 
+const project = {
+  useViewFinancialDetails
+}
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -592,7 +599,8 @@ const Hooks = {
   attendance,
   useLocation,
   bills,
-  masters
+  masters,
+  project
 };
 
 export default Hooks;
