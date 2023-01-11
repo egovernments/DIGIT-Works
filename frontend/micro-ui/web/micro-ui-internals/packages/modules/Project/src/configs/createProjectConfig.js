@@ -74,7 +74,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Project_Details",
-        head: t("WORKS_PROJECT_DETAILS"),
+        head: "",
         body: [
           {
             isMandatory: false,
@@ -329,7 +329,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Financial_Details",
-        head: t("PDF_STATIC_LABEL_ESTIMATE_FINANCIAL_DETAILS"),
+        head: "",
         body: [
           {
             isMandatory: true,
