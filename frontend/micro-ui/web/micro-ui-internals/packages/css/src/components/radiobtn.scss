@@ -1,6 +1,13 @@
 .radio-wrap {
   @apply my-sm block leading-6 mb-md;
 
+  &.flex-row {
+    display: flex;
+    .mg-sm {
+      margin-right: 1rem;
+    }
+  }
+
   div {
     @apply block mb-md;
   }

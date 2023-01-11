@@ -60,7 +60,7 @@ public class StaffService {
      * @param staffPermissionRequest
      * @return
      */
-    public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest) {
+    public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest, Boolean isFirstStaff) {
         //incoming createRequest validation
         staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
 
@@ -75,11 +75,13 @@ public class StaffService {
 
         //db call to get registers from db and use them to validate request registers
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(staffPermissionRequest.getRequestInfo()).build();
-        List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
-        attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
+        if (!isFirstStaff) {
+            List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+            attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
-        //validator call by passing staff request and the data from db call
-        staffServiceValidator.validateCreateStaffPermission(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
+            //validator call by passing staff request and the data from db call
+            staffServiceValidator.validateCreateStaffPermission(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
+        }
 
         //enrichment call by passing staff request and data from db call
         staffEnrichmentService.enrichCreateStaffPermission(staffPermissionRequest);
@@ -144,7 +146,7 @@ public class StaffService {
         StaffPermissionRequest staffPermissionResponse;
 
         try {
-            staffPermissionResponse = createAttendanceStaff(staffPermissionRequest);
+            staffPermissionResponse = createAttendanceStaff(staffPermissionRequest, true);
         } catch (Exception e) {
             throw new CustomException("CREATE_STAFF", "Error in creating staff");
         }

@@ -447,7 +447,7 @@ export const FormComposer = (props) => {
                 </div>
               </LabelFieldPair>
               {field?.populators?.name && errors && errors[field?.populators?.name] && Object.keys(errors[field?.populators?.name]).length ? (
-                <CardLabelError style={{ width: "70%", marginLeft: "2%", fontSize: "12px", marginTop: "-21px" }}>
+                <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>
                   {t(field?.populators?.error)}
                 </CardLabelError>
               ) : null}
@@ -533,9 +533,10 @@ export const FormComposer = (props) => {
     [props.config, formData]
   );
 
-  const getCardStyles = () => {
+  const getCardStyles = (shouldDisplay = true) => {
     let styles = props.cardStyle || {};
     if (props.noBoxShadow) styles = { ...styles, boxShadow: "none" };
+    if(!shouldDisplay) styles = {...styles, display : "none"}
     return styles;
   };
 
@@ -597,22 +598,24 @@ export const FormComposer = (props) => {
            <HorizontalNav configNavItems={props.horizontalNavConfig?props.horizontalNavConfig:null} showNav={true} activeLink={activeLink} setActiveLink={setActiveLink}>
            {props?.showMultipleCardsInNavs ? (
              props?.config?.map((section, index, array) => {
-               return section.navLink ? section?.navLink===activeLink ? (
-                 <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
+               return section.navLink ? (
+                 <Card style={section.navLink !== activeLink ? getCardStyles(false) : getCardStyles()} noCardStyle={props.noCardStyle}>
                     {renderFormFields(props, section, index, array)}
                  </Card>
-               ) : null : null
+               ) : null
              })
            ) :   
              ( 
                  <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
                    {
                      props?.config?.map((section, index, array) => {
-                       return section.navLink ? section?.navLink===activeLink ? (
+                      return section.navLink ?  (
                          <>
-                          {renderFormFields(props, section, index, array)}
+                            <div style={section.navLink !== activeLink ? {display : "none"} : {}}>
+                              {renderFormFields(props, section, index, array)}
+                            </div>
                          </>
-                       ) : null : null
+                       ) : null
                      })
                    }
                  </Card>
