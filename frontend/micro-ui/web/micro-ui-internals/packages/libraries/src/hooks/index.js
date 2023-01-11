@@ -260,6 +260,7 @@ import useViewAttendance from "./attendance/useViewAttendance";
 import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
+import useViewFinancialDetails from "./project/useViewFinancialDetails";
 
 const works = {
   useViewEstimateDetails,
@@ -529,6 +530,10 @@ const masters = {
   useViewOrg
 }
 
+const project = {
+  useViewFinancialDetails
+}
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -594,7 +599,8 @@ const Hooks = {
   attendance,
   useLocation,
   bills,
-  masters
+  masters,
+  project
 };
 
 export default Hooks;
