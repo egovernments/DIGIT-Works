@@ -129,7 +129,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             inline: true,
-            label: "PROJECT_ESTIMATED_COST",
+            label: "PROJECT_ESTIMATED_COST_IN_RS",
             isMandatory: false,
             key: "estimatedCostInRs",
             type: "number",
