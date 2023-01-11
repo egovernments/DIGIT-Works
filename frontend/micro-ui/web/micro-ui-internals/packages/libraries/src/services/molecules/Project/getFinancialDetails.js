@@ -11,16 +11,15 @@ const transformViewDataToApplicationDetails = {
           { title: "WORKS_SUB_SCHEME", value: "5,00,000" },
         ],
       };
-      const applicationDetails_FinancialDetails = { applicationDetails: [FinancialDetails] };
+      const applicationDetails = { applicationDetails: [FinancialDetails] };
       return {
-        applicationDetails_FinancialDetails,
-        applicationData_FinancialDetails : { regNo: 111, HosName: "Name", DOR: "10-10-2020" }, //dummy data
+        applicationDetails,
       };
     },
   };
   
   //Write Service to fetch records
-  export const getFinancialDetails = () => {
+  export const getFinancialDetails = async(tenantId, projectID) => {
     return transformViewDataToApplicationDetails.genericPropertyDetails();
   };
   

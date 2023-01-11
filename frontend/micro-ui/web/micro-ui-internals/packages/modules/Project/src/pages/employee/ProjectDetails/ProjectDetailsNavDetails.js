@@ -4,42 +4,21 @@ import ApplicationDetails from "../../../../../templates/ApplicationDetails";
 const ProjectDetailsNavDetails = ({activeLink}) => {
 
     // integrate once api is ready
-    const workflowDetails = {}; 
-    const { applicationDetails_ProjectDetails, applicationData_ProjectDetails } = Digit.Hooks.project.useViewProjectDetails({}); 
-    const { applicationDetails_FinancialDetails, applicationData_FinancialDetails } = Digit.Hooks.project.useViewFinancialDetails({}); 
+    const { applicationDetails_ProjectDetails } = Digit.Hooks.project.useViewProjectDetails({}); 
+    const { applicationDetails_FinancialDetails } = Digit.Hooks.project.useViewFinancialDetails({}); 
+    const ViewProjectComponent = Digit?.ComponentRegistryService?.getComponent("ViewProject"); 
+    const ViewFinancialDetailsComponent = Digit?.ComponentRegistryService?.getComponent("ViewFinancialDetails"); 
 
     return (
         <>
         {
             (activeLink === "Project_Details") && (
-                <ApplicationDetails
-                    applicationDetails={applicationDetails_ProjectDetails}
-                    isLoading={false} //will come from backend
-                    applicationData={applicationData_ProjectDetails}
-                    moduleCode="Project"
-                    isDataLoading={false}
-                    workflowDetails={workflowDetails}
-                    showTimeLine={false}
-                    timelineStatusPrefix={""}
-                    businessService={""}
-                    forcedActionPrefix={"PROJECT"}
-              />
+                <ViewProjectComponent ></ViewProjectComponent>
             )
         }
         {
             (activeLink === "Financial_Details") && (
-                <ApplicationDetails
-                    applicationDetails={applicationDetails_FinancialDetails}
-                    isLoading={false} //will come from backend
-                    applicationData={applicationData_FinancialDetails}
-                    moduleCode="Project"
-                    isDataLoading={false}
-                    workflowDetails={workflowDetails}
-                    showTimeLine={false}
-                    timelineStatusPrefix={""}
-                    businessService={""}
-                    forcedActionPrefix={"PROJECT"}
-          />
+                <ViewFinancialDetailsComponent ></ViewFinancialDetailsComponent>
             )
         }
         </>
