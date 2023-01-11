@@ -2,6 +2,7 @@ package org.egov.works.enrichment;
 
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -19,6 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ProjectEnrichment {
 
     @Autowired
@@ -30,18 +32,20 @@ public class ProjectEnrichment {
     @Autowired
     private ProjectConfiguration config;
 
-    public void enrichCreateProject(ProjectRequest request) {
+    public void enrichProjectOnCreate(ProjectRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<Project> projects = request.getProjects();
 
         String rootTenantId = projects.get(0).getTenantId().split("\\.")[0];
 
+        //Get Project Ids from Idgen Service for Number of projects present in Projects
         List<String> projectNumbers = getIdList(requestInfo, rootTenantId
                 , config.getIdgenProjectNumberName(), config.getIdgenProjectNumberFormat(), projects.size());
 
         int i = 0;
         for (Project project: projects) {
 
+            //Get Audit details from requestInfo
             AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
             project.setAuditDetails(auditDetails);
             project.setId(UUID.randomUUID().toString());
@@ -69,9 +73,10 @@ public class ProjectEnrichment {
 
     }
 
-    public void enrichUpdateProject(ProjectRequest request, List<Project> projectsFromDB) {
+    public void enrichProjectOnUpdate(ProjectRequest request, List<Project> projectsFromDB) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<Project> projectsFromRequest = request.getProjects();
+        //Get Audit details from requestInfo for new data
         AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
 
         for (Project project : projectsFromRequest) {
@@ -79,15 +84,18 @@ public class ProjectEnrichment {
 
             Project projectFromDB = projectsFromDB.stream().filter(p -> projectId.equals(String.valueOf(p.getId()))).findFirst().orElse(null);
 
+            //Updating lastModifiedTime and lastModifiedBy
             project.setAuditDetails(projectFromDB.getAuditDetails());
             AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), projectFromDB.getAuditDetails(), false);
             project.setAuditDetails(auditDetails);
 
+            //Add address if address is not present for existing project and address id is empty
             if (project.getAddress() != null && StringUtils.isBlank(project.getAddress().getId())) {
                 project.getAddress().setId(UUID.randomUUID().toString());
                 project.setAuditDetails(auditDetailsForAdd);
             }
 
+            //Add new target to backend if id is empty or update lastModifiedTime and lastModifiedBy if id exists
             for (Target target: project.getTargets()) {
                 if (StringUtils.isBlank(target.getId())) {
                     target.setId(UUID.randomUUID().toString());
@@ -101,6 +109,7 @@ public class ProjectEnrichment {
                 }
             }
 
+            //Add new document to backend if id is empty or update lastModifiedTime and lastModifiedBy if id exists
             for (Document document: project.getDocuments()) {
                 if (StringUtils.isBlank(document.getId())) {
                     document.setId(UUID.randomUUID().toString());
@@ -121,8 +130,10 @@ public class ProjectEnrichment {
                                    String idformat, int count) {
         List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses();
 
-        if (CollectionUtils.isEmpty(idResponses))
+        if (CollectionUtils.isEmpty(idResponses)) {
+            log.error("No ids returned from idgen Service");
             throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
+        }
 
         return idResponses.stream()
                 .map(IdResponse::getId).collect(Collectors.toList());

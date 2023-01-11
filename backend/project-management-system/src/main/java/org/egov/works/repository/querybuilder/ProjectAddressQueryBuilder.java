@@ -103,6 +103,7 @@ public class ProjectAddressQueryBuilder {
                 preparedStmtList.add(lastChangedSince);
             }
 
+            //Add clause if includeDeleted is true in request parameter
             addIsDeletedCondition(preparedStmtList, queryBuilder, includeDeleted);
 
             queryBuilder.append(" )");
@@ -110,6 +111,7 @@ public class ProjectAddressQueryBuilder {
             addORClause(count, queryBuilder);
         }
 
+        //Wrap constructed SQL query with where criteria in pagination query
         return addPaginationWrapper(queryBuilder.toString(), preparedStmtList, limit, offset);
     }
 

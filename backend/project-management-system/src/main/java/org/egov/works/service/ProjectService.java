@@ -35,27 +35,36 @@ public class ProjectService {
 
     public ProjectRequest createProject(ProjectRequest project) {
         projectValidator.validateCreateProjectRequest(project);
-        projectEnrichment.enrichCreateProject(project);
+        projectEnrichment.enrichProjectOnCreate(project);
+        log.info("Enriched with Project Number, Ids and AuditDetails");
         producer.push(projectConfiguration.getSaveProjectTopic(), project);
+        log.info("Pushed to kafka");
         return project;
     }
 
     public List<Project> searchProject(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted) {
-        projectValidator.valiateSearchProject(project, limit, offset, tenantId);
+        projectValidator.validateSearchProjectRequest(project, limit, offset, tenantId);
         List<Project> projects = projectRepository.getProjects(project, limit, offset, tenantId, lastChangedSince, includeDeleted);
         return projects;
     }
 
     public ProjectRequest updateProject(ProjectRequest project) {
         projectValidator.validateUpdateProjectRequest(project);
+        log.info("Update project request validated");
+        //Search projects based on project ids
         List<Project> projectsFromDB = searchProject(getSearchProjectRequestForUpdate(project), projectConfiguration.getMaxLimit(), projectConfiguration.getMaxOffset(), project.getProjects().get(0).getTenantId(), null, false);
+        log.info("Fetched projects for update request");
+        //Validate Update project request against projects fetched form database
         projectValidator.validateUpdateAgainstDB(project.getProjects(), projectsFromDB);
-        projectEnrichment.enrichUpdateProject(project, projectsFromDB);
+        projectEnrichment.enrichProjectOnUpdate(project, projectsFromDB);
+        log.info("Enriched with project Number, Ids and AuditDetails");
         producer.push(projectConfiguration.getUpdateProjectTopic(), project);
+        log.info("Pushed to kafka");
 
         return project;
     }
 
+    /* Construct Project Request object for search which contains project id and tenant Id */
     private ProjectRequest getSearchProjectRequestForUpdate(ProjectRequest projectRequest) {
         List<Project> projects = new ArrayList<>();
         for (Project project: projectRequest.getProjects()) {

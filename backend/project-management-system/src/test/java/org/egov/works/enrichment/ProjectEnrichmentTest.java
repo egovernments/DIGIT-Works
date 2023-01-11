@@ -61,7 +61,7 @@ public class ProjectEnrichmentTest {
                 .thenReturn(idGenerationResponse);
 
 
-        projectEnrichment.enrichCreateProject(projectRequest);
+        projectEnrichment.enrichProjectOnCreate(projectRequest);
 
         assertNotNull(projectRequest.getProjects().get(0).getId());
         assertNotNull(projectRequest.getProjects().get(0).getProjectNumber());

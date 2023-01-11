@@ -49,7 +49,7 @@ public class ProjectServiceTest {
 
         verify(projectValidator, times(1)).validateCreateProjectRequest(projectRequest);
 
-        verify(projectEnrichment, times(1)).enrichCreateProject(projectRequest);
+        verify(projectEnrichment, times(1)).enrichProjectOnCreate(projectRequest);
 
         verify(producer, times(1)).push(eq("save-project"), any(ProjectRequest.class));
 
