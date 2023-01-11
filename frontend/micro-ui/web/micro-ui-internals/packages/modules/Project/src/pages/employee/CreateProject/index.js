@@ -16,7 +16,7 @@ const whenHasProjectsHorizontalNavConfig =  [
 
 const whenHasSubProjectsHorizontalNavConfig =  [
   {
-    name:"Project_Details",
+    name:"Project_Details_Sub_Project",
     code:"WORKS_PROJECT_DETAILS",
   },
   {
@@ -90,10 +90,10 @@ const CreateProject = () => {
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
-          setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
+          setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
           setShowNavs(true);
         }else if(selectedProjectType?.code === "COMMON_NO") {
-          setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
+          setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
           setShowNavs(true);
         }
     },[selectedProjectType]);

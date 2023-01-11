@@ -129,7 +129,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             inline: true,
-            label: "PROJECT_ESTIMATED_COST",
+            label: "PROJECT_ESTIMATED_COST_IN_RS",
             isMandatory: false,
             key: "estimatedCostInRs",
             type: "number",
@@ -431,6 +431,93 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               },
               options : subSchemaOptions
             },
+          },
+        ]
+      },
+      {
+        navLink:"Project_Details_Sub_Project",
+        head: "",
+        body: [
+          {
+            isMandatory: false,
+            key: "owningDepartment",
+            type: "radioordropdown",
+            label: "PROJECT_OWNING_DEPT",
+            disable: false,
+            populators: {
+              name: "owningDepartment",
+              optionsKey: "name",
+              error: t("WORKS_REQUIRED_ERR"),
+              required: false,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
+              mdmsConfig: {
+                masterName: "Department",
+                moduleName: "works",
+                localePrefix: "ES_COMMON",
+              },
+            },
+          },
+          {
+            isMandatory: false,
+            key: "executingDepartment",
+            type: "radioordropdown",
+            label: "WORKS_EXECUTING_DEPT",
+            disable: false,
+            populators: {
+              name: "executingDepartment",
+              optionsKey: "name",
+              error: t("WORKS_REQUIRED_ERR"),
+              required: false,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
+              mdmsConfig: {
+                masterName: "Department",
+                moduleName: "works",
+                localePrefix: "ES_COMMON",
+              },
+            },
+          },
+          {
+            isMandatory: false,
+            key: "beneficiary",
+            type: "radioordropdown",
+            label: "WORKS_BENEFICIARY",
+            disable: false,
+            populators: {
+              name: "beneficiary",
+              optionsKey: "name",
+              error: t("WORKS_REQUIRED_ERR"),
+              required: false,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
+              mdmsConfig: {
+                masterName: "BeneficiaryType",
+                moduleName: "works",
+                localePrefix: "ES_COMMON",
+              },
+            },
+          },
+          {
+            inline: true,
+            label: "WORKS_LOR",
+            isMandatory: false,
+            key: "letterRefNoOrReqNo",
+            type: "text",
+            disable: false,
+            populators: { name: "letterRefNoOrReqNo", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+          },
+          {
+            inline: true,
+            label: "PROJECT_TOTAL_ESTIMATED_COST_IN_RS",
+            isMandatory: false,
+            key: "totalEstimatedCostInRs",
+            type: "number",
+            disable: true,
+            populators: { name: "totalEstimatedCostInRs" }
           },
         ]
       }
