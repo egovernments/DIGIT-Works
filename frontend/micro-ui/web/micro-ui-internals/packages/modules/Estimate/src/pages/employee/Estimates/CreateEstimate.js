@@ -28,19 +28,17 @@ const cardState = {
 }
 const configNavItems = [
     {
-        name:"Project Details",
-        code:"WORKS_PROJECT_DETAILS"
+        name: "Project Details",
+        code: "WORKS_PROJECT_DETAILS"
     },
     {
         name: "Work Details",
         code: "WORKS_WORK_DETAILS"
     },
-
 ]
 const CreateEstimate = ({ EstimateSession }) => {
     const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
 
-    const [activeLink, setActiveLink] = useState("Project Details")
     const [showModal, setShowModal] = useState(false);
 
     const { t } = useTranslation()
@@ -56,6 +54,7 @@ const CreateEstimate = ({ EstimateSession }) => {
     const [selectedDesignation, setSelectedDesignation] = useState({})
 
     const onFormSubmit = async (_data) => {
+        
         //first do whatever processing you want on form data then pass it over to modal's onSubmit function
         //setCreateFormData((prevState) => _data)
         setShowModal(true);
@@ -204,7 +203,7 @@ const CreateEstimate = ({ EstimateSession }) => {
             isDescriptionBold={false}
             noBreakLine={true}
             showMultipleCardsWithoutNavs={false}
-            showMultipleCardsInNavs={false}
+            showMultipleCardsInNavs={true}
             horizontalNavConfig={configNavItems}
             showNavs={true}  
         />

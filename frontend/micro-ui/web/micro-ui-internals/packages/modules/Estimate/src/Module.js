@@ -4,6 +4,10 @@ import { useRouteMatch } from "react-router-dom";
 import EmployeeApp from "./pages/employee"
 import EstimateCard from "./components/EstimateCard";
 import ViewProject from "./pageComponents/ViewProject";
+import SOR from "./pageComponents/SOR";
+import NonSORTable from "./pageComponents/NonSORTable";
+import EstimateTemplate from "./pageComponents/EstimateTemplate";
+import OverheadsTable from "./pageComponents/OverheadsTable";
 
 const EstimateModule = ({ stateCode, userType, tenants }) => {
     const moduleCode = ["Estimate","Works"];
@@ -25,7 +29,11 @@ const EstimateModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
     EstimateModule,
     EstimateCard,
-    ViewProject
+    ViewProject,
+    EstimateTemplate,
+    SOR,
+    NonSORTable,
+    OverheadsTable
 };
 
 export const initEstimateComponents = () => {
