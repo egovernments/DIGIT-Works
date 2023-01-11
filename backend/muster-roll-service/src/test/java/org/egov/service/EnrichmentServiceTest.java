@@ -48,7 +48,7 @@ public class EnrichmentServiceTest {
     void shouldGenerateMusterRollId_IfSuccess(){
         idGenResponseSuccess();
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
-        enrichmentService.enrichCreateMusterRoll(musterRollRequest);
+        enrichmentService.enrichMusterRollOnCreate(musterRollRequest);
         assertNotNull(musterRollRequest.getMusterRoll().getId());
     }
 
@@ -56,14 +56,14 @@ public class EnrichmentServiceTest {
     void shouldGenerateMusterRollNumber_IfSuccess(){
         idGenResponseSuccess();
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
-        enrichmentService.enrichCreateMusterRoll(musterRollRequest);
+        enrichmentService.enrichMusterRollOnCreate(musterRollRequest);
         assertEquals(musterRollRequest.getMusterRoll().getMusterRollNumber(),"MR/2022-23/01/05/000131");
     }
 
     @Test
     void checkStatusAsActiveForEstimate(){
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
-        enrichmentService.enrichEstimateMusterRoll(musterRollRequest);
+        enrichmentService.enrichMusterRollOnEstimate(musterRollRequest);
         assertEquals(Status.ACTIVE.toString(),musterRollRequest.getMusterRoll().getStatus().toString());
     }
 
@@ -71,7 +71,7 @@ public class EnrichmentServiceTest {
     void shouldThrowException_IfIdgenFailed(){
         idGenResponseFailure();
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
-        CustomException exception = assertThrows(CustomException.class, ()-> enrichmentService.enrichCreateMusterRoll(musterRollRequest));
+        CustomException exception = assertThrows(CustomException.class, ()-> enrichmentService.enrichMusterRollOnCreate(musterRollRequest));
         assertTrue(exception.getCode().contentEquals("IDGEN ERROR"));
     }
 
