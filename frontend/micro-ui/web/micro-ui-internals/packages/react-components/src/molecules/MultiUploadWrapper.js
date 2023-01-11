@@ -27,11 +27,12 @@ const fileValidationStatus = (file, regex, maxSize, t) => {
 
     return status;
 }
-const checkIfAllValidFiles = (files, regex, maxSize, t, maxFilesAllowed) => {
-    
+const checkIfAllValidFiles = (files, regex, maxSize, t, maxFilesAllowed, state) => {
     if (!files.length || !regex || !maxSize) return [{}, false];
-    if ( maxFilesAllowed && files.length > maxFilesAllowed) return [[{ valid: false, name: 'TOTAL_FILES_MORE_THAN_ALLOWED', error: 'FILE_LIMIT_EXCEED' }],true]
     
+    const uploadedFiles = state.length + 1
+    if ( maxFilesAllowed && uploadedFiles > maxFilesAllowed) return [[{ valid: false, name: files[0]?.name?.substring(0, 15), error: t(`FILE_LIMIT_EXCEEDED`)}],true]
+   
     const messages = [];
     let isInValidGroup = false;
     for (let file of files) {
@@ -76,13 +77,15 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
         }
     }
 
+    const [state, dispatch] = useReducer(uploadReducer, [...setuploadedstate])
+    
     const onUploadMultipleFiles = async (e) => {
         setFileErrors([])
         const files = Array.from(e.target.files);
 
-        
         if (!files.length) return;
-        const [validationMsg, error] = checkIfAllValidFiles(files, allowedFileTypesRegex, allowedMaxSizeInMB, t, maxFilesAllowed);
+        const [validationMsg, error] = checkIfAllValidFiles(files, allowedFileTypesRegex, allowedMaxSizeInMB, t, maxFilesAllowed, state);
+
         if (!error) {
             try {
                 const { data: { files: fileStoreIds } = {} } = await Digit.UploadServices.MultipleFilesStorage(module, e.target.files, tenantId)
@@ -93,7 +96,6 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
             setFileErrors(validationMsg)
         }
     }
-    const [state, dispatch] = useReducer(uploadReducer, [...setuploadedstate])
 
     useEffect(() => getFormState(state), [state])
 

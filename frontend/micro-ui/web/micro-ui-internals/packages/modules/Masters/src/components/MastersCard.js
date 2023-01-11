@@ -20,11 +20,6 @@ const MastersCard = () => {
         link: `/${window.contextPath}/employee/masters/wage-seeker-registration`,
         roles: [],
       },
-      {
-        label: t("COMMON_VIEW_COMMUNITY_ORG"),
-        link: `/${window?.contextPath}/employee/masters/view-organization`,
-        roles: [],
-      },
     ],
   };
   return <EmployeeModuleCard {...propsForModuleCard} />;

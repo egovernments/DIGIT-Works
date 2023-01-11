@@ -1,6 +1,6 @@
 package org.egov.repository.querybuilder;
 
-import org.egov.models.StaffSearchCriteria;
+import org.egov.web.models.StaffSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -13,13 +13,15 @@ public class StaffQueryBuilder {
     private static final String ATTENDANCE_STAFF_SELECT_QUERY = " SELECT stf.id, " +
             "stf.individual_id, " +
             "stf.register_id, " +
+            "stf.tenantid, " +
             "stf.enrollment_date , " +
             "stf.deenrollment_date, " +
             "stf.additionaldetails, " +
             "stf.createdby, " +
             "stf.lastmodifiedby, " +
             "stf.createdtime, " +
-            "stf.lastmodifiedtime " +
+            "stf.lastmodifiedtime, " +
+            "stf.tenantid " +
             "FROM eg_wms_attendance_staff stf ";
 
     public String getActiveAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
@@ -33,14 +35,15 @@ public class StaffQueryBuilder {
     public String getAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
 
-        if (!ObjectUtils.isEmpty(criteria.getIndividualIds())) {
-            List<String> staffUserIds = criteria.getIndividualIds();
+        List<String> staffUserIds = criteria.getIndividualIds();
+        if (staffUserIds != null && !staffUserIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" stf.individual_id IN (").append(createQuery(staffUserIds)).append(")");
             preparedStmtList.addAll(criteria.getIndividualIds());
         }
-        if (!ObjectUtils.isEmpty(criteria.getRegisterIds())) {
-            List<String> registerIds = criteria.getRegisterIds();
+
+        List<String> registerIds = criteria.getRegisterIds();
+        if (registerIds != null && !registerIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" stf.register_id IN (").append(createQuery(registerIds)).append(")");
             preparedStmtList.addAll(criteria.getRegisterIds());

@@ -13,7 +13,7 @@ class _LocalizationClient implements LocalizationClient {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://works-dev.digit.org/localization/messages/v1';
+    baseUrl ??= 'https://works-dev.digit.org//localization/messages/v1';
   }
 
   final Dio _dio;

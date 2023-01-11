@@ -23,6 +23,9 @@ public class IndividualEntry {
     @JsonProperty("id")
     private String id = null;
 
+    @JsonProperty("tenantId")
+    private String tenantId = null;
+
     @JsonProperty("registerId")
     private String registerId = null;
 

@@ -241,6 +241,9 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useSearchWORKS from "./works/useSearchWORKS";
 import useSearchApprovedEstimates from "./works/useSearchApprovedEstimates";
 import useViewEstimateDetails from "./works/useViewEstimateDetails";
+import useViewProjectDetailsInEstimate from './works/useViewProjectDetailsInEstimate'
+import useViewProjectClosureDetails from "./works/useViewProjectClosureDetails";
+import useViewProjectClosureDetailsBills from "./works/useViewProjectClosureBills";
 import useViewLOIDetails from "./works/useViewLOIDetails";
 import useCreateLOI from "./works/useCreateLOI";
 import useEstimateSearch from "./works/useSearch";
@@ -252,13 +255,18 @@ import useUpdateEstimate from "./works/useUpdateEstimate";
 import useWorksInbox from "./works/useInbox";
 import useKickoffInbox from "./works/useKickoffInbox";
 import useViewContractDetails from "./contracts/useViewContractDetails";
+import useViewContractDetailsClosureScreen from "./contracts/useViewContractDetailsClosureScreen";
 import useViewAttendance from "./attendance/useViewAttendance";
 import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
+import useViewFinancialDetails from "./project/useViewFinancialDetails";
 
 const works = {
   useViewEstimateDetails,
+  useViewProjectDetailsInEstimate,
+  useViewProjectClosureDetails,
+  useViewProjectClosureDetailsBills,
   useViewLOIDetails,
   useCreateLOI,
   useEstimateSearch,
@@ -275,6 +283,7 @@ const works = {
 
 const contracts = {
   useViewContractDetails,
+  useViewContractDetailsClosureScreen
 };
 
 const pgr = {
@@ -521,6 +530,10 @@ const masters = {
   useViewOrg
 }
 
+const project = {
+  useViewFinancialDetails
+}
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -586,7 +599,8 @@ const Hooks = {
   attendance,
   useLocation,
   bills,
-  masters
+  masters,
+  project
 };
 
 export default Hooks;

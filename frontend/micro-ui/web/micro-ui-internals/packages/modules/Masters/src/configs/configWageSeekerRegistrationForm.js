@@ -35,22 +35,19 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
   return {
     defaultValues : {
       AadharNumber : "",
-      NameOfWageSeeker : "",
+      Name : "",
+      FatherGuardianName : "",
       dob : "",
       genders : "",
       SocialCategory : "",
-      MobileNumber : "",
-      MobileValidationStatus : "",
-      WageSeekerSkills : "",
-      EngagementStatus : "",
-      Disability : "",
-      UDID : "",
-      UDID_status : "",
+      PhoneNumber : "",
+      Skills : "",
+      SubSkills : "",
+      LinkToOrganisations : "",
       Address : "",
       ward : "",
       ulb : "",
       district : "",
-      orgId : "",
       AccountHolderName : "",
       BankAccType : "",
       AccountNumber : "",
@@ -74,22 +71,31 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
           },
           {
             inline: true,
-            label: "MASTERS_NAME_OF_WAGE_SEEKER",
+            label: "MASTERS_NAME",
             isMandatory: true,
-            key: "NameOfWageSeeker",
+            key: "Name",
             type: "text",
             disable: false,
-            populators: { name: "NameOfWageSeeker", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength : 140 }}
+            populators: { name: "Name", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength : 140 }}
+          },
+          {
+            inline: true,
+            label: "MASTERS_FATHER_NAME",
+            isMandatory: false,
+            key: "FatherGuardianName",
+            type: "text",
+            disable: false,
+            populators: { name: "FatherGuardianName" }
           },
           {
             inline: true,
             label: "MASTERS_DOB",
-            isMandatory: true,
+            isMandatory: false,
             key:"dob",
             description: "",
             type: "date",
             disable: false,
-            populators: { name: "dob", error: t("WORKS_REQUIRED_ERR"), validation: { required: true } },
+            populators: { name: "dob" },
           },
           {
             isMandatory: true,
@@ -144,47 +150,21 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
           },
           {
             inline: true,
-            label: "MASTERS_MOBILE_NUMBER",
+            label: "MASTERS_PHONE_NUMBER",
             isMandatory: true,
-            key: "MobileNumber",
+            key: "PhoneNumber",
             type: "number",
             disable: false,
-            populators: { name: "MobileNumber", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[6789][0-9]{9}$/i } },
+            populators: { name: "PhoneNumber", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[6789][0-9]{9}$/i } },
           },
           {
             isMandatory: true,
-            key: "MobileValidationStatus",
+            key: "Skills",
             type: "radioordropdown",
-            label: "MASTERS_MOBILE_NO_VAL_STATUS",
+            label: "MASTERS_SKILLS",
             disable: false,
             populators: {
-              name: "MobileValidationStatus",
-              optionsKey: "name",
-              error: t("WORKS_REQUIRED_ERR"),
-              required: true,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
-              options : [
-                {
-                  name : "COMMON_YES",
-                  code : "COMMON_YES"
-                },
-                {
-                  name : "COMMON_NO",
-                  code : "COMMON_NO"
-                }
-              ]
-            },
-          },
-          {
-            isMandatory: true,
-            key: "WageSeekerSkills",
-            type: "radioordropdown",
-            label: "MASTERS_WAGE_SEEKER_SKILLS",
-            disable: false,
-            populators: {
-              name: "WageSeekerSkills",
+              name: "Skills",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -200,91 +180,44 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
           },
           {
             isMandatory: true,
-            key: "EngagementStatus",
+            key: "SubSkills",
             type: "radioordropdown",
-            label: "MASTERS_ENGAGEMENT_STATUS",
+            label: "MASTERS_SUB_SKILLS",
             disable: false,
             populators: {
-              name: "EngagementStatus",
+              name: "SubSkills",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              options : [
-                {
-                  name : "COMMON_YES",
-                  code : "COMMON_YES"
-                },
-                {
-                  name : "COMMON_NO",
-                  code : "COMMON_NO"
-                }
-              ]
+              mdmsConfig: {
+                masterName: "WageSeekerSubSkills",
+                moduleName: "common-masters",
+                localePrefix: "MASTERS",
+              },
             },
           },
-        ],
-      },
-      {
-        head: "MASTERS_DISABILITY_DETAILS_IF_ANY",
-        subHead: "",
-        body: [
           {
             isMandatory: true,
-            key: "Disability",
-            type: "radio",
-            label: "MASTERS_DOES_WAGE_SEEKER_HAS_DISABILITY",
+            key: "LinkToOrganisations",
+            type: "radioordropdown",
+            label: "MASTERS_LINK_TO_ORG",
             disable: false,
-            additionalWrapperClass : "radio-mb-flex-column",
             populators: {
-              name: "Disability",
+              name: "LinkToOrganisations",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
-              options : [
-                {
-                  name : "COMMON_YES",
-                  code : "COMMON_YES"
-                },
-                {
-                  name : "COMMON_NO",
-                  code : "COMMON_NO"
-                }
-              ]
-            },
-          },
-          {
-            inline: true,
-            label: "MASTERS_UDID_NUMBER",
-            isMandatory: false,
-            key: "UDID",
-            type: "number",
-            disable: false,
-            populators: { name: "UDID", error: "", validation: {} },
-          },
-          {
-            isMandatory: false,
-            key: "UDID_status",
-            type: "radioordropdown",
-            label: "MASTERS_UDID_VALIDATION_STATUS",
-            disable: false,
-            populators: {
-              name: "UDID_status",
-              optionsKey: "name",
-              error: "",
               optionsCustomStyle : {
                 top : "2.5rem"
               },
               options : [
                 {
-                  name : "COMMON_YES",
-                  code : "COMMON_YES"
+                  name : "MASTERS_ORG_1",
+                  code : "MASTERS_ORG_1"
                 },
-                {
-                  name : "COMMON_NO",
-                  code : "COMMON_NO"
-                }
               ]
             },
           },
@@ -353,31 +286,6 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
                 options: districtOptions
             },
           },
-          {
-            isMandatory: true,
-            key: "orgId",
-            type: "radioordropdown",
-            label: "MASTERS_COMMUNITY_ORG_ID",
-            disable: false,
-            populators: {
-              name: "orgId",
-              optionsKey: "name",
-              error: t("WORKS_REQUIRED_ERR"),
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
-              options : [
-                {
-                  name : "COMMON_YES",
-                  code : "COMMON_YES"
-                },
-                {
-                  name : "COMMON_NO",
-                  code : "COMMON_NO"
-                }
-              ]
-            },
-          },
         ],
       },
       {
@@ -423,7 +331,7 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
             populators: { name: "AccountNumber", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^\d{9,18}$/ } },
           },
           {
-            isMandatory: true,
+            isMandatory: false,
             key: "Bank",
             type: "radioordropdown",
             label: "MASTERS_BANK_NAME",
@@ -431,7 +339,6 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
             populators: {
               name: "Bank",
               optionsKey: "name",
-              error: t("WORKS_REQUIRED_ERR"),
               optionsCustomStyle : {
                 top : "2.5rem"
               },
@@ -445,11 +352,11 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
           {
             inline: true,
             label: "MASTERS_BANK_BRANCH",
-            isMandatory: true,
+            isMandatory: false,
             key: "Branch",
             type: "text",
             disable: false,
-            populators: { name: "Branch", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i } },
+            populators: { name: "Branch" },
           },
           {
             inline: true,

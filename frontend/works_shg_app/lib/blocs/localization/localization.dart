@@ -1,18 +1,27 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:universal_html/html.dart' as html;
+import 'package:works_shg_app/services/urls.dart';
 
-import '../../data/remote_client.dart';
 import '../../data/repositories/remote/localization.dart';
 import '../../models/localization/localization_model.dart';
+import '../../services/local_storage.dart';
+import '../../utils/global_variables.dart';
+import 'app_localization.dart';
 
 part 'localization.freezed.dart';
 
 typedef LocalizationEmitter = Emitter<LocalizationState>;
+List<LocalizationMessageModel>? localizationMessages;
 
 class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
-  LocalizationBloc(super.initialState) {
+  final LocalizationRepository localizationRepository;
+  LocalizationBloc(super.initialState, this.localizationRepository) {
     on<OnLoadLocalizationEvent>(_onLoadLocalization);
   }
 
@@ -20,20 +29,69 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
     OnLoadLocalizationEvent event,
     LocalizationEmitter emit,
   ) async {
-    Client client = Client();
+    if (await GlobalVariables.isLocaleSelect(event.locale)) {
+      dynamic localLabelResponse;
+      if (kIsWeb) {
+        localLabelResponse = html.window.localStorage[event.locale ?? ''];
+      } else {
+        localLabelResponse = storage.read(key: event.locale ?? '');
+      }
 
-    LocalizationModel result =
-        await LocalizationRepository(client.init()).search(
-      url: 'localization/messages/v1/_search',
-      queryParameters: {
-        "module": "rainmaker-common,rainmaker-pb,rainmaker-works",
-        "locale": event.locale,
-        "tenantId": "pb",
-      },
-    );
+      if (localLabelResponse != null) {
+        localizationMessages = jsonDecode(localLabelResponse)
+            .map<LocalizationMessageModel>(
+                (e) => LocalizationMessageModel.fromJson(e))
+            .toList();
+      }
 
-    emit(state.copyWith(localization: result));
-    await Future.delayed(const Duration(seconds: 1));
+      emit(state.copyWith(
+          localization: localizationMessages,
+          isLocalizationLoadCompleted: true));
+      await AppLocalizations(
+        Locale(event.locale.split('_').first, event.locale.split('_').last),
+      ).load();
+    } else {
+      emit(state.copyWith(isLocalizationLoadCompleted: false));
+      LocalizationModel result = await localizationRepository.search(
+        url: Urls.initServices.localizationSearch,
+        queryParameters: {
+          "module": event.module,
+          "locale": event.locale,
+          "tenantId": event.tenantId,
+        },
+      );
+
+      if (kIsWeb) {
+        html.window.localStorage[event.locale ?? ''] =
+            jsonEncode(result.messages.map((e) => e.toJson()).toList());
+      } else {
+        await storage.write(
+            key: event.locale ?? '',
+            value: jsonEncode(result.messages.map((e) => e.toJson()).toList()));
+      }
+
+      dynamic localLabelResponse;
+      if (kIsWeb) {
+        localLabelResponse = html.window.localStorage[event.locale ?? ''];
+      } else {
+        localLabelResponse = storage.read(key: event.locale ?? '');
+      }
+
+      if (localLabelResponse != null) {
+        localizationMessages = jsonDecode(localLabelResponse)
+            .map<LocalizationMessageModel>(
+                (e) => LocalizationMessageModel.fromJson(e))
+            .toList();
+      }
+
+      emit(state.copyWith(
+          localization: localizationMessages,
+          isLocalizationLoadCompleted: true));
+
+      await AppLocalizations(
+        Locale(event.locale.split('_').first, event.locale.split('_').last),
+      ).load();
+    }
   }
 }
 
@@ -49,7 +107,7 @@ class LocalizationEvent with _$LocalizationEvent {
 @freezed
 class LocalizationState with _$LocalizationState {
   const factory LocalizationState({
-    LocalizationModel? localization,
+    List<LocalizationMessageModel>? localization,
     @Default(false) bool isLocalizationLoadCompleted,
   }) = _LocalizationState;
 }

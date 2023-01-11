@@ -1,20 +1,23 @@
 import 'dart:async';
 
 import "package:dio/dio.dart";
+import 'package:works_shg_app/Env/app_config.dart';
 
-import '../utils/constants.dart';
+import '../models/request_info/request_info_model.dart';
 
 class Client {
   Dio init() {
     final Dio dio = Dio();
     dio.interceptors.add(ApiInterceptors());
-    dio.options.baseUrl = Constants.baseURL;
+    dio.options.baseUrl = apiBaseUrl;
 
     return dio;
   }
 }
 
 class ApiInterceptors extends Interceptor {
+  dynamic request;
+
   @override
   Future<dynamic> onRequest(
     RequestOptions options,
@@ -22,20 +25,19 @@ class ApiInterceptors extends Interceptor {
   ) async {
     options.data = {
       ...options.data,
-      "RequestInfo": null,
-
-      // {
-      //   ...const RequestInfoModel(
-      //     apiId: 'Rainmaker',
-      //     ver: ".01",
-      //     ts: "",
-      //     action: "_search",
-      //     did: "1",
-      //     key: "",
-      //     msgId: "20170310130900|en_IN",
-      //     authToken: "a9679414-55dc-497c-9879-47f13069ba4a",
-      //   ).toJson(),
-      // },
+      "RequestInfo": {
+        ...RequestInfoModel(
+          apiId: options.extra['apiId'] ?? 'Rainmaker',
+          ver: ".01",
+          ts: "",
+          action: options.extra['action'] ?? "_search",
+          did: "1",
+          key: "",
+          msgId: options.extra['msgId'] ?? "20170310130900|en_IN",
+          authToken: options.extra['accessToken'],
+        ).toJson(),
+        "userInfo": options.extra['userInfo']
+      },
     };
     super.onRequest(options, handler);
   }

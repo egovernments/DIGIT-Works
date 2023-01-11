@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Switch, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, AppContainer, BreadCrumb } from "@egovernments/digit-ui-react-components";
@@ -15,7 +15,7 @@ const MastersBreadCrumb = ({ location }) => {
     },
     {
         path: `/${window.contextPath}/employee/masters/search-organization`,
-        content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_MASTERS")}` : t("MASTERS_MASTERS"),
+        content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_SEARCH_MASTERS")}` : t("MASTERS_SEARCH_MASTERS"),
         show: location.pathname.includes("/masters/search-organization") ? true : false,
         isBack: fromScreen && true,
     },
@@ -42,10 +42,22 @@ const MastersBreadCrumb = ({ location }) => {
 };
 
 const App = ({ path }) => {
+  const location = useLocation();
+  const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
+  const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
+
   const SearchOrganization = Digit?.ComponentRegistryService?.getComponent("SearchOrganization");
   const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganization");
   const RegisterWageSeekerComponent = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
   const ViewOrganisationComponent = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
+
+  useEffect(() => {
+    return () => {
+      if (!window.location.href.includes("create-organization") && Object.keys(sessionFormData) != 0) {
+        clearSessionFormData();
+      }
+    };
+  }, [location]);
 
   return (
     <Switch>

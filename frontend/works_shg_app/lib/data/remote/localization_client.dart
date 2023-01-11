@@ -7,7 +7,7 @@ import '../../models/localization/localization_model.dart';
 part 'localization_client.g.dart';
 
 @RestApi(
-  baseUrl: '${EnvironmentVariables.baseUrl}localization/messages/v1',
+  baseUrl: '${EnvironmentVariables.baseUrl}/localization/messages/v1',
 )
 abstract class LocalizationClient {
   factory LocalizationClient(Dio dio, {String baseUrl}) = _LocalizationClient;

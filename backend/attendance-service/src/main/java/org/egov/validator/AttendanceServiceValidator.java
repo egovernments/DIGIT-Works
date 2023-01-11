@@ -10,10 +10,12 @@ import org.egov.util.MDMSUtils;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterRequest;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.web.models.StaffPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -83,6 +85,20 @@ public class AttendanceServiceValidator {
         if (CollectionUtils.isEmpty(attendanceRegisterList) || attendanceRegisterRequest.getAttendanceRegister().size() != attendanceRegisterList.size()) {
             throw new CustomException("INVALID_REGISTER_MODIFY", "The record that you are trying to update does not exists in the system");
         }
+
+        Set<String> registerIdsFromDB = attendanceRegisterList.stream().map(AttendanceRegister:: getId).collect(Collectors.toSet());
+        for (AttendanceRegister attendanceRegister: attendanceRegisterRequest.getAttendanceRegister()) {
+            if (!registerIdsFromDB.contains(attendanceRegister.getId())) {
+                throw new CustomException("INVALID_REGISTER_MODIFY", "The register Id " + attendanceRegister.getId() + " that you are trying to update does not exists in the system");
+            }
+
+            if (attendanceRegister.getStaff() != null) {
+                Set<String> staffIdsFromDB = attendanceRegister.getStaff().stream().map(StaffPermission:: getId).collect(Collectors.toSet());
+                if (!staffIdsFromDB.contains(attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid())) {
+                    throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register");
+                }
+            }
+        }
     }
 
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
@@ -115,6 +131,9 @@ public class AttendanceServiceValidator {
             if (attendanceRegisters.get(i).getStartDate() == null) {
                 errorMap.put("START_DATE", "Start date is mandatory");
             }
+            if (attendanceRegisters.get(i).getStartDate().compareTo(attendanceRegisters.get(i).getEndDate()) > 0) {
+                errorMap.put("DATE", "Start date should be less than end date");
+            }
         }
     }
 
@@ -134,21 +153,27 @@ public class AttendanceServiceValidator {
             errorMap.put("INVALID_TENANT", "The tenant: " + attendanceRegisters.get(0).getTenantId() + " is not present in MDMS");
     }
 
-    public void validateSearchEstimate(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
-        if (searchCriteria == null || requestInfoWrapper == null || requestInfoWrapper.getRequestInfo() == null) {
-            throw new CustomException("ATTENDANCE_REGISTER_SEARCH_CRITERIA_REQUEST", "Attendance register search criteria request is mandatory");
+    public void validateSearchRegisterRequest(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
+        if (searchCriteria == null || requestInfoWrapper == null) {
+            throw new CustomException("REGISTER_SEARCH_CRITERIA_REQUEST", "Register search criteria request is mandatory");
         }
+
+        Map<String, String> errorMap = new HashMap<>();
+
+        validateRequestInfo(requestInfoWrapper.getRequestInfo(),errorMap);
+
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
+
+        // Throw exception if required parameters are missing
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
     }
 
     public void validateRegisterAgainstDB(List<String> registerIds, List<AttendanceRegister> attendanceRegisterListFromDB, String tenantId) {
 
         Set<String> uniqueRegisterIdsFromRequest = new HashSet<>(registerIds);
-
-        AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria
-                .builder().ids(registerIds).tenantId(tenantId).build();
 
         Set<String> uniqueRegisterIdsFromDB = attendanceRegisterListFromDB.stream()
                 .map(register -> register.getId()).collect(Collectors.toSet());
@@ -159,7 +184,6 @@ public class AttendanceServiceValidator {
                 throw new CustomException("REGISTER_ID", "Attendance Registers with register id : " + idFromRequest + " does not exist for tenantId");
             }
         }
-
 
     }
 }

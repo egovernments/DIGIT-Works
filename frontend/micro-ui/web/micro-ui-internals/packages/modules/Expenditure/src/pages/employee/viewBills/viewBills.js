@@ -18,7 +18,7 @@ const ViewBills = () => {
         <ApplicationDetails
           applicationDetails={applicationDetails}
           isLoading={false} //will come from backend
-          applicationData={applicationData}s
+          applicationData={applicationData}
           moduleCode="Expenditure"
           isDataLoading={false}
           workflowDetails={workflowDetails}

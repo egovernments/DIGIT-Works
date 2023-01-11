@@ -61,6 +61,11 @@ const EstimateCard = () => {
         link: `/${window?.contextPath}/employee/works/create-estimate`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       },
+      {
+        label: t("ACTION_TEST_CREATE_ESTIMATE"),
+        link: `/${window?.contextPath}/employee/estimate/create-estimate`,
+        roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
+      },
     ],
   };
   return <EmployeeModuleCard {...propsForModuleCard} />;

@@ -56,6 +56,7 @@ const ViewEstimate = (props) => {
             }
         },
     );
+    
     workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
         if (action?.action === "EDIT") {
             
