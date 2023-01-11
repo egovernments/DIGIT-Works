@@ -49,8 +49,8 @@ public class RegisterQueryBuilder {
 
         if (!ObjectUtils.isEmpty(searchCriteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" reg.tenantid = ? ");
-            preparedStmtList.add(searchCriteria.getTenantId());
+            query.append(" reg.tenantid like ? ");
+            preparedStmtList.add(searchCriteria.getTenantId()+"%");
         }
 
         List<String> registerIds = searchCriteria.getIds();

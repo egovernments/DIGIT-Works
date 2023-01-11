@@ -46,38 +46,14 @@ public class AttendanceLogServiceValidator {
         // Verify the Logged-in user is associated to the given register.
         validateLoggedInUser(attendanceLogRequest);
 
-        // Verify if given tenantId is associated with given register
-        validateTenantIdAssociationWithRegisterId(attendanceLogRequest);
-
-        // Verify given attendance log time does exist between startDate and endDate of Register
-        validateAttendanceLogTimeWithRegisterStartEndDate(attendanceLogRequest);
+        // Verify given attendance log against register params
+        validateAttendanceLogsAgainstRegisterParams(attendanceLogRequest);
 
         // Verify if individuals are part of the given register and individuals were active during given attendance log time.
         validateAttendees(attendanceLogRequest);
 
         // Verify provided documentIds are valid.
         validateDocumentIds(attendanceLogRequest);
-    }
-
-    private void validateAttendanceLogTimeWithRegisterStartEndDate(AttendanceLogRequest attendanceLogRequest) {
-        String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
-
-        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria
-                .builder()
-                .ids(Collections.singletonList(registerId))
-                .build();
-        AttendanceRegister attendanceRegister = attendanceRegisterRepository.getRegister(searchCriteria).get(0);
-
-        Instant registerStartTime = Instant.ofEpochMilli(attendanceRegister.getStartDate().longValue());
-        Instant registerEndTime = Instant.ofEpochMilli(attendanceRegister.getEndDate().longValue());
-
-        List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
-        attendanceLogs.forEach(attendanceLog -> {
-            Instant instantAttendanceAttendeeLogTime = Instant.ofEpochMilli(attendanceLog.getTime().longValue());
-                if(!(instantAttendanceAttendeeLogTime.compareTo(registerStartTime) >=0 && instantAttendanceAttendeeLogTime.compareTo(registerEndTime) <=0)){
-                    throw new CustomException("INVALID_ATTENDANCE_TIME", "Attendance time is invalid");
-                }
-        });
     }
 
     public void validateUpdateAttendanceLogRequest(AttendanceLogRequest attendanceLogRequest) {
@@ -89,8 +65,8 @@ public class AttendanceLogServiceValidator {
         // Verify provided log ids are present
         validateAttendanceLogIds(attendanceLogRequest);
 
-        // Verify given attendance log time does exist between startDate and endDate of Register
-        validateAttendanceLogTimeWithRegisterStartEndDate(attendanceLogRequest);
+        // Verify given attendance log against register params
+        validateAttendanceLogsAgainstRegisterParams(attendanceLogRequest);
 
         // Verify if individuals are part of the given register and individuals were active during given attendance log time.
         validateAttendees(attendanceLogRequest);
@@ -99,12 +75,49 @@ public class AttendanceLogServiceValidator {
         validateDocumentIds(attendanceLogRequest);
     }
 
-    private void validateTenantIdAssociationWithRegisterId(AttendanceLogRequest attendanceLogRequest) {
-        String tenantId = attendanceLogRequest.getAttendance().get(0).getTenantId();
+    private void validateAttendanceLogsAgainstRegisterParams(AttendanceLogRequest attendanceLogRequest){
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
-        validateTenantIdAssociationWithRegisterId(tenantId, registerId);
+        String tenantId = attendanceLogRequest.getAttendance().get(0).getTenantId();
+
+        // Fetch register for given registerId
+        List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(registerId);
+
+        if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
+            throw new CustomException("INVALID_REGISTERID", "Given RegisterId is invalid");
+        }
+
+        AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
+
+        validateTenantIdAssociationWithRegisterId(attendanceRegister,tenantId);
+        validateAttendanceLogTimeWithRegisterStartEndDate(attendanceRegister,attendanceLogRequest);
     }
 
+    private void validateTenantIdAssociationWithRegisterId(AttendanceRegister attendanceRegister,String tenantId) {
+        if(!tenantId.equals(attendanceRegister.getTenantId())){
+            throw new CustomException("INVALID_TENANTID", "TenantId is not associated with register");
+        }
+    }
+
+    private List<AttendanceRegister> fetchRegisterWithId(String registerId) {
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria
+                .builder()
+                .ids(Collections.singletonList(registerId))
+                .build();
+        return attendanceRegisterRepository.getRegister(searchCriteria);
+    }
+
+    private void validateAttendanceLogTimeWithRegisterStartEndDate(AttendanceRegister attendanceRegister,AttendanceLogRequest attendanceLogRequest) {
+        Instant registerStartTime = Instant.ofEpochMilli(attendanceRegister.getStartDate().longValue());
+        Instant registerEndTime = Instant.ofEpochMilli(attendanceRegister.getEndDate().longValue());
+
+        List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
+        attendanceLogs.forEach(attendanceLog -> {
+            Instant instantAttendanceAttendeeLogTime = Instant.ofEpochMilli(attendanceLog.getTime().longValue());
+                if(!(instantAttendanceAttendeeLogTime.compareTo(registerStartTime) >=0 && instantAttendanceAttendeeLogTime.compareTo(registerEndTime) <=0)){
+                    throw new CustomException("INVALID_ATTENDANCE_TIME", "Attendance time is invalid");
+                }
+        });
+    }
     private void validateDocumentIds(AttendanceLogRequest attendanceLogRequest) {
         if ("TRUE".equalsIgnoreCase(config.getDocumentIdVerificationRequired())) {
             //TODO
@@ -242,8 +255,15 @@ public class AttendanceLogServiceValidator {
         // Verify given parameters
         validateSearchAttendanceLogParameters(requestInfoWrapper, searchCriteria);
 
+        // Fetch register for given Id
+        List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(searchCriteria.getRegisterId());
+
+        if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
+            throw new CustomException("INVALID_REGISTERID", "Register Not ");
+        }
+
         // Verify TenantId association with register
-        validateTenantIdAssociationWithRegisterId(searchCriteria.getTenantId(), searchCriteria.getRegisterId());
+        validateTenantIdAssociationWithRegisterId(attendanceRegisters.get(0), searchCriteria.getRegisterId());
 
         // Verify the Logged-in user is associated to the given register.
         validateLoggedInUser(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid(), searchCriteria.getRegisterId());
@@ -276,17 +296,7 @@ public class AttendanceLogServiceValidator {
         }
     }
 
-    private void validateTenantIdAssociationWithRegisterId(String tenantId, String registerId) {
-        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria
-                .builder()
-                .tenantId(tenantId)
-                .ids(Collections.singletonList(registerId))
-                .build();
-        List<AttendanceRegister> attendanceRegister = attendanceRegisterRepository.getRegister(searchCriteria);
-        if (attendanceRegister == null || attendanceRegister.isEmpty()) {
-            throw new CustomException("INVALID_TENANTID", "TenantId is not associated with register");
-        }
-    }
+
 
     private void validateLoggedInUser(String userUUID, String registerId) {
         StaffSearchCriteria searchCriteria = StaffSearchCriteria
