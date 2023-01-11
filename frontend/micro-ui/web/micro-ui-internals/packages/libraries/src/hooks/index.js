@@ -260,7 +260,6 @@ import useViewAttendance from "./attendance/useViewAttendance";
 import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
-import useViewProjectDetails from "./project/useViewProjectDetails";
 import useViewFinancialDetails from "./project/useViewFinancialDetails";
 
 const works = {
@@ -532,7 +531,6 @@ const masters = {
 }
 
 const project = {
-  useViewProjectDetails,
   useViewFinancialDetails
 }
 
