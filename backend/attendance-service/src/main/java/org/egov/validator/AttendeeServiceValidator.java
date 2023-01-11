@@ -1,22 +1,32 @@
 package org.egov.validator;
 
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.AttendeeCreateRequest;
-import org.egov.web.models.AttendeeDeleteRequest;
-import org.egov.web.models.IndividualEntry;
+import org.egov.util.MDMSUtils;
+import org.egov.web.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
+import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
 
 @Component
 @Slf4j
 public class AttendeeServiceValidator {
+
+    @Autowired
+    private MDMSUtils mdmsUtils;
     public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
             List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
 
@@ -104,11 +114,67 @@ public class AttendeeServiceValidator {
         }
     }
 
+    public void validateMDMSAndRequestInfoForCreateAttendee(AttendeeCreateRequest attendeeCreateRequest
+            , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
+
+        RequestInfo requestInfo = attendeeCreateRequest.getRequestInfo();
+        List<IndividualEntry> attendeeListFromRequest=attendeeCreateRequest.getAttendees();
+        Map<String, String> errorMap = new HashMap<>();
+
+        String tenantId = attendeeListFromRequest.get(0).getTenantId();
+        //split the tenantId
+        String rootTenantId = tenantId.split("\\.")[0];
+
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+
+        //check tenant Id
+        validateMDMSData(tenantId, mdmsData, errorMap);
+
+
+        //validate request-info
+        validateRequestInfo(requestInfo, errorMap);
+
+
+        //check staff-request
+        validateCreateAttendee(attendeeCreateRequest, attendeeListFromDB, attendanceRegisterListFromDB);
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
+
+    public void validateMDMSAndRequestInfoForDeleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest
+            , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
+
+        RequestInfo requestInfo = attendeeDeleteRequest.getRequestInfo();
+        List<IndividualEntry> attendeeListFromRequest=attendeeDeleteRequest.getAttendees();
+        Map<String, String> errorMap = new HashMap<>();
+
+        String tenantId = attendeeListFromRequest.get(0).getTenantId();
+        //split the tenantId
+        String rootTenantId = tenantId.split("\\.")[0];
+
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+
+        //check tenant Id
+        validateMDMSData(tenantId, mdmsData, errorMap);
+
+
+        //validate request-info
+        validateRequestInfo(requestInfo, errorMap);
+
+
+        //check staff-request
+        validateDeleteAttendee(attendeeDeleteRequest, attendeeListFromDB, attendanceRegisterListFromDB);
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
+
 
     public void validateCreateAttendee(AttendeeCreateRequest attendeeCreateRequest
             , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
 
-        List<IndividualEntry> attendeeListFromRequest = attendeeCreateRequest.getAttendees();
+        List<IndividualEntry> attendeeListFromRequest=attendeeCreateRequest.getAttendees();
 
 
         // attendee cannot be added to register if register's end date has passed
@@ -149,7 +215,6 @@ public class AttendeeServiceValidator {
                 }
             }
         }
-
     }
 
     public void validateDeleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest,
@@ -189,6 +254,33 @@ public class AttendeeServiceValidator {
             }
         }
 
+    }
+
+    private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
+        if (requestInfo == null) {
+            throw new CustomException("REQUEST_INFO", "Request info is mandatory");
+        }
+        if (requestInfo.getUserInfo() == null) {
+            throw new CustomException("USERINFO", "UserInfo is mandatory");
+        }
+        if (requestInfo.getUserInfo() != null && StringUtils.isBlank(requestInfo.getUserInfo().getUuid())) {
+            throw new CustomException("USERINFO_UUID", "User's UUID is mandatory");
+        }
+    }
+
+    private void validateMDMSData(String tenantId , Object mdmsData, Map<String, String> errorMap) {
+        final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
+
+        List<Object> tenantRes = null;
+        try {
+            tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
+        }
+
+        if (CollectionUtils.isEmpty(tenantRes))
+            errorMap.put("INVALID_TENANT", "The tenant: " + tenantId + " is not present in MDMS");
     }
 }
 
