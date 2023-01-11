@@ -134,10 +134,6 @@ public class AttendeeServiceValidator {
         //validate request-info
         validateRequestInfo(requestInfo, errorMap);
 
-
-        //check staff-request
-        validateCreateAttendee(attendeeCreateRequest, attendeeListFromDB, attendanceRegisterListFromDB);
-
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
@@ -162,10 +158,6 @@ public class AttendeeServiceValidator {
         //validate request-info
         validateRequestInfo(requestInfo, errorMap);
 
-
-        //check staff-request
-        validateDeleteAttendee(attendeeDeleteRequest, attendeeListFromDB, attendanceRegisterListFromDB);
-
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
@@ -173,6 +165,9 @@ public class AttendeeServiceValidator {
 
     public void validateCreateAttendee(AttendeeCreateRequest attendeeCreateRequest
             , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
+
+        //validate tenantId with MDMS
+        validateMDMSAndRequestInfoForCreateAttendee(attendeeCreateRequest,attendeeListFromDB,attendanceRegisterListFromDB);
 
         List<IndividualEntry> attendeeListFromRequest=attendeeCreateRequest.getAttendees();
 
@@ -219,6 +214,8 @@ public class AttendeeServiceValidator {
 
     public void validateDeleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest,
                                        List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
+        //validate tenantId with MDMS
+        validateMDMSAndRequestInfoForDeleteAttendee(attendeeDeleteRequest,attendeeListFromDB,attendanceRegisterListFromDB);
 
         List<IndividualEntry> attendeeListFromRequest = attendeeDeleteRequest.getAttendees();
 
