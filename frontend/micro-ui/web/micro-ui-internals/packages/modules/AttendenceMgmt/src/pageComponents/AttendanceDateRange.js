@@ -31,16 +31,20 @@ function isStartDateFocused(focusNumber) {
   return focusNumber === 0;
 }
 
-const AttendenceDateRange = ({ values, onFilterChange, t, labelClass }) => {
+const AttendanceDateRange = ({ values, onFilterChange, t, labelClass, title, epochStartDate, epochEndDate, disabled }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [focusedRange, setFocusedRange] = useState([0, 0]);
-  const [selectionRange, setSelectionRange] = useState({
-    ...values,
-    startDate: values?.startDate,
-    endDate: values?.endDate,
-  });
+  const [selectionRange, setSelectionRange] = useState({...values});
   const wrapperRef = useRef(null);
 
+  useEffect(() => {
+    setSelectionRange(
+      { 
+        startDate : new Date(epochStartDate), 
+        endDate: new Date(epochEndDate)
+      })
+  }, [])
+    
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
@@ -58,7 +62,7 @@ const AttendenceDateRange = ({ values, onFilterChange, t, labelClass }) => {
       const startDate = selectionRange?.startDate;
       const endDate = selectionRange?.endDate;
       const duration = getDuration(selectionRange?.startDate, selectionRange?.endDate);
-      const title = `${format(selectionRange?.startDate, "MMM d, yy")} - ${format(selectionRange?.endDate, "MMM d, yy")}`;
+      const title = `${format(selectionRange?.startDate, "dd-MM-yyyy")} - ${format(selectionRange?.endDate, "dd-MM-yyyy")}`;
       onFilterChange({ range: { startDate, endDate, duration, title }, requestDate: { startDate, endDate, duration, title } });
     }
   }, [selectionRange, isModalOpen]);
@@ -154,11 +158,11 @@ const AttendenceDateRange = ({ values, onFilterChange, t, labelClass }) => {
   return (
     <div className="">
       <div className="row border-none date-range-pair">
-        <h2>{t(`ATM_ATTENDENCE_FOR_WEEK`)}</h2>
+        <h2>{t(`${title}`)}</h2>
         <div className="employee-select-wrap attendence-date-picker" style={{ marginBottom: "0" }} ref={wrapperRef}>
-          <div className="select">
+          <div className="select disabled">
             <input className="employee-select-wrap--elipses" type="text" value={values?.title ? `${values?.title}` : ""} readOnly />
-            <Calender className="cursorPointer" onClick={() => setIsModalOpen((prevState) => !prevState)} />
+            <Calender className="cursorPointer" onClick={() => setIsModalOpen((prevState) => !prevState)}/>
           </div>
           {isModalOpen && (
             <div className="options-card" style={{ overflow: "visible", width: "unset", maxWidth: "fit-content" }}>
@@ -183,4 +187,4 @@ const AttendenceDateRange = ({ values, onFilterChange, t, labelClass }) => {
   );
 };
 
-export default AttendenceDateRange;
+export default AttendanceDateRange;

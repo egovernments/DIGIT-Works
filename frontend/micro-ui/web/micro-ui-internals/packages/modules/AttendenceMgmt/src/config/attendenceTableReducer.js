@@ -1,5 +1,3 @@
-import { useTranslation } from "react-i18next";
-
 //mapping every user state to an id(aadhar for now)
 export const initialTableState = {
   isLoading: false,
@@ -243,35 +241,53 @@ const selectNextState = (state) => {
 };
 
 const updateAttendenceCount = (state) => {
-  let currentAttendence = [0, 0, 0, 0, 0, 0, 0];
-  for (let index in currentAttendence) {
-    for (let row of Object.keys(state.rows)) {
-      let attendence = state.rows[row].attendence[index];
+  let currentAttendence = { Sun: 0, Sat: 0, Fri: 0, Thu: 0, Wed: 0, Tue: 0, Mon: 0 }
+  for (let day of Object.keys(currentAttendence)) {
+    for (let row of Object.keys(state)) {
+      let attendence = state[row].attendence[day];
       if (attendence === "half") {
-        currentAttendence[index] += 0.5;
+        currentAttendence[day] += 0.5;
       } else if (attendence === "full") {
-        currentAttendence[index] += 1;
+        currentAttendence[day] += 1;
       }
     }
   }
   return currentAttendence;
 };
 
+const updateAmtAndWorkingDays = (state) => {
+  let totalAmount = 0
+  let totalActualWorkingDays = 0
+  for (let row of Object.keys(state)) {
+    if(row !== 'total') {
+      totalAmount += state[row].amount
+      totalActualWorkingDays += state[row].actualWorkingDays
+    }    
+  }
+  return {totalAmount, totalActualWorkingDays};
+};
+
 const reducer = (state, action) => {
   switch (action.type) {
-    case "attendence":
+    case "attendanceTotal":
       const prevAttendence = action.state.row.attendence;
       prevAttendence[action.state.index] = selectNextState(action.state.row.attendence[action.state.index]);
       const obj = {
-        [action.state.row.aadhar]: {
+        [action.state.row.id]: {
           ...action.state.row,
           attendence: prevAttendence,
         },
       };
-      let updatedState = { ...state, rows: { ...state.rows, ...obj } };
-      let updatedAttendenceCount = updateAttendenceCount(updatedState);
-      const finalState = { ...state, rows: { ...state.rows, total: { ...state.rows.total, attendence: updatedAttendenceCount } } };
-      return finalState;
+      let updatedState = { ...state, ...obj };;
+      let attendanceTotalCount = updateAttendenceCount(updatedState);
+      return { ...state, total: { ...state.total, attendence: attendanceTotalCount }  };
+    
+    case "initialTotal":
+      console.log('initialTotal');
+      const initialTotalCount = updateAttendenceCount(state);
+      const { totalAmount, totalActualWorkingDays } = updateAmtAndWorkingDays(state)
+      return { ...state, total: { ...state.total, attendence: initialTotalCount, amount: totalAmount, actualWorkingDays: totalActualWorkingDays}  };
+
     default:
       return state;
   }

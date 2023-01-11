@@ -55,14 +55,19 @@ function ApplicationDetailsContent({
   oldValue,
   isInfoLabel = false,
   noBoxShadow = false,
-  sectionHeadStyle = false
+  sectionHeadStyle = false,
+  modify
 }) {
   const { t } = useTranslation();
-  const [state, dispatch] = useReducer(reducer, initialTableState);
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
+  
+  const attendanceData = applicationDetails?.applicationDetails[0].additionalDetails?.table?.weekTable?.tableData
+  const [state, dispatch] = useReducer(reducer, attendanceData);
+
   const handleDateRangeChange = useCallback((data) => {
     setLocalSearchParams(() => ({ ...data }));
   }, []);
+
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
@@ -336,7 +341,7 @@ function ApplicationDetailsContent({
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
                     {t(detail?.additionalDetails?.table?.weekTable?.tableHeader)}
                   </CardSectionHeader>
-                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} />}
+                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} modify={modify}/>}
                 </>
               )
             : null}
