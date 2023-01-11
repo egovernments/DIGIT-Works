@@ -33,11 +33,9 @@ public class MusterRollServiceConfiguration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
-    //Idgen format
+    //Idgen name
     @Value("${egov.idgen.musterroll.number.name}")
     private String idgenMusterRollNumberName;
-    @Value("${egov.idgen.musterroll.number.format}")
-    private String idgenMusterRollNumberFormat;
 
     //Workflow config
     @Value("${musterroll.workflow.module.name}")
@@ -58,6 +56,14 @@ public class MusterRollServiceConfiguration {
     private String saveMusterRollTopic;
     @Value("${musterroll.kafka.update.topic}")
     private String updateMusterRollTopic;
+
+    //search config
+    @Value("${musterroll.default.offset}")
+    private Integer musterDefaultOffset;
+    @Value("${musterroll.default.limit}")
+    private Integer musterDefaultLimit;
+    @Value("${musterroll.search.max.limit}")
+    private Integer musterMaxLimit;
 
     //Attendance log service
     @Value("${works.attendance.log.host}")
