@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
-import org.egov.models.AttendeeSearchCriteria;
+import org.egov.web.models.AttendeeSearchCriteria;
 import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
-import org.egov.models.StaffSearchCriteria;
+import org.egov.web.models.StaffSearchCriteria;
 import org.egov.repository.AttendanceLogRepository;
 import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
@@ -184,7 +184,7 @@ public class AttendanceLogServiceValidator {
     private List<IndividualEntry> fetchAllAttendeesEnrolledInARegister(String registerId) {
         AttendeeSearchCriteria searchCriteria = AttendeeSearchCriteria
                 .builder()
-                .registerId(registerId)
+                .registerIds(Collections.singletonList(registerId))
                 .build();
 
         return attendanceAttendeeRepository.getAttendees(searchCriteria);

@@ -17,6 +17,8 @@ import HandleDownloadPdf from "../../components/HandleDownloadPdf";
 import ModifyEstimate from "../../components/ModifyEstimate";
 import Checklist from "./Checklist/index";
 import ChecklistInbox from './ChecklistInbox'
+import ProjectClosure from "./Project Closure/ProjectClosure";
+import ChecklistSampleForm from "./Checklist/SampleFormTest";
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
 
@@ -105,6 +107,12 @@ const BILLSBreadCrumbs = ({ location }) => {
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CHECKLIST_INBOX")}` : t("WORKS_CHECKLIST_INBOX"),
       show: location.pathname.includes("/works/checklistinbox") ? true : false,
       isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/works/projectclosure`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_PROJECT_CLOSURE")}` : t("WORKS_PROJECT_CLOSURE"),
+      show: location.pathname.includes("/works/projectclosure") ? true : false,
+      isBack: fromScreen && true,
     }
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
@@ -170,6 +178,10 @@ const App = ({ path }) => {
               <LOIInbox parentRoute={path} businessService="LOI" filterComponent="LOI_INBOX_FILTER" initialStates={{}} isInbox={true} />
             )}
           />
+          <PrivateRoute
+            path={`${path}/projectclosure`}
+            component={() => <ProjectClosure />}
+          />
 
           <PrivateRoute path={`${path}/search-estimate`} component={() => <SearchEstimate />} />
           <PrivateRoute path={`${path}/search-approved-estimate`} component={() => <SearchApprovedSubEstimate />} />
@@ -180,6 +192,8 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/view-loi`} component={() => <ViewLOI {...{ path }} />} />
           <PrivateRoute path={`${path}/response`} component={() => <Response {...{ path }} />} />
           <PrivateRoute path={`${path}/checklist`} component={() => <Checklist {...{ path }} />} />
+          <PrivateRoute path={`${path}/sampleForm`} component={() => <ChecklistSampleForm {...{ path }} />} />
+          
           <PrivateRoute path={`${path}/download`} component={()=> <HandleDownloadPdf {...{path}}/>}/>
         </div>
       </React.Fragment>

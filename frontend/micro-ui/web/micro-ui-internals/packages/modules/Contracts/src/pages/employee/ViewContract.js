@@ -63,7 +63,13 @@ const ViewContract = (props) => {
             "name":"REJECT"
         } ,
         {
-            "name":"CREATE_BILL"
+            "name":"CREATE_BILL_SHG_WO"
+        },
+        {
+            "name":"CREATE_BILL_DEPT_WO"
+        },
+        {
+            "name":"CREATE_BILL_DEPT_PO"
         }
     ]
 
@@ -74,8 +80,17 @@ const ViewContract = (props) => {
         if(action?.name==="REJECT_LOI"){
             setShowRejectModal(true)
         }
-        if(action?.name==="CREATE_BILL"){
-            redirectToCreateBill()
+         // if(action?.name==="CREATE_BILL"){
+        //     redirectToCreateBill()
+        // }
+        if(action?.name==="CREATE_BILL_SHG_WO"){
+            redirectToCreateBill('Organisation_Work_Order')
+        }
+        if(action?.name==="CREATE_BILL_DEPT_WO"){
+            redirectToCreateBill('Department_Work_Order')
+        }
+        if(action?.name==="CREATE_BILL_DEPT_PO"){
+            redirectToCreateBill('Department_Purchase_Order')
         }
     }
 
@@ -91,8 +106,9 @@ const ViewContract = (props) => {
         setShowRejectModal(false)
     }
 
-    const redirectToCreateBill = () => {
-        history.push(`/${window?.contextPath}/employee/expenditure/create-bill`, { contractType: getContractType() });
+    //Passing Type for testing purpose, ideally will be generated based on applicationDetails
+    const redirectToCreateBill = (contractType) => {
+        history.push(`/${window?.contextPath}/employee/expenditure/create-bill`, { contractType /*getContractType()*/  });
     }
 
     const getContractType = () => {

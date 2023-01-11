@@ -30,6 +30,7 @@ public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntr
             String id = rs.getString("id");
             String registerId = rs.getString("register_id");
             String individuaId = rs.getString("individual_id");
+            String tenantId= rs.getString("tenantid");
             BigDecimal enrollmentDate = rs.getBigDecimal("enrollment_date");
             BigDecimal deenrollmentDate = rs.getBigDecimal("deenrollment_date");
             String createdby = rs.getString("createdby");
@@ -48,6 +49,7 @@ public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntr
                     .id(id)
                     .individualId(individuaId)
                     .registerId(registerId)
+                    .tenantId(tenantId)
                     .additionalDetails(additionalDetails)
                     .enrollmentDate(enrollmentDate)
                     .denrollmentDate(deenrollmentDate)

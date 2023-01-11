@@ -31,6 +31,7 @@ public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>>
         Map<String, StaffPermission> attendanceStaffMap = new LinkedHashMap<>();
         while (rs.next()) {
             String id = rs.getString("id");
+            String tenantId = rs.getString("tenantid");
             String individuaId = rs.getString("individual_id");
             String registerId = rs.getString("register_id");
             BigDecimal enrollmentDate = rs.getBigDecimal("enrollment_date");
@@ -49,6 +50,7 @@ public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>>
             StaffPermission attendanceStaff = StaffPermission.builder()
                     .additionalDetails(additionalDetails)
                     .id(id)
+                    .tenantId(tenantId)
                     .userId(individuaId)
                     .registerId(registerId)
                     .additionalDetails(additionalDetails)

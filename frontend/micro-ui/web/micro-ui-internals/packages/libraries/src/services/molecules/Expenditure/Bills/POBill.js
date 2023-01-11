@@ -16,8 +16,7 @@ const transformViewDataToApplicationDetails = {
         values: [
           { title: "EXP_VENDOR", value: "Sri Ganesha Enterprises" },
           { title: "EXP_VENDOR_ID", value: "VDR/2021-22/09/0001" },
-          { title: "EXP_CREATED_DATE", value: "28-09-2022" },
-          { title: "EXP_BILL_AMOUNT", value: "5500" },
+          { title: "EXP_BILL_AMOUNT", value: "5,500" },
         ],
         additionalDetails : {
           statusWithRadio : {
@@ -81,10 +80,6 @@ const transformViewDataToApplicationDetails = {
         data: {
           nextActions: [
             {
-              action: "CHECK",
-              roles: "EST_CHECKER,EST_CHECKER",
-            },
-            {
               action: "REJECT",
               roles: "EST_CHECKER,EST_CHECKER",
             },
@@ -122,21 +117,6 @@ const transformViewDataToApplicationDetails = {
                   createdTime: 1663568004997,
                   lastModifiedTime: 1663568004997,
                 },
-                uuid: "568b7e7d-d88f-4079-bb02-3dc9a37c56ea",
-                tenantId: "pb.amritsar",
-                currentState: "67d17040-0c49-40a1-b932-a7b5a5266557",
-                action: "CHECK",
-                nextState: "e970bdf2-a968-4be5-b0fe-bc6584e62829",
-                roles: ["EST_CHECKER"],
-                active: true,
-              },
-              {
-                auditDetails: {
-                  createdBy: "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
-                  lastModifiedBy: "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
-                  createdTime: 1663568004997,
-                  lastModifiedTime: 1663568004997,
-                },
                 uuid: "1a6d9f29-893d-49d9-870f-6e007a6820e8",
                 tenantId: "pb.amritsar",
                 currentState: "67d17040-0c49-40a1-b932-a7b5a5266557",
@@ -162,59 +142,6 @@ const transformViewDataToApplicationDetails = {
               },
             ],
             nextActions: [
-              {
-                auditDetails: {
-                  createdBy: "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
-                  lastModifiedBy: "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
-                  createdTime: 1663568004997,
-                  lastModifiedTime: 1663568004997,
-                },
-                uuid: "e970bdf2-a968-4be5-b0fe-bc6584e62829",
-                tenantId: "pb.amritsar",
-                businessServiceId: "52e2c4e0-f12c-4c75-aef3-1535bc8edac0",
-                sla: null,
-                state: "CHECKED",
-                applicationStatus: "ATTENDANCE_CHECKED",
-                docUploadRequired: false,
-                isStartState: false,
-                isTerminateState: false,
-                isStateUpdatable: true,
-                actions: [
-                  {
-                    auditDetails: {
-                      createdBy: "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
-                      lastModifiedBy: "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
-                      createdTime: 1663568004997,
-                      lastModifiedTime: 1663568004997,
-                    },
-                    uuid: "a952bc13-07ef-4384-9214-9c7c3e974ec8",
-                    tenantId: "pb.amritsar",
-                    currentState: "e970bdf2-a968-4be5-b0fe-bc6584e62829",
-                    action: "TECHNICALSANCATION",
-                    nextState: "e41d89f8-0977-4b43-9193-3e17c1257ff6",
-                    roles: ["EST_TECH_SANC"],
-                    active: true,
-                  },
-                  {
-                    auditDetails: {
-                      createdBy: "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
-                      lastModifiedBy: "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
-                      createdTime: 1663568004997,
-                      lastModifiedTime: 1663568004997,
-                    },
-                    uuid: "c788321f-dc5b-4dc8-a6e6-bd78c6a769fb",
-                    tenantId: "pb.amritsar",
-                    currentState: "e970bdf2-a968-4be5-b0fe-bc6584e62829",
-                    action: "REJECT",
-                    nextState: "af66155b-f5ac-447f-947b-f56539c4d671",
-                    roles: ["EST_TECH_SANC"],
-                    active: true,
-                  },
-                ],
-                assigneeRoles: ["EST_TECH_SANC", "EST_TECH_SANC"],
-                action: "CHECK",
-                roles: ["EST_CHECKER"],
-              },
               {
                 auditDetails: {
                   createdBy: "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
@@ -316,16 +243,6 @@ const transformViewDataToApplicationDetails = {
                 isTerminateState: false,
                 isStateUpdatable: null,
                 actions: [
-                  {
-                    auditDetails: null,
-                    uuid: "568b7e7d-d88f-4079-bb02-3dc9a37c56ea",
-                    tenantId: "pb",
-                    currentState: "67d17040-0c49-40a1-b932-a7b5a5266557",
-                    action: "CHECK",
-                    nextState: "e970bdf2-a968-4be5-b0fe-bc6584e62829",
-                    roles: ["EST_CHECKER"],
-                    active: null,
-                  },
                   {
                     auditDetails: null,
                     uuid: "568b7e7d-d88f-4079-bb02-3dc9a37c56ea",
@@ -455,16 +372,6 @@ const transformViewDataToApplicationDetails = {
                 },
               ],
               nextActions: [
-                {
-                  auditDetails: null,
-                  uuid: "568b7e7d-d88f-4079-bb02-3dc9a37c56ea",
-                  tenantId: "pb",
-                  currentState: "67d17040-0c49-40a1-b932-a7b5a5266557",
-                  action: "CHECK",
-                  nextState: "e970bdf2-a968-4be5-b0fe-bc6584e62829",
-                  roles: ["EST_CHECKER"],
-                  active: null,
-                },
                 {
                   auditDetails: null,
                   uuid: "568b7e7d-d88f-4079-bb02-3dc9a37c56ea",

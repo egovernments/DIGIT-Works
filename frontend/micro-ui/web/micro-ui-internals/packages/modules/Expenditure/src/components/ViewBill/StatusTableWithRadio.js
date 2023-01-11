@@ -12,7 +12,7 @@ const StatusRowWithRadio = ({config, className=""}) => {
             <div className="radio-wrap value status-row-radio">
                 {
                     config?.options?.map((option)=>(
-                        <div key={option?.key}>
+                        <div key={option?.key} className="mg-sm">
                             <span className="radio-btn-wrap">
                                 <input
                                     className="radio-btn"

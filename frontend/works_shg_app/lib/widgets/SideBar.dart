@@ -1,13 +1,21 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:works_shg_app/blocs/auth/auth.dart';
+import 'package:works_shg_app/router/app_router.dart';
+import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 
-import '../../blocs/app_config/app_config.dart';
-import '../../models/app_config/app_config_model.dart';
+import '../blocs/app_initilization/app_initilization.dart';
+import '../blocs/localization/app_localization.dart';
+import '../blocs/localization/localization.dart';
 
 class SideBar extends StatelessWidget {
-  const SideBar({super.key});
+  final String? userName;
+  final String? mobileNumber;
+  const SideBar(
+      {super.key, required this.userName, required this.mobileNumber});
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -21,41 +29,51 @@ class SideBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Carlos',
+                userName.toString(),
                 style: theme.textTheme.displayMedium,
               ),
               Text(
-                '+258 6387387',
+                mobileNumber.toString(),
                 style: theme.textTheme.labelSmall,
               ),
             ],
           ),
         ),
         DigitIconTile(
-          title: 'Home',
+          title: AppLocalizations.of(context).translate(i18.common.home),
           icon: Icons.home,
-          onPressed: () {},
+          onPressed: () => context.router.replace(const HomeRoute()),
         ),
         DigitIconTile(
-          title: 'Language',
+          title: AppLocalizations.of(context).translate(i18.common.language),
           icon: Icons.language,
           content: Padding(
             padding: const EdgeInsets.all(16),
-            child: BlocBuilder<ApplicationConfigBloc, ApplicationConfigState>(
+            child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
               builder: (context, state) {
-                List<Languages>? languageList =
-                    state.appConfigDetail?.configuration?.appConfig.languages;
-
-                return state.appConfigDetail?.configuration?.appConfig
-                            .languages !=
-                        null
+                return state.digitRowCardItems != null &&
+                        state.isInitializationCompleted
                     ? DigitRowCard(
-                        onPressed: (data) {},
-                        list: languageList
+                        onPressed: (data) async {
+                          context.read<AppInitializationBloc>().add(
+                              AppInitializationSetupEvent(
+                                  selectedLangIndex:
+                                      data.value == 'en_IN' ? 0 : 1));
+
+                          await AppLocalizations(
+                            Locale(data.value.split('_').first,
+                                data.value.split('_').last),
+                          ).load();
+                          context.read<LocalizationBloc>().add(
+                              OnLoadLocalizationEvent(
+                                  module: 'rainmaker-common',
+                                  tenantId: 'pb',
+                                  locale: data.value));
+                        },
+                        list: state.digitRowCardItems
                             ?.map((e) => DigitRowCardModel.fromJson(e.toJson()))
                             .toList() as List<DigitRowCardModel>,
-                        width: 75,
-                      )
+                        width: 85)
                     : const Text('');
               },
             ),
@@ -63,10 +81,11 @@ class SideBar extends StatelessWidget {
           onPressed: () {},
         ),
         DigitIconTile(
-          title: 'Logout',
-          icon: Icons.logout,
-          onPressed: () {},
-        ),
+            title: AppLocalizations.of(context).translate(i18.common.logOut),
+            icon: Icons.logout,
+            onPressed: () {
+              context.read<AuthBloc>().add(AuthLogoutEvent());
+            }),
       ],
     );
   }

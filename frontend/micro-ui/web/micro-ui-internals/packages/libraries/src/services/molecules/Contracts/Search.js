@@ -295,4 +295,85 @@ export const ContractSearch = {
       workflowDetails: workflowDataDetails,
     };
   },
+  viewContractsClosureScreen: async (t, tenantId, loiNumber, subEstimateNumber) => {
+    // const workflowDetails = await WorksSearch.workflowDataDetails(tenantId, loiNumber);
+
+    // const loiArr = await WorksSearch.searchLOI(tenantId, {letterOfIndentNumber:loiNumber})
+    //  const loi = loiArr?.[0]
+    const contract = sampleContractSearchResponse?.data?.contracts[0];
+    const additionalDetails = contract?.additionalDetails;
+    // const userInfo = Digit.UserService.getUser()?.info || {};
+    // const uuidUser = userInfo?.uuid;
+    // const {user:users} = await Digit.UserService.userSearch(tenantId, { uuid: [loi?.oicId] }, {});
+    // const usersResponse = await HrmsService.search(tenantId,{codes: loi?.oicId }, {});
+    // const user = users?.[0]
+
+    const contractDetails = {
+      title: " ",
+      asSectionHeader: true,
+      values: [
+        { title: "WORKS_CONTRACT_ID", value: contract?.contractId || t("NA") },
+        // { title: "WORKS_DATE_CREATED", value: convertEpochToDate(contract?.auditDetails?.createdTime) || t("NA") },
+        { title: "WORKS_DATE_CREATED", value: contract?.contractDate || t("NA") },
+      ],
+    };
+
+    // const agreementAmount = subEs?.amount + ((parseInt(loi?.negotiatedPercentage) * subEs?.amount) / 100)
+
+    const financialDetails = {
+      title: "WORKS_FINANCIAL_DETAILS",
+      asSectionHeader: true,
+      values: [{ title: "WORKS_CONTRACT_TYPE", value: "Work Order" || t("NA") },
+        { title: "WORKS_AGREEMENT_AMT", value: contract.agreementAmount || t("NA") }],
+      
+    };
+    const agreementDetails = {
+      title: "WORKS_AGGREEMENT_DETAILS",
+      asSectionHeader: true,
+      values: [
+        { title: "WORKS_EXECUTING_AUTH", value: contract?.implementingAuthority || t("NA") },
+        { title: "WORKS_NAME_OF_ORGN", value: contract?.nameOfOrgn || t("NA") },
+        { title: "WORKS_ORGN_ID", value: contract?.orgnId || t("NA") },
+        { title: "WORKS_CONT_PERIOD", value: contract?.preparedBy || t("NA") },
+        { title: "WORKS_OFFICER_INCHARGE_DES", value: contract?.additionalSecurityDeposit || t("NA") },
+        { title: "ATM_ENGG_INCHARGE", value: contract?.bankGuarantee || t("NA") },
+      ],
+    };
+    const files = additionalDetails?.filesAttached;
+
+    const documentDetails = {
+      title: "",
+      asSectionHeader: true,
+      additionalDetails: {
+        documents: [
+          {
+            title: "WORKS_RELEVANT_DOCS",
+            BS: "Works",
+            values: files?.map((document) => {
+              return {
+                title: document?.fileName,
+                documentType: document?.documentType,
+                documentUid: document?.fileStoreId,
+                fileStoreId: document?.fileStoreId,
+              };
+            }),
+          },
+        ],
+      },
+    };
+
+    let details = [contractDetails, financialDetails, agreementDetails, documentDetails];
+    return {
+      applicationDetails: details,
+      // processInstancesDetails: workflowDetails?.ProcessInstances,
+      applicationData: contract,
+      workflowDetails: workflowDataDetails,
+      CollapseConfig:{
+        collapseAll:true,
+        groupHeader:"",
+        headerLabel:"Contract 1- ID(CTR/2022-23/08/0004) - Type(Work Order)- Date(20-09-2022)",
+        headerValue:"₹ 19,08,500"
+      },
+    };
+  }
 };

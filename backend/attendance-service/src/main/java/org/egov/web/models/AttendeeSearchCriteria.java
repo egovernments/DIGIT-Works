@@ -1,8 +1,9 @@
-package org.egov.models;
+package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -12,20 +13,20 @@ import java.util.List;
 @Builder
 public class AttendeeSearchCriteria {
 
-    @JsonProperty("id")
+    @JsonProperty("ids")
     private List<String> ids;
 
-    @JsonProperty("individualId")
-    private String individualId;
+    @JsonProperty("individualIds")
+    private List<String> individualIds;
 
-    @JsonProperty("registerId")
-    private String registerId;
+    @JsonProperty("registerIds")
+    private List<String> registerIds;
 
     @JsonProperty("enrollmentDate")
-    private Double enrollmentDate = null;
+    private BigDecimal enrollmentDate = null;
 
     @JsonProperty("denrollmentDate")
-    private Double denrollmentDate = null;
+    private BigDecimal denrollmentDate = null;
 
     @JsonProperty("limit")
     private Integer limit;

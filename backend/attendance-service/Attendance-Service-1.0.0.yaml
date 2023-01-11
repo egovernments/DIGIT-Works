@@ -63,11 +63,13 @@ paths:
               $ref: '#/components/schemas/RequestInfoWrapper'
       parameters:
       - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/parameters/tenantId'
-      - name: id
-        description: Id of the register
+      - name: ids
+        description: List of register ids
         in: query
         schema:
-          type: string
+          type: array
+          items:
+            type: string
       - name: registerNumber
         description: Custom formatted Register id
         in: query
@@ -428,7 +430,11 @@ components:
           description: The timestamp of the date on which the individual is enrolled onto the register. Defaults to current time. 
         denrollmentDate:
           type: number
-          description: The timestamp of the date on which the individual is denrolled from the register. Defaults to current time. 
+          description: The timestamp of the date on which the individual is denrolled from the register. Defaults to current time.
+        tenantId:
+          type: string
+          example: pb.amritsar
+          description: Tenant Id
 
     AttendeeCreateRequest:
       type: object
@@ -444,6 +450,7 @@ components:
               - registerId
               - individualId
               - enrollmentDate
+              - tenantId
 
     AttendeeCreateResponse:
       type: object
@@ -469,6 +476,7 @@ components:
               - registerId
               - individualId
               - denrollmentDate
+              - tenantId
 
     AttendeeDeleteResponse:
       type: object

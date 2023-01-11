@@ -16,9 +16,11 @@
 @import "./components/table.scss";
 @import "./components/filters.scss";
 @import "./components/attendencetable.scss";
+@import "./pages/works/horizontalNav.scss";
 
 @import "./pages/employee/index.scss";
 @import "./components/uploadcomponents.scss";
+
 
 .display-none {
   display: none;
@@ -727,16 +729,63 @@ input[type="number"] {
   transition: 0.2s ease-in-out;
 }
 
+.employeeCard {
+  &:empty {
+    padding: 0px !important;
+  }
+}
+
 @screen sm {
   .employeeCard {
     .card-section-header {
       @apply mb-md;
     }
+    &:empty {
+      padding: 0px !important;
+    }
   }
 }
 
+.create-new-org {
+  height: 4rem;
+  padding: 1rem;
+  position: relative;
+}
+
+.create-new-org-btn {
+  width: 322px;
+  height: 40px;
+  position: absolute;
+  top: 0;
+  right: 1rem;
+  background: white;
+  border: 1px solid #F47738;
+  padding: 6px;
+  color: #F47738;
+  display: flex;
+  align-items: center;
+  svg {
+    margin: 0 15px;
+  }
+}
 .bills-menu-options {
   cursor: pointer;
   margin: 1rem;
   text-decoration: underline;
+}
+
+.no-data-found {
+  height: 100%;
+  width : 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .error-msg {
+    margin-top: 2rem;
+  }
+}
+
+.status-value-link {
+  color: #F47738;
 }

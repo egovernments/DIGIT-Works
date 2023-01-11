@@ -1,9 +1,10 @@
 package org.egov.web.models;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.egov.web.models.Status;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -12,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class AttendanceRegisterSearchCriteria {
 
     @JsonProperty("tenantId")
@@ -27,10 +29,10 @@ public class AttendanceRegisterSearchCriteria {
     private String name;
 
     @JsonProperty("fromDate")
-    private Long fromDate;
+    private BigDecimal fromDate;
 
     @JsonProperty("toDate")
-    private Double toDate;
+    private BigDecimal toDate;
 
     @JsonProperty("status")
     private Status status;
@@ -38,10 +40,28 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("attendeeId")
     private String attendeeId;
 
+    @JsonProperty("staffId")
+    private String staffId;
+
     @JsonProperty("limit")
     private Integer limit;
 
     @JsonProperty("offset")
     private Integer offset;
+
+    @JsonProperty("sortBy")
+    private SortBy sortBy;
+
+    @JsonProperty("sortOrder")
+    private SortOrder sortOrder;
+
+    public enum SortOrder {
+        ASC,
+        DESC
+    }
+
+    public enum SortBy {
+        lastModifiedTime
+    }
 
 }

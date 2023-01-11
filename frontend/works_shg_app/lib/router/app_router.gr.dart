@@ -36,9 +36,11 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     LoginRoute.name: (routeData) {
+      final args = routeData.argsAs<LoginRouteArgs>(
+          orElse: () => const LoginRouteArgs());
       return MaterialPageX<dynamic>(
         routeData: routeData,
-        child: const LoginPage(),
+        child: LoginPage(key: args.key),
       );
     },
     HomeRoute.name: (routeData) {
@@ -51,6 +53,12 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: const AttendanceInboxPage(),
+      );
+    },
+    WorkOrderRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const WorkOrderPage(),
       );
     },
     ViewMusterRollsRoute.name: (routeData) {
@@ -111,6 +119,11 @@ class _$AppRouter extends RootStackRouter {
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
+              WorkOrderRoute.name,
+              path: 'work-orders',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
               ViewMusterRollsRoute.name,
               path: 'muster-rolls',
               parent: AuthenticatedRouteWrapper.name,
@@ -165,14 +178,26 @@ class LanguageSelectionRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [LoginPage]
-class LoginRoute extends PageRouteInfo<void> {
-  const LoginRoute()
+class LoginRoute extends PageRouteInfo<LoginRouteArgs> {
+  LoginRoute({Key? key})
       : super(
           LoginRoute.name,
           path: 'login',
+          args: LoginRouteArgs(key: key),
         );
 
   static const String name = 'LoginRoute';
+}
+
+class LoginRouteArgs {
+  const LoginRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'LoginRouteArgs{key: $key}';
+  }
 }
 
 /// generated route for
@@ -197,6 +222,18 @@ class AttendanceInboxRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'AttendanceInboxRoute';
+}
+
+/// generated route for
+/// [WorkOrderPage]
+class WorkOrderRoute extends PageRouteInfo<void> {
+  const WorkOrderRoute()
+      : super(
+          WorkOrderRoute.name,
+          path: 'work-orders',
+        );
+
+  static const String name = 'WorkOrderRoute';
 }
 
 /// generated route for

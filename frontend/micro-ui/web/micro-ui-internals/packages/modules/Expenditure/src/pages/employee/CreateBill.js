@@ -19,7 +19,6 @@ const CreateBill = () => {
     setbillCreated(false)
   }
 
-
   let uiTobeRendered;
   switch(contractType) {
     case 'Organisation_Work_Order':
@@ -27,13 +26,13 @@ const CreateBill = () => {
         <Card>
           <MustorRollDetails/>
           <BreakLine />
-          <AddVendorBill noBreakLine setbillCreated={setbillCreated}/>
+          <AddVendorBill noBreakLine setbillCreated={setbillCreated} contractType={contractType}/>
           <BreakLine />
           <CommissionDetails/>
           <BreakLine/>
           <div style={{margin: "32px 16px", display: "flex", justifyContent:"space-between"}}>
             <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_BILL_AMOUNT")}</CardSectionHeader>
-            <CardSectionHeader style={{marginBottom: 0}}>{"₹ 3,60,000"}</CardSectionHeader>
+            <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${Digit.Utils.dss.formatter(360000, 'number')}`}</CardSectionHeader>
           </div>
         </Card>
       )
@@ -48,7 +47,7 @@ const CreateBill = () => {
           <BreakLine/>
           <div style={{margin: "32px 16px", display: "flex", justifyContent:"space-between"}}>
             <CardSectionHeader style={{marginBottom: 0}}>{t("EXP_TOTAL_BILL_AMOUNT")}</CardSectionHeader>
-            <CardSectionHeader style={{marginBottom: 0}}>{"₹ 3,60,000"}</CardSectionHeader>
+            <CardSectionHeader style={{marginBottom: 0}}>{`₹ ${Digit.Utils.dss.formatter(360000, 'number')}`}</CardSectionHeader>
           </div>
           <ActionBar>
             <SubmitBar onSubmit={handleProceed} label={t("CS_COMMON_PROCEED")} />
@@ -60,7 +59,7 @@ const CreateBill = () => {
     case 'Department_Purchase_Order':
       uiTobeRendered = (
         <Card>
-          <AddVendorBill setbillCreated={setbillCreated}/>
+          <AddVendorBill setbillCreated={setbillCreated} contractType={contractType}/>
         </Card>
       )
       break
