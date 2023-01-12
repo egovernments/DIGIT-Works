@@ -61,6 +61,7 @@ public class ProjectRepository {
         return result;
     }
 
+    /* Fetch Projects based on search criteria */
     private List<Project> getProjectsBasedOnSearchCriteria(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted,  List<Object> preparedStmtList) {
         String query = queryBuilder.getProjectSearchQuery(project, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList);
         List<Project> projects = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
@@ -68,6 +69,7 @@ public class ProjectRepository {
         return projects;
     }
 
+    /* Fetch targets based on Project Ids */
     private List<Target> getTargetsBasedOnProjectIds(List<String> projectIds, List<Object> preparedStmtListTarget) {
         String queryTarget = targetQueryBuilder.getTargetSearchQuery(projectIds, preparedStmtListTarget);
         List<Target> targets = jdbcTemplate.query(queryTarget, targetRowMapper, preparedStmtListTarget.toArray());
@@ -75,6 +77,7 @@ public class ProjectRepository {
         return targets;
     }
 
+    /* Fetch documents based on Project Ids */
     private List<Document> getDocumentsBasedOnProjectIds(List<String> projectIds, List<Object> preparedStmtListDocument) {
         String queryDocument = documentQueryBuilder.getDocumentSearchQuery(projectIds, preparedStmtListDocument);
         List<Document> documents = jdbcTemplate.query(queryDocument, documentRowMapper, preparedStmtListDocument.toArray());

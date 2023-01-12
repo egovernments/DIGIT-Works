@@ -48,7 +48,7 @@ public class ProjectEnrichmentTest {
     private ProjectConfiguration config;
 
     @Test
-    public void enrichCreateProjectTest(){
+    public void enrichProjectOnCreateTest(){
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addProjectWithoutIdAndAuditDetails().build();
 
         when(config.getIdgenProjectNumberName()).thenReturn("project.number");

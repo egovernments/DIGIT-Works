@@ -135,6 +135,7 @@ public class ProjectAddressQueryBuilder {
         }
     }
 
+    /* Wrap constructed SQL query with where criteria in pagination query */
     private String addPaginationWrapper(String query,List<Object> preparedStmtList, Integer limit, Integer offset){
         String finalQuery = paginationWrapper.replace("{}",query);
 

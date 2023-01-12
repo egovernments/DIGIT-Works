@@ -32,6 +32,7 @@ public class ProjectEnrichment {
     @Autowired
     private ProjectConfiguration config;
 
+    /* Enrich Project on Create Request */
     public void enrichProjectOnCreate(ProjectRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<Project> projects = request.getProjects();
@@ -63,6 +64,7 @@ public class ProjectEnrichment {
 
     }
 
+    /* Enrich Project on Update Request */
     public void enrichProjectOnUpdate(ProjectRequest request, List<Project> projectsFromDB) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<Project> projectsFromRequest = request.getProjects();
@@ -152,6 +154,7 @@ public class ProjectEnrichment {
         }
     }
 
+    /* Get Project Number list from IdGen service */
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey,
                                    String idformat, int count) {
         List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses();

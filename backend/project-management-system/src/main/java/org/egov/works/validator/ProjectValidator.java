@@ -136,6 +136,7 @@ public class ProjectValidator {
         }
     }
 
+    /* Validates Project request body for create and update apis */
     private void validateProjectRequest(List<Project> projects, Map<String, String> errorMap) {
         if (projects == null || projects.size() == 0) {
             log.error("Project list is empty. Projects is mandatory");
@@ -174,6 +175,7 @@ public class ProjectValidator {
         }
     }
 
+    /* Validates Search Project Request body */
     private void validateSearchProjectRequest(List<Project> projects, Map<String, String> errorMap) {
         if (projects == null || projects.size() == 0) {
             log.error("Project list is empty. Projects is mandatory");
@@ -204,6 +206,7 @@ public class ProjectValidator {
         }
     }
 
+    /* Validates Request Info and User Info */
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
         if (requestInfo == null) {
             log.error("Request info is mandatory");
@@ -219,6 +222,7 @@ public class ProjectValidator {
         }
     }
 
+    /* Validates the request data against MDMS data */
     private void validateMDMSData(List<Project> projects, Object mdmsData, Map<String, String> errorMap) {
         final String jsonPathForWorksTypeOfProjectList = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_PROJECTTYPE + ".*.code";
         String jsonPathForWorksSubTypeOfProject = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_PROJECTTYPE + ".[?(@.active==true && @.code == '{code}')].projectSubType";
