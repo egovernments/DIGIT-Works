@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Table } from "@egovernments/digit-ui-react-components";
 
-const WeekAttendence = ({ state, dispatch, modify}) => {
+const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
   const { t } = useTranslation();
   const [editable, setEditable] = useState(false)
   const tableRow = state ? Object.values(state) : []
@@ -116,7 +116,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_MON")}</p>
-            <p className="date-attendence">21 Oct</p>
+            <p className="date-attendence">{weekDates.Mon}</p>
           </div>
         ),
         accessor: "mon",
@@ -131,7 +131,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_TUE")}</p>
-            <p className="date-attendence">22 Oct</p>
+            <p className="date-attendence">{weekDates.Tue}</p>
           </div>
         ),
         accessor: "tue",
@@ -146,7 +146,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_WED")}</p>
-            <p className="date-attendence">23 Oct</p>
+            <p className="date-attendence">{weekDates.Wed}</p>
           </div>
         ),
         accessor: "wed",
@@ -161,7 +161,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_THR")}</p>
-            <p className="date-attendence">24 Oct</p>
+            <p className="date-attendence">{weekDates.Thu}</p>
           </div>
         ),
         accessor: "thu",
@@ -176,7 +176,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_FRI")}</p>
-            <p className="date-attendence">25 Oct</p>
+            <p className="date-attendence">{weekDates.Fri}</p>
           </div>
         ),
         accessor: "fri",
@@ -191,7 +191,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_SAT")}</p>
-            <p className="date-attendence">26 Oct</p>
+            <p className="date-attendence">{weekDates.Sat}</p>
           </div>
         ),
         accessor: "sat",
@@ -206,7 +206,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_SUN")}</p>
-            <p className="date-attendence">27 Oct</p>
+            <p className="date-attendence">{weekDates.Sun}</p>
           </div>
         ),
         accessor: "sun",
@@ -257,7 +257,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_MON")}</p>
-            <p className="date-attendence">21 Oct</p>
+            <p className="date-attendence">{weekDates.Mon}</p>
           </div>
         ),
         accessor: "mon",
@@ -272,7 +272,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_TUE")}</p>
-            <p className="date-attendence">22 Oct</p>
+            <p className="date-attendence">{weekDates.Tue}</p>
           </div>
         ),
         accessor: "tue",
@@ -287,7 +287,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_WED")}</p>
-            <p className="date-attendence">23 Oct</p>
+            <p className="date-attendence">{weekDates.Wed}</p>
           </div>
         ),
         accessor: "wed",
@@ -302,7 +302,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_THR")}</p>
-            <p className="date-attendence">24 Oct</p>
+            <p className="date-attendence">{weekDates.Thu}</p>
           </div>
         ),
         accessor: "thu",
@@ -317,7 +317,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_FRI")}</p>
-            <p className="date-attendence">25 Oct</p>
+            <p className="date-attendence">{weekDates.Fri}</p>
           </div>
         ),
         accessor: "fri",
@@ -332,7 +332,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_SAT")}</p>
-            <p className="date-attendence">26 Oct</p>
+            <p className="date-attendence">{weekDates.Sat}</p>
           </div>
         ),
         accessor: "sat",
@@ -347,7 +347,7 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_SUN")}</p>
-            <p className="date-attendence">27 Oct</p>
+            <p className="date-attendence">{weekDates.Sun}</p>
           </div>
         ),
         accessor: "sun",
@@ -414,12 +414,6 @@ const WeekAttendence = ({ state, dispatch, modify}) => {
     ];
   }, [state]);
 
-  /*
-  Two set of columns
-  initial render always lesser cols
-  click on modify, show all cols, when user updates anything, change button to 'Save'
-  on click of 'Save' call update api
-  */
   return (
     <React.Fragment>
       <div style={{ padding: "0px", overflowX: "scroll" }} className="card week-table-card-wrapper">

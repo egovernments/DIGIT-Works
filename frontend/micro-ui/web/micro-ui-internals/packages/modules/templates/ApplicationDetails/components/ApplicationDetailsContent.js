@@ -341,7 +341,7 @@ function ApplicationDetailsContent({
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
                     {t(detail?.additionalDetails?.table?.weekTable?.tableHeader)}
                   </CardSectionHeader>
-                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} modify={modify}/>}
+                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} modify={modify} weekDates={detail?.additionalDetails?.table.weekTable.weekDates}/>}
                 </>
               )
             : null}

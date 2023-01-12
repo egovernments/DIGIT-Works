@@ -6,6 +6,17 @@ const attendanceTypes = {
   0.5 : 'half'
  }
 
+const getWeekDates = (data) => {
+  let weekDates = {}
+  if(data?.individualEntries.length > 0) {
+    const attendanceEntry = data?.individualEntries[0]?.attendanceEntries
+    attendanceEntry.forEach(item => {
+      weekDates[`${Digit.DateUtils.getDayfromTimeStamp(item?.time)}`] = Digit.DateUtils.ConvertTimestampToDate(item?.time, 'MMM d')
+    })
+  }
+  return weekDates
+}
+
 const getWeekAttendance = (data) => {
   let weekAttendance = {}
   if(data.length > 0) {
@@ -64,6 +75,7 @@ const getAttendanceTableData = (data) => {
 const transformViewDataToApplicationDetails = (t, data, workflowDetails) => {
   const musterRoll = data.musterRolls[0]
   const attendanceTableData = getAttendanceTableData(musterRoll)
+  const weekDates = getWeekDates(musterRoll)
   const registrationDetails = {
     title: "ATM_REGISTRATION_DETAILS",
     asSectionHeader: true,
@@ -77,7 +89,8 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails) => {
         weekTable: {
           tableHeader: "ATM_ENROLLED_USERS",
           renderTable: true,
-          tableData: attendanceTableData
+          tableData: attendanceTableData,
+          weekDates: weekDates
         },
       },
       dateRange: {
