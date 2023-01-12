@@ -93,6 +93,7 @@ export const FormComposer = (props) => {
   }, []);
 
   function onSubmit(data) {
+    console.log(errors);
     props.onSubmit(data);
   }
 
@@ -101,12 +102,14 @@ export const FormComposer = (props) => {
   }
 
   useEffect(() => {
-    console.log(errors);
     props.onFormValueChange && props.onFormValueChange(setValue, formData, formState, reset);
   }, [formData]);
 
   const fieldSelector = (type, populators, isMandatory, disable = false, component, config, sectionFormCategory) => {
     let disableFormValidation = false;
+    // disable form validation if section category does not matches with the current category
+    // this will avoid validation for the other categories other than the current category.
+    // sectionFormCategory comes as part of section config and currentFormCategory is a state managed by the FormComposer consumer.
     if (sectionFormCategory && props?.currentFormCategory) {
       disableFormValidation = sectionFormCategory !== props?.currentFormCategory ? true : false;
     }
@@ -118,7 +121,6 @@ export const FormComposer = (props) => {
       case "password":
       case "time":
         // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));
-        console.log( populators.name, sectionFormCategory, props?.currentFormCategory, disableFormValidation);
         return (
           <div className="field-container">
             {populators?.componentInFront ? (

@@ -1,8 +1,7 @@
 import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-// import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
-import { testConfig } from "../../../configs/testConfig";
+import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
@@ -102,8 +101,7 @@ const CreateProject = () => {
           setSessionFormData({ ...sessionFormData, ...formData });
         }
     }
-    // const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities);
-    const createProjectSectionFormConfig = testConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities);
+    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities);
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
