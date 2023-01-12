@@ -38,6 +38,7 @@ import Utils from "./utils";
 import { subFormRegistry } from "./subFormRegistry";
 import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
+import AttendanceService from "./services/elements/Attendance";
 
 const setupLibraries = (Library, props) => {
   window.Digit = window.Digit || {};
@@ -83,6 +84,7 @@ const initLibraries = () => {
 
   setupLibraries("AccessControlService", AccessControlService);
   setupLibraries("BillServices", BillServices);
+  setupLibraries("AttendanceService", AttendanceService);
 
   return new Promise((resolve) => {
     initI18n(resolve);

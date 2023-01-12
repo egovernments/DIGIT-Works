@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:works_shg_app/blocs/attendance/attendance_user_search.dart';
+import 'package:works_shg_app/blocs/attendance/search_projects.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
 import 'package:works_shg_app/router/app_navigator_observer.dart';
 import 'package:works_shg_app/router/app_router.dart';
@@ -17,7 +19,8 @@ import 'Env/app_config.dart';
 import 'blocs/app_bloc_observer.dart';
 import 'blocs/app_config/app_config.dart';
 import 'blocs/app_initilization/app_initilization.dart';
-import 'blocs/attendance/create_attendence_register.dart';
+import 'blocs/attendance/create_attendance_register.dart';
+import 'blocs/attendance/create_attendee.dart';
 import 'blocs/auth/auth.dart';
 import 'blocs/localization/app_localization.dart';
 import 'blocs/localization/localization.dart';
@@ -73,7 +76,7 @@ class MainApplication extends StatelessWidget {
           lazy: false,
         ),
         BlocProvider(create: (context) => AuthBloc(const AuthState())),
-        BlocProvider(create: (context) => AttendenceRegisterCreateBloc()),
+        BlocProvider(create: (context) => AttendanceRegisterCreateBloc()),
         BlocProvider(
           create: (_) => ApplicationConfigBloc(const ApplicationConfigState())
             ..add(const ApplicationConfigEvent.onfetchConfig()),
@@ -85,6 +88,14 @@ class MainApplication extends StatelessWidget {
           create: (_) =>
               MusterRollSearchBloc()..add(const SearchMusterRollEvent()),
         ),
+        BlocProvider(
+          create: (_) => AttendanceProjectsSearchBloc()
+            ..add(const SearchAttendanceProjectsEvent()),
+        ),
+        BlocProvider(
+            create: (context) =>
+                AttendanceUserSearchBloc(const AttendanceUserSearchState())),
+        BlocProvider(create: (context) => AttendeeCreateBloc()),
       ],
       child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
           builder: (context, appInitState) {
@@ -100,13 +111,7 @@ class MainApplication extends StatelessWidget {
                               const LocalizationState(),
                               LocalizationRepository(client.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
-                                module:
-                                    // appInitState
-                                    //         .stateInfoListModel?.localizationModules
-                                    //         ?.map((e) => e.value.toString())
-                                    //         .join(',')
-                                    //         .toString() ??
-                                    'rainmaker-common',
+                                module: 'rainmaker-common,rainmaker-works',
                                 tenantId: appInitState.initMdmsModel!.tenant!
                                     .tenantListModel!.first.code
                                     .toString(),

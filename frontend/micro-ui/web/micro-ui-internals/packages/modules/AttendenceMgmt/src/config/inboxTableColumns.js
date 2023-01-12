@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const GetCell = (value) => <span className="cell-text">{value}</span>;
 
-export const inboxTableColumns = (mustorRollIdLabel, workNameLabel, attendanceWeekLabel, iaipLabel, noOfIndLabel, slaLabel) => [
+export const inboxTableColumns = (tenantId, mustorRollIdLabel, workNameLabel, attendanceWeekLabel, iaipLabel, noOfIndLabel, slaLabel) => [
     {
       Header: mustorRollIdLabel,
       disableSortBy: true,
@@ -13,7 +13,7 @@ export const inboxTableColumns = (mustorRollIdLabel, workNameLabel, attendanceWe
           <div> {
             row.original.mustorRollId ? (
                 <span className="link">
-                <Link to={`viewAttendance?mustorRollId=${row.original.mustorRollId}`}>{row.original.mustorRollId || "NA"}</Link>
+                <Link to={`view-attendance?tenantId=${tenantId}&musterRollNumber=${row.original.mustorRollId}`}>{row.original.mustorRollId || "NA"}</Link>
                 </span>
             ) : (<span>{t("NA")}</span>) }
           </div>

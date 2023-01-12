@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class ButtonLink extends StatelessWidget {
   final String label;
-  final Function()? widgetFunction;
+  final void Function()? widgetFunction;
   const ButtonLink(this.label, this.widgetFunction, {super.key});
 
   @override

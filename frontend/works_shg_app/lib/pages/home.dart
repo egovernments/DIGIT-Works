@@ -1,11 +1,12 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:works_shg_app/blocs/localization/localization.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 
-import '../blocs/auth/auth.dart';
+import '../blocs/attendance/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 
 class HomePage extends StatelessWidget {
@@ -13,9 +14,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      return state.isAuthenticated
+    return Scaffold(body: BlocBuilder<LocalizationBloc, LocalizationState>(
+        builder: (context, state) {
+      return state.isLocalizationLoadCompleted
           ? ScrollableContent(
               children: [
                 DigitCard(
@@ -53,9 +54,13 @@ class HomePage extends StatelessWidget {
                           children: [
                             ButtonLink(
                                 AppLocalizations.of(context)
-                                    .translate(i18.home.manageWageSeekers),
-                                () => context.router
-                                    .push(const AttendanceInboxRoute())),
+                                    .translate(i18.home.manageWageSeekers), () {
+                              context.read<AttendanceProjectsSearchBloc>().add(
+                                    const SearchAttendanceProjectsEvent(),
+                                  );
+                              context.router
+                                  .push(const ManageAttendanceRegisterRoute());
+                            }),
                             ButtonLink(
                                 AppLocalizations.of(context)
                                     .translate(i18.home.registerIndividual),
@@ -65,6 +70,14 @@ class HomePage extends StatelessWidget {
                                     .translate(i18.home.musterRoll),
                                 () => context.router
                                     .push(const ViewMusterRollsRoute())),
+                            ButtonLink(
+                                AppLocalizations.of(context)
+                                    .translate(i18.home.trackAttendance), () {
+                              context.read<AttendanceProjectsSearchBloc>().add(
+                                    const SearchAttendanceProjectsEvent(),
+                                  );
+                              context.router.push(const AttendanceInboxRoute());
+                            })
                           ],
                         )),
                   ),

@@ -34,11 +34,6 @@ const AttendenceMgmtCard = () => {
                 label: t("WORKS_INBOX"),
                 link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
                 roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
-            },
-            {
-                label: t("ACTION_TEST_VIEW_ATTENDENCE"),
-                link: `/${window?.contextPath}/employee/attendencemgmt/view-attendance`,
-                roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
             }
         ],
     };

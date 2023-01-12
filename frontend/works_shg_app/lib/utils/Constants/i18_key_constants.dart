@@ -4,7 +4,7 @@ Login login = const Login();
 Common common = const Common();
 Home home = const Home();
 WorkOrder workOrder = const WorkOrder();
-
+AttendanceMgmt attendanceMgmt = const AttendanceMgmt();
 
 class Login {
   const Login();
@@ -40,9 +40,9 @@ class Common {
   String get accept => 'CORE_BUTTON_ACCEPT';
   String get confirm => 'CORE_BUTTON_CONFIRM';
   String get back => 'CORE_BUTTON_BACK';
-
+  String get sendForApproval => 'CORE_BUTTON_BACK';
+  String get saveAsDraft => 'SAVE_AS_DRAFT';
   String get warning => 'CORE_MSG_WARNING';
-
 }
 
 class Home {
@@ -53,9 +53,17 @@ class Home {
   String get worksMgmt => 'WORKS_MGMT';
   String get attendanceMgmt => 'ACTION_TEST_ATTENDENCEMGMT';
   String get musterRoll => 'ACTION_TEST_MUSTER_ROLL';
+  String get trackAttendance => 'TRACK_ATTENDENCE';
 }
 
 class WorkOrder {
   const WorkOrder();
   String get warningMsg => 'WRNG_MSG_WORKORDER';
+  String get projects => 'WORKS_PROJECT';
+}
+
+class AttendanceMgmt {
+  const AttendanceMgmt();
+  String get enrollWageSeeker => 'WORKS_ENROLL_WAGE_SEEKER';
+  String get updateAttendance => 'UPDATE_ATTENDANCE';
 }
