@@ -200,6 +200,15 @@ const Urls = {
     },
   },
 
+  attendencemgmt: {
+    mustorRoll: {
+      estimate: "/muster-roll/v1/_estimate",
+      create: "/muster-roll/v1/_create",
+      update: "/muster-roll/v1/_update",
+      search: "/muster-roll/v1/_search"
+    }
+  },
+
   noc: {
     nocSearch: "/noc-services/v1/noc/_search",
   },

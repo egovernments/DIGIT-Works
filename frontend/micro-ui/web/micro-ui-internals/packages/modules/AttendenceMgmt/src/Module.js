@@ -10,8 +10,7 @@ import ViewProjects from "./components/ViewProjectsInbox.js/ViewProjects";
 import Inbox from "./pages/employee/Inbox";
 import AttendenceInboxFilter from "./components/inbox/InboxFilter";
 import AttendenceInboxSearch from "./components/inbox/InboxSearch";
-import ViewAttendance from "./pages/employee/viewAttendance/viewAttendance";
-
+import ViewAttendance from "./pages/employee/viewAttendance/ViewAttendance";
 
 export const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["AttendenceMgmt"];
@@ -23,14 +22,13 @@ export const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
     language,
   });
 
-
-    if (isLoading) {
-        return <Loader />;
-    }
-    if (userType === "employee") {
-        return <EmployeeApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} />;
-    }
-    return <CitizenApp path={path} stateCode={stateCode} />;
+  if (isLoading) {
+      return <Loader />;
+  }
+  if (userType === "employee") {
+      return <EmployeeApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} />;
+  }
+  return <CitizenApp path={path} stateCode={stateCode} />;
 };
 
 const componentsToRegister = {
@@ -42,7 +40,6 @@ const componentsToRegister = {
     ViewProjects,
     AttendenceInboxFilter,
     AttendenceInboxSearch
-
 };
 
 export const initAttendenceMgmtComponents = () => {

@@ -49,6 +49,7 @@ import { OBPSService } from "./services/elements/OBPS";
 import { NOCService } from "./services/elements/NOC";
 import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
+import AttendanceService from "./services/elements/Attendance";
 
 const setupLibraries = (Library, props) => {
   window.Digit = window.Digit || {};
@@ -105,6 +106,7 @@ const initLibraries = () => {
   setupLibraries("NOCService", NOCService);
   setupLibraries("AccessControlService", AccessControlService);
   setupLibraries("BillServices", BillServices);
+  setupLibraries("AttendanceService", AttendanceService);
 
   return new Promise((resolve) => {
     initI18n(resolve);
