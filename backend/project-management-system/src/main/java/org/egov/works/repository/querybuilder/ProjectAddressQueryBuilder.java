@@ -5,7 +5,6 @@ import org.egov.works.web.models.Project;
 import org.egov.works.web.models.ProjectRequest;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -29,9 +28,9 @@ public class ProjectAddressQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
+    /* Constructs project search query based on conditions */
     public String getProjectSearchQuery(ProjectRequest projectRequest, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStmtList) {
-        StringBuilder queryBuilder = null;
-        queryBuilder = new StringBuilder(FETCH_PROJECT_ADDRESS_QUERY);
+        StringBuilder queryBuilder = new StringBuilder(FETCH_PROJECT_ADDRESS_QUERY);
         Integer count = projectRequest.getProjects().size();
 
         for (Project project: projectRequest.getProjects()) {
@@ -116,10 +115,8 @@ public class ProjectAddressQueryBuilder {
     }
 
     private void addIsDeletedCondition(List<Object> preparedStmtList, StringBuilder queryBuilder, Boolean includeDeleted) {
-        addClauseIfRequired(preparedStmtList, queryBuilder);
-        if (includeDeleted) {
-            queryBuilder.append(" (prj.is_deleted = true OR prj.is_deleted = false) ");
-        } else {
+        if (!includeDeleted) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" prj.is_deleted = false ");
         }
     }

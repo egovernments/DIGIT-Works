@@ -13,6 +13,7 @@ public class DocumentQueryBuilder {
             "d.created_by as document_createdBy, d.created_time as document_createdTime, d.last_modified_by as document_lastModifiedBy, d.last_modified_time as document_lastModifiedTime " +
             " from eg_pms_document d ";
 
+    /* Constructs document search query based on project Ids */
     public String getDocumentSearchQuery(List<String> projectIds, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = null;
         queryBuilder = new StringBuilder(FETCH_DOCUMENT_QUERY);

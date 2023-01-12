@@ -42,33 +42,23 @@ public class ProjectEnrichment {
         List<String> projectNumbers = getIdList(requestInfo, rootTenantId
                 , config.getIdgenProjectNumberName(), config.getIdgenProjectNumberFormat(), projects.size());
 
-        int i = 0;
-        for (Project project: projects) {
-
-            //Get Audit details from requestInfo
-            AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
-            project.setAuditDetails(auditDetails);
-            project.setId(UUID.randomUUID().toString());
+        for (int i = 0; i < projects.size(); i++) {
 
             if (projectNumbers != null && !projectNumbers.isEmpty()) {
                 projects.get(i).setProjectNumber(projectNumbers.get(i));
-                i++;
             }
 
-            for (Target target: project.getTargets()) {
-                target.setId(UUID.randomUUID().toString());
-                target.setAuditDetails(auditDetails);
-            }
+            //Enrich Project id and audit details
+            enrichProjectRequest(projects.get(i), null, requestInfo);
 
-            for (Document document: project.getDocuments()) {
-                document.setId(UUID.randomUUID().toString());
-                document.setAuditDetails(auditDetails);
-            }
+            //Enrich Address id and audit details
+            enrichProjectAddress(projects.get(i), null, requestInfo);
 
-            if (project.getAddress() != null) {
-                project.getAddress().setAuditDetails(auditDetails);
-                project.getAddress().setId(UUID.randomUUID().toString());
-            }
+            //Enrich target id and audit details
+            enrichProjectTarget(projects.get(i), null, requestInfo);
+
+            //Enrich document id and audit details
+            enrichProjectDocument(projects.get(i), null, requestInfo);
         }
 
     }
@@ -76,54 +66,90 @@ public class ProjectEnrichment {
     public void enrichProjectOnUpdate(ProjectRequest request, List<Project> projectsFromDB) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<Project> projectsFromRequest = request.getProjects();
-        //Get Audit details from requestInfo for new data
-        AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
 
         for (Project project : projectsFromRequest) {
             String projectId = String.valueOf(project.getId());
-
             Project projectFromDB = projectsFromDB.stream().filter(p -> projectId.equals(String.valueOf(p.getId()))).findFirst().orElse(null);
 
-            //Updating lastModifiedTime and lastModifiedBy
-            project.setAuditDetails(projectFromDB.getAuditDetails());
+            //Updating lastModifiedTime and lastModifiedBy for Project
+            enrichProjectRequest(project, projectFromDB, requestInfo);
+
+            //Add address if id is empty or update lastModifiedTime and lastModifiedBy if id exists
+            enrichProjectAddress(project, projectFromDB, requestInfo);
+
+            //Add new target if id is empty or update lastModifiedTime and lastModifiedBy if id exists
+            enrichProjectTarget(project, projectFromDB, requestInfo);
+
+            //Add new document if id is empty or update lastModifiedTime and lastModifiedBy if id exists
+            enrichProjectDocument(project, projectFromDB, requestInfo);
+        }
+
+    }
+
+    /* Enrich Project with id and audit details if project id is empty or if project already present, update last modified by and last modified time */
+    private void enrichProjectRequest(Project projectRequest, Project projectFromDB, RequestInfo requestInfo) {
+        if (StringUtils.isBlank(projectRequest.getId())) {
+            projectRequest.setId(UUID.randomUUID().toString());
+            AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
+            projectRequest.setAuditDetails(auditDetails);
+        } else if (projectFromDB != null) {
+            projectRequest.setAuditDetails(projectFromDB.getAuditDetails());
             AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), projectFromDB.getAuditDetails(), false);
-            project.setAuditDetails(auditDetails);
+            projectRequest.setAuditDetails(auditDetails);
+        }
+    }
 
-            //Add address if address is not present for existing project and address id is empty
-            if (project.getAddress() != null && StringUtils.isBlank(project.getAddress().getId())) {
-                project.getAddress().setId(UUID.randomUUID().toString());
-                project.setAuditDetails(auditDetailsForAdd);
+    /* Enrich Address with id and audit details if address id is empty or if address already present, update last modified by and last modified time */
+    private void enrichProjectAddress(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
+        if (projectFromRequest.getAddress() != null) {
+            if (StringUtils.isBlank(projectFromRequest.getAddress().getId())) {
+                projectFromRequest.getAddress().setId(UUID.randomUUID().toString());
+                AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
+                projectFromRequest.getAddress().setAuditDetails(auditDetails);
+            } else if (projectFromDB != null) {
+                projectFromRequest.getAddress().setAuditDetails(projectFromDB.getAddress().getAuditDetails());
+                AuditDetails auditDetailsAddress = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), projectFromDB.getAddress().getAuditDetails(), false);
+                projectFromRequest.getAddress().setAuditDetails(auditDetailsAddress);
             }
+        }
+    }
 
-            //Add new target to backend if id is empty or update lastModifiedTime and lastModifiedBy if id exists
-            for (Target target: project.getTargets()) {
+    /* Enrich Target with id and audit details if target id is empty or if target already present, update last modified by and last modified time */
+    private void enrichProjectTarget(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
+        if (projectFromRequest.getTargets() != null) {
+            for (Target target: projectFromRequest.getTargets()) {
                 if (StringUtils.isBlank(target.getId())) {
                     target.setId(UUID.randomUUID().toString());
+                    AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
                     target.setAuditDetails(auditDetailsForAdd);
-                } else {
+                } else if (projectFromDB != null) {
                     String targetId = String.valueOf(target.getId());
-                    Target targetFromDB = project.getTargets().stream().filter(t -> targetId.equals(String.valueOf(t.getId()))).findFirst().orElse(null);
+                    Target targetFromDB = projectFromDB.getTargets().stream().filter(t -> targetId.equals(String.valueOf(t.getId()))).findFirst().orElse(null);
                     target.setAuditDetails(targetFromDB.getAuditDetails());
                     AuditDetails auditDetailsTarget = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), targetFromDB.getAuditDetails(), false);
                     target.setAuditDetails(auditDetailsTarget);
                 }
             }
+        }
+    }
 
-            //Add new document to backend if id is empty or update lastModifiedTime and lastModifiedBy if id exists
-            for (Document document: project.getDocuments()) {
+    /* Enrich Document with id and audit details if document id is empty or if document already present, update last modified by and last modified time */
+    private void enrichProjectDocument(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
+        if (projectFromRequest.getDocuments() != null) {
+            for (Document document: projectFromRequest.getDocuments()) {
                 if (StringUtils.isBlank(document.getId())) {
                     document.setId(UUID.randomUUID().toString());
+                    AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
                     document.setAuditDetails(auditDetailsForAdd);
-                } else {
+                } else if (projectFromDB != null) {
                     String documentId = String.valueOf(document.getId());
-                    Document documentFromDB = project.getDocuments().stream().filter(d -> documentId.equals(String.valueOf(d.getId()))).findFirst().orElse(null);
+                    Document documentFromDB = projectFromDB.getDocuments().stream().filter(d -> documentId.equals(String.valueOf(d.getId()))).findFirst().orElse(null);
                     document.setAuditDetails(documentFromDB.getAuditDetails());
                     AuditDetails auditDetailsDocument = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), documentFromDB.getAuditDetails(), false);
                     document.setAuditDetails(auditDetailsDocument);
                 }
             }
         }
-
     }
 
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey,

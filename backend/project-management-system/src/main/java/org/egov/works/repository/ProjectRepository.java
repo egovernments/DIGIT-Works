@@ -41,28 +41,45 @@ public class ProjectRepository {
 
     /* Search projects for project request and parameters and return list of projects */
     public List<Project> getProjects(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted) {
+
+        //Fetch Projects based on search criteria
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getProjectSearchQuery(project, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList);
-        List<Project> projects = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-        log.info("Fetched project list based on given search criteria");
+        List<Project> projects = getProjectsBasedOnSearchCriteria(project, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList);
 
         List<String> projectIds = projects.stream().map(Project :: getId).collect(Collectors.toList());
 
         //Fetch targets based on Project Ids
         List<Object> preparedStmtListTarget = new ArrayList<>();
-        String queryTarget = targetQueryBuilder.getTargetSearchQuery(projectIds, preparedStmtListTarget);
-        List<Target> targets = jdbcTemplate.query(queryTarget, targetRowMapper, preparedStmtListTarget.toArray());
-        log.info("Fetched targets based on project Ids");
+        List<Target> targets = getTargetsBasedOnProjectIds(projectIds, preparedStmtListTarget);
 
         //Fetch documents based on Project Ids
         List<Object> preparedStmtListDocument = new ArrayList<>();
-        String queryDocument = documentQueryBuilder.getDocumentSearchQuery(projectIds, preparedStmtListDocument);
-        List<Document> documents = jdbcTemplate.query(queryDocument, documentRowMapper, preparedStmtListDocument.toArray());
-        log.info("Fetched documents based on project Ids");
+        List<Document> documents = getDocumentsBasedOnProjectIds(projectIds, preparedStmtListDocument);
 
         //Construct Project Objects with fetched projects, targets and documents using Project id
         List<Project> result = buildProjectSearchResult(projects, targets, documents);
         return result;
+    }
+
+    private List<Project> getProjectsBasedOnSearchCriteria(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted,  List<Object> preparedStmtList) {
+        String query = queryBuilder.getProjectSearchQuery(project, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList);
+        List<Project> projects = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+        log.info("Fetched project list based on given search criteria");
+        return projects;
+    }
+
+    private List<Target> getTargetsBasedOnProjectIds(List<String> projectIds, List<Object> preparedStmtListTarget) {
+        String queryTarget = targetQueryBuilder.getTargetSearchQuery(projectIds, preparedStmtListTarget);
+        List<Target> targets = jdbcTemplate.query(queryTarget, targetRowMapper, preparedStmtListTarget.toArray());
+        log.info("Fetched targets based on project Ids");
+        return targets;
+    }
+
+    private List<Document> getDocumentsBasedOnProjectIds(List<String> projectIds, List<Object> preparedStmtListDocument) {
+        String queryDocument = documentQueryBuilder.getDocumentSearchQuery(projectIds, preparedStmtListDocument);
+        List<Document> documents = jdbcTemplate.query(queryDocument, documentRowMapper, preparedStmtListDocument.toArray());
+        log.info("Fetched documents based on project Ids");
+        return documents;
     }
 
     /* Constructs Project Objects with fetched projects, targets and documents using Project id and return list of Projects */

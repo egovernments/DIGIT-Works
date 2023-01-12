@@ -12,6 +12,7 @@ public class TargetQueryBuilder {
             "t.is_deleted as target_isDeleted, t.created_by as target_createdBy, t.created_time as target_createdTime, t.last_modified_by as target_lastModifiedBy, t.last_modified_time as target_lastModifiedTime " +
             " from eg_pms_target t ";
 
+    /* Constructs target search query based on project Ids */
     public String getTargetSearchQuery(List<String> projectIds, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = null;
         queryBuilder = new StringBuilder(FETCH_TARGET_QUERY);

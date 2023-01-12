@@ -3,6 +3,7 @@ package org.egov.works.validator;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.common.protocol.types.Field;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.util.LocationUtil;
@@ -80,6 +81,7 @@ public class ProjectValidator {
             throw new CustomException(errorMap);
     }
 
+    /* Validates Update Project request body */
     public void validateUpdateProjectRequest(ProjectRequest request) {
         Map<String, String> errorMap = new HashMap<>();
         List<Project> projects = request.getProjects();
@@ -93,7 +95,7 @@ public class ProjectValidator {
         String tenantId = projects.get(0).getTenantId();
         String rootTenantId = tenantId.split("\\.")[0];
 
-        //Verify if Project Id is present
+        //Verify if Project id is present
         for (Project project: projects) {
             if (StringUtils.isBlank(project.getId())) {
                 log.error("Project Id is mandatory");
@@ -164,6 +166,10 @@ public class ProjectValidator {
             if (!project.getTenantId().equals(projects.get(0).getTenantId())) {
                 log.error("All projects in Project request must have same tenant Id");
                 throw new CustomException("MULTIPLE_TENANTS", "All projects must have same tenant Id. Please create new request for different tentant id");
+            }
+            if ((project.getStartDate() != null && project.getEndDate() != null) && (project.getStartDate().compareTo(project.getEndDate()) > 0)) {
+                log.error("Start date should be less than end date");
+                errorMap.put("DATE", "Start date should be less than end date");
             }
         }
     }
@@ -251,7 +257,7 @@ public class ProjectValidator {
                 errorMap.put("INVALID_DEPARTMENT_CODE", "The department code: " + project.getDepartment() + " is not present in MDMS");
             }
 
-            //Verify if project sub type is present for project type
+            //Verify if project subtype is present for project type
             if (isProjectPresentInMDMS && !StringUtils.isBlank(project.getProjectType())) {
                 jsonPathForWorksSubTypeOfProject = jsonPathForWorksSubTypeOfProject.replace(PLACEHOLDER_CODE, project.getProjectType());
                 projectSubTypeRes = JsonPath.read(mdmsData, jsonPathForWorksSubTypeOfProject);
@@ -331,18 +337,22 @@ public class ProjectValidator {
             }
 
             Set<String> targetIdsFromDB = projectFromDB.getTargets().stream().map(Target :: getId).collect(Collectors.toSet());
-            for (Target target: project.getTargets()) {
-                if (StringUtils.isNotBlank(target.getId()) && !targetIdsFromDB.contains(target.getId())) {
-                    log.error("The target id " + target.getId() + " that you are trying to update does not exists for the project");
-                    throw new CustomException("INVALID_PROJECT_MODIFY.TARGET", "The target id " + target.getId() + " that you are trying to update does not exists for the project");
+            if (project.getTargets() != null) {
+                for (Target target: project.getTargets()) {
+                    if (StringUtils.isNotBlank(target.getId()) && !targetIdsFromDB.contains(target.getId())) {
+                        log.error("The target id " + target.getId() + " that you are trying to update does not exists for the project");
+                        throw new CustomException("INVALID_PROJECT_MODIFY.TARGET", "The target id " + target.getId() + " that you are trying to update does not exists for the project");
+                    }
                 }
             }
 
             Set<String> documentIdsFromDB = projectFromDB.getDocuments().stream().map(Document:: getId).collect(Collectors.toSet());
-            for (Document document: project.getDocuments()) {
-                if (StringUtils.isNotBlank(document.getId()) && !documentIdsFromDB.contains(document.getId())) {
-                    log.error("The document id " + document.getId() + " that you are trying to update does not exists for the project");
-                    throw new CustomException("INVALID_PROJECT_MODIFY.DOCUMENT", "The document id " + document.getId() + " that you are trying to update does not exists for the project");
+            if (project.getDocuments() != null) {
+                for (Document document: project.getDocuments()) {
+                    if (StringUtils.isNotBlank(document.getId()) && !documentIdsFromDB.contains(document.getId())) {
+                        log.error("The document id " + document.getId() + " that you are trying to update does not exists for the project");
+                        throw new CustomException("INVALID_PROJECT_MODIFY.DOCUMENT", "The document id " + document.getId() + " that you are trying to update does not exists for the project");
+                    }
                 }
             }
 
@@ -355,7 +365,6 @@ public class ProjectValidator {
                 log.error("The address id " + project.getAddress().getId() + " that you are trying to update does not exists for the project");
                 throw new CustomException("INVALID_PROJECT_MODIFY.ADDRESS", "The address id " + project.getAddress().getId() + " that you are trying to update does not exists for the project");
             }
-
         }
 
     }

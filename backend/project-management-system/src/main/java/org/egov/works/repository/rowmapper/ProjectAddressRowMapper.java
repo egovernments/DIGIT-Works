@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
-import org.egov.works.web.models.Address;
-import org.egov.works.web.models.Boundary;
-import org.egov.works.web.models.Project;
-import org.egov.works.web.models.Target;
+import org.egov.works.web.models.*;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -34,10 +31,8 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
         while (rs.next()) {
             String project_id = rs.getString("projectId");
 
-            Project project = !projectMap.containsKey(project_id) ? createProjectObj(rs) : projectMap.get(project_id);
-
             if (!projectMap.containsKey(project_id)) {
-                projectMap.put(project_id, project);
+                projectMap.put(project_id, createProjectObj(rs));
             }
         }
 
@@ -45,27 +40,13 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
     }
 
     private Project createProjectObj(ResultSet rs) throws SQLException, DataAccessException {
-        String project_id = rs.getString("projectId");
-        String project_tenantId = rs.getString("project_tenantId");
-        String project_projectNumber = rs.getString("project_projectNumber");
-        String project_name = rs.getString("project_name");
-        String project_projectType = rs.getString("project_projectType");
-        String project_projectSubtype = rs.getString("project_projectSubtype");
-        String project_department = rs.getString("project_department");
-        String project_description = rs.getString("project_description");
-        String project_referenceId = rs.getString("project_referenceId");
-        Long project_startDate = rs.getLong("project_startDate");
-        Long project_endDate = rs.getLong("project_endDate");
-        Boolean project_isTaskEnabled = rs.getBoolean("project_isTaskEnabled");
-        String project_parent = rs.getString("project_parent");
-        JsonNode project_additionalDetails = getAdditionalDetail("project_additionalDetails", rs);
-        Boolean project_isDeleted = rs.getBoolean("project_isDeleted");
-        Integer project_rowVersion = rs.getInt("project_rowVersion");
-        String project_createdBy = rs.getString("project_createdBy");
-        String project_lastModifiedBy = rs.getString("project_lastModifiedBy");
-        Long project_createdTime = rs.getLong("project_createdTime");
-        Long project_lastModifiedTime = rs.getLong("project_lastModifiedTime");
+        Address address = getAddressObjFromResultSet(rs);
+        Project project = getProjectObjFromResultSet(rs, address);
+        return project;
+    }
 
+    /* Builds Address Object from Result Set */
+    private Address getAddressObjFromResultSet(ResultSet rs) throws SQLException {
         String address_id = rs.getString("addressId");
         String address_tenantId = rs.getString("address_tenantId");
         String address_projectId = rs.getString("address_projectId");
@@ -87,9 +68,6 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
         Long address_createdTime = rs.getLong("address_createdTime");
         Long address_lastModifiedTime = rs.getLong("address_lastModifiedTime");
 
-        AuditDetails projectAuditDetails = AuditDetails.builder().createdBy(project_createdBy).createdTime(project_createdTime)
-                .lastModifiedBy(project_lastModifiedBy).lastModifiedTime(project_lastModifiedTime)
-                .build();
         AuditDetails addresstAuditDetails = AuditDetails.builder().createdBy(address_createdBy).createdTime(address_createdTime)
                 .lastModifiedBy(address_lastModifiedBy).lastModifiedTime(address_lastModifiedTime)
                 .build();
@@ -113,6 +91,36 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
                 .auditDetails(addresstAuditDetails)
                 .build();
 
+        return address;
+    }
+
+    /* Builds Project Object from Result Set and address */
+    private Project getProjectObjFromResultSet(ResultSet rs, Address address) throws SQLException {
+        String project_id = rs.getString("projectId");
+        String project_tenantId = rs.getString("project_tenantId");
+        String project_projectNumber = rs.getString("project_projectNumber");
+        String project_name = rs.getString("project_name");
+        String project_projectType = rs.getString("project_projectType");
+        String project_projectSubtype = rs.getString("project_projectSubtype");
+        String project_department = rs.getString("project_department");
+        String project_description = rs.getString("project_description");
+        String project_referenceId = rs.getString("project_referenceId");
+        Long project_startDate = rs.getLong("project_startDate");
+        Long project_endDate = rs.getLong("project_endDate");
+        Boolean project_isTaskEnabled = rs.getBoolean("project_isTaskEnabled");
+        String project_parent = rs.getString("project_parent");
+        JsonNode project_additionalDetails = getAdditionalDetail("project_additionalDetails", rs);
+        Boolean project_isDeleted = rs.getBoolean("project_isDeleted");
+        Integer project_rowVersion = rs.getInt("project_rowVersion");
+        String project_createdBy = rs.getString("project_createdBy");
+        String project_lastModifiedBy = rs.getString("project_lastModifiedBy");
+        Long project_createdTime = rs.getLong("project_createdTime");
+        Long project_lastModifiedTime = rs.getLong("project_lastModifiedTime");
+
+        AuditDetails projectAuditDetails = AuditDetails.builder().createdBy(project_createdBy).createdTime(project_createdTime)
+                .lastModifiedBy(project_lastModifiedBy).lastModifiedTime(project_lastModifiedTime)
+                .build();
+
         Project project = Project.builder()
                 .id(project_id)
                 .tenantId(project_tenantId)
@@ -133,6 +141,7 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
                 .address(address)
                 .auditDetails(projectAuditDetails)
                 .build();
+
         return project;
     }
 
