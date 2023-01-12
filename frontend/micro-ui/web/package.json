@@ -22,7 +22,6 @@
     "@egovernments/digit-ui-module-attendencemgmt": "1.0.0",
     "@egovernments/digit-ui-module-contracts": "1.0.0",
     "@egovernments/digit-ui-module-estimate": "1.0.0",
-    "@egovernments/digit-ui-module-expenditure": "1.0.0",
     "@egovernments/digit-ui-module-masters": "1.0.0",
     "@egovernments/digit-ui-module-project": "1.0.0",
     "babel-loader": "8.1.0",
