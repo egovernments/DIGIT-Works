@@ -68,6 +68,6 @@ public class ProjectEnrichmentTest {
         assertNotNull(projectRequest.getProjects().get(0).getAddress().getId());
         assertNotNull(projectRequest.getProjects().get(0).getDocuments().get(0).getId());
         assertNotNull(projectRequest.getProjects().get(0).getTargets().get(0).getId());
-        verify(projectServiceUtil,times(1)).getAuditDetails(any(String.class),nullable(AuditDetails.class),eq(Boolean.TRUE));
+        verify(projectServiceUtil,times(4)).getAuditDetails(any(String.class),nullable(AuditDetails.class),eq(Boolean.TRUE));
     }
 }
