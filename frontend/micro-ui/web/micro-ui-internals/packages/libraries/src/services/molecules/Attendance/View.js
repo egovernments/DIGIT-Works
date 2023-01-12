@@ -80,9 +80,9 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails) => {
     title: "ATM_REGISTRATION_DETAILS",
     asSectionHeader: true,
     values: [
-      { title: "WORKS_ORG_NAME", value: musterRoll?.additionalDetails?.orgDetails || t("NA") },
-      { title: "REGISTER_ID", value: musterRoll?.registerId || t("NA")},
-      { title: "REGISTER_NAME", value: musterRoll?.additionalDetails?.registerName || t("NA") },
+      { title: "WORKS_ORG_NAME", value: musterRoll?.additionalDetails?.orgName || t("NA") },
+      { title: "REGISTER_ID", value: musterRoll?.additionalDetails?.attendanceRegisterNo || t("NA")},
+      { title: "REGISTER_NAME", value: musterRoll?.additionalDetails?.attendanceRegisterName || t("NA") },
     ],
     additionalDetails: {
       table: {
@@ -101,6 +101,7 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails) => {
       },
     },
   };
+  
   const applicationDetails = { applicationDetails: [registrationDetails] };
 
   return {
