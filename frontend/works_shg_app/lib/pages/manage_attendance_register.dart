@@ -8,8 +8,8 @@ import '../blocs/localization/app_localization.dart';
 import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
 
-class AttendanceInboxPage extends StatelessWidget {
-  const AttendanceInboxPage({Key? key}) : super(key: key);
+class ManageAttendanceRegisterPage extends StatelessWidget {
+  const ManageAttendanceRegisterPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +43,9 @@ class AttendanceInboxPage extends StatelessWidget {
               ? const Text('No Projects Found')
               : WorkDetailsCard(
                   projectList,
-                  isTrackAttendance: true,
+                  isManageAttendance: true,
                   elevatedButtonLabel: AppLocalizations.of(context)
-                      .translate(i18.attendanceMgmt.updateAttendance),
+                      .translate(i18.attendanceMgmt.enrollWageSeeker),
                   attendanceRegistersModel: state.attendanceRegistersModel,
                 )
         ]);

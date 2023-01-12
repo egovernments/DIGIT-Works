@@ -10,23 +10,24 @@ import 'package:works_shg_app/utils/global_variables.dart';
 import '../../data/remote_client.dart';
 import '../../data/repositories/user_search_repository/user_search.dart';
 
-part 'user_search.freezed.dart';
+part 'attendance_user_search.freezed.dart';
 
-typedef UserSearchEmitter = Emitter<UserSearchState>;
+typedef AttendanceUserSearchEmitter = Emitter<AttendanceUserSearchState>;
 
-class UserSearchBloc extends Bloc<UserSearchEvent, UserSearchState> {
-  UserSearchBloc() : super(const UserSearchState()) {
-    on<SearchUserEvent>(_onSearch);
+class AttendanceUserSearchBloc
+    extends Bloc<AttendanceUserSearchEvent, AttendanceUserSearchState> {
+  AttendanceUserSearchBloc(super.initialState) {
+    on<SearchAttendanceUserEvent>(_onSearch);
   }
 
   FutureOr<void> _onSearch(
-      UserSearchEvent event, UserSearchEmitter emit) async {
+      AttendanceUserSearchEvent event, AttendanceUserSearchEmitter emit) async {
     Client client = Client();
     emit(state.copyWith(loading: true));
     UserSearchModel userSearchModel = await UserSearchRepository(client.init())
         .searchUser(url: Urls.userServices.userSearchProfile, body: {
       "tenantId": GlobalVariables.getTenantId(),
-      "uuid": [GlobalVariables.getUUID()]
+      "mobileNumber": GlobalVariables.getMobileNumber()
     });
     await Future.delayed(const Duration(seconds: 1));
     emit(state.copyWith(userSearchModel: userSearchModel, loading: false));
@@ -34,15 +35,16 @@ class UserSearchBloc extends Bloc<UserSearchEvent, UserSearchState> {
 }
 
 @freezed
-class UserSearchEvent with _$UserSearchEvent {
-  const factory UserSearchEvent.search() = SearchUserEvent;
+class AttendanceUserSearchEvent with _$AttendanceUserSearchEvent {
+  const factory AttendanceUserSearchEvent.search(
+      {required List<String>? userIds}) = SearchAttendanceUserEvent;
 }
 
 @freezed
-class UserSearchState with _$UserSearchState {
-  const UserSearchState._();
+class AttendanceUserSearchState with _$AttendanceUserSearchState {
+  const AttendanceUserSearchState._();
 
-  const factory UserSearchState({
+  const factory AttendanceUserSearchState({
     @Default(false) bool loading,
     UserSearchModel? userSearchModel,
   }) = _UserSearchState;
