@@ -62,6 +62,12 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
       );
 
       if (kIsWeb) {
+        if (await GlobalVariables.isLocaleSelect(event.locale)) {
+          var existing = html.window.localStorage[event.locale ?? ''];
+          existing = existing != null ? jsonDecode(existing ?? '') : [];
+          html.window.localStorage[event.locale ?? ''] = (existing! +
+              jsonEncode(result.messages.map((e) => e.toJson()).toList()));
+        }
         html.window.localStorage[event.locale ?? ''] =
             jsonEncode(result.messages.map((e) => e.toJson()).toList());
       } else {

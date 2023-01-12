@@ -49,10 +49,15 @@ class _$AppRouter extends RootStackRouter {
         child: const HomePage(),
       );
     },
-    AttendanceInboxRoute.name: (routeData) {
+    AttendanceRegisterTableRoute.name: (routeData) {
+      final args = routeData.argsAs<AttendanceRegisterTableRouteArgs>();
       return MaterialPageX<dynamic>(
         routeData: routeData,
-        child: const AttendanceInboxPage(),
+        child: AttendanceRegisterTablePage(
+          args.projectDetails,
+          args.attendanceRegister,
+          key: args.key,
+        ),
       );
     },
     WorkOrderRoute.name: (routeData) {
@@ -73,6 +78,29 @@ class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: SHGInboxPage(
           args.musterDetails,
+          key: args.key,
+        ),
+      );
+    },
+    ManageAttendanceRegisterRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const ManageAttendanceRegisterPage(),
+      );
+    },
+    AttendanceInboxRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const AttendanceInboxPage(),
+      );
+    },
+    TrackAttendanceRoute.name: (routeData) {
+      final args = routeData.argsAs<TrackAttendanceRouteArgs>();
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: TrackAttendancePage(
+          args.projectDetails,
+          args.attendanceRegister,
           key: args.key,
         ),
       );
@@ -114,7 +142,7 @@ class _$AppRouter extends RootStackRouter {
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
-              AttendanceInboxRoute.name,
+              AttendanceRegisterTableRoute.name,
               path: 'manageAttendance',
               parent: AuthenticatedRouteWrapper.name,
             ),
@@ -131,6 +159,21 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               SHGInboxRoute.name,
               path: 'shg-inbox',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              ManageAttendanceRegisterRoute.name,
+              path: 'manage-attendance',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              AttendanceInboxRoute.name,
+              path: 'attendance-inbox',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              TrackAttendanceRoute.name,
+              path: 'track-attendance',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -213,15 +256,43 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [AttendanceInboxPage]
-class AttendanceInboxRoute extends PageRouteInfo<void> {
-  const AttendanceInboxRoute()
-      : super(
-          AttendanceInboxRoute.name,
+/// [AttendanceRegisterTablePage]
+class AttendanceRegisterTableRoute
+    extends PageRouteInfo<AttendanceRegisterTableRouteArgs> {
+  AttendanceRegisterTableRoute({
+    required List<Map<String, dynamic>> projectDetails,
+    required AttendanceRegister? attendanceRegister,
+    Key? key,
+  }) : super(
+          AttendanceRegisterTableRoute.name,
           path: 'manageAttendance',
+          args: AttendanceRegisterTableRouteArgs(
+            projectDetails: projectDetails,
+            attendanceRegister: attendanceRegister,
+            key: key,
+          ),
         );
 
-  static const String name = 'AttendanceInboxRoute';
+  static const String name = 'AttendanceRegisterTableRoute';
+}
+
+class AttendanceRegisterTableRouteArgs {
+  const AttendanceRegisterTableRouteArgs({
+    required this.projectDetails,
+    required this.attendanceRegister,
+    this.key,
+  });
+
+  final List<Map<String, dynamic>> projectDetails;
+
+  final AttendanceRegister? attendanceRegister;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'AttendanceRegisterTableRouteArgs{projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
+  }
 }
 
 /// generated route for
@@ -279,5 +350,68 @@ class SHGInboxRouteArgs {
   @override
   String toString() {
     return 'SHGInboxRouteArgs{musterDetails: $musterDetails, key: $key}';
+  }
+}
+
+/// generated route for
+/// [ManageAttendanceRegisterPage]
+class ManageAttendanceRegisterRoute extends PageRouteInfo<void> {
+  const ManageAttendanceRegisterRoute()
+      : super(
+          ManageAttendanceRegisterRoute.name,
+          path: 'manage-attendance',
+        );
+
+  static const String name = 'ManageAttendanceRegisterRoute';
+}
+
+/// generated route for
+/// [AttendanceInboxPage]
+class AttendanceInboxRoute extends PageRouteInfo<void> {
+  const AttendanceInboxRoute()
+      : super(
+          AttendanceInboxRoute.name,
+          path: 'attendance-inbox',
+        );
+
+  static const String name = 'AttendanceInboxRoute';
+}
+
+/// generated route for
+/// [TrackAttendancePage]
+class TrackAttendanceRoute extends PageRouteInfo<TrackAttendanceRouteArgs> {
+  TrackAttendanceRoute({
+    required List<Map<String, dynamic>> projectDetails,
+    required AttendanceRegister? attendanceRegister,
+    Key? key,
+  }) : super(
+          TrackAttendanceRoute.name,
+          path: 'track-attendance',
+          args: TrackAttendanceRouteArgs(
+            projectDetails: projectDetails,
+            attendanceRegister: attendanceRegister,
+            key: key,
+          ),
+        );
+
+  static const String name = 'TrackAttendanceRoute';
+}
+
+class TrackAttendanceRouteArgs {
+  const TrackAttendanceRouteArgs({
+    required this.projectDetails,
+    required this.attendanceRegister,
+    this.key,
+  });
+
+  final List<Map<String, dynamic>> projectDetails;
+
+  final AttendanceRegister? attendanceRegister;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'TrackAttendanceRouteArgs{projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
   }
 }
