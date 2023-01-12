@@ -31,6 +31,8 @@ class MusterRoll with _$MusterRoll {
     int? endDate,
     @JsonKey(name: 'individualEntries')
         List<IndividualEntries>? individualEntries,
+    @JsonKey(name: 'additionalDetails')
+        MusterAdditionalDetails? musterAdditionalDetails,
   }) = _MusterRoll;
 
   factory MusterRoll.fromJson(
@@ -53,6 +55,20 @@ class IndividualEntries with _$IndividualEntries {
     Map<String, dynamic> json,
   ) =>
       _$IndividualEntriesFromJson(json);
+}
+
+@freezed
+class MusterAdditionalDetails with _$MusterAdditionalDetails {
+  const factory MusterAdditionalDetails({
+    String? attendanceRegisterName,
+    String? attendanceRegisterNo,
+    String? orgName,
+  }) = _MusterAdditionalDetails;
+
+  factory MusterAdditionalDetails.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$MusterAdditionalDetailsFromJson(json);
 }
 
 @freezed

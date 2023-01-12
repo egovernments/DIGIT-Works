@@ -33,6 +33,10 @@ _$_MusterRoll _$$_MusterRollFromJson(Map<String, dynamic> json) =>
       individualEntries: (json['individualEntries'] as List<dynamic>?)
           ?.map((e) => IndividualEntries.fromJson(e as Map<String, dynamic>))
           .toList(),
+      musterAdditionalDetails: json['additionalDetails'] == null
+          ? null
+          : MusterAdditionalDetails.fromJson(
+              json['additionalDetails'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_MusterRollToJson(_$_MusterRoll instance) =>
@@ -46,6 +50,7 @@ Map<String, dynamic> _$$_MusterRollToJson(_$_MusterRoll instance) =>
       'startDate': instance.startDate,
       'endDate': instance.endDate,
       'individualEntries': instance.individualEntries,
+      'additionalDetails': instance.musterAdditionalDetails,
     };
 
 _$_IndividualEntries _$$_IndividualEntriesFromJson(Map<String, dynamic> json) =>
@@ -65,6 +70,22 @@ Map<String, dynamic> _$$_IndividualEntriesToJson(
       'individualId': instance.individualId,
       'totalAttendance': instance.totalAttendance,
       'attendanceEntries': instance.attendanceEntries,
+    };
+
+_$_MusterAdditionalDetails _$$_MusterAdditionalDetailsFromJson(
+        Map<String, dynamic> json) =>
+    _$_MusterAdditionalDetails(
+      attendanceRegisterName: json['attendanceRegisterName'] as String?,
+      attendanceRegisterNo: json['attendanceRegisterNo'] as String?,
+      orgName: json['orgName'] as String?,
+    );
+
+Map<String, dynamic> _$$_MusterAdditionalDetailsToJson(
+        _$_MusterAdditionalDetails instance) =>
+    <String, dynamic>{
+      'attendanceRegisterName': instance.attendanceRegisterName,
+      'attendanceRegisterNo': instance.attendanceRegisterNo,
+      'orgName': instance.orgName,
     };
 
 _$_AttendanceEntries _$$_AttendanceEntriesFromJson(Map<String, dynamic> json) =>

@@ -207,6 +207,9 @@ mixin _$MusterRoll {
   @JsonKey(name: 'individualEntries')
   List<IndividualEntries>? get individualEntries =>
       throw _privateConstructorUsedError;
+  @JsonKey(name: 'additionalDetails')
+  MusterAdditionalDetails? get musterAdditionalDetails =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -230,7 +233,11 @@ abstract class $MusterRollCopyWith<$Res> {
       int? startDate,
       int? endDate,
       @JsonKey(name: 'individualEntries')
-          List<IndividualEntries>? individualEntries});
+          List<IndividualEntries>? individualEntries,
+      @JsonKey(name: 'additionalDetails')
+          MusterAdditionalDetails? musterAdditionalDetails});
+
+  $MusterAdditionalDetailsCopyWith<$Res>? get musterAdditionalDetails;
 }
 
 /// @nodoc
@@ -255,6 +262,7 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? individualEntries = freezed,
+    Object? musterAdditionalDetails = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -293,7 +301,24 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
           ? _value.individualEntries
           : individualEntries // ignore: cast_nullable_to_non_nullable
               as List<IndividualEntries>?,
+      musterAdditionalDetails: freezed == musterAdditionalDetails
+          ? _value.musterAdditionalDetails
+          : musterAdditionalDetails // ignore: cast_nullable_to_non_nullable
+              as MusterAdditionalDetails?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $MusterAdditionalDetailsCopyWith<$Res>? get musterAdditionalDetails {
+    if (_value.musterAdditionalDetails == null) {
+      return null;
+    }
+
+    return $MusterAdditionalDetailsCopyWith<$Res>(
+        _value.musterAdditionalDetails!, (value) {
+      return _then(_value.copyWith(musterAdditionalDetails: value) as $Val);
+    });
   }
 }
 
@@ -315,7 +340,12 @@ abstract class _$$_MusterRollCopyWith<$Res>
       int? startDate,
       int? endDate,
       @JsonKey(name: 'individualEntries')
-          List<IndividualEntries>? individualEntries});
+          List<IndividualEntries>? individualEntries,
+      @JsonKey(name: 'additionalDetails')
+          MusterAdditionalDetails? musterAdditionalDetails});
+
+  @override
+  $MusterAdditionalDetailsCopyWith<$Res>? get musterAdditionalDetails;
 }
 
 /// @nodoc
@@ -338,6 +368,7 @@ class __$$_MusterRollCopyWithImpl<$Res>
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? individualEntries = freezed,
+    Object? musterAdditionalDetails = freezed,
   }) {
     return _then(_$_MusterRoll(
       id: freezed == id
@@ -376,6 +407,10 @@ class __$$_MusterRollCopyWithImpl<$Res>
           ? _value._individualEntries
           : individualEntries // ignore: cast_nullable_to_non_nullable
               as List<IndividualEntries>?,
+      musterAdditionalDetails: freezed == musterAdditionalDetails
+          ? _value.musterAdditionalDetails
+          : musterAdditionalDetails // ignore: cast_nullable_to_non_nullable
+              as MusterAdditionalDetails?,
     ));
   }
 }
@@ -393,7 +428,9 @@ class _$_MusterRoll implements _MusterRoll {
       this.startDate,
       this.endDate,
       @JsonKey(name: 'individualEntries')
-          final List<IndividualEntries>? individualEntries})
+          final List<IndividualEntries>? individualEntries,
+      @JsonKey(name: 'additionalDetails')
+          this.musterAdditionalDetails})
       : _individualEntries = individualEntries;
 
   factory _$_MusterRoll.fromJson(Map<String, dynamic> json) =>
@@ -426,8 +463,12 @@ class _$_MusterRoll implements _MusterRoll {
   }
 
   @override
+  @JsonKey(name: 'additionalDetails')
+  final MusterAdditionalDetails? musterAdditionalDetails;
+
+  @override
   String toString() {
-    return 'MusterRoll(id: $id, tenantId: $tenantId, musterRollNumber: $musterRollNumber, registerId: $registerId, status: $status, musterRollStatus: $musterRollStatus, startDate: $startDate, endDate: $endDate, individualEntries: $individualEntries)';
+    return 'MusterRoll(id: $id, tenantId: $tenantId, musterRollNumber: $musterRollNumber, registerId: $registerId, status: $status, musterRollStatus: $musterRollStatus, startDate: $startDate, endDate: $endDate, individualEntries: $individualEntries, musterAdditionalDetails: $musterAdditionalDetails)';
   }
 
   @override
@@ -449,7 +490,10 @@ class _$_MusterRoll implements _MusterRoll {
                 other.startDate == startDate) &&
             (identical(other.endDate, endDate) || other.endDate == endDate) &&
             const DeepCollectionEquality()
-                .equals(other._individualEntries, _individualEntries));
+                .equals(other._individualEntries, _individualEntries) &&
+            (identical(
+                    other.musterAdditionalDetails, musterAdditionalDetails) ||
+                other.musterAdditionalDetails == musterAdditionalDetails));
   }
 
   @JsonKey(ignore: true)
@@ -464,7 +508,8 @@ class _$_MusterRoll implements _MusterRoll {
       musterRollStatus,
       startDate,
       endDate,
-      const DeepCollectionEquality().hash(_individualEntries));
+      const DeepCollectionEquality().hash(_individualEntries),
+      musterAdditionalDetails);
 
   @JsonKey(ignore: true)
   @override
@@ -482,16 +527,19 @@ class _$_MusterRoll implements _MusterRoll {
 
 abstract class _MusterRoll implements MusterRoll {
   const factory _MusterRoll(
-      {final String? id,
-      final String? tenantId,
-      final String? musterRollNumber,
-      final String? registerId,
-      final String? status,
-      final String? musterRollStatus,
-      final int? startDate,
-      final int? endDate,
-      @JsonKey(name: 'individualEntries')
-          final List<IndividualEntries>? individualEntries}) = _$_MusterRoll;
+          {final String? id,
+          final String? tenantId,
+          final String? musterRollNumber,
+          final String? registerId,
+          final String? status,
+          final String? musterRollStatus,
+          final int? startDate,
+          final int? endDate,
+          @JsonKey(name: 'individualEntries')
+              final List<IndividualEntries>? individualEntries,
+          @JsonKey(name: 'additionalDetails')
+              final MusterAdditionalDetails? musterAdditionalDetails}) =
+      _$_MusterRoll;
 
   factory _MusterRoll.fromJson(Map<String, dynamic> json) =
       _$_MusterRoll.fromJson;
@@ -515,6 +563,9 @@ abstract class _MusterRoll implements MusterRoll {
   @override
   @JsonKey(name: 'individualEntries')
   List<IndividualEntries>? get individualEntries;
+  @override
+  @JsonKey(name: 'additionalDetails')
+  MusterAdditionalDetails? get musterAdditionalDetails;
   @override
   @JsonKey(ignore: true)
   _$$_MusterRollCopyWith<_$_MusterRoll> get copyWith =>
@@ -740,6 +791,192 @@ abstract class _IndividualEntries implements IndividualEntries {
   @JsonKey(ignore: true)
   _$$_IndividualEntriesCopyWith<_$_IndividualEntries> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+MusterAdditionalDetails _$MusterAdditionalDetailsFromJson(
+    Map<String, dynamic> json) {
+  return _MusterAdditionalDetails.fromJson(json);
+}
+
+/// @nodoc
+mixin _$MusterAdditionalDetails {
+  String? get attendanceRegisterName => throw _privateConstructorUsedError;
+  String? get attendanceRegisterNo => throw _privateConstructorUsedError;
+  String? get orgName => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $MusterAdditionalDetailsCopyWith<MusterAdditionalDetails> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MusterAdditionalDetailsCopyWith<$Res> {
+  factory $MusterAdditionalDetailsCopyWith(MusterAdditionalDetails value,
+          $Res Function(MusterAdditionalDetails) then) =
+      _$MusterAdditionalDetailsCopyWithImpl<$Res, MusterAdditionalDetails>;
+  @useResult
+  $Res call(
+      {String? attendanceRegisterName,
+      String? attendanceRegisterNo,
+      String? orgName});
+}
+
+/// @nodoc
+class _$MusterAdditionalDetailsCopyWithImpl<$Res,
+        $Val extends MusterAdditionalDetails>
+    implements $MusterAdditionalDetailsCopyWith<$Res> {
+  _$MusterAdditionalDetailsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? attendanceRegisterName = freezed,
+    Object? attendanceRegisterNo = freezed,
+    Object? orgName = freezed,
+  }) {
+    return _then(_value.copyWith(
+      attendanceRegisterName: freezed == attendanceRegisterName
+          ? _value.attendanceRegisterName
+          : attendanceRegisterName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      attendanceRegisterNo: freezed == attendanceRegisterNo
+          ? _value.attendanceRegisterNo
+          : attendanceRegisterNo // ignore: cast_nullable_to_non_nullable
+              as String?,
+      orgName: freezed == orgName
+          ? _value.orgName
+          : orgName // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_MusterAdditionalDetailsCopyWith<$Res>
+    implements $MusterAdditionalDetailsCopyWith<$Res> {
+  factory _$$_MusterAdditionalDetailsCopyWith(_$_MusterAdditionalDetails value,
+          $Res Function(_$_MusterAdditionalDetails) then) =
+      __$$_MusterAdditionalDetailsCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? attendanceRegisterName,
+      String? attendanceRegisterNo,
+      String? orgName});
+}
+
+/// @nodoc
+class __$$_MusterAdditionalDetailsCopyWithImpl<$Res>
+    extends _$MusterAdditionalDetailsCopyWithImpl<$Res,
+        _$_MusterAdditionalDetails>
+    implements _$$_MusterAdditionalDetailsCopyWith<$Res> {
+  __$$_MusterAdditionalDetailsCopyWithImpl(_$_MusterAdditionalDetails _value,
+      $Res Function(_$_MusterAdditionalDetails) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? attendanceRegisterName = freezed,
+    Object? attendanceRegisterNo = freezed,
+    Object? orgName = freezed,
+  }) {
+    return _then(_$_MusterAdditionalDetails(
+      attendanceRegisterName: freezed == attendanceRegisterName
+          ? _value.attendanceRegisterName
+          : attendanceRegisterName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      attendanceRegisterNo: freezed == attendanceRegisterNo
+          ? _value.attendanceRegisterNo
+          : attendanceRegisterNo // ignore: cast_nullable_to_non_nullable
+              as String?,
+      orgName: freezed == orgName
+          ? _value.orgName
+          : orgName // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
+  const _$_MusterAdditionalDetails(
+      {this.attendanceRegisterName, this.attendanceRegisterNo, this.orgName});
+
+  factory _$_MusterAdditionalDetails.fromJson(Map<String, dynamic> json) =>
+      _$$_MusterAdditionalDetailsFromJson(json);
+
+  @override
+  final String? attendanceRegisterName;
+  @override
+  final String? attendanceRegisterNo;
+  @override
+  final String? orgName;
+
+  @override
+  String toString() {
+    return 'MusterAdditionalDetails(attendanceRegisterName: $attendanceRegisterName, attendanceRegisterNo: $attendanceRegisterNo, orgName: $orgName)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_MusterAdditionalDetails &&
+            (identical(other.attendanceRegisterName, attendanceRegisterName) ||
+                other.attendanceRegisterName == attendanceRegisterName) &&
+            (identical(other.attendanceRegisterNo, attendanceRegisterNo) ||
+                other.attendanceRegisterNo == attendanceRegisterNo) &&
+            (identical(other.orgName, orgName) || other.orgName == orgName));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, attendanceRegisterName, attendanceRegisterNo, orgName);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_MusterAdditionalDetailsCopyWith<_$_MusterAdditionalDetails>
+      get copyWith =>
+          __$$_MusterAdditionalDetailsCopyWithImpl<_$_MusterAdditionalDetails>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_MusterAdditionalDetailsToJson(
+      this,
+    );
+  }
+}
+
+abstract class _MusterAdditionalDetails implements MusterAdditionalDetails {
+  const factory _MusterAdditionalDetails(
+      {final String? attendanceRegisterName,
+      final String? attendanceRegisterNo,
+      final String? orgName}) = _$_MusterAdditionalDetails;
+
+  factory _MusterAdditionalDetails.fromJson(Map<String, dynamic> json) =
+      _$_MusterAdditionalDetails.fromJson;
+
+  @override
+  String? get attendanceRegisterName;
+  @override
+  String? get attendanceRegisterNo;
+  @override
+  String? get orgName;
+  @override
+  @JsonKey(ignore: true)
+  _$$_MusterAdditionalDetailsCopyWith<_$_MusterAdditionalDetails>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 AttendanceEntries _$AttendanceEntriesFromJson(Map<String, dynamic> json) {

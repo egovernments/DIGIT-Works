@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:works_shg_app/models/app_config/app_config_model.dart';
 
 import '../services/local_storage.dart';
 
@@ -47,6 +48,17 @@ class GlobalVariables {
     }
   }
 
+  static String? getMobileNumber() {
+    dynamic mobileNumber;
+    if (kIsWeb) {
+      mobileNumber = html.window.localStorage['mobileNumber'];
+      return jsonDecode(mobileNumber.toString());
+    } else {
+      mobileNumber = storage.read(key: 'mobileNumber');
+      return jsonDecode(mobileNumber.toString());
+    }
+  }
+
   static dynamic getInitData() {
     if (kIsWeb) {
       return jsonDecode(html.window.localStorage['initData'].toString());
@@ -71,11 +83,36 @@ class GlobalVariables {
     }
   }
 
+  static dynamic getUserIds() {
+    if (kIsWeb) {
+      return jsonDecode(html.window.localStorage['userIds'].toString());
+    } else {
+      return jsonDecode(storage.read(key: 'userIds').toString());
+    }
+  }
+
   static Future<bool> isLocaleSelect(String locale) async {
     if (kIsWeb) {
       return html.window.localStorage.keys.contains(locale);
     } else {
       return await storage.containsKey(key: locale);
+    }
+  }
+
+  static String selectedLocale() {
+    List<Languages>? languagesList;
+    if (kIsWeb) {
+      languagesList =
+          jsonDecode(html.window.localStorage['languages'].toString())
+              .map<Languages>((e) => Languages.fromJson(e))
+              .toList();
+      return languagesList!.where((elem) => elem.isSelected).first.value;
+    } else {
+      languagesList = jsonDecode(storage.read(key: 'languages').toString())
+          .map<Languages>((e) => Languages.fromJson(e))
+          .toList();
+
+      return languagesList!.where((elem) => elem.isSelected).first.value;
     }
   }
 }
