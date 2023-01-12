@@ -80,8 +80,6 @@ const CreateProject = () => {
           if(formData?.hasSubProjects) {
             setSelectedProjectType(formData?.hasSubProjects);
           }
-          if(difference?.hasSubProjects) {
-          }
           if(formData?.typeOfWork) {
             setSubTypeOfWorkOptions(formData?.typeOfWork?.subTypes);
           } 
@@ -94,10 +92,10 @@ const CreateProject = () => {
           if (difference?.scheme) {
             setValue("subScheme", '');
           } 
-          if(formData?.subProjectScheme) {
-            setSubSchemaOptions(formData?.subProjectScheme?.subSchemes);
+          if(formData?.subProjectsScheme) {
+            setSubSchemaOptions(formData?.subProjectsScheme?.subSchemes);
           } 
-          if (difference?.scheme) {
+          if (difference?.subProjectsScheme) {
             setValue("subProjectSubScheme", '');
           } 
           setSessionFormData({ ...sessionFormData, ...formData });
