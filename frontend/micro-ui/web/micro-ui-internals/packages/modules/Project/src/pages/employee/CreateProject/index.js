@@ -1,7 +1,8 @@
 import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
+// import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
+import { testConfig } from "../../../configs/testConfig";
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
@@ -20,7 +21,7 @@ const whenHasSubProjectsHorizontalNavConfig =  [
     code:"WORKS_PROJECT_DETAILS",
   },
   {
-      name:"Financial_Details",
+      name:"Financial_Details_Sub_Project",
       code:"WORKS_FINANCIAL_DETAILS",
   },
   {
@@ -41,6 +42,7 @@ const CreateProject = () => {
     const orgSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+    const [currentFormCategory, setCurrentFormCategory] = useState("projects");
 
     //clear session data on first init
     useEffect(()=>{
@@ -65,7 +67,7 @@ const CreateProject = () => {
   
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
 
-    const onFormValueChange = (setValue, formData, formState) => {
+    const onFormValueChange = (setValue, formData, formState, reset) => {
         if (!_.isEqual(sessionFormData, formData)) {
           const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
           if(formData.ward) {
@@ -74,31 +76,48 @@ const CreateProject = () => {
           if (difference?.ward) {
               setValue("locality", '');
           }
+          if(formData?.hasSubProjects) {
+            setSelectedProjectType(formData?.hasSubProjects);
+          }
+          if(difference?.hasSubProjects) {
+          }
+          if(formData?.typeOfWork) {
+            setSubTypeOfWorkOptions(formData?.typeOfWork?.subTypes);
+          } 
+          if (difference?.typeOfWork) {
+            setValue("subTypeOfWork", '');
+          }
+          if(formData?.scheme) {
+            setSubSchemaOptions(formData?.scheme?.subSchemes);
+          } 
+          if (difference?.scheme) {
+            setValue("subScheme", '');
+          } 
+          if(formData?.subProjectScheme) {
+            setSubSchemaOptions(formData?.subProjectScheme?.subSchemes);
+          } 
+          if (difference?.scheme) {
+            setValue("subProjectSubScheme", '');
+          } 
           setSessionFormData({ ...sessionFormData, ...formData });
         }
-        if(formData?.hasSubProjects) {
-          setSelectedProjectType(formData?.hasSubProjects);
-        } 
-        if(formData?.typeOfWork) {
-          setSubTypeOfWorkOptions(formData?.typeOfWork?.subTypes);
-        } 
-        if(formData?.scheme) {
-          setSubSchemaOptions(formData?.scheme?.subSchemes);
-        } 
     }
-    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities);
+    // const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities);
+    const createProjectSectionFormConfig = testConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities);
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
           setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
+          setCurrentFormCategory("subProjects");
           setShowNavs(true);
         }else if(selectedProjectType?.code === "COMMON_NO") {
           setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
+          setCurrentFormCategory("projects");
           setShowNavs(true);
         }
     },[selectedProjectType]);
 
-    const onSubmit = () => {}
+    const onSubmit = (data) => {console.log(data);}
 
     return (
         <React.Fragment>
@@ -130,6 +149,7 @@ const CreateProject = () => {
                 showMultipleCardsInNavs={false}
                 horizontalNavConfig={navTypeConfig}
                 onFormValueChange={onFormValueChange}
+                currentFormCategory={currentFormCategory}
             />
            )}
         </div>
