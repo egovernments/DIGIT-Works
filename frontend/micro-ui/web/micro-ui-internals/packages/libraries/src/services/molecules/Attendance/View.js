@@ -38,9 +38,9 @@ const getAttendanceTableData = (data, skills) => {
       tableRow.actualWorkingDays = item?.totalAttendance
       tableRow.nameOfIndividual = 'Piyush HarjitPal' //item?.additionalDetails?.userName
       tableRow.guardianName = 'Harijitpal' //item?.additionalDetails?.fatherName
-      tableRow.skill = skills['SKILLED_LEVEL_1'].name //skills[item?.additionalDetails?.skillCode]
-      tableRow.amount = skills['SKILLED_LEVEL_1'].amount //get this amount from mdms data
-      tableRow.modifiedAmount = skills['SKILLED_LEVEL_1'].amount //get this amount from mdms data
+      tableRow.skill = skills['SKILLED_LEVEL_1'].name //skills[item?.additionalDetails?.skillCode].name
+      tableRow.amount = skills['SKILLED_LEVEL_1'].amount * item?.totalAttendance //skills[item?.additionalDetails?.skillCode].amount * item?.totalAttendance
+      tableRow.modifiedAmount = tableRow.amount //get this amount from mdms data
       tableRow.modifiedWorkingDays = item?.totalAttendance
       tableRow.bankAccountDetails = {
         accountNo : '880182873839-SBIN0001237', //item?.additionalDetails?.bankDetails, split by - and assign to account and ifsc
