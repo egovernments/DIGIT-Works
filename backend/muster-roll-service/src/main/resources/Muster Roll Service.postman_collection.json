@@ -148,8 +148,20 @@
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.musterRoll.startDate).to.not.be.undefined});",
 							"",
+							"pm.test(\"skill level is default\", function () {",
+							"    let responseData = pm.response.json();",
+							"    pm.expect(responseData.musterRolls[0].individualEntries[0].additionalDetails.skillCode).eq(\"Skill 1\")});",
+							"",
+							"pm.test(\"workflow status is submitted\", function () {",
+							"    let responseData = pm.response.json();",
+							"    pm.expect(responseData.musterRolls[0].musterRollStatus).eq(\"SUBMITTED\")});",
+							"",
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(200)));"
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.environment.set(\"musterRollId\", responseData.musterRolls[0].id);",
+							"pm.environment.set(\"musterRollNumber\", responseData.musterRolls[0].musterRollNumber);"
 						],
 						"type": "text/javascript"
 					}
@@ -160,7 +172,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 169,\n      \"uuid\": \"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n      \"userName\": \"7070102021\",\n      \"name\": \"test2\",\n      \"mobileNumber\": \"9130011254\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n        {\n          \"name\": \"Organization staff\",\n          \"code\": \"ORG_STAFF\",\n          \"tenantId\": \"{{tenantId}}\"\n        }]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n    \"registerId\": \"56shcwgdt231\",\n    \"startDate\": 1670178600000,\n    \"endDate\": 1670697000000,\n     \"additionalDetails\": {\"org details\":\"org1\"}\n  },\n  \"workflow\": {\n      \"action\": \"SUBMIT\",\n        \"comments\": \"Sumbit muster roll\",\n        \"assignees\": []       \n  }\n}",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 169,\n      \"uuid\": \"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n      \"userName\": \"7070102021\",\n      \"name\": \"test2\",\n      \"mobileNumber\": \"9130011254\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n        {\n          \"name\": \"Organization staff\",\n          \"code\": \"ORG_STAFF\",\n          \"tenantId\": \"{{tenantId}}\"\n        }]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n    \"registerId\": \"56shcwgdt412\",\n    \"startDate\": 1670178600000,\n    \"endDate\": 1670697000000,\n     \"additionalDetails\": {\"org details\":\"org1\"}\n  },\n  \"workflow\": {\n      \"action\": \"SUBMIT\",\n        \"comments\": \"Sumbit muster roll\",\n        \"assignees\": []       \n  }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -188,7 +200,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 169,\n      \"uuid\": \"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n      \"userName\": \"7070102021\",\n      \"name\": \"test2\",\n      \"mobileNumber\": \"9130011254\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n        {\n          \"name\": \"Organization staff\",\n          \"code\": \"ORG_STAFF\",\n          \"tenantId\": \"{{tenantId}}\"\n        }]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n    \"registerId\": \"56shcwgdt232\",\n    \"startDate\": 1670178600000,\n    \"endDate\": 1670697000000,\n    \"individualEntries\": [\n                {\n                    \"individualId\": \"123e4567-e89b-12d3-a456-426614174444\",\n                    \"additionalDetails\": {\"code\":\"Skill 2\"}\n                },\n                {\n                    \"individualId\": \"123e4567-e89b-12d3-a456-426614174445\",\n                    \"additionalDetails\": {\"code\":\"Skill 3\"}\n                }\n\n     ],\n     \"additionalDetails\": {\"org details\":\"org1\"}\n  },\n  \"workflow\": {\n      \"action\": \"SUBMIT\",\n        \"comments\": \"Sumbit muster roll\",\n        \"assignees\": []       \n  }\n}",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 169,\n      \"uuid\": \"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n      \"userName\": \"7070102021\",\n      \"name\": \"test2\",\n      \"mobileNumber\": \"9130011254\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n        {\n          \"name\": \"Organization staff\",\n          \"code\": \"ORG_STAFF\",\n          \"tenantId\": \"{{tenantId}}\"\n        }]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n    \"registerId\": \"56shcwgdt308\",\n    \"startDate\": 1670178600000,\n    \"endDate\": 1670697000000,\n    \"individualEntries\": [\n                {\n                    \"individualId\": \"123e4567-e89b-12d3-a456-426614174444\",\n                    \"additionalDetails\": {\"code\":\"Skill 2\"}\n                },\n                {\n                    \"individualId\": \"123e4567-e89b-12d3-a456-426614174445\",\n                    \"additionalDetails\": {\"code\":\"Skill 3\"}\n                }\n\n     ],\n     \"additionalDetails\": {\"org details\":\"org1\"}\n  },\n  \"workflow\": {\n      \"action\": \"SUBMIT\",\n        \"comments\": \"Sumbit muster roll\",\n        \"assignees\": []       \n  }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -216,7 +228,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 169,\n      \"uuid\": \"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n      \"userName\": \"7070102021\",\n      \"name\": \"test2\",\n      \"mobileNumber\": \"9130011254\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n        {\n          \"name\": \"Organization staff\",\n          \"code\": \"ORG_STAFF\",\n          \"tenantId\": \"{{tenantId}}\"\n        }]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n    \"registerId\": \"56shcwgdt233\",\n    \"startDate\": 1670178600000,\n    \"endDate\": 1670697000000,\n    \"individualEntries\": [\n                {\n                    \"individualId\": \"123e4567-e89b-12d3-a456-426614174444\",\n                    \"additionalDetails\": {\"code\":\"Skill 2\"}\n                }\n\n     ],\n     \"additionalDetails\": {\"org details\":\"org1\"}\n  },\n  \"workflow\": {\n      \"action\": \"SUBMIT\",\n        \"comments\": \"Sumbit muster roll\",\n        \"assignees\": []       \n  }\n}",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 169,\n      \"uuid\": \"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n      \"userName\": \"7070102021\",\n      \"name\": \"test2\",\n      \"mobileNumber\": \"9130011254\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n        {\n          \"name\": \"Organization staff\",\n          \"code\": \"ORG_STAFF\",\n          \"tenantId\": \"{{tenantId}}\"\n        }]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n    \"registerId\": \"56shcwgdt244\",\n    \"startDate\": 1670178600000,\n    \"endDate\": 1670697000000,\n    \"individualEntries\": [\n                {\n                    \"individualId\": \"123e4567-e89b-12d3-a456-426614174444\",\n                    \"additionalDetails\": {\"code\":\"Skill 2\"}\n                }\n\n     ],\n     \"additionalDetails\": {\"org details\":\"org1\"}\n  },\n  \"workflow\": {\n      \"action\": \"SUBMIT\",\n        \"comments\": \"Sumbit muster roll\",\n        \"assignees\": []       \n  }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -393,7 +405,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 172,\n      \"uuid\": \"5ce80dd3-b1c0-42fd-b8f6-a2be456db31c\",\n      \"userName\": \"8070102021\",\n      \"name\": \"test3\",\n      \"mobileNumber\": \"8070102021\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"JUNIOR ENGINEER\",\n                    \"tenantId\": \"{{tenantId}}\"\n                }\n        ]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n     \"id\":\"6717f70a-0460-4c6f-9a12-a8c9acb5105c\"\n  },\n  \"workflow\": {\n      \"action\": \"VERIFY\",\n        \"comments\": \"Verify muster roll\",\n        \"assignees\": []\n        \n  }\n}",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 172,\n      \"uuid\": \"5ce80dd3-b1c0-42fd-b8f6-a2be456db31c\",\n      \"userName\": \"8070102021\",\n      \"name\": \"test3\",\n      \"mobileNumber\": \"8070102021\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"JUNIOR ENGINEER\",\n                    \"tenantId\": \"{{tenantId}}\"\n                }\n        ]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n     \"id\":\"{{musterRollId}}\"\n  },\n  \"workflow\": {\n      \"action\": \"VERIFY\",\n        \"comments\": \"Verify muster roll\",\n        \"assignees\": []\n        \n  }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -477,7 +489,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 172,\n      \"uuid\": \"5ce80dd3-b1c0-42fd-b8f6-a2be456db31c\",\n      \"userName\": \"8070102021\",\n      \"name\": \"test3\",\n      \"mobileNumber\": \"8070102021\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"JUNIOR ENGINEER\",\n                    \"tenantId\": \"{{tenantId}}\"\n                }\n        ]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n     \"id\":\"8eda35f4-dd1a-48cc-a18c-1cb1a60fdc36\",\n     \"individualEntries\": [\n                {\n                    \"id\": \"1daf32fa-2565-419a-8bd8-b6624db08936\",\n                    \"totalAttendance\": 5,\n                    \"additionalDetails\": {\"code\":\"Skill 4\"}\n                },\n                {\n                    \"id\": \"aa414964-56cc-4fff-b85f-050b70792eca\",\n                    \"additionalDetails\": {\"code\":\"Skill 3\"}\n                }\n\n     ]\n  },\n  \"workflow\": {\n      \"action\": \"VERIFY\",\n        \"comments\": \"Verify muster roll\",\n        \"assignees\": []\n        \n  }\n}",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 172,\n      \"uuid\": \"5ce80dd3-b1c0-42fd-b8f6-a2be456db31c\",\n      \"userName\": \"8070102021\",\n      \"name\": \"test3\",\n      \"mobileNumber\": \"8070102021\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"JUNIOR ENGINEER\",\n                    \"tenantId\": \"{{tenantId}}\"\n                }\n        ]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n     \"id\":\"85b4cc8f-6eec-4d08-9160-35933789f134\",\n     \"individualEntries\": [\n                {\n                    \"id\": \"82106e16-e34f-4cf9-a358-036c1b35d4a4\",\n                    \"totalAttendance\": 4.5,\n                    \"additionalDetails\": {\"code\":\"Skill 4\"}\n                },\n                {\n                    \"id\": \"29b9368e-7cc0-4cb0-8954-a9277a162aa6\",\n                    \"additionalDetails\": {\"code\":\"Skill 3\"}\n                }\n\n     ]\n  },\n  \"workflow\": {\n      \"action\": \"VERIFY\",\n        \"comments\": \"Verify muster roll\",\n        \"assignees\": []\n        \n  }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -500,40 +512,24 @@
 		},
 		{
 			"name": "Update muster roll - Success - REJECT action",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 172,\n      \"uuid\": \"f9665338-8a0c-4054-93c7-ff1526616da6\",\n      \"userName\": \"9070102020\",\n      \"name\": \"test4\",\n      \"mobileNumber\": \"9070102020\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n                {\n                    \"code\": \"MUNICIPAL_ENGINEER\",\n                    \"name\": \"MUNICIPAL ENGINEER\",\n                    \"tenantId\": \"{{tenantId}}\"\n                }\n            ]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n     \"id\":\"6717f70a-0460-4c6f-9a12-a8c9acb5105c\"\n     \n  },\n  \"workflow\": {\n      \"action\": \"REJECT\",\n        \"comments\": \"Reject muster roll\"\n        \n  }\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));"
+						],
+						"type": "text/javascript"
 					}
-				},
-				"url": {
-					"raw": "{{envURL}}/muster-roll/v1/_update",
-					"host": [
-						"{{envURL}}"
-					],
-					"path": [
-						"muster-roll",
-						"v1",
-						"_update"
-					]
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update muster roll - Success - APPROVE action",
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 172,\n      \"uuid\": \"f9665338-8a0c-4054-93c7-ff1526616da6\",\n      \"userName\": \"9070102020\",\n      \"name\": \"test4\",\n      \"mobileNumber\": \"9070102020\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n                {\n                    \"code\": \"MUNICIPAL_ENGINEER\",\n                    \"name\": \"MUNICIPAL ENGINEER\",\n                    \"tenantId\": \"{{tenantId}}\"\n                }\n            ]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n     \"id\":\"43f38167-8bae-4033-981a-78688cdaafd2\"\n     \n  },\n  \"workflow\": {\n      \"action\": \"APPROVE\",\n        \"comments\": \"Approve muster roll\"\n        \n  }\n}",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 172,\n      \"uuid\": \"f9665338-8a0c-4054-93c7-ff1526616da6\",\n      \"userName\": \"9070102020\",\n      \"name\": \"test4\",\n      \"mobileNumber\": \"9070102020\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n                {\n                    \"code\": \"MUNICIPAL_ENGINEER\",\n                    \"name\": \"MUNICIPAL ENGINEER\",\n                    \"tenantId\": \"{{tenantId}}\"\n                }\n            ]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n     \"id\":\"{{musterRollId}}\"\n     \n  },\n  \"workflow\": {\n      \"action\": \"REJECT\",\n        \"comments\": \"Reject muster roll\"\n        \n  }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -556,12 +552,63 @@
 		},
 		{
 			"name": "Update muster roll - Success - RESUBMIT action",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 169,\n      \"uuid\": \"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n      \"userName\": \"7070102021\",\n      \"name\": \"test2\",\n      \"mobileNumber\": \"9130011254\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n        {\n          \"name\": \"Organization staff\",\n          \"code\": \"ORG_STAFF\",\n          \"tenantId\": \"{{tenantId}}\"\n        }]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n     \"id\":\"6717f70a-0460-4c6f-9a12-a8c9acb5105c\",\n     \"additionalDetails\": {\"computeAttendance\":\"true\"}\n  },\n  \"workflow\": {\n      \"action\": \"RESUBMIT\",\n        \"comments\": \"Resubmit muster roll\",\n        \"assignees\": []       \n        \n  }\n}",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 169,\n      \"uuid\": \"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n      \"userName\": \"7070102021\",\n      \"name\": \"test2\",\n      \"mobileNumber\": \"9130011254\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n        {\n          \"name\": \"Organization staff\",\n          \"code\": \"ORG_STAFF\",\n          \"tenantId\": \"{{tenantId}}\"\n        }]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n     \"id\":\"{{musterRollId}}\",\n     \"additionalDetails\": {\"computeAttendance\":\"true\"}\n  },\n  \"workflow\": {\n      \"action\": \"RESUBMIT\",\n        \"comments\": \"Resubmit muster roll\",\n        \"assignees\": []       \n        \n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{envURL}}/muster-roll/v1/_update",
+					"host": [
+						"{{envURL}}"
+					],
+					"path": [
+						"muster-roll",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update muster roll - Success - APPROVE action",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"asset-services\",\n    \"ver\": null,\n    \"ts\": null,\n    \"action\": null,\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"search with from and to values\",\n    \"authToken\": \"{{envAUTH}}\",\n    \"userInfo\": {\n      \"id\": 172,\n      \"uuid\": \"f9665338-8a0c-4054-93c7-ff1526616da6\",\n      \"userName\": \"9070102020\",\n      \"name\": \"test4\",\n      \"mobileNumber\": \"9070102020\",\n      \"emailId\": \"xyz@egovernments.org\",\n      \"locale\": null,\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n                {\n                    \"code\": \"MUNICIPAL_ENGINEER\",\n                    \"name\": \"MUNICIPAL ENGINEER\",\n                    \"tenantId\": \"{{tenantId}}\"\n                }\n            ]\n    }\n  },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n     \"id\":\"{{musterRollId}}\"\n     \n  },\n  \"workflow\": {\n      \"action\": \"APPROVE\",\n        \"comments\": \"Approve muster roll\"\n        \n  }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -649,7 +696,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{envURL}}/muster-roll/v1/_search?tenantId=pb.amritsar&musterRollNumber=MR/2022-23/01/11/000183",
+					"raw": "{{envURL}}/muster-roll/v1/_search?tenantId=pb.amritsar&musterRollNumber={{musterRollNumber}}",
 					"host": [
 						"{{envURL}}"
 					],
@@ -665,7 +712,7 @@
 						},
 						{
 							"key": "musterRollNumber",
-							"value": "MR/2022-23/01/11/000183"
+							"value": "{{musterRollNumber}}"
 						}
 					]
 				}
@@ -762,191 +809,6 @@
 						{
 							"key": "tenantId",
 							"value": "pb"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Indexer",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"id\":\"ae0f9207-bc61-440b-8ce8-3af5ab95241c\",\n   \"tenantId\":\"pb.amritsar\",\n   \"musterRollNumber\":\"MR/2022-23/12/19/000051\",\n   \"registerId\":\"56shcwgdt239\",\n   \"status\":\"ACTIVE\",\n   \"musterRollStatus\":\"SUBMITTED\",\n   \"startDate\":1670178600000,\n   \"endDate\":1670697000000,\n   \"individualEntries\":[\n      {\n         \"id\":\"a8a6b282-9da9-4319-8164-c56370324e0b\",\n         \"individualId\":\"123e4567-e89b-12d3-a456-426614174444\",\n         \"totalAttendance\":2.5,\n         \"attendanceEntries\":[\n            {\n               \"id\":\"d6ce8728-f097-4af0-aeb4-0bbccbeb950d\",\n               \"time\":1670178600000,\n               \"attendance\":0.5,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"8cf36167-2612-48ca-b639-bc00fb269bd3\",\n               \"time\":1670265000000,\n               \"attendance\":1,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"beb63546-a9cf-4b1c-919c-6123f4835c6d\",\n               \"time\":1670351400000,\n               \"attendance\":1,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"90ab7225-d19d-4fe7-beb6-c0d2eea7b9fe\",\n               \"time\":1670437800000,\n               \"attendance\":0,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"c0c63aa5-70ac-49fc-98ec-33c5ecf7f51d\",\n               \"time\":1670524200000,\n               \"attendance\":0,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"887550c4-18e8-445d-980c-66f14ba242e6\",\n               \"time\":1670610600000,\n               \"attendance\":0,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"38ffa33f-97fb-46b4-b2fb-48f33312d21e\",\n               \"time\":1670697000000,\n               \"attendance\":0,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            }\n         ],\n         \"additionalDetails\":null,\n         \"auditDetails\":{\n            \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n            \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n            \"createdTime\":1671439973986,\n            \"lastModifiedTime\":1671439973986\n         }\n      },\n      {\n         \"id\":\"cfec0b23-653e-4dd6-af5b-49ad3a672f67\",\n         \"individualId\":\"123e4567-e89b-12d3-a456-426614174445\",\n         \"totalAttendance\":1,\n         \"attendanceEntries\":[\n            {\n               \"id\":\"9fb000ac-2475-48e6-982d-2236aa0c4152\",\n               \"time\":1670178600000,\n               \"attendance\":0,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"93703723-fb0b-470e-8937-a67df2299b5a\",\n               \"time\":1670265000000,\n               \"attendance\":1,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"99e07bd3-d37c-48a4-884d-8ab56941edbc\",\n               \"time\":1670351400000,\n               \"attendance\":0,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"003a8ce9-992e-459e-8065-da3933a91e40\",\n               \"time\":1670437800000,\n               \"attendance\":0,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"79a8c68c-1cad-4dec-a04d-c9260a7cd7c4\",\n               \"time\":1670524200000,\n               \"attendance\":0,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"9f2c03fa-8954-454f-8796-d5920cb06915\",\n               \"time\":1670610600000,\n               \"attendance\":0,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            },\n            {\n               \"id\":\"2e448e64-dd2a-4476-baba-b09c97259e7c\",\n               \"time\":1670697000000,\n               \"attendance\":0,\n               \"auditDetails\":{\n                  \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n                  \"createdTime\":1671439973986,\n                  \"lastModifiedTime\":1671439973986\n               },\n               \"additionalDetails\":null\n            }\n         ],\n         \"additionalDetails\":null,\n         \"auditDetails\":{\n            \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n            \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n            \"createdTime\":1671439973986,\n            \"lastModifiedTime\":1671439973986\n         }\n      }\n   ],\n   \"additionalDetails\":null,\n   \"auditDetails\":{\n      \"createdBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n      \"lastModifiedBy\":\"81a1988f-9072-4ff9-8aa4-eee5cf10ba57\",\n      \"createdTime\":1671439973986,\n      \"lastModifiedTime\":1671439973986\n   }\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8095/egov-indexer/index-operations/save-musterroll/_index",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8095",
-					"path": [
-						"egov-indexer",
-						"index-operations",
-						"save-musterroll",
-						"_index"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Legacy index",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"string\",\n        \"ver\": \"string\",\n        \"ts\": null,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"string\",\n        \"authToken\": \"ca3256e3-5318-47b1-8a68-ffcf2228fe35\",\n        \"correlationId\": \"e721639b-c095-40b3-86e2-acecb2cb6efb\",\n        \"userInfo\": {\n            \"id\": 23299,\n            \"uuid\": \"e721639b-c095-40b3-86e2-acecb2cb6efb\",\n            \"userName\": \"9337682030\",\n            \"name\": \"Abhilash Seth\",\n            \"type\": \"CITIZEN\",\n            \"mobileNumber\": \"9337682030\",\n            \"emailId\": \"abhilash.seth@gmail.com\",\n            \"roles\": [\n                {\n                    \"id\": 281,\n                    \"name\": \"Citizen\"\n                }\n            ]\n        }\n    },\n    \"apiDetails\": {\n        \"uri\": \"http://localhost:8080/muster-roll/v1/_search\",\n        \"tenantIdForOpenSearch\": \"pb.amritsar\",\n        \"paginationDetails\": {\n            \"offsetKey\": \"offset\",\n            \"sizeKey\": \"limit\",\n            \"maxPageSize\": 25,\n            \"limit\":25\n        },\n        \"responseJsonPath\": \"$.musterRolls.*\"\n    },\n    \"legacyIndexTopic\": \"muster-legacyIndex\",\n    \"tenantId\": \"pb\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8095/egov-indexer/index-operations/_legacyindex",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8095",
-					"path": [
-						"egov-indexer",
-						"index-operations",
-						"_legacyindex"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "DEV OAUTH",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "authority",
-						"value": "works-dev.digit.org"
-					},
-					{
-						"key": "accept",
-						"value": "application/json, text/plain, */*"
-					},
-					{
-						"key": "accept-language",
-						"value": "en-US,en;q=0.9"
-					},
-					{
-						"key": "authorization",
-						"value": "Basic ZWdvdi11c2VyLWNsaWVudDo="
-					},
-					{
-						"key": "content-type",
-						"value": "application/x-www-form-urlencoded"
-					},
-					{
-						"key": "cookie",
-						"value": "_ga=GA1.2.1506485331.1658314347; intercom-id-xp1951jv=5783eaec-e568-4fc8-885c-28a98fe8a907; __cuid=87e2792a4753445c9c64bd86b44e7e1c; amp_fef1e8=d52a0631-cc84-4948-a819-98043e1a5756R...1gd02kkcb.1gd02kkfv.1j.9.1s"
-					},
-					{
-						"key": "origin",
-						"value": "https://works-dev.digit.org"
-					},
-					{
-						"key": "referer",
-						"value": "https://works-dev.digit.org/works-ui/employee/user/login"
-					},
-					{
-						"key": "sec-ch-ua",
-						"value": "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\""
-					},
-					{
-						"key": "sec-ch-ua-mobile",
-						"value": "?0"
-					},
-					{
-						"key": "sec-ch-ua-platform",
-						"value": "\"Windows\""
-					},
-					{
-						"key": "sec-fetch-dest",
-						"value": "empty"
-					},
-					{
-						"key": "sec-fetch-mode",
-						"value": "cors"
-					},
-					{
-						"key": "sec-fetch-site",
-						"value": "same-origin"
-					},
-					{
-						"key": "user-agent",
-						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
-					}
-				],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "username",
-							"value": "super",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "eGov@123",
-							"type": "text"
-						},
-						{
-							"key": "userType",
-							"value": "EMPLOYEE",
-							"type": "text"
-						},
-						{
-							"key": "tenantId",
-							"value": "pb.amritsar",
-							"type": "text"
-						},
-						{
-							"key": "scope",
-							"value": "read",
-							"type": "text"
-						},
-						{
-							"key": "grant_type",
-							"value": "password",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "https://works-dev.digit.org/user/oauth/token?_=1663574474232",
-					"protocol": "https",
-					"host": [
-						"works-dev",
-						"digit",
-						"org"
-					],
-					"path": [
-						"user",
-						"oauth",
-						"token"
-					],
-					"query": [
-						{
-							"key": "_",
-							"value": "1663574474232"
 						}
 					]
 				}

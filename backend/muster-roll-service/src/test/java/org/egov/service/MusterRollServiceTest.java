@@ -83,4 +83,16 @@ public class MusterRollServiceTest {
         assertTrue(exception.getCode().contentEquals("DUPLICATE_MUSTER_ROLL"));
     }
 
+    @Test
+    void shouldThrowException_IfWorkflowServiceFails() {
+        MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
+        List<MusterRoll> musterRolls = null;
+        lenient().when(musterRollRepository.getMusterRoll(any(MusterRollSearchCriteria.class))).thenReturn(musterRolls);
+        lenient().when(workflowService.updateWorkflowStatus(any(MusterRollRequest.class))).thenThrow(new CustomException("BUSINESSSERVICE_DOESN'T_EXIST",""));
+
+        assertThrows(CustomException.class, () -> {
+            musterRollService.createMusterRoll(musterRollRequest);
+        });
+    }
+
 }
