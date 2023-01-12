@@ -13,7 +13,6 @@ import { LocalityService } from "./services/elements/Localities";
 import { LocalizationService } from "./services/elements/Localization/service";
 import { LoginService } from "./services/elements/Login";
 import { PGRService } from "./services/elements/PGR";
-import { FSMService } from "./services/elements/FSM";
 import { PaymentService } from "./services/elements/Payment";
 import * as dateUtils from "./services/atoms/Utils/Date";
 import Download from "./services/atoms/Download";
@@ -21,11 +20,6 @@ import { WorkflowService } from "./services/elements/WorkFlow";
 import { MdmsService } from "./services/elements/MDMS";
 import { Complaint } from "./services/elements/Complaint";
 import { UserService } from "./services/elements/User";
-import { PTService } from "./services/elements/PT";
-import { WSService } from "./services/elements/WS";
-import { TLService } from "./services/elements/TL";
-import { MCollectService } from "./services/elements/MCollect";
-import { ReportsService } from "./services/elements/Reports";
 import HrmsService from "./services/elements/HRMS";
 import { InboxGeneral } from "./services/elements/InboxService";
 import EventsServices from "./services/elements/Events";
@@ -35,7 +29,6 @@ import { WorksService } from "./services/elements/Works";
 import ShareFiles from "./services/molecules/ShareFiles";
 import { GetServiceDefinitions } from "./services/molecules/ServiceDefinitions";
 import { ULBService } from "./services/molecules/Ulb";
-import { FileDesludging } from "./services/molecules/FSM/FileDesludging";
 import { ComponentRegistryService } from "./services/elements/ComponentRegistry";
 import StoreData from "./services/molecules/StoreData";
 
@@ -43,10 +36,6 @@ import Contexts from "./contexts";
 import Hooks from "./hooks";
 import Utils from "./utils";
 import { subFormRegistry } from "./subFormRegistry";
-import ReceiptsService from "./services/elements/Receipts";
-import { EDCRService } from "./services/elements/EDCR";
-import { OBPSService } from "./services/elements/OBPS";
-import { NOCService } from "./services/elements/NOC";
 import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
 
@@ -70,16 +59,8 @@ const initLibraries = () => {
   setupLibraries("LoginService", LoginService);
   setupLibraries("LocalizationService", LocalizationService);
   setupLibraries("PGRService", PGRService);
-  setupLibraries("FSMService", FSMService);
-  setupLibraries("PTService", PTService);
-  setupLibraries("TLService", TLService);
   setupLibraries("HRMSService", HrmsService);
-  setupLibraries("ReceiptsService", ReceiptsService);
-  setupLibraries("MCollectService", MCollectService);
-  setupLibraries("ReportsService", ReportsService)
   setupLibraries("PaymentService", PaymentService);
-  setupLibraries("EDCRService", EDCRService);
-  setupLibraries("OBPSService", OBPSService);
   setupLibraries("DateUtils", dateUtils);
   setupLibraries("WorkflowService", WorkflowService);
   setupLibraries("MDMSService", MdmsService);
@@ -87,11 +68,9 @@ const initLibraries = () => {
   setupLibraries("JsDictionary", JsDictionary);
   setupLibraries("GetServiceDefinitions", GetServiceDefinitions);
   setupLibraries("Complaint", Complaint);
-  setupLibraries("FileDesludging", FileDesludging);
   setupLibraries("ComponentRegistryService", ComponentRegistryService);
   setupLibraries("StoreData", StoreData);
   setupLibraries("EventsServices", EventsServices);
-  setupLibraries("WSService", WSService);
   setupLibraries("WorksService", WorksService)
 
   setupLibraries("InboxGeneral", InboxGeneral);
@@ -102,7 +81,6 @@ const initLibraries = () => {
   setupLibraries("Utils", Utils);
   setupLibraries("Download", Download);
 
-  setupLibraries("NOCService", NOCService);
   setupLibraries("AccessControlService", AccessControlService);
   setupLibraries("BillServices", BillServices);
 

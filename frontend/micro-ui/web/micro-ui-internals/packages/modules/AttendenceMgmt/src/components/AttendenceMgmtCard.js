@@ -1,4 +1,4 @@
-import { EmployeeModuleCard, PropertyHouse} from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, BioMetricIcon} from "@egovernments/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -19,7 +19,7 @@ const AttendenceMgmtCard = () => {
   // links = links.filter((link) => (link.roles ? checkForEmployee(link.roles) : true));
 
     const propsForModuleCard = {
-        Icon: <PropertyHouse fill="white"/>,
+        Icon: <BioMetricIcon fill="white"/>,
         moduleName: t("ACTION_TEST_ATTENDENCEMGMT"),
         kpis: [
             {

@@ -1,4 +1,4 @@
-import { EmployeeModuleCard, ArrowRightInbox, WSICon } from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, ArrowRightInbox, WorksMgmtIcon } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -19,7 +19,7 @@ const WorksCard = () => {
   // links = links.filter((link) => (link.roles ? checkForEmployee(link.roles) : true));
 
   const propsForModuleCard = {
-    Icon: <WSICon />,
+    Icon: <WorksMgmtIcon />,
     moduleName: t("WORKS"),
     kpis: [
       {

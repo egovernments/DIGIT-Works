@@ -179,7 +179,12 @@ import {
   CreateEstimateIcon,
   GotoInboxIcon,
   AddFilled,
-  NoResultsFoundIcon
+
+  /* Works Management  */
+
+  NoResultsFoundIcon,
+  WorksMgmtIcon,
+  BioMetricIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -381,7 +386,6 @@ export {
   FilterFormField,
   SortAction,
   CustomDropdown,
-  NoResultsFoundIcon,
   // hoc
   FormComposer,
   ResponseComposer,
@@ -474,5 +478,11 @@ export {
   BirthIcon,
   FirenocIcon,
   CreateEstimateIcon,
-  GotoInboxIcon
+  GotoInboxIcon,
+
+  /* Works Management  */
+
+  NoResultsFoundIcon,
+  WorksMgmtIcon,
+  BioMetricIcon
 };
