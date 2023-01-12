@@ -31,25 +31,30 @@ const WorksCard = () => {
     ],
     links: [
       {
+        label: t("ACTION_TEST_PROJECTS"),
+        link: `/${window?.contextPath}/employee/project/create-project`,
+        roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
+      },
+      {
         label: t("WORKS_ESTIMATES"),
         link: `/${window?.contextPath}/employee/works/inbox`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       },
-      {
-        label: t("WORKS_LOI"),
-        link: `/${window?.contextPath}/employee/works/loiinbox`,
-        roles: ["LOI CHECKER", "LOI APPROVER", "LOI CREATOR", "EMPLOYEE"],
-      },
-      {
-        label: t("WORKS_MILESSTONES"),
-        link: `/${window?.contextPath}/employee`,
-        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
-      },
-      {
-        label: t("WORKS_PAY_CALENDAR"),
-        link: `/${window?.contextPath}/employee`,
-        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
-      },
+      // {
+      //   label: t("WORKS_LOI"),
+      //   link: `/${window?.contextPath}/employee/works/loiinbox`,
+      //   roles: ["LOI CHECKER", "LOI APPROVER", "LOI CREATOR", "EMPLOYEE"],
+      // },
+      // {
+      //   label: t("WORKS_MILESSTONES"),
+      //   link: `/${window?.contextPath}/employee`,
+      //   roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+      // },
+      // {
+      //   label: t("WORKS_PAY_CALENDAR"),
+      //   link: `/${window?.contextPath}/employee`,
+      //   roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+      // },
       {
         label: t("WORKS_KICKOFF_CHECKLIST"),
         link: `/${window?.contextPath}/employee/works/checklist`,
@@ -61,11 +66,7 @@ const WorksCard = () => {
         link: `/${window?.contextPath}/employee/works/create-contractor`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
-      {
-        label: t("WORKS_REPORTS"),
-        link: `/${window?.contextPath}/employee/`,
-        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
-      },
+     
       {
         label: t("WORKS_MASTERS"),
         link: `/${window?.contextPath}/employee/works/search-organization`,
