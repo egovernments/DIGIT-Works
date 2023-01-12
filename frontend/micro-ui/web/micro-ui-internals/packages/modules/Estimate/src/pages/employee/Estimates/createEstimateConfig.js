@@ -20,32 +20,72 @@ export const createEstimateConfig = (t) => {
                 ]
             },
             {
+                head: "WORKS_ESTIMATE_TEMPLATE",
+                subHead: "",
                 navLink: "Work Details",
-                head: t("WORK DETAILS"),
                 body: [
                     {
-                        isMandatory: true,
-                        key: "typeOfWork",
-                        type: "radioordropdown",
-                        label: "PROJECT_TYPE_OF_WORK",
-                        disable: false,
-                        populators: {
-                            name: "typeOfWork",
-                            optionsKey: "name",
-                            error: t("WORKS_REQUIRED_ERR"),
-                            required: true,
-                            optionsCustomStyle: {
-                                top: "2.5rem"
-                            },
-                            mdmsConfig: {
-                                masterName: "WageSeekerSkills",
-                                moduleName: "common-masters",
-                                localePrefix: "MASTERS",
-                            },
-                        },
-                    },
+                        type: "component",
+                        component: "EstimateTemplate",
+                        withoutLabel: true,
+                        key: "estimateTemplateDetails",
+                    }
                 ]
-            }
+            },
+            {
+                head: "WORKS_SOR",
+                subHead: "",
+                navLink: "Work Details",
+                body: [
+                    {
+                        type: "component",
+                        component: "SOR",
+                        withoutLabel: true,
+                        key: "sorDetails",
+                    }
+                ]
+            },
+            {
+                head: "WORKS_NON_SOR",
+                subHead: "",
+                navLink: "Work Details",
+                body: [
+                    {
+                        type: "component",
+                        component: "NonSORTable",
+                        withoutLabel: true,
+                        key: "nonSORDetails",
+                    }
+                ]
+            },
+            {
+                head: "WORKS_OVERHEADS",
+                subHead: "",
+                navLink: "Work Details",
+                body: [
+                    {
+                        type: "component",
+                        component: "OverheadsTable",
+                        withoutLabel: true,
+                        key: "overheadsDetails",
+                    }
+                ]
+            },
+            {
+                navLink:"Work Details",
+                head: "WORKS_RELEVANT_DOCS",
+                body: [
+                    {
+                        label: "WORKS_UPLOAD_FILES",
+                        isMandatory: true,
+                        key: "document",
+                        type: "multiupload",
+                        disable: false,
+                        populators: { name: "uploads" },
+                    },
+                ],
+            },
+            
         ]
     }
 }
