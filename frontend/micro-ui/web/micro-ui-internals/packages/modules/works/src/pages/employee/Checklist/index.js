@@ -1,4 +1,4 @@
-import { FormComposer,Header } from '@egovernments/digit-ui-react-components'
+import { FormComposer,Header, Loader } from '@egovernments/digit-ui-react-components'
 import React, { useState } from 'react'
 
 import { useTranslation } from 'react-i18next'
@@ -7,9 +7,23 @@ const Checklist = (props) => {
     const { t } = useTranslation()
     const onSubmit = (data) => {
     }
-
+    const tenant = Digit.ULBService.getStateId();
     const [showForm, setShowForm] = useState(false)
-
+    const { isLoading, data: checklistData } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        "works",
+        [
+            {
+                "name": "ClosureChecklist"
+            },
+            {
+                "name": "KickoffChecklist"
+            }
+        ]
+    );
+    
+    if(isLoading) return <Loader />
+    
   return (
     <React.Fragment>
         <Header styles={{ marginLeft: "15px" }}>{t("WORKS_CHECKLIST")}</Header>
@@ -18,7 +32,7 @@ const Checklist = (props) => {
             label={t("CS_ACTION_DISPOSE")}
             //description={"Sample Description"}
             //text={"Sample Text"}
-            config={configChecklist(t,setShowForm,showForm).form.map((config) => {
+            config={configChecklist(t,setShowForm,showForm,checklistData).form.map((config) => {
                 return {
                     ...config,
                     body: config?.body?.filter((a) => !a.hideInEmployee),
