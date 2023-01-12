@@ -83,14 +83,6 @@ class GlobalVariables {
     }
   }
 
-  static dynamic getUserIds() {
-    if (kIsWeb) {
-      return jsonDecode(html.window.localStorage['userIds'].toString());
-    } else {
-      return jsonDecode(storage.read(key: 'userIds').toString());
-    }
-  }
-
   static Future<bool> isLocaleSelect(String locale) async {
     if (kIsWeb) {
       return html.window.localStorage.keys.contains(locale);
