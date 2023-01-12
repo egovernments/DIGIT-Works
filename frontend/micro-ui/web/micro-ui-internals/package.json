@@ -42,7 +42,8 @@
     "buildP:project": "cd packages/modules/Project && yarn build",
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
-    "deploy:jenkins": "./scripts/jenkins.sh"
+    "deploy:jenkins": "./scripts/jenkins.sh",
+    "clean": "rm -rf node_modules"
   },
   "devDependencies": {
     "husky": "7.0.4",
