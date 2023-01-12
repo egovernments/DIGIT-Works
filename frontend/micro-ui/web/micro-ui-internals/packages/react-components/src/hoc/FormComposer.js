@@ -548,7 +548,11 @@ export const FormComposer = (props) => {
     }
   };
 
-  const [activeLink, setActiveLink] = useState(props.horizontalNavConfig?props.horizontalNavConfig?.[0].name:null)
+  const [activeLink, setActiveLink] = useState(props.horizontalNavConfig?props.horizontalNavConfig?.[0].name:null);
+
+  useEffect(()=>{
+    setActiveLink(props.horizontalNavConfig?.[0].name);
+  },[props.horizontalNavConfig]);
   
   const renderFormFields = useCallback((props, section, index, array) => (
       <React.Fragment key={index}>
