@@ -45,7 +45,7 @@ import useServiceDefs from "./pgr/useServiceDefs";
 import usePGRTenants from "./pgr/useTenants";
 import useComplaintSubType from "./pgr/useComplaintSubType";
 import useComplaintStatusCount from "./pgr/useComplaintStatusWithCount";
-;
+
 
 import useEmployeeSearch from "./useEmployeeSearch";
 
@@ -154,7 +154,6 @@ const pgr = {
   useComplaintStatusCount,
 };
 
-const fsm = {
 
 const dss = {
   useMDMS: useDssMdms,
