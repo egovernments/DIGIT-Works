@@ -11,7 +11,7 @@ import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
-import { initProjectComponents } from  "@egovernments/digit-ui-module-project";
+// import { initProjectComponents } from  "@egovernments/digit-ui-module-project";
 
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
@@ -56,7 +56,7 @@ initAttendenceMgmtComponents();
 initContractsComponents();
 initExpenditureComponents();
 initMastersComponents();
-initProjectComponents();
+// initProjectComponents();
 
 const moduleReducers = (initData) => ({
   initData,
