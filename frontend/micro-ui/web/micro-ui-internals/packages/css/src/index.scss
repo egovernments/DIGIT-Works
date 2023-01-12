@@ -789,3 +789,17 @@ input[type="number"] {
 .status-value-link {
   color: #F47738;
 }
+
+.info-banner-wrap {
+  &.project-banner {
+    background: #FFE2B5;
+    p{
+      font-size: 16px;
+      color: #CC7B2F;
+    } 
+    h2{
+      font-size: 18px;
+      color: #CC7B2F;
+    }
+  }
+}

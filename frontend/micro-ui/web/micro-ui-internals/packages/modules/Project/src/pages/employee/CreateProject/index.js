@@ -17,15 +17,15 @@ const whenHasProjectsHorizontalNavConfig =  [
 
 const whenHasSubProjectsHorizontalNavConfig =  [
   {
-    name:"Project_Details_Sub_Project",
+    name:"Project_Details_In_Sub_Project",
     code:"WORKS_PROJECT_DETAILS",
   },
   {
-      name:"Financial_Details_Sub_Project",
+      name:"Financial_Details_In_Sub_Project",
       code:"WORKS_FINANCIAL_DETAILS",
   },
   {
-      name: "Sub_Project_Details",
+      name: "Sub_Project_Details_In_Sub_Project",
       code:"WORKS_SUB_PROJECT_DETAILS",
   }
 ];
@@ -43,6 +43,7 @@ const CreateProject = () => {
     const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const [currentFormCategory, setCurrentFormCategory] = useState("projects");
+    const [showInfoLabel, setShowInfoLabel] = useState(false);
 
     //clear session data on first init
     useEffect(()=>{
@@ -102,16 +103,18 @@ const CreateProject = () => {
           setSessionFormData({ ...sessionFormData, ...formData });
         }
     }
-    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities);
+    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel);
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
           setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
           setCurrentFormCategory("subProjects");
+          setShowInfoLabel(true);
           setShowNavs(true);
         }else if(selectedProjectType?.code === "COMMON_NO") {
           setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
           setCurrentFormCategory("projects");
+          setShowInfoLabel(false);
           setShowNavs(true);
         }
     },[selectedProjectType]);

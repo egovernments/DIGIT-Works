@@ -1,7 +1,8 @@
+import { CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities) => {
+export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false) => {
   const { t } = useTranslation()
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -70,12 +71,20 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               ],
             },
           },
+          {
+            isMandatory: false,
+            key: "",
+            type: "goToDefaultCase",
+            label: "",
+            disable: false,
+            populators : showInfoLabel && <CitizenInfoLabel info={t("WORKS_INFO")} text={t("WORKS_SUB_PROJECT_INFO_MSG")} className="project-banner" fill="#CC7B2F"></CitizenInfoLabel>
+          }
       ]
       },
       {
         navLink:"Project_Details",
         sectionFormCategory : "projects",
-        head: t("WORKS_PROJECT_DETAILS"),
+        head: t(""),
         body: [
           {
             isMandatory: true,
@@ -334,7 +343,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       {
         navLink:"Financial_Details",
         sectionFormCategory : "projects",
-        head: t("PDF_STATIC_LABEL_ESTIMATE_FINANCIAL_DETAILS"),
+        head: t(""),
         body: [
           {
             isMandatory: true,
@@ -440,18 +449,18 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
         ]
       },
       {
-        navLink:"Project_Details_Sub_Project",
+        navLink:"Project_Details_In_Sub_Project",
         sectionFormCategory : "subProjects",
         head: "",
         body: [
           {
             isMandatory: false,
-            key: "owningDepartment",
+            key: "subProjectOwningDepartment",
             type: "radioordropdown",
             label: "PROJECT_OWNING_DEPT",
             disable: false,
             populators: {
-              name: "owningDepartment",
+              name: "subProjectOwningDepartment",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -467,12 +476,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: false,
-            key: "executingDepartment",
+            key: "subProjectExecutingDepartment",
             type: "radioordropdown",
             label: "WORKS_EXECUTING_DEPT",
             disable: false,
             populators: {
-              name: "executingDepartment",
+              name: "subProjectExecutingDepartment",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -488,12 +497,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: false,
-            key: "beneficiary",
+            key: "subProjectBeneficiary",
             type: "radioordropdown",
             label: "WORKS_BENEFICIARY",
             disable: false,
             populators: {
-              name: "beneficiary",
+              name: "subProjectBeneficiary",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -511,7 +520,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             inline: true,
             label: "WORKS_LOR",
             isMandatory: false,
-            key: "letterRefNoOrReqNo",
+            key: "subProjectLetterRefNoOrReqNo",
             type: "text",
             disable: false,
             populators: { name: "letterRefNoOrReqNo", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
@@ -520,7 +529,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             inline: true,
             label: "PROJECT_TOTAL_ESTIMATED_COST_IN_RS",
             isMandatory: false,
-            key: "totalEstimatedCostInRs",
+            key: "subProjectTotalEstimatedCostInRs",
             type: "number",
             disable: true,
             populators: { name: "totalEstimatedCostInRs" }
@@ -528,9 +537,9 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
         ]
       },
       {
-        navLink:"Financial_Details_Sub_Project",
+        navLink:"Financial_Details_In_Sub_Project",
         sectionFormCategory : "subProjects",
-        head: t("PDF_STATIC_LABEL_ESTIMATE_FINANCIAL_DETAILS"),
+        head: t(""),
         body: [
           {
             isMandatory: true,
