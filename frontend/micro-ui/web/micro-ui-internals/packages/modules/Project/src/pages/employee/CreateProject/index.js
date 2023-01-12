@@ -90,10 +90,10 @@ const CreateProject = () => {
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
-          setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
+          setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
           setShowNavs(true);
         }else if(selectedProjectType?.code === "COMMON_NO") {
-          setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
+          setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
           setShowNavs(true);
         }
     },[selectedProjectType]);
