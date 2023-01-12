@@ -129,9 +129,15 @@ class WorkDetailsCard extends StatelessWidget {
                     userIds: userList,
                   ),
                 );
-            context.router.push(TrackAttendanceRoute(
-                projectDetails: [cardDetails],
-                attendanceRegister: attendanceRegister));
+            if (isManageAttendance) {
+              context.router.push(AttendanceRegisterTableRoute(
+                  projectDetails: [cardDetails],
+                  attendanceRegister: attendanceRegister));
+            } else {
+              context.router.push(TrackAttendanceRoute(
+                  projectDetails: [cardDetails],
+                  attendanceRegister: attendanceRegister));
+            }
           },
           child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
