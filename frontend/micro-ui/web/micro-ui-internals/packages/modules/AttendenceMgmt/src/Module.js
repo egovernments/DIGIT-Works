@@ -10,7 +10,7 @@ import ViewProjects from "./components/ViewProjectsInbox.js/ViewProjects";
 import Inbox from "./pages/employee/Inbox";
 import AttendenceInboxFilter from "./components/inbox/InboxFilter";
 import AttendenceInboxSearch from "./components/inbox/InboxSearch";
-import ViewAttendance from "./pages/employee/viewAttendance/ViewAttendance";
+import ViewAttendance from "./pages/employee/viewAttendance/ViewAttendances";
 
 export const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["AttendenceMgmt"];
