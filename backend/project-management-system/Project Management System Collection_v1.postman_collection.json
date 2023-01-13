@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "638a4375-4519-48d6-82c4-8e395a348fd3",
+		"name": "Project Management System Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Project",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"729c0a34-8314-47d2-b82f-63035e869ddf\"    \n  },\n  \"Projects\": [\n    {\n      \"tenantId\": \"pb.amritsar\",\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Aadhar\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n             \"documentUid\": \"EFWER\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area 51\",\n        \"city\": \"Amritsar\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"tt\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"CREATE\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://works-dev.digit.org/project-management-system/project/v1/_create",
+					"protocol": "https",
+					"host": [
+						"works-dev",
+						"digit",
+						"org"
+					],
+					"path": [
+						"project-management-system",
+						"project",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Project",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"729c0a34-8314-47d2-b82f-63035e869ddf\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"6647d3b0-82a7-4cf5-97c9-2bd64f4c6daf\",\n      \"tenantId\": \"pb.amritsar\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"department\": \"\",\n      \"description\": \"\",\n      \"referenceID\": \"\",\n      \"documents\": [],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"\",\n        \"addressLine1\": \"\",\n        \"addressLine2\": \"\",\n        \"landmark\": \"\",\n        \"city\": \"\",\n        \"pincode\": \"\",\n        \"buildingName\": \"\",\n        \"street\": \"\",\n        \"locality\": \"\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0,\n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://works-dev.digit.org/project-management-system/project/v1/_search?limit=5&offset=0&tenantId=pb.amritsar",
+					"protocol": "https",
+					"host": [
+						"works-dev",
+						"digit",
+						"org"
+					],
+					"path": [
+						"project-management-system",
+						"project",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "tenantId",
+							"value": "pb.amritsar"
+						},
+						{
+							"key": "lastChangedSince",
+							"value": "1672199167640",
+							"disabled": true
+						},
+						{
+							"key": "includeDeleted",
+							"value": "false",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Project",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"729c0a34-8314-47d2-b82f-63035e869ddf\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"6647d3b0-82a7-4cf5-97c9-2bd64f4c6daf\",\n            \"tenantId\": \"pb.amritsar\",\n            \"projectNumber\": \"PR/2022-23/01/000015\",\n            \"name\": \"project2\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"3fbb6a92-62b3-486d-bf92-3ea085640433\",\n                    \"documentType\": \"Aadhar\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"EFWER\",\n                    \"status\": null,\n                    \"additionalDetails\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"7e46e32c-187c-4fb4-9d6b-1ac70fa8f011\",\n                        \"lastModifiedBy\": \"7e46e32c-187c-4fb4-9d6b-1ac70fa8f011\",\n                        \"createdTime\": 1673524091098,\n                        \"lastModifiedTime\": 1673524091098\n                    }\n                }\n            ],\n            \"address\": {\n                \"id\": \"87d079c3-456b-405a-9c27-686f03591295\",\n                \"tenantId\": \"pb.amritsar\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area 51\",\n                \"city\": \"Amritsar\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\",\n                \"auditDetails\": {\n                    \"createdBy\": \"7e46e32c-187c-4fb4-9d6b-1ac70fa8f011\",\n                    \"lastModifiedBy\": \"7e46e32c-187c-4fb4-9d6b-1ac70fa8f011\",\n                    \"createdTime\": 1673524091098,\n                    \"lastModifiedTime\": 1673524091098\n                }\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"tt\",\n            \"targets\": [\n                {\n                    \"id\": \"1679d3f0-3cbe-411b-adbe-466b62e0e4cf\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"7e46e32c-187c-4fb4-9d6b-1ac70fa8f011\",\n                        \"lastModifiedBy\": \"7e46e32c-187c-4fb4-9d6b-1ac70fa8f011\",\n                        \"createdTime\": 1673524091098,\n                        \"lastModifiedTime\": 1673524091098\n                    }\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0,\n            \"auditDetails\": {\n                \"createdBy\": \"7e46e32c-187c-4fb4-9d6b-1ac70fa8f011\",\n                \"lastModifiedBy\": \"7e46e32c-187c-4fb4-9d6b-1ac70fa8f011\",\n                \"createdTime\": 1673524091097,\n                \"lastModifiedTime\": 1673524091097\n            }\n        }\n    ],\n  \"apiOperation\": \"CREATE\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://works-dev.digit.org/project-management-system/project/v1/_update",
+					"protocol": "https",
+					"host": [
+						"works-dev",
+						"digit",
+						"org"
+					],
+					"path": [
+						"project-management-system",
+						"project",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
