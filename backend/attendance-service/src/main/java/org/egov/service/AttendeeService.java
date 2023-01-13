@@ -75,7 +75,7 @@ public class AttendeeService {
         attendeeServiceValidator.validateCreateAttendee(attendeeCreateRequest, attendeeListFromDB, attendanceRegisterListFromDB);
 
         //enrichment call by passing attendee request and data from db call
-        attendeeEnrichmentService.enrichAttendeeOnCreate(attendeeCreateRequest,attendeeListFromDB);
+        attendeeEnrichmentService.enrichAttendeeOnCreate(attendeeCreateRequest);
 
         //push to producer
         producer.push(attendanceServiceConfiguration.getSaveAttendeeTopic(), attendeeCreateRequest);

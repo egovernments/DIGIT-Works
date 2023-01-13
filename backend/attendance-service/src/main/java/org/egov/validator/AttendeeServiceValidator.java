@@ -114,8 +114,7 @@ public class AttendeeServiceValidator {
         }
     }
 
-    public void validateMDMSAndRequestInfoForCreateAttendee(AttendeeCreateRequest attendeeCreateRequest
-            , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
+    public void validateMDMSAndRequestInfoForCreateAttendee(AttendeeCreateRequest attendeeCreateRequest) {
 
         RequestInfo requestInfo = attendeeCreateRequest.getRequestInfo();
         List<IndividualEntry> attendeeListFromRequest=attendeeCreateRequest.getAttendees();
@@ -138,8 +137,7 @@ public class AttendeeServiceValidator {
             throw new CustomException(errorMap);
     }
 
-    public void validateMDMSAndRequestInfoForDeleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest
-            , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
+    public void validateMDMSAndRequestInfoForDeleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest) {
 
         RequestInfo requestInfo = attendeeDeleteRequest.getRequestInfo();
         List<IndividualEntry> attendeeListFromRequest=attendeeDeleteRequest.getAttendees();
@@ -167,7 +165,7 @@ public class AttendeeServiceValidator {
             , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
 
         //validate tenantId with MDMS
-        validateMDMSAndRequestInfoForCreateAttendee(attendeeCreateRequest,attendeeListFromDB,attendanceRegisterListFromDB);
+        validateMDMSAndRequestInfoForCreateAttendee(attendeeCreateRequest);
 
         List<IndividualEntry> attendeeListFromRequest=attendeeCreateRequest.getAttendees();
 
@@ -215,7 +213,7 @@ public class AttendeeServiceValidator {
     public void validateDeleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest,
                                        List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
         //validate tenantId with MDMS
-        validateMDMSAndRequestInfoForDeleteAttendee(attendeeDeleteRequest,attendeeListFromDB,attendanceRegisterListFromDB);
+        validateMDMSAndRequestInfoForDeleteAttendee(attendeeDeleteRequest);
 
         List<IndividualEntry> attendeeListFromRequest = attendeeDeleteRequest.getAttendees();
 
