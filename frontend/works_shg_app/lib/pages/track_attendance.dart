@@ -14,6 +14,7 @@ import '../blocs/attendance/attendance_user_search.dart';
 import '../blocs/localization/app_localization.dart';
 import '../models/attendance/attendance_registry_model.dart';
 import '../router/app_router.dart';
+import '../utils/constants.dart';
 import '../utils/models.dart';
 import '../widgets/CircularButton.dart';
 
@@ -189,11 +190,13 @@ class TrackAttendancePage extends StatelessWidget {
 
   List<TableHeader> get headerList => [
         TableHeader(
-          'Name',
+          AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+              .translate(i18.common.nameLabel),
           apiKey: 'name',
         ),
         TableHeader(
-          'Aadhaar Number',
+          AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+              .translate(i18.common.aadhaarNumber),
           apiKey: 'aadhaarNumber',
         ),
         TableHeader(
