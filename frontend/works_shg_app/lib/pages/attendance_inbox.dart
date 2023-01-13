@@ -20,12 +20,12 @@ class AttendanceInboxPage extends StatelessWidget {
         final List<Map<String, dynamic>> projectList =
             state.attendanceRegistersModel!.attendanceRegister!
                 .map((e) => {
-                      "Name of the Project": e.name,
-                      "WIN Code": e.registerNumber,
-                      "Engineer-in-charge": e.id,
-                      "Dates":
+                      i18.attendanceMgmt.nameOfWork: e.name,
+                      i18.attendanceMgmt.winCode: e.registerNumber,
+                      i18.attendanceMgmt.engineerInCharge: e.id,
+                      i18.common.dates:
                           '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                      "Status": e.status
+                      i18.common.status: e.status
                     })
                 .toList();
 
