@@ -57,7 +57,7 @@ _$_IndividualEntries _$$_IndividualEntriesFromJson(Map<String, dynamic> json) =>
     _$_IndividualEntries(
       id: json['id'] as String?,
       individualId: json['individualId'] as String?,
-      totalAttendance: json['totalAttendance'] as int?,
+      totalAttendance: (json['totalAttendance'] as num?)?.toDouble(),
       attendanceEntries: (json['attendanceEntries'] as List<dynamic>?)
           ?.map((e) => AttendanceEntries.fromJson(e as Map<String, dynamic>))
           .toList(),

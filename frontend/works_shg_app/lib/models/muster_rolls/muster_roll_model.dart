@@ -46,7 +46,7 @@ class IndividualEntries with _$IndividualEntries {
   const factory IndividualEntries({
     String? id,
     String? individualId,
-    int? totalAttendance,
+    double? totalAttendance,
     @JsonKey(name: 'attendanceEntries')
         List<AttendanceEntries>? attendanceEntries,
   }) = _IndividualEntries;

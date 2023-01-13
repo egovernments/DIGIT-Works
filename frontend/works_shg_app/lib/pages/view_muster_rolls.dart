@@ -21,9 +21,9 @@ class ViewMusterRollsPage extends StatelessWidget {
             .musterRollsModel!.musterRoll!
             .map((e) => {
                   i18.attendanceMgmt.nameOfWork:
-                      e.musterAdditionalDetails?.attendanceRegisterName ?? '',
+                      e.musterAdditionalDetails?.attendanceRegisterName ?? 'NA',
                   i18.attendanceMgmt.winCode:
-                      e.musterAdditionalDetails?.attendanceRegisterNo ?? '',
+                      e.musterAdditionalDetails?.attendanceRegisterNo ?? 'NA',
                   i18.attendanceMgmt.musterRollId: e.musterRollNumber,
                   i18.common.dates:
                       '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
