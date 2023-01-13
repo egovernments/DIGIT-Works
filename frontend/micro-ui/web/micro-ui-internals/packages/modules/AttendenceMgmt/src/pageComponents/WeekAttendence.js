@@ -16,17 +16,17 @@ const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
     if(modify) setEditable(true)
   }, [modify])
 
-  const handleCheckboxClick = (row, index) => {
+  const handleCheckboxClick = (row, day) => {
     dispatch({
       type: "attendanceTotal",
       state: {
         row,
-        index,
+        day
       },
     });
   };
 
-  const renderAttendenceSelector = (state, row, index) => {
+  const renderAttendenceSelector = (state, row, day) => {
     const classSelector = (state) => {
       switch (state) {
         case "half":
@@ -64,7 +64,16 @@ const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
     );
   };
 
-  const handleModifiedAmount = (event) => {};
+  const handleModifiedWorkingDays = (e, row) => {
+    let val = e.target.value;
+    val && dispatch({
+      type: "updateModifiedTotal",
+      state: {
+        row,
+        val
+      },
+    });
+  };
 
   const renderBankAccountDetails = (value) => {
     return (
@@ -75,8 +84,8 @@ const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
     );
   };
 
-  const renderInputBoxSelector = (value) => {
-    return <input type="number" value={value} className="modified-amount" onChange={handleModifiedAmount}></input>;
+  const renderInputBoxSelector = (value, row) => {
+    return <input type="number" name="amount" className="modified-amount" defaultValue={value} onChange={(e) => handleModifiedWorkingDays(e, row)}/>
   };
 
   const tableColumnsReadOnly = useMemo(() => {
@@ -387,7 +396,7 @@ const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
           if (row.original.type === "total") {
             return String(t(value));
           }
-          return renderInputBoxSelector(value);
+          return renderInputBoxSelector(value, row.original);
         },
       },
       {

@@ -31,11 +31,23 @@ const updateAmtAndWorkingDays = (state) => {
   return {totalAmount, totalActualWorkingDays};
 };
 
+const updateModifiedAmtAndWorkingDays = (state) => {
+  let totalModifiedAmount = 0
+  let totalModifiedActualWorkingDays = 0
+  for (let row of Object.keys(state)) {
+    if(row !== 'total') {
+      totalModifiedAmount += state[row].modifiedAmount
+      totalModifiedActualWorkingDays += state[row].modifiedWorkingDays
+    }    
+  }
+  return {totalModifiedAmount, totalModifiedActualWorkingDays};
+};
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "attendanceTotal":
       const prevAttendence = action.state.row.attendence;
-      prevAttendence[action.state.index] = selectNextState(action.state.row.attendence[action.state.index]);
+      prevAttendence[action.state.day] = selectNextState(action.state.row.attendence[action.state.day]);
       const obj = {
         [action.state.row.id]: {
           ...action.state.row,
@@ -47,11 +59,23 @@ const reducer = (state, action) => {
       return { ...state, total: { ...state.total, attendence: attendanceTotalCount }  };
     
     case "initialTotal":
-      console.log('initialTotal');
       const initialTotalCount = updateAttendenceCount(state);
       const { totalAmount, totalActualWorkingDays } = updateAmtAndWorkingDays(state)
-      return { ...state, total: { ...state.total, attendence: initialTotalCount, amount: totalAmount, actualWorkingDays: totalActualWorkingDays}  };
+      const { totalModifiedAmount, totalModifiedActualWorkingDays } = updateModifiedAmtAndWorkingDays(state)
+      return { ...state, total: { ...state.total, attendence: initialTotalCount, amount: totalAmount, actualWorkingDays: totalActualWorkingDays, modifiedAmount: totalModifiedAmount, modifiedWorkingDays: totalModifiedActualWorkingDays}  };
 
+    case "updateModifiedTotal":
+      const skillAmount = parseInt(action.state.row.amount / action.state.row.actualWorkingDays)
+      const newObj = {
+        [action.state.row.id]: {
+          ...action.state.row,
+          modifiedAmount: skillAmount * parseInt(action.state.val),
+          modifiedWorkingDays: parseInt(action.state.val),
+        }
+      }
+      let newState = { ...state, ...newObj };;
+      const { totalModifiedAmount: amount, totalModifiedActualWorkingDays: workingDays } = updateModifiedAmtAndWorkingDays(newState)
+      return { ...newState, total: { ...newState.total, modifiedAmount: amount, modifiedWorkingDays: workingDays}  };
     default:
       return state;
   }
