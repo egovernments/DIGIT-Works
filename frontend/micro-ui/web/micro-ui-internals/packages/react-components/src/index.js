@@ -233,7 +233,9 @@ import WeekPicker from "./atoms/WeekPicker";
 import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
 import HorizontalNav from "./atoms/HorizontalNav";
 import NoResultsFound from "./atoms/NoResultsFound";
+import { ViewImages } from "./atoms/ViewImages";
 export {
+  ViewImages,
   Phone,
   Body,
   Loader,

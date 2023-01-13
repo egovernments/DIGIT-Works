@@ -1,4 +1,4 @@
-import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav } from '@egovernments/digit-ui-react-components'
+import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav,ViewImages } from '@egovernments/digit-ui-react-components'
 import React, { Fragment,useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ProjectClosureDetails from './ProjectClosureDetails';
@@ -47,6 +47,20 @@ const ProjectClosure = () => {
         },
     );
 
+    const tenant = Digit.ULBService.getStateId();
+    const { isLoading:isMdmsLoading, data: checklistData } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        "works",
+        [
+            {
+                "name": "ClosureChecklist"
+            },
+            {
+                "name": "KickoffChecklist"
+            }
+        ]
+    );
+
 
   return (
     <Fragment>
@@ -80,9 +94,11 @@ const ProjectClosure = () => {
             {/* Here render the applicationDetails based on activeLink */}
             <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>  
               < ProjectClosureDetails 
-                activeLink={activeLink}
+                activeLink={activeLink} isMdmsLoading={isMdmsLoading} checklistData={checklistData}
               />
             </HorizontalNav>
+
+            
               <ActionBar>
                   <SubmitBar onSubmit={() => { console.log("project Closed") }} label={t("WORKS_CLOSE_PROJECT")} />
               </ActionBar>

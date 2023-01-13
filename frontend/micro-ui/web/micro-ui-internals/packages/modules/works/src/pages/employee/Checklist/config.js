@@ -55,7 +55,7 @@ const getConfig = (question,t,index) => {
                 disable: false,
                 populators: { name: question.code, error: "Required", validation: { required: true } },
             }
-        case "upload":
+        case "UPLOAD_ANSWER_TYPE":
         return {    
             type:"multiupload",
             label: `${index + 1}. ${t(question?.code)}`,
@@ -97,7 +97,7 @@ const getConfig = (question,t,index) => {
 }
 
 export const configChecklist = (t, setShowForm, showForm, checklistData) => {
-    console.log(checklistData);
+    
     const { ClosureChecklist, KickoffChecklist } = checklistData?.works
     const handleChange = (props) => {
         setShowForm((prevState)=>!prevState)

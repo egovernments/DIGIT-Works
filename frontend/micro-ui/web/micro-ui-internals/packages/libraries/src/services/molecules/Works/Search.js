@@ -1957,5 +1957,63 @@ export const WorksSearch = {
             },
         }
         return result;
-    }
+    },
+    getValueHelper:(questionType)=>{
+        switch (questionType) {
+            case "MULTIPLE_ANSWER_TYPE":
+                return "A.  Yes"
+            case "DATE_ANSWER_TYPE":
+                return "A.  20/11/1992"
+            case "UPLOAD_ANSWER_TYPE":
+                return "A.  Yes"
+            default:
+                return ""
+        }
+    },
+    viewProjectClosureScreenFieldSurvey:(tenantId,questions,t) => {
+        const tenant = Digit.ULBService.getStateId();
+        const applicationDetails = [
+            {
+                "title": " ",
+                "asSectionHeader": true,
+                "tab":"fieldSurvey",
+                "values":questions.map((question,index)=> {
+                    return {
+                        "title": `${index+1}.  ${t(question.code)}`,
+                        "value": WorksSearch.getValueHelper(question.type),
+                        "isImages": question.type ==="UPLOAD_ANSWER_TYPE" ? true : false,
+                        "fileStoreIds": ["0db89173-6621-455e-b953-2286936040be"],
+                        tenant
+                    }
+                }) 
+            }
+        ]
+
+        const result = {
+            applicationDetails
+        }
+        return result
+        
+    },
+    viewProjectClosureScreenClosureChecklist: (tenantId,questions,t) => {
+        
+        const applicationDetails = [
+            {
+                "title": " ",
+                "asSectionHeader": true,
+                "tab": "fieldSurvey",
+                "values": questions.map((question, index) => {
+                    return {
+                        "title": `${index + 1}.  ${t(question.code)}`,
+                        "value": WorksSearch.getValueHelper(question.type)
+                    }
+                })
+            }
+        ]
+
+        const result = {
+            applicationDetails
+        }
+        return result
+    },
 }
