@@ -44,6 +44,7 @@ const WorksCard = () => {
         label: t("WORKS_CONTRACTS"),
         link: `/${window?.contextPath}/employee/contracts/inbox`,
         roles: ["LOI CHECKER", "LOI APPROVER", "LOI CREATOR", "EMPLOYEE"],
+        count: 1,
       },
       // {
       //   label: t("WORKS_MILESSTONES"),
@@ -61,19 +62,18 @@ const WorksCard = () => {
       //   roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       //   count: 21,
       // },
-      {
-        label: t("WORKS_CONTRACTOR_BILL"),
-        link: `/${window?.contextPath}/employee/works/create-contractor`,
-        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
-        count:15
-      },
-     
-    
+      // {
+      //   label: t("WORKS_CONTRACTOR_BILL"),
+      //   link: `/${window?.contextPath}/employee/works/create-contractor`,
+      //   roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+      //   count:15
+      // },
+
       {
         label: t("ACTION_TEST_BILLS"),
         link: `/${window?.contextPath}/employee/expenditure/billinbox`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
-        count:10
+        count: 10,
       },
       {
         label: t("WORKS_KICKOFF_CHECKLIST"),
