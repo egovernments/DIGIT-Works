@@ -23,6 +23,7 @@ const ApplicationDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [isWarningPop, setWarningPopUp] = useState(false);
+  const [modify, setModify] = useState(false)
 
   const {
     applicationDetails,
@@ -59,7 +60,6 @@ const ApplicationDetails = (props) => {
   }, [showToast]);
 
   function onActionSelect(action) {
-    
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -287,6 +287,7 @@ const ApplicationDetails = (props) => {
             isInfoLabel={isInfoLabel}
             noBoxShadow={noBoxShadow}
             sectionHeadStyle={sectionHeadStyle}
+            modify={modify}
           />
           {showModal ? (
             <ActionModal

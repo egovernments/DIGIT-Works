@@ -1,14 +1,24 @@
-import { Table, ArrowDown, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useState, useMemo, useEffect, Fragment, useCallback } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Table } from "@egovernments/digit-ui-react-components";
 
-const WeekAttendence = ({ state, dispatch, searchQuery }) => {
+const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
   const { t } = useTranslation();
-  const tableRow = Object.values(state.rows);
+  const [editable, setEditable] = useState(false)
+  const tableRow = state ? Object.values(state) : []
+  
+  useEffect(() => {
+    dispatch({
+      type: "initialTotal",
+      state: {},
+    });
+    
+    if(modify) setEditable(true)
+  }, [modify])
 
   const handleCheckboxClick = (row, index) => {
     dispatch({
-      type: "attendence",
+      type: "attendanceTotal",
       state: {
         row,
         index,
@@ -30,7 +40,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
     };
 
     return (
-      <div className="modern-radio-container week-table" onClick={() => handleCheckboxClick(row, index)}>
+      <div className="modern-radio-container week-table">
         <div className={`${classSelector(state)?.[0]}`}>
           <div className={`${classSelector(state)?.[1]}`}></div>
         </div>
@@ -66,37 +76,38 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
   };
 
   const renderInputBoxSelector = (value) => {
-    return <input type="number" className="modified-amount" onChange={handleModifiedAmount}></input>;
+    return <input type="number" value={value} className="modified-amount" onChange={handleModifiedAmount}></input>;
   };
-  const tableColumns = useMemo(() => {
+
+  const tableColumnsReadOnly = useMemo(() => {
     return [
       {
         Header: () => <p>{t("WORKS_SNO")}</p>,
         accessor: "sno",
         Cell: ({ value, column, row }) => {
           if (row.original.type === "total") {
-            return renderTotalLabel(t(row.original.sno)); //Pass Total as Label
+            return renderTotalLabel(t(row.original.sno));
           }
           return String(t(value));
         },
       },
       {
         Header: () => <p>{t("ATM_REGISTRATION_ID")}</p>,
-        accessor: "reg_id",
+        accessor: "registerId",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
         Header: () => <p>{t("ATM_NAME_OF_THE_INDIVIDUAL")}</p>,
-        accessor: "name_of_individual",
+        accessor: "nameOfIndividual",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
         Header: () => <p>{t("ATM_FATHER/GUARDIAN_NAME")}</p>,
-        accessor: "guardian_name",
+        accessor: "guardianName",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
@@ -105,112 +116,246 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_MON")}</p>
-            <p className="date-attendence">21 Oct</p>
+            <p className="date-attendence">{weekDates.Mon}</p>
           </div>
         ),
         accessor: "mon",
         Cell: ({ value, column, row }) => {
-          //row.original.attendence[0] -> state
           if (row.original.type === "total") {
-            return renderTotal(t(row.original.attendence?.[0]));
+            return renderTotal(t(row.original.attendence?.Mon));
           }
-          return renderAttendenceSelector(row.original.attendence?.[0], row.original, 0);
+          return renderAttendenceSelector(row.original.attendence?.Mon, row.original, 'Mon');
         },
       },
       {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_TUE")}</p>
-            <p className="date-attendence">22 Oct</p>
+            <p className="date-attendence">{weekDates.Tue}</p>
           </div>
         ),
         accessor: "tue",
         Cell: ({ value, column, row }) => {
-          //row.original.attendence[0] -> state
           if (row.original.type === "total") {
-            return renderTotal(t(row.original.attendence?.[1]));
+            return renderTotal(t(row.original.attendence?.Tue));
           }
-          return renderAttendenceSelector(row.original.attendence?.[1], row.original, 1);
+          return renderAttendenceSelector(row.original.attendence?.Tue, row.original, 'Tue');
         },
       },
       {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_WED")}</p>
-            <p className="date-attendence">23 Oct</p>
+            <p className="date-attendence">{weekDates.Wed}</p>
           </div>
         ),
         accessor: "wed",
         Cell: ({ value, column, row }) => {
-          //row.original.attendence[0] -> state
           if (row.original.type === "total") {
-            return renderTotal(t(row.original.attendence?.[2]));
+            return renderTotal(t(row.original.attendence?.Wed));
           }
-          return renderAttendenceSelector(row.original.attendence?.[2], row.original, 2);
+          return renderAttendenceSelector(row.original.attendence?.Wed, row.original, 'Wed');
         },
       },
       {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_THR")}</p>
-            <p className="date-attendence">24 Oct</p>
+            <p className="date-attendence">{weekDates.Thu}</p>
           </div>
         ),
         accessor: "thu",
         Cell: ({ value, column, row }) => {
-          //row.original.attendence[0] -> state
           if (row.original.type === "total") {
-            return renderTotal(t(row.original.attendence?.[3]));
+            return renderTotal(t(row.original.attendence?.Thu));
           }
-          return renderAttendenceSelector(row.original.attendence?.[3], row.original, 3);
+          return renderAttendenceSelector(row.original.attendence?.Thu, row.original, 'Thu');
         },
       },
       {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_FRI")}</p>
-            <p className="date-attendence">25 Oct</p>
+            <p className="date-attendence">{weekDates.Fri}</p>
           </div>
         ),
         accessor: "fri",
         Cell: ({ value, column, row }) => {
-          //row.original.attendence[0] -> state
           if (row.original.type === "total") {
-            return renderTotal(t(row.original.attendence?.[4]));
+            return renderTotal(t(row.original.attendence?.Fri));
           }
-          return renderAttendenceSelector(row.original.attendence?.[4], row.original, 4);
+          return renderAttendenceSelector(row.original.attendence?.Fri, row.original, 'Fri');
         },
       },
       {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_SAT")}</p>
-            <p className="date-attendence">26 Oct</p>
+            <p className="date-attendence">{weekDates.Sat}</p>
           </div>
         ),
         accessor: "sat",
         Cell: ({ value, column, row }) => {
-          //row.original.attendence[0] -> state
           if (row.original.type === "total") {
-            return renderTotal(t(row.original.attendence?.[5]));
+            return renderTotal(t(row.original.attendence?.Sat));
           }
-          return renderAttendenceSelector(row.original.attendence?.[5], row.original, 5);
+          return renderAttendenceSelector(row.original.attendence?.Sat, row.original, 'Sat');
         },
       },
       {
         Header: () => (
           <div className="column-attendence">
             <p className="day-attendence">{t("ATM_SUN")}</p>
-            <p className="date-attendence">27 Oct</p>
+            <p className="date-attendence">{weekDates.Sun}</p>
           </div>
         ),
         accessor: "sun",
         Cell: ({ value, column, row }) => {
-          //row.original.attendence[0] -> state
           if (row.original.type === "total") {
-            return renderTotal(t(row.original.attendence?.[6]));
+            return renderTotal(t(row.original.attendence?.Sun));
           }
-          return renderAttendenceSelector(row.original.attendence?.[6], row.original, 6);
+          return renderAttendenceSelector(row.original.attendence?.Sun, row.original, 'Sun');
+        },
+      }
+    ];
+  }, [state]);
+
+  const tableColumnsEditable = useMemo(() => {
+    return [
+      {
+        Header: () => <p>{t("WORKS_SNO")}</p>,
+        accessor: "sno",
+        Cell: ({ value, column, row }) => {
+          if (row.original.type === "total") {
+            return renderTotalLabel(t(row.original.sno));
+          }
+          return String(t(value));
+        },
+      },
+      {
+        Header: () => <p>{t("ATM_REGISTRATION_ID")}</p>,
+        accessor: "registerId",
+        Cell: ({ value, column, row }) => {
+          return String(t(value));
+        },
+      },
+      {
+        Header: () => <p>{t("ATM_NAME_OF_THE_INDIVIDUAL")}</p>,
+        accessor: "nameOfIndividual",
+        Cell: ({ value, column, row }) => {
+          return String(t(value));
+        },
+      },
+      {
+        Header: () => <p>{t("ATM_FATHER/GUARDIAN_NAME")}</p>,
+        accessor: "guardianName",
+        Cell: ({ value, column, row }) => {
+          return String(t(value));
+        },
+      },
+      {
+        Header: () => (
+          <div className="column-attendence">
+            <p className="day-attendence">{t("ATM_MON")}</p>
+            <p className="date-attendence">{weekDates.Mon}</p>
+          </div>
+        ),
+        accessor: "mon",
+        Cell: ({ value, column, row }) => {
+          if (row.original.type === "total") {
+            return renderTotal(t(row.original.attendence?.Mon));
+          }
+          return renderAttendenceSelector(row.original.attendence?.Mon, row.original, 'Mon');
+        },
+      },
+      {
+        Header: () => (
+          <div className="column-attendence">
+            <p className="day-attendence">{t("ATM_TUE")}</p>
+            <p className="date-attendence">{weekDates.Tue}</p>
+          </div>
+        ),
+        accessor: "tue",
+        Cell: ({ value, column, row }) => {
+          if (row.original.type === "total") {
+            return renderTotal(t(row.original.attendence?.Tue));
+          }
+          return renderAttendenceSelector(row.original.attendence?.Tue, row.original, 'Tue');
+        },
+      },
+      {
+        Header: () => (
+          <div className="column-attendence">
+            <p className="day-attendence">{t("ATM_WED")}</p>
+            <p className="date-attendence">{weekDates.Wed}</p>
+          </div>
+        ),
+        accessor: "wed",
+        Cell: ({ value, column, row }) => {
+          if (row.original.type === "total") {
+            return renderTotal(t(row.original.attendence?.Wed));
+          }
+          return renderAttendenceSelector(row.original.attendence?.Wed, row.original, 'Wed');
+        },
+      },
+      {
+        Header: () => (
+          <div className="column-attendence">
+            <p className="day-attendence">{t("ATM_THR")}</p>
+            <p className="date-attendence">{weekDates.Thu}</p>
+          </div>
+        ),
+        accessor: "thu",
+        Cell: ({ value, column, row }) => {
+          if (row.original.type === "total") {
+            return renderTotal(t(row.original.attendence?.Thu));
+          }
+          return renderAttendenceSelector(row.original.attendence?.Thu, row.original, 'Thu');
+        },
+      },
+      {
+        Header: () => (
+          <div className="column-attendence">
+            <p className="day-attendence">{t("ATM_FRI")}</p>
+            <p className="date-attendence">{weekDates.Fri}</p>
+          </div>
+        ),
+        accessor: "fri",
+        Cell: ({ value, column, row }) => {
+          if (row.original.type === "total") {
+            return renderTotal(t(row.original.attendence?.Fri));
+          }
+          return renderAttendenceSelector(row.original.attendence?.Fri, row.original, 'Fri');
+        },
+      },
+      {
+        Header: () => (
+          <div className="column-attendence">
+            <p className="day-attendence">{t("ATM_SAT")}</p>
+            <p className="date-attendence">{weekDates.Sat}</p>
+          </div>
+        ),
+        accessor: "sat",
+        Cell: ({ value, column, row }) => {
+          if (row.original.type === "total") {
+            return renderTotal(t(row.original.attendence?.Sat));
+          }
+          return renderAttendenceSelector(row.original.attendence?.Sat, row.original, 'Sat');
+        },
+      },
+      {
+        Header: () => (
+          <div className="column-attendence">
+            <p className="day-attendence">{t("ATM_SUN")}</p>
+            <p className="date-attendence">{weekDates.Sun}</p>
+          </div>
+        ),
+        accessor: "sun",
+        Cell: ({ value, column, row }) => {
+          if (row.original.type === "total") {
+            return renderTotal(t(row.original.attendence?.Sun));
+          }
+          return renderAttendenceSelector(row.original.attendence?.Sun, row.original, 'Sun');
         },
       },
       {
@@ -229,7 +374,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
       },
       {
         Header: () => <p>{t("ATM_AMOUNT_IN_RS")}</p>,
-        accessor: "amountInRs",
+        accessor: "amount",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
@@ -238,6 +383,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
         Header: () => <p>{t("ATM_MODIFIED_WORKING_DAYS")}</p>,
         accessor: "modifiedWorkingDays",
         Cell: ({ value, column, row }) => {
+          console.log('value', value);
           if (row.original.type === "total") {
             return String(t(value));
           }
@@ -246,7 +392,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
       },
       {
         Header: () => <p>{t("ATM_MODIFIED_AMOUNT_IN_RS")}</p>,
-        accessor: "modifiedAmountInRs",
+        accessor: "modifiedAmount",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
@@ -267,6 +413,7 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
       },
     ];
   }, [state]);
+
   return (
     <React.Fragment>
       <div style={{ padding: "0px", overflowX: "scroll" }} className="card week-table-card-wrapper">
@@ -280,8 +427,8 @@ const WeekAttendence = ({ state, dispatch, searchQuery }) => {
           initSortId="S N "
           data={tableRow}
           totalRecords={tableRow.length}
-          columns={tableColumns}
-          isPaginationRequired={true}
+          columns={editable ? tableColumnsEditable : tableColumnsReadOnly}
+          isPaginationRequired={false}
           getCellProps={(cellInfo) => {
             let tableProp = {};
             if(cellInfo.column.Header === "Modified Amount(Rs)") {

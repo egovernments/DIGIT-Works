@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
-part of 'create_attendence_register.dart';
+part of 'create_attendance_register.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,7 +15,7 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$AttendenceRegisterCreateEvent {
+mixin _$AttendanceRegisterCreateEvent {
   String get tenantId => throw _privateConstructorUsedError;
   String get registerNumber => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
@@ -45,33 +45,33 @@ mixin _$AttendenceRegisterCreateEvent {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(CreateAttendenceRegisterEvent value) create,
+    required TResult Function(CreateAttendanceRegisterEvent value) create,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(CreateAttendenceRegisterEvent value)? create,
+    TResult? Function(CreateAttendanceRegisterEvent value)? create,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(CreateAttendenceRegisterEvent value)? create,
+    TResult Function(CreateAttendanceRegisterEvent value)? create,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $AttendenceRegisterCreateEventCopyWith<AttendenceRegisterCreateEvent>
+  $AttendanceRegisterCreateEventCopyWith<AttendanceRegisterCreateEvent>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AttendenceRegisterCreateEventCopyWith<$Res> {
-  factory $AttendenceRegisterCreateEventCopyWith(
-          AttendenceRegisterCreateEvent value,
-          $Res Function(AttendenceRegisterCreateEvent) then) =
-      _$AttendenceRegisterCreateEventCopyWithImpl<$Res,
-          AttendenceRegisterCreateEvent>;
+abstract class $AttendanceRegisterCreateEventCopyWith<$Res> {
+  factory $AttendanceRegisterCreateEventCopyWith(
+          AttendanceRegisterCreateEvent value,
+          $Res Function(AttendanceRegisterCreateEvent) then) =
+      _$AttendanceRegisterCreateEventCopyWithImpl<$Res,
+          AttendanceRegisterCreateEvent>;
   @useResult
   $Res call(
       {String tenantId,
@@ -82,10 +82,10 @@ abstract class $AttendenceRegisterCreateEventCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$AttendenceRegisterCreateEventCopyWithImpl<$Res,
-        $Val extends AttendenceRegisterCreateEvent>
-    implements $AttendenceRegisterCreateEventCopyWith<$Res> {
-  _$AttendenceRegisterCreateEventCopyWithImpl(this._value, this._then);
+class _$AttendanceRegisterCreateEventCopyWithImpl<$Res,
+        $Val extends AttendanceRegisterCreateEvent>
+    implements $AttendanceRegisterCreateEventCopyWith<$Res> {
+  _$AttendanceRegisterCreateEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -127,12 +127,12 @@ class _$AttendenceRegisterCreateEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$CreateAttendenceRegisterEventCopyWith<$Res>
-    implements $AttendenceRegisterCreateEventCopyWith<$Res> {
-  factory _$$CreateAttendenceRegisterEventCopyWith(
-          _$CreateAttendenceRegisterEvent value,
-          $Res Function(_$CreateAttendenceRegisterEvent) then) =
-      __$$CreateAttendenceRegisterEventCopyWithImpl<$Res>;
+abstract class _$$CreateAttendanceRegisterEventCopyWith<$Res>
+    implements $AttendanceRegisterCreateEventCopyWith<$Res> {
+  factory _$$CreateAttendanceRegisterEventCopyWith(
+          _$CreateAttendanceRegisterEvent value,
+          $Res Function(_$CreateAttendanceRegisterEvent) then) =
+      __$$CreateAttendanceRegisterEventCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -144,13 +144,13 @@ abstract class _$$CreateAttendenceRegisterEventCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$CreateAttendenceRegisterEventCopyWithImpl<$Res>
-    extends _$AttendenceRegisterCreateEventCopyWithImpl<$Res,
-        _$CreateAttendenceRegisterEvent>
-    implements _$$CreateAttendenceRegisterEventCopyWith<$Res> {
-  __$$CreateAttendenceRegisterEventCopyWithImpl(
-      _$CreateAttendenceRegisterEvent _value,
-      $Res Function(_$CreateAttendenceRegisterEvent) _then)
+class __$$CreateAttendanceRegisterEventCopyWithImpl<$Res>
+    extends _$AttendanceRegisterCreateEventCopyWithImpl<$Res,
+        _$CreateAttendanceRegisterEvent>
+    implements _$$CreateAttendanceRegisterEventCopyWith<$Res> {
+  __$$CreateAttendanceRegisterEventCopyWithImpl(
+      _$CreateAttendanceRegisterEvent _value,
+      $Res Function(_$CreateAttendanceRegisterEvent) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -162,7 +162,7 @@ class __$$CreateAttendenceRegisterEventCopyWithImpl<$Res>
     Object? startDate = null,
     Object? endDate = null,
   }) {
-    return _then(_$CreateAttendenceRegisterEvent(
+    return _then(_$CreateAttendanceRegisterEvent(
       tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
@@ -189,10 +189,8 @@ class __$$CreateAttendenceRegisterEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$CreateAttendenceRegisterEvent
-    with DiagnosticableTreeMixin
-    implements CreateAttendenceRegisterEvent {
-  const _$CreateAttendenceRegisterEvent(
+class _$CreateAttendanceRegisterEvent implements CreateAttendanceRegisterEvent {
+  const _$CreateAttendanceRegisterEvent(
       {required this.tenantId,
       required this.registerNumber,
       required this.name,
@@ -211,27 +209,15 @@ class _$CreateAttendenceRegisterEvent
   final int endDate;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendenceRegisterCreateEvent.create(tenantId: $tenantId, registerNumber: $registerNumber, name: $name, startDate: $startDate, endDate: $endDate)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AttendenceRegisterCreateEvent.create'))
-      ..add(DiagnosticsProperty('tenantId', tenantId))
-      ..add(DiagnosticsProperty('registerNumber', registerNumber))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('startDate', startDate))
-      ..add(DiagnosticsProperty('endDate', endDate));
+  String toString() {
+    return 'AttendanceRegisterCreateEvent.create(tenantId: $tenantId, registerNumber: $registerNumber, name: $name, startDate: $startDate, endDate: $endDate)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CreateAttendenceRegisterEvent &&
+            other is _$CreateAttendanceRegisterEvent &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
             (identical(other.registerNumber, registerNumber) ||
@@ -249,9 +235,9 @@ class _$CreateAttendenceRegisterEvent
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$CreateAttendenceRegisterEventCopyWith<_$CreateAttendenceRegisterEvent>
-      get copyWith => __$$CreateAttendenceRegisterEventCopyWithImpl<
-          _$CreateAttendenceRegisterEvent>(this, _$identity);
+  _$$CreateAttendanceRegisterEventCopyWith<_$CreateAttendanceRegisterEvent>
+      get copyWith => __$$CreateAttendanceRegisterEventCopyWithImpl<
+          _$CreateAttendanceRegisterEvent>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -290,7 +276,7 @@ class _$CreateAttendenceRegisterEvent
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(CreateAttendenceRegisterEvent value) create,
+    required TResult Function(CreateAttendanceRegisterEvent value) create,
   }) {
     return create(this);
   }
@@ -298,7 +284,7 @@ class _$CreateAttendenceRegisterEvent
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(CreateAttendenceRegisterEvent value)? create,
+    TResult? Function(CreateAttendanceRegisterEvent value)? create,
   }) {
     return create?.call(this);
   }
@@ -306,7 +292,7 @@ class _$CreateAttendenceRegisterEvent
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(CreateAttendenceRegisterEvent value)? create,
+    TResult Function(CreateAttendanceRegisterEvent value)? create,
     required TResult orElse(),
   }) {
     if (create != null) {
@@ -316,14 +302,14 @@ class _$CreateAttendenceRegisterEvent
   }
 }
 
-abstract class CreateAttendenceRegisterEvent
-    implements AttendenceRegisterCreateEvent {
-  const factory CreateAttendenceRegisterEvent(
+abstract class CreateAttendanceRegisterEvent
+    implements AttendanceRegisterCreateEvent {
+  const factory CreateAttendanceRegisterEvent(
       {required final String tenantId,
       required final String registerNumber,
       required final String name,
       required final int startDate,
-      required final int endDate}) = _$CreateAttendenceRegisterEvent;
+      required final int endDate}) = _$CreateAttendanceRegisterEvent;
 
   @override
   String get tenantId;
@@ -337,39 +323,39 @@ abstract class CreateAttendenceRegisterEvent
   int get endDate;
   @override
   @JsonKey(ignore: true)
-  _$$CreateAttendenceRegisterEventCopyWith<_$CreateAttendenceRegisterEvent>
+  _$$CreateAttendanceRegisterEventCopyWith<_$CreateAttendanceRegisterEvent>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-mixin _$AttendenceRegisterCreateState {
+mixin _$AttendanceRegisterCreateState {
   bool get loading => throw _privateConstructorUsedError;
-  AttendenceRegistersModel? get attendenceRegistersModel =>
+  AttendanceRegistersModel? get attendanceRegistersModel =>
       throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $AttendenceRegisterCreateStateCopyWith<AttendenceRegisterCreateState>
+  $AttendanceRegisterCreateStateCopyWith<AttendanceRegisterCreateState>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AttendenceRegisterCreateStateCopyWith<$Res> {
-  factory $AttendenceRegisterCreateStateCopyWith(
-          AttendenceRegisterCreateState value,
-          $Res Function(AttendenceRegisterCreateState) then) =
-      _$AttendenceRegisterCreateStateCopyWithImpl<$Res,
-          AttendenceRegisterCreateState>;
+abstract class $AttendanceRegisterCreateStateCopyWith<$Res> {
+  factory $AttendanceRegisterCreateStateCopyWith(
+          AttendanceRegisterCreateState value,
+          $Res Function(AttendanceRegisterCreateState) then) =
+      _$AttendanceRegisterCreateStateCopyWithImpl<$Res,
+          AttendanceRegisterCreateState>;
   @useResult
-  $Res call({bool loading, AttendenceRegistersModel? attendenceRegistersModel});
+  $Res call({bool loading, AttendanceRegistersModel? attendanceRegistersModel});
 
-  $AttendenceRegistersModelCopyWith<$Res>? get attendenceRegistersModel;
+  $AttendanceRegistersModelCopyWith<$Res>? get attendanceRegistersModel;
 }
 
 /// @nodoc
-class _$AttendenceRegisterCreateStateCopyWithImpl<$Res,
-        $Val extends AttendenceRegisterCreateState>
-    implements $AttendenceRegisterCreateStateCopyWith<$Res> {
-  _$AttendenceRegisterCreateStateCopyWithImpl(this._value, this._then);
+class _$AttendanceRegisterCreateStateCopyWithImpl<$Res,
+        $Val extends AttendanceRegisterCreateState>
+    implements $AttendanceRegisterCreateStateCopyWith<$Res> {
+  _$AttendanceRegisterCreateStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -380,144 +366,133 @@ class _$AttendenceRegisterCreateStateCopyWithImpl<$Res,
   @override
   $Res call({
     Object? loading = null,
-    Object? attendenceRegistersModel = freezed,
+    Object? attendanceRegistersModel = freezed,
   }) {
     return _then(_value.copyWith(
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
-      attendenceRegistersModel: freezed == attendenceRegistersModel
-          ? _value.attendenceRegistersModel
-          : attendenceRegistersModel // ignore: cast_nullable_to_non_nullable
-              as AttendenceRegistersModel?,
+      attendanceRegistersModel: freezed == attendanceRegistersModel
+          ? _value.attendanceRegistersModel
+          : attendanceRegistersModel // ignore: cast_nullable_to_non_nullable
+              as AttendanceRegistersModel?,
     ) as $Val);
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $AttendenceRegistersModelCopyWith<$Res>? get attendenceRegistersModel {
-    if (_value.attendenceRegistersModel == null) {
+  $AttendanceRegistersModelCopyWith<$Res>? get attendanceRegistersModel {
+    if (_value.attendanceRegistersModel == null) {
       return null;
     }
 
-    return $AttendenceRegistersModelCopyWith<$Res>(
-        _value.attendenceRegistersModel!, (value) {
-      return _then(_value.copyWith(attendenceRegistersModel: value) as $Val);
+    return $AttendanceRegistersModelCopyWith<$Res>(
+        _value.attendanceRegistersModel!, (value) {
+      return _then(_value.copyWith(attendanceRegistersModel: value) as $Val);
     });
   }
 }
 
 /// @nodoc
-abstract class _$$_AttendenceRegisterCreateStateCopyWith<$Res>
-    implements $AttendenceRegisterCreateStateCopyWith<$Res> {
-  factory _$$_AttendenceRegisterCreateStateCopyWith(
-          _$_AttendenceRegisterCreateState value,
-          $Res Function(_$_AttendenceRegisterCreateState) then) =
-      __$$_AttendenceRegisterCreateStateCopyWithImpl<$Res>;
+abstract class _$$_AttendanceRegisterCreateStateCopyWith<$Res>
+    implements $AttendanceRegisterCreateStateCopyWith<$Res> {
+  factory _$$_AttendanceRegisterCreateStateCopyWith(
+          _$_AttendanceRegisterCreateState value,
+          $Res Function(_$_AttendanceRegisterCreateState) then) =
+      __$$_AttendanceRegisterCreateStateCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool loading, AttendenceRegistersModel? attendenceRegistersModel});
+  $Res call({bool loading, AttendanceRegistersModel? attendanceRegistersModel});
 
   @override
-  $AttendenceRegistersModelCopyWith<$Res>? get attendenceRegistersModel;
+  $AttendanceRegistersModelCopyWith<$Res>? get attendanceRegistersModel;
 }
 
 /// @nodoc
-class __$$_AttendenceRegisterCreateStateCopyWithImpl<$Res>
-    extends _$AttendenceRegisterCreateStateCopyWithImpl<$Res,
-        _$_AttendenceRegisterCreateState>
-    implements _$$_AttendenceRegisterCreateStateCopyWith<$Res> {
-  __$$_AttendenceRegisterCreateStateCopyWithImpl(
-      _$_AttendenceRegisterCreateState _value,
-      $Res Function(_$_AttendenceRegisterCreateState) _then)
+class __$$_AttendanceRegisterCreateStateCopyWithImpl<$Res>
+    extends _$AttendanceRegisterCreateStateCopyWithImpl<$Res,
+        _$_AttendanceRegisterCreateState>
+    implements _$$_AttendanceRegisterCreateStateCopyWith<$Res> {
+  __$$_AttendanceRegisterCreateStateCopyWithImpl(
+      _$_AttendanceRegisterCreateState _value,
+      $Res Function(_$_AttendanceRegisterCreateState) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? loading = null,
-    Object? attendenceRegistersModel = freezed,
+    Object? attendanceRegistersModel = freezed,
   }) {
-    return _then(_$_AttendenceRegisterCreateState(
+    return _then(_$_AttendanceRegisterCreateState(
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
-      attendenceRegistersModel: freezed == attendenceRegistersModel
-          ? _value.attendenceRegistersModel
-          : attendenceRegistersModel // ignore: cast_nullable_to_non_nullable
-              as AttendenceRegistersModel?,
+      attendanceRegistersModel: freezed == attendanceRegistersModel
+          ? _value.attendanceRegistersModel
+          : attendanceRegistersModel // ignore: cast_nullable_to_non_nullable
+              as AttendanceRegistersModel?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$_AttendenceRegisterCreateState extends _AttendenceRegisterCreateState
-    with DiagnosticableTreeMixin {
-  const _$_AttendenceRegisterCreateState(
-      {this.loading = false, this.attendenceRegistersModel})
+class _$_AttendanceRegisterCreateState extends _AttendanceRegisterCreateState {
+  const _$_AttendanceRegisterCreateState(
+      {this.loading = false, this.attendanceRegistersModel})
       : super._();
 
   @override
   @JsonKey()
   final bool loading;
   @override
-  final AttendenceRegistersModel? attendenceRegistersModel;
+  final AttendanceRegistersModel? attendanceRegistersModel;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendenceRegisterCreateState(loading: $loading, attendenceRegistersModel: $attendenceRegistersModel)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AttendenceRegisterCreateState'))
-      ..add(DiagnosticsProperty('loading', loading))
-      ..add(DiagnosticsProperty(
-          'attendenceRegistersModel', attendenceRegistersModel));
+  String toString() {
+    return 'AttendanceRegisterCreateState(loading: $loading, attendanceRegistersModel: $attendanceRegistersModel)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AttendenceRegisterCreateState &&
+            other is _$_AttendanceRegisterCreateState &&
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(
-                    other.attendenceRegistersModel, attendenceRegistersModel) ||
-                other.attendenceRegistersModel == attendenceRegistersModel));
+                    other.attendanceRegistersModel, attendanceRegistersModel) ||
+                other.attendanceRegistersModel == attendanceRegistersModel));
   }
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, loading, attendenceRegistersModel);
+      Object.hash(runtimeType, loading, attendanceRegistersModel);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AttendenceRegisterCreateStateCopyWith<_$_AttendenceRegisterCreateState>
-      get copyWith => __$$_AttendenceRegisterCreateStateCopyWithImpl<
-          _$_AttendenceRegisterCreateState>(this, _$identity);
+  _$$_AttendanceRegisterCreateStateCopyWith<_$_AttendanceRegisterCreateState>
+      get copyWith => __$$_AttendanceRegisterCreateStateCopyWithImpl<
+          _$_AttendanceRegisterCreateState>(this, _$identity);
 }
 
-abstract class _AttendenceRegisterCreateState
-    extends AttendenceRegisterCreateState {
-  const factory _AttendenceRegisterCreateState(
+abstract class _AttendanceRegisterCreateState
+    extends AttendanceRegisterCreateState {
+  const factory _AttendanceRegisterCreateState(
           {final bool loading,
-          final AttendenceRegistersModel? attendenceRegistersModel}) =
-      _$_AttendenceRegisterCreateState;
-  const _AttendenceRegisterCreateState._() : super._();
+          final AttendanceRegistersModel? attendanceRegistersModel}) =
+      _$_AttendanceRegisterCreateState;
+  const _AttendanceRegisterCreateState._() : super._();
 
   @override
   bool get loading;
   @override
-  AttendenceRegistersModel? get attendenceRegistersModel;
+  AttendanceRegistersModel? get attendanceRegistersModel;
   @override
   @JsonKey(ignore: true)
-  _$$_AttendenceRegisterCreateStateCopyWith<_$_AttendenceRegisterCreateState>
+  _$$_AttendanceRegisterCreateStateCopyWith<_$_AttendanceRegisterCreateState>
       get copyWith => throw _privateConstructorUsedError;
 }

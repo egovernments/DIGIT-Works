@@ -6,29 +6,30 @@ part of 'attendance_registry_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_AttendenceRegistersModel _$$_AttendenceRegistersModelFromJson(
+_$_AttendanceRegistersModel _$$_AttendanceRegistersModelFromJson(
         Map<String, dynamic> json) =>
-    _$_AttendenceRegistersModel(
-      attendenceRegister: (json['attendanceRegister'] as List<dynamic>?)
-          ?.map((e) => AttendenceRegister.fromJson(e as Map<String, dynamic>))
+    _$_AttendanceRegistersModel(
+      attendanceRegister: (json['attendanceRegister'] as List<dynamic>?)
+          ?.map((e) => AttendanceRegister.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_AttendenceRegistersModelToJson(
-        _$_AttendenceRegistersModel instance) =>
+Map<String, dynamic> _$$_AttendanceRegistersModelToJson(
+        _$_AttendanceRegistersModel instance) =>
     <String, dynamic>{
-      'attendanceRegister': instance.attendenceRegister,
+      'attendanceRegister': instance.attendanceRegister,
     };
 
-_$_AttendenceRegister _$$_AttendenceRegisterFromJson(
+_$_AttendanceRegister _$$_AttendanceRegisterFromJson(
         Map<String, dynamic> json) =>
-    _$_AttendenceRegister(
+    _$_AttendanceRegister(
       id: json['id'] as String?,
       tenantId: json['tenantId'] as String?,
       registerNumber: json['registerNumber'] as String?,
       name: json['name'] as String?,
       startDate: json['startDate'] as int?,
       endDate: json['endDate'] as int?,
+      status: json['status'] as String?,
       staffEntries: (json['staff'] as List<dynamic>?)
           ?.map((e) => StaffEntries.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -37,8 +38,8 @@ _$_AttendenceRegister _$$_AttendenceRegisterFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$_AttendenceRegisterToJson(
-        _$_AttendenceRegister instance) =>
+Map<String, dynamic> _$$_AttendanceRegisterToJson(
+        _$_AttendanceRegister instance) =>
     <String, dynamic>{
       'id': instance.id,
       'tenantId': instance.tenantId,
@@ -46,6 +47,7 @@ Map<String, dynamic> _$$_AttendenceRegisterToJson(
       'name': instance.name,
       'startDate': instance.startDate,
       'endDate': instance.endDate,
+      'status': instance.status,
       'staff': instance.staffEntries,
       'attendees': instance.attendeesEntries,
     };
@@ -53,21 +55,35 @@ Map<String, dynamic> _$$_AttendenceRegisterToJson(
 _$_StaffEntries _$$_StaffEntriesFromJson(Map<String, dynamic> json) =>
     _$_StaffEntries(
       id: json['id'] as String?,
+      userId: json['userId'] as String?,
+      registerId: json['registerId'] as String?,
+      enrollmentDate: json['enrollmentDate'] as int?,
     );
 
 Map<String, dynamic> _$$_StaffEntriesToJson(_$_StaffEntries instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'userId': instance.userId,
+      'registerId': instance.registerId,
+      'enrollmentDate': instance.enrollmentDate,
     };
 
 _$_AttendeesEntries _$$_AttendeesEntriesFromJson(Map<String, dynamic> json) =>
     _$_AttendeesEntries(
       id: json['id'] as String?,
+      tenantId: json['tenantId'] as String?,
+      registerId: json['registerId'] as String?,
+      individualId: json['individualId'] as String?,
+      enrollmentDate: json['enrollmentDate'] as int?,
     );
 
 Map<String, dynamic> _$$_AttendeesEntriesToJson(_$_AttendeesEntries instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'tenantId': instance.tenantId,
+      'registerId': instance.registerId,
+      'individualId': instance.individualId,
+      'enrollmentDate': instance.enrollmentDate,
     };
 
 _$_AuditDetails _$$_AuditDetailsFromJson(Map<String, dynamic> json) =>

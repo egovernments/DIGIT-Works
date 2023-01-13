@@ -2,8 +2,8 @@ class Urls {
   static UserServices userServices = const UserServices();
   static InitServices initServices = const InitServices();
   static MusterRollServices musterRollServices = const MusterRollServices();
-  static AttendenceRegisterServices attendenceRegisterServices = const AttendenceRegisterServices();
-
+  static AttendanceRegisterServices attendanceRegisterServices =
+      const AttendanceRegisterServices();
 }
 
 class InitServices {
@@ -27,7 +27,9 @@ class MusterRollServices {
   String get searchMusterRolls => 'muster-roll/v1/_search';
 }
 
-class AttendenceRegisterServices {
-  const AttendenceRegisterServices();
-  String get CreateAttendenceRegister => 'attendance/v1/_create';
+class AttendanceRegisterServices {
+  const AttendanceRegisterServices();
+  String get createAttendanceRegister => 'attendance/v1/_create';
+  String get searchAttendanceRegister => 'attendance/v1/_search';
+  String get createAttendee => 'attendance/attendee/v1/_create';
 }

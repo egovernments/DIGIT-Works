@@ -5,7 +5,7 @@ import InboxLinks from './InboxLinks'
 import { SearchAction, FilterAction, PopUp, Card, Loader, DetailsCard} from "@egovernments/digit-ui-react-components";
 
 const MobileInbox = (props) => {
-  const {isFilter, isSearch, parentRoute, data, onFilterChange, onSearch, isLoading, filterComponent, searchComponent, sortParams } = props;
+  const {isFilter, isSearch, parentRoute, data, onFilterChange, onSearch, isLoading, filterComponent, searchComponent, sortParams, tenantId } = props;
   const { t } = useTranslation();
   const [type, setType] = useState("");
   const [popup, setPopup] = useState(false);
@@ -27,7 +27,7 @@ const MobileInbox = (props) => {
         [t("ATM_MUSTER_ROLL_ID")]: (
             <div>
                 <span className="link">
-                  <Link to={`viewAttendance?mustorRollId=${row.mustorRollId}`}>
+                  <Link to={`view-attendance?tenantId=${tenantId}&musterRollNumber=${row.mustorRollId}`}>
                     {row.mustorRollId || t("ES_COMMON_NA")}
                   </Link>
                 </span>

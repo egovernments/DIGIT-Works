@@ -6,12 +6,12 @@ import { inboxTableColumns } from '../../config/inboxTableColumns';
 
 const DesktopInbox = (props) => {
   const {isFilter, isSearch, parentRoute, filterComponent, searchComponent, data, onFilterChange, onSearch, searchParams, defaultSearchParams,
-  onSort, onNextPage, onPrevPage, currentPage, pageSizeLimit, onPageSizeChange, totalRecords, sortParams, isLoading} = props
+  onSort, onNextPage, onPrevPage, currentPage, pageSizeLimit, onPageSizeChange, totalRecords, sortParams, isLoading, tenantId} = props
   const { t } = useTranslation();
   const AttendenceInboxFilter = Digit.ComponentRegistryService.getComponent(filterComponent);
   const AttendenceInboxSearch = Digit.ComponentRegistryService.getComponent(searchComponent);
 
-  const inboxColumns = useMemo(() => inboxTableColumns(t("ATM_MUSTER_ROLL_ID"), t("WORKS_NAME_OF_WORK"), t("ATM_ATTENDANCE_WEEK"), t("ATM_IA_AP"), t("ATM_NO_OF_INDIVIDUALS"), t("ATM_SLA")),[])
+  const inboxColumns = useMemo(() => inboxTableColumns(tenantId, t("ATM_MUSTER_ROLL_ID"), t("WORKS_NAME_OF_WORK"), t("ATM_ATTENDANCE_WEEK"), t("ATM_IA_AP"), t("ATM_NO_OF_INDIVIDUALS"), t("ATM_SLA")),[])
   
   let result;
   if(isLoading) {

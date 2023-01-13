@@ -45,6 +45,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           jsonEncode(userDetailsModel.userRequestModel?.uuid);
       html.window.localStorage['tenantId' ?? ''] =
           jsonEncode(userDetailsModel.userRequestModel?.tenantId);
+      html.window.localStorage['mobileNumber' ?? ''] =
+          jsonEncode(userDetailsModel.userRequestModel?.mobileNumber);
     } else {
       await storage.write(
           key: 'accessToken' ?? '',

@@ -5,6 +5,8 @@ import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 
 import '../blocs/auth/auth.dart';
 import '../blocs/localization/app_localization.dart';
+import '../blocs/localization/localization.dart';
+import '../utils/global_variables.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -44,6 +46,12 @@ class LoginPage extends StatelessWidget {
                     onPressed: state.loading
                         ? null
                         : () {
+                            context.read<LocalizationBloc>().add(
+                                OnLoadLocalizationEvent(
+                                    module: 'rainmaker-works,rainmaker-common',
+                                    tenantId: GlobalVariables.getTenantId()
+                                        .toString(),
+                                    locale: GlobalVariables.selectedLocale()));
                             context.read<AuthBloc>().add(
                                   AuthLoginEvent(
                                     userId: userIdController.text,

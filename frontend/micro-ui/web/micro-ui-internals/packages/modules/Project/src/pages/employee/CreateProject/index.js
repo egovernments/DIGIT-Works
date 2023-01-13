@@ -2,6 +2,7 @@ import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
+import _ from "lodash";
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
@@ -90,10 +91,10 @@ const CreateProject = () => {
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
-          setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
+          setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
           setShowNavs(true);
         }else if(selectedProjectType?.code === "COMMON_NO") {
-          setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
+          setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
           setShowNavs(true);
         }
     },[selectedProjectType]);
