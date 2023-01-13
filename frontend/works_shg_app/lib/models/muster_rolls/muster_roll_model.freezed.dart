@@ -580,7 +580,7 @@ IndividualEntries _$IndividualEntriesFromJson(Map<String, dynamic> json) {
 mixin _$IndividualEntries {
   String? get id => throw _privateConstructorUsedError;
   String? get individualId => throw _privateConstructorUsedError;
-  int? get totalAttendance => throw _privateConstructorUsedError;
+  double? get totalAttendance => throw _privateConstructorUsedError;
   @JsonKey(name: 'attendanceEntries')
   List<AttendanceEntries>? get attendanceEntries =>
       throw _privateConstructorUsedError;
@@ -600,7 +600,7 @@ abstract class $IndividualEntriesCopyWith<$Res> {
   $Res call(
       {String? id,
       String? individualId,
-      int? totalAttendance,
+      double? totalAttendance,
       @JsonKey(name: 'attendanceEntries')
           List<AttendanceEntries>? attendanceEntries});
 }
@@ -635,7 +635,7 @@ class _$IndividualEntriesCopyWithImpl<$Res, $Val extends IndividualEntries>
       totalAttendance: freezed == totalAttendance
           ? _value.totalAttendance
           : totalAttendance // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       attendanceEntries: freezed == attendanceEntries
           ? _value.attendanceEntries
           : attendanceEntries // ignore: cast_nullable_to_non_nullable
@@ -655,7 +655,7 @@ abstract class _$$_IndividualEntriesCopyWith<$Res>
   $Res call(
       {String? id,
       String? individualId,
-      int? totalAttendance,
+      double? totalAttendance,
       @JsonKey(name: 'attendanceEntries')
           List<AttendanceEntries>? attendanceEntries});
 }
@@ -688,7 +688,7 @@ class __$$_IndividualEntriesCopyWithImpl<$Res>
       totalAttendance: freezed == totalAttendance
           ? _value.totalAttendance
           : totalAttendance // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       attendanceEntries: freezed == attendanceEntries
           ? _value._attendanceEntries
           : attendanceEntries // ignore: cast_nullable_to_non_nullable
@@ -716,7 +716,7 @@ class _$_IndividualEntries implements _IndividualEntries {
   @override
   final String? individualId;
   @override
-  final int? totalAttendance;
+  final double? totalAttendance;
   final List<AttendanceEntries>? _attendanceEntries;
   @override
   @JsonKey(name: 'attendanceEntries')
@@ -770,7 +770,7 @@ abstract class _IndividualEntries implements IndividualEntries {
   const factory _IndividualEntries(
           {final String? id,
           final String? individualId,
-          final int? totalAttendance,
+          final double? totalAttendance,
           @JsonKey(name: 'attendanceEntries')
               final List<AttendanceEntries>? attendanceEntries}) =
       _$_IndividualEntries;
@@ -783,7 +783,7 @@ abstract class _IndividualEntries implements IndividualEntries {
   @override
   String? get individualId;
   @override
-  int? get totalAttendance;
+  double? get totalAttendance;
   @override
   @JsonKey(name: 'attendanceEntries')
   List<AttendanceEntries>? get attendanceEntries;
