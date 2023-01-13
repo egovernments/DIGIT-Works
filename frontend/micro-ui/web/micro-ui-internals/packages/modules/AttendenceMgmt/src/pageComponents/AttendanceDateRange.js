@@ -62,7 +62,7 @@ const AttendanceDateRange = ({ values, onFilterChange, t, labelClass, title, epo
       const startDate = selectionRange?.startDate;
       const endDate = selectionRange?.endDate;
       const duration = getDuration(selectionRange?.startDate, selectionRange?.endDate);
-      const title = `${format(selectionRange?.startDate, "dd-MM-yyyy")} - ${format(selectionRange?.endDate, "dd-MM-yyyy")}`;
+      const title = `${format(selectionRange?.startDate, "dd/MM/yyyy")} - ${format(selectionRange?.endDate, "dd/MM/yyyy")}`;
       onFilterChange({ range: { startDate, endDate, duration, title }, requestDate: { startDate, endDate, duration, title } });
     }
   }, [selectionRange, isModalOpen]);

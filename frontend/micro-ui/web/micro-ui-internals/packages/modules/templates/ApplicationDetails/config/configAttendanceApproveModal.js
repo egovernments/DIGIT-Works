@@ -19,10 +19,7 @@ const configAttendanceApproveModal = ({ t, action }) => {
             },
           ],
         },
-      ],
-      defaultValues: {
-        comments: "",
-      },
+      ]
     };
   }
 };

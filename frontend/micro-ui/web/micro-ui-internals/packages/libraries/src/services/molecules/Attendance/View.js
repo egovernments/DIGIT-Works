@@ -78,6 +78,7 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills)
   const weekDates = getWeekDates(musterRoll)
   const registrationDetails = {
     title: "ATM_REGISTRATION_DETAILS",
+    applicationData: musterRoll,
     asSectionHeader: true,
     values: [
       { title: "WORKS_ORG_NAME", value: musterRoll?.additionalDetails?.orgName || t("NA") },
