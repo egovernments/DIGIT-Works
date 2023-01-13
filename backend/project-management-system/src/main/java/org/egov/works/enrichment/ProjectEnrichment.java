@@ -41,7 +41,7 @@ public class ProjectEnrichment {
 
         //Get Project Ids from Idgen Service for Number of projects present in Projects
         List<String> projectNumbers = getIdList(requestInfo, rootTenantId
-                , config.getIdgenProjectNumberName(), config.getIdgenProjectNumberFormat(), projects.size());
+                , config.getIdgenProjectNumberName(), "", projects.size());
 
         for (int i = 0; i < projects.size(); i++) {
 

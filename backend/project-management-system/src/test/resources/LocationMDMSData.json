@@ -1,0 +1,8 @@
+{
+  "ResponseInfo": null,
+  "MdmsRes": {
+    "egov-location": {
+      "TenantBoundary": ["SUN04", "SUN05"]
+    }
+  }
+}

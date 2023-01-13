@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.TestConfiguration;
 import org.egov.works.config.ProjectConfiguration;
 import org.egov.works.enrichment.ProjectEnrichment;
@@ -19,6 +20,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.context.annotation.Import;
@@ -96,6 +98,28 @@ public class ProjectApiControllerTest {
         assertEquals(1, response.getProject().size());
         assertNotNull(response.getProject().get(0).getId());
         assertEquals("successful", response.getResponseInfo().getStatus());
+
+    }
+
+    @Test
+    @DisplayName("project request should fail for invalid project request")
+    public void projectV1CreatePostFailure() throws Exception {
+        ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addBadProject().build();
+        when(projectService.createProject(any(ProjectRequest.class))).thenThrow(new CustomException("TENANT_ID", "Tenant ID is mandatory"));
+
+        ResponseInfo responseInfo = ProjectRequestTestBuilder.builder().getResponseInfo_Success(projectRequest);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(projectRequest.getRequestInfo(),true)).thenReturn(responseInfo);
+
+        MvcResult result = mockMvc.perform(post("/project/v1/_create").contentType(MediaType
+                        .APPLICATION_JSON).content(objectMapper.writeValueAsString(projectRequest)))
+                .andExpect(status().isBadRequest()).andReturn();
+
+        String responseStr = result.getResponse().getContentAsString();
+        ProjectResponse response = objectMapper.readValue(responseStr,
+                ProjectResponse.class);
+
+        assertEquals(0, response.getProject().size());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
 
     }
 

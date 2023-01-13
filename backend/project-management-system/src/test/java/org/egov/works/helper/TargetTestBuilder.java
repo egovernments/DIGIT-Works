@@ -22,7 +22,7 @@ public class TargetTestBuilder {
         this.builder
                 .id("Id-1")
                 .projectid("ProjectId-1")
-                .beneficiaryType("BeneficiaryType-1")
+                .beneficiaryType("Slum")
                 .totalNo(1)
                 .targetNo(1)
                 .isDeleted(false)

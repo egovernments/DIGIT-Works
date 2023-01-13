@@ -146,33 +146,24 @@ public class ProjectValidator {
         for (Project project: projects) {
             if (project == null) {
                 log.error("Project is mandatory in Projects");
-                throw new CustomException("PROJECT", "Project is mandatory");
+                errorMap.put("PROJECT", "Project is mandatory");
             }
-            if (StringUtils.isBlank(project.getTenantId())) {
+            if (project != null && StringUtils.isBlank(project.getTenantId())) {
                 log.error("Tenant ID is mandatory in Project request body");
                 throw new CustomException("TENANT_ID", "Tenant ID is mandatory");
             }
-            if (StringUtils.isBlank(project.getName())) {
-                log.error("Project Name is mandatory in Project request body");
-                throw new CustomException("PROJECT_NAME", "Project Name is mandatory");
-            }
-            if (StringUtils.isBlank(project.getProjectType())) {
-                log.error("Project Type is mandatory in Project request body");
-                throw new CustomException("PROJECT_TYPE", "Project Type is mandatory");
-            }
-            if (StringUtils.isBlank(project.getProjectType()) && StringUtils.isNotBlank(project.getProjectSubType())) {
-                log.error("Project Type must be present for Project sub type in Project request body");
-                errorMap.put("PROJECT_SUBTYPE", "Project Type must be present for Project sub type");
-            }
-            if (!project.getTenantId().equals(projects.get(0).getTenantId())) {
+            if (project != null &&  !project.getTenantId().equals(projects.get(0).getTenantId())) {
                 log.error("All projects in Project request must have same tenant Id");
-                throw new CustomException("MULTIPLE_TENANTS", "All projects must have same tenant Id. Please create new request for different tentant id");
+                errorMap.put("MULTIPLE_TENANTS", "All projects must have same tenant Id. Please create new request for different tentant id");
             }
-            if ((project.getStartDate() != null && project.getEndDate() != null) && (project.getStartDate().compareTo(project.getEndDate()) > 0)) {
+            if (project != null &&  (project.getStartDate() != null && project.getEndDate() != null) && (project.getStartDate().compareTo(project.getEndDate()) > 0)) {
                 log.error("Start date should be less than end date");
-                errorMap.put("DATE", "Start date should be less than end date");
+                errorMap.put("INVALID_DATE", "Start date should be less than end date");
             }
         }
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
     }
 
     /* Validates Search Project Request body */
@@ -210,16 +201,17 @@ public class ProjectValidator {
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
         if (requestInfo == null) {
             log.error("Request info is mandatory");
-            throw new CustomException("REQUEST_INFO", "Request info is mandatory");
-        }
-        if (requestInfo.getUserInfo() == null) {
+            errorMap.put("REQUEST_INFO", "Request info is mandatory");
+        } else if (requestInfo.getUserInfo() == null) {
             log.error("UserInfo is mandatory in RequestInfo");
-            throw new CustomException("USERINFO", "UserInfo is mandatory");
-        }
-        if (requestInfo.getUserInfo() != null && StringUtils.isBlank(requestInfo.getUserInfo().getUuid())) {
+            errorMap.put("USERINFO", "UserInfo is mandatory");
+        } else if (requestInfo.getUserInfo() != null && StringUtils.isBlank(requestInfo.getUserInfo().getUuid())) {
             log.error("UUID is mandatory in UserInfo");
-            throw new CustomException("USERINFO_UUID", "UUID is mandatory");
+            errorMap.put("USERINFO_UUID", "UUID is mandatory");
         }
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
     }
 
     /* Validates the request data against MDMS data */
@@ -305,7 +297,7 @@ public class ProjectValidator {
         final String jsonPathForBoundryLocation = "$.MdmsRes." + MDMS_LOCATION_MODULE_NAME + "." + MASTER_BOUNDARY_LOCATION + ".*";
 
         if (locations.size() > 0) {
-            Object locResult = locationUtil.getLocationFromMDMS(locations, tenantId, requestInfo, errorMap);
+            Object locResult = locationUtil.getLocationFromMDMS(locations, tenantId, requestInfo);
             if (locResult != null) {
                 List<Object> locRes = JsonPath.read(locResult, jsonPathForBoundryLocation);
                 if (CollectionUtils.isEmpty(locRes)) {

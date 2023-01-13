@@ -37,10 +37,8 @@ public class ProjectConfiguration {
     private String idGenHost;
     @Value("${egov.idgen.path}")
     private String idGenPath;
-    //id format
+    //id format name
     @Value("${egov.idgen.project.number.name}")
     private String idgenProjectNumberName;
-    @Value("${egov.idgen.project.number.format}")
-    private String idgenProjectNumberFormat;
 
 }

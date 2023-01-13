@@ -32,7 +32,7 @@ public class LocationUtil {
     @Autowired
     ServiceRequestRepository serviceRequestRepository;
 
-    public Object getLocationFromMDMS(List<String> locations, String tenantId, RequestInfo requestInfo, Map<String, String> errorMap) {
+    public Object getLocationFromMDMS(List<String> locations, String tenantId, RequestInfo requestInfo) {
         MdmsCriteriaReq mdmsCriteriaReq = getLocMDMSRequest(locations, tenantId, requestInfo);
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
         return result;
