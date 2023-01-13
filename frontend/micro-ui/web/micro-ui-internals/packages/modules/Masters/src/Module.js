@@ -37,8 +37,8 @@ export const MastersModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
   MastersModule,
-  MastersCard,
-  ProjectCard,
+  MasterCard:MastersCard ,
+  ProjectsCard:ProjectCard,
   SearchOrganization,
   CreateOrganization,
   RegisterWageSeeker,

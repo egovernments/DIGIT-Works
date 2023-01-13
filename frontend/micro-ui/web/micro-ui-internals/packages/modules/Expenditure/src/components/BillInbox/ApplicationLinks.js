@@ -9,16 +9,22 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
   const allLinks = [
     {
       text: t("WORKS_CREATE_NEW_BILL"),
-      link: `/works-ui/employee/contracts/create-bill`,
+      link: `/${window?.contextPath}/employee/contracts/create-bill`,
       businessService: "WORKS",
       roles: [],
     },
     {
       text: t("WORKS_SEARCH_BILLS"),
-      link: `/works-ui/employee/contracts/search-bills`,
+      link: `/${window?.contextPath}/employee/contracts/search-bills`,
       businessService: "WORKS",
       roles: [],
     },
+    {
+      text: t("COMMON_VIEW_BILLS"),
+      link: `/${window?.contextPath}/employee/expenditure/view-bills/menu`,
+      businessService: "WORKS",
+      roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
+    }
   ];
 
   const [links, setLinks] = useState([]);

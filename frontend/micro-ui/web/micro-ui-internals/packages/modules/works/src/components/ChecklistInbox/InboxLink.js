@@ -8,8 +8,8 @@ const InboxLinks = ({ parentRoute, businessService }) => {
 
   const allLinks = [
     {
-      text: t("WORKS_SEARCH_CHECKLISTS"),
-      link: `/works-ui/employee/works/search-checklists`,
+      text: t("WORKS_KICKOFF_CHECKLIST"),
+      link: `/${window?.contextPath}/employee/works/checklist`,
       businessService: "WORKS",
       roles: [],
     },
@@ -20,8 +20,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   const { roles: userRoles } = Digit.UserService.getUser().info;
 
   useEffect(() => {
-    let linksToShow = allLinks
-      .filter(({ roles }) => roles.some((e) => userRoles.map(({ code }) => code).includes(e)) || !roles?.length);
+    let linksToShow = allLinks.filter(({ roles }) => roles.some((e) => userRoles.map(({ code }) => code).includes(e)) || !roles?.length);
     setLinks(linksToShow);
   }, []);
 

@@ -1,6 +1,5 @@
 import ReactDOM from "react-dom";
 import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import XLSX from "xlsx";
 import domtoimage from "dom-to-image";
 

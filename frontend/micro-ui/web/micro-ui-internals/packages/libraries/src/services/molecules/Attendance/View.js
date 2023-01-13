@@ -36,9 +36,9 @@ const getAttendanceTableData = (data) => {
       tableRow.sno = index + 1
       tableRow.registerId = data?.registerId
       tableRow.actualWorkingDays = item?.totalAttendance
-      tableRow.nameOfIndividual = item?.additionalDetails?.userName
-      tableRow.guardianName = item?.additionalDetails?.fatherName
-      tableRow.skill = item?.additionalDetails?.skillCode
+      tableRow.nameOfIndividual = item?.additionalDetails?.userName || 'Piyush HarjitPal'
+      tableRow.guardianName = item?.additionalDetails?.fatherName  || 'HarjitPal'
+      tableRow.skill = item?.additionalDetails?.skillCode || 'SKILL_1'
       tableRow.amount = 2000 //get this amount from mdms data
       tableRow.modifiedAmount = 2000 //get this amount from mdms data
       tableRow.modifiedWorkingDays = item?.totalAttendance
@@ -46,7 +46,7 @@ const getAttendanceTableData = (data) => {
         accountNo : '880182873839-SBIN0001237', //item?.additionalDetails?.bankDetails, split by - and assign to account and ifsc
         ifscCode : null
       }
-      tableRow.aadharNumber = item?.additionalDetails?.aadharNumber
+      tableRow.aadharNumber = item?.additionalDetails?.aadharNumber|| '9099-1234-1234' 
       tableRow.attendence = getWeekAttendance(item?.attendanceEntries)
       tableData[item.id] = tableRow
     });
