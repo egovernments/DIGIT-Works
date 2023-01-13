@@ -20,7 +20,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>> {
@@ -34,13 +37,13 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
         Map<String, IndividualEntry> individualMap = new LinkedHashMap<>();
         while (rs.next()) {
             String id = rs.getString("id");
-            String tenantId = rs.getString("tenantid");
-            String musterRollNumber = rs.getString("musterrollnumber");
-            String registerId = rs.getString("attendanceregisterid");
+            String tenantId = rs.getString("tenant_id");
+            String musterRollNumber = rs.getString("musterroll_number");
+            String registerId = rs.getString("attendance_register_id");
             String status = rs.getString("status");
-            String musterRollStatus = rs.getString("musterrollstatus");
-            BigDecimal startDate = rs.getBigDecimal("startdate");
-            BigDecimal endDate = rs.getBigDecimal("enddate");
+            String musterRollStatus = rs.getString("musterroll_status");
+            BigDecimal startDate = rs.getBigDecimal("start_date");
+            BigDecimal endDate = rs.getBigDecimal("end_date");
 
             String createdby = rs.getString("createdby");
             String lastmodifiedby = rs.getString("lastmodifiedby");
