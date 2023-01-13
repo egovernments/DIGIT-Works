@@ -96,6 +96,8 @@ import useViewEstimateDetails from "./works/useViewEstimateDetails";
 import useViewProjectDetailsInEstimate from './works/useViewProjectDetailsInEstimate'
 import useViewProjectClosureDetails from "./works/useViewProjectClosureDetails";
 import useViewProjectClosureDetailsBills from "./works/useViewProjectClosureBills";
+import useViewProjectClosureDetailsClosureChecklist from "./works/useViewProjectClosureDetailsClosureChecklist";
+import useViewProjectClosureDetailsKickoffChecklist from "./works/useViewProjectClosureDetailsKickoffChecklist";
 import useViewLOIDetails from "./works/useViewLOIDetails";
 import useCreateLOI from "./works/useCreateLOI";
 import useEstimateSearch from "./works/useSearch";
@@ -119,6 +121,8 @@ const works = {
   useViewProjectDetailsInEstimate,
   useViewProjectClosureDetails,
   useViewProjectClosureDetailsBills,
+  useViewProjectClosureDetailsKickoffChecklist,
+  useViewProjectClosureDetailsClosureChecklist,
   useViewLOIDetails,
   useCreateLOI,
   useEstimateSearch,
