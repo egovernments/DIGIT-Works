@@ -1,21 +1,29 @@
 package org.egov.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
+import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -39,6 +47,12 @@ public class CalculationService {
     @Autowired
     private MdmsUtil mdmsUtils;
 
+    @Autowired
+    private MusterRollServiceUtil musterRollServiceUtil;
+
+    @Autowired
+    private ObjectMapper mapper;
+
     private int halfDayNumHours;
     private int fullDayNumHours;
     private boolean isRoundOffHours;
@@ -51,21 +65,26 @@ public class CalculationService {
      */
     public void createAttendance(MusterRollRequest musterRollRequest, boolean isCreate) {
 
+        //fetch MDMS data for muster - attendance hours and skill level
+        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
+        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
+        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
+
         //fetch the log events for all individuals in a muster roll
-        List<AttendanceLog> attendanceLogList = fetchAttendanceLogsAndMDMSData(musterRollRequest);
+        List<AttendanceLog> attendanceLogList = fetchAttendanceLogsAndHours(musterRollRequest,mdmsData);
         Map<String,List<LocalDateTime>> individualEntryAttendanceMap = populateAttendanceLogEvents(attendanceLogList,ENTRY_EVENT);
         Map<String,List<LocalDateTime>> individualExitAttendanceMap = populateAttendanceLogEvents(attendanceLogList,EXIT_EVENT);
 
-        log.info("EnrichmentService::createAttendance::From MDMS::HALF_DAY_NUM_HOURS::"+halfDayNumHours+"::FULL_DAY_NUM_HOURS::"+fullDayNumHours);
-        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
+        log.info("CalculationService::createAttendance::From MDMS::HALF_DAY_NUM_HOURS::"+halfDayNumHours+"::FULL_DAY_NUM_HOURS::"+fullDayNumHours+"::isRoundOffHours::"+isRoundOffHours);
         AuditDetails auditDetails = musterRoll.getAuditDetails();
         LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate().longValue()).atZone(ZoneId.of(ZONE)).toLocalDate();
         LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate().longValue()).atZone(ZoneId.of(ZONE)).toLocalDate();
 
-        log.debug("EnrichmentService::calculateAttendance::startDate::"+startDate+"::endDate::"+endDate);
+        log.debug("CalculationService::calculateAttendance::startDate::"+startDate+"::endDate::"+endDate);
 
         //calculate attendance aggregate and per day per individual attendance
         List<IndividualEntry> individualEntries = new ArrayList<>();
+        List<IndividualEntry> individualEntriesFromRequest = musterRoll.getIndividualEntries();
 
         for (Map.Entry<String,List<LocalDateTime>> entry : individualExitAttendanceMap.entrySet()) {
             IndividualEntry individualEntry = new IndividualEntry();
@@ -111,13 +130,17 @@ public class CalculationService {
             }
 
             individualEntry.setAttendanceEntries(attendanceEntries);
-            log.debug("EnrichmentService::calculateAttendance::Attendance Entry::size::"+attendanceEntries.size());
+            log.debug("CalculationService::createAttendance::Attendance Entry::size::"+attendanceEntries.size());
             individualEntry.setAuditDetails(auditDetails);
             individualEntry.setTotalAttendance(totalAttendance);
+            //TODO - user object from the below method will be passed to setAdditionalDetails
+            fetchUserDetails(individualEntry);
+            //Set skill level - default is "Skill 1"
+            setAdditionalDetails(individualEntry,individualEntriesFromRequest,mdmsData);
             individualEntries.add(individualEntry);
         }
         musterRoll.setIndividualEntries(individualEntries);
-        log.debug("EnrichmentService::calculateAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());
+        log.debug("CalculationService::createAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());
 
     }
 
@@ -158,21 +181,25 @@ public class CalculationService {
 
 
     /**
-     * Calculate the per day attendance and attendance aggregate for each individual - ACTION "RESUMBIT'
+     * Re-calculates the per day attendance and attendance aggregate for each individual on update
      * @param musterRollRequest
      *
      */
     public void updateAttendance(MusterRollRequest musterRollRequest) {
 
+        //fetch MDMS data for muster - attendance hours and skill level
+        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
+        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
+        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
+
         //fetch the log events for all individuals in a muster roll
-        List<AttendanceLog> attendanceLogList = fetchAttendanceLogsAndMDMSData(musterRollRequest);
+        List<AttendanceLog> attendanceLogList = fetchAttendanceLogsAndHours(musterRollRequest,mdmsData);
         Map<String,List<LocalDateTime>> individualEntryAttendanceMap = populateAttendanceLogEvents(attendanceLogList,ENTRY_EVENT);
         Map<String,List<LocalDateTime>> individualExitAttendanceMap = populateAttendanceLogEvents(attendanceLogList,EXIT_EVENT);
 
-        log.info("EnrichmentService::updateAttendance::From MDMS::HALF_DAY_NUM_HOURS::"+halfDayNumHours+"::FULL_DAY_NUM_HOURS::"+fullDayNumHours);
+        log.info("CalculationService::updateAttendance::From MDMS::HALF_DAY_NUM_HOURS::"+halfDayNumHours+"::FULL_DAY_NUM_HOURS::"+fullDayNumHours+"::isRoundOffHours::"+isRoundOffHours);
 
         //calculate attendance aggregate and per day per individual attendance
-        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         AuditDetails auditDetails = musterRoll.getAuditDetails();
         List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
         for (Map.Entry<String,List<LocalDateTime>> entry : individualExitAttendanceMap.entrySet()) {
@@ -201,7 +228,7 @@ public class CalculationService {
             individualEntry.setAuditDetails(auditDetails);
             individualEntry.setTotalAttendance(totalAttendance);
         }
-
+        log.debug("CalculationService::updateAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());
     }
 
     /**
@@ -209,16 +236,12 @@ public class CalculationService {
      * @param musterRollRequest
      * @return List<AttendanceLog>
      */
-    private List<AttendanceLog> fetchAttendanceLogsAndMDMSData(MusterRollRequest musterRollRequest) {
+    private List<AttendanceLog> fetchAttendanceLogsAndHours(MusterRollRequest musterRollRequest,Object mdmsData) {
 
         //fetch the attendance log
         List<AttendanceLog> attendanceLogList = getAttendanceLogs(musterRollRequest.getMusterRoll(),musterRollRequest.getRequestInfo());
 
-        //fetch the attendance time from MDMS
-        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
-        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
-        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
-        populateAttendanceTime(mdmsData);
+        populateAttendanceHours(mdmsData);
 
         return attendanceLogList;
     }
@@ -244,7 +267,7 @@ public class CalculationService {
     }
 
     /**
-     * Fetch the exit attendance log events for all individuals in an attendance register between the startDate and endDate
+     * Fetch the  attendance log events for all individuals in an attendance register between the startDate and endDate
      * This is fetched from the AttendanceLog service
      * @param musterRoll
      * @param requestInfo
@@ -254,31 +277,45 @@ public class CalculationService {
 
         StringBuilder uri = new StringBuilder();
         uri.append(config.getAttendanceLogHost()).append(config.getAttendanceLogEndpoint());
-
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
                 .queryParam("tenantId",musterRoll.getTenantId())
                 .queryParam("registerId",musterRoll.getRegisterId())
                 .queryParam("fromTime",musterRoll.getStartDate().longValue())
                 .queryParam("toTime",musterRoll.getEndDate().doubleValue())
                 .queryParam("status",Status.ACTIVE);
-
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+        AttendanceLogResponse attendanceLogResponse = null;
 
-        AttendanceLogResponse attendanceLogResponse = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceLogResponse.class);
+        log.info("CalculationService::getAttendanceLogs::call attendance log search");
 
-        if (attendanceLogResponse == null || attendanceLogResponse.getAttendance() == null) {
-            throw new CustomException("ATTENDANCE_LOG_EMPTY","No attendance log found for this register and date range");
+        try {
+            attendanceLogResponse  = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceLogResponse.class);
+        }  catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
+           log.error("CalculationService::getAttendanceLogs::Error thrown from attendance log service::"+httpClientOrServerExc.getStatusCode());
+            throw new CustomException("ATTENDANCE_LOG_SERVICE_EXCEPTION","Error thrown from attendance log service::"+httpClientOrServerExc.getStatusCode());
         }
 
+        if (attendanceLogResponse == null || attendanceLogResponse.getAttendance() == null) {
+            StringBuffer exceptionMessage = new StringBuffer();
+            exceptionMessage.append("No attendance log found for the register - ");
+            exceptionMessage.append(musterRoll.getRegisterId());
+            exceptionMessage.append(" with startDate - ");
+            exceptionMessage.append(musterRoll.getStartDate());
+            exceptionMessage.append(" and endDate - ");
+            exceptionMessage.append(musterRoll.getEndDate());
+            throw new CustomException("ATTENDANCE_LOG_EMPTY",exceptionMessage.toString());
+        }
+
+        log.info("CalculationService::getAttendanceLogs::Attendance logs fetched successfully");
         return attendanceLogResponse.getAttendance();
     }
 
     /**
-     * Fetch the entry , exit time from MDMS
+     * Fetch the half day , full day hours from MDMS
      * @param mdmsData
      *
      */
-    private void populateAttendanceTime(Object mdmsData) {
+    private void populateAttendanceHours(Object mdmsData) {
 
         final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_MUSTER_ROLL + ".*";
         List<LinkedHashMap<String,String>> musterRes = null;
@@ -287,7 +324,7 @@ public class CalculationService {
             musterRes = JsonPath.read(mdmsData, jsonPathForWorksMuster);
 
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("CalculationService::populateAttendanceHours::Error parsing mdms response::"+e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
         }
 
@@ -311,6 +348,43 @@ public class CalculationService {
             }
         }
 
+    }
+
+    /**
+     * Set the additionalDetails of the individual
+     * @param individualEntry
+     * @param individualEntriesFromRequest
+     * @param mdmsData
+     */
+    private void setAdditionalDetails(IndividualEntry individualEntry, List<IndividualEntry> individualEntriesFromRequest, Object mdmsData) {
+        String skillCode = DEFAULT_SKILL_LEVEL;
+        if (!CollectionUtils.isEmpty(individualEntriesFromRequest)) {
+            IndividualEntry individualEntryRequest = individualEntriesFromRequest.stream()
+                                                        .filter(individual -> individual.getIndividualId().equalsIgnoreCase(individualEntry.getIndividualId()))
+                                                        .findFirst().orElse(null);
+            try {
+                if (individualEntryRequest != null && individualEntryRequest.getAdditionalDetails() != null) {
+                    JsonNode node = mapper.readTree(mapper.writeValueAsString(individualEntryRequest.getAdditionalDetails()));
+                    skillCode = node.findValue("code").textValue();
+                }
+            } catch (IOException e) {
+                log.error("CalculationService::setAdditionalDetails::Failed to parse additionalDetail object from request "+e);
+                throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object from request");
+            }
+        }
+
+        //Update the skill value based on the code from request or set as default skill
+        musterRollServiceUtil.populateAdditionalDetails(mdmsData, individualEntry, skillCode);
+    }
+
+    /**
+     * Fetch the user details - Name, Father's name and Aadhar details
+     * @param individualEntry
+     *
+     */
+    private void fetchUserDetails(IndividualEntry individualEntry){
+        //TODO Search the individual service using the individualId (from IndividualEntry) and fetch the UUID of the individual
+        //Invoke the search api of user using the UUID to get the name, father's name , aadhar and bank details
     }
 
 }

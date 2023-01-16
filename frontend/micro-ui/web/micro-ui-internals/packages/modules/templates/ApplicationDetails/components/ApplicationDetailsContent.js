@@ -6,6 +6,7 @@ import {
   CheckPoint,
   CollapseAndExpandGroups,
   ConnectingCheckPoints,
+  ViewImages,
   Loader,
   Row,
   StatusTable,
@@ -36,11 +37,12 @@ import InfoDetails from "./InfoDetails";
 import ViewBreakup from "./ViewBreakup";
 import SubWorkTableDetails from "./SubWorkTableDetails";
 import WeekAttendence from "../../../AttendenceMgmt/src/pageComponents/WeekAttendence";
-import reducer, { initialTableState } from "../../../AttendenceMgmt/src/config/attendenceTableReducer";
+import reducer from "../../../AttendenceMgmt/src/config/attendenceTableReducer";
 import AttendanceDateRange from "../../../AttendenceMgmt/src/pageComponents/AttendanceDateRange";
 import MustorRollDetailsTable from "../../../Expenditure/src/components/ViewBill/MustorRollDetailsTable";
 import StatusTableWithRadio from "../../../Expenditure/src/components/ViewBill/StatusTableWithRadio";
 import ShowTotalValue from "../../../Expenditure/src/components/ViewBill/ShowTotalValue";
+
 
 function ApplicationDetailsContent({
   applicationDetails,
@@ -55,14 +57,19 @@ function ApplicationDetailsContent({
   oldValue,
   isInfoLabel = false,
   noBoxShadow = false,
-  sectionHeadStyle = false
+  sectionHeadStyle = false,
+  modify
 }) {
   const { t } = useTranslation();
-  const [state, dispatch] = useReducer(reducer, initialTableState);
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
+  
+  const attendanceData = applicationDetails?.applicationDetails[0].additionalDetails?.table?.weekTable?.tableData
+  const [state, dispatch] = useReducer(reducer, attendanceData);
+
   const handleDateRangeChange = useCallback((data) => {
     setLocalSearchParams(() => ({ ...data }));
   }, []);
+
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
@@ -130,16 +137,49 @@ function ApplicationDetailsContent({
     window.location.href.includes("employee/tl") || window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc");
   const isNocLocation = window.location.href.includes("employee/noc");
   const isBPALocation = window.location.href.includes("employee/obps");
-  const isWS = window.location.href.includes("employee/ws") || window.location.href.includes("employee/works") || window.location.href.includes("employee/estimate");
+  let isWS = window.location.href.includes("employee/ws") || window.location.href.includes("employee/works")|| window.location.href.includes("employee/project") || window.location.href.includes("employee/estimate") ;
 
-  const getRowStyles = () => {
+  
+
+  const getRowStyles = (tab="") => {
+    
     if (window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc")) {
       return { justifyContent: "space-between", fontSize: "16px", lineHeight: "19px", color: "#0B0C0C" };
     } else if (checkLocation) {
       return { justifyContent: "space-between", fontSize: "16px", lineHeight: "19px", color: "#0B0C0C" };
-    } else {
+    }
+    else if ( tab==="fieldSurvey")  {
+        return {
+          justifyContent: "space-between", flexDirection:"column"
+        }
+    }
+     else {
       return {};
     }
+    
+  };
+  const getTextStyles = (tab="") => {
+    if ( tab==="fieldSurvey" ) {
+      return {
+        marginTop:"1rem",
+        marginBottom:"1rem"
+      }
+    }
+    else {
+      return {};
+    }
+
+  };
+  const getLabelStyles = (tab = "") => {
+    if ( tab === "fieldSurvey") {
+      return {
+        width:"100%"
+      }
+    }
+    else {
+      return {};
+    }
+
   };
 
   const getTableStyles = () => {
@@ -303,14 +343,18 @@ function ApplicationDetailsContent({
                     <Row
                       key={t(value.title)}
                       label={isWS ? `${t(value.title)}:` : t(value.title)}
-                      text={getTextValue(value)}
+                      text={value?.isImages ? <ViewImages fileStoreIds={value?.fileStoreIds}
+                        tenantId={value?.tenant}
+                        onClick={() => { }} />: getTextValue(value)}
                       last={index === detail?.values?.length - 1}
                       caption={value.caption}
                       className="border-none"
                       /* privacy object set to the Row Component */
                       privacy={value?.privacy}
                       // TODO, Later will move to classes
-                      rowContainerStyle={getRowStyles()}
+                      rowContainerStyle={getRowStyles(detail?.tab)}
+                      textStyle={getTextStyles(detail?.tab)}
+                      labelStyle={getLabelStyles(detail?.tab)}
                     />
                   );
                 })}
@@ -336,7 +380,7 @@ function ApplicationDetailsContent({
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
                     {t(detail?.additionalDetails?.table?.weekTable?.tableHeader)}
                   </CardSectionHeader>
-                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} />}
+                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} modify={modify} weekDates={detail?.additionalDetails?.table.weekTable.weekDates}/>}
                 </>
               )
             : null}

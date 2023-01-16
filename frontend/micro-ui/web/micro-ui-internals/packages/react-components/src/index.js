@@ -179,7 +179,12 @@ import {
   CreateEstimateIcon,
   GotoInboxIcon,
   AddFilled,
-  NoResultsFoundIcon
+
+  /* Works Management  */
+
+  NoResultsFoundIcon,
+  WorksMgmtIcon,
+  BioMetricIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -233,7 +238,9 @@ import WeekPicker from "./atoms/WeekPicker";
 import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
 import HorizontalNav from "./atoms/HorizontalNav";
 import NoResultsFound from "./atoms/NoResultsFound";
+import { ViewImages } from "./atoms/ViewImages";
 export {
+  ViewImages,
   Phone,
   Body,
   Loader,
@@ -381,7 +388,6 @@ export {
   FilterFormField,
   SortAction,
   CustomDropdown,
-  NoResultsFoundIcon,
   // hoc
   FormComposer,
   ResponseComposer,
@@ -474,5 +480,11 @@ export {
   BirthIcon,
   FirenocIcon,
   CreateEstimateIcon,
-  GotoInboxIcon
+  GotoInboxIcon,
+
+  /* Works Management  */
+
+  NoResultsFoundIcon,
+  WorksMgmtIcon,
+  BioMetricIcon
 };

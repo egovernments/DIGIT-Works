@@ -659,6 +659,16 @@ input[type="number"] {
   h2 {
     font-weight: bolder;
   }
+  .disabled {
+    border-color: #9E9E9E;
+    pointer-events: none !important;
+    input {
+      color: #9E9E9E !important;
+    }
+    svg {
+      fill: #9E9E9E;
+    }
+  }
 }
 
 @screen sm {
@@ -784,4 +794,8 @@ input[type="number"] {
   .error-msg {
     margin-top: 2rem;
   }
+}
+
+.status-value-link {
+  color: #F47738;
 }

@@ -1,7 +1,11 @@
 package org.egov.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.kafka.Producer;
 import org.egov.repository.MusterRollRepository;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,31 +48,42 @@ public class MusterRollService {
     @Autowired
     private MusterRollRepository musterRollRepository;
 
+    @Autowired
+    private ObjectMapper mapper;
+
 
     /**
-     * Provide the estimate of the muster roll
+     * Calculates the per day attendance , attendance aggregate from startDate to endDate
+     * and provides it as an estimate.
+     * Note: This will NOT create muster roll and NOT store the details
      *
      * @param musterRollRequest
      * @return
      */
     public MusterRollRequest estimateMusterRoll(MusterRollRequest musterRollRequest) {
+        log.info("MusterRollService::estimateMusterRoll");
+
         musterRollValidator.validateEstimateMusterRoll(musterRollRequest);
-        enrichmentService.enrichEstimateMusterRoll(musterRollRequest);
+        enrichmentService.enrichMusterRollOnEstimate(musterRollRequest);
         calculationService.createAttendance(musterRollRequest,false);
         return musterRollRequest;
     }
 
 
     /**
-     * Create a muster roll record
+     * Calculates the per day attendance , attendance aggregate from startDate to endDate for all the
+     * individuals of the provided attendance register.
+     * Creates muster roll and stores the details.
      *
      * @param musterRollRequest
      * @return
      */
     public MusterRollRequest createMusterRoll(MusterRollRequest musterRollRequest) {
+        log.info("MusterRollService::createMusterRoll");
+
         checkMusterRollExists(musterRollRequest.getMusterRoll());
         musterRollValidator.validateCreateMusterRoll(musterRollRequest);
-        enrichmentService.enrichCreateMusterRoll(musterRollRequest);
+        enrichmentService.enrichMusterRollOnCreate(musterRollRequest);
         calculationService.createAttendance(musterRollRequest,true);
         workflowService.updateWorkflowStatus(musterRollRequest);
         producer.push(serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
@@ -75,31 +91,37 @@ public class MusterRollService {
     }
 
     /**
-     * Search muster roll based on the given search criteria
+     * Search muster roll based on the given search criteria - tenantId, musterId, musterRollNumber, startDate, endDate, status
+     * and musterRollStatus
      *
      * @param requestInfoWrapper
      * @param searchCriteria
      * @return
      */
     public List<MusterRoll> searchMusterRolls(RequestInfoWrapper requestInfoWrapper, MusterRollSearchCriteria searchCriteria) {
+        log.info("MusterRollService::searchMusterRolls");
+
         musterRollValidator.validateSearchMuster(requestInfoWrapper,searchCriteria);
+        enrichmentService.enrichSearchRequest(searchCriteria);
         List<MusterRoll> musterRollList = musterRollRepository.getMusterRoll(searchCriteria);
         return musterRollList;
     }
 
     /**
-     * Update the muster roll
+     * Updates the totalAttendance, skill details (if modified) and re-calculates the attendance (if 'computeAttendance' is true)
      *
      * @param musterRollRequest
      * @return
      */
     public MusterRollRequest updateMusterRoll(MusterRollRequest musterRollRequest) {
+        log.info("MusterRollService::updateMusterRoll");
+
         MusterRoll existingMusterRoll = fetchExistingMusterRoll(musterRollRequest.getMusterRoll());
         musterRollValidator.validateUpdateMusterRoll(musterRollRequest);
-        enrichmentService.enrichUpdateMusterRoll(musterRollRequest,existingMusterRoll);
+        enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll);
         Workflow workflow = musterRollRequest.getWorkflow();
-        //If the ACTION is 'RESUBMIT', re-calculate the attendance from attendanceLogs and update
-        if (workflow.getAction().equalsIgnoreCase("RESUBMIT")) {
+        //If 'computeAttendance' flag is true, re-calculate the attendance from attendanceLogs and update
+        if (isComputeAttendance(musterRollRequest.getMusterRoll())) {
             calculationService.updateAttendance(musterRollRequest);
         }
         workflowService.updateWorkflowStatus(musterRollRequest);
@@ -111,13 +133,20 @@ public class MusterRollService {
      * Check if the muster roll already exists for the same registerId, startDate and endDate to avoid duplicate muster creation
      * @param musterRoll
      */
-    public void checkMusterRollExists(MusterRoll musterRoll) {
+    private void checkMusterRollExists(MusterRoll musterRoll) {
         MusterRollSearchCriteria searchCriteria = MusterRollSearchCriteria.builder().tenantId(musterRoll.getTenantId())
                 .registerId(musterRoll.getRegisterId()).fromDate(musterRoll.getStartDate())
                 .toDate(musterRoll.getEndDate()).build();
         List<MusterRoll> musterRolls = musterRollRepository.getMusterRoll(searchCriteria);
         if (!CollectionUtils.isEmpty(musterRolls)) {
-            throw new CustomException("DUPLICATE_MUSTER_ROLL","Muster roll already exists for this register and date");
+            StringBuffer exceptionMessage = new StringBuffer();
+            exceptionMessage.append("Muster roll already exists for the register - ");
+            exceptionMessage.append(musterRoll.getRegisterId());
+            exceptionMessage.append(" with startDate - ");
+            exceptionMessage.append(musterRoll.getStartDate());
+            exceptionMessage.append(" and endDate - ");
+            exceptionMessage.append(musterRoll.getEndDate());
+            throw new CustomException("DUPLICATE_MUSTER_ROLL",exceptionMessage.toString());
         }
     }
 
@@ -126,15 +155,36 @@ public class MusterRollService {
      * @param musterRoll
      * @return
      */
-    public MusterRoll fetchExistingMusterRoll(MusterRoll musterRoll) {
+    private MusterRoll fetchExistingMusterRoll(MusterRoll musterRoll) {
         List<String> ids = new ArrayList<>();
-        ids.add(musterRoll.getId().toString());
+        ids.add(musterRoll.getId());
         MusterRollSearchCriteria searchCriteria = MusterRollSearchCriteria.builder().ids(ids).tenantId(musterRoll.getTenantId()).build();
         List<MusterRoll> musterRolls = musterRollRepository.getMusterRoll(searchCriteria);
         if (CollectionUtils.isEmpty(musterRolls)) {
-            throw new CustomException("NO_MATCH_FOUND","Invalid Muster roll id");
+            throw new CustomException("NO_MATCH_FOUND","Invalid Muster roll id - "+musterRoll.getId());
         }
         MusterRoll existingMusterRoll = musterRolls.get(0);
         return existingMusterRoll;
+    }
+
+    /**
+     * Check if the 'computeAttendance' flag is true
+     * @param musterRoll
+     * @return
+     */
+    private boolean isComputeAttendance (MusterRoll musterRoll) {
+       if (musterRoll.getAdditionalDetails() != null) {
+           try {
+               JsonNode node = mapper.readTree(mapper.writeValueAsString(musterRoll.getAdditionalDetails()));
+               if (node.findValue("computeAttendance") != null && StringUtils.isNotBlank(node.findValue("computeAttendance").textValue())) {
+                   String value = node.findValue("computeAttendance").textValue();
+                   return BooleanUtils.toBoolean(value);
+               }
+           } catch (IOException e) {
+               log.info("MusterRollService::isComputeAttendance::Failed to parse additionalDetail object from request"+e);
+               throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object from request on update");
+           }
+       }
+       return false;
     }
 }

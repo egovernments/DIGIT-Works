@@ -6,42 +6,45 @@ part 'attendance_registry_model.freezed.dart';
 part 'attendance_registry_model.g.dart';
 
 @freezed
-class AttendenceRegistersModel with _$AttendenceRegistersModel {
-  const factory AttendenceRegistersModel({
+class AttendanceRegistersModel with _$AttendanceRegistersModel {
+  const factory AttendanceRegistersModel({
     @JsonKey(name: 'attendanceRegister')
-        List<AttendenceRegister>? attendenceRegister,
-  }) = _AttendenceRegistersModel;
+        List<AttendanceRegister>? attendanceRegister,
+  }) = _AttendanceRegistersModel;
 
-  factory AttendenceRegistersModel.fromJson(
+  factory AttendanceRegistersModel.fromJson(
     Map<String, dynamic> json,
   ) =>
-      _$AttendenceRegistersModelFromJson(json);
+      _$AttendanceRegistersModelFromJson(json);
 }
 
 @freezed
-class AttendenceRegister with _$AttendenceRegister {
-  const factory AttendenceRegister({
+class AttendanceRegister with _$AttendanceRegister {
+  const factory AttendanceRegister({
     String? id,
     String? tenantId,
     String? registerNumber,
     String? name,
     int? startDate,
     int? endDate,
+    String? status,
     @JsonKey(name: 'staff') List<StaffEntries>? staffEntries,
     @JsonKey(name: 'attendees') List<AttendeesEntries>? attendeesEntries,
-  }) = _AttendenceRegister;
+  }) = _AttendanceRegister;
 
-  factory AttendenceRegister.fromJson(
+  factory AttendanceRegister.fromJson(
     Map<String, dynamic> json,
   ) =>
-      _$AttendenceRegisterFromJson(json);
+      _$AttendanceRegisterFromJson(json);
 }
 
 @freezed
 class StaffEntries with _$StaffEntries {
-  const factory StaffEntries({
-    String? id,
-  }) = _StaffEntries;
+  const factory StaffEntries(
+      {String? id,
+      String? userId,
+      String? registerId,
+      int? enrollmentDate}) = _StaffEntries;
 
   factory StaffEntries.fromJson(
     Map<String, dynamic> json,
@@ -51,9 +54,12 @@ class StaffEntries with _$StaffEntries {
 
 @freezed
 class AttendeesEntries with _$AttendeesEntries {
-  const factory AttendeesEntries({
-    String? id,
-  }) = _AttendeesEntries;
+  const factory AttendeesEntries(
+      {String? id,
+      String? tenantId,
+      String? registerId,
+      String? individualId,
+      int? enrollmentDate}) = _AttendeesEntries;
 
   factory AttendeesEntries.fromJson(
     Map<String, dynamic> json,

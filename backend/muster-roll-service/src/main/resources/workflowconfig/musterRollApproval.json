@@ -16,8 +16,8 @@
   "BusinessServices": [
     {
       "tenantId": "pb",
-      "businessService": "MUKTAWORKS",
-      "business": "Mukta Works",
+      "businessService": "muster-roll-approval",
+      "business": "muster-roll-services",
       "businessServiceSla": 432000000,
       "states": [
         {
@@ -114,25 +114,8 @@
                 "ORG_ADMIN",
                 "ORG_STAFF"
               ]
-            },
-            {
-              "action": "CLOSEAFTERREJECTION",
-              "nextState": "CLOSED",
-              "roles": [
-                "ORG_STAFF",
-                "ORG_ADMIN"
-              ]
             }
           ]
-        },
-        {
-          "sla": null,
-          "state": "CLOSED",
-          "applicationStatus": "CLOSED",
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": true,
-          "isStateUpdatable": false
         }
       ]
     }
