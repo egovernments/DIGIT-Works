@@ -74,8 +74,8 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     const workflow = { action: action?.action, comments: data?.comments}
     const dataTobeSubmitted = {musterRoll, workflow}
     console.log('dataTobeSubmitted', dataTobeSubmitted);
-    //PR: api to update muster roll with actions
-    // submitAction({letterOfIndent:applicationData,workflow})}
+    //api to update muster roll with actions
+    submitAction(dataTobeSubmitted)
   }
 
   const cardStyle = () => {

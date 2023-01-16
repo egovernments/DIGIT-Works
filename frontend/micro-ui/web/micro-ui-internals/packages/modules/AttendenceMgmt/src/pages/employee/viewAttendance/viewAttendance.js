@@ -21,6 +21,8 @@ const ViewAttendance = () => {
     }
   );
 
+  const { mutate } = Digit.Hooks.attendance.useUpdateAttendance();
+
 return (
   <React.Fragment>
     <Header>{t("ATM_VIEW_ATTENDENCE")}</Header>
@@ -35,6 +37,7 @@ return (
       timelineStatusPrefix={""}
       businessService={"MUKTAWORKS"}
       forcedActionPrefix={"WORKS"}
+      mutate={mutate}
     />
   </React.Fragment>
   );
