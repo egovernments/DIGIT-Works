@@ -11,9 +11,24 @@ const initialState = [
     },
 ];
 //these params depend on what the controller of the associated type is sending.
-const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
+const SubProjectDetailsTable = ({t, register, control, setValue, onChange, errors}) => {
     const [rows, setRows] = useState(initialState);
-    const columns = [t('WORKS_SNO'), t('WORKS_NAME_OF_WORK'), t('WORKS_ESTIMATED_AMOUNT'), t('WORKS_WORK_TYPE'), t('WORKS_SUB_TYPE_WORK'), t('WORKS_WORK_NATURE'), t('WORKS_PROJECT_START_DATE'), t('WORKS_PROJECT_END_DATE'), t('WORKS_MODE_OF_ENTRUSTMENT'), t('WORKS_LOCALITY'), t('WORKS_WARD'), t('WORKS_URBAN_LOCAL_BODY'), t('WORKS_GEO_LOCATION'), t('WORKS_UPLOAD_FILES'),''];
+    const columns = [
+        {label : t('WORKS_SNO'), isMandatory : true },
+        {label : t('WORKS_NAME_OF_WORK'), isMandatory : true },
+        {label : t('WORKS_ESTIMATED_AMOUNT'), isMandatory : true },
+        {label : t('WORKS_WORK_TYPE'), isMandatory : true },
+        {label : t('WORKS_SUB_TYPE_WORK'), isMandatory : true },
+        {label : t('WORKS_WORK_NATURE'), isMandatory : true },
+        {label : t('WORKS_PROJECT_START_DATE'), isMandatory : true },
+        {label : t('WORKS_PROJECT_END_DATE'), isMandatory : true },
+        {label : t('WORKS_MODE_OF_ENTRUSTMENT'), isMandatory : true },
+        {label : t('WORKS_LOCALITY'), isMandatory : true },
+        {label : t('WORKS_WARD'), isMandatory : true },
+        {label : t('WORKS_URBAN_LOCAL_BODY'), isMandatory : true },
+        {label : t('WORKS_GEO_LOCATION'), isMandatory : true },
+        {label : t('WORKS_UPLOAD_FILES'), isMandatory : true },
+    ];
     const [subProjectTypeOfWorkOptions, setSubProjectTypeOfWorkOptions] = useState([]);
     const [subProjectSubTypeOfWorkOptions, setSubProjectSubTypeOfWorkOptions] = useState([]);
     const formFieldName = "subProjectDetails";
@@ -92,8 +107,8 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
     }
 
     const renderHeader = () => {
-        return columns?.map((key, index) => {
-            return <th key={index} style={getStyles(key)} > {key} </th>
+        return columns?.map((column, index) => {
+            return <th key={index} style={getStyles()} >{column?.label}{column?.isMandatory && '*'} </th>
         })
     }
 
@@ -144,6 +159,15 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
         onChange(numberOfFiles>0?filesData:[]);
       }
 
+    const renderErrorIfAny = (row, name) => {
+        return <>
+            {errors && errors?.[formFieldName]?.[row.key]?.[name]?.type === "pattern" && (
+                <CardLabelError style={{width : '100%', position : 'absolute', marginTop: '3px'}}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+            {errors && errors?.[formFieldName]?.[row.key]?.[name]?.type === "required" && (
+                <CardLabelError style={{width : '100%', position : 'absolute', marginTop: '3px'}}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+        </>
+    }
+
     const renderBody = () => {
         let i = 0
         return rows.map((row, index) => {
@@ -152,12 +176,14 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                 <td style={getStyles()}>{i}</td>
                 <td style={getStyles()} >
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsNameOfWork`} inputRef={register()}/>
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsNameOfWork`} inputRef={register({required : true})}/>
+                        {renderErrorIfAny(row, "subProjectDetailsNameOfWork")}
                     </div>
                 </td>
                 <td style={getStyles()}>
                     <div className='field' style={{ "width": "100%" }} >
                         <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsEstimatedAmount`} inputRef={register()}/>
+                        {renderErrorIfAny(row, "subProjectDetailsEstimatedAmount")}
                     </div>
                 </td>
                 <td style={getStyles()}>
@@ -174,6 +200,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                                 }})
                             )}
                       />
+                    {renderErrorIfAny(row, "subProjectDetailsTypeOfWork")}
                     </div>
                 </td>  
                 <td style={getStyles()}>
@@ -185,6 +212,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                             getDropDownDataFromMDMS(t, row, "subProjectDetailsSubTypeOfWork", props, register, "name",  subProjectSubTypeOfWorkOptions)
                         )}
                       />
+                    {renderErrorIfAny(row, "subProjectDetailsSubTypeOfWork")}
                     </div>
                 </td>
                 <td style={getStyles()}>
@@ -201,6 +229,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                             }})
                         )}
                       />
+                    {renderErrorIfAny(row, "subProjectDetailsNatureOfWork")}
                     </div>
                 </td>
                 <td style={getStyles()}>
@@ -212,6 +241,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                         inputRef={register()}
                         style={{paddingRight: "3px"}}
                     />
+                    {renderErrorIfAny(row, "subProjectDetailsStartDate")}
                     </div>
                 </td>  
                 <td style={getStyles()}>
@@ -223,6 +253,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                         inputRef={register()}
                         style={{paddingRight: "3px"}}
                     />
+                    {renderErrorIfAny(row, "subProjectDetailsEndDate")}
                     </div>
                 </td> 
                 <td style={getStyles()}>
@@ -239,6 +270,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                             }})
                         )}
                       />
+                    {renderErrorIfAny(row, "subProjectDetailsModeOfEntrustment")}
                     </div>
                 </td>   
                 <td style={getStyles()}>
@@ -250,6 +282,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                                 getDropDownDataFromMDMS(t, row, "subProjectDetailsWard", props, register, "i18nKey", wardsAndLocalities?.wards)
                             )}
                         />
+                    {renderErrorIfAny(row, "subProjectDetailsWard")}
                     </div>
                 </td> 
                 <td style={getStyles()}>
@@ -261,6 +294,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                                 getDropDownDataFromMDMS(t, row, "subProjectDetailsLocality", props, register, "i18nKey", subProjectDetailsLocalities)
                             )}
                         />
+                    {renderErrorIfAny(row, "subProjectDetailsLocality")}
                     </div>
                 </td>  
                 <td style={getStyles()}>
@@ -272,16 +306,19 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                                 getDropDownDataFromMDMS(t, row, "subProjectDetailsUrbanLocalBody", props, register, "name", subProjectDetailsLocalities)
                             )}
                         />
+                    {renderErrorIfAny(row, "subProjectDetailsUrbanLocalBody")}
                     </div>
                 </td> 
                 <td style={getStyles()} >
                     <div className='field' style={{ "width": "100%" }} >
                         <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsGeoLocation`} inputRef={register()}/>
+                        {renderErrorIfAny(row, "subProjectDetailsGeoLocation")}
                     </div>
                 </td>
                 <td style={getStyles()} >
                     <div className='field' style={{ "width": "100%" }} >
                         <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsGeoLocation`} inputRef={register()}/>
+                        {renderErrorIfAny(row, "subProjectDetailsGeoLocation")}
                     </div>
                 </td>
                 {/* <td style={getStyles()}>
@@ -302,6 +339,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                             customClass={"upload-margin-bottom"}
                             name={`${formFieldName}.${row.key}.subProjectDetailsFilesUpload`}
                         />
+                        {renderErrorIfAny(row, "subProjectDetailsFilesUpload")}
                     </div>
                 </td>  */}
                 <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
