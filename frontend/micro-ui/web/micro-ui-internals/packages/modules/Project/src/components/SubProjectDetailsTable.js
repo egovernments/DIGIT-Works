@@ -19,8 +19,8 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
     const formFieldName = "subProjectDetails";
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId); 
-    const [subProjectDetailsSelectedWard, setSubProjectDetailsSelectedWard] = useState('');
-    const [subProjectDetailsLocalities, setSubProjectDetailsLocalities] = useState('');
+    const [subProjectDetailsSelectedWard, setSubProjectDetailsSelectedWard] = useState([]);
+    const [subProjectDetailsLocalities, setSubProjectDetailsLocalities] = useState([]);
 
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
         tenantId, 'Ward',
@@ -46,7 +46,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
         setSubProjectDetailsLocalities(wardsAndLocalities?.localities[subProjectDetailsSelectedWard?.code] ? wardsAndLocalities?.localities[subProjectDetailsSelectedWard?.code]: [] );
     },[subProjectDetailsSelectedWard]);
 
-    const getDropDownDataFromMDMS = (t, row, inputName, props, register, options={}) => {
+    const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey="name", options={}) => {
         const { isLoading, data } = Digit.Hooks.useCustomMDMS(
                 Digit.ULBService.getStateId(),
                 options?.mdmsConfig?.moduleName,
@@ -67,7 +67,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                         inputRef={register()}
                         option={options?.mdmsConfig ? data : options}
                         selected={props?.value}
-                        optionKey={"name"}
+                        optionKey={optionKey}
                         t={t}
                         select={(e)=>handleDropdownChange(e, props, row, inputName)}
                         onBlur={props?.onBlur}
@@ -75,11 +75,11 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
     }
 
     const handleDropdownChange = (e,props, row, inputName) => {
-        if(inputName === "subProjectsTypeOfWork") {
+        if(inputName === "subProjectDetailsTypeOfWork") {
             setValue(`${formFieldName}.${row.key}.subProjectDetailsSubTypeOfWork`, '');
             setSubProjectTypeOfWorkOptions(e);
         }
-        if(inputName === "subProjectWard") {
+        if(inputName === "subProjectDetailsWard") {
             setValue(`${formFieldName}.${row.key}.subProjectDetailsLocality`, '');
             setSubProjectDetailsSelectedWard(e);
         }
@@ -88,7 +88,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
 
     //TODOy
     const getStyles = () => {
-        return { "min-width": "14rem" };
+        return { "minWidth": "14rem" };
     }
 
     const renderHeader = () => {
@@ -166,7 +166,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsTypeOfWork`}
                         render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsTypeOfWork" , props, register, { 
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsTypeOfWork" , props, register, "name", { 
                                     mdmsConfig: {
                                     masterName: "TypeOfWork",
                                     moduleName: "works",
@@ -182,7 +182,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsSubTypeOfWork`}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProjectDetailsSubTypeOfWork", props, register, subProjectSubTypeOfWorkOptions)
+                            getDropDownDataFromMDMS(t, row, "subProjectDetailsSubTypeOfWork", props, register, "name",  subProjectSubTypeOfWorkOptions)
                         )}
                       />
                     </div>
@@ -193,7 +193,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsNatureOfWork`}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProjectDetailsNatureOfWork", props, register, { 
+                            getDropDownDataFromMDMS(t, row, "subProjectDetailsNatureOfWork", props, register, "name", { 
                                 mdmsConfig: {
                                     masterName: "NatureOfWork",
                                     moduleName: "works",
@@ -231,7 +231,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsModeOfEntrustment`}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProjectDetailsModeOfEntrustment", props, register, { 
+                            getDropDownDataFromMDMS(t, row, "subProjectDetailsModeOfEntrustment", props, register, "name", { 
                                 mdmsConfig: {
                                     masterName: "EntrustmentMode",
                                     moduleName: "works",
@@ -247,7 +247,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsWard`}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsWard", props, register, wardsAndLocalities?.wards)
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsWard", props, register, "i18nKey", wardsAndLocalities?.wards)
                             )}
                         />
                     </div>
@@ -258,7 +258,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsLocality`}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsLocality", props, register, subProjectDetailsLocalities)
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsLocality", props, register, "i18nKey", subProjectDetailsLocalities)
                             )}
                         />
                     </div>
@@ -269,7 +269,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsUrbanLocalBody`}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsUrbanLocalBody", props, register, subProjectDetailsLocalities)
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsUrbanLocalBody", props, register, "name", subProjectDetailsLocalities)
                             )}
                         />
                     </div>
