@@ -118,10 +118,11 @@ public class MusterRollService {
 
         MusterRoll existingMusterRoll = fetchExistingMusterRoll(musterRollRequest.getMusterRoll());
         musterRollValidator.validateUpdateMusterRoll(musterRollRequest);
+        boolean isComputeAttendance = isComputeAttendance(musterRollRequest.getMusterRoll());
         enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll);
         Workflow workflow = musterRollRequest.getWorkflow();
         //If 'computeAttendance' flag is true, re-calculate the attendance from attendanceLogs and update
-        if (isComputeAttendance(musterRollRequest.getMusterRoll())) {
+        if (isComputeAttendance) {
             calculationService.updateAttendance(musterRollRequest);
         }
         workflowService.updateWorkflowStatus(musterRollRequest);

@@ -280,13 +280,14 @@ public class CalculationService {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
                 .queryParam("tenantId",musterRoll.getTenantId())
                 .queryParam("registerId",musterRoll.getRegisterId())
-                .queryParam("fromTime",musterRoll.getStartDate().longValue())
-                .queryParam("toTime",musterRoll.getEndDate().doubleValue())
+                .queryParam("fromTime",musterRoll.getStartDate())
+                .queryParam("toTime",musterRoll.getEndDate())
                 .queryParam("status",Status.ACTIVE);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         AttendanceLogResponse attendanceLogResponse = null;
 
-        log.info("CalculationService::getAttendanceLogs::call attendance log search");
+        log.info("CalculationService::getAttendanceLogs::call attendance log search with tenantId::"+musterRoll.getTenantId()
+                +"::registerId::"+musterRoll.getRegisterId()+"::fromTime::"+musterRoll.getStartDate()+"::toTime::"+musterRoll.getEndDate());
 
         try {
             attendanceLogResponse  = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceLogResponse.class);
