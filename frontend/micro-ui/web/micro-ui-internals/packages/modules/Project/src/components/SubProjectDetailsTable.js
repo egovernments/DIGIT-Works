@@ -88,7 +88,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
 
     //TODOy
     const getStyles = () => {
-        return { "width": "100vw" };
+        return { "min-width": "14rem" };
     }
 
     const renderHeader = () => {
@@ -161,7 +161,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                     </div>
                 </td>
                 <td style={getStyles()}>
-                    <div className='field' style={{ "width": "100%" }} >
+                    <div className='field sub-projects-details-field-mt' style={{ "width": "100%" }} >
                       <Controller
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsTypeOfWork`}
@@ -177,7 +177,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                     </div>
                 </td>  
                 <td style={getStyles()}>
-                    <div className='field' style={{ "width": "100%" }} >
+                    <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                     <Controller
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsSubTypeOfWork`}
@@ -188,7 +188,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                     </div>
                 </td>
                 <td style={getStyles()}>
-                    <div className='field' style={{ "width": "100%" }} >
+                    <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                     <Controller
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsNatureOfWork`}
@@ -204,7 +204,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                     </div>
                 </td>
                 <td style={getStyles()}>
-                    <div className='field' style={{ "width": "100%" }} >
+                    <div className='field sub-projects-details-field-mt' style={{ "width": "100%" }} >
                     <TextInput
                         type={"date"}
                         name={`${formFieldName}.${row.key}.subProjectDetailsStartDate`}
@@ -215,7 +215,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                     </div>
                 </td>  
                 <td style={getStyles()}>
-                    <div className='field' style={{ "width": "100%" }} >
+                    <div className='field sub-projects-details-field-mt' style={{ "width": "100%" }} >
                     <TextInput
                         type={"date"}
                         name={`${formFieldName}.${row.key}.subProjectDetailsEndDate`}
@@ -226,7 +226,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                     </div>
                 </td> 
                 <td style={getStyles()}>
-                    <div className='field' style={{ "width": "100%" }} >
+                    <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                     <Controller
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsModeOfEntrustment`}
@@ -242,7 +242,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                     </div>
                 </td>   
                 <td style={getStyles()}>
-                    <div className='field' style={{ "width": "100%" }} >
+                    <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                         <Controller
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsWard`}
@@ -253,7 +253,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                     </div>
                 </td> 
                 <td style={getStyles()}>
-                    <div className='field' style={{ "width": "100%" }} >
+                    <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                         <Controller
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsLocality`}
@@ -264,7 +264,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange}) => {
                     </div>
                 </td>  
                 <td style={getStyles()}>
-                    <div className='field' style={{ "width": "100%" }} >
+                    <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                         <Controller
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsUrbanLocalBody`}
