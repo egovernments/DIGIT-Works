@@ -34,7 +34,7 @@ export const ProjectModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
     ProjectModule,
-    ProjectCard,
+    ProjectsCard :ProjectCard,
     CreateProject,
     ProjectDetails,
     ViewFinancialDetails

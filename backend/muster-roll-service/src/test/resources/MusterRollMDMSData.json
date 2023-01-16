@@ -1,0 +1,49 @@
+{
+  "ResponseInfo": null,
+  "MdmsRes": {
+    "common-masters": {
+      "MusterRoll": [
+        {
+          "code": "ENTRY_HOUR",
+          "value": "9"
+        },
+        {
+          "code": "EXIT_HOUR_HALF_DAY",
+          "value": "14"
+        },
+        {
+          "code": "EXIT_HOUR_FULL_DAY",
+          "value": "18"
+        },
+        {
+          "code": "HALF_DAY_NUM_HOURS",
+          "value": "4"
+        },
+        {
+          "code": "FULL_DAY_NUM_HOURS",
+          "value": "8"
+        },
+        {
+          "code": "ROUND_OFF_HOURS",
+          "value": "true"
+        },
+        {
+          "code": "Skill 1",
+          "value": "Unskilled"
+        },
+        {
+          "code": "Skill 2",
+          "value": "Semiskilled"
+        },
+        {
+          "code": "Skill 3",
+          "value": "Skilled"
+        },
+        {
+          "code": "Skill 4",
+          "value": "Highskilled"
+        }
+      ]
+    }
+  }
+}

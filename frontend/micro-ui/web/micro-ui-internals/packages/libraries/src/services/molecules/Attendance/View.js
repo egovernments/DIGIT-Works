@@ -36,17 +36,17 @@ const getAttendanceTableData = (data, skills) => {
       tableRow.sno = index + 1
       tableRow.registerId = data?.registerId
       tableRow.actualWorkingDays = item?.totalAttendance
-      tableRow.nameOfIndividual = 'Piyush HarjitPal' //item?.additionalDetails?.userName
-      tableRow.guardianName = 'Harijitpal' //item?.additionalDetails?.fatherName
-      tableRow.skill = skills['SKILLED_LEVEL_1'].name //skills[item?.additionalDetails?.skillCode].name
-      tableRow.amount = skills['SKILLED_LEVEL_1'].amount * item?.totalAttendance //skills[item?.additionalDetails?.skillCode].amount * item?.totalAttendance
-      tableRow.modifiedAmount = tableRow.amount //get this amount from mdms data
+      tableRow.nameOfIndividual = item?.additionalDetails?.userName || 'Piyush HarjitPal'
+      tableRow.guardianName = item?.additionalDetails?.fatherName  || 'HarjitPal'
+      tableRow.skill = skills['SKILLED_LEVEL_1'].name || 'SKILL_1'
+      tableRow.amount = skills['SKILLED_LEVEL_1'].amount * item?.totalAttendance
+      tableRow.modifiedAmount = tableRow.amount 
       tableRow.modifiedWorkingDays = item?.totalAttendance
       tableRow.bankAccountDetails = {
         accountNo : '880182873839-SBIN0001237', //item?.additionalDetails?.bankDetails, split by - and assign to account and ifsc
         ifscCode : null
       }
-      tableRow.aadharNumber = '9099-1234-1234' //item?.additionalDetails?.aadharNumber
+      tableRow.aadharNumber = item?.additionalDetails?.aadharNumber|| '9099-1234-1234' 
       tableRow.attendence = getWeekAttendance(item?.attendanceEntries)
       tableData[item.id] = tableRow
     });
@@ -102,7 +102,6 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills)
       },
     },
   };
-
   const applicationDetails = { applicationDetails: [registrationDetails] };
 
   return {
@@ -129,7 +128,7 @@ export const fetchAttendanceDetails = async (t, tenantId, searchParams) => {
   try {
     const response = await AttendanceService.search(tenantId, searchParams);
     const workflowDetails = await workflowDataDetails(tenantId, searchParams.musterRollNumber);
-    const skills = await getWageSeekerSkills(tenantId)
+    const skills = await getWageSeekerSkills()
     return transformViewDataToApplicationDetails(t, response, workflowDetails, skills)
   } catch (error) {
       console.log('error', error);

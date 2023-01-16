@@ -1,17 +1,17 @@
 export const dummyTableData = [
     {
-        mustorRollId: 'MR/2022-23/01/12/000218',
-        work: 'Wall Painting',
-        week: '22-08-2022 - 29-08-2022' ,
-        iaip: 'Maa Bhagavati SHG',
+        mustorRollId: 'MR/2022-23/01/13/000237',
+        work: 'Construction Roads',
+        week: '02-01-2023 - 08-01-2023' ,
+        iaip: 'Jagan',
         individualCount: '50',
         slaDays: '5'
     },
     {
-        mustorRollId: 'MR/2022-23/01/12/000217',
+        mustorRollId: "WR/2022-23/01/13/000200",
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
-        iaip: 'Maa Bhagavati SHG',
+        iaip: 'Jagan',
         individualCount: '50',
         slaDays: '5'
     },

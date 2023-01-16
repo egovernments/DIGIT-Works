@@ -2,6 +2,7 @@ import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
+import _ from "lodash";
 
 const whenHasProjectsHorizontalNavConfig =  [
   {

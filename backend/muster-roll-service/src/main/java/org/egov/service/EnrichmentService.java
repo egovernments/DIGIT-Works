@@ -1,5 +1,7 @@
 package org.egov.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -9,18 +11,21 @@ import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.repository.IdGenRepository;
 import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.egov.util.MusterRollServiceConstants.ACTION_REJECT;
+import static org.egov.util.MusterRollServiceConstants.DEFAULT_SKILL_LEVEL;
 
 @Service
 @Slf4j
@@ -38,13 +43,21 @@ public class EnrichmentService {
     @Autowired
     private MusterRollRepository musterRollRepository;
 
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    private MdmsUtil mdmsUtils;
+
 
     /**
-     * Enrich estimate muster roll
+     * Enrich muster roll on estimate
      * @param musterRollRequest
      *
      */
-    public void enrichEstimateMusterRoll(MusterRollRequest musterRollRequest) {
+    public void enrichMusterRollOnEstimate(MusterRollRequest musterRollRequest) {
+        log.info("EnrichmentService::enrichMusterRollOnEstimate");
+
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
 
@@ -58,11 +71,13 @@ public class EnrichmentService {
     }
 
     /**
-     * Enrich create muster roll
+     * Enrich muster roll on create
      * @param musterRollRequest
      *
      */
-    public void enrichCreateMusterRoll(MusterRollRequest musterRollRequest) {
+    public void enrichMusterRollOnCreate(MusterRollRequest musterRollRequest) {
+        log.info("EnrichmentService::enrichMusterRollOnCreate");
+
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
 
@@ -76,7 +91,7 @@ public class EnrichmentService {
         //musterRollNumber - Idgen
         String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
         List<String> musterNumbers = getIdList(requestInfo, rootTenantId
-                , config.getIdgenMusterRollNumberName(), config.getIdgenMusterRollNumberFormat(), 1);
+                , config.getIdgenMusterRollNumberName(), "", 1); //idformat will be fetched by idGen service
         if (musterNumbers != null && !musterNumbers.isEmpty()) {
             String musterRollNumber = musterNumbers.get(0);
             musterRoll.setMusterRollNumber(musterRollNumber);
@@ -90,31 +105,56 @@ public class EnrichmentService {
     }
 
     /**
-     * Enrich update muster roll
+     * Enrich the muster roll on update
      * @param musterRollRequest
      */
-    public void enrichUpdateMusterRoll(MusterRollRequest musterRollRequest, MusterRoll existingMusterRoll) {
+    public void enrichMusterRollOnUpdate(MusterRollRequest musterRollRequest, MusterRoll existingMusterRoll) {
+        log.info("EnrichmentService::enrichMusterRollOnUpdate");
+
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         Workflow workflow = musterRollRequest.getWorkflow();
 
+        //fetch MDMS data for muster - skill level
+        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
+        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
 
-        if (workflow.getAction().equalsIgnoreCase("VERIFY")) {
-            //VERIFY action can modify the totalAttendance.
+        log.info("EnrichmentService::enrichMusterRollOnUpdate::Workflow action is "+workflow.getAction());
+
+
+            //update totalAttendance and skill details if modified
             List<IndividualEntry> individualEntries = existingMusterRoll.getIndividualEntries();
             List<IndividualEntry> modifiedIndividualEntries = musterRoll.getIndividualEntries();
-            for (IndividualEntry individualEntry : individualEntries) {
-                for (IndividualEntry modifiedIndividualEntry : modifiedIndividualEntries)  {
-                    if (modifiedIndividualEntry.getId().equalsIgnoreCase(individualEntry.getId())) {
-                        individualEntry.setTotalAttendance(modifiedIndividualEntry.getTotalAttendance());
-                        break;
+            if (!CollectionUtils.isEmpty(modifiedIndividualEntries)) {
+                for (IndividualEntry individualEntry : individualEntries) {
+                    for (IndividualEntry modifiedIndividualEntry : modifiedIndividualEntries)  {
+                        if (modifiedIndividualEntry.getId().equalsIgnoreCase(individualEntry.getId())) {
+                            //update the total attendance
+                            if (modifiedIndividualEntry.getTotalAttendance() != null) {
+                                individualEntry.setTotalAttendance(modifiedIndividualEntry.getTotalAttendance());
+                            }
+                            if (modifiedIndividualEntry.getAdditionalDetails() != null) {
+                                try {
+                                    JsonNode node = mapper.readTree(mapper.writeValueAsString(modifiedIndividualEntry.getAdditionalDetails()));
+                                    if (node.findValue("code") != null  && StringUtils.isNotBlank(node.findValue("code").textValue())) {
+                                        String skillCode = node.findValue("code").textValue();
+                                        //Update the skill value based on the code from request
+                                        musterRollServiceUtil.populateAdditionalDetails(mdmsData,individualEntry,skillCode);
+                                    }
+                                } catch (IOException e) {
+                                    log.info("EnrichmentService::enrichMusterRollOnUpdate::Failed to parse additionalDetail object from request"+e);
+                                    throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object from request on update");
+                                }
+
+                            }
+                            break;
+                        }
                     }
                 }
             }
 
-        }
         musterRoll = existingMusterRoll;
-        musterRollRequest.setMusterRoll(musterRoll);
+        musterRollRequest.setMusterRoll(existingMusterRoll);
 
         //AuditDetails
         musterRoll.setAuditDetails(existingMusterRoll.getAuditDetails());
@@ -144,6 +184,24 @@ public class EnrichmentService {
             updatedAssignees.add(auditDetails.getCreatedBy());
             workflow.setAssignees(updatedAssignees);
         }
+    }
+
+    /**
+     * Enrich MusterRollSearchCriteria with default offset and limit
+     *
+     * @param searchCriteria
+     */
+    public void enrichSearchRequest(MusterRollSearchCriteria searchCriteria) {
+
+        if (searchCriteria.getLimit() == null)
+            searchCriteria.setLimit(config.getMusterDefaultLimit());
+
+        if (searchCriteria.getOffset() == null)
+            searchCriteria.setOffset(config.getMusterDefaultOffset());
+
+        if (searchCriteria.getLimit() != null && searchCriteria.getLimit() > config.getMusterMaxLimit())
+            searchCriteria.setLimit(config.getMusterMaxLimit());
+
     }
 
     /**
