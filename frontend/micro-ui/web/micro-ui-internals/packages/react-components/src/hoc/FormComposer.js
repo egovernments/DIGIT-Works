@@ -570,8 +570,7 @@ export const FormComposer = (props) => {
             {props.secondaryActionLabel}
           </div>)}
       </React.Fragment>  
-    ),    
-    [props?.config]
+    )
   );
 
   return (
