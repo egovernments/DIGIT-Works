@@ -6,34 +6,29 @@ import org.egov.TestConfiguration;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.helper.MusterRollRequestBuilderTest;
+import org.egov.repository.MusterRollRepository;
 import org.egov.service.MusterRollService;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ErrorRes;
 import org.egov.util.ResponseInfoCreator;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -41,9 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 */
 
 
-//@WebMvcTest(MusterRollApiController.class)
+@ContextConfiguration(classes=Main.class)
+@WebMvcTest(MusterRollApiController.class)
 @Import({TestConfiguration.class})
-@SpringBootTest(classes=Main.class)
 @AutoConfigureMockMvc
 public class MusterRollApiControllerTest {
 
@@ -51,9 +46,6 @@ public class MusterRollApiControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    @MockBean
     private ObjectMapper objectMapper;
 
     @MockBean
@@ -61,6 +53,9 @@ public class MusterRollApiControllerTest {
 
     @MockBean
     private ResponseInfoCreator responseInfoCreator;
+
+    @MockBean
+    private MusterRollRepository musterRollRepository;
 
 
     @Test
