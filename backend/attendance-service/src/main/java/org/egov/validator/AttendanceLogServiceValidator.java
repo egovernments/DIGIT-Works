@@ -259,11 +259,11 @@ public class AttendanceLogServiceValidator {
         List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(searchCriteria.getRegisterId());
 
         if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
-            throw new CustomException("INVALID_REGISTERID", "Register Not ");
+            throw new CustomException("INVALID_REGISTERID", "Register Not found ");
         }
 
         // Verify TenantId association with register
-        validateTenantIdAssociationWithRegisterId(attendanceRegisters.get(0), searchCriteria.getRegisterId());
+        validateTenantIdAssociationWithRegisterId(attendanceRegisters.get(0), searchCriteria.getTenantId());
 
         // Verify the Logged-in user is associated to the given register.
         validateLoggedInUser(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid(), searchCriteria.getRegisterId());
