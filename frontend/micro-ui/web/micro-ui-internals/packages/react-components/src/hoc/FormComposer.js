@@ -93,7 +93,6 @@ export const FormComposer = (props) => {
   }, []);
 
   function onSubmit(data) {
-    console.log(errors);
     props.onSubmit(data);
   }
 
@@ -287,6 +286,7 @@ export const FormComposer = (props) => {
                 clearErrors={clearErrors}
                 formState={formState}
                 onBlur={props.onBlur}
+                control={control}
               />
             )}
             name={config.key}
@@ -562,7 +562,7 @@ export const FormComposer = (props) => {
     setActiveLink(props.horizontalNavConfig?.[0].name);
   },[props.horizontalNavConfig]);
   
-  const renderFormFields = useCallback((props, section, index, array, sectionFormCategory) => (
+  const renderFormFields = (props, section, index, array, sectionFormCategory) => (
       <React.Fragment key={index}>
           {!props.childrenAtTheBottom && props.children}
           {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
@@ -578,8 +578,6 @@ export const FormComposer = (props) => {
             {props.secondaryActionLabel}
           </div>)}
       </React.Fragment>  
-    ),    
-    [props?.config]
   );
 
   return (

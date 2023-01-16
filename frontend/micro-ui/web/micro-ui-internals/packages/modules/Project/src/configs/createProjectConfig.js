@@ -644,6 +644,19 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
         ]
       },
+      {
+        navLink:"Sub_Project_Details_In_Sub_Project",
+        sectionFormCategory : "subProjects",
+        head: t(""),
+        body: [
+          {
+            key: "subProjectDetails",
+            type: "component",
+            component: "SubProjectDetailsTable",
+            withoutLabel: true,
+          },
+        ]
+      },
     ]
     
   };
