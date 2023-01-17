@@ -38,11 +38,13 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
   const empDesignation = empData?.assignments?.[0].designation
   const empName = empData?.user?.name
 
+  console.log('Selected Action', action);
+
   useEffect(() => {
     const selectedAction = action?.action
     switch(selectedAction) {
       case "VERIFY":
-        //Check what to show on Verify
+        submitBasedOnAction(action, 'Verify muster roll')
         break;
       case "REJECT":
         setConfig(
@@ -62,6 +64,10 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
             action
           })
         )
+        break;
+      case "RESUBMIT":
+        submitBasedOnAction(action, 'Resubmit muster roll')
+        break;
       default:
         break
     }
@@ -69,12 +75,25 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
 
   
   function onSubmit (data) {
-    console.log('FormData', data, applicationDetails);
-    const musterRoll = { tenantId, id: applicationDetails?.applicationDetails?.[0]?.applicationData?.id}
-    const workflow = { action: action?.action, comments: data?.comments}
+    submitBasedOnAction(action, data?.comments)
+  }
+
+  const submitBasedOnAction = (action, comments) => {
+    let musterRoll = { tenantId, id: applicationDetails?.applicationDetails?.[0]?.applicationData?.id}
+    let workflow = { action: action?.action, comments: (comments || `${action?.action} done`), assignees: [] }
+
+    const selectedAction = action?.action
+    switch(selectedAction) {
+      case "VERIFY":
+        //if save add individual details 
+        break;
+      case "RESUBMIT":
+        musterRoll.additionalDetails = { computeAttendance : true } 
+        break;
+      default:
+        break;
+    }
     const dataTobeSubmitted = {musterRoll, workflow}
-    console.log('dataTobeSubmitted', dataTobeSubmitted);
-    //api to update muster roll with actions
     submitAction(dataTobeSubmitted)
   }
 

@@ -23,7 +23,8 @@ const ApplicationDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [isWarningPop, setWarningPopUp] = useState(false);
-  const [modify, setModify] = useState(false)
+  const [modify, setModify] = useState(false);
+  const [displaySaveAction, setDisplaySaveAction] = useState(false);
 
   const {
     applicationDetails,
@@ -77,7 +78,8 @@ const ApplicationDetails = (props) => {
         }
         
       } else if (!action?.redirectionUrl) {
-        setShowModal(true);
+        if(action?.action === 'EDIT') setModify(true)
+        else setShowModal(true);
       } else {
         history.push({
           pathname: action.redirectionUrl?.pathname,
@@ -288,6 +290,7 @@ const ApplicationDetails = (props) => {
             noBoxShadow={noBoxShadow}
             sectionHeadStyle={sectionHeadStyle}
             modify={modify}
+            setDisplaySaveAction={setDisplaySaveAction}
           />
           {showModal ? (
             <ActionModal
@@ -325,6 +328,7 @@ const ApplicationDetails = (props) => {
             forcedActionPrefix={forcedActionPrefix}
             ActionBarStyle={ActionBarStyle}
             MenuStyle={MenuStyle}
+            displaySaveAction={displaySaveAction}
           />}
         </React.Fragment>
       ) : (

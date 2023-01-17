@@ -35,7 +35,7 @@ const ViewAttendance = () => {
         workflowDetails={workflowDetails}
         showTimeLine={true}
         timelineStatusPrefix={""}
-        businessService={"MUKTAWORKS"}
+        businessService={"muster-roll-approval"}
         forcedActionPrefix={"WORKS"}
         mutate={mutate}
       />

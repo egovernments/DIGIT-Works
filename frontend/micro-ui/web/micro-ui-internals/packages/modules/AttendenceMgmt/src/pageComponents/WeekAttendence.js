@@ -1,21 +1,29 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Table } from "@egovernments/digit-ui-react-components";
+import { Table, typeOf } from "@egovernments/digit-ui-react-components";
 
-const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
+const WeekAttendence = ({ state, dispatch, modify, setDisplaySaveAction, weekDates}) => {
   const { t } = useTranslation();
   const [editable, setEditable] = useState(false)
   const tableRow = state ? Object.values(state) : []
+  const [prevAttendanceTotal, setPrevAttendanceTotal] = useState({})
   
   useEffect(() => {
     dispatch({
       type: "initialTotal",
       state: {},
     });
-    
+
+    let prev = {}
+    tableRow?.forEach(row => {
+      prev[row.id] = row.modifiedWorkingDays
+    })
+    setPrevAttendanceTotal(prev)
+
     if(modify) setEditable(true)
   }, [modify])
 
+  console.log('prevAttendanceTotal', prevAttendanceTotal);
   const handleCheckboxClick = (row, day) => {
     dispatch({
       type: "attendanceTotal",
@@ -65,14 +73,18 @@ const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
   };
 
   const handleModifiedWorkingDays = (e, row) => {
-    let val = e.target.value;
-    val && dispatch({
-      type: "updateModifiedTotal",
-      state: {
-        row,
-        val
-      },
-    });
+    let val = parseInt(e.target.value);
+    let prevVal = parseInt(prevAttendanceTotal[row.id])
+    if (val && val !== prevVal) {
+      setDisplaySaveAction(true)
+      dispatch({
+        type: "updateModifiedTotal",
+        state: {
+          row,
+          val
+        },
+      });
+    }
   };
 
   const renderBankAccountDetails = (value) => {
@@ -392,7 +404,6 @@ const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
         Header: () => <p>{t("ATM_MODIFIED_WORKING_DAYS")}</p>,
         accessor: "modifiedWorkingDays",
         Cell: ({ value, column, row }) => {
-          console.log('value', value);
           if (row.original.type === "total") {
             return String(t(value));
           }

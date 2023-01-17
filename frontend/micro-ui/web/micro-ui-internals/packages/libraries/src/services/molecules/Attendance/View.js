@@ -43,7 +43,7 @@ const getAttendanceTableData = (data, skills) => {
       tableRow.modifiedAmount = tableRow.amount 
       tableRow.modifiedWorkingDays = item?.totalAttendance
       tableRow.bankAccountDetails = {
-        accountNo : '880182873839-SBIN0001237', //item?.additionalDetails?.bankDetails, split by - and assign to account and ifsc
+        accountNo : item?.additionalDetails?.bankDetails || '880182873839-SBIN0001237',
         ifscCode : null
       }
       tableRow.aadharNumber = item?.additionalDetails?.aadharNumber|| '9099-1234-1234' 

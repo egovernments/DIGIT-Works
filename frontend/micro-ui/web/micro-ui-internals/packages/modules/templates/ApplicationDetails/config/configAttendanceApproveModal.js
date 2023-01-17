@@ -1,6 +1,6 @@
 
 const configAttendanceApproveModal = ({ t, action }) => {
-  if (action?.applicationStatus === "ATTENDANCE_APPROVE") {
+  if (action?.applicationStatus === "APPROVED") {
     return {
       label: {
         heading: t("ATM_PROCESSINGMODAL_HEADER"),
