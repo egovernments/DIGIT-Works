@@ -20,13 +20,6 @@ public class StaffEnrichmentService {
     @Autowired
     private AttendanceServiceUtil attendanceServiceUtil;
 
-    @Autowired
-    private AttendanceServiceConfiguration config;
-
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
-
-
     public void enrichCreateStaffPermission(StaffPermissionRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();

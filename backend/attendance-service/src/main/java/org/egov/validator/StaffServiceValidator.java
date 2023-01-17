@@ -36,8 +36,7 @@ public class StaffServiceValidator {
     private AttendanceRegisterService attendanceRegisterService;
 
 
-    public void validateCreateStaffPermission(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB
-            , List<AttendanceRegister> attendanceRegisterListFromDB) {
+    public void validateMDMSAndRequestInfoForStaff(StaffPermissionRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
         Map<String, String> errorMap = new HashMap<>();
@@ -55,40 +54,9 @@ public class StaffServiceValidator {
         //validate request-info
         validateRequestInfo(requestInfo, errorMap);
 
-
-        //check staff-request
-        validateCreateStaffPermission(request, staffPermissionListFromDB, attendanceRegisterListFromDB, errorMap);
-
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
-
-    public void validateDeleteStaffPermission(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB
-            , List<AttendanceRegister> attendanceRegisterListFromDB) {
-        Map<String, String> errorMap = new HashMap<>();
-        RequestInfo requestInfo = request.getRequestInfo();
-        List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
-
-        String tenantId = staffPermissionListFromRequest.get(0).getTenantId();
-        //split the tenantId
-        String rootTenantId = tenantId.split("\\.")[0];
-
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
-
-        //check tenant Id
-        validateMDMSData(tenantId, mdmsData, errorMap);
-
-
-        //validate request-info
-        validateRequestInfo(requestInfo, errorMap);
-
-        //check staff-request
-        validateDeleteStaffPermission(request, staffPermissionListFromDB, attendanceRegisterListFromDB, errorMap);
-
-        if (!errorMap.isEmpty())
-            throw new CustomException(errorMap);
-    }
-
 
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
         if (requestInfo == null) {
@@ -105,6 +73,10 @@ public class StaffServiceValidator {
 
     public void validateStaffPermissionRequestParameters(StaffPermissionRequest staffPermissionRequest) {
         List<StaffPermission> staffPermissionList = staffPermissionRequest.getStaff();
+
+        if (ObjectUtils.isEmpty(staffPermissionList) || ObjectUtils.isEmpty(staffPermissionList.get(0))) {
+            throw new CustomException("STAFF", "Staff is mandatory");
+        }
 
         String baseTenantId = staffPermissionList.get(0).getTenantId();
         for (StaffPermission staffPermission : staffPermissionList) {
@@ -148,8 +120,12 @@ public class StaffServiceValidator {
         }
     }
 
-    private void validateCreateStaffPermission(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB,
-                                               Map<String, String> errorMap) {
+    public void validateCreateStaffPermission(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB,
+                                              List<AttendanceRegister> attendanceRegisterListFromDB) {
+
+        //validate tenant id with mdms and request info
+        validateMDMSAndRequestInfoForStaff(request);
+
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
 
         // check if staff tenant id is same as register tenant id
@@ -187,8 +163,12 @@ public class StaffServiceValidator {
     }
 
 
-    private void validateDeleteStaffPermission(StaffPermissionRequest staffPermissionRequest
-            , List<StaffPermission> staffPermissionListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB, Map<String, String> errorMap) {
+    public void validateDeleteStaffPermission(StaffPermissionRequest staffPermissionRequest
+            , List<StaffPermission> staffPermissionListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
+
+        //validate tenant id with mdms and request info
+        validateMDMSAndRequestInfoForStaff(staffPermissionRequest);
+
         RequestInfo requestInfo = staffPermissionRequest.getRequestInfo();
         List<StaffPermission> staffPermissionListFromRequest = staffPermissionRequest.getStaff();
 
@@ -259,7 +239,7 @@ public class StaffServiceValidator {
     }
 
 
-    private void validateMDMSData(String tenantId , Object mdmsData, Map<String, String> errorMap) {
+    private void validateMDMSData(String tenantId, Object mdmsData, Map<String, String> errorMap) {
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
 
         List<Object> tenantRes = null;
