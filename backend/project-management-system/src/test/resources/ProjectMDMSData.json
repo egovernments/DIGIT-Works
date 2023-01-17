@@ -24,7 +24,7 @@
       ]
     },
     "tenant": {
-      "tenants": ["pb", "pb.jalandhar","pb.amritsar"]
+      "tenants": ["t1", "t2"]
     }
   }
 }

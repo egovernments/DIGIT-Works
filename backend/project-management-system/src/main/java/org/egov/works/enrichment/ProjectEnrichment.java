@@ -8,6 +8,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ProjectConfiguration;
 import org.egov.works.repository.IdGenRepository;
+import org.egov.works.repository.ProjectRepository;
 import org.egov.works.util.ProjectServiceUtil;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.egov.works.util.ProjectConstants.PROJECT_PARENT_HIERARCHY_SEPERATOR;
 
 @Service
 @Slf4j
@@ -33,7 +36,7 @@ public class ProjectEnrichment {
     private ProjectConfiguration config;
 
     /* Enrich Project on Create Request */
-    public void enrichProjectOnCreate(ProjectRequest request) {
+    public void enrichProjectOnCreate(ProjectRequest request, List<Project> parentProjects) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<Project> projects = request.getProjects();
 
@@ -47,10 +50,12 @@ public class ProjectEnrichment {
 
             if (projectNumbers != null && !projectNumbers.isEmpty()) {
                 projects.get(i).setProjectNumber(projectNumbers.get(i));
+            } else {
+                throw new CustomException("PROJECT_NUMBER_NOT_GENERATED","Error occurred while generating project numbers from IdGen service");
             }
 
             //Enrich Project id and audit details
-            enrichProjectRequest(projects.get(i), null, requestInfo);
+            enrichProjectRequest(projects.get(i), null, requestInfo, parentProjects);
 
             //Enrich Address id and audit details
             enrichProjectAddress(projects.get(i), null, requestInfo);
@@ -74,7 +79,7 @@ public class ProjectEnrichment {
             Project projectFromDB = projectsFromDB.stream().filter(p -> projectId.equals(String.valueOf(p.getId()))).findFirst().orElse(null);
 
             //Updating lastModifiedTime and lastModifiedBy for Project
-            enrichProjectRequest(project, projectFromDB, requestInfo);
+            enrichProjectRequest(project, projectFromDB, requestInfo, null);
 
             //Add address if id is empty or update lastModifiedTime and lastModifiedBy if id exists
             enrichProjectAddress(project, projectFromDB, requestInfo);
@@ -89,16 +94,33 @@ public class ProjectEnrichment {
     }
 
     /* Enrich Project with id and audit details if project id is empty or if project already present, update last modified by and last modified time */
-    private void enrichProjectRequest(Project projectRequest, Project projectFromDB, RequestInfo requestInfo) {
+    private void enrichProjectRequest(Project projectRequest, Project projectFromDB, RequestInfo requestInfo, List<Project> parentProjects) {
         if (StringUtils.isBlank(projectRequest.getId())) {
             projectRequest.setId(UUID.randomUUID().toString());
             AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
             projectRequest.setAuditDetails(auditDetails);
+            if (parentProjects != null && StringUtils.isNotBlank(projectRequest.getParent())) {
+                enrichProjectHierarchy(projectRequest, parentProjects);
+            }
         } else if (projectFromDB != null) {
             projectRequest.setAuditDetails(projectFromDB.getAuditDetails());
             AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), projectFromDB.getAuditDetails(), false);
             projectRequest.setAuditDetails(auditDetails);
         }
+    }
+
+    //Enrich Project with Parent Hierarchy. If parent Project hierarchy is not present then add parent locality at the beginning of project hierarchy, if present add Parent project's project hierarchy
+    private void enrichProjectHierarchy(Project projectRequest, List<Project> parentProjects) {
+        Project parentProject = parentProjects.stream().filter(p -> projectRequest.getParent().equals(p.getId())).findFirst().orElse(null);
+        String parentProjectHierarchy = "";
+        if (parentProject != null) {
+            if (StringUtils.isNotBlank(parentProject.getProjectHierarchy())) {
+                parentProjectHierarchy = parentProject.getProjectHierarchy();
+            } else {
+                parentProjectHierarchy = parentProject.getAddress().getLocality();
+            }
+        }
+        projectRequest.setProjectHierarchy(parentProjectHierarchy + PROJECT_PARENT_HIERARCHY_SEPERATOR + projectRequest.getAddress().getLocality());
     }
 
     /* Enrich Address with id and audit details if address id is empty or if address already present, update last modified by and last modified time */

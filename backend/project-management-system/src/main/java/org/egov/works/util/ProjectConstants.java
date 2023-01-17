@@ -13,7 +13,9 @@ public class ProjectConstants {
     public static final String MASTER_BOUNDARY_LOCATION = "TenantBoundary";
     public static final String MDMS_LOCATION_MODULE_NAME = "egov-location";
 
+    public static final String BOUNDARY = "boundary";
+
     //General
     public static final String SEMICOLON = ":";
-    public static final String DOT = ".";
+    public static final String PROJECT_PARENT_HIERARCHY_SEPERATOR = ".";
 }

@@ -35,7 +35,7 @@ public class AddressTestBuilder {
                 .pincode("Pincode-1")
                 .buildingName("BuildingName-1")
                 .street("Street-1")
-                .locality("SUN04")
+                .locality("Locality-2")
                 .auditDetails(AuditDetailsTestBuilder.builder().withAuditDetails().build());
         return this;
     }

@@ -1,11 +1,13 @@
 package org.egov.works.validator;
 
+import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.helper.MDMSTestBuilder;
 import org.egov.works.helper.ProjectRequestTestBuilder;
-import org.egov.works.util.LocationUtil;
+import org.egov.works.repository.ServiceRequestRepository;
+import org.egov.works.util.BoundaryUtil;
 import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.ProjectRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,9 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,17 +35,16 @@ public class ProjectValidatorTest {
     private MDMSUtils mdmsUtils;
 
     @Mock
-    private LocationUtil locationUtil;
+    private BoundaryUtil boundaryUtil;
+
 
     @BeforeEach
     void setUp() throws Exception {
         //MOCK MDMS Response
         Object mdmsResponse = MDMSTestBuilder.builder().getMockMDMSData();
-        Object locationMdmsResponse = MDMSTestBuilder.builder().getMockLocationMDMSData();
         lenient().when(mdmsUtils.mDMSCall(any(ProjectRequest.class),
                 any(String.class))).thenReturn(mdmsResponse);
-        lenient().when(locationUtil.getLocationFromMDMS(any(ArrayList.class),
-                any(String.class), any(RequestInfo.class))).thenReturn(locationMdmsResponse);
+
     }
 
     @Test
@@ -97,8 +96,8 @@ public class ProjectValidatorTest {
     @Test
     void shouldThrowException_IfMultipleTenantsArePresent() {
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withMultipleProjectForCreateValidationSuccess().build();
-        projectRequest.getProjects().get(0).setTenantId("pb");
-        projectRequest.getProjects().get(1).setTenantId("od");
+        projectRequest.getProjects().get(0).setTenantId("t1");
+        projectRequest.getProjects().get(1).setTenantId("t2");
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateCreateProjectRequest(projectRequest));
         assertTrue(exception.toString().contains("MULTIPLE_TENANTS"));
     }
@@ -132,7 +131,7 @@ public class ProjectValidatorTest {
     @Test
     void shouldThrowException_IfTenantIdInValid() {
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withProjectForCreateValidationSuccess().build();
-        projectRequest.getProjects().get(0).setTenantId("T1");
+        projectRequest.getProjects().get(0).setTenantId("t12");
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateCreateProjectRequest(projectRequest));
         assertTrue(exception.toString().contains("INVALID_TENANT"));
     }
@@ -151,13 +150,5 @@ public class ProjectValidatorTest {
         projectRequest.getProjects().get(0).getTargets().get(0).setBeneficiaryType("B1");
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateCreateProjectRequest(projectRequest));
         assertTrue(exception.toString().contains("INVALID_BENEFICIARY_TYPE"));
-    }
-
-    @Test
-    void shouldThrowException_IfInValidLocationMDMSData() {
-        ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withProjectForCreateValidationSuccess().build();
-        projectRequest.getProjects().get(0).getAddress().setLocality("SUN99");
-        CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateCreateProjectRequest(projectRequest));
-        assertTrue(exception.toString().contains("LOCATION_NOT_FOUND"));
     }
 }

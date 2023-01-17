@@ -3,10 +3,9 @@ package org.egov.works.validator;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.common.protocol.types.Field;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.egov.works.util.LocationUtil;
+import org.egov.works.util.BoundaryUtil;
 import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class ProjectValidator {
     MDMSUtils mdmsUtils;
 
     @Autowired
-    LocationUtil locationUtil;
+    BoundaryUtil boundaryUtil;
 
     /* Validates create Project request body */
     public void validateCreateProjectRequest(ProjectRequest request) {
@@ -50,9 +49,8 @@ public class ProjectValidator {
 
         //Get localities in list from all Projects in request body for validation
         List<String> locationsForValidation = getLocationForValidation(projects);
-        if (locationsForValidation.size() > 0)
-            validateLocation(locationsForValidation, tenantId, requestInfo, errorMap);
-        log.info("Localities in request validated with MDMS data");
+        validateLocation(locationsForValidation, tenantId, requestInfo, errorMap);
+        log.info("Localities in request validated with Location Service");
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -110,8 +108,7 @@ public class ProjectValidator {
         log.info("Request data validated with MDMS");
 
         List<String> locationsForValidation = getLocationForValidation(projects);
-        if (locationsForValidation.size() > 0)
-            validateLocation(locationsForValidation, tenantId, requestInfo, errorMap);
+        validateLocation(locationsForValidation, tenantId, requestInfo, errorMap);
         log.info("Localities in request validated with MDMS data");
 
         if (!errorMap.isEmpty())
@@ -181,13 +178,10 @@ public class ProjectValidator {
             if (StringUtils.isBlank(project.getId()) && StringUtils.isBlank(project.getProjectType())
                     && StringUtils.isBlank(project.getName()) && StringUtils.isBlank(project.getProjectNumber())
                     && StringUtils.isBlank(project.getProjectSubType()) && StringUtils.isBlank(project.getReferenceID())
-                    && project.getStartDate() == 0 && project.getEndDate() == 0 && StringUtils.isBlank(project.getDepartment())) {
+                    && project.getStartDate() == 0 && project.getEndDate() == 0 && StringUtils.isBlank(project.getDepartment())
+                    && StringUtils.isBlank(project.getParent()) && project.getIsTaskEnabled() == null) {
                 log.error("Any one project search field is required for Project Search");
                 throw new CustomException("PROJECT_SEARCH_FIELDS", "Any one project search field is required");
-            }
-            if (StringUtils.isBlank(project.getProjectType()) && StringUtils.isNotBlank(project.getProjectSubType())) {
-                log.error("Project Type must be present for Project sub type in Project request body");
-                errorMap.put("PROJECT", "Project Type must be present for Project sub type");
             }
 
             if (!project.getTenantId().equals(projects.get(0).getTenantId())) {
@@ -292,28 +286,10 @@ public class ProjectValidator {
         return localities;
     }
 
-    /* Validates Locality data with MDMS boundary data*/
+    /* Validates Locality data with location service */
     private void validateLocation(List<String> locations, String tenantId, RequestInfo requestInfo, Map<String, String> errorMap) {
-        final String jsonPathForBoundryLocation = "$.MdmsRes." + MDMS_LOCATION_MODULE_NAME + "." + MASTER_BOUNDARY_LOCATION + ".*";
-
         if (locations.size() > 0) {
-            Object locResult = locationUtil.getLocationFromMDMS(locations, tenantId, requestInfo);
-            if (locResult != null) {
-                List<Object> locRes = JsonPath.read(locResult, jsonPathForBoundryLocation);
-                if (CollectionUtils.isEmpty(locRes)) {
-                    log.error("Locations doesn't exist in the system");
-                    errorMap.put("LOCATION_NOT_FOUND", "Locations doesn't exist in the system");
-                }
-                for (String location: locations) {
-                    if(!locRes.contains(location)) {
-                        log.error("Location " + location + " doesn't exist in the system");
-                        errorMap.put("LOCATION_NOT_FOUND", "Location " + location + " doesn't exist in the system");
-                    }
-                }
-            } else {
-                log.error("Locations doesn't exist in the system");
-                errorMap.put("LOCATION_NOT_FOUND", "Locations doesn't exist in the system");
-            }
+            boundaryUtil.validateBoundaryDetails(locations, tenantId, requestInfo, BOUNDARY_ADMIN_HIERARCHY_CODE);
         }
     }
 
@@ -363,5 +339,16 @@ public class ProjectValidator {
             }
         }
 
+    }
+
+    /* Validates parent data in create request against projects data fetched from database */
+    public void validateParentAgainstDB(List<Project> projects, List<Project> parentProjects) {
+        Set<String> parentProjectIds = parentProjects.stream().map(Project :: getId).collect(Collectors.toSet());
+        for (Project project: projects) {
+            if (StringUtils.isNotBlank(project.getParent()) && !parentProjectIds.contains(project.getParent())) {
+                log.error("The parent project with id " + project.getParent() + " does not exists in the system");
+                throw new CustomException("INVALID_PARENT_PROJECT", "The parent project with id " + project.getParent() + " does not exists in the system");
+            }
+        }
     }
 }

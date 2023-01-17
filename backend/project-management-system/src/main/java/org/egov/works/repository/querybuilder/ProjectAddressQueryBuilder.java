@@ -12,7 +12,7 @@ public class ProjectAddressQueryBuilder {
 
     private static final String FETCH_PROJECT_ADDRESS_QUERY = "SELECT prj.id as projectId, prj.tenant_id as project_tenantId, prj.project_number as project_projectNumber, prj.name as project_name, prj.project_type as project_projectType, prj.project_subtype as project_projectSubtype, " +
             " prj.department as project_department, prj.description as project_description, prj.reference_id as project_referenceId, prj.start_date as project_startDate, prj.end_date as project_endDate, " +
-            "prj.is_task_enabled as project_isTaskEnabled, prj.parent as project_parent, prj.additional_details as project_additionalDetails, prj.is_deleted as project_isDeleted, prj.row_version as project_rowVersion, " +
+            "prj.is_task_enabled as project_isTaskEnabled, prj.parent as project_parent, prj.project_hierarchy as project_projectHierarchy, prj.additional_details as project_additionalDetails, prj.is_deleted as project_isDeleted, prj.row_version as project_rowVersion, " +
             " prj.created_by as project_createdBy, prj.last_modified_by as project_lastModifiedBy, prj.created_time as project_createdTime, prj.last_modified_time as project_lastModifiedTime, " +
             "addr.id as addressId, addr.tenant_id as address_tenantId, addr.project_id as address_projectId, addr.door_no as address_doorNo, addr.latitude as address_latitude, addr.longitude as address_longitude, addr.location_accuracy as address_locationAccuracy, " +
             " addr.type as address_type, addr.address_line1 as address_addressLine1, addr.address_line2 as address_addressLine2, addr.landmark as address_landmark, addr.city as address_city, addr.pin_code as address_pinCode, " +
@@ -95,6 +95,18 @@ public class ProjectAddressQueryBuilder {
                 preparedStmtList.add(project.getEndDate());
             }
 
+            if (project.getIsTaskEnabled() != null) {
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.is_task_enabled=? ");
+                preparedStmtList.add(project.getIsTaskEnabled());
+            }
+
+            if (StringUtils.isNotBlank(project.getParent())) {
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.parent=? ");
+                preparedStmtList.add(project.getParent());
+            }
+
             if (lastChangedSince != null && lastChangedSince != 0) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
                 queryBuilder.append(" ( prj.created_time > ? OR prj.last_modified_time > ? )");
@@ -127,10 +139,11 @@ public class ProjectAddressQueryBuilder {
         }
     }
 
+    /* Add WHERE clause before first condition, ADD and for subsequent conditions. Do not add AND before any condition and after "(" */
     private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
         if (values.isEmpty())
             queryString.append(" WHERE ( ");
-        else {
+        else if (queryString.toString().lastIndexOf("(") != (queryString.toString().trim().length() - 1)) {
             queryString.append(" AND");
         }
     }

@@ -6,7 +6,9 @@ import org.egov.works.helper.ProjectRequestTestBuilder;
 import org.egov.works.producer.ProjectProducer;
 import org.egov.works.repository.ProjectRepository;
 import org.egov.works.validator.ProjectValidator;
+import org.egov.works.web.models.Project;
 import org.egov.works.web.models.ProjectRequest;
+import org.egov.works.web.models.ProjectResponse;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
@@ -15,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -37,9 +40,6 @@ public class ProjectServiceTest {
     @Mock
     private ProjectConfiguration projectConfiguration;
 
-//    @Mock
-//    private ProjectRepository projectRepository;
-
     @Test
     public void shouldCreateProjectSuccessfully(){
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProject().build();
@@ -49,9 +49,11 @@ public class ProjectServiceTest {
 
         verify(projectValidator, times(1)).validateCreateProjectRequest(projectRequest);
 
-        verify(projectEnrichment, times(1)).enrichProjectOnCreate(projectRequest);
+        verify(projectEnrichment, times(1)).enrichProjectOnCreate(projectRequest, null);
 
         verify(producer, times(1)).push(eq("save-project"), any(ProjectRequest.class));
+
+        assertNotNull(projectRequest.getProjects());
 
     }
 

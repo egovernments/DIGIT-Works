@@ -69,6 +69,9 @@ public class Project {
     @JsonProperty("parent")
     private String parent = null;
 
+    @JsonProperty("projectHierarchy")
+    private String projectHierarchy = null;
+
     @JsonProperty("targets")
     @Valid
     private List<Target> targets = null;

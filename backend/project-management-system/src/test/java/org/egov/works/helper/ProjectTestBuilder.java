@@ -23,7 +23,7 @@ public class ProjectTestBuilder {
     public ProjectTestBuilder addGoodProject(){
         this.builder
                 .id("Project-1")
-                .tenantId("pb.amritsar")
+                .tenantId("t1")
                 .projectNumber("ProjectNumber-1")
                 .name("ProjectName-1")
                 .projectType("MP-CWS")
@@ -36,7 +36,6 @@ public class ProjectTestBuilder {
                 .startDate(Long.valueOf(1L))
                 .endDate(Long.valueOf(2L))
                 .isTaskEnabled(true)
-                .parent("Parent-1")
                 .targets(Collections.singletonList(TargetTestBuilder.builder().addGoodTarget().build()))
                 .isDeleted(false)
                 .rowVersion(Integer.valueOf(1))
@@ -86,7 +85,7 @@ public class ProjectTestBuilder {
                 .startDate(Long.valueOf(1L))
                 .endDate(Long.valueOf(2L))
                 .isTaskEnabled(true)
-                .parent("Parent-1")
+                .parent("Project-1")
                 .targets(Collections.singletonList(TargetTestBuilder.builder().addTargetWithoutIdAndAuditDetails().build()))
                 .isDeleted(false)
                 .rowVersion(Integer.valueOf(1))

@@ -108,6 +108,7 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
         Long project_startDate = rs.getLong("project_startDate");
         Long project_endDate = rs.getLong("project_endDate");
         Boolean project_isTaskEnabled = rs.getBoolean("project_isTaskEnabled");
+        String project_projectHierarchy = rs.getString("project_projectHierarchy");
         String project_parent = rs.getString("project_parent");
         JsonNode project_additionalDetails = getAdditionalDetail("project_additionalDetails", rs);
         Boolean project_isDeleted = rs.getBoolean("project_isDeleted");
@@ -135,6 +136,7 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
                 .endDate(project_endDate)
                 .isTaskEnabled(project_isTaskEnabled)
                 .parent(project_parent)
+                .projectHierarchy(project_projectHierarchy)
                 .additionalDetails(project_additionalDetails)
                 .isDeleted(project_isDeleted)
                 .rowVersion(project_rowVersion)
