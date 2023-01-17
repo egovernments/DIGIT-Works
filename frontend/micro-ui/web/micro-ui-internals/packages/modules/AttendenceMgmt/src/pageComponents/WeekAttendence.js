@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Table, typeOf } from "@egovernments/digit-ui-react-components";
+import { Table } from "@egovernments/digit-ui-react-components";
 
 const WeekAttendence = ({ state, dispatch, modify, setDisplaySaveAction, weekDates}) => {
   const { t } = useTranslation();
@@ -23,7 +23,6 @@ const WeekAttendence = ({ state, dispatch, modify, setDisplaySaveAction, weekDat
     if(modify) setEditable(true)
   }, [modify])
 
-  console.log('prevAttendanceTotal', prevAttendanceTotal);
   const handleCheckboxClick = (row, day) => {
     dispatch({
       type: "attendanceTotal",
