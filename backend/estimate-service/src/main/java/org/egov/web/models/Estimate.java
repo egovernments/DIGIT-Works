@@ -8,6 +8,7 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class Estimate {
     private String projectId = null;
 
     @JsonProperty("proposalDate")
-    private Double proposalDate = null;
+    private BigDecimal proposalDate = null;
 
     @JsonProperty("status")
     private StatusEnum status = null;
@@ -61,8 +62,8 @@ public class Estimate {
     @JsonProperty("address")
     private Address address = null;
 
-    @JsonProperty("totalEstimateAmount")
-    private Double totalEstimateAmount = null;
+//    @JsonProperty("totalEstimateAmount")
+//    private Double totalEstimateAmount = null;
 
     @JsonProperty("estimateDetails")
     @Valid
