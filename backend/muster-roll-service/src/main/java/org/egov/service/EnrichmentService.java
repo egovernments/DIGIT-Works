@@ -210,10 +210,13 @@ public class EnrichmentService {
      * @param musterRoll
      */
     private void populateAuditDetailsIndividualEntry(MusterRoll musterRoll) {
-       for (IndividualEntry individualEntry : musterRoll.getIndividualEntries()) {
-           individualEntry.setAuditDetails(musterRoll.getAuditDetails());
-           populateAuditDetailsAttendanceEntry(individualEntry);
+       if (musterRoll.getIndividualEntries() != null) {
+           for (IndividualEntry individualEntry : musterRoll.getIndividualEntries()) {
+               individualEntry.setAuditDetails(musterRoll.getAuditDetails());
+               populateAuditDetailsAttendanceEntry(individualEntry);
+           }
        }
+
     }
 
     /**
@@ -222,9 +225,12 @@ public class EnrichmentService {
      * @param individualEntry
      */
     private void populateAuditDetailsAttendanceEntry(IndividualEntry individualEntry) {
-        for (AttendanceEntry attendanceEntry : individualEntry.getAttendanceEntries()) {
-            attendanceEntry.setAuditDetails(individualEntry.getAuditDetails());
+        if (individualEntry.getAttendanceEntries() != null) {
+            for (AttendanceEntry attendanceEntry : individualEntry.getAttendanceEntries()) {
+                attendanceEntry.setAuditDetails(individualEntry.getAuditDetails());
+            }
         }
+
     }
 
     /**
