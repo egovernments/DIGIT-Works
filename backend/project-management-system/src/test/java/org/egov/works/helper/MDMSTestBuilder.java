@@ -31,19 +31,4 @@ public class MDMSTestBuilder {
         return  mdmsResponse;
 
     }
-
-    public Object getMockLocationMDMSData() {
-        Object mdmsLocationResponse = null;
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/LocationMDMSData.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-            mdmsLocationResponse = objectMapper.readValue(exampleRequest, Object.class);
-        } catch (Exception exception) {
-            log.error("ProjectServiceTest::getLocationMdmsResponse::Exception while parsing mdms json");
-        }
-        return  mdmsLocationResponse;
-
-    }
 }
