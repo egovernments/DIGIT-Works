@@ -192,7 +192,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             },
           },
           {
-            isMandatory: true,
+            isMandatory: false,
             key: "natureOfWork",
             type: "radioordropdown",
             label: "WORKS_WORK_NATURE",
@@ -201,7 +201,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               name: "natureOfWork",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
-              required: true,
+              required: false,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
@@ -287,7 +287,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             },
           },
           {
-            isMandatory: true,
+            isMandatory: false,
             key: "ward",
             type: "radioordropdown",
             label: "PDF_STATIC_LABEL_ESTIMATE_WARD",
@@ -296,7 +296,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               name: "ward",
               optionsKey: "i18nKey",
               error: t("WORKS_REQUIRED_ERR"),
-              required: true,
+              required: false,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
@@ -304,7 +304,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             },
           },
           {
-            isMandatory: true,
+            isMandatory: false,
             key: "locality",
             type: "radioordropdown",
             label: "WORKS_LOCALITY",
@@ -650,7 +650,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
         head: t(""),
         body: [
           {
-            key: "subProjectDetails",
+            key: "subProjectDetailsComponent",
             type: "component",
             component: "SubProjectDetailsTable",
             withoutLabel: true,

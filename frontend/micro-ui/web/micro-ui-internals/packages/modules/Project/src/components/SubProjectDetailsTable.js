@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Dropdown, CustomDropdown, Loader, MultiUploadWrapper } from '@egovernments/digit-ui-react-components'
 import { Controller } from 'react-hook-form';
 import _ from 'lodash';
@@ -14,28 +14,31 @@ const initialState = [
 const SubProjectDetailsTable = ({t, register, control, setValue, onChange, errors}) => {
     const [rows, setRows] = useState(initialState);
     const columns = [
-        {label : t('WORKS_SNO'), isMandatory : true },
+        {label : t('WORKS_SNO'), isMandatory : false },
         {label : t('WORKS_NAME_OF_WORK'), isMandatory : true },
-        {label : t('WORKS_ESTIMATED_AMOUNT'), isMandatory : true },
+        {label : t('WORKS_ESTIMATED_AMOUNT'), isMandatory : false },
         {label : t('WORKS_WORK_TYPE'), isMandatory : true },
-        {label : t('WORKS_SUB_TYPE_WORK'), isMandatory : true },
-        {label : t('WORKS_WORK_NATURE'), isMandatory : true },
-        {label : t('WORKS_PROJECT_START_DATE'), isMandatory : true },
-        {label : t('WORKS_PROJECT_END_DATE'), isMandatory : true },
-        {label : t('WORKS_MODE_OF_ENTRUSTMENT'), isMandatory : true },
-        {label : t('WORKS_LOCALITY'), isMandatory : true },
-        {label : t('WORKS_WARD'), isMandatory : true },
-        {label : t('WORKS_URBAN_LOCAL_BODY'), isMandatory : true },
-        {label : t('WORKS_GEO_LOCATION'), isMandatory : true },
-        {label : t('WORKS_UPLOAD_FILES'), isMandatory : true },
+        {label : t('WORKS_SUB_TYPE_WORK'), isMandatory : false },
+        {label : t('WORKS_WORK_NATURE'), isMandatory : false },
+        {label : t('WORKS_PROJECT_START_DATE'), isMandatory : false },
+        {label : t('WORKS_PROJECT_END_DATE'), isMandatory : false },
+        {label : t('WORKS_MODE_OF_ENTRUSTMENT'), isMandatory : false },
+        {label : t('WORKS_LOCALITY'), isMandatory : false },
+        {label : t('WORKS_WARD'), isMandatory : false },
+        {label : t('WORKS_URBAN_LOCAL_BODY'), isMandatory : false },
+        {label : t('WORKS_GEO_LOCATION'), isMandatory : false },
+        {label : t('WORKS_UPLOAD_FILES'), isMandatory : false },
     ];
     const [subProjectTypeOfWorkOptions, setSubProjectTypeOfWorkOptions] = useState([]);
     const [subProjectSubTypeOfWorkOptions, setSubProjectSubTypeOfWorkOptions] = useState([]);
-    const formFieldName = "subProjectDetails";
+    const formFieldName = "subProjectDetails"; //keep this name diff from the key in config
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId); 
     const [subProjectDetailsSelectedWard, setSubProjectDetailsSelectedWard] = useState([]);
     const [subProjectDetailsLocalities, setSubProjectDetailsLocalities] = useState([]);
+    const { data: cities } = Digit.Hooks.useTenants();
+    const getCities = () => cities?.filter((e) => e.code.includes(tenantId)) || [];
+    let formatSubTypeWorkOptions = [];
 
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
         tenantId, 'Ward',
@@ -51,17 +54,18 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     wards, localities
                }
             }
-        })
-    
+        });
+        
     useEffect(()=>{
-        setSubProjectSubTypeOfWorkOptions(subProjectTypeOfWorkOptions?.subTypes ? subProjectTypeOfWorkOptions?.subTypes : [] );
+        let subWork
+        setSubProjectSubTypeOfWorkOptions(formatSubTypeWorkOptions);
     },[subProjectTypeOfWorkOptions]);
 
     useEffect(()=>{
         setSubProjectDetailsLocalities(wardsAndLocalities?.localities[subProjectDetailsSelectedWard?.code] ? wardsAndLocalities?.localities[subProjectDetailsSelectedWard?.code]: [] );
     },[subProjectDetailsSelectedWard]);
 
-    const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey="name", options={}) => {
+    const getDropDownDataFromMDMS = (t, row, inputName, props, register, isRequired=false, optionKey="name", options={}) => {
         const { isLoading, data } = Digit.Hooks.useCustomMDMS(
                 Digit.ULBService.getStateId(),
                 options?.mdmsConfig?.moduleName,
@@ -79,7 +83,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 //show MDMS data if options are not provided. Options are in use here for pre defined options from config. 
                 //Usage example : dependent dropdown
                 } else return <Dropdown
-                        inputRef={register()}
+                        inputRef={register({required : true})}
                         option={options?.mdmsConfig ? data : options}
                         selected={props?.value}
                         optionKey={optionKey}
@@ -182,7 +186,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 </td>
                 <td style={getStyles()}>
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsEstimatedAmount`} inputRef={register()}/>
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsEstimatedAmount`} inputRef={register({required : false})}/>
                         {renderErrorIfAny(row, "subProjectDetailsEstimatedAmount")}
                     </div>
                 </td>
@@ -192,7 +196,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsTypeOfWork`}
                         render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsTypeOfWork" , props, register, "name", { 
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsTypeOfWork" , props, register, true, "name", { 
                                     mdmsConfig: {
                                     masterName: "TypeOfWork",
                                     moduleName: "works",
@@ -208,8 +212,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     <Controller
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsSubTypeOfWork`}
+                        rules={{ required: true}}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProjectDetailsSubTypeOfWork", props, register, "name",  subProjectSubTypeOfWorkOptions)
+                            getDropDownDataFromMDMS(t, row, "subProjectDetailsSubTypeOfWork", props, register, false, "name",  formatSubTypeWorkOptions)
                         )}
                       />
                     {renderErrorIfAny(row, "subProjectDetailsSubTypeOfWork")}
@@ -221,7 +226,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsNatureOfWork`}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProjectDetailsNatureOfWork", props, register, "name", { 
+                            getDropDownDataFromMDMS(t, row, "subProjectDetailsNatureOfWork", props, register, false, "name", { 
                                 mdmsConfig: {
                                     masterName: "NatureOfWork",
                                     moduleName: "works",
@@ -238,7 +243,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         type={"date"}
                         name={`${formFieldName}.${row.key}.subProjectDetailsStartDate`}
                         onChange={onChange}
-                        inputRef={register()}
+                        inputRef={register({required : false})}
                         style={{paddingRight: "3px"}}
                     />
                     {renderErrorIfAny(row, "subProjectDetailsStartDate")}
@@ -250,7 +255,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         type={"date"}
                         name={`${formFieldName}.${row.key}.subProjectDetailsEndDate`}
                         onChange={onChange}
-                        inputRef={register()}
+                        inputRef={register({required : false})}
                         style={{paddingRight: "3px"}}
                     />
                     {renderErrorIfAny(row, "subProjectDetailsEndDate")}
@@ -262,7 +267,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsModeOfEntrustment`}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProjectDetailsModeOfEntrustment", props, register, "name", { 
+                            getDropDownDataFromMDMS(t, row, "subProjectDetailsModeOfEntrustment", props, register, false, "name", { 
                                 mdmsConfig: {
                                     masterName: "EntrustmentMode",
                                     moduleName: "works",
@@ -279,7 +284,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsWard`}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsWard", props, register, "i18nKey", wardsAndLocalities?.wards)
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsWard", props, register, false, "i18nKey", wardsAndLocalities?.wards)
                             )}
                         />
                     {renderErrorIfAny(row, "subProjectDetailsWard")}
@@ -291,7 +296,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsLocality`}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsLocality", props, register, "i18nKey", subProjectDetailsLocalities)
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsLocality", props, register, false, "i18nKey", subProjectDetailsLocalities)
                             )}
                         />
                     {renderErrorIfAny(row, "subProjectDetailsLocality")}
@@ -303,7 +308,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsUrbanLocalBody`}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsUrbanLocalBody", props, register, "name", subProjectDetailsLocalities)
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsUrbanLocalBody", props, register, false, "i18nKey", getCities())
                             )}
                         />
                     {renderErrorIfAny(row, "subProjectDetailsUrbanLocalBody")}
@@ -311,37 +316,52 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 </td> 
                 <td style={getStyles()} >
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsGeoLocation`} inputRef={register()}/>
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsGeoLocation`} inputRef={register({required : false})}/>
                         {renderErrorIfAny(row, "subProjectDetailsGeoLocation")}
                     </div>
                 </td>
-                <td style={getStyles()} >
+                <td style={getStyles()}>
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsGeoLocation`} inputRef={register()}/>
-                        {renderErrorIfAny(row, "subProjectDetailsGeoLocation")}
-                    </div>
-                </td>
-                {/* <td style={getStyles()}>
-                    <div className='field' style={{ "width": "100%" }} >
-                        <MultiUploadWrapper
-                            inputRef={register()}
-                            t={t}
-                            module="works"
-                            tenantId={Digit.ULBService.getCurrentTenantId()}
-                            getFormState={(filesData)=> getFileStoreData(filesData, setValue)}
-                            showHintBelow={true}
-                            setuploadedstate={setValue}
-                            allowedFileTypesRegex={"/(.*?)(jpeg|jpg|png|pdf|image)$/i,"}
-                            allowedMaxSizeInMB={2}
-                            hintText={""}
-                            maxFilesAllowed={2}
-                            extraStyleName={{ padding: "0.5rem" }}
-                            customClass={"upload-margin-bottom"}
-                            name={`${formFieldName}.${row.key}.subProjectDetailsFilesUpload`}
-                        />
+                           <Controller
+                                name={`${formFieldName}.${row.key}.subProjectDetailsFilesUpload`}
+                                control={control}
+                                render={({ onChange, ref, value = [] }) => {
+                                function getFileStoreData(filesData) {
+                                    const numberOfFiles = filesData.length;
+                                    let finalDocumentData = [];
+                                    if (numberOfFiles > 0) {
+                                    filesData.forEach((value) => {
+                                        finalDocumentData.push({
+                                        fileName: value?.[0],
+                                        fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
+                                        documentType: value?.[1]?.file?.type,
+                                        });
+                                    });
+                                    }
+                                    //here we need to update the form the same way as the state of the reducer in multiupload, since Upload component within the multiupload wrapper uses that same format of state so we need to set the form data as well in the same way. Previously we were altering it and updating the formData
+                                    onChange(numberOfFiles>0?filesData:[]);
+                                }
+                                return (
+                                    <MultiUploadWrapper
+                                        t={t}
+                                        module="works"
+                                        tenantId={Digit.ULBService.getCurrentTenantId()}
+                                        getFormState={getFileStoreData}
+                                        showHintBelow={true}
+                                        setuploadedstate={value}
+                                        allowedFileTypesRegex={/(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i}
+                                        allowedMaxSizeInMB={2}
+                                        hintText={""}
+                                        maxFilesAllowed={2}
+                                        extraStyleName={{ padding: "0.5rem" }}
+                                        customClass={"upload-margin-bottom"}
+                                    />
+                                );
+                                }}
+                            />
                         {renderErrorIfAny(row, "subProjectDetailsFilesUpload")}
                     </div>
-                </td>  */}
+                </td> 
                 <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
             </tr>
         })
