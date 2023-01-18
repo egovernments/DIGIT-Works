@@ -61,7 +61,7 @@ public class EstimateServiceValidator {
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
 
         validateMDMSData(estimate, mdmsData, errorMap);
-        validateProjectId(request, errorMap);
+        //validateProjectId(request, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
