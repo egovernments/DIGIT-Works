@@ -64,10 +64,10 @@ public class EstimateServiceConfiguration {
 
 
     //Works -Project management system Config
-    @Value("${works.project.management.system.host}")
+    @Value("${works.project.service.host}")
     private String worksProjectManagementSystemHost;
 
-    @Value("${works.project.management.system.path}")
+    @Value("${works.project.service.path}")
     private String worksProjectManagementSystemPath;
 
     @PostConstruct
