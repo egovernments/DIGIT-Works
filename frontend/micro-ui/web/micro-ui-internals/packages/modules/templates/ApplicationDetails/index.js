@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
+import { format } from "date-fns";
 
 import { Loader } from "@egovernments/digit-ui-react-components";
 
@@ -150,10 +151,24 @@ const ApplicationDetails = (props) => {
     }
   }
 
+  const getAttendanceResponseHeaderAndMessage = (action) => {
+    let response = {}
+    if (action?.includes("VERIFY")) {
+      response.header = t("ATM_ATTENDANCE_VERIFIED")
+      response.message = t("ATM_ATTENDANCE_VERIFIED_SUCCESS")
+    } else if (action?.includes("REJECT")) {
+      response.header = t("ATM_ATTENDANCE_REJECTED")
+      response.message = t("ATM_ATTENDANCE_REJECTED_SUCCESS")
+    } else if (action?.includes("APPROVE")) {
+      response.header = t("ATM_ATTENDANCE_APPROVED")
+      response.message = t("ATM_ATTENDANCE_APPROVED_SUCCESS")
+    } 
+    return response
+  }
+
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
     const performedAction = data?.workflow?.action
     setIsEnableLoader(true);
-
     if (mutate) {
       setIsEnableLoader(true);
       mutate(data, {
@@ -252,6 +267,17 @@ const ApplicationDetails = (props) => {
               setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
             }            
             return
+          }
+          if(data?.musterRolls?.[0]) {
+            const musterRoll = data?.musterRolls?.[0]
+            const response = getAttendanceResponseHeaderAndMessage(performedAction)
+            const state = {
+              header: response?.header,
+              message: response?.message,
+              info: t("ATM_REGISTER_ID_WEEK"),
+              id: `${musterRoll.registerId} | ${format(new Date(musterRoll.startDate), "dd/MM/yyyy")} - ${format(new Date(musterRoll.endDate), "dd/MM/yyyy")}`,
+            }
+            history.push(`/${window.contextPath}/employee/attendencemgmt/response`, state)
           }
           setShowToast({ key: "success", action: selectedAction });
           clearDataDetails && setTimeout(clearDataDetails, 3000);

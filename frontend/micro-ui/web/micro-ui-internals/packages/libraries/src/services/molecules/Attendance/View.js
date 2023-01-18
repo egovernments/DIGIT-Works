@@ -38,8 +38,8 @@ const getAttendanceTableData = (data, skills) => {
       tableRow.actualWorkingDays = item?.totalAttendance
       tableRow.nameOfIndividual = item?.additionalDetails?.userName || 'Piyush HarjitPal'
       tableRow.guardianName = item?.additionalDetails?.fatherName  || 'HarjitPal'
-      tableRow.skill = skills['SKILLED_LEVEL_1'].name || 'SKILL_1'
-      tableRow.amount = skills['SKILLED_LEVEL_1'].amount * item?.totalAttendance
+      tableRow.skill = skills['SKILLED_LEVEL_1'].name || 'SKILL_1'  //skills[item?.additionalDetails?.skillCode].name
+      tableRow.amount = skills['SKILLED_LEVEL_1'].amount * item?.totalAttendance //skills[item?.additionalDetails?.skillCode].amount * item?.totalAttendance
       tableRow.modifiedAmount = tableRow.amount 
       tableRow.modifiedWorkingDays = item?.totalAttendance
       tableRow.bankAccountDetails = {

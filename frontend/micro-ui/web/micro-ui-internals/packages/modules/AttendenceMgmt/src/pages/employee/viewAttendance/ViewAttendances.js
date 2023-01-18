@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useState} from "react";
 import { useTranslation } from "react-i18next";
 import { Header } from "@egovernments/digit-ui-react-components";
 import ApplicationDetails from "../../../../../templates/ApplicationDetails";
@@ -6,6 +6,11 @@ import ApplicationDetails from "../../../../../templates/ApplicationDetails";
 const ViewAttendance = () => {
   const { t } = useTranslation();
   const { tenantId, musterRollNumber } = Digit.Hooks.useQueryParams();
+  const [showToast, setShowToast] = useState(null);
+
+  const closeToast = () => {
+      setShowToast(null);
+  };
 
   const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.attendance.useViewAttendance(tenantId, { musterRollNumber });
   
@@ -38,6 +43,9 @@ const ViewAttendance = () => {
         businessService={"muster-roll-approval"}
         forcedActionPrefix={"WORKS"}
         mutate={mutate}
+        showToast={showToast}
+        setShowToast={setShowToast}
+        closeToast={closeToast}
       />
     </React.Fragment>
     );

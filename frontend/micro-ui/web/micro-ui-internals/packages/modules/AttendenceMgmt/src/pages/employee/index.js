@@ -2,6 +2,7 @@ import React from "react";
 import { Switch, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, AppContainer, BreadCrumb } from "@egovernments/digit-ui-react-components";
+import Response from "../../components/Response";
 
 const AttendanceBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -25,6 +26,12 @@ const AttendanceBreadCrumbs = ({ location }) => {
       show: location.pathname.includes("/attendencemgmt/view-attendance") ? true : false,
       isBack: fromScreen && true,
     },
+    {
+      path: `/${window.contextPath}/employee/attendencemgmt/response`,
+      content: fromScreen ? `${t(fromScreen)} / / ${t("ATM_VIEW_ATTENDENCE")}` : t("ATM_VIEW_ATTENDENCE"),
+      show: location.pathname.includes("/attendencemgmt/response") ? true : false,
+      isBack: fromScreen && true,
+    }
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 };
@@ -47,6 +54,7 @@ const App = ({ path }) => {
             <Inbox isInbox parentRoute={path} filterComponent="AttendenceInboxFilter" searchComponent="AttendenceInboxSearch" initialStates={{}} />
           )}
         />
+        <PrivateRoute path={`${path}/response`} component={Response} />
       </AppContainer>
     </Switch>
   );
