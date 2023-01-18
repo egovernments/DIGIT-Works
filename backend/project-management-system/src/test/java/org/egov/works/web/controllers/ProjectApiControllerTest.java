@@ -28,9 +28,11 @@ import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.util.LinkedMultiValueMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -74,7 +76,7 @@ public class ProjectApiControllerTest {
 
     @Test
     @DisplayName("project request should pass with API Operation CREATE")
-    public void projectV1CreatePostSuccess() throws Exception {
+    public void createProjectPostSuccess() throws Exception {
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProject().build();
         when(projectService.createProject(any(ProjectRequest.class))).thenReturn(projectRequest);
 
@@ -103,7 +105,7 @@ public class ProjectApiControllerTest {
 
     @Test
     @DisplayName("project request should fail for invalid project request")
-    public void projectV1CreatePostFailure() throws Exception {
+    public void createProjectPostFailure() throws Exception {
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addBadProject().build();
         when(projectService.createProject(any(ProjectRequest.class))).thenThrow(new CustomException("TENANT_ID", "Tenant ID is mandatory"));
 
@@ -120,6 +122,36 @@ public class ProjectApiControllerTest {
 
         assertEquals(0, response.getProject().size());
         assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+
+    }
+
+    @Test
+    @DisplayName("project request should pass with API Operation CREATE")
+    public void searchProjectPostSuccess() throws Exception {
+        ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProjectForSearch().build();
+        when(projectService.searchProject(any(ProjectRequest.class), any(Integer.class),
+                any(Integer.class),any(String.class),eq(null),any(Boolean.class))).thenReturn(projectRequest.getProjects());
+
+        ResponseInfo responseInfo = ProjectRequestTestBuilder.builder().getResponseInfo_Success(projectRequest);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(projectRequest.getRequestInfo(),true)).thenReturn(responseInfo);
+
+        LinkedMultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("limit", "5");
+        requestParams.add("offset", "0");
+        requestParams.add("tenantId", "t1");
+
+
+        MvcResult result = mockMvc.perform(post("/project/v1/_search").params(requestParams).contentType(MediaType
+                        .APPLICATION_JSON).content(objectMapper.writeValueAsString(projectRequest)))
+                .andExpect(status().isOk()).andReturn();
+
+        String responseStr = result.getResponse().getContentAsString();
+        ProjectResponse response = objectMapper.readValue(responseStr,
+                ProjectResponse.class);
+
+        assertEquals(1, response.getProject().size());
+        assertNotNull(response.getProject().get(0).getId());
+        assertEquals("successful", response.getResponseInfo().getStatus());
 
     }
 

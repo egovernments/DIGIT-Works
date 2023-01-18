@@ -93,4 +93,32 @@ public class ProjectTestBuilder {
 
         return this;
     }
+
+    public ProjectTestBuilder addGoodProjectForSearch(){
+        this.builder
+                .id("Project-1")
+                .tenantId("t1")
+                .projectNumber("ProjectNumber-1")
+                .name("ProjectName-1")
+                .projectType("MP-CWS")
+                .projectSubType("MP001")
+                .startDate(Long.valueOf(1L))
+                .endDate(Long.valueOf(2L));
+
+        return this;
+    }
+
+    public ProjectTestBuilder addBadProjectForSearch(){
+        this.builder
+                .id("")
+                .tenantId("t1")
+                .projectNumber("")
+                .name("")
+                .projectType("")
+                .projectSubType("")
+                .startDate(0L)
+                .endDate(0L);
+
+        return this;
+    }
 }

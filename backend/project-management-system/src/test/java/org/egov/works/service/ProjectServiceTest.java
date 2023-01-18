@@ -17,7 +17,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -40,6 +44,9 @@ public class ProjectServiceTest {
     @Mock
     private ProjectConfiguration projectConfiguration;
 
+    @Mock
+    private ProjectRepository projectRepository;
+
     @Test
     public void shouldCreateProjectSuccessfully(){
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProject().build();
@@ -54,6 +61,27 @@ public class ProjectServiceTest {
         verify(producer, times(1)).push(eq("save-project"), any(ProjectRequest.class));
 
         assertNotNull(projectRequest.getProjects());
+
+    }
+
+    @Test
+    public void shouldSearchProjectSuccessfully(){
+        ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProjectForSearch().build();
+        List<Project> searchProjectResults = ProjectRequestTestBuilder.builder().addGoodProject().build().getProjects();
+        Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
+        when(projectRepository.getProjects(projectRequest, (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
+                (String)searchParams.get("tenantId"), (Long)searchParams.get("lastChangedSince"), (Boolean) searchParams.get("includeDeleted")))
+                .thenReturn(searchProjectResults);
+
+        List<Project> response = projectService.searchProject(projectRequest, (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
+                (String)searchParams.get("tenantId"), (Long)searchParams.get("lastChangedSince"), (Boolean) searchParams.get("includeDeleted"));
+
+        verify(projectValidator, times(1)).validateSearchProjectRequest(projectRequest, (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
+                (String)searchParams.get("tenantId"));
+
+        assertEquals(1, response.size());
+
+        assertNotNull(response);
 
     }
 

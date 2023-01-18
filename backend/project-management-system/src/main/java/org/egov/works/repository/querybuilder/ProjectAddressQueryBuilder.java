@@ -1,14 +1,23 @@
 package org.egov.works.repository.querybuilder;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.works.config.ProjectConfiguration;
 import org.egov.works.web.models.Project;
 import org.egov.works.web.models.ProjectRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static org.egov.works.util.ProjectConstants.DOT;
+
 @Component
+@Slf4j
 public class ProjectAddressQueryBuilder {
+
+    @Autowired
+    private ProjectConfiguration config;
 
     private static final String FETCH_PROJECT_ADDRESS_QUERY = "SELECT prj.id as projectId, prj.tenant_id as project_tenantId, prj.project_number as project_projectNumber, prj.name as project_name, prj.project_type as project_projectType, prj.project_subtype as project_projectSubtype, " +
             " prj.department as project_department, prj.description as project_description, prj.reference_id as project_referenceId, prj.start_date as project_startDate, prj.end_date as project_endDate, " +
@@ -37,8 +46,15 @@ public class ProjectAddressQueryBuilder {
 
             if (StringUtils.isNotBlank(tenantId)) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" prj.tenant_id=? ");
-                preparedStmtList.add(tenantId);
+                if (!tenantId.contains(DOT)) {
+                    log.info("State level tenant");
+                    queryBuilder.append(" prj.tenant_id like ? ");
+                    preparedStmtList.add(tenantId+'%');
+                } else {
+                    log.info("City level tenant");
+                    queryBuilder.append(" prj.tenant_id=? ");
+                    preparedStmtList.add(tenantId);
+                }
             }
 
             if (StringUtils.isNotBlank(project.getId())) {
@@ -71,40 +87,16 @@ public class ProjectAddressQueryBuilder {
                 preparedStmtList.add(project.getProjectSubType());
             }
 
-            if (StringUtils.isNotBlank(project.getReferenceID())) {
-                addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" prj.reference_id=? ");
-                preparedStmtList.add(project.getReferenceID());
-            }
-
-            if (StringUtils.isNotBlank(project.getDepartment())) {
-                addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" prj.department=? ");
-                preparedStmtList.add(project.getDepartment());
-            }
-
             if (project.getStartDate() != null && project.getStartDate() != 0) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" prj.start_date=? ");
+                queryBuilder.append(" prj.start_date >= ? ");
                 preparedStmtList.add(project.getStartDate());
             }
 
             if (project.getEndDate() != null && project.getEndDate() != 0) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" prj.end_date=? ");
+                queryBuilder.append(" prj.end_date <= ? ");
                 preparedStmtList.add(project.getEndDate());
-            }
-
-            if (project.getIsTaskEnabled() != null) {
-                addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" prj.is_task_enabled=? ");
-                preparedStmtList.add(project.getIsTaskEnabled());
-            }
-
-            if (StringUtils.isNotBlank(project.getParent())) {
-                addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" prj.parent=? ");
-                preparedStmtList.add(project.getParent());
             }
 
             if (lastChangedSince != null && lastChangedSince != 0) {
@@ -149,7 +141,9 @@ public class ProjectAddressQueryBuilder {
     }
 
     /* Wrap constructed SQL query with where criteria in pagination query */
-    private String addPaginationWrapper(String query,List<Object> preparedStmtList, Integer limit, Integer offset){
+    private String addPaginationWrapper(String query,List<Object> preparedStmtList, Integer limitParam, Integer offsetParam){
+        Integer limit = (limitParam > config.getMaxLimit()) ? config.getMaxLimit() : limitParam;
+        Integer offset = (offsetParam > config.getMaxOffset()) ? config.getMaxOffset() : offsetParam;
         String finalQuery = paginationWrapper.replace("{}",query);
 
         preparedStmtList.add(offset);

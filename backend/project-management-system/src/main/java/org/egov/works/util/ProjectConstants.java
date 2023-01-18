@@ -17,5 +17,6 @@ public class ProjectConstants {
 
     //General
     public static final String SEMICOLON = ":";
+    public static final String DOT = ".";
     public static final String PROJECT_PARENT_HIERARCHY_SEPERATOR = ".";
 }

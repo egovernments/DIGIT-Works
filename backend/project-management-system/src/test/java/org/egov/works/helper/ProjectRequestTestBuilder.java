@@ -9,7 +9,9 @@ import org.egov.works.web.models.ProjectRequest;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProjectRequestTestBuilder {
     private ProjectRequest.ProjectRequestBuilder builder ;
@@ -41,6 +43,18 @@ public class ProjectRequestTestBuilder {
 
     public ProjectRequestTestBuilder addBadProject(){
         projects.add(ProjectTestBuilder.builder().addBadProject().build());
+        this.builder.projects(projects);
+        return this;
+    }
+
+    public ProjectRequestTestBuilder addGoodProjectForSearch(){
+        projects.add(ProjectTestBuilder.builder().addGoodProjectForSearch().build());
+        this.builder.projects(projects);
+        return this;
+    }
+
+    public ProjectRequestTestBuilder addBadProjectForSearch(){
+        projects.add(ProjectTestBuilder.builder().addBadProjectForSearch().build());
         this.builder.projects(projects);
         return this;
     }
@@ -84,6 +98,17 @@ public class ProjectRequestTestBuilder {
                 .msgId(projectRequest.getRequestInfo().getMsgId())
                 .status("successful").build();
         return responseInfo;
+    }
+
+    public Map<String, Object> getSearchProjectParams() {
+        Map<String, Object> searchParamsMap = new HashMap<>();
+        searchParamsMap.put("limit", 5);
+        searchParamsMap.put("offset", 0);
+        searchParamsMap.put("tenantId", "t1");
+        searchParamsMap.put("lastChangedSince", null);
+        searchParamsMap.put("includeDeleted", false);
+
+        return searchParamsMap;
     }
 
 

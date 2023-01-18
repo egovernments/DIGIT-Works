@@ -118,12 +118,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_create",
+					"raw": "{{base_url}}/pms/project/v1/_create",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_create"
@@ -235,12 +235,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_create",
+					"raw": "{{base_url}}/pms/project/v1/_create",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_create"
@@ -276,12 +276,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_create",
+					"raw": "{{base_url}}/pms/project/v1/_create",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_create"
@@ -317,12 +317,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_create",
+					"raw": "{{base_url}}/pms/project/v1/_create",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_create"
@@ -358,12 +358,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_create",
+					"raw": "{{base_url}}/pms/project/v1/_create",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_create"
@@ -391,7 +391,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"8b8983bf-f39e-4758-942c-ae963dfbcc93\",\n      \"tenantId\": \"pb.amritsar\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"department\": \"\",\n      \"description\": \"\",\n      \"referenceID\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0,\n      \"isTaskEnabled\": false,\n      \"parent\": \"\"\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"8b8983bf-f39e-4758-942c-ae963dfbcc93\",\n      \"tenantId\": \"pb.amritsar\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -399,12 +399,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_search?limit=5&offset=0&tenantId=pb.amritsar",
+					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId=pb.amritsar",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_search"
@@ -456,7 +456,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"\",\n      \"tenantId\": \"pb.amritsar\",\n      \"projectType\": \"MP-CWS\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"department\": \"\",\n      \"description\": \"\",\n      \"referenceID\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0,\n      \"isTaskEnabled\": false,\n      \"parent\": \"\"\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n     {\n      \"id\": \"\",\n      \"tenantId\": \"pb.amritsar\",\n      \"projectType\": \"MP-CWS\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -464,12 +464,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_search?limit=5&offset=0&tenantId=pb.amritsar&lastChangedSince=1673494068231&includeDeleted=true",
+					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId=pb.amritsar&lastChangedSince=1673494068231&includeDeleted=true",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_search"
@@ -519,7 +519,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"\",\n      \"tenantId\": \"pb.amritsar\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"department\": \"\",\n      \"description\": \"\",\n      \"referenceID\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0,\n      \"isTaskEnabled\": false,\n      \"parent\": \"\"\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"\",\n      \"tenantId\": \"pb.amritsar\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -527,12 +527,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_search?limit=5&offset=0&tenantId=pb.amritsar",
+					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId=pb.amritsar",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_search"
@@ -671,12 +671,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_update",
+					"raw": "{{base_url}}/pms/project/v1/_update",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_update"
@@ -779,12 +779,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_update",
+					"raw": "{{base_url}}/pms/project/v1/_update",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_update"
@@ -923,12 +923,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_update",
+					"raw": "{{base_url}}/pms/project/v1/_update",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_update"
@@ -964,12 +964,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_update",
+					"raw": "{{base_url}}/pms/project/v1/_update",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_update"
@@ -1005,12 +1005,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_update",
+					"raw": "{{base_url}}/pms/project/v1/_update",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_update"
@@ -1046,12 +1046,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/project-management-system/project/v1/_update",
+					"raw": "{{base_url}}/pms/project/v1/_update",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"project-management-system",
+						"pms",
 						"project",
 						"v1",
 						"_update"
