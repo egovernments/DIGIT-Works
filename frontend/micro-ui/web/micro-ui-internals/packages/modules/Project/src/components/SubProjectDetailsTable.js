@@ -38,7 +38,6 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
     const [subProjectDetailsLocalities, setSubProjectDetailsLocalities] = useState([]);
     const { data: cities } = Digit.Hooks.useTenants();
     const getCities = () => cities?.filter((e) => e.code.includes(tenantId)) || [];
-    let formatSubTypeWorkOptions = [];
 
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
         tenantId, 'Ward',
@@ -57,15 +56,17 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         });
         
     useEffect(()=>{
-        let subWork
-        setSubProjectSubTypeOfWorkOptions(formatSubTypeWorkOptions);
+        let filteredSubTypeOfWork = ( subProjectTypeOfWorkOptions && subProjectTypeOfWorkOptions?.subTypes ) ? (
+        subProjectTypeOfWorkOptions?.subTypes.map(subType=>({code : subType?.code, name : `ES_COMMON_${subType?.code}`}))) : [];
+        setSubProjectSubTypeOfWorkOptions(filteredSubTypeOfWork);
     },[subProjectTypeOfWorkOptions]);
 
     useEffect(()=>{
         setSubProjectDetailsLocalities(wardsAndLocalities?.localities[subProjectDetailsSelectedWard?.code] ? wardsAndLocalities?.localities[subProjectDetailsSelectedWard?.code]: [] );
     },[subProjectDetailsSelectedWard]);
 
-    const getDropDownDataFromMDMS = (t, row, inputName, props, register, isRequired=false, optionKey="name", options={}) => {
+    const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey="name", options=[]) => {
+        console.log(options);
         const { isLoading, data } = Digit.Hooks.useCustomMDMS(
                 Digit.ULBService.getStateId(),
                 options?.mdmsConfig?.moduleName,
@@ -83,7 +84,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 //show MDMS data if options are not provided. Options are in use here for pre defined options from config. 
                 //Usage example : dependent dropdown
                 } else return <Dropdown
-                        inputRef={register({required : true})}
+                        inputRef={register()}
                         option={options?.mdmsConfig ? data : options}
                         selected={props?.value}
                         optionKey={optionKey}
@@ -195,8 +196,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                       <Controller
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsTypeOfWork`}
+                        rules={{ required: true}}
                         render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsTypeOfWork" , props, register, true, "name", { 
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsTypeOfWork" , props, register, "name", { 
                                     mdmsConfig: {
                                     masterName: "TypeOfWork",
                                     moduleName: "works",
@@ -212,9 +214,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     <Controller
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsSubTypeOfWork`}
-                        rules={{ required: true}}
+                        rules={{ required: false}}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProjectDetailsSubTypeOfWork", props, register, false, "name",  formatSubTypeWorkOptions)
+                            getDropDownDataFromMDMS(t, row, "subProjectDetailsSubTypeOfWork", props, register, "name",  subProjectSubTypeOfWorkOptions)
                         )}
                       />
                     {renderErrorIfAny(row, "subProjectDetailsSubTypeOfWork")}
@@ -225,8 +227,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     <Controller
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsNatureOfWork`}
+                        rules={{ required: false}}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProjectDetailsNatureOfWork", props, register, false, "name", { 
+                            getDropDownDataFromMDMS(t, row, "subProjectDetailsNatureOfWork", props, register, "name", { 
                                 mdmsConfig: {
                                     masterName: "NatureOfWork",
                                     moduleName: "works",
@@ -266,8 +269,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     <Controller
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsModeOfEntrustment`}
+                        rules={{ required: false}}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProjectDetailsModeOfEntrustment", props, register, false, "name", { 
+                            getDropDownDataFromMDMS(t, row, "subProjectDetailsModeOfEntrustment", props, register, "name", { 
                                 mdmsConfig: {
                                     masterName: "EntrustmentMode",
                                     moduleName: "works",
@@ -283,8 +287,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         <Controller
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsWard`}
+                            rules={{ required: false}}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsWard", props, register, false, "i18nKey", wardsAndLocalities?.wards)
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsWard", props, register, "i18nKey", wardsAndLocalities?.wards)
                             )}
                         />
                     {renderErrorIfAny(row, "subProjectDetailsWard")}
@@ -296,7 +301,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsLocality`}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsLocality", props, register, false, "i18nKey", subProjectDetailsLocalities)
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsLocality", props, register, "i18nKey", subProjectDetailsLocalities)
                             )}
                         />
                     {renderErrorIfAny(row, "subProjectDetailsLocality")}
@@ -307,8 +312,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         <Controller
                             control={control}
                             name={`${formFieldName}.${row.key}.subProjectDetailsUrbanLocalBody`}
+                            rules={{ required: false}}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProjectDetailsUrbanLocalBody", props, register, false, "i18nKey", getCities())
+                                getDropDownDataFromMDMS(t, row, "subProjectDetailsUrbanLocalBody", props, register, "i18nKey", getCities())
                             )}
                         />
                     {renderErrorIfAny(row, "subProjectDetailsUrbanLocalBody")}
@@ -325,6 +331,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                            <Controller
                                 name={`${formFieldName}.${row.key}.subProjectDetailsFilesUpload`}
                                 control={control}
+                                rules={{ required: false}}
                                 render={({ onChange, ref, value = [] }) => {
                                 function getFileStoreData(filesData) {
                                     const numberOfFiles = filesData.length;
