@@ -64,8 +64,9 @@ public class ProjectEnrichmentTest {
         projectRequest.getProjects().get(0).setTenantId("t1");
 
         projectEnrichment.enrichProjectOnCreate(projectRequest, parentProjects);
+        String actualProjectHierarchy = parentProjects.get(0).getId() + "." + projectRequest.getProjects().get(0).getId();
         assertNotNull(projectRequest.getProjects().get(0).getProjectHierarchy());
-        assertEquals(projectRequest.getProjects().get(0).getProjectHierarchy(), "Locality-2.Locality-1");
+        assertEquals(projectRequest.getProjects().get(0).getProjectHierarchy(), actualProjectHierarchy);
     }
 
     @Test

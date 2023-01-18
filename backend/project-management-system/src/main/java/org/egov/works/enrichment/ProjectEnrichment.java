@@ -115,10 +115,10 @@ public class ProjectEnrichment {
             if (StringUtils.isNotBlank(parentProject.getProjectHierarchy())) {
                 parentProjectHierarchy = parentProject.getProjectHierarchy();
             } else {
-                parentProjectHierarchy = parentProject.getAddress().getLocality();
+                parentProjectHierarchy = parentProject.getId();
             }
         }
-        projectRequest.setProjectHierarchy(parentProjectHierarchy + PROJECT_PARENT_HIERARCHY_SEPERATOR + projectRequest.getAddress().getLocality());
+        projectRequest.setProjectHierarchy(parentProjectHierarchy + PROJECT_PARENT_HIERARCHY_SEPERATOR + projectRequest.getId());
     }
 
     /* Enrich Address with id and audit details if address id is empty or if address already present, update last modified by and last modified time */
