@@ -13,7 +13,8 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
 
   return {
     defaultValues : {
-      dateOfProposal : "01-01-2020"
+      dateOfProposal : "01-01-2020",
+      hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"}
     },
     form: [
       { 
@@ -58,7 +59,6 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               optionsKey: "name",
               error: "Required",
               required: false,
-              defaultValue : "YES",
               options: [
                 {
                   code: "COMMON_YES",

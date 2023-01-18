@@ -32,7 +32,7 @@ const whenHasSubProjectsHorizontalNavConfig =  [
 
 const CreateProject = () => {
     const {t} = useTranslation();
-    const [selectedProjectType, setSelectedProjectType] = useState("");
+    const [selectedProjectType, setSelectedProjectType] = useState({name : "COMMON_YES", code : "COMMON_YES"});
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
     const [showNavs, setShowNavs] = useState(false);
     const [subTypeOfWorkOptions, setSubTypeOfWorkOptions] = useState([]);
