@@ -80,7 +80,7 @@ public class ProjectRequestTestBuilder {
     }
 
     public RequestInfo getRequestInfo(){
-        Role role = new Role(1L,"JUNIOR ENGINEER","JUNIOR_ENGINEER","pb.amritsar");
+        Role role = new Role(1L,"JUNIOR ENGINEER","JUNIOR_ENGINEER","t1");
         List<Role> roles = new ArrayList<>();
         roles.add(role);
         User userInfo = User.builder().id(172L).uuid("5ce80dd3-b1c0-42fd-b8f6-a2be456db31c").userName("8070102021").name("test3").mobileNumber("8070102021")
