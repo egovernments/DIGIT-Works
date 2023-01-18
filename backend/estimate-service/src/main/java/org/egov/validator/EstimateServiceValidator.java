@@ -180,7 +180,7 @@ public class EstimateServiceValidator {
         try {
             deptRes = JsonPath.read(mdmsData, jsonPathForWorksDepartment);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
-            sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
+           // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
