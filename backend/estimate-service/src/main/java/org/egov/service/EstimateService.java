@@ -2,8 +2,8 @@ package org.egov.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.producer.Producer;
 import org.egov.config.EstimateServiceConfiguration;
+import org.egov.producer.Producer;
 import org.egov.repository.EstimateRepository;
 import org.egov.validator.EstimateServiceValidator;
 import org.egov.web.models.Estimate;
