@@ -7,14 +7,15 @@ part 'table_model.g.dart';
 class TableDataModel with _$TableDataModel {
   @JsonSerializable(explicitToJson: true)
   const factory TableDataModel({
-    required String name,
-    required String aadhaar,
-    required int monIndex,
-    required int tueIndex,
-    required int wedIndex,
-    required int thursIndex,
-    required int friIndex,
-    required int satIndex,
+    required String? name,
+    required String? aadhaar,
+    String? bankNumber,
+    int? monIndex,
+    int? tueIndex,
+    int? wedIndex,
+    int? thursIndex,
+    int? friIndex,
+    int? satIndex,
   }) = _TableDataModel;
 
   factory TableDataModel.fromJson(Map<String, dynamic> json) =>

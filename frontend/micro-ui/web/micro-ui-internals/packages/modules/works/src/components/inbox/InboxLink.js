@@ -8,10 +8,10 @@ const InboxLinks = ({ parentRoute, businessService }) => {
 
   const allLinks = [
     {
-      text: t("WORKS_CREATE_ESTIMATE"),
-      link: `/works-ui/employee/works/create-estimate`,
+      text: t("ACTION_TEST_CREATE_ESTIMATE"),
+      link: `/${window?.contextPath}/employee/estimate/create-estimate`,
       businessService: "WORKS",
-      roles: ["EST_CREATOR"],
+      roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
     },
     {
       text: t("WORKS_SEARCH_EST"),

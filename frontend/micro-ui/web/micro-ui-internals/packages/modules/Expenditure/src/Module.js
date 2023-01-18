@@ -27,7 +27,7 @@ const ExpenditureModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
     ExpenditureModule,
     billInboxFilter,
-    ExpenditureCard,
+    ExpCard:ExpenditureCard,
     ViewBillsMenu,
     ViewBills
 };

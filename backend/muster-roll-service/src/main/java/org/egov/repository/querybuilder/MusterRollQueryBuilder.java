@@ -10,9 +10,9 @@ import java.util.List;
 @Component
 public class MusterRollQueryBuilder {
 
-    private static final String FETCH_MUSTER_ROLL_QUERY = "SELECT muster.id,muster.tenantid,muster.musterrollnumber,muster.attendanceregisterid,muster.status,muster.musterrollstatus,muster.startdate,muster.enddate,muster.createdby,muster.lastmodifiedby,muster.createdtime,muster.lastmodifiedtime,muster.additionaldetails,"+
+    private static final String FETCH_MUSTER_ROLL_QUERY = "SELECT muster.id,muster.tenant_id,muster.musterroll_number,muster.attendance_register_id,muster.status,muster.musterroll_status,muster.start_date,muster.end_date,muster.createdby,muster.lastmodifiedby,muster.createdtime,muster.lastmodifiedtime,muster.additionaldetails,"+
             "ind.id AS summaryId,ind.muster_roll_id AS indMusterId,ind.individual_id AS IndividualId,ind.total_attendance AS totalAttendance,ind.additionaldetails AS indAddlDetails,ind.createdby AS indCreatedBy,ind.lastmodifiedby AS indModifiedBy,ind.createdtime AS indCreatedTime,ind.lastmodifiedtime AS indModifiedTime,"+
-            "attn.id AS attendanceId,attn.attendance_summary_id AS attnSummaryId,attn.date_of_attendance AS AttnDate,attn.attendance AS attendance,attn.additionaldetails AS attnAddlDetails,attn.createdby AS attnCreatedBy,attn.lastmodifiedby AS attnModifiedBy,attn.createdtime AS attnCreatedTime,attn.lastmodifiedtime AS attnModifiedTime "+
+            "attn.id AS attendanceId,attn.attendance_summary_id AS attnSummaryId,attn.date_of_attendance AS AttnDate,attn.attendance_value AS attendance,attn.additionaldetails AS attnAddlDetails,attn.createdby AS attnCreatedBy,attn.lastmodifiedby AS attnModifiedBy,attn.createdtime AS attnCreatedTime,attn.lastmodifiedtime AS attnModifiedTime "+
             "FROM eg_wms_muster_roll AS muster " +
             "LEFT JOIN " +
             "eg_wms_attendance_summary AS ind " +
@@ -34,31 +34,31 @@ public class MusterRollQueryBuilder {
 
         if (StringUtils.isNotBlank(searchCriteria.getTenantId())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" muster.tenantid=? ");
-            preparedStmtList.add(searchCriteria.getTenantId());
+            queryBuilder.append(" muster.tenant_id LIKE ? ");
+            preparedStmtList.add(searchCriteria.getTenantId()+"%");
         }
 
         if (StringUtils.isNotBlank(searchCriteria.getMusterRollNumber())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" muster.musterrollnumber=? ");
+            queryBuilder.append(" muster.musterroll_number=? ");
             preparedStmtList.add(searchCriteria.getMusterRollNumber());
         }
 
         if (StringUtils.isNotBlank(searchCriteria.getRegisterId())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" muster.attendanceregisterid=? ");
+            queryBuilder.append(" muster.attendance_register_id=? ");
             preparedStmtList.add(searchCriteria.getRegisterId());
         }
 
         if (searchCriteria.getFromDate() != null) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" muster.startdate=? ");
+            queryBuilder.append(" muster.start_date=? ");
             preparedStmtList.add(searchCriteria.getFromDate());
         }
 
         if (searchCriteria.getToDate() != null) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" muster.enddate=? ");
+            queryBuilder.append(" muster.end_date=? ");
             preparedStmtList.add(searchCriteria.getToDate());
         }
 
@@ -70,7 +70,7 @@ public class MusterRollQueryBuilder {
 
         if (StringUtils.isNotBlank(searchCriteria.getMusterRollStatus())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" muster.musterrollstatus=? ");
+            queryBuilder.append(" muster.musterroll_status=? ");
             preparedStmtList.add(searchCriteria.getMusterRollStatus());
         }
 

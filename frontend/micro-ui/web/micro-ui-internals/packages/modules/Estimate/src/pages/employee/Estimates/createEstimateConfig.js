@@ -1,5 +1,7 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+
+
+const allowedFileTypes = /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i;
 
 export const createEstimateConfig = (t) => {
 
@@ -81,7 +83,7 @@ export const createEstimateConfig = (t) => {
                         key: "document",
                         type: "multiupload",
                         disable: false,
-                        populators: { name: "uploads" },
+                        populators: { name: "uploads", maxFilesAllowed: 5, hintText: t("WORKS_DOC_UPLOAD_HINT"), allowedMaxSizeInMB: 5, allowedFileTypesRegex: allowedFileTypes, showHintBelow:true },
                     },
                 ],
             },

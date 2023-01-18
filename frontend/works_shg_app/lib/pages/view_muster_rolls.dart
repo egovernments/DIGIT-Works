@@ -17,17 +17,19 @@ class ViewMusterRollsPage extends StatelessWidget {
         BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
             builder: (context, state) {
       if (!state.loading && state.musterRollsModel != null) {
-        final List<Map<String, dynamic>> musterList =
-            state.musterRollsModel!.musterRoll!
-                .map((e) => {
-                      "Name of the Work": e.id,
-                      "WIN Code": e.registerId,
-                      "Muster Roll ID": e.musterRollNumber,
-                      "Dates":
-                          '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                      "Status": e.status
-                    })
-                .toList();
+        final List<Map<String, dynamic>> musterList = state
+            .musterRollsModel!.musterRoll!
+            .map((e) => {
+                  i18.attendanceMgmt.nameOfWork:
+                      e.musterAdditionalDetails?.attendanceRegisterName ?? 'NA',
+                  i18.attendanceMgmt.winCode:
+                      e.musterAdditionalDetails?.attendanceRegisterNo ?? 'NA',
+                  i18.attendanceMgmt.musterRollId: e.musterRollNumber,
+                  i18.common.dates:
+                      '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
+                  i18.common.status: e.status
+                })
+            .toList();
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const Back(),
           Padding(
@@ -39,7 +41,7 @@ class ViewMusterRollsPage extends StatelessWidget {
             ),
           ),
           musterList.isEmpty
-              ? Text('No Muster Rolls Found')
+              ? const Text('No Muster Rolls Found')
               : WorkDetailsCard(
                   musterList,
                   isSHGInbox: true,

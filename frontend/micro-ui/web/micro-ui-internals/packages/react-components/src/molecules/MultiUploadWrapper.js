@@ -14,7 +14,7 @@ const fileValidationStatus = (file, regex, maxSize, t) => {
     if (!file) return;
 
     if (!regex.test(file.type) && (file.size / 1024 / 1024) > maxSize) {
-        status.valid = false; status.error = t(`NOT_SUPPORTED_FILE_TYPE_AND_FILE_SIZE_EXCEEDED`);
+        status.valid = false; status.error = t(`NOT_SUPPORTED_FILE_TYPE_AND_FILE_SIZE_EXCEEDED_5MB`);
     }
 
     if (!regex.test(file.type)) {
@@ -22,7 +22,7 @@ const fileValidationStatus = (file, regex, maxSize, t) => {
     }
 
     if ((file.size / 1024 / 1024) > maxSize) {
-        status.valid = false; status.error = t(`FILE_SIZE_EXCEEDED`);
+        status.valid = false; status.error = t(`FILE_SIZE_EXCEEDED_5MB`);
     }
 
     return status;
@@ -30,9 +30,16 @@ const fileValidationStatus = (file, regex, maxSize, t) => {
 const checkIfAllValidFiles = (files, regex, maxSize, t, maxFilesAllowed, state) => {
     if (!files.length || !regex || !maxSize) return [{}, false];
     
+    // added another condition files.length > 0 , for when  user uploads files more than maxFilesAllowed in one go the
     const uploadedFiles = state.length + 1
-    if ( maxFilesAllowed && uploadedFiles > maxFilesAllowed) return [[{ valid: false, name: files[0]?.name?.substring(0, 15), error: t(`FILE_LIMIT_EXCEEDED`)}],true]
+    if ( maxFilesAllowed && (uploadedFiles  > maxFilesAllowed || files.length > maxFilesAllowed)) return [[{ valid: false, name: files[0]?.name?.substring(0, 15), error: t(`FILE_LIMIT_EXCEEDED`)}],true]
    
+    // Adding a check for fileSize > maxSize
+    // const maxSizeInBytes = maxSize * 1000000
+    // if(files?.some(file => file.size > maxSizeInBytes)){
+    //     return [[{ valid: false, name: "", error: t(`FILE_SIZE_EXCEEDED_5MB`) }], true]
+    // }
+
     const messages = [];
     let isInValidGroup = false;
     for (let file of files) {
@@ -85,7 +92,7 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
 
         if (!files.length) return;
         const [validationMsg, error] = checkIfAllValidFiles(files, allowedFileTypesRegex, allowedMaxSizeInMB, t, maxFilesAllowed, state);
-
+        
         if (!error) {
             try {
                 const { data: { files: fileStoreIds } = {} } = await Digit.UploadServices.MultipleFilesStorage(module, e.target.files, tenantId)
