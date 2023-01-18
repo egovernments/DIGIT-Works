@@ -806,9 +806,18 @@ input[type="number"] {
 
 .sub-project-table-wrapper {
   overflow-x: scroll;
+  .project-details-table {
+    position: relative;
+    .sub-projects-details-field-mt {
+      margin-top: 1.5rem;
+    }    
+    .projects-subProject-details-error {
+      width : 100%;
+      position : absolute;
+      margin-top: 3px;
+      &.dropdown-field {
+        margin-top: -21px;
+      }
+    }
+  }
 }
-
-.sub-projects-details-field-mt {
-  margin-top: 1.5rem;
-}
-

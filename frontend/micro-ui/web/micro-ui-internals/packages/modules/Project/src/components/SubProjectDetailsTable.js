@@ -107,7 +107,10 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
     }
 
     //TODOy
-    const getStyles = () => {
+    const getStyles = (type) => {
+        if(type === "upload") {
+            return { "minWidth": "20rem" };
+        }
         return { "minWidth": "14rem" };
     }
 
@@ -164,12 +167,12 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         onChange(numberOfFiles>0?filesData:[]);
       }
 
-    const renderErrorIfAny = (row, name) => {
+    const renderErrorIfAny = (row, name, isErrorForDropdown=false) => {
         return <>
             {errors && errors?.[formFieldName]?.[row.key]?.[name]?.type === "pattern" && (
-                <CardLabelError style={{width : '100%', position : 'absolute', marginTop: '3px'}}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
             {errors && errors?.[formFieldName]?.[row.key]?.[name]?.type === "required" && (
-                <CardLabelError style={{width : '100%', position : 'absolute', marginTop: '3px'}}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
         </>
     }
 
@@ -206,7 +209,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                 }})
                             )}
                       />
-                    {renderErrorIfAny(row, "subProjectDetailsTypeOfWork")}
+                    {renderErrorIfAny(row, "subProjectDetailsTypeOfWork", true)}
                     </div>
                 </td>  
                 <td style={getStyles()}>
@@ -219,7 +222,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                             getDropDownDataFromMDMS(t, row, "subProjectDetailsSubTypeOfWork", props, register, "name",  subProjectSubTypeOfWorkOptions)
                         )}
                       />
-                    {renderErrorIfAny(row, "subProjectDetailsSubTypeOfWork")}
+                    {renderErrorIfAny(row, "subProjectDetailsSubTypeOfWork", true)}
                     </div>
                 </td>
                 <td style={getStyles()}>
@@ -237,7 +240,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                             }})
                         )}
                       />
-                    {renderErrorIfAny(row, "subProjectDetailsNatureOfWork")}
+                    {renderErrorIfAny(row, "subProjectDetailsNatureOfWork", true)}
                     </div>
                 </td>
                 <td style={getStyles()}>
@@ -279,7 +282,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                             }})
                         )}
                       />
-                    {renderErrorIfAny(row, "subProjectDetailsModeOfEntrustment")}
+                    {renderErrorIfAny(row, "subProjectDetailsModeOfEntrustment", true)}
                     </div>
                 </td>   
                 <td style={getStyles()}>
@@ -292,7 +295,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                 getDropDownDataFromMDMS(t, row, "subProjectDetailsWard", props, register, "i18nKey", wardsAndLocalities?.wards)
                             )}
                         />
-                    {renderErrorIfAny(row, "subProjectDetailsWard")}
+                    {renderErrorIfAny(row, "subProjectDetailsWard", true)}
                     </div>
                 </td> 
                 <td style={getStyles()}>
@@ -304,7 +307,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                 getDropDownDataFromMDMS(t, row, "subProjectDetailsLocality", props, register, "i18nKey", subProjectDetailsLocalities)
                             )}
                         />
-                    {renderErrorIfAny(row, "subProjectDetailsLocality")}
+                    {renderErrorIfAny(row, "subProjectDetailsLocality", true)}
                     </div>
                 </td>  
                 <td style={getStyles()}>
@@ -317,7 +320,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                 getDropDownDataFromMDMS(t, row, "subProjectDetailsUrbanLocalBody", props, register, "i18nKey", getCities())
                             )}
                         />
-                    {renderErrorIfAny(row, "subProjectDetailsUrbanLocalBody")}
+                    {renderErrorIfAny(row, "subProjectDetailsUrbanLocalBody", true)}
                     </div>
                 </td> 
                 <td style={getStyles()} >
@@ -326,7 +329,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         {renderErrorIfAny(row, "subProjectDetailsGeoLocation")}
                     </div>
                 </td>
-                <td style={getStyles()}>
+                <td style={getStyles("upload")}>
                     <div className='field' style={{ "width": "100%" }} >
                            <Controller
                                 name={`${formFieldName}.${row.key}.subProjectDetailsFilesUpload`}
@@ -376,7 +379,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
 
     return (
         <div className="sub-project-table-wrapper">
-            <table className='table reports-table sub-work-table'>
+            <table className='table reports-table sub-work-table project-details-table'>
             <thead>
                 <tr>{renderHeader()}</tr>
             </thead>
