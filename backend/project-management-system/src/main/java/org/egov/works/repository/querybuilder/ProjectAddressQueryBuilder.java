@@ -101,7 +101,7 @@ public class ProjectAddressQueryBuilder {
 
             if (lastChangedSince != null && lastChangedSince != 0) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" ( prj.created_time > ? OR prj.last_modified_time > ? )");
+                queryBuilder.append(" ( prj.created_time >= ? OR prj.last_modified_time >= ? )");
                 preparedStmtList.add(lastChangedSince);
                 preparedStmtList.add(lastChangedSince);
             }
