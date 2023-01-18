@@ -221,7 +221,7 @@ export const FormComposer = (props) => {
                   module="works"
                   tenantId={Digit.ULBService.getCurrentTenantId()}
                   getFormState={getFileStoreData}
-                  showHintBelow={true}
+                  showHintBelow={populators?.showHintBelow ? true : false}
                   setuploadedstate={value}
                   allowedFileTypesRegex={populators.allowedFileTypes}
                   allowedMaxSizeInMB={populators.allowedMaxSizeInMB}
@@ -570,8 +570,7 @@ export const FormComposer = (props) => {
             {props.secondaryActionLabel}
           </div>)}
       </React.Fragment>  
-    ),    
-    [props?.config]
+    )
   );
 
   return (

@@ -46,6 +46,8 @@ public class MusterRollValidator {
      * @param musterRollRequest
      */
     public void validateEstimateMusterRoll(MusterRollRequest musterRollRequest){
+        log.info("MusterRollValidator::validateEstimateMusterRoll");
+
         Map<String, String> errorMap = new HashMap<>();
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
@@ -69,6 +71,8 @@ public class MusterRollValidator {
      * @param musterRollRequest
      */
     public void validateCreateMusterRoll(MusterRollRequest musterRollRequest) {
+        log.info("MusterRollValidator::validateCreateMusterRoll");
+
         Map<String, String> errorMap = new HashMap<>();
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
@@ -94,6 +98,8 @@ public class MusterRollValidator {
      * @param musterRollRequest
      */
     public void validateUpdateMusterRoll(MusterRollRequest musterRollRequest) {
+        log.info("MusterRollValidator::validateUpdateMusterRoll");
+
         Map<String, String> errorMap = new HashMap<>();
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
@@ -120,8 +126,10 @@ public class MusterRollValidator {
      * @param searchCriteria
      */
     public void validateSearchMuster(RequestInfoWrapper requestInfoWrapper, MusterRollSearchCriteria searchCriteria) {
+        log.info("MusterRollValidator::validateSearchMuster");
+
         if (searchCriteria == null || requestInfoWrapper == null || requestInfoWrapper.getRequestInfo() == null) {
-            throw new CustomException("MUSTER_ROLL_SEARCH_CRITERIA_REQUEST", " Muster roll search criteria request is mandatory");
+            throw new CustomException("MUSTER_ROLL_SEARCH_CRITERIA_REQUEST", "Muster roll search criteria request is mandatory");
         }
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
@@ -163,9 +171,11 @@ public class MusterRollValidator {
 
         log.info("MusterRollValidator::validateCreateMusterRoll::startDate in epoch::"+musterRoll.getStartDate());
         log.info("MusterRollValidator::validateCreateMusterRoll::startDate::"+startDate);
+        log.info("MusterRollValidator::validateCreateMusterRoll::endDate in epoch from request::"+musterRoll.getEndDate());
 
-        //Set the endDate as SUNDAY
+        //Override the endDate as SUNDAY
         LocalDate endDate = startDate.plusDays(6);
+        log.info("MusterRollValidator::validateCreateMusterRoll:: calculated endDate::"+endDate);
         musterRoll.setEndDate(new BigDecimal(endDate.atStartOfDay(ZoneId.of(ZONE)).toInstant().toEpochMilli()));
 
     }
@@ -181,46 +191,6 @@ public class MusterRollValidator {
             throw new CustomException("MUSTER_ROLL_ID","MusterRollId is mandatory");
         }
 
-        if (workflow.getAction().equalsIgnoreCase("VERIFY")) {
-            List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
-            //verify eligible role
-            if (!isVerifyEligibleRole(requestInfo)) {
-                throw new CustomException("VERIFY_INELIGIBLE","User ineligible for Verify action");
-            }
-            if (CollectionUtils.isEmpty(individualEntries)) {
-                throw new CustomException("INDIVIDUAL_ENTRY","IndividualEntry is mandatory");
-            }
-            for (IndividualEntry individualEntry : individualEntries) {
-                if (individualEntry.getId() == null) {
-                    throw new CustomException("INDIVIDUAL_ENTRY_ID","Id for IndividualEntry is mandatory");
-                }
-                //totalAttendance is required for 'VERIFY'
-                if (individualEntry.getTotalAttendance() == null) {
-                    throw new CustomException("INDIVIDUAL_ENTRY_TOTAL_ATTENDANCE","Total Attendance for IndividualEntry is mandatory");
-                }
-            }
-
-        }
-
-    }
-
-    /**
-     * Validate the role for VERIFY ACTION
-     * @param requestInfo
-     */
-    private boolean isVerifyEligibleRole(RequestInfo requestInfo) {
-        User userInfo = requestInfo.getUserInfo();
-        boolean rolePresent = false;
-        if (userInfo.getRoles() != null && !userInfo.getRoles().isEmpty()) {
-            List<org.egov.common.contract.request.Role> roles = userInfo.getRoles();
-            List<String> verifyEligibleRole = Arrays.asList(VERIFY_ELIGIBLE_ROLES.split(","));
-
-            rolePresent = roles.stream().anyMatch(role -> {
-                return verifyEligibleRole.contains(role.getCode());
-            });
-
-        }
-        return rolePresent;
     }
 
     private void validateEstimateMusterRoll(MusterRoll musterRoll, Map<String, String> errorMap) {
@@ -242,7 +212,7 @@ public class MusterRollValidator {
         }
 
         log.info("MusterRollValidator::validateEstimateMusterRoll::startDate in epoch::"+musterRoll.getStartDate());
-        log.info("MusterRollValidator::validateEstimateMusterRoll::endDate"+musterRoll.getEndDate());
+        log.info("MusterRollValidator::validateEstimateMusterRoll::endDate in epoch::"+musterRoll.getEndDate());
 
     }
 
@@ -252,12 +222,6 @@ public class MusterRollValidator {
         }
         if (StringUtils.isBlank(workflow.getAction())) {
             errorMap.put("WORK_FLOW.ACTION", "Work flow's action is mandatory");
-        }
-
-        if (StringUtils.isNotBlank(workflow.getAction()) && !(ACTION_REJECT.equalsIgnoreCase(workflow.getAction())
-                || ACTION_APPROVE.equalsIgnoreCase(workflow.getAction()) || CLOSEAFTERREJECTION.equalsIgnoreCase(workflow.getAction()))
-                && (workflow.getAssignees() == null || workflow.getAssignees().isEmpty() || workflow.getAssignees().size() != 1)) {
-            throw new CustomException("WORK_FLOW.ASSIGNEE", "Work flow's assignee is mandatory");
         }
     }
 
@@ -270,11 +234,12 @@ public class MusterRollValidator {
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
 
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("MusterRollValidator::validateMDMSData::"+e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
         }
 
         if (CollectionUtils.isEmpty(tenantRes)) {
+            log.error("The tenant: " + musterRoll.getTenantId() + " is not present in MDMS");
             errorMap.put("INVALID_TENANT", "The tenant: " + musterRoll.getTenantId() + " is not present in MDMS");
         }
 

@@ -27,7 +27,7 @@ const componentsToRegister = {
     ContractsModule,
     contractInboxFilter,
     SearchContractApplication,
-    ContractsCard
+    ContractCard:ContractsCard
 };
 
 export const initContractsComponents = () => {

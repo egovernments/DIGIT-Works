@@ -1,72 +1,147 @@
 package org.egov.web.controllers;
 
-import org.junit.Test;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.Main;
+import org.egov.TestConfiguration;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
+import org.egov.helper.MusterRollRequestBuilderTest;
+import org.egov.service.MusterRollService;
+import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ErrorRes;
+import org.egov.util.ResponseInfoCreator;
+import org.egov.web.models.MusterRollRequest;
+import org.egov.web.models.MusterRollResponse;
+import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.egov.TestConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
 * API tests for MusterRollApiController
 */
-@Ignore
-@RunWith(SpringRunner.class)
-@WebMvcTest(MusterRollApiController.class)
-@Import(TestConfiguration.class)
+
+
+//@WebMvcTest(MusterRollApiController.class)
+@Import({TestConfiguration.class})
+@SpringBootTest(classes=Main.class)
+@AutoConfigureMockMvc
 public class MusterRollApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @MockBean
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private MusterRollService musterRollService;
+
+    @MockBean
+    private ResponseInfoCreator responseInfoCreator;
+
+
+    @Test
+    public void musterRollV1EstimatePostSuccess() throws Exception {
+
+        MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
+        ResponseInfo responseInfo = MusterRollRequestBuilderTest.builder().getResponseInfo_Success();
+        when(musterRollService.estimateMusterRoll(any(MusterRollRequest.class))).thenReturn(musterRollRequest);
+        when(responseInfoCreator.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
+                .thenReturn(responseInfo);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(musterRollRequest);
+        MvcResult result = mockMvc.perform(post("/v1/_estimate").contentType(MediaType
+                        .APPLICATION_JSON_UTF8).content(content))
+                .andExpect(status().isOk()).andReturn();
+        String responseStr = result.getResponse().getContentAsString();
+        MusterRollResponse response = objectMapper.readValue(responseStr,
+                MusterRollResponse.class);
+        assertEquals(1, response.getMusterRolls().size());
+        assertEquals("successful", response.getResponseInfo().getStatus());
+    }
+
+    @Test
+    public void musterRollV1EstimatePostFailure() throws Exception {
+        MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateException();
+        ResponseInfo responseInfo = MusterRollRequestBuilderTest.builder().getResponseInfo_Success();
+        when(musterRollService.estimateMusterRoll(any(MusterRollRequest.class))).thenThrow(new CustomException("END_DATE_EMPTY","EndDate is mandatory"));
+        when(responseInfoCreator.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
+                .thenReturn(responseInfo);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(musterRollRequest);
+        MvcResult result = mockMvc.perform(post("/v1/_estimate").contentType(MediaType
+                        .APPLICATION_JSON_UTF8).content(content))
+                .andExpect(status().isBadRequest()).andReturn();
+        String responseStr = result.getResponse().getContentAsString();
+        ErrorRes response  = objectMapper.readValue(responseStr,
+                ErrorRes.class);
+
+        assertEquals(1, response.getErrors().size());
+        assertEquals("END_DATE_EMPTY",response.getErrors().get(0).getCode());
+    }
+
     @Test
     public void musterRollV1CreatePostSuccess() throws Exception {
-        mockMvc.perform(post("/muster-roll/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
+
+        MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
+        ResponseInfo responseInfo = MusterRollRequestBuilderTest.builder().getResponseInfo_Success();
+        when(musterRollService.createMusterRoll(any(MusterRollRequest.class))).thenReturn(musterRollRequest);
+        when(responseInfoCreator.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
+                .thenReturn(responseInfo);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(musterRollRequest);
+        MvcResult result = mockMvc.perform(post("/v1/_create").contentType(MediaType
+        .APPLICATION_JSON_UTF8).content(content))
+                .andExpect(status().isOk()).andReturn();
+        String responseStr = result.getResponse().getContentAsString();
+        MusterRollResponse response = objectMapper.readValue(responseStr,
+                MusterRollResponse.class);
+
+        assertEquals(1, response.getMusterRolls().size());
+        assertEquals("successful", response.getResponseInfo().getStatus());
     }
 
     @Test
     public void musterRollV1CreatePostFailure() throws Exception {
-        mockMvc.perform(post("/muster-roll/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
+        MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateException();
+        ResponseInfo responseInfo = MusterRollRequestBuilderTest.builder().getResponseInfo_Success();
+        when(musterRollService.createMusterRoll(any(MusterRollRequest.class))).thenThrow(new CustomException("DUPLICATE_MUSTER_ROLL","Muster roll already exists for this register and date"));
+        when(responseInfoCreator.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
+                .thenReturn(responseInfo);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(musterRollRequest);
+        MvcResult result = mockMvc.perform(post("/v1/_create").contentType(MediaType
+                        .APPLICATION_JSON_UTF8).content(content))
+                .andExpect(status().isBadRequest()).andReturn();
+        String responseStr = result.getResponse().getContentAsString();
+        ErrorRes response  = objectMapper.readValue(responseStr,
+                ErrorRes.class);
 
-    @Test
-    public void musterRollV1SearchPostSuccess() throws Exception {
-        mockMvc.perform(post("/muster-roll/v1/_search").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
-    }
-
-    @Test
-    public void musterRollV1SearchPostFailure() throws Exception {
-        mockMvc.perform(post("/muster-roll/v1/_search").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void musterRollV1UpdatePostSuccess() throws Exception {
-        mockMvc.perform(post("/muster-roll/v1/_update").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
-    }
-
-    @Test
-    public void musterRollV1UpdatePostFailure() throws Exception {
-        mockMvc.perform(post("/muster-roll/v1/_update").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
+        assertEquals(1, response.getErrors().size());
+        assertEquals("DUPLICATE_MUSTER_ROLL",response.getErrors().get(0).getCode());
     }
 
 }

@@ -28,7 +28,7 @@ const EstimateModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
     EstimateModule,
-    EstimateCard,
+    EstimatesCard:EstimateCard,
     ViewProject,
     EstimateTemplate,
     SOR,

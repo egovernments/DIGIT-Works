@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/models/attendance/attendance_registry_model.dart';
 import 'package:works_shg_app/models/table/table_model.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/molecules/digit_table.dart' as shg_app;
@@ -158,14 +159,19 @@ class AttendanceRegisterTablePage extends StatelessWidget {
 
   List<TableHeader> get headerList => [
         TableHeader(
-          'Name',
+          AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+              .translate(i18.common.nameLabel),
           apiKey: 'name',
         ),
         TableHeader(
-          'Aadhaar Number',
+          AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+              .translate(i18.common.aadhaarNumber),
           apiKey: 'aadhaarNumber',
         ),
-        TableHeader('Bank Account Number', apiKey: 'bankNumber')
+        TableHeader(
+            AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+                .translate(i18.common.bankAccountNumber),
+            apiKey: 'bankNumber')
       ];
 
   TableDataRow getAttendanceRow(TableDataModel tableDataModel) {

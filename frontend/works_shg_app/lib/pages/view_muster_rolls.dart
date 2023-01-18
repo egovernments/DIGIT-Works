@@ -20,14 +20,14 @@ class ViewMusterRollsPage extends StatelessWidget {
         final List<Map<String, dynamic>> musterList = state
             .musterRollsModel!.musterRoll!
             .map((e) => {
-                  "Name of the Work":
-                      e.musterAdditionalDetails?.attendanceRegisterName ?? '',
-                  "WIN Code":
-                      e.musterAdditionalDetails?.attendanceRegisterNo ?? '',
-                  "Muster Roll ID": e.musterRollNumber,
-                  "Dates":
+                  i18.attendanceMgmt.nameOfWork:
+                      e.musterAdditionalDetails?.attendanceRegisterName ?? 'NA',
+                  i18.attendanceMgmt.winCode:
+                      e.musterAdditionalDetails?.attendanceRegisterNo ?? 'NA',
+                  i18.attendanceMgmt.musterRollId: e.musterRollNumber,
+                  i18.common.dates:
                       '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                  "Status": e.status
+                  i18.common.status: e.status
                 })
             .toList();
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

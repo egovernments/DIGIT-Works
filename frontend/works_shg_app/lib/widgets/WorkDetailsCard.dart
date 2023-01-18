@@ -70,7 +70,8 @@ class WorkDetailsCard extends StatelessWidget {
     var labelList = <Widget>[];
     for (int j = 0; j < cardDetails.length; j++) {
       labelList.add(getItemWidget(context,
-          title: cardDetails.keys.elementAt(j).toString(),
+          title: AppLocalizations.of(context)
+              .translate(cardDetails.keys.elementAt(j).toString()),
           description: cardDetails.values.elementAt(j).toString()));
     }
     if (isWorkOrderInbox) {

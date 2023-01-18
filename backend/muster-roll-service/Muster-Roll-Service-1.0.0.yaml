@@ -206,7 +206,7 @@ components:
           description: It is the computed attendance value based on the entry and exit events fetched from the Attendance service. The muster roll service will still allow the user to override the value of this attendance.
         additionalDetails:
           type: object
-          description: This can be used to store skillset that is a requirement for Mukta. This is an updatable field from the user's input.
+          description: This is an updatable field from the user's input.
 
     AttendanceLog:
       type: object

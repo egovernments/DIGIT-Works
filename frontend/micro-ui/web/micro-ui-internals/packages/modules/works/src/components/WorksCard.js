@@ -1,4 +1,4 @@
-import { EmployeeModuleCard, ArrowRightInbox, WSICon } from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, ArrowRightInbox, WorksMgmtIcon } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -19,67 +19,78 @@ const WorksCard = () => {
   // links = links.filter((link) => (link.roles ? checkForEmployee(link.roles) : true));
 
   const propsForModuleCard = {
-    Icon: <WSICon />,
+    Icon: <WorksMgmtIcon />,
     moduleName: t("WORKS"),
     kpis: [
       {
         //Pass Count Value from Inbox API here
-        count: 21,
+        count: 33,
         label: t("INBOX"),
         link: `/${window?.contextPath}/employee/works/inbox`,
       },
     ],
     links: [
       {
-        label: t("WORKS_ESTIMATES"),
-        link: `/${window?.contextPath}/employee/works/inbox`,
+        label: t("ACTION_TEST_PROJECTS"),
+        link: `/${window?.contextPath}/employee/project/create-project`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
       },
       {
-        label: t("WORKS_LOI"),
-        link: `/${window?.contextPath}/employee/works/loiinbox`,
+        label: t("WORKS_ESTIMATES"),
+        link: `/${window?.contextPath}/employee/works/inbox`,
+        roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
+        count: 1,
+      },
+      {
+        label: t("WORKS_CONTRACTS"),
+        link: `/${window?.contextPath}/employee/contracts/inbox`,
         roles: ["LOI CHECKER", "LOI APPROVER", "LOI CREATOR", "EMPLOYEE"],
+        count: 1,
       },
+      // {
+      //   label: t("WORKS_MILESSTONES"),
+      //   link: `/${window?.contextPath}/employee`,
+      //   roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+      // },
+      // {
+      //   label: t("WORKS_PAY_CALENDAR"),
+      //   link: `/${window?.contextPath}/employee`,
+      //   roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+      // },
+      // {
+      //   label: t("WORKS_KICKOFF_CHECKLIST"),
+      //   link: `/${window?.contextPath}/employee/works/checklist`,
+      //   roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+      //   count: 21,
+      // },
+      // {
+      //   label: t("WORKS_CONTRACTOR_BILL"),
+      //   link: `/${window?.contextPath}/employee/works/create-contractor`,
+      //   roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+      //   count:15
+      // },
+
       {
-        label: t("WORKS_MILESSTONES"),
-        link: `/${window?.contextPath}/employee`,
+        label: t("ACTION_TEST_BILLS"),
+        link: `/${window?.contextPath}/employee/expenditure/billinbox`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
-      },
-      {
-        label: t("WORKS_PAY_CALENDAR"),
-        link: `/${window?.contextPath}/employee`,
-        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+        count: 10,
       },
       {
         label: t("WORKS_KICKOFF_CHECKLIST"),
-        link: `/${window?.contextPath}/employee/works/checklist`,
+        link: `/${window?.contextPath}/employee/works/checklistinbox`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
-        count: 21,
-      },
-      {
-        label: t("WORKS_CONTRACTOR_BILL"),
-        link: `/${window?.contextPath}/employee/works/create-contractor`,
-        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
-      },
-      {
-        label: t("WORKS_REPORTS"),
-        link: `/${window?.contextPath}/employee/`,
-        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+        count: 5,
       },
       {
         label: t("WORKS_MASTERS"),
-        link: `/${window?.contextPath}/employee/works/search-organization`,
+        link: `/${window?.contextPath}/employee/masters/search-organization`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {
-        label: t("WORKS_DASHBOARD"),
-        link: `/${window?.contextPath}/employee/`,
-        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
-      },
-      {
-        label: t("WORKS_CHECKLIST_INBOX"),
-        link: `/${window?.contextPath}/employee/works/checklistinbox`,
-        roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+        label: t("WORKS_PROJECT_CLOSURE"),
+        link: `/${window?.contextPath}/employee/works/projectclosure`,
+        roles: [],
       },
     ],
   };
