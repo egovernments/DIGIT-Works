@@ -2,8 +2,6 @@ package org.egov.enrichment;
 
 import digit.models.coremodels.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.config.AttendanceServiceConfiguration;
-import org.egov.service.AttendanceRegisterService;
 import org.egov.util.AttendanceServiceUtil;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;

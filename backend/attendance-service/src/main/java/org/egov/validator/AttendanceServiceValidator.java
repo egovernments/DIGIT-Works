@@ -181,6 +181,7 @@ public class AttendanceServiceValidator {
         //check if all register ids from request exist in db
         for (String idFromRequest : uniqueRegisterIdsFromRequest) {
             if (!uniqueRegisterIdsFromDB.contains(idFromRequest)) {
+                log.error("Attendance Registers with register id : " + idFromRequest + " does not exist for tenantId");
                 throw new CustomException("REGISTER_ID", "Attendance Registers with register id : " + idFromRequest + " does not exist for tenantId");
             }
         }

@@ -48,10 +48,12 @@ public class StaffServiceValidator {
         Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
 
         //check tenant Id
+        log.info("validate tenantId with MDMS");
         validateMDMSData(tenantId, mdmsData, errorMap);
 
 
         //validate request-info
+        log.info("validate request info coming from api request");
         validateRequestInfo(requestInfo, errorMap);
 
         if (!errorMap.isEmpty())
@@ -60,12 +62,15 @@ public class StaffServiceValidator {
 
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
         if (requestInfo == null) {
+            log.error("Request info is null");
             throw new CustomException("REQUEST_INFO", "Request info is mandatory");
         }
         if (requestInfo.getUserInfo() == null) {
+            log.error("UserInfo is null");
             throw new CustomException("USERINFO", "UserInfo is mandatory");
         }
         if (requestInfo.getUserInfo() != null && StringUtils.isBlank(requestInfo.getUserInfo().getUuid())) {
+            log.error("User's UUID field is empty");
             throw new CustomException("USERINFO_UUID", "User's UUID is mandatory");
         }
     }
@@ -75,6 +80,7 @@ public class StaffServiceValidator {
         List<StaffPermission> staffPermissionList = staffPermissionRequest.getStaff();
 
         if (ObjectUtils.isEmpty(staffPermissionList) || ObjectUtils.isEmpty(staffPermissionList.get(0))) {
+            log.error("Staff Object is empty in staff request");
             throw new CustomException("STAFF", "Staff is mandatory");
         }
 
@@ -84,22 +90,27 @@ public class StaffServiceValidator {
             //validate request parameters for each staff object
 
             if (ObjectUtils.isEmpty(staffPermission)) {
+                log.error("Staff Object is empty in staff request");
                 throw new CustomException("STAFF", "Staff is mandatory");
             }
             if (StringUtils.isBlank(staffPermission.getRegisterId())) {
+                log.error("Register id is empty in staff request");
                 throw new CustomException("REGISTER_ID", "Register id is mandatory");
             }
 
             if (StringUtils.isBlank(staffPermission.getUserId())) {
+                log.error("User id is empty in staff request");
                 throw new CustomException("USER_ID", "User id is mandatory");
             }
 
             if (StringUtils.isBlank(staffPermission.getTenantId())) {
+                log.error("Tenant id is empty in staff request");
                 throw new CustomException("TENANT_ID", "Tenant id is mandatory");
             }
 
             //validate if all staff in the list have the same tenant id
             if (!staffPermission.getTenantId().equals(baseTenantId)) {
+                log.error("All staff objects do not have the same tenant id");
                 throw new CustomException("TENANT_ID", "All Staff to be enrolled or de enrolled must have the same tenant id. Please raise new request for different tenant id");
             }
 
@@ -115,6 +126,7 @@ public class StaffServiceValidator {
         for (String id : uniqueIds) {
             long count = uniqueIds.stream().filter(uniqueId -> id.equals(uniqueId)).count();
             if (count > 1) {
+                log.error("Duplicate Staff Objects found in request");
                 throw new CustomException("STAFF", "Duplicate Staff Objects present in request");
             }
         }
@@ -124,14 +136,17 @@ public class StaffServiceValidator {
                                               List<AttendanceRegister> attendanceRegisterListFromDB) {
 
         //validate tenant id with mdms and request info
+        log.info("validating tenant id from MDMS and Request info");
         validateMDMSAndRequestInfoForStaff(request);
 
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
 
         // check if staff tenant id is same as register tenant id
+        log.info("checking if staff tenant id is same as register tenant id");
         for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
             for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {
                 if (!staffFromRequest.getTenantId().equals(attendanceRegister.getTenantId())) {
+                    log.error("Staff TENANT_ID for staff : " + staffFromRequest.getUserId() + " is not same as TENANT_ID of register");
                     throw new CustomException("TENANT_ID"
                             , "Staff TENANT_ID for staff : " + staffFromRequest.getUserId() + " is not same as TENANT_ID of register");
                 }
@@ -139,20 +154,24 @@ public class StaffServiceValidator {
         }
 
         // staff cannot be added to register if register's end date has passed
+        log.info("checking that staff cannot be added to register if register's end date has passed");
         BigDecimal enrollmentDate = new BigDecimal(System.currentTimeMillis());
         for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
             int dateComparisonResult = attendanceRegister.getEndDate().compareTo(enrollmentDate);
             if (dateComparisonResult < 0) {
+                log.error("Staff cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
                 throw new CustomException("END_DATE", "Staff cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
             }
         }
 
         //check is staff user id exists in staff table for the given register id. If yes check the deenrollment date. If staffId does not exist new staff can still be enrolled to the register
+       log.info("Checking if deenrollment date is null for existing staff");
         if (staffPermissionListFromDB != null) {
             for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {//list of staff from request
                 for (StaffPermission staffFromDB : staffPermissionListFromDB) {  //list of staff from DB
                     if (staffFromRequest.getUserId().equals(staffFromDB.getUserId()) && staffFromRequest.getRegisterId().equals(staffFromDB.getRegisterId())) {
                         if (staffFromDB.getDenrollmentDate() == null) {
+                            log.error("Deenrollment date is null. Staff is already enrolled to the register");
                             throw new CustomException("USER_id", "Staff " + staffFromDB.getUserId() + " is already enrolled in the register " + staffFromDB.getRegisterId());
                         }
                     }
@@ -167,6 +186,7 @@ public class StaffServiceValidator {
             , List<StaffPermission> staffPermissionListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
 
         //validate tenant id with mdms and request info
+        log.info("validating tenant id from MDMS and Request info");
         validateMDMSAndRequestInfoForStaff(staffPermissionRequest);
 
         RequestInfo requestInfo = staffPermissionRequest.getRequestInfo();
@@ -176,7 +196,8 @@ public class StaffServiceValidator {
         boolean staffDeenrolled = true;
 
 
-        //check is staff user id exists in staff table. If yes check if the de enrollment date is not null
+        //check is staff user id exists in staff table. If yes check if the de enrollment date is null
+        log.info("checking if the de enrollment date of staff is null");
         for (StaffPermission staffPermissionFromRequest : staffPermissionListFromRequest) {
             for (StaffPermission staffPermissionFromDB : staffPermissionListFromDB) {
                 if (staffPermissionFromRequest.getRegisterId().equals(staffPermissionFromDB.getRegisterId()) &&
@@ -197,6 +218,7 @@ public class StaffServiceValidator {
 
         //staff list size associated with the register (At least one staff should remain with a register before de enrollment)
         //initialize request and DB hashmaps with registerId as key
+        log.info("checking that atleast one staff should remain enrolled to a register before de enrollment");
         HashMap<String, Integer> staffCountInEachRegisterIdFromRequest = new HashMap<>();
         HashMap<String, Integer> staffCountInEachRegisterIdFromDB = new HashMap<>();
         for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
@@ -216,7 +238,7 @@ public class StaffServiceValidator {
         }
 
 
-        //<registerId,staffCount> from StaffDB data number od staff enrolled to each register in db
+        //<registerId,staffCount> from StaffDB data number of staff enrolled to each register in db
         for (StaffPermission staffPermissionFromDB : staffPermissionListFromDB) {
             String staffRegisterId = staffPermissionFromDB.getRegisterId().toString();
             if (staffCountInEachRegisterIdFromDB.containsKey(staffRegisterId) && staffPermissionFromDB.getDenrollmentDate() == null) {

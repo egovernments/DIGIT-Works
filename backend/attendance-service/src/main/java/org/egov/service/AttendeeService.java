@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendeeEnrichmentService;
 import org.egov.kafka.Producer;
-import org.egov.web.models.AttendeeSearchCriteria;
 import org.egov.repository.AttendeeRepository;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
@@ -53,6 +52,7 @@ public class AttendeeService {
      */
     public AttendeeCreateRequest createAttendee(AttendeeCreateRequest attendeeCreateRequest) {
         //incoming createRequest validation
+        log.info("validating create attendee request parameters");
         attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest);
 
         //extract registerIds and attendee IndividualIds from client request
@@ -64,21 +64,29 @@ public class AttendeeService {
         //db call to get the attendeeList data
         AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).individualIds(attendeeIds).build();
         List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendees(attendeeSearchCriteria);
+        log.info("attendee List received From DB : " + attendeeListFromDB.size());
+
 
         //db call to get registers from db and use them to validate request registers
         digit.models.coremodels.RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(attendeeCreateRequest.getRequestInfo()).build();
         List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+        log.info("attendance register List received From DB : " + attendanceRegisterListFromDB.size());
+        log.info("validating register ids from request against DB");
         attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
 
         //validator call by passing attendee request and the data from db call
+        log.info("attendeeServiceValidator called to validate Create attendee request");
         attendeeServiceValidator.validateCreateAttendee(attendeeCreateRequest, attendeeListFromDB, attendanceRegisterListFromDB);
 
         //enrichment call by passing attendee request and data from db call
+        log.info("attendeeServiceValidator called to enrich Create attendee request");
         attendeeEnrichmentService.enrichAttendeeOnCreate(attendeeCreateRequest);
 
         //push to producer
+        log.info("attendee objects pushed via producer");
         producer.push(attendanceServiceConfiguration.getSaveAttendeeTopic(), attendeeCreateRequest);
+        log.info("attendees present in Create attendee request are enrolled to the registers");
         return attendeeCreateRequest;
     }
 
@@ -90,6 +98,7 @@ public class AttendeeService {
      */
     public AttendeeDeleteRequest deleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest) {
         //incoming deleteRequest validation
+        log.info("validating delete attendee request parameters");
         attendeeServiceValidator.validateAttendeeDeleteRequestParameters(attendeeDeleteRequest);
 
         //extract registerIds and attendee IndividualIds from client request
@@ -101,24 +110,30 @@ public class AttendeeService {
         //db call to get the attendeeList data
         AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).individualIds(attendeeIds).build();
         List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendees(attendeeSearchCriteria);
+        log.info("attendee List received From DB : " + attendeeListFromDB.size());
 
         //db call to get registers from db and use them to validate request registers
         digit.models.coremodels.RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(attendeeDeleteRequest.getRequestInfo()).build();
         List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+        log.info("attendance register List received From DB : " + attendanceRegisterListFromDB.size());
+        log.info("validating register ids from request against DB");
         attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
 
         //validator call by passing attendee request and the data from db call
+        log.info("validating delete attendee request");
         attendeeServiceValidator.validateDeleteAttendee(attendeeDeleteRequest, attendeeListFromDB, attendanceRegisterListFromDB);
 
         //enrichment call by passing attendee request and data from db call
-        attendeeEnrichmentService.enrichAttendeeOnDelete(attendeeDeleteRequest,attendeeListFromDB);
+        log.info("enriching delete attendee request");
+        attendeeEnrichmentService.enrichAttendeeOnDelete(attendeeDeleteRequest, attendeeListFromDB);
 
         //push to producer
+        log.info("attendee objects updated via producer");
         producer.push(attendanceServiceConfiguration.getUpdateAttendeeTopic(), attendeeDeleteRequest);
+        log.info("attendees present in delete attendee request are deenrolled from the registers");
         return attendeeDeleteRequest;
     }
-
 
 
     private List<String> extractRegisterIdsFromCreateRequest(AttendeeCreateRequest attendeeCreateRequest) {

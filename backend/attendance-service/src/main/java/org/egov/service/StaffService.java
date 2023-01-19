@@ -13,9 +13,9 @@ import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.validator.StaffServiceValidator;
 import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.StaffSearchCriteria;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
+import org.egov.web.models.StaffSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +62,7 @@ public class StaffService {
      */
     public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest, Boolean isFirstStaff) {
         //incoming createRequest validation
+        log.info("Validating incoming staff request");
         staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
 
         //extract registerIds and staffUserIds from client request
@@ -72,26 +73,33 @@ public class StaffService {
         //db call to get the staffList data whose de enrollment date is null
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
         List<StaffPermission> staffPermissionListFromDB = getActiveStaff(staffSearchCriteria);
+        log.info("size of active staffPermission List received From DB :" + staffPermissionListFromDB.size());
 
         //db call to get registers from db and use them to validate request registers
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(staffPermissionRequest.getRequestInfo()).build();
         if (!isFirstStaff) {
             List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+            log.info("size of Attendance Registers list received from DB : " + attendanceRegisterListFromDB.size());
+            log.info("Validating register ids from request against the DB");
             attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
             //validator call by passing staff request and the data from db call
+            log.info("staffServiceValidator called to validate Create StaffPermission request");
             staffServiceValidator.validateCreateStaffPermission(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
         }
 
         //enrichment call by passing staff request and data from db call
+        log.info("staffEnrichmentService called to enrich Create StaffPermission request");
         staffEnrichmentService.enrichCreateStaffPermission(staffPermissionRequest);
 
         //push to producer
+        log.info("staff objects pushed via producer");
         producer.push(serviceConfiguration.getSaveStaffTopic(), staffPermissionRequest);
+        log.info("staff present in Create StaffPermission request are enrolled to the register");
         return staffPermissionRequest;
     }
 
-    public List<StaffPermission> getActiveStaff(StaffSearchCriteria staffSearchCriteria){
+    public List<StaffPermission> getActiveStaff(StaffSearchCriteria staffSearchCriteria) {
         return staffRepository.getActiveStaff(staffSearchCriteria);
     }
 
@@ -103,6 +111,7 @@ public class StaffService {
      */
     public StaffPermissionRequest deleteAttendanceStaff(StaffPermissionRequest staffPermissionRequest) {
         //incoming deleteRequest validation
+        log.info("Validating incoming staff request");
         staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
 
         //extract registerIds and staffUserIds from client request
@@ -113,26 +122,35 @@ public class StaffService {
         //db call to get registers from db and use them to validate request registers
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(staffPermissionRequest.getRequestInfo()).build();
         List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+        log.info("size of Attendance Registers list received from DB : " + attendanceRegisterListFromDB.size());
+        log.info("Validating register ids from request against the DB");
         attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
         // db call to get staff data
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
         List<StaffPermission> staffPermissionListFromDB = getAllStaff(staffSearchCriteria);
+        log.info("size of staffPermission list received from DB : " + staffPermissionListFromDB.size());
+
 
         //validator call by passing staff request and the data from db call
+        log.info("staffServiceValidator called to validate Delete StaffPermission request");
         staffServiceValidator.validateDeleteStaffPermission(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
 
+        log.info("staffEnrichmentService called to enrich Delete StaffPermission request");
         staffEnrichmentService.enrichDeleteStaffPermission(staffPermissionRequest, staffPermissionListFromDB);
 
+        log.info("staff objects pushed via producer");
         producer.push(serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
+        log.info("staff present in Delete StaffPermission request are deenrolled from the register");
         return staffPermissionRequest;
     }
 
-    public List<StaffPermission> getAllStaff(StaffSearchCriteria staffSearchCriteria){
+    public List<StaffPermission> getAllStaff(StaffSearchCriteria staffSearchCriteria) {
         return staffRepository.getAllStaff(staffSearchCriteria);
     }
 
     public StaffPermissionRequest createFirstStaff(RequestInfo requestInfo, List<AttendanceRegister> attendanceRegisters) { //check enroll
+        log.info("Enrolling logged in User as first staff to the created register");
         List<StaffPermission> staffPermissionList = new ArrayList<>();
 
         for (AttendanceRegister attendanceRegister : attendanceRegisters) {
@@ -147,6 +165,7 @@ public class StaffService {
 
         try {
             staffPermissionResponse = createAttendanceStaff(staffPermissionRequest, true);
+            log.info("User enrolled as staff to the register");
         } catch (Exception e) {
             throw new CustomException("CREATE_STAFF", "Error in creating staff");
         }
