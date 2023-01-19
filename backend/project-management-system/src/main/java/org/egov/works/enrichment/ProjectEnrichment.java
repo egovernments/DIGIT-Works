@@ -48,21 +48,27 @@ public class ProjectEnrichment {
 
             if (projectNumbers != null && !projectNumbers.isEmpty()) {
                 projects.get(i).setProjectNumber(projectNumbers.get(i));
+                log.info("Project numbers set for projects");
             } else {
+                log.error("Error occurred while generating project numbers from IdGen service");
                 throw new CustomException("PROJECT_NUMBER_NOT_GENERATED","Error occurred while generating project numbers from IdGen service");
             }
 
             //Enrich Project id and audit details
             enrichProjectRequest(projects.get(i), null, requestInfo, parentProjects);
+            log.info("Enriched project request with id and Audit details");
 
             //Enrich Address id and audit details
             enrichProjectAddress(projects.get(i), null, requestInfo);
+            log.info("Enriched project Address with id and Audit details");
 
             //Enrich target id and audit details
             enrichProjectTarget(projects.get(i), null, requestInfo);
+            log.info("Enriched target with id and Audit details");
 
             //Enrich document id and audit details
             enrichProjectDocument(projects.get(i), null, requestInfo);
+            log.info("Enriched documents with id and Audit details");
         }
 
     }
@@ -78,15 +84,19 @@ public class ProjectEnrichment {
 
             //Updating lastModifiedTime and lastModifiedBy for Project
             enrichProjectRequest(project, projectFromDB, requestInfo, null);
+            log.info("Enriched project in update project request");
 
             //Add address if id is empty or update lastModifiedTime and lastModifiedBy if id exists
             enrichProjectAddress(project, projectFromDB, requestInfo);
+            log.info("Enriched address in update project request");
 
             //Add new target if id is empty or update lastModifiedTime and lastModifiedBy if id exists
             enrichProjectTarget(project, projectFromDB, requestInfo);
+            log.info("Enriched target in update project request");
 
             //Add new document if id is empty or update lastModifiedTime and lastModifiedBy if id exists
             enrichProjectDocument(project, projectFromDB, requestInfo);
+            log.info("Enriched document in update project request");
         }
 
     }
@@ -95,6 +105,7 @@ public class ProjectEnrichment {
     private void enrichProjectRequest(Project projectRequest, Project projectFromDB, RequestInfo requestInfo, List<Project> parentProjects) {
         if (StringUtils.isBlank(projectRequest.getId())) {
             projectRequest.setId(UUID.randomUUID().toString());
+            log.info("Project id set to " + projectRequest.getId());
             AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
             projectRequest.setAuditDetails(auditDetails);
             if (parentProjects != null && StringUtils.isNotBlank(projectRequest.getParent())) {
@@ -104,6 +115,7 @@ public class ProjectEnrichment {
             projectRequest.setAuditDetails(projectFromDB.getAuditDetails());
             AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), projectFromDB.getAuditDetails(), false);
             projectRequest.setAuditDetails(auditDetails);
+            log.info("Enriched project audit details for project " + projectRequest.getId());
         }
     }
 
@@ -112,13 +124,17 @@ public class ProjectEnrichment {
         Project parentProject = parentProjects.stream().filter(p -> projectRequest.getParent().equals(p.getId())).findFirst().orElse(null);
         String parentProjectHierarchy = "";
         if (parentProject != null) {
+            log.info("Parent project with id " + parentProject.getId() + " found for project id " + projectRequest.getId());
             if (StringUtils.isNotBlank(parentProject.getProjectHierarchy())) {
+                log.info("Project hierarchy found for parent project " + parentProject.getId());
                 parentProjectHierarchy = parentProject.getProjectHierarchy();
             } else {
+                log.info("Project hierarchy is empty for project " + parentProject.getId());
                 parentProjectHierarchy = parentProject.getId();
             }
         }
         projectRequest.setProjectHierarchy(parentProjectHierarchy + PROJECT_PARENT_HIERARCHY_SEPERATOR + projectRequest.getId());
+        log.info("Project hierarchy set for project " + projectRequest.getId());
     }
 
     /* Enrich Address with id and audit details if address id is empty or if address already present, update last modified by and last modified time */
@@ -128,10 +144,12 @@ public class ProjectEnrichment {
                 projectFromRequest.getAddress().setId(UUID.randomUUID().toString());
                 AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
                 projectFromRequest.getAddress().setAuditDetails(auditDetails);
+                log.info("Added address with id " + projectFromRequest.getAddress().getId() + " for project " + projectFromRequest.getId());
             } else if (projectFromDB != null) {
                 projectFromRequest.getAddress().setAuditDetails(projectFromDB.getAddress().getAuditDetails());
                 AuditDetails auditDetailsAddress = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), projectFromDB.getAddress().getAuditDetails(), false);
                 projectFromRequest.getAddress().setAuditDetails(auditDetailsAddress);
+                log.info("Enriched address audit details for project " + projectFromRequest.getId());
             }
         }
     }
@@ -144,12 +162,14 @@ public class ProjectEnrichment {
                     target.setId(UUID.randomUUID().toString());
                     AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
                     target.setAuditDetails(auditDetailsForAdd);
+                    log.info("Added target with id " + target.getId() + " for project " + projectFromRequest.getId());
                 } else if (projectFromDB != null) {
                     String targetId = String.valueOf(target.getId());
                     Target targetFromDB = projectFromDB.getTargets().stream().filter(t -> targetId.equals(String.valueOf(t.getId()))).findFirst().orElse(null);
                     target.setAuditDetails(targetFromDB.getAuditDetails());
                     AuditDetails auditDetailsTarget = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), targetFromDB.getAuditDetails(), false);
                     target.setAuditDetails(auditDetailsTarget);
+                    log.info("Enriched target audit details for target " + targetId);
                 }
             }
         }
@@ -163,12 +183,14 @@ public class ProjectEnrichment {
                     document.setId(UUID.randomUUID().toString());
                     AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
                     document.setAuditDetails(auditDetailsForAdd);
+                    log.info("Added document with id " + document.getId() + " for project " + projectFromRequest.getId());
                 } else if (projectFromDB != null) {
                     String documentId = String.valueOf(document.getId());
                     Document documentFromDB = projectFromDB.getDocuments().stream().filter(d -> documentId.equals(String.valueOf(d.getId()))).findFirst().orElse(null);
                     document.setAuditDetails(documentFromDB.getAuditDetails());
                     AuditDetails auditDetailsDocument = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), documentFromDB.getAuditDetails(), false);
                     document.setAuditDetails(auditDetailsDocument);
+                    log.info("Enriched document audit details for document " + documentId);
                 }
             }
         }

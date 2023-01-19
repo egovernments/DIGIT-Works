@@ -80,6 +80,7 @@ public class ProjectService {
         if (projectsForSearchRequest.size() > 0) {
             parentProjects = searchProject(getSearchProjectRequest(projectsForSearchRequest, projectRequest.getRequestInfo(), true), projectConfiguration.getMaxLimit(), projectConfiguration.getMaxOffset(), projectRequest.getProjects().get(0).getTenantId(), null, false);
         }
+        log.info("Fetched parent projects from DB");
         return parentProjects;
     }
 

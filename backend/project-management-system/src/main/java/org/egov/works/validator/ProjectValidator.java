@@ -236,15 +236,18 @@ public class ProjectValidator {
 
         for (Project project: projects) {
             boolean isProjectPresentInMDMS = true;
+            log.info("Validate Project type with MDMS");
             if (!StringUtils.isBlank(project.getProjectType()) && !typeOfProjectRes.contains(project.getProjectType())) {
                 isProjectPresentInMDMS = false;
                 log.error("The project type: " + project.getProjectType() + " is not present in MDMS");
                 errorMap.put("INVALID_PROJECT_TYPE", "The project type: " + project.getProjectType() + " is not present in MDMS");
             }
+            log.info("Validate Tenant Id with MDMS");
             if (!StringUtils.isBlank(project.getTenantId()) && !tenantRes.contains(project.getTenantId())) {
                 log.error("The tenant: " + project.getTenantId() + " is not present in MDMS");
                 errorMap.put("INVALID_TENANT", "The tenant: " + project.getTenantId() + " is not present in MDMS");
             }
+            log.info("Validate Department with MDMS");
             if (!StringUtils.isBlank(project.getDepartment()) && !deptRes.contains(project.getDepartment())) {
                 log.error("The department code: " + project.getDepartment() + " is not present in MDMS");
                 errorMap.put("INVALID_DEPARTMENT_CODE", "The department code: " + project.getDepartment() + " is not present in MDMS");
@@ -252,6 +255,7 @@ public class ProjectValidator {
 
             //Verify if project subtype is present for project type
             if (isProjectPresentInMDMS && !StringUtils.isBlank(project.getProjectType())) {
+                log.info("Validate Project Subtype with MDMS");
                 jsonPathForWorksSubTypeOfProject = jsonPathForWorksSubTypeOfProject.replace(PLACEHOLDER_CODE, project.getProjectType());
                 projectSubTypeRes = JsonPath.read(mdmsData, jsonPathForWorksSubTypeOfProject);
 
@@ -265,6 +269,7 @@ public class ProjectValidator {
                 for (Target target: project.getTargets()) {
                     //Verify if beneficiary is present for project type
                     if (isProjectPresentInMDMS && !StringUtils.isBlank(target.getBeneficiaryType())) {
+                        log.info("Validate Beneficiary Type with MDMS");
                         jsonPathForBeneficiaryOfProject = jsonPathForBeneficiaryOfProject.replace(PLACEHOLDER_CODE, project.getProjectType());
                         beneficiaryTypeRes = JsonPath.read(mdmsData, jsonPathForBeneficiaryOfProject);
 
@@ -353,5 +358,6 @@ public class ProjectValidator {
                 throw new CustomException("INVALID_PARENT_PROJECT", "The parent project with id " + project.getParent() + " does not exists in the system");
             }
         }
+        log.info("Parent projects validated against DB");
     }
 }
