@@ -132,9 +132,11 @@ public class StaffService {
         return staffRepository.getAllStaff(staffSearchCriteria);
     }
 
+    /* Creates First Staff for the register, when register is created */
     public StaffPermissionRequest createFirstStaff(RequestInfo requestInfo, List<AttendanceRegister> attendanceRegisters) { //check enroll
         List<StaffPermission> staffPermissionList = new ArrayList<>();
 
+        //Create StaffPermission for create staff request
         for (AttendanceRegister attendanceRegister : attendanceRegisters) {
             StaffPermission staffPermission = StaffPermission.builder().userId(requestInfo.getUserInfo().getUuid())
                     .tenantId(attendanceRegister.getTenantId())
@@ -145,13 +147,15 @@ public class StaffService {
         StaffPermissionRequest staffPermissionRequest = StaffPermissionRequest.builder().requestInfo(requestInfo).staff(staffPermissionList).build();
         StaffPermissionRequest staffPermissionResponse;
 
+        // Calls create attendance staff with created request. If some error in creating staff, throws error
         try {
             staffPermissionResponse = createAttendanceStaff(staffPermissionRequest, true);
+            log.info("Successfully created first staff for attendance register");
         } catch (Exception e) {
+            log.error("Error in creating staff", e);
             throw new CustomException("CREATE_STAFF", "Error in creating staff");
         }
         return staffPermissionResponse;
-
     }
 
     private List<String> extractRegisterIdsFromRequest(StaffPermissionRequest staffPermissionRequest) {

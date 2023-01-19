@@ -57,14 +57,19 @@ public class AttendanceRegisterService {
     public AttendanceRegisterRequest createAttendanceRegister(AttendanceRegisterRequest request) {
         attendanceServiceValidator.validateCreateAttendanceRegister(request);
         registerEnrichment.enrichCreateAttendanceRegister(request);
+        log.info("Enriched Register with Register number, Ids and audit details");
         producer.push(attendanceServiceConfiguration.getSaveAttendanceRegisterTopic(), request);
+        log.info("Pushed create attendance register request to kafka");
+        // User who creates the register, by default gets enrolled as the first staff for that register.
         StaffPermissionRequest staffPermissionResponse = staffService.createFirstStaff(request.getRequestInfo(), request.getAttendanceRegister());
+        log.info("The user " + request.getRequestInfo().getUserInfo().getUuid() + " is enrolled as staff for the created attendance registers");
+        //Set created staff details in attendance register
         registerEnrichment.enrichStaffInRegister(request.getAttendanceRegister(), staffPermissionResponse);
         return request;
     }
 
     /**
-     * Search attendace register based on given search criteria
+     * Search attendance register based on given search criteria
      *
      * @param requestInfoWrapper
      * @param searchCriteria
@@ -240,30 +245,48 @@ public class AttendanceRegisterService {
      */
     public AttendanceRegisterRequest updateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
         attendanceServiceValidator.validateUpdateAttendanceRegisterRequest(attendanceRegisterRequest);
+        log.info("Validated update attendance register request");
+
+        //Create requestInfoWrapper from attendanceRegister request, collect ids in list for search attendance register request parameters
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(attendanceRegisterRequest.getRequestInfo()).build();
         List<String> registerIds = getAttendanceRegisterIdList(attendanceRegisterRequest);
         String tenantId = attendanceRegisterRequest.getAttendanceRegister().get(0).getTenantId();
+        //Get Attendance registers from DB based on register ids, tenantId and requestInfo
         List<AttendanceRegister> attendanceRegistersFromDB = getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+        log.info("Fetched attendance registers for update request");
+
+        //Validate Update attendance register request against attendance registers fetched from database
         attendanceServiceValidator.validateUpdateAgainstDB(attendanceRegisterRequest, attendanceRegistersFromDB);
+
         registerEnrichment.enrichUpdateAttendanceRegister(attendanceRegisterRequest, attendanceRegistersFromDB);
+        log.info("Enriched with register Number, Ids and AuditDetails");
         producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
+        log.info("Pushed update attendance register request to kafka");
 
         return attendanceRegisterRequest;
     }
 
+    /* Get Attendance registers from DB based on register ids and tenant Id */
     public List<AttendanceRegister> getAttendanceRegisters(RequestInfoWrapper requestInfoWrapper, List<String> registerIds, String tenantId) {
+
+        //Search criteria for attendance register search request
         AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().ids(registerIds)
                 .tenantId(tenantId).build();
         List<AttendanceRegister> attendanceRegisterList;
+
+        // Calls search attendance register with created request. If some error in searching attendance register, throws error
         try {
             attendanceRegisterList = searchAttendanceRegister(requestInfoWrapper, searchCriteria);
+            log.info("Attendance register search successful");
         } catch (Exception e) {
+            log.info("Error in searching attendance register", e);
             throw new CustomException("SEARCH_ATTENDANCE_REGISTER", "Error in searching attendance register");
         }
 
         return attendanceRegisterList;
     }
 
+    /* Get attendance registers Id list from attendance register request */
     private List<String> getAttendanceRegisterIdList(AttendanceRegisterRequest request) {
         List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
 

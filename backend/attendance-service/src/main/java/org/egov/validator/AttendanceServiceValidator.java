@@ -29,78 +29,84 @@ public class AttendanceServiceValidator {
     @Autowired
     private MDMSUtils mdmsUtils;
 
+    /* Validates create Attendance Register request body */
     public void validateCreateAttendanceRegister(AttendanceRegisterRequest request) {
         Map<String, String> errorMap = new HashMap<>();
         List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
         RequestInfo requestInfo = request.getRequestInfo();
 
+        //Verify if RequestInfo and UserInfo is present
         validateRequestInfo(requestInfo, errorMap);
+        //Verify if attendance register request and mandatory fields are present
         validateAttendanceRegisterRequest(attendanceRegisters, errorMap);
 
         String tenantId = attendanceRegisters.get(0).getTenantId();
         String rootTenantId = tenantId.split("\\.")[0];
 
-        for (AttendanceRegister attendanceRegister : attendanceRegisters) {
-            if (!attendanceRegister.getTenantId().equals(tenantId)) {
-                throw new CustomException("MULTIPLE_TENANTS", "All registers must have same tenant Id. Please create new request for different tentant id");
-            }
-        }
-
+        //Get MDMS data using create attendance register request and tenantId
         Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
+        log.info("Request data validated with MDMS");
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
 
+    /* Validates Update Attendance register request body */
     public void validateUpdateAttendanceRegisterRequest(AttendanceRegisterRequest request) {
         Map<String, String> errorMap = new HashMap<>();
         List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
         RequestInfo requestInfo = request.getRequestInfo();
 
+        //Verify if RequestInfo and UserInfo is present
         validateRequestInfo(requestInfo, errorMap);
+        //Verify attendance register request and if mandatory fields are present
         validateAttendanceRegisterRequest(attendanceRegisters, errorMap);
+
+        for (AttendanceRegister attendanceRegister: attendanceRegisters) {
+            if (StringUtils.isBlank(attendanceRegister.getId())) {
+                log.error("Attendance register id is mandatory in register update request");
+                errorMap.put("ATTENDANCE_REGISTER_ID", "Attendance register id is mandatory");
+            }
+        }
 
         String tenantId = attendanceRegisters.get(0).getTenantId();
         String rootTenantId = tenantId.split("\\.")[0];
 
+        //Get MDMS data using create attendance register request and tenantId
         Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
-
-        for (int i = 0; i < attendanceRegisters.size(); i++) {
-            if (attendanceRegisters.get(i).getId() == null) {
-                errorMap.put("ATTENDANCE_REGISTER_ID", "Attendance register id is mandatory");
-            }
-
-            if (!attendanceRegisters.get(i).getTenantId().equals(tenantId)) {
-                errorMap.put("MULTIPLE_TENANTS", "All registers must have same tenant Id. Please create new request for different tentant id");
-            }
-        }
+        log.info("Request data validated with MDMS");
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
 
+    /* Validates attendance register data in update request against attendance register data fetched from database */
     public void validateUpdateAgainstDB(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegisterList) {
         if (CollectionUtils.isEmpty(attendanceRegisterList) || attendanceRegisterRequest.getAttendanceRegister().size() != attendanceRegisterList.size()) {
+            log.error("The record that you are trying to update does not exists in the system");
             throw new CustomException("INVALID_REGISTER_MODIFY", "The record that you are trying to update does not exists in the system");
         }
 
         Set<String> registerIdsFromDB = attendanceRegisterList.stream().map(AttendanceRegister:: getId).collect(Collectors.toSet());
         for (AttendanceRegister attendanceRegister: attendanceRegisterRequest.getAttendanceRegister()) {
             if (!registerIdsFromDB.contains(attendanceRegister.getId())) {
+                log.error("The register Id " + attendanceRegister.getId() + " that you are trying to update does not exists in the system");
                 throw new CustomException("INVALID_REGISTER_MODIFY", "The register Id " + attendanceRegister.getId() + " that you are trying to update does not exists in the system");
             }
 
+            // If the user who is trying to update the register is not associated with the register, throw error that the user does not have permission to modify the attendance register
             if (attendanceRegister.getStaff() != null) {
-                Set<String> staffIdsFromDB = attendanceRegister.getStaff().stream().map(StaffPermission:: getId).collect(Collectors.toSet());
-                if (!staffIdsFromDB.contains(attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid())) {
+                Set<String> staffUserIdsFromDB = attendanceRegister.getStaff().stream().map(StaffPermission:: getUserId).collect(Collectors.toSet());
+                if (!staffUserIdsFromDB.contains(attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid())) {
                     throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register");
                 }
             }
         }
     }
 
+    /* Validates Request Info and User Info */
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
         if (requestInfo == null) {
             throw new CustomException("REQUEST_INFO", "Request info is mandatory");
@@ -113,25 +119,36 @@ public class AttendanceServiceValidator {
         }
     }
 
+    /* Validates Attendance register request body for create and update apis */
     private void validateAttendanceRegisterRequest(List<AttendanceRegister> attendanceRegisters, Map<String, String> errorMap) {
         if (attendanceRegisters == null || attendanceRegisters.size() == 0) {
+            log.error("Attendance Register is mandatory");
             throw new CustomException("ATTENDANCE_REGISTER", "Attendance Register is mandatory");
         }
 
         for (int i = 0; i < attendanceRegisters.size(); i++) {
             if (attendanceRegisters.get(i) == null) {
+                log.error("Attendance Register is mandatory");
                 throw new CustomException("ATTENDANCE_REGISTER", "Attendance Register is mandatory");
             }
+            if (!attendanceRegisters.get(i).getTenantId().equals(attendanceRegisters.get(0).getTenantId())) {
+                log.error("All registers must have same tenant Id. Please create new request for different tenant id");
+                throw new CustomException("MULTIPLE_TENANTS", "All registers must have same tenant Id. Please create new request for different tenant id");
+            }
             if (StringUtils.isBlank(attendanceRegisters.get(i).getTenantId())) {
+                log.error("Tenant is mandatory");
                 errorMap.put("TENANT_ID", "Tenant is mandatory");
             }
             if (StringUtils.isBlank(attendanceRegisters.get(i).getName())) {
+                log.error("Name is mandatory");
                 errorMap.put("NAME", "Name is mandatory");
             }
             if (attendanceRegisters.get(i).getStartDate() == null) {
+                log.error("Start date is mandatory");
                 errorMap.put("START_DATE", "Start date is mandatory");
             }
             if (attendanceRegisters.get(i).getStartDate().compareTo(attendanceRegisters.get(i).getEndDate()) > 0) {
+                log.error("Start date should be less than end date");
                 errorMap.put("DATE", "Start date should be less than end date");
             }
         }

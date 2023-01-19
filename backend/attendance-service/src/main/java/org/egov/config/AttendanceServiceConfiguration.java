@@ -27,8 +27,6 @@ public class AttendanceServiceConfiguration {
     private String idGenPath;
     @Value("${egov.idgen.attendance.register.number.name}")
     private String idgenAttendanceRegisterNumberName;
-    @Value("${egov.idgen.attendance.register.number.format}")
-    private String idgenAttendanceRegisterNumberFormat;
     //MDMS
     @Value("${egov.mdms.host}")
     private String mdmsHost;
