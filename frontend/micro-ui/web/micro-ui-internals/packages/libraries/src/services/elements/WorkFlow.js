@@ -143,7 +143,7 @@ export const WorkflowService = {
             return { ...actionResultantState, assigneeRoles: assignees, action: ac.action, roles: ac.roles };
           });
           if(state?.isStateUpdatable) {
-            _nextActions.push({ action: "EDIT", ...state })
+            _nextActions.push({ action: "EDIT", ...state, roles: state?.actions?.[0]?.roles})
           }
           return { ...state, nextActions: _nextActions, roles: state?.action, roles: state?.actions?.reduce((acc, el) => [...acc, ...el.roles], []) };
         })?.[0];
