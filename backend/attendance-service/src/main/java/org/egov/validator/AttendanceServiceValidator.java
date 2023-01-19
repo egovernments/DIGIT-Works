@@ -131,7 +131,7 @@ public class AttendanceServiceValidator {
             if (attendanceRegisters.get(i).getStartDate() == null) {
                 errorMap.put("START_DATE", "Start date is mandatory");
             }
-            if (attendanceRegisters.get(i).getStartDate().compareTo(attendanceRegisters.get(i).getEndDate()) > 0) {
+            if (attendanceRegisters.get(i).getStartDate() != null && attendanceRegisters.get(i).getStartDate().compareTo(attendanceRegisters.get(i).getEndDate()) > 0) {
                 errorMap.put("DATE", "Start date should be less than end date");
             }
         }
