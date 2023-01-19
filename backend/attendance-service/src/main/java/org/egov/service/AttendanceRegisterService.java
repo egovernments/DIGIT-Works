@@ -82,145 +82,145 @@ public class AttendanceRegisterService {
         //Enrich requested search criteria
         registerEnrichment.enrichSearchRegisterRequest(requestInfoWrapper.getRequestInfo(),searchCriteria);
 
-        //Get the logged-in user roles code
-        List<String> userRoleCodes = getUserRoleCodes(requestInfoWrapper.getRequestInfo());
+        //Get the logged-in user roles
+        List<String> userRoles = getUserRoleCodes(requestInfoWrapper.getRequestInfo());
 
         List<AttendanceRegister> resultAttendanceRegisters = new ArrayList<>();
 
-        if (userRoleCodes.contains(AttendanceServiceConstants.JUNIOR_ENGINEER_ROLE_CODE) || userRoleCodes.contains(AttendanceServiceConstants.MUNICIPAL_ENGINEER_ROLE_CODE)) {
+        if (userRoles.contains(AttendanceServiceConstants.SUPERUSER_ROLE_CODE) ||
+                userRoles.contains(AttendanceServiceConstants.JUNIOR_ENGINEER_ROLE_CODE) ||
+                userRoles.contains(AttendanceServiceConstants.MUNICIPAL_ENGINEER_ROLE_CODE)) {
             /*
-                If logged-in user is Junior Engineer or Municipal Engineer then do the search based on the supplied criteria.
-                limit the response register count based on the configuration.
+                If logged-in user is Super User or Junior Engineer or Municipal Engineer then do the search based on the supplied criteria.
+                Limit the response register count based on the configuration.
              */
 
-            fetchAndFilterRegisters(searchCriteria,resultAttendanceRegisters);
-        } else if (userRoleCodes.contains(AttendanceServiceConstants.ORG_ADMIN_ROLE_CODE) || userRoleCodes.contains(AttendanceServiceConstants.ORG_STAFF_ROLE_CODE)) {
+            fetchAndFilterRegisters(searchCriteria, resultAttendanceRegisters);
+        } else if (userRoles.contains(AttendanceServiceConstants.ORG_ADMIN_ROLE_CODE) ||
+                    userRoles.contains(AttendanceServiceConstants.ORG_STAFF_ROLE_CODE)) {
             /*
                 If the logged-in user is Org Admin or Org Staff then do the search based on the supplied criteria.
                 But make sure response register list should contain only those register for which logged-in is associated.
             */
             String uuid = requestInfoWrapper.getRequestInfo().getUserInfo().getUuid();
             Set<String> registers = fetchRegistersAssociatedToLoggedInStaffUser(uuid);
-            updateSearchCriteriaAndFetchAndFilterRegisters(registers,searchCriteria,resultAttendanceRegisters);
+            updateSearchCriteriaAndFetchAndFilterRegisters(registers, searchCriteria, resultAttendanceRegisters);
 
-        } else {
+        } else if (userRoles.contains(AttendanceServiceConstants.CITIZEN_ROLE_CODE)) {
             /*
                 If the logged-in user is Attendee then do the search based on the supplied criteria.
                 But make sure response register list should contain only those register for which logged-in is associated.
             */
             String uuid = requestInfoWrapper.getRequestInfo().getUserInfo().getUuid();
             Set<String> registers = fetchRegistersAssociatedToLoggedInAttendeeUser(uuid);
-            updateSearchCriteriaAndFetchAndFilterRegisters(registers,searchCriteria,resultAttendanceRegisters);
+            updateSearchCriteriaAndFetchAndFilterRegisters(registers, searchCriteria, resultAttendanceRegisters);
+        } else {
+            throw new CustomException("UNAUTHORIZED_USER", "User is not authorized");
         }
-
-        updateRegisterWithAssociatedStaff(resultAttendanceRegisters);
-
-        updateRegisterWithAssociatedAttendees(resultAttendanceRegisters);
-
-
         return resultAttendanceRegisters;
-    }
-
-    private void updateRegisterWithAssociatedAttendees(List<AttendanceRegister> resultAttendanceRegisters) {
-        // Fetch all attendee associated with provided register
-        List<String> registerIds = resultAttendanceRegisters.stream().map(e -> e.getId()).collect(Collectors.toList());
-        AttendeeSearchCriteria searchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).build();
-        List<IndividualEntry> attendees = attendeeRepository.getAttendees(searchCriteria);
-        Map<String, List<IndividualEntry>> registerIdAttendeeMapping = attendees.stream().collect(Collectors.groupingBy(IndividualEntry::getRegisterId));
-
-        // Update register with associated staff
-        for(AttendanceRegister register : resultAttendanceRegisters){
-            List<IndividualEntry> staffPermissions = registerIdAttendeeMapping.get(register.getId());
-            register.setAttendees(staffPermissions);
-        }
-    }
-
-    private void updateRegisterWithAssociatedStaff(List<AttendanceRegister> resultAttendanceRegisters) {
-        // Fetch all staff associated with provided register
-        List<String> registerIds = resultAttendanceRegisters.stream().map(e -> e.getId()).collect(Collectors.toList());
-        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).build();
-        List<StaffPermission> staffMembers = staffService.getAllStaff(staffSearchCriteria);
-        Map<String, List<StaffPermission>> registerIdStaffMapping = staffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
-
-        // Update register with associated attendees
-        for(AttendanceRegister register : resultAttendanceRegisters){
-            List<StaffPermission> staffPermissions = registerIdStaffMapping.get(register.getId());
-            register.setStaff(staffPermissions);
-        }
     }
 
     /**
      * Update the search criteria with list of registerIds if it does not contain registerId
      * then fetch the all registers based on the search criteria
      * but keep only those registers at last which contains attendees or staff in given search criteria
+     *
      * @param registers
      * @param searchCriteria
      * @param resultAttendanceRegisters
      */
-    public void updateSearchCriteriaAndFetchAndFilterRegisters(Set<String> registers,AttendanceRegisterSearchCriteria searchCriteria,List<AttendanceRegister> resultAttendanceRegisters){
-      if(searchCriteria.getIds() == null){
-           List<String> registerIds = new ArrayList<>();
-           registerIds.addAll(registers);
-           searchCriteria.setIds(registerIds);
-      } else {
-          for(String id: searchCriteria.getIds()){
-              if(!registers.contains(id)){
-                  throw new CustomException("INVALID_REGISTER_ID", "User can search only associated registers");
-              }
-          }
-      }
-        fetchAndFilterRegisters(searchCriteria,resultAttendanceRegisters);
+    public void updateSearchCriteriaAndFetchAndFilterRegisters(Set<String> registers, AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
+
+        if (registers == null || registers.isEmpty())
+            return;
+        if (searchCriteria.getIds() == null) {
+            List<String> registerIds = new ArrayList<>();
+            registerIds.addAll(registers);
+            searchCriteria.setIds(registerIds);
+        } else {
+            for (String id : searchCriteria.getIds()) {
+                if (!registers.contains(id)) {
+                    throw new CustomException("INVALID_REGISTER_ID", "User can search only associated registers");
+                }
+            }
+        }
+        fetchAndFilterRegisters(searchCriteria, resultAttendanceRegisters);
     }
 
     /**
-     *
      * Fetch the all registers based on the supplied search criteria
      * but keep only those registers which contains attendees or staff given in search criteria
+     *
      * @param searchCriteria
      * @param resultAttendanceRegisters
      */
-    private void fetchAndFilterRegisters(AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters){
+    private void fetchAndFilterRegisters(AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
+        // Fetch the all registers based on the supplied search criteria
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
+        // Create a map with key as registerId and corresponding register list as value
+        Map<String, List<AttendanceRegister>> registerIdVsAttendanceRegisters = attendanceRegisters.stream().collect(Collectors.groupingBy(AttendanceRegister::getId));
 
-        // If search criteria contains AttdendeeId and StaffId
-        if(searchCriteria.getAttendeeId() != null && searchCriteria.getStaffId() != null){
-            for(AttendanceRegister register : attendanceRegisters){
-                if(register.getAttendees().contains(searchCriteria.getAttendeeId()) && register.getStaff().contains(searchCriteria.getStaffId())){
-                    resultAttendanceRegisters.add(register);
-                }
-            }
+        List<String> registerIdsToSearch = new ArrayList<>();
+        registerIdsToSearch.addAll(registerIdVsAttendanceRegisters.keySet());
 
+        // Fetch and filer staff members based on the supplied search criteria.
+        List<StaffPermission> staffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
+        // Create a map with key as registerId and corresponding staff list as value
+        Map<String, List<StaffPermission>> registerIdStaffMapping = staffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
+
+        // If staffId present in search criteria then update the registerIDToSearch list with new set of registerIds
+        if (searchCriteria.getStaffId() != null){
+            registerIdsToSearch.clear();
+            registerIdsToSearch.addAll(registerIdStaffMapping.keySet());
         }
-        // If search criteria contains only AttdendeeId
-        else if(searchCriteria.getAttendeeId() != null){
-            for(AttendanceRegister register : attendanceRegisters){
-                if(register.getAttendees().contains(searchCriteria.getAttendeeId())){
-                    resultAttendanceRegisters.add(register);
-                }
-            }
 
+        // Fetch and filer attendees based on the supplied search criteria.
+        List<IndividualEntry> attendees = fetchAllAttendeesAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
+        // Create a map with key as registerId and corresponding attendee list as value
+        Map<String, List<IndividualEntry>> registerIdAttendeeMapping = attendees.stream().collect(Collectors.groupingBy(IndividualEntry::getRegisterId));
+
+        // If AttendeeId present in search criteria then update the registerIDToSearch list with new set of registerIds
+        if(searchCriteria.getAttendeeId() != null){
+            List<String> registerIdsAssociatedToAttendees = new ArrayList<>();
+            registerIdsAssociatedToAttendees.addAll(registerIdAttendeeMapping.keySet());
+            registerIdsToSearch.clear();
+            registerIdsToSearch.addAll(registerIdsAssociatedToAttendees);
         }
-        // If search criteria contains only StaffId
-        else if (searchCriteria.getStaffId() != null) {
-            for (AttendanceRegister register : attendanceRegisters) {
-                if (register.getStaff().contains(searchCriteria.getStaffId())) {
-                    resultAttendanceRegisters.add(register);
-                }
-            }
 
-        } else {
-            // Since search criteria does not contain attendeeId or staffId
-            resultAttendanceRegisters.addAll(attendanceRegisters);
+        // Populate final list of registers to be return
+        for(String registerId : registerIdsToSearch ){
+            List<AttendanceRegister> registers = registerIdVsAttendanceRegisters.get(registerId);
+            for(AttendanceRegister register : registers){
+                register.setStaff(registerIdStaffMapping.get(registerId));
+                register.setAttendees(registerIdAttendeeMapping.get(registerId));
+                resultAttendanceRegisters.add(register);
+            }
         }
     }
 
-    private List<String> getUserRoleCodes(RequestInfo requestInfo) {
-        List<String> userRoleCodes = new ArrayList<>();
-        List<Role> roles = requestInfo.getUserInfo().getRoles();
-        for (Role role : roles) {
-            userRoleCodes.add(role.getCode());
+    private List<IndividualEntry> fetchAllAttendeesAssociatedToRegisterIds(List<String> registerIdsToSearch, AttendanceRegisterSearchCriteria searchCriteria) {
+        AttendeeSearchCriteria attendeeSearchCriteria = null;
+        if(searchCriteria.getAttendeeId() != null){
+            attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIdsToSearch).individualIds(Collections.singletonList(searchCriteria.getAttendeeId())).build();
+        } else {
+            attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIdsToSearch).build();
         }
-        return userRoleCodes;
+        return attendeeRepository.getAttendees(attendeeSearchCriteria);
+    }
+
+    private List<StaffPermission> fetchAllStaffMembersAssociatedToRegisterIds(List<String> registerIdsToSearch, AttendanceRegisterSearchCriteria searchCriteria) {
+        StaffSearchCriteria staffSearchCriteria = null ;
+        if(searchCriteria.getStaffId() != null){
+            staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIdsToSearch).individualIds(Collections.singletonList(searchCriteria.getStaffId())).build();
+        } else {
+            staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIdsToSearch).build();
+        }
+        return staffService.getAllStaff(staffSearchCriteria);
+    }
+
+    private List<String> getUserRoleCodes(RequestInfo requestInfo) {
+        List<Role> roles = requestInfo.getUserInfo().getRoles();
+        return roles.stream().map(e->e.getCode()).collect(Collectors.toList());
     }
 
     private Set<String> fetchRegistersAssociatedToLoggedInStaffUser(String uuid) {
@@ -228,13 +228,13 @@ public class AttendanceRegisterService {
         individualIds.add(uuid);
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().individualIds(individualIds).build();
         List<StaffPermission> staffMembers = staffService.getAllStaff(staffSearchCriteria);
-        return staffMembers.stream().map(e->e.getRegisterId()).collect(Collectors.toSet());
+        return staffMembers.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
     }
 
     private Set<String> fetchRegistersAssociatedToLoggedInAttendeeUser(String uuid) {
         AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().individualIds(Collections.singletonList(uuid)).build();
         List<IndividualEntry> attendees = attendeeRepository.getAttendees(attendeeSearchCriteria);
-        return attendees.stream().map(e->e.getRegisterId()).collect(Collectors.toSet());
+        return attendees.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
     }
 
     /**
