@@ -19,7 +19,7 @@ public class AttendeeEnrichmentService {
     @Autowired
     private AttendanceServiceUtil attendanceServiceUtil;
 
-    public void enrichAttendeeOnCreate(AttendeeCreateRequest attendeeCreateRequest, List<IndividualEntry> attendeeListFromDB) {
+    public void enrichAttendeeOnCreate(AttendeeCreateRequest attendeeCreateRequest) {
         RequestInfo requestInfo = attendeeCreateRequest.getRequestInfo();
         List<IndividualEntry> attendeeListFromRequest = attendeeCreateRequest.getAttendees();
 
