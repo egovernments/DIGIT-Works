@@ -1,6 +1,10 @@
 import React, { Fragment } from "react";
+import { useForm } from "react-hook-form";
 
-const InboxSearchComposer = ({configs}) => {
+const InboxSearchComposer = (props) => {
+    const  { configs } = props;
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const onSubmit = data => console.log(data);
 
     return (
         <>
