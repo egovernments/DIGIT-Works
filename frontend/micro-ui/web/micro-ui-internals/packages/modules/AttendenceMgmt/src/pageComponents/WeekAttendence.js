@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Table } from "@egovernments/digit-ui-react-components";
 
-const WeekAttendence = ({ state, dispatch, modify, setDisplaySaveAction, weekDates}) => {
+const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekDates}) => {
   const { t } = useTranslation();
   const [editable, setEditable] = useState(false)
   const tableRow = state ? Object.values(state) : []
@@ -72,10 +72,21 @@ const WeekAttendence = ({ state, dispatch, modify, setDisplaySaveAction, weekDat
   };
 
   const handleModifiedWorkingDays = (e, row) => {
-    let val = parseInt(e.target.value);
-    let prevVal = parseInt(prevAttendanceTotal[row.id])
+    let val = parseFloat(e.target.value);
+    let prevVal = parseFloat(prevAttendanceTotal[row.id])
     if (val && val !== prevVal) {
-      setDisplaySaveAction(true)
+      setSaveAttendanceState(prevState => 
+                    ({...prevState, 
+                      displaySave: true, 
+                      updatePayload: prevState.updatePayload.some(item => item.id === row.id) ? 
+                          (prevState.updatePayload.map(item => {
+                              if(item.id === row.id) {
+                                item.totalAttendance = val
+                              } 
+                              return item
+                          })) :
+                          [...prevState.updatePayload, {id: row.id, totalAttendance: val}]
+                      }))
       dispatch({
         type: "updateModifiedTotal",
         state: {
@@ -96,7 +107,7 @@ const WeekAttendence = ({ state, dispatch, modify, setDisplaySaveAction, weekDat
   };
 
   const renderInputBoxSelector = (value, row) => {
-    return <input type="number" name="amount" className="modified-amount" defaultValue={value} onChange={(e) => handleModifiedWorkingDays(e, row)}/>
+    return <input type="number" name="amount" className="modified-amount" step={0.5} defaultValue={value} onChange={(e) => handleModifiedWorkingDays(e, row)}/>
   };
 
   const tableColumnsReadOnly = useMemo(() => {

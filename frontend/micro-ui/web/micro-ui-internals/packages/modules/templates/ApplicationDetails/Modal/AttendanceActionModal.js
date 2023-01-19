@@ -23,7 +23,7 @@ const CloseBtn = (props) => {
   );
 };
 
-const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode,applicationDetails,workflowDetails }) => {
+const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode,applicationDetails,workflowDetails, saveAttendanceState}) => {
   
   let { loiNumber, estimateNumber, musterRollNumber } = Digit.Hooks.useQueryParams();
    const [config, setConfig] = useState({});
@@ -37,8 +37,6 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
   const empDepartment = empData?.assignments?.[0].department
   const empDesignation = empData?.assignments?.[0].designation
   const empName = empData?.user?.name
-
-  console.log('Selected Action', action);
 
   useEffect(() => {
     const selectedAction = action?.action
@@ -68,12 +66,14 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
       case "RESUBMIT":
         submitBasedOnAction(action, 'Resubmit muster roll')
         break;
+      case "SAVE":
+        submitBasedOnAction(action, 'Verify muster roll')
+        break;
       default:
         break
     }
   }, [employeeData]);
 
-  
   function onSubmit (data) {
     submitBasedOnAction(action, data?.comments)
   }
@@ -84,8 +84,9 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
 
     const selectedAction = action?.action
     switch(selectedAction) {
-      case "VERIFY":
-        //if save add individual details 
+      case "SAVE":
+        musterRoll.individualEntries = saveAttendanceState?.updatePayload
+        workflow.action = 'VERIFY'
         break;
       case "RESUBMIT":
         musterRoll.additionalDetails = { computeAttendance : true } 

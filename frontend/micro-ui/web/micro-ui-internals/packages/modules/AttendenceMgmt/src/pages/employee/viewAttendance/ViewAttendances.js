@@ -41,7 +41,7 @@ const ViewAttendance = () => {
         showTimeLine={true}
         timelineStatusPrefix={""}
         businessService={"muster-roll-approval"}
-        forcedActionPrefix={"WORKS"}
+        forcedActionPrefix={"ATM"}
         mutate={mutate}
         showToast={showToast}
         setShowToast={setShowToast}

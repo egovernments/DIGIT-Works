@@ -25,7 +25,7 @@ const ApplicationDetails = (props) => {
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [isWarningPop, setWarningPopUp] = useState(false);
   const [modify, setModify] = useState(false);
-  const [displaySaveAction, setDisplaySaveAction] = useState(false);
+  const [saveAttendanceState, setSaveAttendanceState] = useState({ displaySave : false, updatePayload: []})
 
   const {
     applicationDetails,
@@ -316,7 +316,7 @@ const ApplicationDetails = (props) => {
             noBoxShadow={noBoxShadow}
             sectionHeadStyle={sectionHeadStyle}
             modify={modify}
-            setDisplaySaveAction={setDisplaySaveAction}
+            setSaveAttendanceState={setSaveAttendanceState}
           />
           {showModal ? (
             <ActionModal
@@ -333,6 +333,7 @@ const ApplicationDetails = (props) => {
               businessService={businessService}
               workflowDetails={workflowDetails}
               moduleCode={moduleCode}
+              saveAttendanceState={saveAttendanceState}
             />
           ) : null}
           {isWarningPop ? (
@@ -354,7 +355,7 @@ const ApplicationDetails = (props) => {
             forcedActionPrefix={forcedActionPrefix}
             ActionBarStyle={ActionBarStyle}
             MenuStyle={MenuStyle}
-            displaySaveAction={displaySaveAction}
+            saveAttendanceState={saveAttendanceState}
           />}
         </React.Fragment>
       ) : (

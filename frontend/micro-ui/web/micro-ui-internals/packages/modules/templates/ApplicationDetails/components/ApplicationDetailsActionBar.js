@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from "react";
 import { useTranslation } from "react-i18next";
 import { SubmitBar, ActionBar, Menu } from "@egovernments/digit-ui-react-components";
 
-function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSelect, setDisplayMenu, businessService, forcedActionPrefix,ActionBarStyle={},MenuStyle={}, displaySaveAction }) {
+function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSelect, setDisplayMenu, businessService, forcedActionPrefix,ActionBarStyle={},MenuStyle={}, saveAttendanceState }) {
   const { t } = useTranslation();
   let user = Digit.UserService.getUser();
   const menuRef = useRef();
@@ -33,7 +33,7 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
     isSingleButton = false;
   }
 
-  if(displaySaveAction) {
+  if(saveAttendanceState?.displaySave) {
     isMenuBotton = false;
     isSingleButton = true;
     actions = [

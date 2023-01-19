@@ -65,12 +65,12 @@ const reducer = (state, action) => {
       return { ...state, total: { ...state.total, attendence: initialTotalCount, amount: totalAmount, actualWorkingDays: totalActualWorkingDays, modifiedAmount: totalModifiedAmount, modifiedWorkingDays: totalModifiedActualWorkingDays}  };
 
     case "updateModifiedTotal":
-      const skillAmount = parseInt(action.state.row.amount / action.state.row.actualWorkingDays)
+      const skillAmount = parseFloat(action.state.row.amount / action.state.row.actualWorkingDays)
       const newObj = {
         [action.state.row.id]: {
           ...action.state.row,
-          modifiedAmount: skillAmount * parseInt(action.state.val),
-          modifiedWorkingDays: parseInt(action.state.val),
+          modifiedAmount: skillAmount * parseFloat(action.state.val),
+          modifiedWorkingDays: parseFloat(action.state.val),
         }
       }
       let newState = { ...state, ...newObj };;
