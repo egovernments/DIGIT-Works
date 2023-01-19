@@ -239,6 +239,8 @@ import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
 import HorizontalNav from "./atoms/HorizontalNav";
 import NoResultsFound from "./atoms/NoResultsFound";
 import { ViewImages } from "./atoms/ViewImages";
+import InboxSearchComposer from "./hoc/InboxSearchComposer";
+
 export {
   ViewImages,
   Phone,
@@ -406,6 +408,7 @@ export {
   Poll,
   Details,
   InboxComposer,
+  InboxSearchComposer,
   // Icons
   FilterIcon,
   FilterSvg,
