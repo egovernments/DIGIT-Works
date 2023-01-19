@@ -9,10 +9,7 @@ import org.egov.repository.EstimateRepository;
 import org.egov.repository.IdGenRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.EstimateServiceUtil;
-import org.egov.web.models.Estimate;
-import org.egov.web.models.EstimateRequest;
-import org.egov.web.models.EstimateSearchCriteria;
-import org.egov.web.models.Workflow;
+import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -41,12 +38,15 @@ public class EnrichmentService {
 
 
     /**
-     * Enrich create estimate with - audit details, estimate number from idGen service
+     * Enrich create estimate with - audit details, estimate number from idGen service,
+     * id for the estimate, estimateDetail, address, amountDetail
      * @param request
      */
     public void enrichCreateEstimate(EstimateRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         Estimate estimate = request.getEstimate();
+        List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
+        Address address = estimate.getAddress();
 
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, true);
         estimate.setAuditDetails(auditDetails);
@@ -63,6 +63,17 @@ public class EnrichmentService {
         if (estimateNumbers != null && !estimateNumbers.isEmpty()) {
             String estimateNumber = estimateNumbers.get(0);
             estimate.setEstimateNumber(estimateNumber);
+        }
+
+
+        address.setId(UUID.randomUUID().toString());
+        //enrich estimate detail & amount detail - id(s)
+        for(EstimateDetail estimateDetail : estimateDetails){
+            estimateDetail.setId(UUID.randomUUID().toString());
+            List<AmountDetail> amountDetails = estimateDetail.getAmountDetail();
+            for(AmountDetail amountDetail : amountDetails){
+                amountDetail.setId(UUID.randomUUID().toString());
+            }
         }
 
     }
