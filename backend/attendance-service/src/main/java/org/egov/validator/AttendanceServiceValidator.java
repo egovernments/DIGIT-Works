@@ -131,13 +131,9 @@ public class AttendanceServiceValidator {
                 log.error("Attendance Register is mandatory");
                 throw new CustomException("ATTENDANCE_REGISTER", "Attendance Register is mandatory");
             }
-            if (!attendanceRegisters.get(i).getTenantId().equals(attendanceRegisters.get(0).getTenantId())) {
-                log.error("All registers must have same tenant Id. Please create new request for different tenant id");
-                throw new CustomException("MULTIPLE_TENANTS", "All registers must have same tenant Id. Please create new request for different tenant id");
-            }
             if (StringUtils.isBlank(attendanceRegisters.get(i).getTenantId())) {
                 log.error("Tenant is mandatory");
-                errorMap.put("TENANT_ID", "Tenant is mandatory");
+                throw new CustomException("TENANT_ID", "Tenant is mandatory");
             }
             if (StringUtils.isBlank(attendanceRegisters.get(i).getName())) {
                 log.error("Name is mandatory");
@@ -145,11 +141,15 @@ public class AttendanceServiceValidator {
             }
             if (attendanceRegisters.get(i).getStartDate() == null) {
                 log.error("Start date is mandatory");
-                errorMap.put("START_DATE", "Start date is mandatory");
+                throw new CustomException("START_DATE", "Start date is mandatory");
             }
-            if (attendanceRegisters.get(i).getStartDate().compareTo(attendanceRegisters.get(i).getEndDate()) > 0) {
+            if (attendanceRegisters.get(i).getEndDate() != null && attendanceRegisters.get(i).getStartDate().compareTo(attendanceRegisters.get(i).getEndDate()) > 0) {
                 log.error("Start date should be less than end date");
                 errorMap.put("DATE", "Start date should be less than end date");
+            }
+            if (!attendanceRegisters.get(i).getTenantId().equals(attendanceRegisters.get(0).getTenantId())) {
+                log.error("All registers must have same tenant Id. Please create new request for different tenant id");
+                throw new CustomException("MULTIPLE_TENANTS", "All registers must have same tenant Id. Please create new request for different tenant id");
             }
         }
     }
