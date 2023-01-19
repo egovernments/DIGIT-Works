@@ -6,7 +6,7 @@ import { ActionBar, Banner, Card, CardText, SubmitBar } from "@egovernments/digi
 const Response = () => {
     const { t } = useTranslation()
     const { state }  = useLocation()
-    console.log('@@state', state);
+    
     return (
         <Card>
             <Banner 

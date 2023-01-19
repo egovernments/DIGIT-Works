@@ -24,9 +24,7 @@ const CloseBtn = (props) => {
 };
 
 const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode,applicationDetails,workflowDetails, saveAttendanceState}) => {
-  
-  let { loiNumber, estimateNumber, musterRollNumber } = Digit.Hooks.useQueryParams();
-   const [config, setConfig] = useState({});
+  const [config, setConfig] = useState({});
 
   const userUuid = Digit.UserService.getUser()?.info.uuid;
   const { isLoading, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
