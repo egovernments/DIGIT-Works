@@ -109,12 +109,15 @@ public class AttendanceServiceValidator {
     /* Validates Request Info and User Info */
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
         if (requestInfo == null) {
+            log.error("Request info is mandatory");
             throw new CustomException("REQUEST_INFO", "Request info is mandatory");
         }
         if (requestInfo.getUserInfo() == null) {
+            log.error("UserInfo is mandatory");
             throw new CustomException("USERINFO", "UserInfo is mandatory");
         }
         if (requestInfo.getUserInfo() != null && StringUtils.isBlank(requestInfo.getUserInfo().getUuid())) {
+            log.error("UUID is mandatory");
             throw new CustomException("USERINFO_UUID", "UUID is mandatory");
         }
     }
@@ -166,12 +169,15 @@ public class AttendanceServiceValidator {
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
         }
 
-        if (CollectionUtils.isEmpty(tenantRes))
+        if (CollectionUtils.isEmpty(tenantRes)){
+            log.error("The tenant: " + attendanceRegisters.get(0).getTenantId() + " is not present in MDMS");
             errorMap.put("INVALID_TENANT", "The tenant: " + attendanceRegisters.get(0).getTenantId() + " is not present in MDMS");
+        }
     }
 
     public void validateSearchRegisterRequest(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
         if (searchCriteria == null || requestInfoWrapper == null) {
+            log.error("Register search criteria request is mandatory");
             throw new CustomException("REGISTER_SEARCH_CRITERIA_REQUEST", "Register search criteria request is mandatory");
         }
 
@@ -180,6 +186,7 @@ public class AttendanceServiceValidator {
         validateRequestInfo(requestInfoWrapper.getRequestInfo(),errorMap);
 
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
+            log.error("Tenant is mandatory");
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
 
@@ -198,6 +205,7 @@ public class AttendanceServiceValidator {
         //check if all register ids from request exist in db
         for (String idFromRequest : uniqueRegisterIdsFromRequest) {
             if (!uniqueRegisterIdsFromDB.contains(idFromRequest)) {
+                log.error("Tenant is mandatory");
                 throw new CustomException("REGISTER_ID", "Attendance Registers with register id : " + idFromRequest + " does not exist for tenantId");
             }
         }
