@@ -69,26 +69,6 @@ export const createEstimatePayload = (data) => {
                 "pincode": "560150",
                 "detail": "string"
             },
-            // "estimateDetails": [
-            //     {
-            //         "category": "Overhead, SOR, non-SOR",
-            //         "sorId": "251c51eb-e970-4e01-a99a-70136c47a934",
-            //         "name": "string",
-            //         "description": "string",
-            //         "unitRate": 0,
-            //         "noOfunit": 0,
-            //         "uom": "string",
-            //         "uomValue": 0,
-            //         "amountDetail": [
-            //             {
-            //                 "type": "Gst, cess, charge",
-            //                 "amount": 34567,
-            //                 "additionalDetails": {}
-            //             }
-            //         ],
-            //         "additionalDetails": {}
-            //     }
-            // ],
             "estimateDetails": fetchEstimateDetails(filteredFormData),
             "additionalDetails": {
                 "uploads":data?.uploads?.length > 0 ? data?.uploads : []
@@ -102,33 +82,6 @@ export const createEstimatePayload = (data) => {
             ]
         }
     }
-    // let payload = {
-    //     "tenantId": tenantId,
-    //     "status": "ACTIVE",
-    //     "estimateStatus": "ACTIVE",
-    //     "subject": "Construct new schools",
-    //     "requirementNumber": data?.requirementNumber,
-    //     "description": "Construct new schools",
-    //     "department": data?.department?.code,
-    //     "location": `${tenantId}:ADMIN:${tenantId}:${data?.ward?.code}:${data?.location?.code}`,
-    //     "workCategory": "Engineering",
-    //     "beneficiaryType": data?.beneficiaryType.code,
-    //     "natureOfWork": data?.natureOfWork.code,
-    //     "typeOfWork": data?.typeOfWork?.code,
-    //     "subTypeOfWork": data?.subTypeOfWork?.code,
-    //     "entrustmentMode": data?.entrustmentMode?.code,
-    //     "fund": data?.fund?.code,
-    //     "function": data?.function?.code,
-    //     "budgetHead": data?.budgetHead?.code,
-    //     "scheme": data?.scheme?.schemeCode,
-    //     "subScheme": data?.scheme?.subSchemes[0]?.code,
-    //     "estimateDetails": estimateDetails,
-    //     "additionalDetails": {
-    //         formData: data,
-    //         createdBy: Digit.UserService.getUser()?.info?.name,
-    //         owner: Digit.UserService.getUser()?.info?.name,
-    //         filesAttached: data?.uploads
-    //     }
-    // }
+    
     return payload;
 }
