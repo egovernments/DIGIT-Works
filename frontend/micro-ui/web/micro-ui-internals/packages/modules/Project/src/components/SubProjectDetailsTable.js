@@ -11,7 +11,8 @@ const initialState = [
     },
 ];
 //these params depend on what the controller of the associated type is sending.
-const SubProjectDetailsTable = ({t, register, control, setValue, onChange, errors}) => {
+const SubProjectDetailsTable = ({t, register, control, setValue, onChange, errors, sectionFormCategory, selectedFormCategory}) => {
+    console.log(selectedFormCategory, sectionFormCategory);
     const [rows, setRows] = useState(initialState);
     const columns = [
         {label : t('WORKS_SNO'), isMandatory : false },
@@ -184,7 +185,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 <td style={getStyles()}>{i}</td>
                 <td style={getStyles()} >
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsNameOfWork`} inputRef={register({required : true})}/>
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProjectDetailsNameOfWork`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true}) : register({required : false})}/>
                         {renderErrorIfAny(row, "subProjectDetailsNameOfWork")}
                     </div>
                 </td>
@@ -199,7 +200,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                       <Controller
                         control={control}
                         name={`${formFieldName}.${row.key}.subProjectDetailsTypeOfWork`}
-                        rules={{ required: true}}
+                        rules={(selectedFormCategory === sectionFormCategory) ? {required : true} : {}}
                         render={(props)=>(
                                 getDropDownDataFromMDMS(t, row, "subProjectDetailsTypeOfWork" , props, register, "name", { 
                                     mdmsConfig: {
