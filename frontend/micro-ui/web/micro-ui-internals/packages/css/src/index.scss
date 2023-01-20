@@ -799,3 +799,35 @@ input[type="number"] {
 .status-value-link {
   color: #F47738;
 }
+
+.info-banner-wrap {
+  &.project-banner {
+    background: #FFE2B5;
+    p{
+      font-size: 16px;
+      color: #CC7B2F;
+    } 
+    h2{
+      font-size: 18px;
+      color: #CC7B2F;
+    }
+  }
+}
+
+.sub-project-table-wrapper {
+  overflow-x: scroll;
+  .project-details-table {
+    position: relative;
+    .sub-projects-details-field-mt {
+      margin-top: 1.5rem;
+    }    
+    .projects-subProject-details-error {
+      width : 100%;
+      position : absolute;
+      margin-top: 3px;
+      &.dropdown-field {
+        margin-top: -21px;
+      }
+    }
+  }
+}
