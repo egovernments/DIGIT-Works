@@ -111,6 +111,7 @@ import useKickoffInbox from "./works/useKickoffInbox";
 import useViewContractDetails from "./contracts/useViewContractDetails";
 import useViewContractDetailsClosureScreen from "./contracts/useViewContractDetailsClosureScreen";
 import useViewAttendance from "./attendance/useViewAttendance";
+import useUpdateAttendance from "./attendance/useUpdateAttendance";
 import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
@@ -207,6 +208,7 @@ const survey = {
 
 const attendance = {
   useViewAttendance,
+  useUpdateAttendance
 };
 
 const bills = {

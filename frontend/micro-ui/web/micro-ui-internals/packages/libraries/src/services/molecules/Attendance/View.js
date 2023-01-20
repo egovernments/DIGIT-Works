@@ -27,7 +27,7 @@ const getWeekAttendance = (data) => {
   return weekAttendance
 }
 
-const getAttendanceTableData = (data) => {
+const getAttendanceTableData = (data, skills) => {
   let tableData = {}
   if(data?.individualEntries.length > 0) {
     data?.individualEntries.forEach((item, index) => {
@@ -38,12 +38,12 @@ const getAttendanceTableData = (data) => {
       tableRow.actualWorkingDays = item?.totalAttendance
       tableRow.nameOfIndividual = item?.additionalDetails?.userName || 'Piyush HarjitPal'
       tableRow.guardianName = item?.additionalDetails?.fatherName  || 'HarjitPal'
-      tableRow.skill = item?.additionalDetails?.skillCode || 'SKILL_1'
-      tableRow.amount = 2000 //get this amount from mdms data
-      tableRow.modifiedAmount = 2000 //get this amount from mdms data
+      tableRow.skill = skills['SKILLED_LEVEL_1'].name || 'SKILL_1'  //skills[item?.additionalDetails?.skillCode].name
+      tableRow.amount = skills['SKILLED_LEVEL_1'].amount * item?.totalAttendance //skills[item?.additionalDetails?.skillCode].amount * item?.totalAttendance
+      tableRow.modifiedAmount = tableRow.amount 
       tableRow.modifiedWorkingDays = item?.totalAttendance
       tableRow.bankAccountDetails = {
-        accountNo : '880182873839-SBIN0001237', //item?.additionalDetails?.bankDetails, split by - and assign to account and ifsc
+        accountNo : item?.additionalDetails?.bankDetails || '880182873839-SBIN0001237',
         ifscCode : null
       }
       tableRow.aadharNumber = item?.additionalDetails?.aadharNumber|| '9099-1234-1234' 
@@ -72,12 +72,13 @@ const getAttendanceTableData = (data) => {
   return tableData
 }
 
-const transformViewDataToApplicationDetails = (t, data, workflowDetails) => {
+const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills) => {
   const musterRoll = data.musterRolls[0]
-  const attendanceTableData = getAttendanceTableData(musterRoll)
+  const attendanceTableData = getAttendanceTableData(musterRoll, skills)
   const weekDates = getWeekDates(musterRoll)
   const registrationDetails = {
     title: "ATM_REGISTRATION_DETAILS",
+    applicationData: musterRoll,
     asSectionHeader: true,
     values: [
       { title: "WORKS_ORG_NAME", value: musterRoll?.additionalDetails?.orgName || t("NA") },
@@ -101,7 +102,6 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails) => {
       },
     },
   };
-  
   const applicationDetails = { applicationDetails: [registrationDetails] };
 
   return {
@@ -114,14 +114,22 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails) => {
 
 const workflowDataDetails = async (tenantId, businessIds) => {
     const response = await Digit.WorkflowService.getByBusinessId(tenantId, businessIds);
-    return response;
+    return response
+}
+
+const getWageSeekerSkills = async () => {
+  const skills = {}
+  const response = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "common-masters", [{"name": "WageSeekerSkills"}])
+  response?.['common-masters']?.WageSeekerSkills.forEach(item => (skills[item.code] = item))
+  return skills
 }
 
 export const fetchAttendanceDetails = async (t, tenantId, searchParams) => {
   try {
     const response = await AttendanceService.search(tenantId, searchParams);
     const workflowDetails = await workflowDataDetails(tenantId, searchParams.musterRollNumber);
-    return transformViewDataToApplicationDetails(t, response, workflowDetails)
+    const skills = await getWageSeekerSkills()
+    return transformViewDataToApplicationDetails(t, response, workflowDetails, skills)
   } catch (error) {
       console.log('error', error);
       throw new Error(error?.response?.data?.Errors[0].message);
