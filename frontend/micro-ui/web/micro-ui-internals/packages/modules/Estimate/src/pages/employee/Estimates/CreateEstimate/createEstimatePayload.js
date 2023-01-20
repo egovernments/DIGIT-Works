@@ -43,7 +43,7 @@ const fetchEstimateDetails = (data) => {
 }
 
 export const createEstimatePayload = (data) => {
-    console.log(data);
+    
     let filteredFormData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
     const tenantId = Digit.ULBService.getCurrentTenantId()
     //let Zone = tenantId === "pb.jalandhar" ? "JZN1" : "Z1"

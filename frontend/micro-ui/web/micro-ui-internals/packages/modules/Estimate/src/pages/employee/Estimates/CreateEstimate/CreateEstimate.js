@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import getModalConfig from './config'
 import { createEstimateConfig } from './createEstimateConfig'
 import { createEstimatePayload } from './createEstimatePayload'
-
+import { useHistory } from "react-router-dom";
 const cardState = {
     "title": " ",
     "asSectionHeader": true,
@@ -38,6 +38,8 @@ const configNavItems = [
     },
 ]
 const CreateEstimate = ({ EstimateSession }) => {
+    const history = useHistory()
+
     const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
 
     const { mutate: EstimateMutation } = Digit.Hooks.works.useCreateEstimateNew("WORKS");
@@ -120,48 +122,39 @@ const CreateEstimate = ({ EstimateSession }) => {
         
 
         await EstimateMutation(payload, {
-            onError: (error, variables) => {
-                debugger
+            onError: async (error, variables) => {
                 setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
                 setTimeout(() => {
                     setShowToast(false);
                 }, 5000);
             },
             onSuccess: async (responseData, variables) => {
-                debugger
                 clearSessionFormData();
-                history.push("/works-ui/employee/works/response", {
+                const state = {
                     header: t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
                     id: responseData?.estimates[0]?.estimateNumber,
                     info: t("WORKS_ESTIMATE_ID"),
-                    message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.department}`) }),
+                    message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
                     links: [
                         {
-                            name: t("WORKS_CREATE_ESTIMATE"),
-                            redirectUrl: "/works-ui/employee/estimate/create-estimate",
-                            code: "",
-                            svg: "CreateEstimateIcon",
-                            isVisible: true,
-                            type: "add",
-                        },
-                        {
                             name: t("WORKS_GOTO_ESTIMATE_INBOX"),
-                            redirectUrl: "/works-ui/employee/works/inbox",
+                            redirectUrl: `/${window.contextPath}/employee/works/inbox`,
                             code: "",
                             svg: "GotoInboxIcon",
                             isVisible: true,
                             type: "inbox",
                         },
                         {
-                            name: t("WORKS_DOWNLOAD_PDF"),
-                            redirectUrl: "/works-ui/employee/works/inbox",
+                            name: t("WORKS_CREATE_ESTIMATE"),
+                            redirectUrl: `/${window.contextPath}/employee/estimate/create-estimate`,
                             code: "",
-                            svg: "DownloadPrefixIcon",
+                            svg: "CreateEstimateIcon",
                             isVisible: true,
-                            type: "download",
+                            type: "add",
                         },
                     ],
-                });
+                }
+                history.push(`/${window.contextPath}/employee/works/response`, state);
             },
         });
 
