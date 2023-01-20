@@ -114,7 +114,7 @@ const CreateEstimate = ({ EstimateSession }) => {
             selectedDesignation
         }
         setSessionFormData(completeFormData)
-        console.log(completeFormData);
+        
 
         const payload = createEstimatePayload(completeFormData)
         setShowModal(false);
@@ -157,12 +157,6 @@ const CreateEstimate = ({ EstimateSession }) => {
                 history.push(`/${window.contextPath}/employee/works/response`, state);
             },
         });
-
-        //here
-        //console.log(createFormData);
-        //console.log(sessionFormData);
-        //here you can handle the data submitted in the modal and call the api
-        //access comments from data and details such as dept,desig,approver are stored locally in this comp
     }
 
     const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(
