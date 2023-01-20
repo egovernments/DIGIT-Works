@@ -2,7 +2,10 @@ const InboxSearchComposerConfig = () => {
     return {
         pageHeader : "Search Projects",
         form : {
-                type : "inbox",
+                type : "search", 
+                //use classname as 'search' for search view
+                //use classname as 'inobx' for inbox view
+                //inbox view is by default
                 sections : {
                     search : {
                         fields : []
