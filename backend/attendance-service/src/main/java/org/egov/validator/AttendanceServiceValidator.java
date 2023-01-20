@@ -83,25 +83,30 @@ public class AttendanceServiceValidator {
     }
 
     /* Validates attendance register data in update request against attendance register data fetched from database */
-    public void validateUpdateAgainstDB(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegisterList) {
-        if (CollectionUtils.isEmpty(attendanceRegisterList) || attendanceRegisterRequest.getAttendanceRegister().size() != attendanceRegisterList.size()) {
+    public void validateUpdateAgainstDB(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegistersFromDB) {
+        if (CollectionUtils.isEmpty(attendanceRegistersFromDB)) {
             log.error("The record that you are trying to update does not exists in the system");
             throw new CustomException("INVALID_REGISTER_MODIFY", "The record that you are trying to update does not exists in the system");
         }
 
-        Set<String> registerIdsFromDB = attendanceRegisterList.stream().map(AttendanceRegister:: getId).collect(Collectors.toSet());
-        for (AttendanceRegister attendanceRegister: attendanceRegisterRequest.getAttendanceRegister()) {
-            if (!registerIdsFromDB.contains(attendanceRegister.getId())) {
-                log.error("The register Id " + attendanceRegister.getId() + " that you are trying to update does not exists in the system");
-                throw new CustomException("INVALID_REGISTER_MODIFY", "The register Id " + attendanceRegister.getId() + " that you are trying to update does not exists in the system");
+        for (AttendanceRegister registerFromRequest: attendanceRegisterRequest.getAttendanceRegister()) {
+
+            AttendanceRegister registerFromDB = attendanceRegistersFromDB.stream().filter(ar -> ar.getId().equals(registerFromRequest.getId())).findFirst().orElse(null);
+            if (registerFromDB == null) {
+                log.error("The register Id " + registerFromRequest.getId() + " that you are trying to update does not exists in the system");
+                throw new CustomException("INVALID_REGISTER_MODIFY", "The register Id " + registerFromRequest.getId() + " that you are trying to update does not exists in the system");
             }
 
             // If the user who is trying to update the register is not associated with the register, throw error that the user does not have permission to modify the attendance register
-            if (attendanceRegister.getStaff() != null) {
-                Set<String> staffUserIdsFromDB = attendanceRegister.getStaff().stream().map(StaffPermission:: getUserId).collect(Collectors.toSet());
+            if (registerFromDB.getStaff() != null) {
+                Set<String> staffUserIdsFromDB = registerFromDB.getStaff().stream().map(StaffPermission:: getUserId).collect(Collectors.toSet());
                 if (!staffUserIdsFromDB.contains(attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid())) {
-                    throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register");
+                    log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                    throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 }
+            } else {
+                log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
             }
         }
     }
@@ -142,12 +147,16 @@ public class AttendanceServiceValidator {
                 log.error("Name is mandatory");
                 errorMap.put("NAME", "Name is mandatory");
             }
-            if (attendanceRegisters.get(i).getStartDate() == null) {
-                log.error("Start date is mandatory");
+            if (attendanceRegisters.get(i).getStartDate() == null || attendanceRegisters.get(i).getStartDate().compareTo(BigDecimal.ZERO) == 0) {
+                log.error("Start date is mandatory for attendance register " + attendanceRegisters.get(i).getName());
                 throw new CustomException("START_DATE", "Start date is mandatory");
             }
+            if (attendanceRegisters.get(i).getStartDate().compareTo(BigDecimal.ZERO) < 0) {
+                log.error("Start date is less than zero " + attendanceRegisters.get(i).getName());
+                throw new CustomException("START_DATE", "Start date should be valid");
+            }
             if (attendanceRegisters.get(i).getEndDate() != null && attendanceRegisters.get(i).getStartDate().compareTo(attendanceRegisters.get(i).getEndDate()) > 0) {
-                log.error("Start date should be less than end date");
+                log.error("Start date should be less than end date for attendance register " + attendanceRegisters.get(i).getName());
                 errorMap.put("DATE", "Start date should be less than end date");
             }
             if (!attendanceRegisters.get(i).getTenantId().equals(attendanceRegisters.get(0).getTenantId())) {
