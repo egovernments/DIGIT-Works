@@ -6,6 +6,8 @@ const OverheadsTable = (props) => {
     const [totalAmount,setTotalAmount] = useState(100)
     const formFieldName = "overheadDetails" // this will be the key under which the data for this table will be present on onFormSubmit
     
+    const errorCardStyle = {width:"100%"}
+
     const initialState = [
         {
             key: 1,
@@ -23,7 +25,7 @@ const OverheadsTable = (props) => {
                 obj = { "width": "1rem" }
                 break;
             case 2:
-                obj = { "width": "30rem" }
+                obj = { "width": "60%" }
                 break;
             case 3:
                 obj = { "width": "30rem" }
@@ -32,7 +34,7 @@ const OverheadsTable = (props) => {
                 obj = { "width": "30rem" }
                 break;
             case 5:
-                obj = { "width": "1rem" }
+                obj = { "width": "3%" }
                 break;
             default:
                 obj = { "width": "92rem" }
@@ -40,7 +42,7 @@ const OverheadsTable = (props) => {
         }
         return obj
     }
-    const columns = [t('WORKS_SNO'), t('WORKS_NAME'), t('WORKS_PERCENTAGE'),t('WORKS_AMOUNT'), '']
+    const columns = [t('WORKS_SNO'), t('PROJECT_DESC'), t('WORKS_PERCENTAGE'),t('WORKS_AMOUNT'), '']
     const renderHeader = () => {
         return columns?.map((key, index) => {
             return <th key={index} style={getStyles(index+1)} > {key} </th>
@@ -91,27 +93,27 @@ const OverheadsTable = (props) => {
                 })
                 }
                 />{errors && errors?.[formFieldName]?.[row.key]?.name?.type === "pattern" && (
-                    <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                        <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "required" && (
-                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
                 
                 <td style={getStyles(3)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.percentage`} inputRef={register({
                     required: false,
                     pattern: /^[0-9]*$/
                 })}
-                />{errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
-                    <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-                    {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+                />{errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "pattern" && (
+                        <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                    {errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "required" && (
+                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
                 <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.amount`} inputRef={register({
                     required: false,
                     pattern: /^[0-9]*$/
                 })}
                 />{errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
-                    <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                        <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-                        <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
                 
                 <td style={getStyles(5)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
             </tr>
@@ -133,7 +135,7 @@ const OverheadsTable = (props) => {
                 </tr>
                 <tr>
                     {/* <td style={getStyles(1)}></td> */}
-                    <td colSpan={5} style={{ "textAlign": "center" }} onClick={addRow}><span><AddIcon fill={"#F47738"} styles={{ "margin": "auto", "display": "inline", "marginTop": "-2px" }} /><label style={{ "marginLeft": "10px", fontWeight: "600" }}>{t("WORKS_ADD_ITEM")}</label></span></td>
+                    <td colSpan={5} style={{ "textAlign": "center" }} onClick={addRow}><span><AddIcon fill={"#F47738"} styles={{ "margin": "auto", "display": "inline", "marginTop": "-2px" }} /><label style={{ "marginLeft": "10px", fontWeight: "600", color:" #F47738" }}>{t("WORKS_ADD_OVERHEAD")}</label></span></td>
                     {/* <td style={getStyles(3)}></td>
                     <td style={getStyles(6)}></td> */}
                 </tr>

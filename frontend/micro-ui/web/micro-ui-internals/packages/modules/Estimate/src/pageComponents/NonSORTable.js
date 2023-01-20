@@ -41,7 +41,7 @@ const NonSORTable = (props) => {
         obj = { "width": "10rem" }
         break;
       case 8:
-        obj = { "width": "1rem" }
+        obj = { "width": "3%" }
         break;
       default:
         obj = { "width": "1rem" }
@@ -49,7 +49,7 @@ const NonSORTable = (props) => {
     }
     return obj
   }
-  const columns = [t('WORKS_SNO'), t('PROJECT_DESC'), t('PROJECT_UOM'), t('CS_COMMON_RATE'), t('WORKS_ESTIMATED_QUANTITY'), t('WORKS_ESTIMATED_AMOUNT'),t('RT_TOTAL'), '']
+  const columns = [t('WORKS_SNO'), t('PROJECT_DESC'), t('PROJECT_UOM'), t('CS_COMMON_RATE'), t('WORKS_ESTIMATED_QUANTITY'), t('WORKS_ESTIMATED_AMOUNT'), '']
   const renderHeader = () => {
     return columns?.map((key, index) => {
       return <th key={index} style={getStyles(index + 1)} > {key} </th>
@@ -64,6 +64,7 @@ const NonSORTable = (props) => {
     }
     return true
   }
+  const errorCardStyle = {width:"100%"}
   const removeRow = (row) => {
     //make a new state here which doesn't have this key
     const updatedState = rows.map(e => {
@@ -99,55 +100,55 @@ const NonSORTable = (props) => {
           pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
         })
         }
-        />{errors && errors?.[formFieldName]?.[row.key]?.name?.type === "pattern" && (
-          <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-          {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "required" && (
-            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+        />{errors && errors?.[formFieldName]?.[row.key]?.description?.type === "pattern" && (
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+          {errors && errors?.[formFieldName]?.[row.key]?.description?.type === "required" && (
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
         <td style={getStyles(3)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.uom`} inputRef={register({
           required: false,
-          pattern: /^[0-9]*$/
+          pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
         })}
-        />{errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
-          <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-          {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+        />{errors && errors?.[formFieldName]?.[row.key]?.uom?.type === "pattern" && (
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+          {errors && errors?.[formFieldName]?.[row.key]?.uom?.type === "required" && (
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
         <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.rate`} inputRef={register({
           required: false,
           pattern: /^[0-9]*$/
         })}
-        />{errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
-          <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-          {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+        />{errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "pattern" && (
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+          {errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "required" && (
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
         <td style={getStyles(5)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.estimatedQuantity`} inputRef={register({
           required: false,
           pattern: /^[0-9]*$/
         })}
-        />{errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
-          <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-          {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+        />{errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "pattern" && (
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+          {errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "required" && (
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
         <td style={getStyles(6)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.estimatedAmount`} inputRef={register({
           required: false,
           pattern: /^[0-9]*$/
         })}
-        />{errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
-          <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-          {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+        />{errors && errors?.[formFieldName]?.[row.key]?.estimatedAmount?.type === "pattern" && (
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+          {errors && errors?.[formFieldName]?.[row.key]?.estimatedAmount?.type === "required" && (
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
-        <td style={getStyles(7)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.total`} inputRef={register({
+        {/* <td style={getStyles(7)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.total`} inputRef={register({
           required: false,
           pattern: /^[0-9]*$/
         })}
         />{errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
           <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
           {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td> */}
 
         <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
       </tr>
@@ -162,16 +163,17 @@ const NonSORTable = (props) => {
       </thead>
       <tbody>
         {renderBody()}
-        {/* <tr>
-          <td colSpan={3} style={{ textAlign: "right", fontWeight: "600" }}>{t("RT_TOTAL")}</td>
+        <tr>
+          <td colSpan={1}></td>
+          <td colSpan={4} style={{ textAlign: "right", fontWeight: "600" }}>{t("RT_TOTAL")}</td>
           <td colSpan={1}>{totalAmount}</td>
           <td colSpan={1}></td>
-        </tr> */}
+        </tr>
         
         <tr>
-          <td style={getStyles(1)}></td>
-          <td colSpan={6} style={{ "textAlign": "center" }} onClick={addRow}><span><AddIcon fill={"#F47738"} styles={{ "margin": "auto", "display": "inline", "marginTop": "-2px" }} /><label style={{ "marginLeft": "10px", fontWeight: "600" }}>{t("WORKS_ADD_NON_SOR")}</label></span></td>
-          <td style={getStyles(1)}></td>
+          {/* <td style={getStyles(1)}></td> */}
+          <td colSpan={7} style={{ "textAlign": "center" }} onClick={addRow}><span><AddIcon fill={"#F47738"} styles={{ "margin": "auto", "display": "inline", "marginTop": "-2px" }} /><label style={{ "marginLeft": "10px", fontWeight: "600", color: "#F47738" }}>{t("WORKS_ADD_ITEM")}</label></span></td>
+          {/* <td style={getStyles(1)}></td> */}
         </tr>
         
       </tbody>

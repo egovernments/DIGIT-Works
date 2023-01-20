@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
 
-import CreateEstimate from "./Estimates/CreateEstimate";
+import CreateEstimate from "./Estimates/CreateEstimate/CreateEstimate";
 
 const EstimateBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
