@@ -196,7 +196,7 @@ public class AttendeeServiceValidator {
     }
 
 
-    public void validateCreateAttendee(AttendeeCreateRequest attendeeCreateRequest
+    public void validateAttendeeOnCreate(AttendeeCreateRequest attendeeCreateRequest
             , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
 
         //validate tenantId with MDMS
@@ -248,7 +248,7 @@ public class AttendeeServiceValidator {
         }
     }
 
-    public void validateDeleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest,
+    public void validateAttendeeOnDelete(AttendeeDeleteRequest attendeeDeleteRequest,
                                        List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
         //validate tenantId with MDMS
         log.info("validating tenant id from MDMS and Request info");

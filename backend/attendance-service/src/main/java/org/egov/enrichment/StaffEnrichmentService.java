@@ -18,7 +18,7 @@ public class StaffEnrichmentService {
     @Autowired
     private AttendanceServiceUtil attendanceServiceUtil;
 
-    public void enrichCreateStaffPermission(StaffPermissionRequest request) {
+    public void enrichStaffPermissionOnCreate(StaffPermissionRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
 
@@ -31,7 +31,7 @@ public class StaffEnrichmentService {
         }
     }
 
-    public void enrichDeleteStaffPermission(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB) {
+    public void enrichStaffPermissionOnDelete(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
 

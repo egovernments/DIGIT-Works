@@ -17,6 +17,9 @@ public class StaffSearchCriteria {
     @JsonProperty("registerIds")
     private List<String> registerIds;
 
+    @JsonProperty("tenantId")
+    private String tenantId;
+
     @JsonProperty("limit")
     private Integer limit;
 

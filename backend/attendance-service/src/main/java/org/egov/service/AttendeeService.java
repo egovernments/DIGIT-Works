@@ -77,7 +77,7 @@ public class AttendeeService {
 
         //validator call by passing attendee request and the data from db call
         log.info("attendeeServiceValidator called to validate Create attendee request");
-        attendeeServiceValidator.validateCreateAttendee(attendeeCreateRequest, attendeeListFromDB, attendanceRegisterListFromDB);
+        attendeeServiceValidator.validateAttendeeOnCreate(attendeeCreateRequest, attendeeListFromDB, attendanceRegisterListFromDB);
 
         //enrichment call by passing attendee request and data from db call
         log.info("attendeeServiceValidator called to enrich Create attendee request");
@@ -122,7 +122,7 @@ public class AttendeeService {
 
         //validator call by passing attendee request and the data from db call
         log.info("validating delete attendee request");
-        attendeeServiceValidator.validateDeleteAttendee(attendeeDeleteRequest, attendeeListFromDB, attendanceRegisterListFromDB);
+        attendeeServiceValidator.validateAttendeeOnDelete(attendeeDeleteRequest, attendeeListFromDB, attendanceRegisterListFromDB);
 
         //enrichment call by passing attendee request and data from db call
         log.info("enriching delete attendee request");

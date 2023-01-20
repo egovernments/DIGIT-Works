@@ -141,7 +141,7 @@ public class StaffServiceValidatorTest {
 
         attendanceRegisterList.get(0).setTenantId("od.odisha");
 
-        assertThrows(CustomException.class,() -> staffServiceValidator.validateCreateStaffPermission(staffPermissionRequest,staffPermissionList,attendanceRegisterList));
+        assertThrows(CustomException.class,() -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest,staffPermissionList,attendanceRegisterList));
     }
 
     @DisplayName("check if register end date has passed")
@@ -154,7 +154,7 @@ public class StaffServiceValidatorTest {
 
         attendanceRegisterList.get(0).setEndDate(new BigDecimal("1547733538000"));
 
-        assertThrows(CustomException.class,() -> staffServiceValidator.validateCreateStaffPermission(staffPermissionRequest,staffPermissionList,attendanceRegisterList));
+        assertThrows(CustomException.class,() -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest,staffPermissionList,attendanceRegisterList));
     }
 
     @DisplayName("check if staff is already enrolled to the given register")
@@ -166,7 +166,7 @@ public class StaffServiceValidatorTest {
         List<AttendanceRegister> attendanceRegisterList= AttendanceRegisterBuilderTest.getAttendanceRegisterList();
 
 
-        assertThrows(CustomException.class,() -> staffServiceValidator.validateCreateStaffPermission(staffPermissionRequest,staffPermissionList,attendanceRegisterList));
+        assertThrows(CustomException.class,() -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest,staffPermissionList,attendanceRegisterList));
     }
 
 

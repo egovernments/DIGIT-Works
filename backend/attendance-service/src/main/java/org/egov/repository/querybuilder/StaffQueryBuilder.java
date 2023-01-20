@@ -48,6 +48,12 @@ public class StaffQueryBuilder {
             query.append(" stf.register_id IN (").append(createQuery(registerIds)).append(")");
             preparedStmtList.addAll(criteria.getRegisterIds());
         }
+
+        if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" stf.tenantid = ? ");
+            preparedStmtList.add(criteria.getTenantId());
+        }
         return query.toString();
     }
 

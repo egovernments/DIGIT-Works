@@ -34,7 +34,7 @@ public class StaffEnrichmentServiceTest {
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
 
         staffPermissionRequest.getStaff().get(0).setEnrollmentDate(null);
-        staffEnrichmentService.enrichCreateStaffPermission(staffPermissionRequest);
+        staffEnrichmentService.enrichStaffPermissionOnCreate(staffPermissionRequest);
 
         assertNotNull(staffPermissionRequest.getStaff().get(0).getEnrollmentDate());
     }

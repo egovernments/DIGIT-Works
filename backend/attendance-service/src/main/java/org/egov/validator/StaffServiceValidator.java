@@ -132,26 +132,14 @@ public class StaffServiceValidator {
         }
     }
 
-    public void validateCreateStaffPermission(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB,
-                                              List<AttendanceRegister> attendanceRegisterListFromDB) {
+    public void validateStaffPermissionOnCreate(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB,
+                                                List<AttendanceRegister> attendanceRegisterListFromDB) {
 
         //validate tenant id with mdms and request info
         log.info("validating tenant id from MDMS and Request info");
         validateMDMSAndRequestInfoForStaff(request);
 
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
-
-        // check if staff tenant id is same as register tenant id
-        log.info("checking if staff tenant id is same as register tenant id");
-        for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
-            for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {
-                if (!staffFromRequest.getTenantId().equals(attendanceRegister.getTenantId())) {
-                    log.error("Staff TENANT_ID for staff : " + staffFromRequest.getUserId() + " is not same as TENANT_ID of register");
-                    throw new CustomException("TENANT_ID"
-                            , "Staff TENANT_ID for staff : " + staffFromRequest.getUserId() + " is not same as TENANT_ID of register");
-                }
-            }
-        }
 
         // staff cannot be added to register if register's end date has passed
         log.info("checking that staff cannot be added to register if register's end date has passed");
@@ -165,7 +153,7 @@ public class StaffServiceValidator {
         }
 
         //check is staff user id exists in staff table for the given register id. If yes check the deenrollment date. If staffId does not exist new staff can still be enrolled to the register
-       log.info("Checking if deenrollment date is null for existing staff");
+        log.info("Checking if deenrollment date is null for existing staff");
         if (staffPermissionListFromDB != null) {
             for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {//list of staff from request
                 for (StaffPermission staffFromDB : staffPermissionListFromDB) {  //list of staff from DB
@@ -182,7 +170,7 @@ public class StaffServiceValidator {
     }
 
 
-    public void validateDeleteStaffPermission(StaffPermissionRequest staffPermissionRequest
+    public void validateStaffPermissionOnDelete(StaffPermissionRequest staffPermissionRequest
             , List<StaffPermission> staffPermissionListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
 
         //validate tenant id with mdms and request info
@@ -229,7 +217,7 @@ public class StaffServiceValidator {
 
         //<registerId,staffCount> from staffRequest - number of de enrollments from each register
         for (StaffPermission staffPermissionFromRequest : staffPermissionListFromRequest) {
-            String staffRegisterId = staffPermissionFromRequest.getRegisterId().toString();
+            String staffRegisterId = staffPermissionFromRequest.getRegisterId();
             if (staffCountInEachRegisterIdFromRequest.containsKey(staffRegisterId)) {
                 int count = staffCountInEachRegisterIdFromRequest.get(staffRegisterId);
                 count++;
@@ -240,7 +228,7 @@ public class StaffServiceValidator {
 
         //<registerId,staffCount> from StaffDB data number of staff enrolled to each register in db
         for (StaffPermission staffPermissionFromDB : staffPermissionListFromDB) {
-            String staffRegisterId = staffPermissionFromDB.getRegisterId().toString();
+            String staffRegisterId = staffPermissionFromDB.getRegisterId();
             if (staffCountInEachRegisterIdFromDB.containsKey(staffRegisterId) && staffPermissionFromDB.getDenrollmentDate() == null) {
                 int count = staffCountInEachRegisterIdFromDB.get(staffRegisterId);
                 count++;

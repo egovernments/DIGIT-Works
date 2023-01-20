@@ -71,7 +71,7 @@ public class StaffService {
         List<String> registerIds = extractRegisterIdsFromRequest(staffPermissionRequest);
 
         //db call to get the staffList data whose de enrollment date is null
-        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
+        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).tenantId(tenantId).build();
         List<StaffPermission> staffPermissionListFromDB = getActiveStaff(staffSearchCriteria);
         log.info("size of active staffPermission List received From DB :" + staffPermissionListFromDB.size());
 
@@ -85,12 +85,12 @@ public class StaffService {
 
             //validator call by passing staff request and the data from db call
             log.info("staffServiceValidator called to validate Create StaffPermission request");
-            staffServiceValidator.validateCreateStaffPermission(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
+            staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
         }
 
         //enrichment call by passing staff request and data from db call
         log.info("staffEnrichmentService called to enrich Create StaffPermission request");
-        staffEnrichmentService.enrichCreateStaffPermission(staffPermissionRequest);
+        staffEnrichmentService.enrichStaffPermissionOnCreate(staffPermissionRequest);
 
         //push to producer
         log.info("staff objects pushed via producer");
@@ -127,17 +127,17 @@ public class StaffService {
         attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
         // db call to get staff data
-        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
+        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).tenantId(tenantId).build();
         List<StaffPermission> staffPermissionListFromDB = getAllStaff(staffSearchCriteria);
         log.info("size of staffPermission list received from DB : " + staffPermissionListFromDB.size());
 
 
         //validator call by passing staff request and the data from db call
         log.info("staffServiceValidator called to validate Delete StaffPermission request");
-        staffServiceValidator.validateDeleteStaffPermission(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
+        staffServiceValidator.validateStaffPermissionOnDelete(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
 
         log.info("staffEnrichmentService called to enrich Delete StaffPermission request");
-        staffEnrichmentService.enrichDeleteStaffPermission(staffPermissionRequest, staffPermissionListFromDB);
+        staffEnrichmentService.enrichStaffPermissionOnDelete(staffPermissionRequest, staffPermissionListFromDB);
 
         log.info("staff objects pushed via producer");
         producer.push(serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
@@ -190,6 +190,5 @@ public class StaffService {
         }
         return staffIds;
     }
-
 
 }
