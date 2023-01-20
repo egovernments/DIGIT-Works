@@ -117,6 +117,7 @@ import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
 import useViewFinancialDetails from "./project/useViewFinancialDetails";
+import useCreateProject from "./works/useCreateProject";
 
 const works = {
   useViewEstimateDetails,
@@ -137,7 +138,8 @@ const works = {
   useApplicationActionsEstimate,
   useSearchApprovedEstimates,
   useInbox: useWorksInbox,
-  useKickoffInbox
+  useKickoffInbox,
+  useCreateProject
 };
 
 const contracts = {
