@@ -56,7 +56,7 @@ public class AttendanceRegisterService {
      */
     public AttendanceRegisterRequest createAttendanceRegister(AttendanceRegisterRequest request) {
         attendanceServiceValidator.validateCreateAttendanceRegister(request);
-        registerEnrichment.enrichCreateAttendanceRegister(request);
+        registerEnrichment.enrichRegisterOnCreate(request);
         log.info("Enriched Register with Register number, Ids and audit details");
         producer.push(attendanceServiceConfiguration.getSaveAttendanceRegisterTopic(), request);
         log.info("Pushed create attendance register request to kafka");
@@ -277,7 +277,7 @@ public class AttendanceRegisterService {
         //Validate Update attendance register request against attendance registers fetched from database
         attendanceServiceValidator.validateUpdateAgainstDB(attendanceRegisterRequest, attendanceRegistersFromDB);
 
-        registerEnrichment.enrichUpdateAttendanceRegister(attendanceRegisterRequest, attendanceRegistersFromDB);
+        registerEnrichment.enrichRegisterOnUpdate(attendanceRegisterRequest, attendanceRegistersFromDB);
         log.info("Enriched with register Number, Ids and AuditDetails");
         producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
         log.info("Pushed update attendance register request to kafka");

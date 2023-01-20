@@ -30,7 +30,7 @@ public class RegisterEnrichment {
 
 
     /* Enrich Attendance Register on Create Request */
-    public void enrichCreateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
+    public void enrichRegisterOnCreate(AttendanceRegisterRequest attendanceRegisterRequest) {
         RequestInfo requestInfo = attendanceRegisterRequest.getRequestInfo();
         List<AttendanceRegister> attendanceRegisters = attendanceRegisterRequest.getAttendanceRegister();
 
@@ -44,24 +44,28 @@ public class RegisterEnrichment {
 
             if (registerNumbers != null && !registerNumbers.isEmpty()) {
                 attendanceRegisters.get(i).setRegisterNumber(registerNumbers.get(i));
+                log.info("Register number " + registerNumbers.get(i) + " assigned to register " + attendanceRegisters.get(i));
             } else {
+                log.error("Error occurred while generating attendance register numbers from IdGen service");
                 throw new CustomException("ATTENDANCE_REGISTER_NUMBER_NOT_GENERATED","Error occurred while generating attendance register numbers from IdGen service");
             }
 
             //Enrich attendance register id and audit details
             attendanceRegisters.get(i).setId(UUID.randomUUID().toString());
+            log.info("Attendance register assigned with register Id " + attendanceRegisters.get(i).getId());
             AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
             attendanceRegisters.get(i).setAuditDetails(auditDetails);
-
+            log.info("Enriched register " + attendanceRegisters.get(i).getId() + " with Audit details");
         }
     }
 
     /* Enrich Attendance Register on Update Request */
-    public void enrichUpdateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegistersListFromDB) {
+    public void enrichRegisterOnUpdate(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegistersListFromDB) {
         RequestInfo requestInfo = attendanceRegisterRequest.getRequestInfo();
         List<AttendanceRegister> attendanceRegistersListInUpdateReq = attendanceRegisterRequest.getAttendanceRegister();
 
         for (AttendanceRegister attendanceRegisterInUpdateReq : attendanceRegistersListInUpdateReq) {
+            log.info("Enriching register " + attendanceRegisterInUpdateReq.getId());
             String registerId = String.valueOf(attendanceRegisterInUpdateReq.getId());
             AttendanceRegister attendanceRegisterFromDB = attendanceRegistersListFromDB.stream().filter(ar -> registerId.equals(String.valueOf(ar.getId()))).findFirst().orElse(null);
 
@@ -69,11 +73,13 @@ public class RegisterEnrichment {
             attendanceRegisterInUpdateReq.setRegisterNumber(attendanceRegisterFromDB.getRegisterNumber());
             attendanceRegisterInUpdateReq.setAttendees(attendanceRegisterFromDB.getAttendees());
             attendanceRegisterInUpdateReq.setStaff(attendanceRegisterFromDB.getStaff());
+            log.info("Update attendance register request for register " + attendanceRegisterInUpdateReq.getId() + " enriched with register number, attendees and staff");
 
             // Set audit details for register update request
             attendanceRegisterInUpdateReq.setAuditDetails(attendanceRegisterFromDB.getAuditDetails());
             AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), attendanceRegisterFromDB.getAuditDetails(), false);
             attendanceRegisterInUpdateReq.setAuditDetails(auditDetails);
+            log.info("Update attendance register request for register " + attendanceRegisterInUpdateReq.getId() + " enriched with audit details");
         }
     }
 
@@ -83,6 +89,7 @@ public class RegisterEnrichment {
             String registerId = String.valueOf(attendanceRegister.getId());
             List<StaffPermission> staff = staffPermissionResponse.getStaff().stream().filter(st -> registerId.equals(st.getRegisterId())).collect(Collectors.toList());
             attendanceRegister.setStaff(staff);
+            log.info("Created staff details associated with attendance register " + attendanceRegister.getId() + " in create request");
         }
     }
 

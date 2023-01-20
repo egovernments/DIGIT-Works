@@ -116,7 +116,7 @@ public class StaffService {
         attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
         // db call to get staff data
-        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
+        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).build();
         List<StaffPermission> staffPermissionListFromDB = getAllStaff(staffSearchCriteria);
 
         //validator call by passing staff request and the data from db call

@@ -37,8 +37,10 @@ public class AttendanceServiceValidator {
 
         //Verify if RequestInfo and UserInfo is present
         validateRequestInfo(requestInfo, errorMap);
+        log.info("Request Info validated for attendance create request");
         //Verify if attendance register request and mandatory fields are present
         validateAttendanceRegisterRequest(attendanceRegisters, errorMap);
+        log.info("Attendance registers validated for create request");
 
         String tenantId = attendanceRegisters.get(0).getTenantId();
         String rootTenantId = tenantId.split("\\.")[0];
@@ -60,8 +62,10 @@ public class AttendanceServiceValidator {
 
         //Verify if RequestInfo and UserInfo is present
         validateRequestInfo(requestInfo, errorMap);
+        log.info("Request Info validated for attendance update request");
         //Verify attendance register request and if mandatory fields are present
         validateAttendanceRegisterRequest(attendanceRegisters, errorMap);
+        log.info("Attendance registers validated for update request");
 
         for (AttendanceRegister attendanceRegister: attendanceRegisters) {
             if (StringUtils.isBlank(attendanceRegister.getId())) {
@@ -147,7 +151,8 @@ public class AttendanceServiceValidator {
                 log.error("Name is mandatory");
                 errorMap.put("NAME", "Name is mandatory");
             }
-            if (attendanceRegisters.get(i).getStartDate() == null || attendanceRegisters.get(i).getStartDate().compareTo(BigDecimal.ZERO) == 0) {
+            if (attendanceRegisters.get(i).getStartDate() == null ||
+                    (attendanceRegisters.get(i).getStartDate() != null && attendanceRegisters.get(i).getStartDate().compareTo(BigDecimal.ZERO) == 0)) {
                 log.error("Start date is mandatory for attendance register " + attendanceRegisters.get(i).getName());
                 throw new CustomException("START_DATE", "Start date is mandatory");
             }
