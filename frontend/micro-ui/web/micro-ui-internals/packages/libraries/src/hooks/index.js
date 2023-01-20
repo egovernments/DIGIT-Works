@@ -102,6 +102,7 @@ import useViewLOIDetails from "./works/useViewLOIDetails";
 import useCreateLOI from "./works/useCreateLOI";
 import useEstimateSearch from "./works/useSearch";
 import useCreateEstimate from "./works/useCreateEstimate";
+import useCreateEstimateNew from "./works/useCreateEstimateNew";
 import useSearchEstimate from "./works/userSearchEstimate";
 import useApplicationActionsLOI from "./works/useApplicationActions";
 import useApplicationActionsEstimate from "./works/useUpdateEstimate";
@@ -128,6 +129,7 @@ const works = {
   useEstimateSearch,
   useSearchWORKS,
   useCreateEstimate,
+  useCreateEstimateNew,
   useSearchEstimate,
   useApplicationActionsLOI,
   useUpdateEstimate,
