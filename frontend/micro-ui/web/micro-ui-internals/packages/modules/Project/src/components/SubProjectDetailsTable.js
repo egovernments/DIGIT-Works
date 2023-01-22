@@ -97,11 +97,11 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
 
     const handleDropdownChange = (e,props, row, inputName) => {
         if(inputName === "subProjectDetailsTypeOfWork") {
-            setValue(`${formFieldName}.${row.key}.subProject_subTypeOfWork`, '');
+            setValue(`${formFieldName}.${row.key}.subTypeOfWork`, '');
             setSubProjectTypeOfWorkOptions(e);
         }
         if(inputName === "subProjectDetailsWard") {
-            setValue(`${formFieldName}.${row.key}.subProject_locality`, '');
+            setValue(`${formFieldName}.${row.key}.locality`, '');
             setSubProjectDetailsSelectedWard(e);
         }
         props?.onChange(e);
@@ -152,22 +152,6 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         setRows(prev => [...prev, obj])
     }
 
-    function getFileStoreData(filesData, value) {
-        const numberOfFiles = filesData.length;
-        let finalDocumentData = [];
-        if (numberOfFiles > 0) {
-          filesData.forEach((value) => {
-            finalDocumentData.push({
-              fileName: value?.[0],
-              fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
-              documentType: value?.[1]?.file?.type,
-            });
-          });
-        }
-        //here we need to update the form the same way as the state of the reducer in multiupload, since Upload component within the multiupload wrapper uses that same format of state so we need to set the form data as well in the same way. Previously we were altering it and updating the formData
-        onChange(numberOfFiles>0?filesData:[]);
-      }
-
     const renderErrorIfAny = (row, name, isErrorForDropdown=false) => {
         return <>
             {errors && errors?.[formFieldName]?.[row.key]?.[name]?.type === "pattern" && (
@@ -185,24 +169,24 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 <td style={getStyles()}>{i}</td>
                 <td style={getStyles()} >
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProject_nameOfWork`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true}) : register({required : false})}/>
-                        {renderErrorIfAny(row, "subProject_NameOfWork")}
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.nameOfWork`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true}) : register({required : false})}/>
+                        {renderErrorIfAny(row, "nameOfWork")}
                     </div>
                 </td>
                 <td style={getStyles()}>
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProject_estimatedAmount`} inputRef={register({required : false})}/>
-                        {renderErrorIfAny(row, "subProject_estimatedAmount")}
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.estimatedAmount`} inputRef={register({required : false})}/>
+                        {renderErrorIfAny(row, "estimatedAmount")}
                     </div>
                 </td>
                 <td style={getStyles()}>
                     <div className='field sub-projects-details-field-mt' style={{ "width": "100%" }} >
                       <Controller
                         control={control}
-                        name={`${formFieldName}.${row.key}.subProject_typeOfWork`}
+                        name={`${formFieldName}.${row.key}.typeOfWork`}
                         rules={(selectedFormCategory === sectionFormCategory) ? {required : true} : {}}
                         render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProject_typeOfWork" , props, register, "name", { 
+                                getDropDownDataFromMDMS(t, row, "typeOfWork" , props, register, "name", { 
                                     mdmsConfig: {
                                     masterName: "TypeOfWork",
                                     moduleName: "works",
@@ -210,30 +194,30 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                 }})
                             )}
                       />
-                    {renderErrorIfAny(row, "subProject_typeOfWork", true)}
+                    {renderErrorIfAny(row, "typeOfWork", true)}
                     </div>
                 </td>  
                 <td style={getStyles()}>
                     <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                     <Controller
                         control={control}
-                        name={`${formFieldName}.${row.key}.subProject_subTypeOfWork`}
+                        name={`${formFieldName}.${row.key}.subTypeOfWork`}
                         rules={{ required: false}}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProject_subTypeOfWork", props, register, "name",  subProjectSubTypeOfWorkOptions)
+                            getDropDownDataFromMDMS(t, row, "subTypeOfWork", props, register, "name",  subProjectSubTypeOfWorkOptions)
                         )}
                       />
-                    {renderErrorIfAny(row, "subProject_subTypeOfWork", true)}
+                    {renderErrorIfAny(row, "subTypeOfWork", true)}
                     </div>
                 </td>
                 <td style={getStyles()}>
                     <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                     <Controller
                         control={control}
-                        name={`${formFieldName}.${row.key}.subProject_natureOfWork`}
+                        name={`${formFieldName}.${row.key}.natureOfWork`}
                         rules={{ required: false}}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProject_natureOfWork", props, register, "name", { 
+                            getDropDownDataFromMDMS(t, row, "natureOfWork", props, register, "name", { 
                                 mdmsConfig: {
                                     masterName: "NatureOfWork",
                                     moduleName: "works",
@@ -241,41 +225,41 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                             }})
                         )}
                       />
-                    {renderErrorIfAny(row, "subProject_natureOfWork", true)}
+                    {renderErrorIfAny(row, "natureOfWork", true)}
                     </div>
                 </td>
                 <td style={getStyles()}>
                     <div className='field sub-projects-details-field-mt' style={{ "width": "100%" }} >
                     <TextInput
                         type={"date"}
-                        name={`${formFieldName}.${row.key}.subProject_startDate`}
+                        name={`${formFieldName}.${row.key}.startDate`}
                         onChange={onChange}
                         inputRef={register({required : false})}
                         style={{paddingRight: "3px"}}
                     />
-                    {renderErrorIfAny(row, "subProject_startDate")}
+                    {renderErrorIfAny(row, "startDate")}
                     </div>
                 </td>  
                 <td style={getStyles()}>
                     <div className='field sub-projects-details-field-mt' style={{ "width": "100%" }} >
                     <TextInput
                         type={"date"}
-                        name={`${formFieldName}.${row.key}.subProject_endDate`}
+                        name={`${formFieldName}.${row.key}.endDate`}
                         onChange={onChange}
                         inputRef={register({required : false})}
                         style={{paddingRight: "3px"}}
                     />
-                    {renderErrorIfAny(row, "subProject_endDate")}
+                    {renderErrorIfAny(row, "endDate")}
                     </div>
                 </td> 
                 <td style={getStyles()}>
                     <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                     <Controller
                         control={control}
-                        name={`${formFieldName}.${row.key}.subProject_modeOfEntrustment`}
+                        name={`${formFieldName}.${row.key}.modeOfEntrustment`}
                         rules={{ required: false}}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subProject_modeOfEntrustment", props, register, "name", { 
+                            getDropDownDataFromMDMS(t, row, "modeOfEntrustment", props, register, "name", { 
                                 mdmsConfig: {
                                     masterName: "EntrustmentMode",
                                     moduleName: "works",
@@ -283,57 +267,57 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                             }})
                         )}
                       />
-                    {renderErrorIfAny(row, "subProject_modeOfEntrustment", true)}
+                    {renderErrorIfAny(row, "modeOfEntrustment", true)}
                     </div>
                 </td>   
                 <td style={getStyles()}>
                     <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                         <Controller
                             control={control}
-                            name={`${formFieldName}.${row.key}.subProject_ward`}
+                            name={`${formFieldName}.${row.key}.ward`}
                             rules={{ required: false}}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProject_ward", props, register, "i18nKey", wardsAndLocalities?.wards)
+                                getDropDownDataFromMDMS(t, row, "ward", props, register, "i18nKey", wardsAndLocalities?.wards)
                             )}
                         />
-                    {renderErrorIfAny(row, "subProject_ward", true)}
+                    {renderErrorIfAny(row, "ward", true)}
                     </div>
                 </td> 
                 <td style={getStyles()}>
                     <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                         <Controller
                             control={control}
-                            name={`${formFieldName}.${row.key}.subProject_locality`}
+                            name={`${formFieldName}.${row.key}.locality`}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProject_locality", props, register, "i18nKey", subProjectDetailsLocalities)
+                                getDropDownDataFromMDMS(t, row, "locality", props, register, "i18nKey", subProjectDetailsLocalities)
                             )}
                         />
-                    {renderErrorIfAny(row, "subProject_locality", true)}
+                    {renderErrorIfAny(row, "locality", true)}
                     </div>
                 </td>  
                 <td style={getStyles()}>
                     <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                         <Controller
                             control={control}
-                            name={`${formFieldName}.${row.key}.subProject_urbanLocalBody`}
+                            name={`${formFieldName}.${row.key}.urbanLocalBody`}
                             rules={{ required: false}}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "subProject_urbanLocalBody", props, register, "i18nKey", getCities())
+                                getDropDownDataFromMDMS(t, row, "urbanLocalBody", props, register, "i18nKey", getCities())
                             )}
                         />
-                    {renderErrorIfAny(row, "subProject_urbanLocalBody", true)}
+                    {renderErrorIfAny(row, "urbanLocalBody", true)}
                     </div>
                 </td> 
                 <td style={getStyles()} >
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.subProject_geoLocation`} inputRef={register({required : false})}/>
-                        {renderErrorIfAny(row, "subProject_geoLocation")}
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.geoLocation`} inputRef={register({required : false})}/>
+                        {renderErrorIfAny(row, "geoLocation")}
                     </div>
                 </td>
                 <td style={getStyles("upload")}>
                     <div className='field' style={{ "width": "100%" }} >
                            <Controller
-                                name={`${formFieldName}.${row.key}.subProject_filesUpload`}
+                                name={`${formFieldName}.${row.key}.filesUpload`}
                                 control={control}
                                 rules={{ required: false}}
                                 render={({ onChange, ref, value = [] }) => {
@@ -370,7 +354,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                 );
                                 }}
                             />
-                        {renderErrorIfAny(row, "subProject_filesUpload")}
+                        {renderErrorIfAny(row, "filesUpload")}
                     </div>
                 </td> 
                 <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
