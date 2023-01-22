@@ -43,7 +43,7 @@ const CreateProject = () => {
     const orgSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
-    const [currentFormCategory, setCurrentFormCategory] = useState("projects");
+    const [currentFormCategory, setCurrentFormCategory] = useState("project");
     const [showInfoLabel, setShowInfoLabel] = useState(false);
 
     //clear session data on first init
@@ -72,32 +72,32 @@ const CreateProject = () => {
     const onFormValueChange = (setValue, formData, formState, reset) => {
         if (!_.isEqual(sessionFormData, formData)) {
           const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
-          if(formData.ward) {
-              setSelectedWard(formData?.ward?.code)
+          if(formData?.basicDetails_hasSubProjects) {
+            setSelectedProjectType(formData?.basicDetails_hasSubProjects);
           }
-          if (difference?.ward) {
-              setValue("locality", '');
+          if(formData.noSubProject_ward) {
+              setSelectedWard(formData?.noSubProject_ward?.code)
           }
-          if(formData?.hasSubProjects) {
-            setSelectedProjectType(formData?.hasSubProjects);
+          if (difference?.noSubProject_ward) {
+              setValue("noSubProject_locality", '');
           }
-          if(formData?.typeOfWork) {
-            setSubTypeOfWorkOptions(formData?.typeOfWork?.subTypes);
+          if(formData?.noSubProject_typeOfWork) {
+            setSubTypeOfWorkOptions(formData?.noSubProject_typeOfWork?.subTypes);
           } 
-          if (difference?.typeOfWork) {
-            setValue("subTypeOfWork", '');
+          if (difference?.noSubProject_typeOfWork) {
+            setValue("noSubProject_subTypeOfWork", '');
           }
-          if(formData?.scheme) {
-            setSubSchemaOptions(formData?.scheme?.subSchemes);
+          if(formData?.noSubProject_scheme) {
+            setSubSchemaOptions(formData?.noSubProject_scheme?.subSchemes);
           } 
-          if (difference?.scheme) {
-            setValue("subScheme", '');
+          if (difference?.noSubProject_scheme) {
+            setValue("noSubProject_subScheme", '');
           } 
-          if(formData?.subProjectsScheme) {
-            setSubSchemaOptions(formData?.subProjectsScheme?.subSchemes);
+          if(formData?.withSubProject_project_scheme) {
+            setSubSchemaOptions(formData?.withSubProject_project_scheme?.subSchemes);
           } 
-          if (difference?.subProjectsScheme) {
-            setValue("subProjectSubScheme", '');
+          if (difference?.withSubProject_project_scheme) {
+            setValue("withSubProject_project_subScheme", '');
           } 
           setSessionFormData({ ...sessionFormData, ...formData });
         }
@@ -107,12 +107,12 @@ const CreateProject = () => {
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
           setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
-          setCurrentFormCategory("subProjects");
+          setCurrentFormCategory("withSubProject");
           setShowInfoLabel(true);
           setShowNavs(true);
         }else if(selectedProjectType?.code === "COMMON_NO") {
           setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
-          setCurrentFormCategory("projects");
+          setCurrentFormCategory("noSubProject");
           setShowInfoLabel(false);
           setShowNavs(true);
         }
@@ -124,7 +124,7 @@ const CreateProject = () => {
     }
 
     const onSubmit = async(data) => {
-      const payload = CreateProjectUtils.payload.create(data, "");
+      const payload = CreateProjectUtils.payload.create(data, selectedProjectType, "", tenantId);
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
             console.log("Error",error);
