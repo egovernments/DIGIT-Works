@@ -334,7 +334,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
                 name: "noSubProject_uploadedFiles",
                 allowedMaxSizeInMB:2,
                 maxFilesAllowed:2,
-                allowedFileTypes : /(.*?)(jpeg|jpg|png|pdf|image)$/i,
+                allowedFileTypes : /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
                 customClass : "upload-margin-bottom"
             }
           }
@@ -455,12 +455,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
         body: [
           {
             isMandatory: false,
-            key: "withSubProject_project_OwningDepartment",
+            key: "withSubProject_project_owningDepartment",
             type: "radioordropdown",
             label: "PROJECT_OWNING_DEPT",
             disable: false,
             populators: {
-              name: "withSubProject_project_OwningDepartment",
+              name: "withSubProject_project_owningDepartment",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -476,12 +476,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: false,
-            key: "withSubProject_project_ExecutingDepartment",
+            key: "withSubProject_project_executingDepartment",
             type: "radioordropdown",
             label: "WORKS_EXECUTING_DEPT",
             disable: false,
             populators: {
-              name: "withSubProject_project_ExecutingDepartment",
+              name: "withSubProject_project_executingDepartment",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -497,12 +497,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: false,
-            key: "withSubProject_project_Beneficiary",
+            key: "withSubProject_project_beneficiary",
             type: "radioordropdown",
             label: "WORKS_BENEFICIARY",
             disable: false,
             populators: {
-              name: "withSubProject_project_Beneficiary",
+              name: "withSubProject_project_beneficiary",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -529,10 +529,10 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             inline: true,
             label: "PROJECT_TOTAL_ESTIMATED_COST_IN_RS",
             isMandatory: false,
-            key: "withSubProject_project_TotalEstimatedCostInRs",
+            key: "withSubProject_project_estimatedCostInRs",
             type: "number",
             disable: true,
-            populators: { name: "withSubProject_project_totalEstimatedCostInRs" }
+            populators: { name: "withSubProject_project_estimatedCostInRs" }
           },
         ]
       },
@@ -543,12 +543,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
         body: [
           {
             isMandatory: true,
-            key: "withSubProject_project_subProjectsFund",
+            key: "withSubProject_project_fund",
             type: "radioordropdown",
             label: "WORKS_FUND",
             disable: false,
             populators: {
-              name: "withSubProject_project_Fund",
+              name: "withSubProject_project_fund",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -564,12 +564,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: true,
-            key: "withSubProject_project_Function",
+            key: "withSubProject_project_function",
             type: "radioordropdown",
             label: "WORKS_FUNCTION",
             disable: false,
             populators: {
-              name: "withSubProject_project_Function",
+              name: "withSubProject_project_function",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -585,12 +585,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: true,
-            key: "withSubProject_project_BudgetHead",
+            key: "withSubProject_project_budgetHead",
             type: "radioordropdown",
             label: "WORKS_BUDGET_HEAD",
             disable: false,
             populators: {
-              name: "withSubProject_project_BudgetHead",
+              name: "withSubProject_project_budgetHead",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,

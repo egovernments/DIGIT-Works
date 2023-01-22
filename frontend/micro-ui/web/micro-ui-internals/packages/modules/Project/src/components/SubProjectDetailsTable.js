@@ -32,7 +32,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
     ];
     const [subProjectTypeOfWorkOptions, setSubProjectTypeOfWorkOptions] = useState([]);
     const [subProjectSubTypeOfWorkOptions, setSubProjectSubTypeOfWorkOptions] = useState([]);
-    const formFieldName = "withSubProject_subProjects"; //keep this name diff from the key in config
+    const formFieldName = "withSubProject_project_subProjects"; //keep this name diff from the key in config
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId); 
     const [subProjectDetailsSelectedWard, setSubProjectDetailsSelectedWard] = useState([]);

@@ -61,6 +61,29 @@ const CreateProjectUtils = {
                 Projects : createProjectList(data, parentProjectID), //if there is a Parent Project, then create list of sub-projects array, or only create one object for Parent Project.
                 apiOperation : "CREATE"
             }
+        },
+        transform : (data) => {
+          let transformedPayload = {
+            basicDetails : {},
+            noSubProject : {},
+            withSubProject : {}
+          };
+          for(let key of Object.keys(data)) {
+            console.log(key, data[key]);
+            if(key.includes("basicDetails_")) {
+              let croppedKey = key.replace("basicDetails_","");
+              transformedPayload.basicDetails[croppedKey] = data[key];
+            }
+            if(key.includes("noSubProject_")) {
+              let croppedKey = key.replace("noSubProject_","");
+              transformedPayload.noSubProject[croppedKey] = data[key];
+            }
+            if(key.includes("withSubProject_project_")) {
+              let croppedKey = key.replace("withSubProject_project_","");
+              transformedPayload.withSubProject[croppedKey] = data[key];
+            }
+          }
+          return transformedPayload;
         }
     }
 }
