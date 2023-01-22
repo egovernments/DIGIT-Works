@@ -3,6 +3,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
 import _ from "lodash";
+import CreateProjectUtils from "../../../utils/createProjectUtils";
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
@@ -117,7 +118,22 @@ const CreateProject = () => {
         }
     },[selectedProjectType]);
 
-    const onSubmit = (data) => {console.log(data);}
+    const { mutate: CreateProjectMutation, data, isLoading : isProjectCreationLoading} = Digit.Hooks.works.useCreateProject();
+    if(isProjectCreationLoading) {
+      console.log(data);
+    }
+
+    const onSubmit = async(data) => {
+      const payload = CreateProjectUtils.payload.create(data, "");
+      await CreateProjectMutation(payload, {
+        onError: async (error, variables) => {
+            console.log("Error",error);
+        },
+        onSuccess: async (responseData, variables) => {
+          console.log("Success",responseData, variables);
+        },
+    });
+    }
 
     return (
         <React.Fragment>
