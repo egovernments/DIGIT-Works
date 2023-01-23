@@ -1,6 +1,6 @@
 import { PropertyHouse } from "@egovernments/digit-ui-react-components";
 
-const InboxSearchComposerConfig = () => {
+const InboxSearchComposerConfig = (t) => {
     return {
         pageHeader : "Search Projects",
         type : "search", 
@@ -19,7 +19,7 @@ const InboxSearchComposerConfig = () => {
                 uiConfig : {
                     links : [
                         {
-                            text: t("WORKS_ENROLL_WAGE_SEEKER"), 
+                            text: t("ACTION_TEST_PROJECTS"), 
                             link: `/${window?.contextPath}/employee/contracts/create-contract`,
                             businessService: "WORKS",
                             roles: [],

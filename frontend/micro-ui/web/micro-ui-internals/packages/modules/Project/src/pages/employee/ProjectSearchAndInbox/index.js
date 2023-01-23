@@ -7,7 +7,7 @@ const ProjectSearchAndInbox = () => {
     const {t} = useTranslation();
 
     //Import Config to Bootstrap the Layout -- this is a test config
-    const configs = InboxConfig();
+    const configs = InboxConfig(t);
 
     return (
         <div className={"employee-main-application-details"}>

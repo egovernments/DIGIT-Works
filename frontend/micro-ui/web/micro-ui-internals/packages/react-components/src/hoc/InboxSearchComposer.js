@@ -14,23 +14,29 @@ const InboxSearchComposer = (props) => {
                         {/* Since we need to keep the config sections order-less, avoiding for loop */}
                         {/* That way the config can have sections in any order */}
                        {
-                        configs?.type === "inbox" &&  
+                        configs?.sections?.links?.show &&  
                             <div className="section links">
-                                <InboxLinks links={configs?.sections?.links?.uiConfig?.links} headerText={configs?.sections?.links?.uiConfig?.headerText} logoIcon={configs?.sections?.links?.uiConfig?.logoIcon}></InboxLinks>
+                                <InboxLinks customClass="inbox-search-links-component" links={configs?.sections?.links?.uiConfig?.links} headerText={configs?.sections?.links?.uiConfig?.headerText} logoIcon={configs?.sections?.links?.uiConfig?.logoIcon}></InboxLinks>
                             </div>
                        }
-                        <div className="section search">
-                            {/* Integrate the Search Component here*/}
-                        </div>
+                       {
+                        configs?.sections?.search?.show &&  
+                            <div className="section search">
+                                {/* Integrate the Search Component here*/}
+                            </div>
+                        }
                         {
-                        configs?.form?.type === "inbox" &&  
+                        configs?.sections?.filter?.show &&  
                             <div className="section filter">
                                 {/* Integrate the Filter Component here*/}
                             </div> 
                         }
-                        <div className="section search-results">
-                            {/* Integrate the Search Results Component here*/}
-                        </div>
+                         {
+                        configs?.sections?.searchResult?.show &&  
+                            <div className="section search-results">
+                                {/* Integrate the Search Results Component here*/}
+                            </div>
+                        }
                 </div>
                 <div className="additional-sections-parent">
                     {/* One can use this Parent to add additional sub parents to render more sections */}
