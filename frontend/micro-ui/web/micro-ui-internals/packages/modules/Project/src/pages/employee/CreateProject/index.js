@@ -119,15 +119,15 @@ const CreateProject = () => {
     },[selectedProjectType]);
 
     const { mutate: CreateProjectMutation, data, isLoading : isProjectCreationLoading} = Digit.Hooks.works.useCreateProject();
-    if(isProjectCreationLoading) {
-      console.log(data);
-    }
 
     const onSubmit = async(data) => {
       const transformedPayload = CreateProjectUtils.payload.transform(data);
-      console.log("TTTT",transformedPayload);
-      const payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId);
-      await CreateProjectMutation(payload, {
+      console.log("Transformed Payload",transformedPayload);
+      const payload1 = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId);
+      const payload2 = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "0894da55-6fb2-44cd-bfd4-9988a2649207", tenantId);
+      console.log("Final Payload-1",payload1);
+      console.log("Final Payload-2",payload2);
+      await CreateProjectMutation(payload1, {
         onError: async (error, variables) => {
             console.log("Error",error);
         },

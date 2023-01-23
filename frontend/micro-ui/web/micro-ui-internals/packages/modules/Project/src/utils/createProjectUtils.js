@@ -2,24 +2,18 @@ import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
 
 const createDocumentsPayload = (documents) => {
   let documents_payload_list = [];
-  let payload_modal =  {
-    "id": "",
-    "documentType": "",
-    "fileStore": "",
-    "documentUid": "" //Check with Nipun
-  }
   for(let index in documents) {
+    let payload_modal = {};
     payload_modal.id = index;
     payload_modal.documentType = documents[index][1]['file']['type'];
     payload_modal.fileStore = documents[index][1]['fileStoreId']['fileStoreId'];
     payload_modal.documentUid = "";
     documents_payload_list.push(payload_modal);
   }
-  return payload_modal;
+  return documents_payload_list;
 }
 
-function createProjectList(data, selectedProjectType, tenantId, parentProjectID) {
-    console.log("CREATING PAYLOAD-->",data, selectedProjectType, tenantId, parentProjectID);
+function createProjectList(data, selectedProjectType, parentProjectID, tenantId) {
     let projects_payload = [];
     let project_details;
     let basic_details = data?.basicDetails;
@@ -27,12 +21,19 @@ function createProjectList(data, selectedProjectType, tenantId, parentProjectID)
     if(selectedProjectType?.code === "COMMON_NO") {
       project_details = data?.noSubProject;
       total_projects = 1;
-    }else {
-      project_details = data?.withSubProject;
-      total_projects = project_details?.subProjects.length - 1; //array has data from 1st index
+    }else if(selectedProjectType?.code === "COMMON_YES") {
+      if(parentProjectID) {
+        total_projects = data?.withSubProject?.subProjects.length - 1; //array has data from 1st index
+      }else{
+        project_details = data?.withSubProject;
+      }
     }
     //iterate till all sub-projects. For noSubProject Case, this will iterate only once
-    for(let i=0; i<total_projects; i++) {
+    for(let index=1; index<=total_projects; index++) {
+        // In case of Sub Projects having Parent ID, project_details will be each sub-project
+        if(parentProjectID) {
+          project_details = data?.withSubProject?.subProjects[index];
+        }
         let payload =   {
           "tenantId": tenantId,
           "name": basic_details?.projectName,
@@ -61,7 +62,7 @@ function createProjectList(data, selectedProjectType, tenantId, parentProjectID)
           "startDate": convertDateToEpoch(project_details?.startDate), 
           "endDate": convertDateToEpoch(project_details?.endDate), 
           "isTaskEnabled": false, //Not being captured on UI //For Health Team Project
-          "parent": "",
+          "parent": parentProjectID || "", // In case of Single project, Parent ID is empty.
           "targets": [ //Not being captured on UI //For Health Team Project
             {
               "beneficiaryType": "Slum",
@@ -79,16 +80,16 @@ function createProjectList(data, selectedProjectType, tenantId, parentProjectID)
           },
           "rowVersion": 0
       }
+      projects_payload.push(payload);
     }
-    project_payloads.push(parent_project_with_no_subprojects);
     return projects_payload;
 }
 
 const CreateProjectUtils = {
     payload : {
-        create : (data, selectedProjectType, tenantId, parentProjectID) => {
+        create : (data, selectedProjectType, parentProjectID, tenantId) => {
             return {
-                Projects : createProjectList(data, selectedProjectType, tenantId, parentProjectID), //if there is a Parent Project, then create list of sub-projects array, or only create one object for Parent Project.
+                Projects : createProjectList(data, selectedProjectType, parentProjectID, tenantId), //if there is a Parent Project, then create list of sub-projects array, or only create one object for Parent Project.
                 apiOperation : "CREATE"
             }
         },
@@ -99,7 +100,6 @@ const CreateProjectUtils = {
             withSubProject : {}
           };
           for(let key of Object.keys(data)) {
-            console.log(key, data[key]);
             if(key.includes("basicDetails_")) {
               let croppedKey = key.replace("basicDetails_","");
               transformedPayload.basicDetails[croppedKey] = data[key];

@@ -109,7 +109,7 @@ export const FormComposer = (props) => {
   }
 
   useEffect(() => {
-    console.log(errors);
+    console.log("ERORRS IN FORM",errors);
     props.onFormValueChange && props.onFormValueChange(setValue, formData, formState, reset);
   }, [formData]);
 

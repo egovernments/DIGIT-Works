@@ -12,7 +12,6 @@ const initialState = [
 ];
 //these params depend on what the controller of the associated type is sending.
 const SubProjectDetailsTable = ({t, register, control, setValue, onChange, errors, sectionFormCategory, selectedFormCategory}) => {
-    console.log(selectedFormCategory, sectionFormCategory);
     const [rows, setRows] = useState(initialState);
     const columns = [
         {label : t('WORKS_SNO'), isMandatory : false },
@@ -67,7 +66,6 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
     },[subProjectDetailsSelectedWard]);
 
     const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey="name", options=[]) => {
-        console.log(options);
         const { isLoading, data } = Digit.Hooks.useCustomMDMS(
                 Digit.ULBService.getStateId(),
                 options?.mdmsConfig?.moduleName,
@@ -96,11 +94,11 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
     }
 
     const handleDropdownChange = (e,props, row, inputName) => {
-        if(inputName === "subProjectDetailsTypeOfWork") {
+        if(inputName === "typeOfWork") {
             setValue(`${formFieldName}.${row.key}.subTypeOfWork`, '');
             setSubProjectTypeOfWorkOptions(e);
         }
-        if(inputName === "subProjectDetailsWard") {
+        if(inputName === "ward") {
             setValue(`${formFieldName}.${row.key}.locality`, '');
             setSubProjectDetailsSelectedWard(e);
         }
@@ -175,8 +173,8 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 </td>
                 <td style={getStyles()}>
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.estimatedAmount`} inputRef={register({required : false})}/>
-                        {renderErrorIfAny(row, "estimatedAmount")}
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.estimatedCostInRs`} inputRef={register({required : false})} type="number"/>
+                        {renderErrorIfAny(row, "estimatedCostInRs")}
                     </div>
                 </td>
                 <td style={getStyles()}>
@@ -256,10 +254,10 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                     <Controller
                         control={control}
-                        name={`${formFieldName}.${row.key}.modeOfEntrustment`}
+                        name={`${formFieldName}.${row.key}.recommendedModeOfEntrustment`}
                         rules={{ required: false}}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "modeOfEntrustment", props, register, "name", { 
+                            getDropDownDataFromMDMS(t, row, "recommendedModeOfEntrustment", props, register, "name", { 
                                 mdmsConfig: {
                                     masterName: "EntrustmentMode",
                                     moduleName: "works",
@@ -267,7 +265,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                             }})
                         )}
                       />
-                    {renderErrorIfAny(row, "modeOfEntrustment", true)}
+                    {renderErrorIfAny(row, "recommendedModeOfEntrustment", true)}
                     </div>
                 </td>   
                 <td style={getStyles()}>
@@ -317,7 +315,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 <td style={getStyles("upload")}>
                     <div className='field' style={{ "width": "100%" }} >
                            <Controller
-                                name={`${formFieldName}.${row.key}.filesUpload`}
+                                name={`${formFieldName}.${row.key}.uploadedFiles`}
                                 control={control}
                                 rules={{ required: false}}
                                 render={({ onChange, ref, value = [] }) => {
@@ -354,7 +352,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                 );
                                 }}
                             />
-                        {renderErrorIfAny(row, "filesUpload")}
+                        {renderErrorIfAny(row, "uploadedFiles")}
                     </div>
                 </td> 
                 <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
