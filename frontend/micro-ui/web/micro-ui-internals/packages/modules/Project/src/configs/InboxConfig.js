@@ -2,7 +2,7 @@ import { PropertyHouse } from "@egovernments/digit-ui-react-components";
 
 const InboxSearchComposerConfig = (t) => {
     return {
-        pageHeader : "Search Projects",
+        pageHeader : "Search Projects", //change this to label
         type : "search", 
         //use classname as 'search' for search view
         //use classname as 'inbox' for inbox view
@@ -19,13 +19,13 @@ const InboxSearchComposerConfig = (t) => {
                 uiConfig : {
                     links : [
                         {
-                            text: t("ACTION_TEST_PROJECTS"), 
+                            text: t("ACTION_TEST_PROJECTS"),  //transaplation on component label //make key names more intuitive
                             link: `/${window?.contextPath}/employee/contracts/create-contract`,
                             businessService: "WORKS",
-                            roles: [],
+                            roles: [], // handle roles inside the component
                         }
                     ],
-                    logoIcon : PropertyHouse,
+                    logoIcon : PropertyHouse, //import this in component. 
                     headerText : "Projects",
                 },
                 children : {},
