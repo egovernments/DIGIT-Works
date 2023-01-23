@@ -8,11 +8,10 @@ import { initExpenditureComponents } from "@egovernments/digit-ui-module-expendi
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
-
-const { DigitUI } = React.lazy(() => import("@egovernments/digit-ui-module-core"));
-const { initLibraries } = React.lazy(() => import("@egovernments/digit-ui-libraries"));
-const { initProjectComponents } = React.lazy(() => import("@egovernments/digit-ui-module-project"));
-const { initHRMSComponents } = React.lazy(() => import("@egovernments/digit-ui-module-hrms"));
+import { DigitUI } from "@egovernments/digit-ui-module-core";
+import { initLibraries } from "@egovernments/digit-ui-libraries";
+import { initProjectComponents } from "@egovernments/digit-ui-module-project";
+import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 
 
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
