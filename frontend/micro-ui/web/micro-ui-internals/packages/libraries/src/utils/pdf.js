@@ -1,4 +1,5 @@
 import { Fonts } from "./fonts";
+
 const pdfMake = require("pdfmake/build/pdfmake.js");
 // const pdfFonts = require("pdfmake/build/vfs_fonts.js");
 // pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -242,84 +243,7 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
   downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
 };
 
-/**
- * Util function that can be used
- * to download WS modify connection application acknowledgement pdfs
- * Data is passed to this function from this file
- * packages\modules\ws\src\utils\getWsAckDataForModifyPdfs.js
- * @author nipunarora-egov
- *
- * @example
- * Digit.Utils.pdf.generateModifyPdf()
- *
- * @returns Downloads a pdf  
- */
-
-const jsPdfGeneratorForModifyPDF = async({tenantId,bodyDetails,headerDetails,logo}) =>{
-  //here follow an approch to render specific table for every object in bodyDetails
-  //keep the header logic same for now
-  //we are expecting the bodyDetails to be array of objects where each obj will be a table 
-  //format of each obj {title:[array of str],values:[array of obj]}
-  
-  const dd = {
-    pageMargins: [40, 40, 40, 30],
-    header: {},
-    defaultStyle: {
-      font: "Hind",
-    },
-    content:[
-      ...createHeader(headerDetails, logo, tenantId),
-      ...createBodyContent(bodyDetails)
-    ]
-  
-  }
-
-  pdfMake.vfs = Fonts;
-  let locale = Digit.SessionStorage.get("locale") || "en_IN";
-  let Hind = pdfFonts[locale] || pdfFonts["Hind"];
-  pdfMake.fonts = { Hind: { ...Hind } };
-  const generatedPDF = pdfMake.createPdf(dd);
-  downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
-}
-
-/**
- * Util function that can be used
- * to download bill amendment application acknowledgement pdfs
- * Data is passed to this function from this file
- * packages\modules\ws\src\utils\getWsAckDataForBillAmendPdf.js
- * @author nipunarora-egov
- *
- * @example
- * Digit.Utils.pdf.generateBillAmendPDF()
- *
- * @returns Downloads a pdf  
- */
-
-
-const generateBillAmendPDF = async ({ tenantId, bodyDetails, headerDetails, logo,t }) => {
-  const dd = {
-    pageMargins: [40, 40, 40, 30],
-    header: {},
-    defaultStyle: {
-      font: "Hind",
-    },
-    content: [
-      ...createHeaderBillAmend(headerDetails, logo, tenantId,t),
-      ...createBodyContentBillAmend(bodyDetails,t)
-    ]
-
-  }
-  
-
-  pdfMake.vfs = Fonts;
-  let locale = Digit.SessionStorage.get("locale") || "en_IN";
-  let Hind = pdfFonts[locale] || pdfFonts["Hind"];
-  pdfMake.fonts = { Hind: { ...Hind } };
-  const generatedPDF = pdfMake.createPdf(dd);
-  downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
-}
-
-export default { generate: jsPdfGenerator, generatev1: jsPdfGeneratorv1, generateModifyPdf: jsPdfGeneratorForModifyPDF, generateBillAmendPDF };
+export default { generate: jsPdfGenerator ,generatev1:jsPdfGeneratorv1};
 
 const createBodyContentBillAmend = (table,t) => {
   let bodyData = []

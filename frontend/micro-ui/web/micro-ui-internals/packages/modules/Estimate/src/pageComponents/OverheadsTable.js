@@ -1,6 +1,6 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState,useEffect } from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError } from '@egovernments/digit-ui-react-components'
-import { toNumber } from 'lodash';
+
 
 const OverheadsTable = (props) => {
     const [totalAmount,setTotalAmount] = useState(100)
@@ -16,7 +16,20 @@ const OverheadsTable = (props) => {
     ];
     const [rows, setRows] = useState(initialState);
 
-    const { t, register, errors } = props
+    const { t, register, errors, setValues, getValues, formData } = props
+
+    const setTotal = (formData) => {
+        const tableData = formData?.[formFieldName]
+        setTotalAmount((prevState) => {
+            return tableData?.filter((row, index) => row)?.filter((row, index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseInt(curr?.amount) || 0
+                , 0)
+        })
+
+    }
+
+    useEffect(() => {
+        setTotal(formData)
+    }, [formData,rows]);
 
     const getStyles = (index) => {
         let obj = {}
