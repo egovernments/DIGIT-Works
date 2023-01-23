@@ -101,10 +101,17 @@ export const FormComposer = (props) => {
   }
 
   useEffect(() => {
-    props.onFormValueChange && props.onFormValueChange(setValue, formData, formState);
+    props.onFormValueChange && props.onFormValueChange(setValue, formData, formState, reset);
   }, [formData]);
 
-  const fieldSelector = (type, populators, isMandatory, disable = false, component, config) => {
+  const fieldSelector = (type, populators, isMandatory, disable = false, component, config, sectionFormCategory) => {
+    let disableFormValidation = false;
+    // disable form validation if section category does not matches with the current category
+    // this will avoid validation for the other categories other than the current category.
+    // sectionFormCategory comes as part of section config and currentFormCategory is a state managed by the FormComposer consumer.
+    if (sectionFormCategory && props?.currentFormCategory) {
+      disableFormValidation = sectionFormCategory !== props?.currentFormCategory ? true : false;
+    }
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
     switch (type) {
       case "date":
@@ -136,7 +143,7 @@ export const FormComposer = (props) => {
                 />
               )}
               name={populators.name}
-              rules={{ required: isMandatory, ...populators.validation }}
+              rules={!disableFormValidation ? { required: isMandatory, ...populators.validation } : {}}
               control={control}
             />
           </div>
@@ -160,7 +167,7 @@ export const FormComposer = (props) => {
               />
             )}
             name={populators.name}
-            rules={{ required: isMandatory, ...populators.validation }}
+            rules={!disableFormValidation ? { required: isMandatory, ...populators.validation } : {}}
             control={control}
           />
         );
@@ -180,7 +187,7 @@ export const FormComposer = (props) => {
             )}
             defaultValue={populators.defaultValue}
             name={populators?.name}
-            rules={{ required: isMandatory, ...populators.validation }}
+            rules={!disableFormValidation ? { required: isMandatory, ...populators.validation } : {}}
             control={control}
           />
         );
@@ -198,7 +205,7 @@ export const FormComposer = (props) => {
           <Controller
             name={`${populators.name}`}
             control={control}
-            rules={{ required: false }}
+            rules={!disableFormValidation ? { required: false } : {}}
             render={({ onChange, ref, value = [] }) => {
               function getFileStoreData(filesData) {
                 const numberOfFiles = filesData.length;
@@ -254,7 +261,7 @@ export const FormComposer = (props) => {
                 errorStyle={errors?.[populators.name]}
               />
             )}
-            rules={{ required: isMandatory, ...populators.validation }}
+            rules={!disableFormValidation ? { required: isMandatory, ...populators.validation } : {}}
             defaultValue={formData?.[populators.name]}
             name={config.key}
             control={control}
@@ -279,6 +286,8 @@ export const FormComposer = (props) => {
                 clearErrors={clearErrors}
                 formState={formState}
                 onBlur={props.onBlur}
+                control={control}
+                getValues={getValues}
               />
             )}
             name={config.key}
@@ -379,7 +388,7 @@ export const FormComposer = (props) => {
   };
 
   const formFields = useCallback(
-    (section, index, array) => (
+    (section, index, array, sectionFormCategory) => (
       <React.Fragment key={index}>
         {section && getCombinedComponent(section)}
         {section.body.map((field, index) => {
@@ -401,7 +410,7 @@ export const FormComposer = (props) => {
                     <CardLabelError>{t(field.populators.error || errors[field.populators?.name]?.message)}</CardLabelError>
                   ) : null}
                   <div style={field.withoutLabel ? { width: "100%" } : {}} className="field">
-                    {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
+                    {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field, sectionFormCategory)}
                     {field?.description && (
                       <CardLabel
                         style={{
@@ -442,7 +451,7 @@ export const FormComposer = (props) => {
                   </CardLabel>
                 )}
                 <div style={field.withoutLabel ? { width: "100%", ...props?.fieldStyle } : { ...props?.fieldStyle }} className="field">
-                  {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
+                  {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field, sectionFormCategory)}
                   {field?.description && <CardText style={{ fontSize: "14px", marginTop: "-24px" }}>{t(field?.description)}</CardText>}
                 </div>
               </LabelFieldPair>
@@ -554,13 +563,13 @@ export const FormComposer = (props) => {
     setActiveLink(props.horizontalNavConfig?.[0].name);
   },[props.horizontalNavConfig]);
   
-  const renderFormFields = useCallback((props, section, index, array) => (
+  const renderFormFields = (props, section, index, array, sectionFormCategory) => (
       <React.Fragment key={index}>
           {!props.childrenAtTheBottom && props.children}
           {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
           {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
           {props.text && <CardText>{props.text}</CardText>}
-          {formFields(section, index, array)}
+          {formFields(section, index, array, sectionFormCategory)}
           {props.childrenAtTheBottom && props.children}
           {props.submitInForm && (
             <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
@@ -570,7 +579,6 @@ export const FormComposer = (props) => {
             {props.secondaryActionLabel}
           </div>)}
       </React.Fragment>  
-    )
   );
 
   return (
@@ -603,7 +611,7 @@ export const FormComposer = (props) => {
              props?.config?.map((section, index, array) => {
                return section.navLink ? (
                  <Card style={section.navLink !== activeLink ? getCardStyles(false) : getCardStyles()} noCardStyle={props.noCardStyle}>
-                    {renderFormFields(props, section, index, array)}
+                    {renderFormFields(props, section, index, array, section?.sectionFormCategory)}
                  </Card>
                ) : null
              })
@@ -615,7 +623,7 @@ export const FormComposer = (props) => {
                       return section.navLink ?  (
                          <>
                             <div style={section.navLink !== activeLink ? {display : "none"} : {}}>
-                              {renderFormFields(props, section, index, array)}
+                              {renderFormFields(props, section, index, array, section?.sectionFormCategory)}
                             </div>
                          </>
                        ) : null
