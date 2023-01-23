@@ -1,64 +1,94 @@
-function createProjectList(data, parentProjectID) {
-    console.log(data, parentProjectID);
-    let project_payload = [];
-    if(!parentProjectID) {
-        //Project that has no sub-projects
-        let parent_project_with_no_subprojects =   {
-            "tenantId": "pb.amritsar",
-            "name": "project101",
-            "projectType": "MP-CWS",
-            "projectSubType": "",
-            "department": "DEPT_11",
-            "description": "DEPT_11 description",
-            "referenceID": "d9d8ffee-68a2-485d-bc50-14160477ea4c",
-            "documents": [
-                {
-                  "id": "",
-                  "documentType": "Document1",
-                  "fileStore": "99dcde84-aae2-4836-9ff9-f711fb82bb8b",
-                  "documentUid": "QWERTY123"
-                }
-            ],
-            "address": {
-              "tenantId": "pb.amritsar",
-              "doorNo": "1",
-              "latitude": 90,
-              "longitude": 180,
-              "locationAccuracy": 10000,
-              "type": "Home",
-              "addressLine1": "Address Line 1",
-              "addressLine2": "Address Line 2",
-              "landmark": "Area1",
-              "city": "City1",
-              "pincode": "999999",
-              "buildingName": "Test_Building",
-              "street": "Test_Street",
-              "locality": "SUN04"
-            },
-            "startDate": 0,
-            "endDate": 0, 
-            "isTaskEnabled": false,
-            "parent": "",
-            "targets": [
-              {
-                "beneficiaryType": "Slum",
-                "totalNo": 0,
-                "targetNo": 0
-              }
-            ],
-            "additionalDetails": {},
-            "rowVersion": 0
-        }
-        project_payload.push(parent_project_with_no_subprojects);
+import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
+
+const createDocumentsPayload = (documents) => {
+  let documents_payload_list = [];
+  let payload_modal =  {
+    "id": "",
+    "documentType": "",
+    "fileStore": "",
+    "documentUid": "" //Check with Nipun
+  }
+  for(let index in documents) {
+    payload_modal?.id = index;
+    payload_modal?.documentType = documents[index][1]['file']['type'];
+    payload_modal?.fileStore = documents[index][1]['fileStoreId']['fileStoreId'];
+    payload_modal?.documentUid = "";
+    documents_payload_list.push(payload_modal);
+  }
+  return payload_modal;
+}
+
+function createProjectList(data, selectedProjectType, tenantId, parentProjectID) {
+    console.log("CREATING PAYLOAD-->",data, selectedProjectType, tenantId, parentProjectID);
+    let projects_payload = [];
+    let project_details;
+    let basic_details = data?.basicDetails;
+    let total_projects = 1;
+    if(selectedProjectType?.code === "COMMON_NO") {
+      project_details = data?.noSubProject;
+      total_projects = 1;
+    }else {
+      project_details = data?.withSubProject;
+      total_projects = project_details?.subProjects.length - 1; //array has data from 1st index
     }
-    return project_payload;
+    //iterate till all sub-projects. For noSubProject Case, this will iterate only once
+    for(let i=0; i<total_projects; i++) {
+        let payload =   {
+          "tenantId": tenantId,
+          "name": basic_details?.projectName,
+          "projectType": "MP-CWS", //Check with Chetan
+          "projectSubType": "",  //Check with Chetan
+          "department": project_details?.owningDepartment?.code,
+          "description": basic_details?.projectDesc,
+          "referenceID": project_details?.letterRefNoOrReqNo,
+          "documents": createDocumentsPayload(project_details?.uploadedFiles),
+          "address": {
+            "tenantId": tenantId,
+            "doorNo": "1", //Not being captured on UI
+            "latitude": 90, //Not being captured on UI
+            "longitude": 180, //Not being captured on UI
+            "locationAccuracy": 10000, //Not being captured on UI
+            "type": "Home", //Not being captured on UI
+            "addressLine1": project_details?.geoLocation,
+            "addressLine2": "Address Line 2", //Not being captured on UI
+            "landmark": "Area1", //Not being captured on UI
+            "city": "City1", //Not being captured on UI
+            "pincode": "999999", //Not being captured on UI
+            "buildingName": "Test_Building", //Not being captured on UI
+            "street": "Test_Street", //Not being captured on UI
+            "locality": project_details?.locality
+          },
+          "startDate": convertDateToEpoch(project_details?.startDate), 
+          "endDate": convertDateToEpoch(project_details?.endDate), 
+          "isTaskEnabled": false, //Not being captured on UI //For Health Team Project
+          "parent": "",
+          "targets": [ //Not being captured on UI //For Health Team Project
+            {
+              "beneficiaryType": "Slum",
+              "totalNo": 0,
+              "targetNo": 0
+            }
+          ],
+          "additionalDetails": { //These are financial details. Adding them here as they will be integrated with a different service.
+            "budgetHead" : project_details?.budgetHead?.code,
+            "estimatedCostInRs" : project_details?.estimatedCostInRs,
+            "function" : project_details?.function,
+            "fund" : project_details?.fund,
+            "scheme" :  project_details?.scheme?.code,
+            "subScheme" :  project_details?.subScheme?.code,
+          },
+          "rowVersion": 0
+      }
+    }
+    project_payloads.push(parent_project_with_no_subprojects);
+    return projects_payload;
 }
 
 const CreateProjectUtils = {
     payload : {
-        create : (data, parentProjectID) => {
+        create : (data, selectedProjectType, tenantId, parentProjectID) => {
             return {
-                Projects : createProjectList(data, parentProjectID), //if there is a Parent Project, then create list of sub-projects array, or only create one object for Parent Project.
+                Projects : createProjectList(data, selectedProjectType, tenantId, parentProjectID), //if there is a Parent Project, then create list of sub-projects array, or only create one object for Parent Project.
                 apiOperation : "CREATE"
             }
         },

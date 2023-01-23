@@ -126,7 +126,7 @@ const CreateProject = () => {
     const onSubmit = async(data) => {
       const transformedPayload = CreateProjectUtils.payload.transform(data);
       console.log("TTTT",transformedPayload);
-      const payload = CreateProjectUtils.payload.create(data, selectedProjectType, "", tenantId);
+      const payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId);
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
             console.log("Error",error);
