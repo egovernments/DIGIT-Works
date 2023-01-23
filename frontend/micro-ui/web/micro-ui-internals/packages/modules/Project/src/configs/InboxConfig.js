@@ -1,4 +1,4 @@
-const InboxSearchComposerConfig = () => {
+const inboxConfig = () => {
     return {
         pageHeader : "Search Projects",
         form : {
@@ -28,4 +28,4 @@ const InboxSearchComposerConfig = () => {
     }
 }
 
-export default InboxSearchComposerConfig;
+export default inboxConfig;
