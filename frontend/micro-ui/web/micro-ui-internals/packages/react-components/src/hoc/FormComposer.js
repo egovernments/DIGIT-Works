@@ -287,6 +287,7 @@ export const FormComposer = (props) => {
                 formState={formState}
                 onBlur={props.onBlur}
                 control={control}
+                getValues={getValues}
               />
             )}
             name={config.key}

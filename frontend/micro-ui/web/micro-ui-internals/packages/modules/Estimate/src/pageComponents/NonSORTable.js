@@ -1,6 +1,6 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState ,useEffect} from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError } from '@egovernments/digit-ui-react-components'
-import { toNumber } from 'lodash';
+
 
 const NonSORTable = (props) => {
   const [totalAmount, setTotalAmount] = useState(100)
@@ -14,7 +14,20 @@ const NonSORTable = (props) => {
   ];
   const [rows, setRows] = useState(initialState);
 
-  const { t, register, errors } = props
+  const { t, register, errors , setValues, getValues, formData} = props
+
+  const setTotal = (formData) => {
+    const tableData = formData?.[formFieldName]
+    setTotalAmount((prevState)=> {
+      return tableData?.filter(row => row)?.reduce((acc, curr) => acc + parseInt(curr?.estimatedAmount) || 0
+        ,0)
+    })
+    
+  }
+
+  useEffect(() => {
+    setTotal(formData)
+  }, [formData]);
 
   const getStyles = (index) => {
     let obj = {}
