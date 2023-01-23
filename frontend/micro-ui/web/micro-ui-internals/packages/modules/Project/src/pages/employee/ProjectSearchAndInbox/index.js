@@ -1,4 +1,4 @@
-import { Header, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
+import { Header, InboxSearchComposer, PropertyHouse } from "@egovernments/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import InboxConfig from "../../../configs/InboxConfig";

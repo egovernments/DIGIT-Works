@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { useForm } from "react-hook-form";
+import InboxLinks from "../atoms/InboxLinks";
 
 const InboxSearchComposer = (props) => {
     const  { configs } = props;
@@ -12,15 +13,21 @@ const InboxSearchComposer = (props) => {
                 <div className={`sections-parent ${configs?.form?.type}`}>
                         {/* Since we need to keep the config sections order-less, avoiding for loop */}
                         {/* That way the config can have sections in any order */}
-                        <div className="section links">
-                            {/* Integrate the Links Component here*/}
-                        </div>
+                       {
+                        configs?.type === "inbox" &&  
+                            <div className="section links">
+                                <InboxLinks links={configs?.sections?.links?.uiConfig?.links} headerText={configs?.sections?.links?.uiConfig?.headerText} logoIcon={configs?.sections?.links?.uiConfig?.logoIcon}></InboxLinks>
+                            </div>
+                       }
                         <div className="section search">
                             {/* Integrate the Search Component here*/}
                         </div>
-                        <div className="section filter">
-                            {/* Integrate the Filter Component here*/}
-                        </div> 
+                        {
+                        configs?.form?.type === "inbox" &&  
+                            <div className="section filter">
+                                {/* Integrate the Filter Component here*/}
+                            </div> 
+                        }
                         <div className="section search-results">
                             {/* Integrate the Search Results Component here*/}
                         </div>

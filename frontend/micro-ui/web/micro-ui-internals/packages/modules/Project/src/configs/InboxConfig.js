@@ -1,29 +1,54 @@
+import { PropertyHouse } from "@egovernments/digit-ui-react-components";
+
 const InboxSearchComposerConfig = () => {
     return {
         pageHeader : "Search Projects",
-        form : {
-                type : "search", 
-                //use classname as 'search' for search view
-                //use classname as 'inobx' for inbox view
-                //inbox view is by default
-                sections : {
-                    search : {
-                        fields : []
-                    },
-                    links : {
-                        fields : []
-                    },
-                    filter : {
-                        fields : []
-                    },
-                    searchResult : {
-                        fields : []
-                    }
+        type : "search", 
+        //use classname as 'search' for search view
+        //use classname as 'inbox' for inbox view
+        //inbox view is by default
+        sections : {
+            search : {
+                uiConfig : {
+
                 },
-                additionalSections : {
-                    //Open for Extensions
-                    //One can create a diff Parent card and add additional fields in it.
-                }
+                children : {},
+                show : true //by default true. 
+            },
+            links : {
+                uiConfig : {
+                    links : [
+                        {
+                            text: t("WORKS_ENROLL_WAGE_SEEKER"), 
+                            link: `/${window?.contextPath}/employee/contracts/create-contract`,
+                            businessService: "WORKS",
+                            roles: [],
+                        }
+                    ],
+                    logoIcon : PropertyHouse,
+                    headerText : "Projects",
+                },
+                children : {},
+                show : true //by default true. 
+            },
+            filter : {
+                uiConfig : {
+                    
+                },
+                children : {},
+                show : true //by default true. 
+            },
+            searchResult : {
+                uiConfig : {
+                    
+                },
+                children : {},
+                show : true //by default true. 
+            }
+        },
+        additionalSections : {
+            //Open for Extensions
+            //One can create a diff Parent card and add additional fields in it.
         }
     }
 }
