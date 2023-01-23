@@ -174,10 +174,14 @@ components:
         individualId:
           type: string
           description: Reference of the attendee from the Individual Registry.
-        totalAttendance:
+        actualTotalAttendance:
           type: number
           readOnly: true
-          description: It is the computed sum of attendance in the given time preiod of the muster roll. This will be stored in the msuter roll service's db. It will be computed only when the register is created or edited. So the computation will happen with CREATE and EDIT actions only.
+          description: It is the computed sum of attendance in the given time period of the muster roll. This will be stored in the muster roll service's db. It will be computed only when the muster is created. So the computation will happen with CREATE actions only.
+        modifiedTotalAttendance:
+          type: number
+          readOnly: true
+          description: It is the modified sum of attendance in the given time period of the muster roll. This will be stored in the muster roll service's db. It will be stored when the totalAttendance is edited. So the updation will happen with EDIT actions only.
         attendanceEntries:
           type: array
           readOnly: true

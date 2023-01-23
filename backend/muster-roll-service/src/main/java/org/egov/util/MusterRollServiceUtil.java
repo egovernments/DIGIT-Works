@@ -18,8 +18,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static org.egov.util.MusterRollServiceConstants.MASTER_MUSTER_ROLL;
-import static org.egov.util.MusterRollServiceConstants.MDMS_COMMON_MASTERS_MODULE_NAME;
+import static org.egov.util.MusterRollServiceConstants.*;
 
 @Component
 @Slf4j
@@ -52,7 +51,7 @@ public class MusterRollServiceUtil {
      *
      */
     public void populateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode) {
-        final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_MUSTER_ROLL + ".*";
+        final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_WAGER_SEEKER_SKILLS + ".*";
         List<LinkedHashMap<String,String>> musterRes = null;
 
         try {
@@ -68,7 +67,7 @@ public class MusterRollServiceUtil {
             for (Object object : musterRes) {
                 LinkedHashMap<String, String> codeValueMap = (LinkedHashMap<String, String>) object;
                 if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
-                    skillValue = codeValueMap.get("value");
+                    skillValue = codeValueMap.get("name");
                     break;
                 }
             }

@@ -10,6 +10,7 @@ import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.kafka.Producer;
 import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.MdmsUtil;
 import org.egov.validator.MusterRollValidator;
 import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
@@ -50,6 +51,9 @@ public class MusterRollService {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private MdmsUtil mdmsUtils;
 
 
     /**
@@ -117,14 +121,20 @@ public class MusterRollService {
         log.info("MusterRollService::updateMusterRoll");
 
         MusterRoll existingMusterRoll = fetchExistingMusterRoll(musterRollRequest.getMusterRoll());
+        log.info("MusterRollService::updateMusterRoll::update request for musterRollNumber::"+existingMusterRoll.getMusterRollNumber());
         musterRollValidator.validateUpdateMusterRoll(musterRollRequest);
         boolean isComputeAttendance = isComputeAttendance(musterRollRequest.getMusterRoll());
-        enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll);
-        Workflow workflow = musterRollRequest.getWorkflow();
+
+        //fetch MDMS data for muster - skill level
+        String rootTenantId = existingMusterRoll.getTenantId().split("\\.")[0];
+        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
+
+        enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll,mdmsData);
         //If 'computeAttendance' flag is true, re-calculate the attendance from attendanceLogs and update
         if (isComputeAttendance) {
-            calculationService.updateAttendance(musterRollRequest);
+            calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
+
         workflowService.updateWorkflowStatus(musterRollRequest);
         producer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
         return musterRollRequest;

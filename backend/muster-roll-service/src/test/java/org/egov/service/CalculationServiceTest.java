@@ -87,7 +87,7 @@ public class CalculationServiceTest {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         getMockAttendanceLogsSuccess();
         calculationService.createAttendance(musterRollRequest,true);
-        BigDecimal totalAttendance = musterRollRequest.getMusterRoll().getIndividualEntries().get(0).getTotalAttendance();
+        BigDecimal totalAttendance = musterRollRequest.getMusterRoll().getIndividualEntries().get(0).getActualTotalAttendance();
         assertEquals(new BigDecimal("2.0"),totalAttendance);
     }
 
