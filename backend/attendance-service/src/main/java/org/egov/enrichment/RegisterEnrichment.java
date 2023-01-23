@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -56,7 +58,24 @@ public class RegisterEnrichment {
             AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
             attendanceRegisters.get(i).setAuditDetails(auditDetails);
             log.info("Enriched register " + attendanceRegisters.get(i).getId() + " with Audit details");
+            // User who creates the register, by default gets enrolled as the first staff for that register.
+            enrichRegisterFirstStaff(attendanceRegisters.get(i), requestInfo, auditDetails);
         }
+    }
+
+    /* Enrich first staff details while creating register*/
+    private void enrichRegisterFirstStaff(AttendanceRegister attendanceRegister, RequestInfo requestInfo, AuditDetails auditDetails) {
+        StaffPermission staffPermission = StaffPermission.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(attendanceRegister.getTenantId())
+                .registerId(attendanceRegister.getId())
+                .userId(requestInfo.getUserInfo().getUuid())
+                .enrollmentDate(new BigDecimal(System.currentTimeMillis()))
+                .auditDetails(auditDetails)
+                .build();
+        attendanceRegister.setStaff(Collections.singletonList(staffPermission));
+        log.info("First staff for attendance register is added in attendance register");
+        log.info("The user " + requestInfo.getUserInfo().getUuid() + " is addedd as staff for the attendance register + " + staffPermission.getRegisterId());
     }
 
     /* Enrich Attendance Register on Update Request */

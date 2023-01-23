@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.RegisterEnrichment;
+import org.egov.enrichment.StaffEnrichmentService;
 import org.egov.kafka.Producer;
 import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
@@ -48,6 +49,9 @@ public class AttendanceRegisterService {
     @Autowired
     private AttendeeRepository attendeeRepository;
 
+    @Autowired
+    private StaffEnrichmentService staffEnrichmentService;
+
     /**
      * Create Attendance register
      *
@@ -57,15 +61,9 @@ public class AttendanceRegisterService {
     public AttendanceRegisterRequest createAttendanceRegister(AttendanceRegisterRequest request) {
         attendanceServiceValidator.validateCreateAttendanceRegister(request);
         registerEnrichment.enrichRegisterOnCreate(request);
-        log.info("Enriched Register with Register number, Ids and audit details");
+        log.info("Enriched Register with Register number, Ids, first staff and audit details");
         producer.push(attendanceServiceConfiguration.getSaveAttendanceRegisterTopic(), request);
         log.info("Pushed create attendance register request to kafka");
-
-        // User who creates the register, by default gets enrolled as the first staff for that register.
-        StaffPermissionRequest staffPermissionResponse = staffService.createFirstStaff(request.getRequestInfo(), request.getAttendanceRegister());
-        log.info("The user " + request.getRequestInfo().getUserInfo().getUuid() + " is enrolled as staff for the created attendance registers");
-        //Set created staff details in attendance register
-        registerEnrichment.enrichStaffInRegister(request.getAttendanceRegister(), staffPermissionResponse);
         return request;
     }
 
