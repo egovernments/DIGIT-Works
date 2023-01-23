@@ -9,10 +9,10 @@ const createDocumentsPayload = (documents) => {
     "documentUid": "" //Check with Nipun
   }
   for(let index in documents) {
-    payload_modal?.id = index;
-    payload_modal?.documentType = documents[index][1]['file']['type'];
-    payload_modal?.fileStore = documents[index][1]['fileStoreId']['fileStoreId'];
-    payload_modal?.documentUid = "";
+    payload_modal.id = index;
+    payload_modal.documentType = documents[index][1]['file']['type'];
+    payload_modal.fileStore = documents[index][1]['fileStoreId']['fileStoreId'];
+    payload_modal.documentUid = "";
     documents_payload_list.push(payload_modal);
   }
   return payload_modal;
