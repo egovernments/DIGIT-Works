@@ -1,6 +1,6 @@
 export const dummyTableData = [
     {
-        mustorRollId: 'MR/2022-23/01/13/000237',
+        mustorRollId: 'MR/2022-23/01/19/000309',
         work: 'Construction Roads',
         week: '02-01-2023 - 08-01-2023' ,
         iaip: 'Jagan',
@@ -8,7 +8,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        mustorRollId: "WR/2022-23/01/13/000200",
+        mustorRollId: "MR/2022-23/01/19/000310",
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Jagan',
@@ -16,7 +16,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        mustorRollId: 'MR/2022-23/01/12/000216',
+        mustorRollId: 'MR/2022-23/01/19/000311',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -24,7 +24,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        mustorRollId: 'MR/2022-23/01/12/000215',
+        mustorRollId: 'MR/2022-23/01/19/000312',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -32,7 +32,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        mustorRollId: 'MR/2022-23/01/12/000214',
+        mustorRollId: 'MR/2022-23/01/18/000282',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
