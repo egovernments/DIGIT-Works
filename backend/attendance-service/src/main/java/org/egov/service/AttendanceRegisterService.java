@@ -2,6 +2,7 @@ package org.egov.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.config.AttendanceServiceConfiguration;
@@ -10,7 +11,6 @@ import org.egov.kafka.Producer;
 import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.AttendanceServiceConstants;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.web.models.*;
@@ -78,41 +78,50 @@ public class AttendanceRegisterService {
         registerEnrichment.enrichSearchRegisterRequest(requestInfoWrapper.getRequestInfo(),searchCriteria);
 
         //Get the logged-in user roles
-        List<String> userRoles = getUserRoleCodes(requestInfoWrapper.getRequestInfo());
+        Set<String> userRoles = getUserRoleCodes(requestInfoWrapper.getRequestInfo());
+
+        //Get the roles enabled for open serach
+        Set<String> openSearchEnabledRoles  = getRegisterOpenSearchEnabledRoles();
 
         List<AttendanceRegister> resultAttendanceRegisters = new ArrayList<>();
 
-        if (userRoles.contains(AttendanceServiceConstants.SUPERUSER_ROLE_CODE) ||
-                userRoles.contains(AttendanceServiceConstants.JUNIOR_ENGINEER_ROLE_CODE) ||
-                userRoles.contains(AttendanceServiceConstants.MUNICIPAL_ENGINEER_ROLE_CODE)) {
+        if(isUserEnabledForOpenSearch(userRoles,openSearchEnabledRoles)){
             /*
-                If logged-in user is Super User or Junior Engineer or Municipal Engineer then do the search based on the supplied criteria.
-                Limit the response register count based on the configuration.
-             */
-
+               User having the role to perform open search on attendance register.
+            */
             fetchAndFilterRegisters(searchCriteria, resultAttendanceRegisters);
-        } else if (userRoles.contains(AttendanceServiceConstants.ORG_ADMIN_ROLE_CODE) ||
-                    userRoles.contains(AttendanceServiceConstants.ORG_STAFF_ROLE_CODE)) {
+        }else{
             /*
-                If the logged-in user is Org Admin or Org Staff then do the search based on the supplied criteria.
-                But make sure response register list should contain only those register for which logged-in is associated.
+               Make sure response register list should contain only those register for which logged-in is associated.
             */
             String uuid = requestInfoWrapper.getRequestInfo().getUserInfo().getUuid();
             Set<String> registers = fetchRegistersAssociatedToLoggedInStaffUser(uuid);
             updateSearchCriteriaAndFetchAndFilterRegisters(registers, searchCriteria, resultAttendanceRegisters);
-
-        } else if (userRoles.contains(AttendanceServiceConstants.CITIZEN_ROLE_CODE)) {
-            /*
-                If the logged-in user is Attendee then do the search based on the supplied criteria.
-                But make sure response register list should contain only those register for which logged-in is associated.
-            */
-            String uuid = requestInfoWrapper.getRequestInfo().getUserInfo().getUuid();
-            Set<String> registers = fetchRegistersAssociatedToLoggedInAttendeeUser(uuid);
-            updateSearchCriteriaAndFetchAndFilterRegisters(registers, searchCriteria, resultAttendanceRegisters);
-        } else {
-            throw new CustomException("UNAUTHORIZED_USER", "User is not authorized");
         }
         return resultAttendanceRegisters;
+    }
+
+    private boolean isUserEnabledForOpenSearch(Set<String> userRoles, Set<String> openSearchEnabledRoles) {
+        for(String userRole : userRoles){
+            if(openSearchEnabledRoles.contains(userRole)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Set<String> getRegisterOpenSearchEnabledRoles() {
+        Set<String> openSearchEnabledRoles = new HashSet<>();
+        String registerOpenSearchEnabledRoles = attendanceServiceConfiguration.getRegisterOpenSearchEnabledRoles();
+        if(!StringUtils.isBlank(registerOpenSearchEnabledRoles)){
+            String[] roles = registerOpenSearchEnabledRoles.split(",");
+            for(String role :roles){
+                if(!StringUtils.isBlank(role)){
+                    openSearchEnabledRoles.add(role);
+                }
+            }
+        }
+        return openSearchEnabledRoles;
     }
 
     /**
@@ -213,9 +222,12 @@ public class AttendanceRegisterService {
         return staffService.getAllStaff(staffSearchCriteria);
     }
 
-    private List<String> getUserRoleCodes(RequestInfo requestInfo) {
+    private Set<String> getUserRoleCodes(RequestInfo requestInfo) {
+        Set<String> userRoles = new HashSet<>();
         List<Role> roles = requestInfo.getUserInfo().getRoles();
-        return roles.stream().map(e->e.getCode()).collect(Collectors.toList());
+        if(roles == null)
+            return userRoles;
+        return roles.stream().map(e->e.getCode()).collect(Collectors.toSet());
     }
 
     private Set<String> fetchRegistersAssociatedToLoggedInStaffUser(String uuid) {
@@ -224,12 +236,6 @@ public class AttendanceRegisterService {
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().individualIds(individualIds).build();
         List<StaffPermission> staffMembers = staffService.getAllStaff(staffSearchCriteria);
         return staffMembers.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
-    }
-
-    private Set<String> fetchRegistersAssociatedToLoggedInAttendeeUser(String uuid) {
-        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().individualIds(Collections.singletonList(uuid)).build();
-        List<IndividualEntry> attendees = attendeeRepository.getAttendees(attendeeSearchCriteria);
-        return attendees.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
     }
 
     /**
