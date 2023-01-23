@@ -18,8 +18,9 @@ const NonSORTable = (props) => {
 
   const setTotal = (formData) => {
     const tableData = formData?.[formFieldName]
+   
     setTotalAmount((prevState)=> {
-      return tableData?.filter(row => row)?.reduce((acc, curr) => acc + parseInt(curr?.estimatedAmount) || 0
+      return tableData?.filter((row, index) => row)?.filter((row,index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseInt(curr?.estimatedAmount) || 0
         ,0)
     })
     
@@ -27,7 +28,7 @@ const NonSORTable = (props) => {
 
   useEffect(() => {
     setTotal(formData)
-  }, [formData]);
+  }, [formData,rows]);
 
   const getStyles = (index) => {
     let obj = {}
