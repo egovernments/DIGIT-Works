@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -61,11 +60,11 @@ public class ProjectUtil {
 
         //created the project search request body
         ObjectNode projectSearchReqNode = mapper.createObjectNode();
-
         ArrayNode projectArrayNode = mapper.createArrayNode();
 
         ObjectNode projectObjNode = mapper.createObjectNode();
         projectObjNode.put(ID, projectId);
+        projectObjNode.put(TENANT_ID, tenantId);
 
         projectArrayNode.add(projectObjNode);
 

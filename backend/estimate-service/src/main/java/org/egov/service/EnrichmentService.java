@@ -42,7 +42,7 @@ public class EnrichmentService {
      * id for the estimate, estimateDetail, address, amountDetail
      * @param request
      */
-    public void enrichCreateEstimate(EstimateRequest request) {
+    public void enrichEstimateOnCreate(EstimateRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         Estimate estimate = request.getEstimate();
         List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
@@ -51,6 +51,7 @@ public class EnrichmentService {
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, true);
         estimate.setAuditDetails(auditDetails);
         estimate.setId(UUID.randomUUID().toString());
+        //TODO -check with FE ?
         Date currentDT = new Date();
         BigDecimal proposalDate = new BigDecimal(currentDT.getTime());
         estimate.setProposalDate(proposalDate);
@@ -105,7 +106,7 @@ public class EnrichmentService {
      * @param requestInfo
      * @param searchCriteria
      */
-    public void enrichSearchEstimate(RequestInfo requestInfo, EstimateSearchCriteria searchCriteria) {
+    public void enrichEstimateOnSearch(RequestInfo requestInfo, EstimateSearchCriteria searchCriteria) {
         if (searchCriteria.getLimit() == null)
             searchCriteria.setLimit(config.getDefaultLimit());
 
@@ -121,7 +122,7 @@ public class EnrichmentService {
      * workflow's action, & based on user's roles
      * @param request
      */
-    public void enrichUpdateEstimate(EstimateRequest request) {
+    public void enrichEstimateOnUpdate(EstimateRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         Estimate estimate = request.getEstimate();
 

@@ -44,7 +44,7 @@ public class EstimateServiceValidator {
      *
      * @param request
      */
-    public void validateCreateEstimate(EstimateRequest request) {
+    public void validateEstimateOnCreate(EstimateRequest request) {
         Map<String, String> errorMap = new HashMap<>();
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();
@@ -61,7 +61,7 @@ public class EstimateServiceValidator {
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
 
         validateMDMSData(estimate, mdmsData, errorMap);
-        //validateProjectId(request, errorMap);
+        validateProjectId(request, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -209,7 +209,7 @@ public class EstimateServiceValidator {
      * @param requestInfoWrapper
      * @param searchCriteria
      */
-    public void validateSearchEstimate(RequestInfoWrapper requestInfoWrapper, EstimateSearchCriteria searchCriteria) {
+    public void validateEstimateOnSearch(RequestInfoWrapper requestInfoWrapper, EstimateSearchCriteria searchCriteria) {
         if (searchCriteria == null || requestInfoWrapper == null || requestInfoWrapper.getRequestInfo() == null) {
             throw new CustomException("ESTIMATE_SEARCH_CRITERIA_REQUEST", "Estimate search criteria request is mandatory");
         }
@@ -228,7 +228,7 @@ public class EstimateServiceValidator {
      *
      * @param request
      */
-    public void validateUpdateEstimate(EstimateRequest request) {
+    public void validateEstimateOnUpdate(EstimateRequest request) {
         Map<String, String> errorMap = new HashMap<>();
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();

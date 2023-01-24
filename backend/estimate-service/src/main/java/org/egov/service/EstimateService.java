@@ -48,10 +48,10 @@ public class EstimateService {
      * @return
      */
     public EstimateRequest createEstimate(EstimateRequest estimateRequest) {
-        serviceValidator.validateCreateEstimate(estimateRequest);
-        enrichmentService.enrichCreateEstimate(estimateRequest);
+        serviceValidator.validateEstimateOnCreate(estimateRequest);
+        enrichmentService.enrichEstimateOnCreate(estimateRequest);
         workflowService.updateWorkflowStatus(estimateRequest);
-        calculationService.calculateEstimate(estimateRequest);
+       // calculationService.calculateEstimate(estimateRequest);
         producer.push(serviceConfiguration.getSaveEstimateTopic(), estimateRequest);
         return estimateRequest;
     }
@@ -64,8 +64,8 @@ public class EstimateService {
      * @return
      */
     public List<Estimate> searchEstimate(RequestInfoWrapper requestInfoWrapper, EstimateSearchCriteria searchCriteria) {
-        serviceValidator.validateSearchEstimate(requestInfoWrapper, searchCriteria);
-        enrichmentService.enrichSearchEstimate(requestInfoWrapper.getRequestInfo(), searchCriteria);
+        serviceValidator.validateEstimateOnSearch(requestInfoWrapper, searchCriteria);
+        enrichmentService.enrichEstimateOnSearch(requestInfoWrapper.getRequestInfo(), searchCriteria);
 
         List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
 
@@ -94,10 +94,10 @@ public class EstimateService {
      * @return
      */
     public EstimateRequest updateEstimate(EstimateRequest estimateRequest) {
-        serviceValidator.validateUpdateEstimate(estimateRequest);
-        enrichmentService.enrichUpdateEstimate(estimateRequest);
+        serviceValidator.validateEstimateOnUpdate(estimateRequest);
+        enrichmentService.enrichEstimateOnUpdate(estimateRequest);
         workflowService.updateWorkflowStatus(estimateRequest);
-        calculationService.calculateEstimate(estimateRequest);
+        //calculationService.calculateEstimate(estimateRequest);
         producer.push(serviceConfiguration.getUpdateEstimateTopic(), estimateRequest);
         return estimateRequest;
     }
