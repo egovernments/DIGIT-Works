@@ -103,7 +103,7 @@ const Response = (props) => {
                   : null} */}
                   {t(state.message)}
           </CardText>
-          <div style={{"display":"flex","justifyContent":"space-between","flexDirection":"row","alignItems":"flex-end"}}>
+          <div style={{"display":"flex","justifyContent":"end","flexDirection":"row","alignItems":"flex-end"}}>
 
               {/* <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} 
                     onClick={handleDownloadPdf}>

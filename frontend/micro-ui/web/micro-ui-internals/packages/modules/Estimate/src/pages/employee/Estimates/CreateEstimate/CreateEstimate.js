@@ -3,7 +3,8 @@ import React,{Fragment,useEffect,useState} from 'react'
 import { useTranslation } from 'react-i18next'
 import getModalConfig from './config'
 import { createEstimateConfig } from './createEstimateConfig'
-
+import { createEstimatePayload } from './createEstimatePayload'
+import { useHistory } from "react-router-dom";
 const cardState = {
     "title": " ",
     "asSectionHeader": true,
@@ -37,7 +38,12 @@ const configNavItems = [
     },
 ]
 const CreateEstimate = ({ EstimateSession }) => {
+    const history = useHistory()
+
     const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
+
+    const { mutate: EstimateMutation } = Digit.Hooks.works.useCreateEstimateNew("WORKS");
+
 
     const [showModal, setShowModal] = useState(false);
 
@@ -53,10 +59,13 @@ const CreateEstimate = ({ EstimateSession }) => {
     const [designation, setDesignation] = useState([]);
     const [selectedDesignation, setSelectedDesignation] = useState({})
 
+    const [inputFormData,setInputFormData] = useState(sessionFormData)
+
     const onFormSubmit = async (_data) => {
         
+        setInputFormData((prevState) => _data)
         //first do whatever processing you want on form data then pass it over to modal's onSubmit function
-        //setCreateFormData((prevState) => _data)
+        
         setShowModal(true);
         //      use below code for create contract API CALL
 
@@ -95,13 +104,59 @@ const CreateEstimate = ({ EstimateSession }) => {
         //         }
         //     })
     };
-    const onModalSubmit = (data) => {
+    const onModalSubmit = async (data) => {
+        
+        const completeFormData = {
+            ...data,
+            ...inputFormData,
+            selectedApprover,
+            selectedDept,
+            selectedDesignation
+        }
+        // setSessionFormData(completeFormData)
+        
+
+        const payload = createEstimatePayload(completeFormData)
         setShowModal(false);
-        console.log("Estimate Created");
-        //console.log(createFormData);
-        //console.log(sessionFormData);
-        //here you can handle the data submitted in the modal and call the api
-        //access comments from data and details such as dept,desig,approver are stored locally in this comp
+        
+        
+
+        await EstimateMutation(payload, {
+            onError: async (error, variables) => {
+                setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+                setTimeout(() => {
+                    setShowToast(false);
+                }, 5000);
+            },
+            onSuccess: async (responseData, variables) => {
+                clearSessionFormData();
+                const state = {
+                    header: t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
+                    id: responseData?.estimates[0]?.estimateNumber,
+                    info: t("WORKS_ESTIMATE_ID"),
+                    message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
+                    links: [
+                        {
+                            name: t("WORKS_GOTO_ESTIMATE_INBOX"),
+                            redirectUrl: `/${window.contextPath}/employee/works/inbox`,
+                            code: "",
+                            svg: "GotoInboxIcon",
+                            isVisible: true,
+                            type: "inbox",
+                        },
+                        {
+                            name: t("WORKS_CREATE_ESTIMATE"),
+                            redirectUrl: `/${window.contextPath}/employee/estimate/create-estimate`,
+                            code: "",
+                            svg: "CreateEstimateIcon",
+                            isVisible: true,
+                            type: "add",
+                        },
+                    ],
+                }
+                history.push(`/${window.contextPath}/employee/works/response`, state);
+            },
+        });
     }
 
     const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(

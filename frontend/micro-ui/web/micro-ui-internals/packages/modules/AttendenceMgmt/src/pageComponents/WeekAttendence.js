@@ -2,31 +2,38 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Table } from "@egovernments/digit-ui-react-components";
 
-const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
+const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekDates}) => {
   const { t } = useTranslation();
   const [editable, setEditable] = useState(false)
   const tableRow = state ? Object.values(state) : []
+  const [prevAttendanceTotal, setPrevAttendanceTotal] = useState({})
   
   useEffect(() => {
     dispatch({
       type: "initialTotal",
       state: {},
     });
-    
+
+    let prev = {}
+    tableRow?.forEach(row => {
+      prev[row.id] = row.modifiedWorkingDays
+    })
+    setPrevAttendanceTotal(prev)
+
     if(modify) setEditable(true)
   }, [modify])
 
-  const handleCheckboxClick = (row, index) => {
+  const handleCheckboxClick = (row, day) => {
     dispatch({
       type: "attendanceTotal",
       state: {
         row,
-        index,
+        day
       },
     });
   };
 
-  const renderAttendenceSelector = (state, row, index) => {
+  const renderAttendenceSelector = (state, row, day) => {
     const classSelector = (state) => {
       switch (state) {
         case "half":
@@ -64,7 +71,31 @@ const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
     );
   };
 
-  const handleModifiedAmount = (event) => {};
+  const handleModifiedWorkingDays = (e, row) => {
+    let val = parseFloat(e.target.value);
+    let prevVal = parseFloat(prevAttendanceTotal[row.id])
+    if (val && val !== prevVal) {
+      setSaveAttendanceState(prevState => 
+                    ({...prevState, 
+                      displaySave: true, 
+                      updatePayload: prevState.updatePayload.some(item => item.id === row.id) ? 
+                          (prevState.updatePayload.map(item => {
+                              if(item.id === row.id) {
+                                item.totalAttendance = val
+                              } 
+                              return item
+                          })) :
+                          [...prevState.updatePayload, {id: row.id, totalAttendance: val}]
+                      }))
+      dispatch({
+        type: "updateModifiedTotal",
+        state: {
+          row,
+          val
+        },
+      });
+    }
+  };
 
   const renderBankAccountDetails = (value) => {
     return (
@@ -75,8 +106,8 @@ const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
     );
   };
 
-  const renderInputBoxSelector = (value) => {
-    return <input type="number" value={value} className="modified-amount" onChange={handleModifiedAmount}></input>;
+  const renderInputBoxSelector = (value, row) => {
+    return <input type="number" name="amount" className="modified-amount" step={0.5} defaultValue={value} onChange={(e) => handleModifiedWorkingDays(e, row)}/>
   };
 
   const tableColumnsReadOnly = useMemo(() => {
@@ -383,11 +414,10 @@ const WeekAttendence = ({ state, dispatch, modify, weekDates}) => {
         Header: () => <p>{t("ATM_MODIFIED_WORKING_DAYS")}</p>,
         accessor: "modifiedWorkingDays",
         Cell: ({ value, column, row }) => {
-          console.log('value', value);
           if (row.original.type === "total") {
             return String(t(value));
           }
-          return renderInputBoxSelector(value);
+          return renderInputBoxSelector(value, row.original);
         },
       },
       {

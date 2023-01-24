@@ -10,6 +10,16 @@ const AttendanceService = {
         auth: true,
         userService: true,
         params: { tenantId, ...searchParams },
+      }),
+
+    update: (data) => 
+      Request({
+        url: Urls.attendencemgmt.mustorRoll.update,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        data: data
       })
   };
 
