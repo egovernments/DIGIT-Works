@@ -17,13 +17,36 @@ const InboxConfig = (t) => {
                 uiConfig : {
                     links : [
                         {
-                            label: "ACTION_TEST_PROJECTS",
-                            link: `/employee/contracts/create-contract`,
+                            text: "ACTION_TEST_PROJECTS",
+                            url: `/employee/contracts/create-contract`,
                             businessService: "WORKS",
+                            roles: [],
+                        },
+                        {
+                            text: "ACTION_TEST_PROJECTS",
+                            url: `/employee/contracts/create-contract`,
+                            businessService: "WORKS",
+                            roles: [],
+                        },
+                        {
+                            text: "ACTION_TEST_PROJECTS",
+                            url: `/employee/contracts/create-contract`,
+                            businessService: "WORKS",
+                            roles: [],
+                        },
+                        {
+                            text: "ACTION_TEST_PROJECTS",
+                            url: `/employee/contracts/create-contract`,
+                            businessService: "WORKS",
+                            roles: [],
                         }
-                    ],            
+                    ],
+                    label : "ACTION_TEST_PROJECT_INBOX",
+                    logoIcon : { //Pass the name of the Icon Component as String here and map it in the InboxSearchLinks Component   
+                        component : "PropertyHouse",
+                        customClass : "inbox-search-icon--projects"         
+                    }
                 },
-                label : "Projects",
                 children : {},
                 show : true //by default true. 
             },

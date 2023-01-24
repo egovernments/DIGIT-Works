@@ -240,6 +240,7 @@ import HorizontalNav from "./atoms/HorizontalNav";
 import NoResultsFound from "./atoms/NoResultsFound";
 import { ViewImages } from "./atoms/ViewImages";
 import InboxSearchComposer from "./hoc/InboxSearchComposer";
+import InboxSearchLinks from "./atoms/InboxSearchLinks";
 
 export {
   ViewImages,
@@ -409,6 +410,7 @@ export {
   Details,
   InboxComposer,
   InboxSearchComposer,
+  InboxSearchLinks,
   // Icons
   FilterIcon,
   FilterSvg,
