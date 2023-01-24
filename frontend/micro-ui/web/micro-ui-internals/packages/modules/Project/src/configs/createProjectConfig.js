@@ -102,8 +102,8 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               },
               mdmsConfig: {
                 masterName: "Department",
-                moduleName: "works",
-                localePrefix: "ES_COMMON",
+                moduleName: "common-masters",
+                localePrefix: "COMMON_MASTERS_DEPARTMENT",
               },
             },
           },
@@ -469,8 +469,8 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               },
               mdmsConfig: {
                 masterName: "Department",
-                moduleName: "works",
-                localePrefix: "ES_COMMON",
+                moduleName: "common-masters",
+                localePrefix: "COMMON_MASTERS_DEPARTMENT",
               },
             },
           },
