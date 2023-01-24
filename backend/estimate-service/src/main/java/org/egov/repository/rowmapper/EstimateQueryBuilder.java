@@ -20,7 +20,7 @@ public class EstimateQueryBuilder {
 
 
     private static final String FETCH_ESTIMATE_QUERY = "SELECT est.*," +
-            "estDetail.*, est.id as estId, est.last_modified_time as estLastModifiedTime, estDetail.id AS estDetailId, " +
+            "estDetail.*,estAmtDetail.*,estAdd.*, est.id as estId, est.last_modified_time as estLastModifiedTime, estDetail.id AS estDetailId, " +
             "estDetail.additional_details AS estDetailAdditional,estAmtDetail.additional_details AS estAmtDetailAdditional," +
             "estAdd.id AS estAddId,estAmtDetail.id AS estAmtDetailId,estDetail.estimate_id AS estDetailEstId " +
             "FROM eg_wms_estimate AS est " +
