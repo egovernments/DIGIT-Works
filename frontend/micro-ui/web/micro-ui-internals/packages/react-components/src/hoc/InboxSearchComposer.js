@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { useForm } from "react-hook-form";
+import ResultsTable from "../molecules/ResultsTable";
 
 const InboxSearchComposer = (props) => {
     const  { configs } = props;
@@ -23,6 +24,7 @@ const InboxSearchComposer = (props) => {
                         </div> 
                         <div className="section search-results">
                             {/* Integrate the Search Results Component here*/}
+                            <ResultsTable config={configs} />
                         </div>
                 </div>
                 <div className="additional-sections-parent">

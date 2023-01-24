@@ -2,7 +2,7 @@ const InboxSearchComposerConfig = () => {
     return {
         pageHeader : "Search Projects",
         form : {
-                type : "search", 
+                type : "inbox", 
                 //use classname as 'search' for search view
                 //use classname as 'inobx' for inbox view
                 //inbox view is by default
@@ -18,6 +18,10 @@ const InboxSearchComposerConfig = () => {
                     },
                     searchResult : {
                         fields : []
+                        //need a list of columns and their jsonPaths
+                        //config for calling the api
+                        //if it's an inbox by default we need to show some data, if it's a search screen
+                        //then by default an empty card should be displayed
                     }
                 },
                 additionalSections : {
