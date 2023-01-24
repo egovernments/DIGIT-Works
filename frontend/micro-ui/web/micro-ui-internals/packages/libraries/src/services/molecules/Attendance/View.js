@@ -35,18 +35,18 @@ const getAttendanceTableData = (data, skills) => {
       tableRow.id = item.id
       tableRow.sno = index + 1
       tableRow.registerId = data?.registerId
-      tableRow.actualWorkingDays = item?.totalAttendance
+      tableRow.actualWorkingDays = item?.actualTotalAttendance
       tableRow.nameOfIndividual = item?.additionalDetails?.userName || 'Piyush HarjitPal'
       tableRow.guardianName = item?.additionalDetails?.fatherName  || 'HarjitPal'
-      tableRow.skill = skills['SKILLED_LEVEL_1'].name || 'SKILL_1'  //skills[item?.additionalDetails?.skillCode].name
-      tableRow.amount = skills['SKILLED_LEVEL_1'].amount * item?.totalAttendance //skills[item?.additionalDetails?.skillCode].amount * item?.totalAttendance
+      tableRow.skill = skills[item?.additionalDetails?.skillCode]?.name || skills['SKILL_1'].name
+      tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount * item?.actualTotalAttendance || skills['SKILL_1'].amount * item?.actualTotalAttendance 
       tableRow.modifiedAmount = tableRow.amount 
-      tableRow.modifiedWorkingDays = item?.totalAttendance
+      tableRow.modifiedWorkingDays = item?.modifiedTotalAttendance ? item?.modifiedTotalAttendance : item?.actualTotalAttendance
       tableRow.bankAccountDetails = {
         accountNo : item?.additionalDetails?.bankDetails || '880182873839-SBIN0001237',
         ifscCode : null
       }
-      tableRow.aadharNumber = item?.additionalDetails?.aadharNumber|| '9099-1234-1234' 
+      tableRow.aadharNumber = item?.additionalDetails?.aadharNumber || '9099-1234-1234' 
       tableRow.attendence = getWeekAttendance(item?.attendanceEntries)
       tableData[item.id] = tableRow
     });
