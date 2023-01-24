@@ -44,6 +44,12 @@ public class AttendanceLogServiceValidator {
         log.info("Validate attendance log create request");
         validateAttendanceLogRequest(attendanceLogRequest);
 
+        // Verify all the attendance logs should below to same registerId
+        validateMultipleRegisterIds(attendanceLogRequest);
+
+        // Verify all the attendance logs should below to same tenantId
+        validateMultipleTenantIds(attendanceLogRequest);
+
         // Verify the Logged-in user is associated to the given register.
         validateLoggedInUser(attendanceLogRequest);
 
@@ -58,9 +64,47 @@ public class AttendanceLogServiceValidator {
         log.info("Attendance log create request validation done");
     }
 
+    private void validateMultipleTenantIds(AttendanceLogRequest attendanceLogRequest) {
+        List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
+        Set<String> tenantIds = new HashSet<>();
+        for(AttendanceLog attendanceLog : attendanceLogs){
+            String tenantId = attendanceLog.getTenantId();
+            if(tenantIds.isEmpty()){
+                tenantIds.add(tenantId);
+            }else{
+                if(!tenantIds.contains(tenantId)){
+                    log.error("Attendance logs should below to same tenantId");
+                    throw new CustomException("MULTIPLE_TENANTIDS","Attendance logs should belong to same tenantId");
+                }
+            }
+        }
+    }
+
+    private void validateMultipleRegisterIds(AttendanceLogRequest attendanceLogRequest) {
+        List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
+        Set<String> registerIds = new HashSet<>();
+        for(AttendanceLog attendanceLog : attendanceLogs){
+            String registerId = attendanceLog.getRegisterId();
+            if(registerIds.isEmpty()){
+                registerIds.add(registerId);
+            }else{
+                if(!registerIds.contains(registerId)){
+                    log.error("Attendance logs should below to same registerId");
+                    throw new CustomException("MULTIPLE_REGISTERIDS","Attendance logs should belong to same registerId");
+                }
+            }
+        }
+    }
+
     public void validateUpdateAttendanceLogRequest(AttendanceLogRequest attendanceLogRequest) {
         log.info("Validate attendance log update request");
         validateAttendanceLogRequest(attendanceLogRequest);
+
+        // Verify all the attendance logs should below to same registerId
+        validateMultipleRegisterIds(attendanceLogRequest);
+
+        // Verify all the attendance logs should below to same tenantId
+        validateMultipleTenantIds(attendanceLogRequest);
 
         // Verify the Logged-in user is associated to the given register.
         validateLoggedInUser(attendanceLogRequest);
