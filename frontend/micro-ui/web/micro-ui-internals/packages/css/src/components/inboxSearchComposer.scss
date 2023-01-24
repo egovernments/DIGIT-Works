@@ -35,6 +35,10 @@
                 &.links {
                     height: 100%;
                     color : red;
+                    .inbox-search-links-component {
+                        height: 100% !important;
+                        width: 100%;
+                    }
                 }
                 &.filter {
                    height: 10rem;

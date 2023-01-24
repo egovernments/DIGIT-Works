@@ -1,29 +1,52 @@
-const InboxSearchComposerConfig = () => {
+const InboxSearchComposerConfig = (t) => {
     return {
-        pageHeader : "Search Projects",
-        form : {
-                type : "search", 
-                //use classname as 'search' for search view
-                //use classname as 'inobx' for inbox view
-                //inbox view is by default
-                sections : {
-                    search : {
-                        fields : []
-                    },
-                    links : {
-                        fields : []
-                    },
-                    filter : {
-                        fields : []
-                    },
-                    searchResult : {
-                        fields : []
-                    }
+        label : "Search Projects",
+        type : "inbox", 
+        //use classname as 'search' for search view
+        //use classname as 'inbox' for inbox view
+        //inbox view is by default
+        sections : {
+            search : {
+                uiConfig : {
+
                 },
-                additionalSections : {
-                    //Open for Extensions
-                    //One can create a diff Parent card and add additional fields in it.
-                }
+                children : {},
+                show : true //by default true. 
+            },
+            links : {
+                uiConfig : {
+                    links : [
+                        {
+                            label: "ACTION_TEST_PROJECTS",
+                            link: `/employee/contracts/create-contract`,
+                            businessService: "WORKS",
+                        }
+                    ],            
+                },
+                label : "Projects",
+                children : {},
+                show : true //by default true. 
+            },
+            filter : {
+                label : "",
+                uiConfig : {
+                    
+                },
+                children : {},
+                show : true //by default true. 
+            },
+            searchResult : {
+                label : "",
+                uiConfig : {
+                    
+                },
+                children : {},
+                show : true //by default true. 
+            }
+        },
+        additionalSections : {
+            //Open for Extensions
+            //One can create a diff Parent card and add additional fields in it.
         }
     }
 }
