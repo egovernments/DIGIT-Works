@@ -1,6 +1,7 @@
 package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
@@ -28,11 +29,17 @@ public class Project {
     @JsonProperty("tenantId")
     private String tenantId = null;
 
+    @JsonProperty("projectNumber")
+    private String projectNumber = null;
+
+    @JsonProperty("name")
+    private String name = null;
+
     @JsonProperty("projectType")
     private String projectType = null;
 
-    @JsonProperty("subprojectType")
-    private String subprojectType = null;
+    @JsonProperty("projectSubType")
+    private String projectSubType = null;
 
     @JsonProperty("department")
     private String department = null;
@@ -62,6 +69,9 @@ public class Project {
     @JsonProperty("parent")
     private String parent = null;
 
+    @JsonProperty("projectHierarchy")
+    private String projectHierarchy = null;
+
     @JsonProperty("targets")
     @Valid
     private List<Target> targets = null;
@@ -70,7 +80,7 @@ public class Project {
     private Object additionalDetails = null;
 
     @JsonProperty("isDeleted")
-    private Boolean isDeleted = null;
+    private Boolean isDeleted = false;
 
     @JsonProperty("rowVersion")
     private Integer rowVersion = null;
