@@ -77,8 +77,8 @@ public class CalculationService {
 
         log.info("CalculationService::createAttendance::From MDMS::HALF_DAY_NUM_HOURS::"+halfDayNumHours+"::FULL_DAY_NUM_HOURS::"+fullDayNumHours+"::isRoundOffHours::"+isRoundOffHours);
         AuditDetails auditDetails = musterRoll.getAuditDetails();
-        LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate().longValue()).atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate().longValue()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDate();
+        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDate();
 
         log.debug("CalculationService::calculateAttendance::startDate::"+startDate+"::endDate::"+endDate);
 
@@ -102,7 +102,7 @@ public class CalculationService {
                 if (isCreate) {
                     attendanceEntry.setId(UUID.randomUUID().toString());
                 }
-                attendanceEntry.setTime(new BigDecimal(date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+                attendanceEntry.setTime(new BigDecimal(date.atStartOfDay(ZoneId.of(config.getTimeZone())).toInstant().toEpochMilli()));
 
                 //check if the individual's entry attendance is logged between startDate and endDate
                 LocalDateTime entryTimestamp = null;
@@ -210,7 +210,7 @@ public class CalculationService {
             List<AttendanceEntry> attendanceEntries = individualEntry.getAttendanceEntries();
             BigDecimal totalAttendance = new BigDecimal("0.0");
             for (AttendanceEntry attendanceEntry : attendanceEntries) {
-                LocalDate attendanceDate = Instant.ofEpochMilli(attendanceEntry.getTime().longValue()).atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate attendanceDate = Instant.ofEpochMilli(attendanceEntry.getTime().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDate();
                 LocalDateTime entryTimestamp = entryTimestampList.stream()
                                                         .filter(dateTime -> dateTime.toLocalDate().isEqual(attendanceDate))
                                                         .findFirst().orElse(null);
@@ -261,7 +261,7 @@ public class CalculationService {
                 .collect(Collectors.groupingBy(
                         attendanceLog -> attendanceLog.getIndividualId(), //key
                         LinkedHashMap::new, // populate the map
-                        Collectors.mapping(attendanceLog -> Instant.ofEpochMilli(attendanceLog.getTime().longValue()).atZone(ZoneId.systemDefault()).toLocalDateTime(),Collectors.toList()) //value is the list of timestamp
+                        Collectors.mapping(attendanceLog -> Instant.ofEpochMilli(attendanceLog.getTime().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDateTime(),Collectors.toList()) //value is the list of timestamp
                 ));
 
         return individualAttendanceMap;
@@ -279,10 +279,10 @@ public class CalculationService {
         /* UI sends the startDate and endDate. Set the toTime for attendanceLog search api as endDate+23h0m to
         * fetch the logs till end of the endDate */
         BigDecimal fromTime = musterRoll.getStartDate();
-        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate().longValue()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDate();
         // set the endTime as endDate's date+23h0min
         LocalDateTime endTime = endDate.atTime(23,0);
-        BigDecimal toTime = new BigDecimal(endTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        BigDecimal toTime = new BigDecimal(endTime.atZone(ZoneId.of(config.getTimeZone())).toInstant().toEpochMilli());
 
         StringBuilder uri = new StringBuilder();
         uri.append(config.getAttendanceLogHost()).append(config.getAttendanceLogEndpoint());

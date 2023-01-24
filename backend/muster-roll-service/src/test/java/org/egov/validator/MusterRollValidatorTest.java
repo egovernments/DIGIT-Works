@@ -44,6 +44,8 @@ public class MusterRollValidatorTest {
         Object mdmsResponse = MusterRollRequestBuilderTest.getTenantMdmsResponse();
         lenient().when(mdmsUtils.mDMSCall(any(MusterRollRequest.class),
                 any(String.class))).thenReturn(mdmsResponse);
+        lenient().when(serviceConfiguration.getTimeZone()).thenReturn("Asia/Kolkata");
+
     }
 
     @Test
