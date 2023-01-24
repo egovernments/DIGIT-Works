@@ -23,7 +23,7 @@ last_modified_by             character varying(256),
 created_time                 bigint,
 last_modified_time           bigint,
 
-CONSTRAINT uk_eg_wms_estimate UNIQUE (project_id),
+CONSTRAINT uk_eg_wms_estimate UNIQUE (estimate_number),
 CONSTRAINT pk_eg_wms_estimate PRIMARY KEY (id)
 );
 
@@ -41,8 +41,6 @@ uom                          character varying(256),
 uom_value                    NUMERIC,
 additional_details           JSONB,
 CONSTRAINT pk_eg_wms_estimate_detail PRIMARY KEY (id),
-CONSTRAINT uk_eg_wms_estimate_detail_name UNIQUE (name),
-CONSTRAINT uk_eg_wms_estimate_detail_description UNIQUE (description),
 CONSTRAINT fk_eg_wms_estimate_detail FOREIGN KEY (estimate_id) REFERENCES eg_wms_estimate (id)
 );
 
