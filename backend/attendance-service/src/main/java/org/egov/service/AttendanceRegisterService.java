@@ -2,6 +2,7 @@ package org.egov.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.config.AttendanceServiceConfiguration;
@@ -75,55 +76,58 @@ public class AttendanceRegisterService {
      * @return
      */
     public List<AttendanceRegister> searchAttendanceRegister(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
-        log.info("Search for registers started");
         //Validate the requested parameters
         attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria);
-        log.info("Search registers request validations done");
 
         //Enrich requested search criteria
         registerEnrichment.enrichSearchRegisterRequest(requestInfoWrapper.getRequestInfo(),searchCriteria);
-        log.info("Search registers enrichment done");
 
         //Get the logged-in user roles
-        List<String> userRoles = getUserRoleCodes(requestInfoWrapper.getRequestInfo());
+        Set<String> userRoles = getUserRoleCodes(requestInfoWrapper.getRequestInfo());
+
+        //Get the roles enabled for open serach
+        Set<String> openSearchEnabledRoles  = getRegisterOpenSearchEnabledRoles();
 
         List<AttendanceRegister> resultAttendanceRegisters = new ArrayList<>();
 
-        if (userRoles.contains(AttendanceServiceConstants.SUPERUSER_ROLE_CODE) ||
-                userRoles.contains(AttendanceServiceConstants.JUNIOR_ENGINEER_ROLE_CODE) ||
-                userRoles.contains(AttendanceServiceConstants.MUNICIPAL_ENGINEER_ROLE_CODE)) {
+        if(isUserEnabledForOpenSearch(userRoles,openSearchEnabledRoles)){
             /*
-                If logged-in user is Super User or Junior Engineer or Municipal Engineer then do the search based on the supplied criteria.
-                Limit the response register count based on the configuration.
-             */
+               User having the role to perform open search on attendance register.
+            */
             log.info("Searching registers for Superuser or Engineer");
             fetchAndFilterRegisters(searchCriteria, resultAttendanceRegisters);
-        } else if (userRoles.contains(AttendanceServiceConstants.ORG_ADMIN_ROLE_CODE) ||
-                    userRoles.contains(AttendanceServiceConstants.ORG_STAFF_ROLE_CODE)) {
+        }else{
             /*
-                If the logged-in user is Org Admin or Org Staff then do the search based on the supplied criteria.
-                But make sure response register list should contain only those register for which logged-in is associated.
+               Make sure response register list should contain only those register for which logged-in is associated.
             */
-            log.info("Searching registers for Org Admin or Org Staff");
             String uuid = requestInfoWrapper.getRequestInfo().getUserInfo().getUuid();
             Set<String> registers = fetchRegistersAssociatedToLoggedInStaffUser(uuid);
             updateSearchCriteriaAndFetchAndFilterRegisters(registers, searchCriteria, resultAttendanceRegisters);
-
-        } else if (userRoles.contains(AttendanceServiceConstants.CITIZEN_ROLE_CODE)) {
-            /*
-                If the logged-in user is Attendee then do the search based on the supplied criteria.
-                But make sure response register list should contain only those register for which logged-in is associated.
-            */
-            log.info("Searching registers for Attendee");
-            String uuid = requestInfoWrapper.getRequestInfo().getUserInfo().getUuid();
-            Set<String> registers = fetchRegistersAssociatedToLoggedInAttendeeUser(uuid);
-            updateSearchCriteriaAndFetchAndFilterRegisters(registers, searchCriteria, resultAttendanceRegisters);
-        } else {
-            log.error("User is not authorized");
-            throw new CustomException("UNAUTHORIZED_USER", "User is not authorized");
         }
-        log.info("Search registers completed");
         return resultAttendanceRegisters;
+    }
+
+    private boolean isUserEnabledForOpenSearch(Set<String> userRoles, Set<String> openSearchEnabledRoles) {
+        for(String userRole : userRoles){
+            if(openSearchEnabledRoles.contains(userRole)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Set<String> getRegisterOpenSearchEnabledRoles() {
+        Set<String> openSearchEnabledRoles = new HashSet<>();
+        String registerOpenSearchEnabledRoles = attendanceServiceConfiguration.getRegisterOpenSearchEnabledRoles();
+        if(!StringUtils.isBlank(registerOpenSearchEnabledRoles)){
+            String[] roles = registerOpenSearchEnabledRoles.split(",");
+            for(String role :roles){
+                if(!StringUtils.isBlank(role)){
+                    openSearchEnabledRoles.add(role);
+                }
+            }
+        }
+        return openSearchEnabledRoles;
     }
 
     /**
@@ -233,9 +237,12 @@ public class AttendanceRegisterService {
     }
 
     /* Returns list of user roles */
-    private List<String> getUserRoleCodes(RequestInfo requestInfo) {
+    private Set<String> getUserRoleCodes(RequestInfo requestInfo) {
+        Set<String> userRoles = new HashSet<>();
         List<Role> roles = requestInfo.getUserInfo().getRoles();
-        return roles.stream().map(e->e.getCode()).collect(Collectors.toList());
+        if(roles == null)
+            return userRoles;
+        return roles.stream().map(e->e.getCode()).collect(Collectors.toSet());
     }
 
     /* Get all registers associated for the logged in staff  */
@@ -283,7 +290,6 @@ public class AttendanceRegisterService {
         return attendanceRegisterRequest;
     }
 
-    /* Get Attendance registers from DB based on register ids and tenant Id */
     public List<AttendanceRegister> getAttendanceRegisters(RequestInfoWrapper requestInfoWrapper, List<String> registerIds, String tenantId) {
 
         //Search criteria for attendance register search request

@@ -93,6 +93,9 @@ public class AttendanceServiceConfiguration {
     @Value("${attendance.register.search.max.limit}")
     private Integer attendanceRegisterMaxLimit;
 
+    @Value("${attendance.register.open.search.enabled.roles}")
+    private String registerOpenSearchEnabledRoles;
+
 }
 
 
