@@ -9,21 +9,24 @@ const InboxSearchComposer = (props) => {
 
     return (
         <div className="inbox-search-component-wrapper">
-            <div className={`sections-parent ${configs?.form?.type}`}>
+            <div className={`sections-parent ${configs?.type}`}>
                 {/* Since we need to keep the config sections order-less, avoiding for loop */}
                 {/* That way the config can have sections in any order */}
-                <div className="section links">
+                { configs?.children?.links?.visible && <div className="section links">
                     {/* Integrate the Links Component here*/}
-                </div>
-                <div className="section search">
+                    <div>Show links</div>
+                </div>}
+                { configs?.children?.search?.visible && <div className="section search">
                     <SearchComponent/>
-                </div>
-                <div className="section filter">
+                </div>}
+                { configs?.children?.filter?.visible && <div className="section filter">
                     {/* Integrate the Filter Component here*/}
-                </div> 
-                <div className="section search-results">
+                    <div>Show Filter</div>
+                </div> }
+                { configs?.children?.searchResult?.visible && <div className="section search-results">
                     {/* Integrate the Search Results Component here*/}
-                </div>
+                    <div>Show table</div>
+                </div> }
             </div>
             <div className="additional-sections-parent">
                 {/* One can use this Parent to add additional sub parents to render more sections */}

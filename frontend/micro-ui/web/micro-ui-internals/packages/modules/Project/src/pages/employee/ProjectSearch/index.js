@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import inboxConfig from "../../../configs/inboxConfig";
+import inboxConfig from "../../../configs/searchConfig";
 
 const ProjectSearch = () => {
     const { t } = useTranslation();
@@ -11,7 +11,7 @@ const ProjectSearch = () => {
    
     return (
         <React.Fragment>
-            <Header styles={{ fontSize: "32px" }}>{configs?.pageHeader}</Header>
+            <Header styles={{ fontSize: "32px" }}>{configs?.header}</Header>
             <div className="inbox-search-wrapper">
                 <InboxSearchComposer configs={configs}></InboxSearchComposer>
             </div>
