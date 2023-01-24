@@ -1,34 +1,34 @@
 const searchConfig = () => {
     return {
-        header : "Search Projects",
-        visible: true,
+        label : "Search Projects",
         type: 'search',
-        children : {
-            search: {
-                header : "",
-                visible: true,
-                type: "",
-                children : {}
+        sections : {
+            search : {
+                uiConfig : {},
+                label : "",
+                children : {},
+                show : true
             },
-            links: {
-                header : "",
-                visible: false,
-                type: "",
-                children : {}
+            links : {
+                uiConfig : {},
+                label : "",
+                children : {},
+                show : false 
             },
-            filter: {
-                header : "",
-                visible: true,
-                type: "",
-                children : {}
+            filter : {
+                uiConfig : {},
+                label : "",
+                children : {},
+                show : false 
             },
-            searchResult: {
-                header : "",
-                visible: true,
-                type: "",
-                children : {}
+            searchResult : {
+                uiConfig : {},
+                label : "",
+                children : {},
+                show : true
             }
-        }
+        },
+        additionalSections : {}
     }
 }
 

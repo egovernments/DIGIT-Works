@@ -1,17 +1,16 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import inboxConfig from "../../../configs/searchConfig";
+import searchConfig from "../../../configs/searchConfig";
 
 const ProjectSearch = () => {
     const { t } = useTranslation();
 
-    //Import Config to Bootstrap the Layout -- this is a test config
-    const configs = inboxConfig();
+    const configs = searchConfig();
    
     return (
         <React.Fragment>
-            <Header styles={{ fontSize: "32px" }}>{configs?.header}</Header>
+            <Header styles={{ fontSize: "32px" }}>{configs?.label}</Header>
             <div className="inbox-search-wrapper">
                 <InboxSearchComposer configs={configs}></InboxSearchComposer>
             </div>

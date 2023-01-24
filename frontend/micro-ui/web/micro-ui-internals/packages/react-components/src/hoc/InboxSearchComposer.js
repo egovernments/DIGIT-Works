@@ -1,37 +1,51 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import SearchComponent from "../atoms/SearchComponent";
+import SubmitBar from "../atoms/SubmitBar";
 
 const InboxSearchComposer = (props) => {
     const  { configs } = props;
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const onSubmit = data => console.log(data);
+    
+    const onFormSubmit = (_data) => {
+        console.log(_data);
+    }
 
     return (
-        <div className="inbox-search-component-wrapper">
+        <div className="inbox-search-component-wrapper ">
             <div className={`sections-parent ${configs?.type}`}>
                 {/* Since we need to keep the config sections order-less, avoiding for loop */}
                 {/* That way the config can have sections in any order */}
-                { configs?.children?.links?.visible && <div className="section links">
-                    {/* Integrate the Links Component here*/}
-                    <div>Show links</div>
-                </div>}
-                { configs?.children?.search?.visible && <div className="section search">
-                    <SearchComponent/>
-                </div>}
-                { configs?.children?.filter?.visible && <div className="section filter">
-                    {/* Integrate the Filter Component here*/}
-                    <div>Show Filter</div>
-                </div> }
-                { configs?.children?.searchResult?.visible && <div className="section search-results">
-                    {/* Integrate the Search Results Component here*/}
-                    <div>Show table</div>
-                </div> }
+                {
+                    configs?.sections?.links?.show &&  
+                        <div className="section links">
+                            {/* Integrate the Search Component here*/}
+                        </div>
+                }
+                {
+                    configs?.sections?.search?.show &&  
+                        <div className="section search">
+                            <SearchComponent/>
+                        </div>
+                    }
+                    {
+                    configs?.sections?.filter?.show &&  
+                        <div className="section filter">
+                            {/* Integrate the Filter Component here*/}
+                        </div> 
+                    }
+                    {
+                    configs?.sections?.searchResult?.show &&  
+                        <div className="section search-results">
+                            {/* Integrate the Search Results Component here*/}
+                        </div>
+                    }
             </div>
             <div className="additional-sections-parent">
                 {/* One can use this Parent to add additional sub parents to render more sections */}
             </div>
-        </div>
+        </div>   
     )
 }
 
