@@ -12,7 +12,6 @@ import org.egov.kafka.Producer;
 import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.AttendanceServiceConstants;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.web.models.*;
