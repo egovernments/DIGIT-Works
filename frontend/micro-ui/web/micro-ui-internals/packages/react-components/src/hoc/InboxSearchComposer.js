@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { useForm } from "react-hook-form";
-import InboxLinks from "../atoms/InboxLinks";
+import SubmitBar from "../atoms/SubmitBar";
 
 const InboxSearchComposer = (props) => {
     const  { configs } = props;
@@ -15,13 +15,13 @@ const InboxSearchComposer = (props) => {
         <>
             <form onSubmit={handleSubmit(onFormSubmit)}>
                 <div className="inbox-search-component-wrapper ">
-                    <div className={`sections-parent ${configs?.form?.type}`}>
+                    <div className={`sections-parent ${configs?.type}`}>
                             {/* Since we need to keep the config sections order-less, avoiding for loop */}
                             {/* That way the config can have sections in any order */}
                         {
                             configs?.sections?.links?.show &&  
                                 <div className="section links">
-                                    <InboxLinks customClass="inbox-search-links-component" links={configs?.sections?.links?.uiConfig?.links} headerText={configs?.sections?.links?.uiConfig?.headerText} logoIcon={configs?.sections?.links?.uiConfig?.logoIcon}></InboxLinks>
+                                    {/* Integrate the Search Component here*/}
                                 </div>
                         }
                         {
@@ -47,6 +47,7 @@ const InboxSearchComposer = (props) => {
                         {/* One can use this Parent to add additional sub parents to render more sections */}
                     </div>
                 </div>
+                {/* In progress, Park it for now */}
                 <SubmitBar submit="submit" />
             </form>
         </>

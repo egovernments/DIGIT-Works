@@ -12,7 +12,7 @@ const ProjectSearchAndInbox = () => {
     return (
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t(`${configs?.pageHeader}`)}</Header>
+                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t(`${configs?.label}`)}</Header>
             </div>
             <div className="inbox-search-wrapper">
                 <InboxSearchComposer configs={configs}></InboxSearchComposer>
