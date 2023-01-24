@@ -72,7 +72,7 @@ public class ProjectUtil {
         projectSearchReqNode.putPOJO(PROJECTS, projectArrayNode);
 
 
-        Object projectRes = requestRepository.fetchResult(uriBuilder, projectSearchReqNode.toString());
+        Object projectRes = requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
 
         return projectRes;
     }
