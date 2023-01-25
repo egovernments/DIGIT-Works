@@ -199,22 +199,21 @@ const ResultsTable = ({ tableContainerClass, config }) => {
     const tableColumns = useMemo(() => {
         return config?.columns?.map(column => {
             
-            if(column.isLink){
+            if(column.redirectUrl){
                 return {
                     Header: column?.label || "NA",
-                    accessor: column?.accessor,
-                    Cell: ({ value, column, row }) => {
+                    Cell: ({ value, col, row }) => {
+                        //integrate row.original with jsonPath
                         return <span className="link">
-                            <Link to={column?.redirectUrl ||'/works-ui/employee/project/project-inbox-item'}>{value || "NA"}</Link>
+                            <Link to={column?.redirectUrl || '/works-ui/employee/project/project-inbox-item'}>{String(t(_.get(row.original, column.jsonPath, "NA")))}</Link>
                         </span>
                     }
                 }
             }
             return {
                 Header: column?.label || "NA",
-                accessor: column?.accessor,
-                Cell: ({ value, column, row }) => {
-                    return String(t(value));
+                Cell: ({ value, col, row }) => {
+                    return String(t(_.get(row.original,column.jsonPath,"NA")));
                 }
             }
         })
