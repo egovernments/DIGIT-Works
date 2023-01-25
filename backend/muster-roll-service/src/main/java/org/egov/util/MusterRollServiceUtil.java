@@ -7,6 +7,7 @@ import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
+import org.egov.web.models.AttendanceEntry;
 import org.egov.web.models.IndividualEntry;
 import org.egov.web.models.MusterRoll;
 import org.json.JSONObject;
@@ -91,5 +92,22 @@ public class MusterRollServiceUtil {
             }
         }
 
+    }
+
+    /**
+     *  Sets the attendanceLogId in additionalDetails of the attendanceEntry
+     * @param attendanceEntry
+     * @param entryAttendanceLogId
+     * @param exitAttendanceLogId
+     */
+    public void populateAdditionalDetailsAttendanceEntry (AttendanceEntry attendanceEntry, String entryAttendanceLogId, String exitAttendanceLogId) {
+        JSONObject additionalDetails = new JSONObject();
+        additionalDetails.put("entryAttendanceLogId",entryAttendanceLogId);
+        additionalDetails.put("exitAttendanceLogId",exitAttendanceLogId);
+        try {
+            attendanceEntry.setAdditionalDetails(mapper.readValue(additionalDetails.toString(), Object.class));
+        } catch (IOException e) {
+            throw new CustomException("MusterRollServiceUtil::populateAdditionalDetailsAttendanceEntry::PARSING ERROR", "Failed to set additionalDetail object");
+        }
     }
 }

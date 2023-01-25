@@ -99,6 +99,8 @@ public class CalculationService {
             BigDecimal totalAttendance = new BigDecimal("0.0");
             while (date.isBefore(endDate) || date.isEqual(endDate)) {
                 AttendanceEntry attendanceEntry = new AttendanceEntry();
+                String entryAttendanceLogId = null;
+                String exitAttendanceLogId = null;
                 if (isCreate) {
                     attendanceEntry.setId(UUID.randomUUID().toString());
                 }
@@ -109,6 +111,10 @@ public class CalculationService {
                 for (LocalDateTime dateTime : entryTimestampList) {
                     if (date.isEqual(dateTime.toLocalDate())) {
                         entryTimestamp = dateTime;
+                        //populate the attendanceLogId for estimate
+                        if (!isCreate) {
+                            entryAttendanceLogId = getAttendanceLogId(attendanceLogList,individualEntry.getIndividualId(),entryTimestamp,ENTRY_EVENT);
+                        }
                         break;
                     }
                 }
@@ -118,6 +124,10 @@ public class CalculationService {
                 for (LocalDateTime dateTime : exitTimestampList) {
                     if (date.isEqual(dateTime.toLocalDate())) {
                         exitTimestamp = dateTime;
+                        //populate the attendanceLogId for estimate
+                        if (!isCreate) {
+                            exitAttendanceLogId = getAttendanceLogId(attendanceLogList,individualEntry.getIndividualId(),exitTimestamp,EXIT_EVENT);
+                        }
                         break;
                     }
                 }
@@ -126,6 +136,10 @@ public class CalculationService {
 
                 date = date.plusDays(1);
                 attendanceEntry.setAuditDetails(auditDetails);
+                // set attendanceLogId in additionalDetails for attendanceEntry
+                if (!isCreate && StringUtils.isNotBlank(entryAttendanceLogId) && StringUtils.isNotBlank(exitAttendanceLogId)) {
+                    musterRollServiceUtil.populateAdditionalDetailsAttendanceEntry(attendanceEntry,entryAttendanceLogId,exitAttendanceLogId);
+                }
                 attendanceEntries.add(attendanceEntry);
             }
 
@@ -397,6 +411,20 @@ public class CalculationService {
     private void fetchUserDetails(IndividualEntry individualEntry){
         //TODO Search the individual service using the individualId (from IndividualEntry) and fetch the UUID of the individual
         //Invoke the search api of user using the UUID to get the name, father's name , aadhar and bank details
+    }
+
+    /**
+     * Fetches the id of the attendance log
+     * @return
+     */
+    private String getAttendanceLogId(List<AttendanceLog> attendanceLogList, String individualId, LocalDateTime timestamp, String type) {
+         AttendanceLog attendanceLog = null;
+         BigDecimal time = new BigDecimal(timestamp.atZone(ZoneId.of(config.getTimeZone())).toInstant().toEpochMilli());
+         attendanceLog = attendanceLogList.stream()
+                                            .filter(attnLog -> attnLog.getIndividualId().equalsIgnoreCase(individualId)
+                                                        && attnLog.getTime().compareTo(time) == 0 && attnLog.getType().equalsIgnoreCase(type))
+                                            .findFirst().orElse(null);
+         return attendanceLog != null ? attendanceLog.getId() : "";
     }
 
 }
