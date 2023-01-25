@@ -51,4 +51,4 @@ const inboxConfig = (t) => {
     }
 }
 
-export default InboxConfig;
+export default inboxConfig;
