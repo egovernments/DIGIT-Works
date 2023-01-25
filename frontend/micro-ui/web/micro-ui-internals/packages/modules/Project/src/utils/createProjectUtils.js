@@ -36,11 +36,11 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
         }
         let payload =   {
           "tenantId": tenantId,
-          "name": basic_details?.projectName,
+          "name": parentProjectID ? project_details?.projectName : basic_details?.projectName,
           "projectType": "MP-CWS", //Check with Chetan
           "projectSubType": "",  //Check with Chetan
           "department": project_details?.owningDepartment?.code,
-          "description": basic_details?.projectDesc,
+          "description":  parentProjectID ? project_details?.projectDesc : basic_details?.projectDesc,
           "referenceID": project_details?.letterRefNoOrReqNo,
           "documents": createDocumentsPayload(project_details?.uploadedFiles),
           "address": {

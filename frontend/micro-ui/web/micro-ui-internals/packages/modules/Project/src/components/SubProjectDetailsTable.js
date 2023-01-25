@@ -167,8 +167,8 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 <td style={getStyles()}>{i}</td>
                 <td style={getStyles()} >
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.nameOfWork`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true}) : register({required : false})}/>
-                        {renderErrorIfAny(row, "nameOfWork")}
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.projectName`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true}) : register({required : false})}/>
+                        {renderErrorIfAny(row, "projectName")}
                     </div>
                 </td>
                 <td style={getStyles()}>
