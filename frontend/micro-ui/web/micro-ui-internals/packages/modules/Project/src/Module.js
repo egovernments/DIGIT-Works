@@ -2,6 +2,7 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useRouteMatch } from "react-router-dom";
 import ProjectCard from "./components/ProjectCard";
+import SubProjectDetailsTable from "./components/SubProjectDetailsTable";
 import ViewFinancialDetails from "./pageComponents/ViewFinancialDetails";
 import { default as EmployeeApp } from "./pages/employee";
 import CreateProject from "./pages/employee/CreateProject/index";
@@ -37,7 +38,8 @@ const componentsToRegister = {
     ProjectsCard :ProjectCard,
     CreateProject,
     ProjectDetails,
-    ViewFinancialDetails
+    ViewFinancialDetails,
+    SubProjectDetailsTable
 };
 
 export const initProjectComponents = () => {

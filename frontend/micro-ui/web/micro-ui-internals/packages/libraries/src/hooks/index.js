@@ -102,6 +102,7 @@ import useViewLOIDetails from "./works/useViewLOIDetails";
 import useCreateLOI from "./works/useCreateLOI";
 import useEstimateSearch from "./works/useSearch";
 import useCreateEstimate from "./works/useCreateEstimate";
+import useCreateEstimateNew from "./works/useCreateEstimateNew";
 import useSearchEstimate from "./works/userSearchEstimate";
 import useApplicationActionsLOI from "./works/useApplicationActions";
 import useApplicationActionsEstimate from "./works/useUpdateEstimate";
@@ -111,6 +112,7 @@ import useKickoffInbox from "./works/useKickoffInbox";
 import useViewContractDetails from "./contracts/useViewContractDetails";
 import useViewContractDetailsClosureScreen from "./contracts/useViewContractDetailsClosureScreen";
 import useViewAttendance from "./attendance/useViewAttendance";
+import useUpdateAttendance from "./attendance/useUpdateAttendance";
 import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
@@ -128,6 +130,7 @@ const works = {
   useEstimateSearch,
   useSearchWORKS,
   useCreateEstimate,
+  useCreateEstimateNew,
   useSearchEstimate,
   useApplicationActionsLOI,
   useUpdateEstimate,
@@ -207,6 +210,7 @@ const survey = {
 
 const attendance = {
   useViewAttendance,
+  useUpdateAttendance
 };
 
 const bills = {

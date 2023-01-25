@@ -1,7 +1,8 @@
+import { CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities) => {
+export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false) => {
   const { t } = useTranslation()
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -12,7 +13,8 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
 
   return {
     defaultValues : {
-      dateOfProposal : "01-01-2020"
+      dateOfProposal : "01-01-2020",
+      hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"}
     },
     form: [
       { 
@@ -57,7 +59,6 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               optionsKey: "name",
               error: "Required",
               required: false,
-              defaultValue : "YES",
               options: [
                 {
                   code: "COMMON_YES",
@@ -70,14 +71,23 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               ],
             },
           },
+          {
+            isMandatory: false,
+            key: "",
+            type: "goToDefaultCase",
+            label: "",
+            disable: false,
+            populators : showInfoLabel && <CitizenInfoLabel info={t("WORKS_INFO")} text={t("WORKS_SUB_PROJECT_INFO_MSG")} className="project-banner" fill="#CC7B2F"></CitizenInfoLabel>
+          }
       ]
       },
       {
         navLink:"Project_Details",
-        head: "",
+        sectionFormCategory : "projects",
+        head: t(""),
         body: [
           {
-            isMandatory: false,
+            isMandatory: true,
             key: "owningDepartment",
             type: "radioordropdown",
             label: "PROJECT_OWNING_DEPT",
@@ -86,7 +96,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               name: "owningDepartment",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
-              required: false,
+              required: true,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
@@ -140,6 +150,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Project_Details",
+        sectionFormCategory : "projects",
         head: t("WORKS_WORK_DETAILS"),
         body: [
           {
@@ -181,7 +192,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             },
           },
           {
-            isMandatory: true,
+            isMandatory: false,
             key: "natureOfWork",
             type: "radioordropdown",
             label: "WORKS_WORK_NATURE",
@@ -190,7 +201,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               name: "natureOfWork",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
-              required: true,
+              required: false,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
@@ -246,6 +257,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },  
       {
         navLink:"Project_Details",
+        sectionFormCategory : "projects",
         head: t("PDF_STATIC_LABEL_ESTIMATE_LOC_DETAILS"),
         body: [
           {
@@ -275,7 +287,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             },
           },
           {
-            isMandatory: true,
+            isMandatory: false,
             key: "ward",
             type: "radioordropdown",
             label: "PDF_STATIC_LABEL_ESTIMATE_WARD",
@@ -284,7 +296,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               name: "ward",
               optionsKey: "i18nKey",
               error: t("WORKS_REQUIRED_ERR"),
-              required: true,
+              required: false,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
@@ -292,7 +304,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             },
           },
           {
-            isMandatory: true,
+            isMandatory: false,
             key: "locality",
             type: "radioordropdown",
             label: "WORKS_LOCALITY",
@@ -312,6 +324,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Project_Details",
+        sectionFormCategory : "projects",
         head: t("WORKS_UPLOAD_FILES"),
         body: [
           {
@@ -329,7 +342,8 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Financial_Details",
-        head: "",
+        sectionFormCategory : "projects",
+        head: t(""),
         body: [
           {
             isMandatory: true,
@@ -433,7 +447,216 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             },
           },
         ]
-      }
+      },
+      {
+        navLink:"Project_Details_In_Sub_Project",
+        sectionFormCategory : "subProjects",
+        head: "",
+        body: [
+          {
+            isMandatory: false,
+            key: "subProjectOwningDepartment",
+            type: "radioordropdown",
+            label: "PROJECT_OWNING_DEPT",
+            disable: false,
+            populators: {
+              name: "subProjectOwningDepartment",
+              optionsKey: "name",
+              error: t("WORKS_REQUIRED_ERR"),
+              required: false,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
+              mdmsConfig: {
+                masterName: "Department",
+                moduleName: "works",
+                localePrefix: "ES_COMMON",
+              },
+            },
+          },
+          {
+            isMandatory: false,
+            key: "subProjectExecutingDepartment",
+            type: "radioordropdown",
+            label: "WORKS_EXECUTING_DEPT",
+            disable: false,
+            populators: {
+              name: "subProjectExecutingDepartment",
+              optionsKey: "name",
+              error: t("WORKS_REQUIRED_ERR"),
+              required: false,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
+              mdmsConfig: {
+                masterName: "Department",
+                moduleName: "works",
+                localePrefix: "ES_COMMON",
+              },
+            },
+          },
+          {
+            isMandatory: false,
+            key: "subProjectBeneficiary",
+            type: "radioordropdown",
+            label: "WORKS_BENEFICIARY",
+            disable: false,
+            populators: {
+              name: "subProjectBeneficiary",
+              optionsKey: "name",
+              error: t("WORKS_REQUIRED_ERR"),
+              required: false,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
+              mdmsConfig: {
+                masterName: "BeneficiaryType",
+                moduleName: "works",
+                localePrefix: "ES_COMMON",
+              },
+            },
+          },
+          {
+            inline: true,
+            label: "WORKS_LOR",
+            isMandatory: false,
+            key: "subProjectLetterRefNoOrReqNo",
+            type: "text",
+            disable: false,
+            populators: { name: "letterRefNoOrReqNo", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+          },
+          {
+            inline: true,
+            label: "PROJECT_TOTAL_ESTIMATED_COST_IN_RS",
+            isMandatory: false,
+            key: "subProjectTotalEstimatedCostInRs",
+            type: "number",
+            disable: true,
+            populators: { name: "totalEstimatedCostInRs" }
+          },
+        ]
+      },
+      {
+        navLink:"Financial_Details_In_Sub_Project",
+        sectionFormCategory : "subProjects",
+        head: t(""),
+        body: [
+          {
+            isMandatory: true,
+            key: "subProjectsFund",
+            type: "radioordropdown",
+            label: "WORKS_FUND",
+            disable: false,
+            populators: {
+              name: "subProjectsFund",
+              optionsKey: "name",
+              error: t("WORKS_REQUIRED_ERR"),
+              required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
+              mdmsConfig: {
+                masterName: "Fund",
+                moduleName: "finance",
+                localePrefix: "ES_COMMON",
+              },
+            },
+          },
+          {
+            isMandatory: true,
+            key: "subProjectsFunction",
+            type: "radioordropdown",
+            label: "WORKS_FUNCTION",
+            disable: false,
+            populators: {
+              name: "subProjectsFunction",
+              optionsKey: "name",
+              error: t("WORKS_REQUIRED_ERR"),
+              required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
+              mdmsConfig: {
+                masterName: "Functions",
+                moduleName: "finance",
+                localePrefix: "ES_COMMON",
+              },
+            },
+          },
+          {
+            isMandatory: true,
+            key: "subProjectsBudgetHead",
+            type: "radioordropdown",
+            label: "WORKS_BUDGET_HEAD",
+            disable: false,
+            populators: {
+              name: "subProjectsBudgetHead",
+              optionsKey: "name",
+              error: t("WORKS_REQUIRED_ERR"),
+              required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
+              mdmsConfig: {
+                masterName: "BudgetHead",
+                moduleName: "finance",
+                localePrefix: "ES_COMMON",
+              },
+            },
+          },
+          {
+            isMandatory: true,
+            key: "subProjectsScheme",
+            type: "radioordropdown",
+            label: "WORKS_SCHEME",
+            disable: false,
+            populators: {
+              name: "subProjectsScheme",
+              optionsKey: "name",
+              error: t("WORKS_REQUIRED_ERR"),
+              required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
+              mdmsConfig: {
+                masterName: "Scheme",
+                moduleName: "finance",
+                localePrefix: "ES_COMMON",
+              },
+            },
+          },
+          {
+            isMandatory: true,
+            key: "subProjectsSubScheme",
+            type: "radioordropdown",
+            label: "WORKS_SUB_SCHEME",
+            disable: false,
+            populators: {
+              name: "subProjectsSubScheme",
+              optionsKey: "name",
+              error: t("WORKS_REQUIRED_ERR"),
+              required: true,
+              optionsCustomStyle : {
+                top : "2.5rem"
+              },
+              options : subSchemaOptions
+            },
+          },
+        ]
+      },
+      {
+        navLink:"Sub_Project_Details_In_Sub_Project",
+        sectionFormCategory : "subProjects",
+        head: t(""),
+        body: [
+          {
+            key: "subProjectDetailsComponent",
+            type: "component",
+            component: "SubProjectDetailsTable",
+            withoutLabel: true,
+          },
+        ]
+      },
     ]
     
   };

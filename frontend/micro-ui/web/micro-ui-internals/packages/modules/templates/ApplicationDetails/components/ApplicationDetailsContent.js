@@ -58,7 +58,8 @@ function ApplicationDetailsContent({
   isInfoLabel = false,
   noBoxShadow = false,
   sectionHeadStyle = false,
-  modify
+  modify,
+  setSaveAttendanceState
 }) {
   const { t } = useTranslation();
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
@@ -380,7 +381,7 @@ function ApplicationDetailsContent({
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
                     {t(detail?.additionalDetails?.table?.weekTable?.tableHeader)}
                   </CardSectionHeader>
-                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} modify={modify} weekDates={detail?.additionalDetails?.table.weekTable.weekDates}/>}
+                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} modify={modify} setSaveAttendanceState={setSaveAttendanceState} weekDates={detail?.additionalDetails?.table.weekTable.weekDates}/>}
                 </>
               )
             : null}
