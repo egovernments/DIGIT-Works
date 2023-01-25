@@ -1,4 +1,4 @@
-const InboxConfig = (t) => {
+const inboxConfig = (t) => {
     return {
         label : "Search Projects",
         type : "inbox", 
@@ -51,4 +51,4 @@ const InboxConfig = (t) => {
     }
 }
 
-export default InboxConfig;
+export default inboxConfig;

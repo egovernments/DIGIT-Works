@@ -7,6 +7,7 @@ import ViewFinancialDetails from "./pageComponents/ViewFinancialDetails";
 import { default as EmployeeApp } from "./pages/employee";
 import CreateProject from "./pages/employee/CreateProject/index";
 import ProjectDetails from "./pages/employee/ProjectDetails";
+import ProjectSearch from "./pages/employee/ProjectSearch";
 import ProjectSearchAndInbox from "./pages/employee/ProjectSearchAndInbox";
 
 export const ProjectModule = ({ stateCode, userType, tenants }) => {
@@ -40,8 +41,9 @@ const componentsToRegister = {
     CreateProject,
     ProjectDetails,
     ViewFinancialDetails,
-    ProjectSearchAndInbox,
-    SubProjectDetailsTable
+    ProjectSearch,
+    SubProjectDetailsTable,
+    ProjectSearchAndInbox
 };
 
 export const initProjectComponents = () => {
