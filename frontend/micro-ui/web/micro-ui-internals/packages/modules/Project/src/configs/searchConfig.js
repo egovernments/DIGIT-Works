@@ -4,7 +4,9 @@ const searchConfig = () => {
         type: 'search',
         sections : {
             search : {
-                uiConfig : {},
+                uiConfig : {
+                    headerStyle : null,
+                },
                 label : "",
                 children : {},
                 show : true

@@ -93,11 +93,10 @@ let config = [
 }
 ]
 
-const SearchComponent = (props) => {
-  
+const SearchComponent = ({ uiConfig, header = "", children = {}}) => {
   const { t } = useTranslation();
-  const { fields } = props
-
+  
+  console.log('config', uiConfig);
   const {
     register,
     handleSubmit,
@@ -135,12 +134,15 @@ const SearchComponent = (props) => {
   formStyle 
   headerflag, headerStyle, check based on is search config has header
   labelstyle, isMandatory
+
+  .search-wrapper
+
   */
 
   return (
     <React.Fragment>
       <div style={{width: '100%', padding: '16px'}}>
-        {false && <Header>{t("WORKS_CREATE_CONTRACTOR")}</Header>}
+        {header && <Header styles={uiConfig?.headerStyle}>{header}</Header>}
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
           <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', rowGap: '4px', columnGap: '16px'}}>
             <RenderFormFields 
