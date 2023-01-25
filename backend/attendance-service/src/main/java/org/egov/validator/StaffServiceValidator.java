@@ -174,12 +174,11 @@ public class StaffServiceValidator {
         //check is staff user id exists in staff table for the given register id. If yes check the deenrollment date. If staffId does not exist new staff can still be enrolled to the register
         if (staffPermissionListFromDB != null) {
             for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {//list of staff from request
-                for (StaffPermission staffFromDB : staffPermissionListFromDB) {  //list of staff from DB
-                    if (staffFromRequest.getUserId().equals(staffFromDB.getUserId()) && staffFromRequest.getRegisterId().equals(staffFromDB.getRegisterId())) {
-                        if (staffFromDB.getDenrollmentDate() == null) {
-                            throw new CustomException("USER_id", "Staff " + staffFromDB.getUserId() + " is already enrolled in the register " + staffFromDB.getRegisterId());
-                        }
-                    }
+                StaffPermission staff = staffPermissionListFromDB.stream()
+                        .filter(s -> s.getUserId().equals(staffFromRequest.getUserId()) && s.getRegisterId().equals(staffFromRequest.getRegisterId()))
+                        .findFirst().orElse(null);
+                if (staff != null && staff.getDenrollmentDate() == null) {
+                    throw new CustomException("USER_id", "Staff " + staff.getUserId() + " is already enrolled in the register " + staff.getRegisterId());
                 }
             }
         }
