@@ -50,7 +50,7 @@ const InboxSearchComposer = (props) => {
                 }
                 {
                 configs?.sections?.searchResult?.show &&  
-                    <div className="section search-results">
+                    <div className="" style={{ overflowX: "scroll" }}>
                         {/* Integrate the Search Results Component here*/}
                         <ResultsTable config={configs?.sections?.searchResult?.uiConfig}/>
                     </div>
