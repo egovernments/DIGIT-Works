@@ -1,4 +1,4 @@
-import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Toast } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
@@ -45,6 +45,7 @@ const CreateProject = () => {
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const [currentFormCategory, setCurrentFormCategory] = useState("project");
     const [showInfoLabel, setShowInfoLabel] = useState(false);
+    const [toast, setToast] = useState({show : false, label : "", error : false});
 
     //clear session data on first init
     useEffect(()=>{
@@ -118,23 +119,34 @@ const CreateProject = () => {
         }
     },[selectedProjectType]);
 
-    const { mutate: CreateProjectMutation, data, isLoading : isProjectCreationLoading} = Digit.Hooks.works.useCreateProject();
+    const { mutate: CreateProjectMutation } = Digit.Hooks.works.useCreateProject();
 
     const onSubmit = async(data) => {
       const transformedPayload = CreateProjectUtils.payload.transform(data);
-      console.log("Transformed Payload",transformedPayload);
-      const payload1 = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId);
-      const payload2 = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "0894da55-6fb2-44cd-bfd4-9988a2649207", tenantId);
-      console.log("Final Payload-1",payload1);
-      console.log("Final Payload-2",payload2);
-      await CreateProjectMutation(payload1, {
+      let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId);
+
+      await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
             console.log("Error",error);
+            debugger;
+            setToast(()=>({show : true, label : "Failed to Create Project.", error : true}));
         },
         onSuccess: async (responseData, variables) => {
-          console.log("Success",responseData, variables);
+          console.log("Success",responseData);
+          debugger;
+          if(responseData?.ResponseInfo?.Errors) {
+            setToast(()=>({show : true, label : variables?.ResponseInfo?.Errors[0]['message'], error : true}));
+          }else if(responseData?.ResponseInfo?.status){
+            setToast(()=>({show : true, label : variables?.ResponseInfo?.status, error : false}));
+          }else{
+            setToast(()=>({show : true, label : "Something Went Wrong.", error : true}));
+          }
         },
     });
+    }
+
+    const handleToastClose = () => {
+      setToast({show : false, label : "", error : false});
     }
 
     return (
@@ -170,6 +182,7 @@ const CreateProject = () => {
                 currentFormCategory={currentFormCategory}
             />
            )}
+           {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={'true'} onClose={handleToastClose}></Toast>}
         </div>
       </React.Fragment>
     )

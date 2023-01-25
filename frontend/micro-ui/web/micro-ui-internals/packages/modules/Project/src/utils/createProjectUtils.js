@@ -57,7 +57,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "pincode": "999999", //Not being captured on UI
             "buildingName": "Test_Building", //Not being captured on UI
             "street": "Test_Street", //Not being captured on UI
-            "locality": project_details?.locality
+            "locality": project_details?.locality?.code
           },
           "startDate": convertDateToEpoch(project_details?.startDate), 
           "endDate": convertDateToEpoch(project_details?.endDate), 
