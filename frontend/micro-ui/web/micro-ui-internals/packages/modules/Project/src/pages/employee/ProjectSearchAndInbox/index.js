@@ -7,7 +7,7 @@ const ProjectSearchAndInboxComponent = () => {
     const { t } = useTranslation();
 
     const configs = inboxConfig();
-   
+    
     return (
         <React.Fragment>
             <Header styles={{ fontSize: "32px" }}>{configs?.label}</Header>

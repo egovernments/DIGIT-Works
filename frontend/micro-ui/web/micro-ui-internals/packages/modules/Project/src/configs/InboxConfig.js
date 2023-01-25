@@ -1,6 +1,6 @@
 const inboxConfig = (t) => {
     return {
-        label : "Search Projects",
+        label : "Inbox",
         type : "inbox", 
         //use classname as 'search' for search view
         //use classname as 'inbox' for inbox view
@@ -8,10 +8,59 @@ const inboxConfig = (t) => {
         sections : {
             search : {
                 uiConfig : {
-
+                    headerStyle : null,
+                    primaryLabel: 'Search',
+                    secondaryLabel: 'Clear Search',
+                    defaultValues : {
+                        projectId: "",
+                        department: "",
+                        workType: ""
+                    },
+                    fields : [
+                        {
+                            label:"Project ID",
+                            type: "text",
+                            isMandatory: false,
+                            disable: false,
+                            populators: { 
+                                name: "projectId"
+                            },
+                        },
+                        {
+                            label: "Department",
+                            type: "dropdown",
+                            isMandatory: false,
+                            disable: false,
+                            populators: {
+                              name: "department",
+                              optionsKey: "name",
+                              mdmsConfig: {
+                                masterName: "Department",
+                                moduleName: "common-masters",
+                                localePrefix: "WORKS",
+                              }
+                            }
+                        },
+                        {
+                          label: "Type Of Work",
+                          type: "dropdown",
+                          isMandatory: false,
+                          disable: false,
+                          populators: {
+                            name: "workType",
+                            optionsKey: "name",
+                            mdmsConfig: {
+                              masterName: "TypeOfWork",
+                              moduleName: "works",
+                              localePrefix: "WORKS",
+                            }
+                          }
+                        }
+                    ]
                 },
+                label : "",
                 children : {},
-                show : true //by default true. 
+                show : true
             },
             links : {
                 uiConfig : {
