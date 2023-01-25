@@ -21,7 +21,7 @@ public class AttendanceRegisterBuilderTest {
         AttendanceRegister attendanceRegister=AttendanceRegister.builder().id("97ed7da3-753e-426a-b0b0-95dd61029785")
                 .registerNumber("RGN-67124").name("self help3").startDate(new BigDecimal("1673740800000"))
                 .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).attendees(getAttendees())
-                        .staff(getStaff()).build();
+                .tenantId("pb.amritsar").staff(getStaff()).build();
         return attendanceRegister;
     }
 
@@ -64,15 +64,15 @@ public class AttendanceRegisterBuilderTest {
 
         AttendanceRegister attendanceRegisterOne=AttendanceRegister.builder().id("54215cb7-c7f7-4521-8965-09647454a1f0")
                 .registerNumber("RGN-67124").name("self help3").startDate(new BigDecimal("1673740800000"))
-                .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).build();
+                .endDate(new BigDecimal("1692057600000")).tenantId("pb.amritsar").auditDetails(getAuditDetails()).build();
 
         AttendanceRegister attendanceRegisterTwo=AttendanceRegister.builder().id("54215cb7-c7f7-4521-8965-09647454a1f1")
                 .registerNumber("RGN-67124").name("self help3").startDate(new BigDecimal("1673740800000"))
-                .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).build();
+                .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).tenantId("pb.amritsar").build();
 
         AttendanceRegister attendanceRegisterThree=AttendanceRegister.builder().id("54215cb7-c7f7-4521-8965-09647454a1f2")
                 .registerNumber("RGN-67124").name("self help3").startDate(new BigDecimal("1673740800000"))
-                .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).build();
+                .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).tenantId("pb.amritsar").build();
 
         List<AttendanceRegister> attendanceRegisterList=new ArrayList<>(Arrays.asList(attendanceRegisterOne,attendanceRegisterTwo,attendanceRegisterThree));
 

@@ -149,7 +149,7 @@ public class AttendeeServiceValidatorTest {
         attendanceRegister.setEndDate(new BigDecimal("1578728218000")); //set a past date
 
         assertThrows(CustomException.class, () -> attendeeServiceValidator
-                .validateCreateAttendee(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
+                .validateAttendeeOnCreate(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
     }
 
     @DisplayName("attendee enrollment date should be after start date and before end date of register")
@@ -163,7 +163,7 @@ public class AttendeeServiceValidatorTest {
         attendeeCreateRequest.getAttendees().get(0).setEnrollmentDate(new BigDecimal("1673422618000"));
 
         assertThrows(CustomException.class, () -> attendeeServiceValidator
-                .validateCreateAttendee(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
+                .validateAttendeeOnCreate(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
     }
 
     @DisplayName("check if attendee is already enrolled to the register")
@@ -175,7 +175,7 @@ public class AttendeeServiceValidatorTest {
         List<IndividualEntry> attendees = attendanceRegister.getAttendees();
 
         assertThrows(CustomException.class, () -> attendeeServiceValidator
-                .validateCreateAttendee(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
+                .validateAttendeeOnCreate(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
 
     }
 
