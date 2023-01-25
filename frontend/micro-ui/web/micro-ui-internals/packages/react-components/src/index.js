@@ -66,7 +66,6 @@ import { LastRow, MediaRow, Row, StatusTable } from "./atoms/StatusTable";
 import SubmitBar from "./atoms/SubmitBar";
 import StandaloneSearchBar from "./atoms/StandaloneSearchBar";
 import ULBHomeCard from "./atoms/ULBHomeCard";
-
 import {
   AnnouncementIcon,
   ArrowDown,
