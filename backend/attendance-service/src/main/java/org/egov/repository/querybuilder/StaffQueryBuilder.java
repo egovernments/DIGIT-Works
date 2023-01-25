@@ -56,19 +56,6 @@ public class StaffQueryBuilder {
         }
         return query.toString();
     }
-
-    public String getAttendanceStaffFromRegistersSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
-
-        if (!ObjectUtils.isEmpty(criteria.getRegisterIds())) {
-            List<String> registerIds = criteria.getRegisterIds();
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" stf.register_id IN (").append(createQuery(registerIds)).append(")");
-            preparedStmtList.addAll(criteria.getRegisterIds());
-        }
-        return query.toString();
-    }
-
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
         if (preparedStmtList.isEmpty()) {
             query.append(" WHERE ");

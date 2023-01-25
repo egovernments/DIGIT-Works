@@ -33,7 +33,7 @@ public class StaffRepository {
 
     public List<StaffPermission> getAllStaff(StaffSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getAttendanceStaffFromRegistersSearchQuery(searchCriteria, preparedStmtList);
+        String query = queryBuilder.getAttendanceStaffSearchQuery(searchCriteria, preparedStmtList);
         List<StaffPermission> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return attendanceStaffList;
     }

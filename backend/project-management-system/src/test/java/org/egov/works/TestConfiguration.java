@@ -1,4 +1,4 @@
-package org.egov;
+package org.egov.works;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

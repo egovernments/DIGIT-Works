@@ -57,6 +57,14 @@ config:
         dockerfile: "build/maven/Dockerfile"
         image-name: "works-inbox-service"
 
+  - name: "builds/digit-works/backend/project-management-system"
+    build:
+      - work-dir: "backend/project-management-system"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "project-management-system"
+      - work-dir: "backend/project-management-system/src/main/resources/db"
+        image-name: "project-management-system-db"
+
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
     build:
