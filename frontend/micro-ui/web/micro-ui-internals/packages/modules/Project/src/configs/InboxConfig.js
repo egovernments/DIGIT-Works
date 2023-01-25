@@ -9,8 +9,8 @@ const inboxConfig = (t) => {
             search : {
                 uiConfig : {
                     headerStyle : null,
-                    buttonLabel: 'Search',
-                    linkLabel: 'Clear Search',
+                    primaryLabel: 'Search',
+                    secondaryLabel: 'Clear Search',
                     defaultValues : {
                         projectId: "",
                         department: "",

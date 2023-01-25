@@ -43,13 +43,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     dispatch({
       type: "searchForm",
       state: {
-        data: data,
-        serviceName: 'AttendanceService',
-        serviceFunction: 'search',
-        requestBody: {},
-        requestParams: {
-           musterRollNumber: 'MR/2022-23/01/24/000349'
-        }
+        data: data
       }
     })
     console.log('data', data);
@@ -79,8 +73,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
             />  
           </div> 
           <div className="search-button-wrapper">
-            <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{uiConfig?.linkLabel}</LinkLabel>
-            <SubmitBar label={uiConfig?.buttonLabel} submit="submit" disabled={false}/>
+            <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{uiConfig?.secondaryLabel}</LinkLabel>
+            <SubmitBar label={uiConfig?.primaryLabel} submit="submit" disabled={false}/>
           </div>
         </form>
       </div>
