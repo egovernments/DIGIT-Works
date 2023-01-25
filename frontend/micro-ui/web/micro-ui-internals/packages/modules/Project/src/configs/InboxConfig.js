@@ -1,18 +1,66 @@
 const inboxConfig = (t) => {
     return {
-        label : "Project Inbox",
+        label : "Inbox",
         type : "inbox", 
         //use classname as 'search' for search view
         //use classname as 'inbox' for inbox view
         //inbox view is by default
         sections : {
             search : {
-                label : "",
-                uiConfig : { //UIConfig structure can vary based on components.
-
+                uiConfig : {
+                    headerStyle : null,
+                    primaryLabel: 'Search',
+                    secondaryLabel: 'Clear Search',
+                    defaultValues : {
+                        projectId: "",
+                        department: "",
+                        workType: ""
+                    },
+                    fields : [
+                        {
+                            label:"Project ID",
+                            type: "text",
+                            isMandatory: false,
+                            disable: false,
+                            populators: { 
+                                name: "projectId"
+                            },
+                        },
+                        {
+                            label: "Department",
+                            type: "dropdown",
+                            isMandatory: false,
+                            disable: false,
+                            populators: {
+                              name: "department",
+                              optionsKey: "name",
+                              mdmsConfig: {
+                                masterName: "Department",
+                                moduleName: "common-masters",
+                                localePrefix: "WORKS",
+                              }
+                            }
+                        },
+                        {
+                          label: "Type Of Work",
+                          type: "dropdown",
+                          isMandatory: false,
+                          disable: false,
+                          populators: {
+                            name: "workType",
+                            optionsKey: "name",
+                            mdmsConfig: {
+                              masterName: "TypeOfWork",
+                              moduleName: "works",
+                              localePrefix: "WORKS",
+                            }
+                          }
+                        }
+                    ]
                 },
+                label : "",
                 children : {},
-                show : true //by default true. 
+                show : true
             },
             links : {
                 uiConfig : {
@@ -127,71 +175,44 @@ const inboxConfig = (t) => {
                     columns: [
                         {
                             label: "name",
-                            jsonPath: "searchResult[0].name",
-                            accessor: "name",
-                            isLink: true,
+                            jsonPath: "name",
                             redirectUrl: '/works-ui/employee/project/project-inbox-item'
                         },
                         {
                             label: "age",
-                            jsonPath: "searchResult[0].age",
-                            accessor: "age",
-                            isLink: false,
-                            redirectUrl: ""
+                            jsonPath: "age"   
                         },
                         {
                             label: "gender",
-                            jsonPath: "searchResult[0].age",
-                            accessor: "gender",
-                            isLink: false,
-                            redirectUrl: ""
+                            jsonPath: "gender",  
                         },
                         {
                             label: "company",
-                            jsonPath: "searchResult[0].company",
-                            accessor: "company",
-                            isLink: false,
-                            redirectUrl: ""
+                            jsonPath: "company",
                         },
                         {
                             label: "email",
-                            jsonPath: "searchResult[0].email",
-                            accessor: "email",
-                            isLink: false,
-                            redirectUrl: ""
+                            jsonPath: "email",  
                         },
                         {
                             label: "phone",
-                            jsonPath: "searchResult[0].phone",
-                            accessor: "phone",
-                            isLink: false,
-                            redirectUrl: ""
+                            jsonPath: "phone",
                         },
                         {
                             label: "balance",
-                            jsonPath: "searchResult[0].balance",
-                            accessor: "balance",
-                            isLink: false,
-                            redirectUrl: ""
+                            jsonPath: "balance",  
                         },
                         {
                             label: "favoriteFruit",
-                            jsonPath: "searchResult[0].favoriteFruit",
-                            accessor: "favoriteFruit",
-                            isLink: false,
-                            redirectUrl: ""
+                            jsonPath: "favoriteFruit",
                         },
                         {
                             label: "eyeColor",
-                            jsonPath: "searchResult[0].eyeColor",
-                            accessor: "eyeColor",
-                            isLink: false,
-                            redirectUrl: ""
+                            jsonPath: "eyeColor",                
                         }
                     ],
                     enableGlobalSearch: false,
                     enableColumnSort: true,
-
                 },
                 children : {},
                 show : true //by default true. 

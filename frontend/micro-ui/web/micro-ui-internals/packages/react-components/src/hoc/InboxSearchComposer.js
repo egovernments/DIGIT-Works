@@ -1,28 +1,19 @@
-import React, { Fragment,useReducer,useContext } from "react";
-import { useForm } from "react-hook-form";
 import InboxSearchLinks from "../atoms/InboxSearchLinks";
+import React, { useReducer } from "react";
 import ResultsTable from "./ResultsTable"
-import SubmitBar from "../atoms/SubmitBar";
 import reducer, { initialTableState } from "./InboxSearchComposerReducer";
 import { InboxContext } from "./InboxSearchComposerContext";
 import SearchComponent from "../atoms/SearchComponent";
 
 const InboxSearchComposer = (props) => {
     const  { configs } = props;
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const onSubmit = data => console.log(data);
     
     //whenever this state is updated we'll make a call to the search/inbox api
     const [state, dispatch] = useReducer(reducer, initialTableState)
 
-    const onFormSubmit = (_data) => {
-        console.log(_data);
-    }
-
     return (
-        <>
-            <InboxContext.Provider value={{state,dispatch}} >
-                 <div className="inbox-search-component-wrapper ">
+        <InboxContext.Provider value={{state,dispatch}} >
+            <div className="inbox-search-component-wrapper ">
             <div className={`sections-parent ${configs?.type}`}>
                 {/* Since we need to keep the config sections order-less, avoiding for loop */}
                 {/* That way the config can have sections in any order */}
@@ -38,7 +29,6 @@ const InboxSearchComposer = (props) => {
                             <SearchComponent 
                                 uiConfig={ configs?.sections?.search?.uiConfig} 
                                 header={configs?.sections?.search?.label} 
-                                children={configs?.sections?.search?.children} 
                                 screenType={configs?.type}/>
                         </div>
                 }
@@ -57,16 +47,15 @@ const InboxSearchComposer = (props) => {
                 configs?.sections?.searchResult?.show &&  
                     <div className="" style={{ overflowX: "scroll" }}>
                         {/* Integrate the Search Results Component here*/}
-                        {/* <ResultsTable config={configs?.sections?.searchResult?.uiConfig}/> */}
+                        <ResultsTable config={configs?.sections?.searchResult?.uiConfig}/>
                     </div>
                 }
             </div>
             <div className="additional-sections-parent">
                 {/* One can use this Parent to add additional sub parents to render more sections */}
             </div>
-        </div>   
-            </InboxContext.Provider>
-        </>
+            </div>   
+        </InboxContext.Provider>
     )
 }
 
