@@ -47,44 +47,71 @@ const inboxConfig = (t) => {
                     columns: [
                         {
                             label: "name",
-                            jsonPath: "name",
+                            jsonPath: "searchResult[0].name",
+                            accessor: "name",
+                            isLink: true,
                             redirectUrl: '/works-ui/employee/project/project-inbox-item'
                         },
                         {
                             label: "age",
-                            jsonPath: "age"   
+                            jsonPath: "searchResult[0].age",
+                            accessor: "age",
+                            isLink: false,
+                            redirectUrl: ""
                         },
                         {
                             label: "gender",
-                            jsonPath: "gender",  
+                            jsonPath: "searchResult[0].age",
+                            accessor: "gender",
+                            isLink: false,
+                            redirectUrl: ""
                         },
                         {
                             label: "company",
-                            jsonPath: "company",
+                            jsonPath: "searchResult[0].company",
+                            accessor: "company",
+                            isLink: false,
+                            redirectUrl: ""
                         },
                         {
                             label: "email",
-                            jsonPath: "email",  
+                            jsonPath: "searchResult[0].email",
+                            accessor: "email",
+                            isLink: false,
+                            redirectUrl: ""
                         },
                         {
                             label: "phone",
-                            jsonPath: "phone",
+                            jsonPath: "searchResult[0].phone",
+                            accessor: "phone",
+                            isLink: false,
+                            redirectUrl: ""
                         },
                         {
                             label: "balance",
-                            jsonPath: "balance",  
+                            jsonPath: "searchResult[0].balance",
+                            accessor: "balance",
+                            isLink: false,
+                            redirectUrl: ""
                         },
                         {
                             label: "favoriteFruit",
-                            jsonPath: "favoriteFruit",
+                            jsonPath: "searchResult[0].favoriteFruit",
+                            accessor: "favoriteFruit",
+                            isLink: false,
+                            redirectUrl: ""
                         },
                         {
                             label: "eyeColor",
-                            jsonPath: "eyeColor",                
+                            jsonPath: "searchResult[0].eyeColor",
+                            accessor: "eyeColor",
+                            isLink: false,
+                            redirectUrl: ""
                         }
                     ],
                     enableGlobalSearch: false,
                     enableColumnSort: true,
+
                 },
                 children : {},
                 show : true //by default true. 
