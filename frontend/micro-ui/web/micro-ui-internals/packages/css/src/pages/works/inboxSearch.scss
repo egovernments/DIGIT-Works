@@ -1,0 +1,23 @@
+.search-wrapper {
+    width: 100%;
+    padding: 1rem;
+
+    .search-field-wrapper {
+        display: grid;
+        row-gap: 0.25rem;
+        column-gap: 1rem;
+        &.inbox {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        &.search {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    .search-button-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+}

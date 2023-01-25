@@ -156,7 +156,7 @@ const RenderFormFields = (props) => {
                     )}
                     rules={{ required: isMandatory, ...populators.validation}}
                     defaultValue={formData?.[populators.name]}
-                    name={config.key}
+                    name={populators?.name}
                     control={control}
                 />
                 );
@@ -184,7 +184,7 @@ const RenderFormFields = (props) => {
                     getValues={getValues}
                   />
                 )}
-                name={config.key}
+                name={config?.key}
                 control={control}
               />
             );
@@ -196,7 +196,7 @@ const RenderFormFields = (props) => {
 
     return (
       <React.Fragment>
-        {fields.map((item, index) => {
+        {fields?.map((item, index) => {
           return (
             <LabelFieldPair key={index}>
                 { item.label && (
