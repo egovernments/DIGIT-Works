@@ -2,7 +2,7 @@ import { CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false) => {
+export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false) => {
   const { t } = useTranslation()
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -155,12 +155,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
         body: [
           {
             isMandatory: true,
-            key: "noSubProject_typeOfWork",
+            key: "noSubProject_typeOfProject",
             type: "radioordropdown",
             label: "WORKS_WORK_TYPE",
             disable: false,
             populators: {
-              name: "noSubProject_typeOfWork",
+              name: "noSubProject_typeOfProject",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -168,7 +168,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "TypeOfWork",
+                masterName: "ProjectType",
                 moduleName: "works",
                 localePrefix: "ES_COMMON",
               },
@@ -176,19 +176,19 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: false,
-            key: "noSubProject_subTypeOfWork",
+            key: "noSubProject_subTypeOfProject",
             type: "radioordropdown",
             label: "PDF_STATIC_LABEL_ESTIMATE_SUB_TYPE_OF_WORK",
             disable: false,
             populators: {
-              name: "noSubProject_subTypeOfWork",
+              name: "noSubProject_subTypeOfProject",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              options : subTypeOfWorkOptions
+              options : subTypeOfProjectOptions //TODO:
             },
           },
           {

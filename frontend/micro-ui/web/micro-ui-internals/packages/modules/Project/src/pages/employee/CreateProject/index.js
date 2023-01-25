@@ -36,7 +36,7 @@ const CreateProject = () => {
     const [selectedProjectType, setSelectedProjectType] = useState({name : "COMMON_YES", code : "COMMON_YES"});
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
     const [showNavs, setShowNavs] = useState(false);
-    const [subTypeOfWorkOptions, setSubTypeOfWorkOptions] = useState([]);
+    const [subTypeOfProjectOptions, setsubTypeOfProjectOptions] = useState([]);
     const [subSchemaOptions, setSubSchemaOptions] = useState([]);
     const [selectedWard, setSelectedWard] = useState('');
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -82,11 +82,11 @@ const CreateProject = () => {
           if (difference?.noSubProject_ward) {
               setValue("noSubProject_locality", '');
           }
-          if(formData?.noSubProject_typeOfWork) {
-            setSubTypeOfWorkOptions(formData?.noSubProject_typeOfWork?.subTypes);
+          if(formData?.noSubProject_typeOfProject) {
+            setsubTypeOfProjectOptions(formData?.noSubProject_typeOfProject?.projectSubType);
           } 
-          if (difference?.noSubProject_typeOfWork) {
-            setValue("noSubProject_subTypeOfWork", '');
+          if (difference?.noSubProject_typeOfProject) {
+            setValue("noSubProject_subTypeOfProject", '');
           }
           if(formData?.noSubProject_scheme) {
             setSubSchemaOptions(formData?.noSubProject_scheme?.subSchemes);
@@ -103,7 +103,7 @@ const CreateProject = () => {
           setSessionFormData({ ...sessionFormData, ...formData });
         }
     }
-    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel);
+    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel);
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
@@ -122,25 +122,19 @@ const CreateProject = () => {
     const { mutate: CreateProjectMutation } = Digit.Hooks.works.useCreateProject();
 
     const onSubmit = async(data) => {
+      debugger;
+      //Transforming Payload to categories of Basic Details, Projects and Sub-Projects
       const transformedPayload = CreateProjectUtils.payload.transform(data);
-      let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId);
+      //Final Payload
+      let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "TEST", tenantId);
 
+      //TODO: MUTATION ISSUE -- responseData is being fetched as undefined.
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
-            console.log("Error",error);
-            debugger;
             setToast(()=>({show : true, label : "Failed to Create Project.", error : true}));
         },
         onSuccess: async (responseData, variables) => {
-          console.log("Success",responseData);
-          debugger;
-          if(responseData?.ResponseInfo?.Errors) {
-            setToast(()=>({show : true, label : variables?.ResponseInfo?.Errors[0]['message'], error : true}));
-          }else if(responseData?.ResponseInfo?.status){
-            setToast(()=>({show : true, label : variables?.ResponseInfo?.status, error : false}));
-          }else{
-            setToast(()=>({show : true, label : "Something Went Wrong.", error : true}));
-          }
+          
         },
     });
     }

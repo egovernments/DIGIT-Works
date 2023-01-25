@@ -29,7 +29,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         {label : t('WORKS_GEO_LOCATION'), isMandatory : false },
         {label : t('WORKS_UPLOAD_FILES'), isMandatory : false },
     ];
-    const [subProjectTypeOfWorkOptions, setSubProjectTypeOfWorkOptions] = useState([]);
+    const [subProjectTypeOfProjectOptions, setSubProjectTypeOfWorkOptions] = useState([]);
     const [subProjectSubTypeOfWorkOptions, setSubProjectSubTypeOfWorkOptions] = useState([]);
     const formFieldName = "withSubProject_project_subProjects"; //keep this name diff from the key in config
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -56,10 +56,10 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         });
         
     useEffect(()=>{
-        let filteredSubTypeOfWork = ( subProjectTypeOfWorkOptions && subProjectTypeOfWorkOptions?.subTypes ) ? (
-        subProjectTypeOfWorkOptions?.subTypes.map(subType=>({code : subType?.code, name : `ES_COMMON_${subType?.code}`}))) : [];
-        setSubProjectSubTypeOfWorkOptions(filteredSubTypeOfWork);
-    },[subProjectTypeOfWorkOptions]);
+        let filteredSubTypeOfProject = ( subProjectTypeOfProjectOptions && subProjectTypeOfProjectOptions?.projectSubType ) ? (
+        subProjectTypeOfProjectOptions?.projectSubType.map(projectSubType=>({code : projectSubType?.code, name : `ES_COMMON_${projectSubType?.code}`}))) : [];
+        setSubProjectSubTypeOfWorkOptions(filteredSubTypeOfProject);
+    },[subProjectTypeOfProjectOptions]);
 
     useEffect(()=>{
         setSubProjectDetailsLocalities(wardsAndLocalities?.localities[subProjectDetailsSelectedWard?.code] ? wardsAndLocalities?.localities[subProjectDetailsSelectedWard?.code]: [] );
@@ -94,8 +94,8 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
     }
 
     const handleDropdownChange = (e,props, row, inputName) => {
-        if(inputName === "typeOfWork") {
-            setValue(`${formFieldName}.${row.key}.subTypeOfWork`, '');
+        if(inputName === "typeOfProject") {
+            setValue(`${formFieldName}.${row.key}.subTypeOfProject`, '');
             setSubProjectTypeOfWorkOptions(e);
         }
         if(inputName === "ward") {
@@ -181,31 +181,31 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     <div className='field sub-projects-details-field-mt' style={{ "width": "100%" }} >
                       <Controller
                         control={control}
-                        name={`${formFieldName}.${row.key}.typeOfWork`}
+                        name={`${formFieldName}.${row.key}.typeOfProject`}
                         rules={(selectedFormCategory === sectionFormCategory) ? {required : true} : {}}
                         render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "typeOfWork" , props, register, "name", { 
+                                getDropDownDataFromMDMS(t, row, "typeOfProject" , props, register, "name", { 
                                     mdmsConfig: {
-                                    masterName: "TypeOfWork",
-                                    moduleName: "works",
-                                    localePrefix: "ES_COMMON",
+                                        masterName: "ProjectType",
+                                        moduleName: "works",
+                                        localePrefix: "ES_COMMON",
                                 }})
                             )}
                       />
-                    {renderErrorIfAny(row, "typeOfWork", true)}
+                    {renderErrorIfAny(row, "typeOfProject", true)}
                     </div>
                 </td>  
                 <td style={getStyles()}>
                     <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                     <Controller
                         control={control}
-                        name={`${formFieldName}.${row.key}.subTypeOfWork`}
+                        name={`${formFieldName}.${row.key}.subTypeOfProject`}
                         rules={{ required: false}}
                         render={(props)=>(
-                            getDropDownDataFromMDMS(t, row, "subTypeOfWork", props, register, "name",  subProjectSubTypeOfWorkOptions)
+                            getDropDownDataFromMDMS(t, row, "subTypeOfProject", props, register, "name",  subProjectSubTypeOfWorkOptions)
                         )}
                       />
-                    {renderErrorIfAny(row, "subTypeOfWork", true)}
+                    {renderErrorIfAny(row, "subTypeOfProject", true)}
                     </div>
                 </td>
                 <td style={getStyles()}>

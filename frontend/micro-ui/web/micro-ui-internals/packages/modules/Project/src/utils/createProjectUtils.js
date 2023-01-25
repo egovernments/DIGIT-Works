@@ -37,8 +37,8 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
         let payload =   {
           "tenantId": tenantId,
           "name": parentProjectID ? project_details?.projectName : basic_details?.projectName,
-          "projectType": "MP-CWS", //Check with Chetan
-          "projectSubType": "",  //Check with Chetan
+          "projectType": project_details?.typeOfProject?.code ,
+          "projectSubType": project_details?.subTypeOfProject?.code , 
           "department": project_details?.owningDepartment?.code,
           "description":  parentProjectID ? project_details?.projectDesc : basic_details?.projectDesc,
           "referenceID": project_details?.letterRefNoOrReqNo,
