@@ -1,12 +1,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import inboxConfig from "../../../configs/inboxConfig";
+import searchConfig from "../../../configs/searchConfig";
 
-const ProjectSearchAndInboxComponent = () => {
+const ProjectSearch = () => {
     const { t } = useTranslation();
 
-    const configs = inboxConfig();
+    const configs = searchConfig();
    
     return (
         <React.Fragment>
@@ -18,4 +18,4 @@ const ProjectSearchAndInboxComponent = () => {
     )
 }
 
-export default ProjectSearchAndInboxComponent;
+export default ProjectSearch;
