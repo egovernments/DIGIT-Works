@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import Header from "../atoms/Header";
 import RenderFormFields from "../molecules/RenderFormFields";
 import LinkLabel from '../atoms/LinkLabel';
 import SubmitBar from "../atoms/SubmitBar";
+import { InboxContext } from "../hoc/InboxSearchComposerContext";
 
 const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   const { t } = useTranslation();
-  
-  console.log('config', uiConfig);
+  const { state, dispatch } = useContext(InboxContext)
+
   const {
     register,
     handleSubmit,
@@ -39,6 +40,18 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
 
   const onSubmit = (data) => {
     //send data to reducer
+    dispatch({
+      type: "searchForm",
+      state: {
+        data: data,
+        serviceName: 'AttendanceService',
+        serviceFunction: 'search',
+        requestBody: {},
+        requestParams: {
+           musterRollNumber: 'MR/2022-23/01/24/000349'
+        }
+      }
+    })
     console.log('data', data);
   }
 

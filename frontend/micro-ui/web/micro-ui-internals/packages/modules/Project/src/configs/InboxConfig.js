@@ -1,6 +1,6 @@
 const inboxConfig = (t) => {
     return {
-        label : "Search Projects",
+        label : "Inbox",
         type : "inbox", 
         //use classname as 'search' for search view
         //use classname as 'inbox' for inbox view
@@ -10,10 +10,12 @@ const inboxConfig = (t) => {
                 uiConfig : {
                     headerStyle : null,
                     buttonLabel: 'Search',
-                    linkLabel: 'Clear Search'
-                },
-                label : "",
-                children : {
+                    linkLabel: 'Clear Search',
+                    defaultValues : {
+                        projectId: "",
+                        department: "",
+                        workType: ""
+                    },
                     fields : [
                         {
                             label:"Project ID",
@@ -56,6 +58,8 @@ const inboxConfig = (t) => {
                         }
                     ]
                 },
+                label : "",
+                children : {},
                 show : true
             },
             links : {
