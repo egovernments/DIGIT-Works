@@ -1,13 +1,13 @@
 import { Header, InboxSearchComposer, PropertyHouse } from "@egovernments/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import InboxConfig from "../../../configs/InboxConfig";
+import inboxConfig from "../../../configs/InboxConfig";
 
 const ProjectSearchAndInbox = () => {
     const {t} = useTranslation();
 
     //Import Config to Bootstrap the Layout -- this is a test config
-    const configs = InboxConfig(t);
+    const configs = inboxConfig(t);
 
     return (
         <div className={"employee-main-application-details"}>
