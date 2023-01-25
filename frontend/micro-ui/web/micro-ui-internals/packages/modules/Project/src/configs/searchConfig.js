@@ -7,10 +7,15 @@ const searchConfig = () => {
                 uiConfig : {
                     headerStyle : null,
                     buttonLabel: 'Search',
-                    linkLabel: 'Clear Search'
-                },
-                label : "",
-                children : {
+                    linkLabel: 'Clear Search',
+                    defaultValues : {
+                        projectId: "",
+                        subProjectId: "",
+                        projectName: "",
+                        workType: "",
+                        createdFromDate: "",
+                        createdToDate: ""
+                    },
                     fields : [
                         {
                             label:"Project ID",
@@ -62,9 +67,20 @@ const searchConfig = () => {
                           populators: { 
                               name: "createdFromDate"
                           }
+                        },
+                        {
+                            label: "Created to Date",
+                            type: "date",
+                            isMandatory: false,
+                            disable: false,
+                            populators: { 
+                                name: "createdToDate"
+                            }
                         }
                     ]
                 },
+                label : "",
+                children : {},
                 show : true
             },
             searchResult : {

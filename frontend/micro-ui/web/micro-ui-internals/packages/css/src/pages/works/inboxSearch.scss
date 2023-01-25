@@ -21,3 +21,12 @@
         gap: 1rem;
     }
 }
+
+@screen sm {
+    .search-wrapper {
+        .search-field-wrapper {
+            display: flex;
+            flex-direction : column;
+        }
+    }   
+}

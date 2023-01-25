@@ -20,7 +20,6 @@ const InboxSearchComposer = (props) => {
                             <SearchComponent 
                                 uiConfig={ configs?.sections?.search?.uiConfig} 
                                 header={configs?.sections?.search?.label} 
-                                children={configs?.sections?.search?.children} 
                                 screenType={configs?.type}/>
                         </div>
                 }

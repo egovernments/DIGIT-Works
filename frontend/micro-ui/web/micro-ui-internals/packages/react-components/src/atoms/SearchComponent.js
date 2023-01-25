@@ -6,7 +6,7 @@ import RenderFormFields from "../molecules/RenderFormFields";
 import LinkLabel from '../atoms/LinkLabel';
 import SubmitBar from "../atoms/SubmitBar";
 
-const SearchComponent = ({ uiConfig, header = "", children = {}, screenType = "search"}) => {
+const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   const { t } = useTranslation();
   
   console.log('config', uiConfig);
@@ -25,6 +25,7 @@ const SearchComponent = ({ uiConfig, header = "", children = {}, screenType = "s
     clearErrors,
     unregister,
   } = useForm({
+    defaultValues: uiConfig?.defaultValues,
   });
 
   const formData = watch();
@@ -42,13 +43,7 @@ const SearchComponent = ({ uiConfig, header = "", children = {}, screenType = "s
   }
 
   const clearSearch = () => {
-    reset({
-      projectId: "",
-      subProjectId: "",
-      projectName: "",
-      workType: "",
-      createdFromDate: ""
-    })
+    reset(uiConfig?.defaultValues)
   }
  
   return (
@@ -58,7 +53,7 @@ const SearchComponent = ({ uiConfig, header = "", children = {}, screenType = "s
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
           <div className={`search-field-wrapper ${screenType}`}>
             <RenderFormFields 
-              fields={children?.fields} 
+              fields={uiConfig?.fields} 
               control={control} 
               formData={formData}
               errors={errors}
@@ -71,7 +66,7 @@ const SearchComponent = ({ uiConfig, header = "", children = {}, screenType = "s
             />  
           </div> 
           <div className="search-button-wrapper">
-            <LinkLabel style={{marginBottom: 0}} onClick={clearSearch}>{uiConfig?.linkLabel}</LinkLabel>
+            <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{uiConfig?.linkLabel}</LinkLabel>
             <SubmitBar label={uiConfig?.buttonLabel} submit="submit" disabled={false}/>
           </div>
         </form>

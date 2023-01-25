@@ -8,10 +8,55 @@ const inboxConfig = (t) => {
         sections : {
             search : {
                 uiConfig : {
-
+                    headerStyle : null,
+                    buttonLabel: 'Search',
+                    linkLabel: 'Clear Search'
                 },
-                children : {},
-                show : true //by default true. 
+                label : "",
+                children : {
+                    fields : [
+                        {
+                            label:"Project ID",
+                            type: "text",
+                            isMandatory: false,
+                            disable: false,
+                            populators: { 
+                                name: "projectId"
+                            },
+                        },
+                        {
+                            label: "Department",
+                            type: "dropdown",
+                            isMandatory: false,
+                            disable: false,
+                            populators: {
+                              name: "department",
+                              optionsKey: "name",
+                              mdmsConfig: {
+                                masterName: "Department",
+                                moduleName: "common-masters",
+                                localePrefix: "WORKS",
+                              }
+                            }
+                        },
+                        {
+                          label: "Type Of Work",
+                          type: "dropdown",
+                          isMandatory: false,
+                          disable: false,
+                          populators: {
+                            name: "workType",
+                            optionsKey: "name",
+                            mdmsConfig: {
+                              masterName: "TypeOfWork",
+                              moduleName: "works",
+                              localePrefix: "WORKS",
+                            }
+                          }
+                        }
+                    ]
+                },
+                show : true
             },
             links : {
                 uiConfig : {
