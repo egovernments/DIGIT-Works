@@ -70,7 +70,7 @@ public class StaffService {
         List<String> registerIds = extractRegisterIdsFromRequest(staffPermissionRequest);
 
         //db call to get the staffList data whose de enrollment date is null
-        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).build();
+        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).individualIds(staffIds).tenantId(tenantId).build();
         List<StaffPermission> staffPermissionListFromDB = getActiveStaff(staffSearchCriteria);
 
         //db call to get registers from db and use them to validate request registers
@@ -114,7 +114,7 @@ public class StaffService {
         attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
         // db call to get staff data
-        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).build();
+        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).tenantId(tenantId).build();
         List<StaffPermission> staffPermissionListFromDB = getAllStaff(staffSearchCriteria);
 
         //validator call by passing staff request and the data from db call

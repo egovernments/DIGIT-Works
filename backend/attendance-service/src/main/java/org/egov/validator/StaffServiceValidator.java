@@ -152,16 +152,6 @@ public class StaffServiceValidator {
                                                Map<String, String> errorMap) {
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
 
-        // check if staff tenant id is same as register tenant id
-        for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
-            for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {
-                if (!staffFromRequest.getTenantId().equals(attendanceRegister.getTenantId())) {
-                    throw new CustomException("TENANT_ID"
-                            , "Staff TENANT_ID for staff : " + staffFromRequest.getUserId() + " is not same as TENANT_ID of register");
-                }
-            }
-        }
-
         // staff cannot be added to register if register's end date has passed
         BigDecimal enrollmentDate = new BigDecimal(System.currentTimeMillis());
         for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
@@ -171,7 +161,7 @@ public class StaffServiceValidator {
             }
         }
 
-        //check is staff user id exists in staff table for the given register id. If yes check the deenrollment date. If staffId does not exist new staff can still be enrolled to the register
+        //check if staff user id exists in staff table for the given register id. If yes check the deenrollment date. If staffId does not exist new staff can still be enrolled to the register
         if (staffPermissionListFromDB != null) {
             for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {//list of staff from request
                 StaffPermission staff = staffPermissionListFromDB.stream()
@@ -258,7 +248,7 @@ public class StaffServiceValidator {
     }
 
 
-    private void validateMDMSData(String tenantId , Object mdmsData, Map<String, String> errorMap) {
+    private void validateMDMSData(String tenantId, Object mdmsData, Map<String, String> errorMap) {
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
 
         List<Object> tenantRes = null;
