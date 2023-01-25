@@ -435,7 +435,7 @@ public class AttendanceLogServiceValidator {
                 log.error("Attendance registerid is mandatory");
                 errorMap.put("ATTENDANCE.REGISTERID", "Attendance registerid is mandatory");
             }
-            if (attendeeLog.getIndividualId() == null) {
+            if (StringUtils.isBlank(attendeeLog.getIndividualId() )) {
                 log.error("Attendance indidualid is mandatory");
                 errorMap.put("ATTENDANCE.INDIVIDUALID", "Attendance indidualid is mandatory");
             }
