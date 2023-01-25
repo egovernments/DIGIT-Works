@@ -14,7 +14,6 @@ const InboxSearchComposer = (props) => {
     
     //whenever this state is updated we'll make a call to the search/inbox api
     const [state, dispatch] = useReducer(reducer, initialTableState)
-    // debugger
 
     const onFormSubmit = (_data) => {
         console.log(_data);
@@ -47,13 +46,18 @@ const InboxSearchComposer = (props) => {
                 configs?.sections?.filter?.show &&  
                     <div className="section filter">
                         {/* Integrate the Filter Component here*/}
+                        <SearchComponent 
+                                uiConfig={ configs?.sections?.filter?.uiConfig} 
+                                header={configs?.sections?.filter?.label} 
+                                children={configs?.sections?.filter?.children} 
+                                screenType={configs?.type}/>
                     </div> 
                 }
                 {
                 configs?.sections?.searchResult?.show &&  
                     <div className="" style={{ overflowX: "scroll" }}>
                         {/* Integrate the Search Results Component here*/}
-                        <ResultsTable config={configs?.sections?.searchResult?.uiConfig}/>
+                        {/* <ResultsTable config={configs?.sections?.searchResult?.uiConfig}/> */}
                     </div>
                 }
             </div>
