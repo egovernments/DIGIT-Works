@@ -7,7 +7,8 @@ const InboxConfig = (t) => {
         //inbox view is by default
         sections : {
             search : {
-                uiConfig : {
+                label : "",
+                uiConfig : { //UIConfig structure can vary based on components.
 
                 },
                 children : {},
