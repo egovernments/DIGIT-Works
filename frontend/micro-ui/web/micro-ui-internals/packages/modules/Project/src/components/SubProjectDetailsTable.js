@@ -28,6 +28,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         {label : t('WORKS_URBAN_LOCAL_BODY'), isMandatory : false },
         {label : t('WORKS_GEO_LOCATION'), isMandatory : false },
         {label : t('WORKS_UPLOAD_FILES'), isMandatory : false },
+        {label : t('WORKS_ACTIONS'), isMandatory : false }
     ];
     const [subProjectTypeOfProjectOptions, setSubProjectTypeOfWorkOptions] = useState([]);
     const [subProjectSubTypeOfWorkOptions, setSubProjectSubTypeOfWorkOptions] = useState([]);
@@ -110,6 +111,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         if(type === "upload") {
             return { "minWidth": "20rem" };
         }
+        if(type === "SNO") {
+            return { "minWidth": "7rem" };
+        }
         return { "minWidth": "14rem" };
     }
 
@@ -164,7 +168,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         return rows.map((row, index) => {
             if (row.isShow) i++
             return row.isShow && <tr key={index} style={{ "height": "50%" }}>
-                <td style={getStyles()}>{i}</td>
+                <td style={getStyles('SNO')}>{i}</td>
                 <td style={getStyles()} >
                     <div className='field' style={{ "width": "100%" }} >
                         <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.projectName`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true}) : register({required : false})}/>
@@ -355,7 +359,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         {renderErrorIfAny(row, "uploadedFiles")}
                     </div>
                 </td> 
-                <td style={getStyles(4)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
+                <td style={getStyles('SNO')} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
             </tr>
         })
     }

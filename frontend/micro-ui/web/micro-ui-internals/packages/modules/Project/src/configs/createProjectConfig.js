@@ -111,7 +111,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             isMandatory: false,
             key: "noSubProject_targetDemocracy",
             type: "radioordropdown",
-            label: "PROJECT_TARGET_DEMOGRAPHY",
+            label: t("PROJECT_TARGET_DEMOGRAPHY"),
             disable: false,
             populators: {
               name: "noSubProject_targetDemocracy",
@@ -130,7 +130,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
           },
           {
             inline: true,
-            label: "WORKS_LOR",
+            label: t("WORKS_LOR"),
             isMandatory: false,
             key: "noSubProject_letterRefNoOrReqNo",
             type: "text",
@@ -139,7 +139,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
           },
           {
             inline: true,
-            label: "PROJECT_ESTIMATED_COST_IN_RS",
+            label: t("PROJECT_ESTIMATED_COST_IN_RS"),
             isMandatory: false,
             key: "noSubProject_estimatedCostInRs",
             type: "number",
@@ -325,7 +325,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
       {
         navLink:"Project_Details",
         sectionFormCategory : "noSubProject",
-        head: t("WORKS_UPLOAD_FILES"),
+        head: t("WORKS_RELEVANT_DOCS"),
         body: [
           {
             type:"multiupload",
@@ -335,7 +335,8 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
                 allowedMaxSizeInMB:2,
                 maxFilesAllowed:2,
                 allowedFileTypes : /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
-                customClass : "upload-margin-bottom"
+                customClass : "upload-margin-bottom",
+                errorMessage : t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG")
             }
           }
         ]
@@ -362,7 +363,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
               mdmsConfig: {
                 masterName: "Fund",
                 moduleName: "finance",
-                localePrefix: "ES_COMMON",
+                localePrefix: "ES_COMMON_FIN",
               },
             },
           },
