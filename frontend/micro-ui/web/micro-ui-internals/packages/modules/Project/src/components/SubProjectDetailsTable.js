@@ -18,7 +18,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         {label : t('WORKS_NAME_OF_WORK'), isMandatory : true },
         {label : t('WORKS_ESTIMATED_AMOUNT'), isMandatory : false },
         {label : t('WORKS_WORK_TYPE'), isMandatory : true },
-        {label : t('WORKS_SUB_TYPE_WORK'), isMandatory : false },
+        {label : t('WORKS_PROJECT_SUB_TYPE_WORK'), isMandatory : false },
         {label : t('WORKS_WORK_NATURE'), isMandatory : false },
         {label : t('WORKS_PROJECT_START_DATE'), isMandatory : false },
         {label : t('WORKS_PROJECT_END_DATE'), isMandatory : false },
