@@ -112,13 +112,16 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
             return { "minWidth": "20rem" };
         }
         if(type === "SNO") {
-            return { "minWidth": "7rem" };
+            return { "minWidth": "2rem" };
         }
         return { "minWidth": "14rem" };
     }
 
     const renderHeader = () => {
         return columns?.map((column, index) => {
+            if(column.label === t("WORKS_ACTIONS") || column.label === t("WORKS_SNO")) {
+                return <th key={index} style={getStyles("SNO")} >{column?.label}{column?.isMandatory && '*'} </th>
+            }
             return <th key={index} style={getStyles()} >{column?.label}{column?.isMandatory && '*'} </th>
         })
     }
