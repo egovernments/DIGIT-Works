@@ -39,7 +39,6 @@ const InboxSearchComposer = (props) => {
                         <SearchComponent 
                                 uiConfig={ configs?.sections?.filter?.uiConfig} 
                                 header={configs?.sections?.filter?.label} 
-                                children={configs?.sections?.filter?.children} 
                                 screenType={configs?.type}/>
                     </div> 
                 }

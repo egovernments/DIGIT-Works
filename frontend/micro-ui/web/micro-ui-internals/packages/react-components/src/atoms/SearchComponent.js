@@ -8,6 +8,7 @@ import SubmitBar from "../atoms/SubmitBar";
 import { InboxContext } from "../hoc/InboxSearchComposerContext";
 
 const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
+  console.log(uiConfig);
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
 
@@ -58,7 +59,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
       <div className={'search-wrapper'}>
         {header && <Header styles={uiConfig?.headerStyle}>{header}</Header>}
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
-          <div className={`search-field-wrapper ${screenType}`}>
+          <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
             <RenderFormFields 
               fields={uiConfig?.fields} 
               control={control} 

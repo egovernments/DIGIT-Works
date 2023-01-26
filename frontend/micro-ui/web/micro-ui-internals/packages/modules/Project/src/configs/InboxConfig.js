@@ -68,25 +68,21 @@ const inboxConfig = (t) => {
                         {
                             text: "ACTION_TEST_PROJECTS",
                             url: `/employee/contracts/create-contract`,
-                            businessService: "WORKS",
                             roles: [],
                         },
                         {
                             text: "ACTION_TEST_PROJECTS",
                             url: `/employee/contracts/create-contract`,
-                            businessService: "WORKS",
                             roles: [],
                         },
                         {
                             text: "ACTION_TEST_PROJECTS",
                             url: `/employee/contracts/create-contract`,
-                            businessService: "WORKS",
                             roles: [],
                         },
                         {
                             text: "ACTION_TEST_PROJECTS",
                             url: `/employee/contracts/create-contract`,
-                            businessService: "WORKS",
                             roles: [],
                         }
                     ],
@@ -101,12 +97,15 @@ const inboxConfig = (t) => {
             },
             filter : {
                 uiConfig : {
+                    type : 'filter',
                     headerStyle : null,
-                    buttonLabel: 'Filter',
-                    linkLabel: 'Clear Search'
-                },
-                label : "Filter",
-                children : {
+                    primaryLabel: 'Filter',
+                    secondaryLabel: 'Clear Search',
+                    defaultValues : {
+                        projectId: "",
+                        department: "",
+                        workType: ""
+                    },
                     fields : [
                         {
                             label:"Project ID",
@@ -118,22 +117,19 @@ const inboxConfig = (t) => {
                             },
                         },
                         {
-                            label: "Sub Project ID",
-                            type: "text",
+                            label: "Department",
+                            type: "dropdown",
                             isMandatory: false,
                             disable: false,
-                            populators: { 
-                                name: "subProjectId"
-                            },
-                        },
-                        {
-                          label: "Name of the Project",
-                          type: "text",
-                          isMandatory: false,
-                          disable: false,
-                          populators: { 
-                              name: "projectName"
-                          }
+                            populators: {
+                              name: "department",
+                              optionsKey: "name",
+                              mdmsConfig: {
+                                masterName: "Department",
+                                moduleName: "common-masters",
+                                localePrefix: "WORKS",
+                              }
+                            }
                         },
                         {
                           label: "Type Of Work",
@@ -149,18 +145,10 @@ const inboxConfig = (t) => {
                               localePrefix: "WORKS",
                             }
                           }
-                        },
-                        {
-                          label: "Created from Date",
-                          type: "date",
-                          isMandatory: false,
-                          disable: false,
-                          populators: { 
-                              name: "createdFromDate"
-                          }
                         }
                     ]
                 },
+                label : "Filter",
                 show : true
             },
             searchResult : {
