@@ -10,6 +10,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceEntry;
 import org.egov.web.models.IndividualEntry;
 import org.egov.web.models.MusterRoll;
+import org.egov.web.models.MusterRollSearchCriteria;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -109,5 +110,20 @@ public class MusterRollServiceUtil {
         } catch (IOException e) {
             throw new CustomException("MusterRollServiceUtil::populateAdditionalDetailsAttendanceEntry::PARSING ERROR", "Failed to set additionalDetail object");
         }
+    }
+
+    /**
+     * Checks if the search is based only on tenantId
+     * @param searchCriteria
+     * @return
+     */
+    public boolean isTenantBasedSearch(MusterRollSearchCriteria searchCriteria) {
+        if ((searchCriteria.getIds() == null || searchCriteria.getIds().isEmpty()) && StringUtils.isBlank(searchCriteria.getMusterRollNumber())
+                && StringUtils.isBlank(searchCriteria.getRegisterId()) &&  searchCriteria.getFromDate() == null  && searchCriteria.getToDate() == null
+                && searchCriteria.getStatus() == null && StringUtils.isBlank(searchCriteria.getMusterRollStatus())
+                && StringUtils.isNotBlank(searchCriteria.getTenantId())) {
+            return true;
+        }
+        return false;
     }
 }

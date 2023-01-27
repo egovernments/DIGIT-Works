@@ -1,7 +1,9 @@
 package org.egov.repository.querybuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.MusterRollSearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -9,6 +11,9 @@ import java.util.List;
 
 @Component
 public class MusterRollQueryBuilder {
+
+    @Autowired
+    private MusterRollServiceUtil musterRollServiceUtil;
 
     private static final String FETCH_MUSTER_ROLL_QUERY = "SELECT muster.id,muster.tenant_id,muster.musterroll_number,muster.attendance_register_id,muster.status,muster.musterroll_status,muster.start_date,muster.end_date,muster.createdby,muster.lastmodifiedby,muster.createdtime,muster.lastmodifiedtime,muster.additionaldetails,"+
             "ind.id AS summaryId,ind.muster_roll_id AS indMusterId,ind.individual_id AS IndividualId,ind.actual_total_attendance AS actualTotalAttendance,ind.additionaldetails AS indAddlDetails,ind.createdby AS indCreatedBy,ind.lastmodifiedby AS indModifiedBy,ind.createdtime AS indCreatedTime,ind.lastmodifiedtime AS indModifiedTime,ind.modified_total_attendance AS modifiedTotalAttendance,"+
@@ -74,7 +79,10 @@ public class MusterRollQueryBuilder {
             preparedStmtList.add(searchCriteria.getMusterRollStatus());
         }
 
-        addLimitAndOffset(queryBuilder, searchCriteria, preparedStmtList);
+        //if the search is only based on tenantId, add limit and offset at query level
+        if (musterRollServiceUtil.isTenantBasedSearch(searchCriteria)) {
+            addLimitAndOffset(queryBuilder, searchCriteria, preparedStmtList);
+        }
 
         return queryBuilder.toString();
     }
