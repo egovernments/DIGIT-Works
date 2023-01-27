@@ -24,6 +24,12 @@
         align-items: center;
         justify-content: flex-end;
         gap: 1rem;
+        &.inbox {
+            grid-column: 2 / span 2;
+        }
+        &.search {
+            grid-column: 3 / span 2;
+        }
     }
 }
 
