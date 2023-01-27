@@ -1,10 +1,8 @@
-const inboxConfig = (t) => {
+const inboxConfig = () => {
     return {
         label : "Inbox",
         type : "inbox", 
-        //use classname as 'search' for search view
-        //use classname as 'inbox' for inbox view
-        //inbox view is by default
+        //classname: search view => 'search', inbox view => 'inbox'(default)
         sections : {
             search : {
                 uiConfig : {

@@ -2,6 +2,23 @@ const searchConfig = () => {
     return {
         label : "Search Projects",
         type: 'search',
+        apiDetails: {
+            serviceName: "/pms/project/v1/_search",
+            requestParam: {
+                tenantId: Digit.ULBService.getCurrentTenantId(),
+                limit: 5,
+                offset: 0
+            },
+            requestBody: {
+                apiOperation: "SEARCH",
+                Projects: [
+                    {
+                        tenantId: Digit.ULBService.getCurrentTenantId()
+                    }
+                ]
+            },
+            jsonPath: `Properties[0].address`
+        },
         sections : {
             search : {
                 uiConfig : {

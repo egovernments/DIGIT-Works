@@ -1,22 +1,48 @@
-import InboxSearchLinks from "../atoms/InboxSearchLinks";
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import ResultsTable from "./ResultsTable"
-import reducer, { initialTableState } from "./InboxSearchComposerReducer";
+import reducer, { initialInboxState } from "./InboxSearchComposerReducer";
+import InboxSearchLinks from "../atoms/InboxSearchLinks";
 import { InboxContext } from "./InboxSearchComposerContext";
 import SearchComponent from "../atoms/SearchComponent";
 
 const InboxSearchComposer = (props) => {
-    const  { configs } = props;
+    const { configs } = props;
+    const [enable, setEnable] = useState(false);
+    const [state, dispatch] = useReducer(reducer, initialInboxState)
+
+    useEffect(() => {
+        const requestBody = configs?.apiDetails?.requestBody
+        if(state.searchForm?.data) {
+            requestBody.Projects[0].id = '7c941228-6149-4adc-bdb9-8b77f6c3757d'
+            setEnable(true)
+        }
+    }, [state.searchForm])
     
-    //whenever this state is updated we'll make a call to the search/inbox api
-    const [state, dispatch] = useReducer(reducer, initialTableState)
+   
+    const requestCriteria = [
+        configs?.apiDetails?.serviceName,
+        configs?.apiDetails?.requestParam,
+        configs?.apiDetails?.requestBody,
+        {},
+        {
+            enabled: enable
+        }
+    ];
+
+    const { isLoading, data, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
+    console.log('project data', data);
+    
+    useEffect(() => {
+        return () => {
+            revalidate();
+            setEnable(false);
+        };
+    });
 
     return (
         <InboxContext.Provider value={{state,dispatch}} >
             <div className="inbox-search-component-wrapper ">
             <div className={`sections-parent ${configs?.type}`}>
-                {/* Since we need to keep the config sections order-less, avoiding for loop */}
-                {/* That way the config can have sections in any order */}
                 {
                     configs?.sections?.links?.show &&  
                         <div className="section links">
@@ -35,7 +61,6 @@ const InboxSearchComposer = (props) => {
                 {
                 configs?.sections?.filter?.show &&  
                     <div className="section filter">
-                        {/* Integrate the Filter Component here*/}
                         <SearchComponent 
                                 uiConfig={ configs?.sections?.filter?.uiConfig} 
                                 header={configs?.sections?.filter?.label} 
@@ -45,7 +70,6 @@ const InboxSearchComposer = (props) => {
                 {
                 configs?.sections?.searchResult?.show &&  
                     <div className="" style={{ overflowX: "scroll" }}>
-                        {/* Integrate the Search Results Component here*/}
                         <ResultsTable config={configs?.sections?.searchResult?.uiConfig}/>
                     </div>
                 }
