@@ -376,7 +376,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
             <tbody>
                 {renderBody()}
                 <tr>
-                    <td style={getStyles()}></td>
+                    <td style={getStyles("SNO")}></td>
                     <td style={{ ...getStyles(2), "textAlign": "center" }} onClick={addRow}><span><AddIcon fill={"#F47738"} styles={{ "margin": "auto", "display": "inline", "marginTop": "-2px" }} /><label style={{ "marginLeft": "10px" }}>{t("WORKS_ADD_ITEM")}</label></span></td>
                     <td style={getStyles()}></td>
                     <td style={getStyles()}></td>
