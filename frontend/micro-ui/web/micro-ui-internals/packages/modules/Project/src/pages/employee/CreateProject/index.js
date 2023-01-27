@@ -122,19 +122,23 @@ const CreateProject = () => {
     const { mutate: CreateProjectMutation } = Digit.Hooks.works.useCreateProject();
 
     const onSubmit = async(data) => {
-      debugger;
       //Transforming Payload to categories of Basic Details, Projects and Sub-Projects
       const transformedPayload = CreateProjectUtils.payload.transform(data);
       //Final Payload
-      let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "TEST", tenantId);
+      let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId);
 
-      //TODO: MUTATION ISSUE -- responseData is being fetched as undefined.
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
             setToast(()=>({show : true, label : "Failed to Create Project.", error : true}));
         },
         onSuccess: async (responseData, variables) => {
-          
+          if(responseData?.ResponseInfo?.Errors) {
+            setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors[0]['message'], error : true}));
+          }else if(responseData?.ResponseInfo?.status){
+            setToast(()=>({show : true, label : responseData?.ResponseInfo?.status, error : false}));
+          }else{
+            setToast(()=>({show : true, label : "Something Went Wrong.", error : true}));
+          }
         },
     });
     }

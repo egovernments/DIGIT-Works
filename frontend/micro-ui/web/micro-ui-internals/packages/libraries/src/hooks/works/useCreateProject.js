@@ -3,7 +3,7 @@ import { useMutation } from "react-query";
 
 const useCreateProject=()=>{
     return useMutation((payload)=>{
-        WorksService.createProject(payload);
+       return WorksService.createProject(payload);
     });
 }
 
