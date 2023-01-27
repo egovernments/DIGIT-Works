@@ -14,7 +14,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
   return {
     defaultValues : {
       basicDetails_dateOfProposal : "01-01-2020",
-      basicDetails_hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"}
+      basicDetails_hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"},
     },
     form: [
       { 
@@ -157,7 +157,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             isMandatory: true,
             key: "noSubProject_typeOfProject",
             type: "radioordropdown",
-            label: "WORKS_WORK_TYPE",
+            label: "WORKS_PROJECT_TYPE",
             disable: false,
             populators: {
               name: "noSubProject_typeOfProject",
@@ -178,7 +178,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             isMandatory: false,
             key: "noSubProject_subTypeOfProject",
             type: "radioordropdown",
-            label: "PDF_STATIC_LABEL_ESTIMATE_SUB_TYPE_OF_WORK",
+            label: "WORKS_SUB_PROJECT_TYPE",
             disable: false,
             populators: {
               name: "noSubProject_subTypeOfProject",
