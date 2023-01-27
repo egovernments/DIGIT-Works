@@ -37,7 +37,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
         let payload =   {
           "tenantId": tenantId,
           "name": parentProjectID ? project_details?.projectName : basic_details?.projectName,
-          "projectType": project_details?.typeOfProject?.code ,
+          "projectType": project_details?.typeOfProject?.code || "MP-CWS" , //BE throwing null pointer Exception if send null and giving error on  empty string. But for Sub-projects's Parent, this field is not captured on UI. -- Need to check with CHetan.
           "projectSubType": project_details?.subTypeOfProject?.code , 
           "department": project_details?.owningDepartment?.code,
           "description":  parentProjectID ? project_details?.projectDesc : basic_details?.projectDesc,

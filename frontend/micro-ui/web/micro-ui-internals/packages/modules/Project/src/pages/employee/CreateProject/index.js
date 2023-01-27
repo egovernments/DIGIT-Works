@@ -132,12 +132,31 @@ const CreateProject = () => {
             setToast(()=>({show : true, label : "Failed to Create Project.", error : true}));
         },
         onSuccess: async (responseData, variables) => {
-          if(responseData?.ResponseInfo?.Errors) {
-            setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors[0]['message'], error : true}));
-          }else if(responseData?.ResponseInfo?.status){
-            setToast(()=>({show : true, label : responseData?.ResponseInfo?.status, error : false}));
+          //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
+          if(selectedProjectType?.code === "COMMON_YES") {
+            payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Projects[0]?.id, tenantId);
+            await CreateProjectMutation(payload, {
+              onError :  async (error, variables) => {
+                setToast(()=>({show : true, label : "Failed to Create Project.", error : true}));
+              },
+              onSuccess: async (responseData, variables) => {
+                if(responseData?.ResponseInfo?.Errors) {
+                  setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors[0]['message'], error : true}));
+                }else if(responseData?.ResponseInfo?.status){
+                  setToast(()=>({show : true, label : responseData?.ResponseInfo?.status, error : false}));
+                }else{
+                  setToast(()=>({show : true, label : "Something Went Wrong.", error : true}));
+                }
+              }
+            })
           }else{
-            setToast(()=>({show : true, label : "Something Went Wrong.", error : true}));
+            if(responseData?.ResponseInfo?.Errors) {
+              setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors[0]['message'], error : true}));
+            }else if(responseData?.ResponseInfo?.status){
+              setToast(()=>({show : true, label : responseData?.ResponseInfo?.status, error : false}));
+            }else{
+              setToast(()=>({show : true, label : "Something Went Wrong.", error : true}));
+            }
           }
         },
     });
