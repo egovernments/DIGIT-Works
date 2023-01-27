@@ -1,0 +1,24 @@
+@startuml
+title Project Creation
+group Happy Flow
+  autonumber
+  Client -> Project : Create Project
+  Project -> Project : Validate user info\n and request info
+  Project -> Project : Validate request (\nProject, tenantId\n and start/end dates\n parent project ID)
+  Project -> MDMS : Fetch MDMS data\n (Project type, subtype, department, tenant)
+  MDMS -> Project: Validate request against\n MDMS data (Project type, subtype,\n department, tenant)
+  Project -> IDGen: Request custom\n formatted ID list
+  IDGen -> Project: Return ID list
+  Project -> Project : Enrich request with\n audit details
+  Project -> Queue: Push project\n create payload
+  Project -> Client: Project created\n (Return project ID)
+  Persister -> Queue: Consume project payload
+  Persister -> RDBMS: Persist data 
+end
+group Invalid request params
+  Client -> Project : Create Project
+  Project -> Project : Validate request (\nProject array, tenantId\n and start/end dates)
+  Project -> Project: Validate parent\n project ID
+  Project -> Client: Validation failed\n (400 with\n appropriate error message)
+end
+@enduml
