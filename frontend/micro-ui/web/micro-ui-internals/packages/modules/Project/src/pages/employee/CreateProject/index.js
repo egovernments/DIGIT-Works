@@ -67,6 +67,14 @@ const CreateProject = () => {
              }
           }
       })
+
+      const createSubTypesMDMSObject = (subTypesData) => {
+        let mdmsData = [];
+        for(let subType of subTypesData?.projectSubType) {
+          mdmsData.push({code : subType, name : `ES_COMMON_${subType}`});
+        }
+        return mdmsData;
+      }
   
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
 
@@ -83,7 +91,8 @@ const CreateProject = () => {
               setValue("noSubProject_locality", '');
           }
           if(formData?.noSubProject_typeOfProject) {
-            setsubTypeOfProjectOptions(formData?.noSubProject_typeOfProject?.projectSubType);
+            let subTypeData = createSubTypesMDMSObject(formData?.noSubProject_typeOfProject);
+            setsubTypeOfProjectOptions(subTypeData); 
           } 
           if (difference?.noSubProject_typeOfProject) {
             setValue("noSubProject_subTypeOfProject", '');

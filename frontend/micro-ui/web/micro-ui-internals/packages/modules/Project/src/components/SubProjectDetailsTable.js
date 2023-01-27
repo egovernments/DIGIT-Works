@@ -30,8 +30,8 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         {label : t('WORKS_UPLOAD_FILES'), isMandatory : false },
         {label : t('WORKS_ACTIONS'), isMandatory : false }
     ];
-    const [subProjectTypeOfProjectOptions, setSubProjectTypeOfWorkOptions] = useState([]);
-    const [subProjectSubTypeOfWorkOptions, setSubProjectSubTypeOfWorkOptions] = useState([]);
+    const [subProjectTypeOfProjectOptions, setSubProjectTypeOfProjectOptions] = useState([]);
+    const [subProjectSubTypeOfWorkOptions, setSubProjectSubTypeOfProjectOptions] = useState([]);
     const formFieldName = "withSubProject_project_subProjects"; //keep this name diff from the key in config
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId); 
@@ -58,8 +58,8 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         
     useEffect(()=>{
         let filteredSubTypeOfProject = ( subProjectTypeOfProjectOptions && subProjectTypeOfProjectOptions?.projectSubType ) ? (
-        subProjectTypeOfProjectOptions?.projectSubType.map(projectSubType=>({code : projectSubType?.code, name : `ES_COMMON_${projectSubType?.code}`}))) : [];
-        setSubProjectSubTypeOfWorkOptions(filteredSubTypeOfProject);
+        subProjectTypeOfProjectOptions?.projectSubType.map(projectSubType=>({code : projectSubType, name : `ES_COMMON_${projectSubType}`}))) : [];
+        setSubProjectSubTypeOfProjectOptions(filteredSubTypeOfProject);
     },[subProjectTypeOfProjectOptions]);
 
     useEffect(()=>{
@@ -97,7 +97,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
     const handleDropdownChange = (e,props, row, inputName) => {
         if(inputName === "typeOfProject") {
             setValue(`${formFieldName}.${row.key}.subTypeOfProject`, '');
-            setSubProjectTypeOfWorkOptions(e);
+            setSubProjectTypeOfProjectOptions(e);
         }
         if(inputName === "ward") {
             setValue(`${formFieldName}.${row.key}.locality`, '');
