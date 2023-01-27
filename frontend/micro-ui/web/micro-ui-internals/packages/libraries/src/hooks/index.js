@@ -32,6 +32,8 @@ import useCreateEvent from "./events/useCreateEvent";
 import useUpdateEvent from "./events/useUpdateEvent";
 import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
+import useGenderMDMS from "./useGenderMDMS";
+import useCustomAPIHook from "./useCustomAPIHook";
 
 import useComplaintDetails from "./pgr/useComplaintDetails";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
@@ -255,6 +257,7 @@ const Hooks = {
   useTenants,
   useAccessControl,
   usePrivacyContext,
+  useGenderMDMS,
   pgr,
  
   dss,
@@ -268,6 +271,7 @@ const Hooks = {
   works,
   useRouteSubscription,
   useCustomMDMS,
+  useCustomAPIHook,
   useGetHowItWorksJSON,
   useGetFAQsJSON,
   useGetDSSFAQsJSON,
