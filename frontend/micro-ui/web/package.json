@@ -12,6 +12,7 @@
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/AttendenceMgmt",
     "micro-ui-internals/packages/modules/Masters",
+    "micro-ui-internals/packages/modules/works",
     "micro-ui-internals/packages/modules/Project",
     "micro-ui-internals/packages/modules/Estimate"
   ],

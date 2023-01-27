@@ -7,8 +7,12 @@
     "example",
     "packages/css",
     "packages/react-components",
-    "packages/modules/*"
-  ],
+    "packages/modules/AttendenceMgmt",
+    "packages/modules/Masters",
+    "packages/modules/works",
+    "packages/modules/Project",
+    "packages/modules/Estimate"
+    ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
   "license": "MIT",
   "private": true,
