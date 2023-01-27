@@ -37,7 +37,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             key: "basicDetails_projectName",
             type: "text",
             disable: false,
-            populators: { name: "basicDetails_projectName", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "basicDetails_projectName", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_NAME"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
@@ -46,7 +46,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             key: "basicDetails_projectDesc",
             type: "text",
             disable: false,
-            populators: { name: "basicDetails_projectDesc", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "basicDetails_projectDesc", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_DESC"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             isMandatory: false,
@@ -135,7 +135,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             key: "noSubProject_letterRefNoOrReqNo",
             type: "text",
             disable: false,
-            populators: { name: "noSubProject_letterRefNoOrReqNo", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "noSubProject_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
@@ -524,7 +524,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             key: "withSubProject_project_LetterRefNoOrReqNo",
             type: "text",
             disable: false,
-            populators: { name: "withSubProject_project_letterRefNoOrReqNo", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "withSubProject_project_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
