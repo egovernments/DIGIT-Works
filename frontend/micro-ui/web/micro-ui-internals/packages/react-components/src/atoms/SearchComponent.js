@@ -72,11 +72,11 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
               clearErrors={clearErrors}
               labelStyle={{fontSize: "16px"}}
             />  
+            <div className={`search-button-wrapper ${screenType}`}>
+              <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{uiConfig?.secondaryLabel}</LinkLabel>
+              <SubmitBar label={uiConfig?.primaryLabel} submit="submit" disabled={false}/>
+            </div>
           </div> 
-          <div className="search-button-wrapper">
-            <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{uiConfig?.secondaryLabel}</LinkLabel>
-            <SubmitBar label={uiConfig?.primaryLabel} submit="submit" disabled={false}/>
-          </div>
         </form>
       </div>
     </React.Fragment>
