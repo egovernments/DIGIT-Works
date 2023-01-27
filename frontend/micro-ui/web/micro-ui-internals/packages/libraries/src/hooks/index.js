@@ -117,6 +117,7 @@ import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
 import useViewFinancialDetails from "./project/useViewFinancialDetails";
+import useCustomAPIHook from "./useCustomAPIHook";
 
 const works = {
   useViewEstimateDetails,
@@ -282,7 +283,8 @@ const Hooks = {
   useLocation,
   bills,
   masters,
-  project
+  project,
+  useCustomAPIHook
 };
 
 export default Hooks;

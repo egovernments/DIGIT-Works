@@ -8,7 +8,6 @@ import SubmitBar from "../atoms/SubmitBar";
 import { InboxContext } from "../hoc/InboxSearchComposerContext";
 
 const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
-  console.log(uiConfig);
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
 
@@ -44,10 +43,11 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     dispatch({
       type: "searchForm",
       state: {
-        data: data
+        data: data,
+        searchClicked: true
       }
     })
-    console.log('data', data);
+    
   }
 
   const clearSearch = () => {
