@@ -19,6 +19,9 @@ const searchResult = [
         "company": "ZOXY",
         "email": "schultzshort@zoxy.com",
         "phone": "+1 (850) 563-3334",
+        "phno":{
+            "phone": "999977777",
+        },
         "tags": [
             "sunt",
             "aute",
@@ -46,6 +49,9 @@ const searchResult = [
         "favoriteFruit": "banana"
     },
     {
+        "phno": {
+            "phone": "+1 (850) 563-3334",
+        },
         "_id": "63cfb68604e9b8272bdf9f2f",
         "balance": "$3,080.13",
         "age": 30,
@@ -82,6 +88,9 @@ const searchResult = [
         "favoriteFruit": "banana"
     },
     {
+        "phno": {
+            "phone": "+1 (850) 563-3334",
+        },
         "_id": "63cfb686a7414ae3e0aaf6e3",
         "balance": "$1,593.75",
         "age": 20,
@@ -118,6 +127,9 @@ const searchResult = [
         "favoriteFruit": "banana"
     },
     {
+        "phno": {
+            "phone": "+1 (850) 563-3334",
+        },
         "_id": "63cfb6867f2982e5515ed1d4",
         "balance": "$3,852.13",
         "age": 35,
@@ -154,6 +166,9 @@ const searchResult = [
         "favoriteFruit": "apple"
     },
     {
+        "phno": {
+            "phone": "+1 (850) 563-3334",
+        },
         "_id": "63cfb6860fcdcfe1dbdacec3",
         "balance": "$1,928.10",
         "age": 39,
@@ -197,23 +212,31 @@ const ResultsTable = ({ tableContainerClass, config }) => {
     const {state,dispatch} = useContext(InboxContext)
     // debugger
     const tableColumns = useMemo(() => {
+        //test if accessor can take jsonPath value only and then check sort and global search work properly
         return config?.columns?.map(column => {
             
             if(column.redirectUrl){
                 return {
                     Header: column?.label || "NA",
+                    accessor:column.jsonPath,
                     Cell: ({ value, col, row }) => {
                         //integrate row.original with jsonPath
+                        // return <span className="link">
+                        //     <Link to={column?.redirectUrl || '/works-ui/employee/project/project-inbox-item'}>{String(t(_.get(row.original, column.jsonPath, "NA")))}</Link>
+                        // </span>
                         return <span className="link">
-                            <Link to={column?.redirectUrl || '/works-ui/employee/project/project-inbox-item'}>{String(t(_.get(row.original, column.jsonPath, "NA")))}</Link>
+                            <Link to={column?.redirectUrl || '/works-ui/employee/project/project-inbox-item'}>{String(t(value))}</Link>
                         </span>
                     }
                 }
             }
             return {
                 Header: column?.label || "NA",
+                accessor: column.jsonPath,
                 Cell: ({ value, col, row }) => {
-                    return String(t(_.get(row.original,column.jsonPath,"NA")));
+                    // return String(t(_.get(row.original,column.jsonPath,"NA")));
+                    return String(t(value));
+
                 }
             }
         })
@@ -298,9 +321,9 @@ const ResultsTable = ({ tableContainerClass, config }) => {
     // console.log("curr page", (parseInt(getValues("offset")) / parseInt(getValues("limit")) || 1));
     return (
         <div >
-            {/* {config?.enableGlobalSearch && <div className='card' style={{ "padding": "0px", marginTop: "1rem" }}>
+            {config?.enableGlobalSearch && <div className='card' style={{ "padding": "0px", marginTop: "1rem" }}>
         <TextInput className="searchInput"  onChange={(e) => onSearch(e.target.value)} style={{ border: "none", borderRadius: "200px" }} />
-      </div>} */}
+      </div>}
             <Table
                 //className="table-fixed-first-column-wage-seekers wage-seekers-table"
                 t={t}
