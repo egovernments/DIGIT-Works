@@ -7,6 +7,7 @@ import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import '../blocs/localization/app_localization.dart';
 import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
+import '../widgets/loaders.dart';
 
 class ViewMusterRollsPage extends StatelessWidget {
   const ViewMusterRollsPage({Key? key}) : super(key: key);
@@ -31,7 +32,9 @@ class ViewMusterRollsPage extends StatelessWidget {
                 })
             .toList();
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Back(),
+          Back(
+            backLabel: AppLocalizations.of(context).translate(i18.common.back),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -45,10 +48,12 @@ class ViewMusterRollsPage extends StatelessWidget {
               : WorkDetailsCard(
                   musterList,
                   isSHGInbox: true,
+                  musterRollsModel: state.musterRollsModel,
                 )
         ]);
       } else {
-        return const CircularProgressIndicator();
+        return Loaders.circularLoader(context);
+        ;
       }
     })));
   }

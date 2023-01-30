@@ -14,6 +14,7 @@ import '../blocs/attendance/create_attendee.dart';
 import '../blocs/localization/app_localization.dart';
 import '../router/app_router.dart';
 import '../utils/models.dart';
+import '../widgets/loaders.dart';
 
 class AttendanceRegisterTablePage extends StatelessWidget {
   final List<Map<String, dynamic>> projectDetails;
@@ -58,7 +59,10 @@ class AttendanceRegisterTablePage extends StatelessWidget {
               child: CustomScrollView(slivers: [
                 SliverList(
                     delegate: SliverChildListDelegate([
-                  const Back(),
+                  Back(
+                    backLabel:
+                        AppLocalizations.of(context).translate(i18.common.back),
+                  ),
                   WorkDetailsCard(projectDetails),
                 ])),
                 SliverToBoxAdapter(
@@ -97,15 +101,15 @@ class AttendanceRegisterTablePage extends StatelessWidget {
                           children: [
                             LayoutBuilder(builder: (context, constraints) {
                               var width = constraints.maxWidth < 760
-                                  ? 145.0
-                                  : (constraints.maxWidth / 4);
+                                  ? 120.0
+                                  : (constraints.maxWidth / 5);
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: shg_app.DigitTable(
                                   headerList: headerList,
                                   tableData: tableData,
                                   leftColumnWidth: width,
-                                  rightColumnWidth: width * 7,
+                                  rightColumnWidth: width * 2,
                                   height: 58 + (52.0 * tableData.length),
                                 ),
                               );
@@ -151,7 +155,8 @@ class AttendanceRegisterTablePage extends StatelessWidget {
             )
           ]);
         } else {
-          return const CircularProgressIndicator();
+          return Loaders.circularLoader(context);
+          ;
         }
       }),
     );

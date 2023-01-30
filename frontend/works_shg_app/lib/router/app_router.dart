@@ -42,11 +42,12 @@ part 'app_router.gr.dart';
         AutoRoute(page: AttendanceRegisterTablePage, path: 'manageAttendance'),
         AutoRoute(page: WorkOrderPage, path: 'work-orders'),
         AutoRoute(page: ViewMusterRollsPage, path: 'muster-rolls'),
-        AutoRoute(page: SHGInboxPage, path: 'shg-inbox'),
+        AutoRoute(page: SHGInboxPage, path: 'shg-inbox/:id/:tenantId'),
         AutoRoute(
             page: ManageAttendanceRegisterPage, path: 'manage-attendance'),
         AutoRoute(page: AttendanceInboxPage, path: 'attendance-inbox'),
-        AutoRoute(page: TrackAttendancePage, path: 'track-attendance')
+        AutoRoute(
+            page: TrackAttendancePage, path: 'track-attendance/:id/:tenantId')
       ],
     ),
   ],
