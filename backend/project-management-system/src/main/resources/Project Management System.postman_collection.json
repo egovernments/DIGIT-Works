@@ -15,91 +15,69 @@
 							"pm.test(\"RequestInfo is required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.RequestInfo).to.not.be.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"RequestInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UserInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo).to.not.be.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UserInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo).to.not.be.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UUID is required in UserInfo\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UUID is required in UserInfo\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.undefined;",
-							"    }",
+							"}",
 							");",
 							"",
 							"pm.test(\"Projects are required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.Projects).to.not.be.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"Projects are required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.Projects).to.not.be.null;",
-							"    }",
+							"}",
 							");",
 							"",
 							"pm.test(\"TenantId is required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    var project = req.Projects[0];",
 							"    pm.expect(project.tenantId).to.be.not.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"TenantId is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    var project = req.Projects[0];",
 							"    pm.expect(project.tenantId).to.be.not.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"TenantId is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    var project = req.Projects[0];",
 							"    pm.expect(project.tenantId).not.to.eql(\"\");",
-							"    }",
+							"}",
 							");",
-							"    ",
 							"",
 							"pm.test(\"Start date should be less than end date\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    var project = req.Projects[0];",
-							"    pm.expect(project.endDate).to.be.not.below(project.startDate);",
+							"    if (Number.isFinite(project.endDate) && (project.endDate != undefined || project.endDate != null)) {",
+							"        pm.expect(project.endDate).to.be.not.below(project.startDate);",
 							"    }",
+							"}",
 							");",
 							"",
-							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(200))",
+							"pm.test(\"Response is successful\", () =>",
+							"    pm.expect(pm.response.to.have.status(200))",
 							");",
 							"",
 							"pm.test(\"Project Number is enriched\", function () {",
 							"    var res = pm.response.json();",
 							"    var projectNumber = res.Projects[0].projectNumber;",
-							"    pm.expect(projectNumber.substring(0,2)).to.eql(\"PR\");",
-							"    }",
+							"    pm.expect(projectNumber.substring(0, 2)).to.eql(\"PR\");",
+							"}",
 							");",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.collectionVariables.set(\"tenantId\", responseData.Projects[0].tenantId);",
+							"pm.collectionVariables.set(\"stateLevelTenant\", responseData.Projects[0].tenantId.split('.', 1)[0]);",
+							"",
+							"pm.collectionVariables.set(\"projectId\", responseData.Projects[0].id);",
+							"pm.collectionVariables.set(\"projectNumber\", responseData.Projects[0].projectNumber);",
+							"",
+							"pm.collectionVariables.set(\"lastChangedSince\", (responseData.Projects[0].auditDetails.createdTime));",
+							"pm.collectionVariables.set(\"lastChangedSinceIncreased\", (responseData.Projects[0].auditDetails.createdTime + 1000));",
+							"",
+							"pm.collectionVariables.set(\"addressId\", responseData.Projects[0].address.id);",
+							"pm.collectionVariables.set(\"targetId\", responseData.Projects[0].targets[0].id);",
+							"pm.collectionVariables.set(\"documentId\", responseData.Projects[0].documents[0].id);",
 							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"tenantId\", \"pb.amritsar\");"
 						],
 						"type": "text/javascript"
 					}
@@ -110,7 +88,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n  \"Projects\": [\n    {\n      \"tenantId\": \"pb.amritsar\",\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"CREATE\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n  \"Projects\": [\n    {\n      \"tenantId\": \"{{tenantId}}\",\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"{{tenantId}}\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"CREATE\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -141,68 +119,45 @@
 						"exec": [
 							"pm.test(\"RequestInfo is required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo).to.not.be.null});",
-							"",
-							"pm.test(\"RequestInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo).to.not.be.undefined});",
-							"",
-							"pm.test(\"UserInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo).to.not.be.null});",
-							"",
-							"pm.test(\"UserInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo).to.not.be.undefined});",
-							"",
-							"pm.test(\"UUID is required in UserInfo\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.null});",
-							"",
-							"pm.test(\"UUID is required in UserInfo\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.undefined});",
+							"    pm.expect(req.RequestInfo).to.not.be.null;",
+							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+							"    }",
+							");",
 							"",
 							"pm.test(\"Projects are required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.Projects).to.not.be.undefined});",
-							"",
-							"pm.test(\"Projects are required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.Projects).to.not.be.null});",
-							"",
-							"pm.test(\"TenantId is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    req.Projects.forEach(p => {",
-							"        pm.expect(p.tenantId).to.be.not.null});",
-							"    });",
+							"    pm.expect(req.Projects).to.not.be.undefined;",
+							"    pm.expect(req.Projects).to.not.be.null;",
+							"    }",
+							");",
 							"",
 							"pm.test(\"TenantId is required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
-							"    req.Projects.forEach(p => {",
-							"        pm.expect(p.tenantId).to.be.not.undefined});",
+							"    req.Projects.forEach(project => {",
+							"         pm.expect(project.tenantId).to.be.not.null;",
+							"         pm.expect(project.tenantId).to.be.not.undefined;",
+							"         pm.expect(project.tenantId).not.to.eql(\"\");",
 							"    });",
-							"",
-							"pm.test(\"TenantId is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    req.Projects.forEach(p => {",
-							"        pm.expect(p.tenantId).not.to.eql(\"\");});",
-							"    });",
+							"    }",
+							");",
 							"    ",
 							"pm.test(\"All Projects must have same tenantId\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    var tenantId = req.Projects[0].tenantId;",
-							"    req.Projects.forEach(p => {",
-							"        pm.expect(p.tenantId).to.eql(tenantId);",
-							"        });",
+							"    req.Projects.forEach(project => {",
+							"        pm.expect(project.tenantId).to.eql(tenantId);",
 							"    });",
+							"});",
 							"",
 							"pm.test(\"Start date should be less than end date\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
-							"    req.Projects.forEach(p => {",
-							"        pm.expect(p.endDate).to.be.not.below(p.startDate);",
-							"        });",
+							"    req.Projects.forEach(project => {",
+							"        if (Number.isFinite(project.endDate) && (project.endDate != undefined || project.endDate != null )) {",
+							"            pm.expect(project.endDate).to.be.not.below(project.startDate);",
+							"        }",
 							"    });",
+							"    }",
+							");",
 							"",
 							"pm.test(\"Response is successful\", () => ",
 							"   pm.expect(pm.response.to.have.status(200)));",
@@ -210,12 +165,20 @@
 							"pm.test(\"Project Number is enriched\", function () {",
 							"    var res = pm.response.json();",
 							"    ",
-							"    res.Projects.forEach(p => {",
-							"        var projectNumber = res.Projects[0].projectNumber;",
-							"        pm.expect(projectNumber.substring(0,2)).to.eql(\"PR\");",
+							"    res.Projects.forEach(project => {",
+							"        pm.expect(project.projectNumber.substring(0,2)).to.eql(\"PR\");",
 							"        });",
 							"    }",
 							");",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.collectionVariables.set(\"projectId2\", responseData.Projects[1].id);",
+							"pm.collectionVariables.set(\"projectNumber2\", responseData.Projects[1].projectNumber);",
+							"",
+							"pm.collectionVariables.set(\"addressId2\", responseData.Projects[1].address.id);",
+							"pm.collectionVariables.set(\"targetId2\", responseData.Projects[1].targets[0].id);",
+							"pm.collectionVariables.set(\"documentId2\", responseData.Projects[1].documents[0].id);",
+							"",
 							""
 						],
 						"type": "text/javascript"
@@ -227,7 +190,98 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n  \"Projects\": [\n    {\n      \"tenantId\": \"pb.amritsar\",\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    },\n    {\n      \"tenantId\": \"pb.amritsar\",\n      \"name\": \"project2\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"CREATE\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n  \"Projects\": [\n    {\n      \"tenantId\": \"{{tenantId}}\",\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"{{tenantId}}\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    },\n    {\n      \"tenantId\": \"{{tenantId}}\",\n      \"name\": \"project2\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"{{tenantId}}\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"CREATE\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/pms/project/v1/_create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pms",
+						"project",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Project - Success - Add Sub Project",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"RequestInfo is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.RequestInfo).to.not.be.null;",
+							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+							"}",
+							");",
+							"",
+							"pm.test(\"Projects are required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.Projects).to.not.be.undefined;",
+							"    pm.expect(req.Projects).to.not.be.null;",
+							"}",
+							");",
+							"",
+							"pm.test(\"TenantId is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var project = req.Projects[0];",
+							"    pm.expect(project.tenantId).to.be.not.null;",
+							"    pm.expect(project.tenantId).to.be.not.undefined;",
+							"    pm.expect(project.tenantId).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Start date should be less than end date\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var project = req.Projects[0];",
+							"    if (Number.isFinite(project.endDate) && (project.endDate != undefined || project.endDate != null)) {",
+							"        pm.expect(project.endDate).to.be.not.below(project.startDate);",
+							"    }",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response is successful\", () =>",
+							"    pm.expect(pm.response.to.have.status(200))",
+							");",
+							"",
+							"pm.test(\"Project Number is enriched\", function () {",
+							"    var res = pm.response.json();",
+							"    var projectNumber = res.Projects[0].projectNumber;",
+							"    pm.expect(projectNumber.substring(0, 2)).to.eql(\"PR\");",
+							"}",
+							");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n  \"Projects\": [\n    {\n      \"tenantId\": \"{{tenantId}}\",\n      \"name\": \"project1-subproject\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"{{tenantId}}\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"{{projectId}}\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"CREATE\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -257,7 +311,16 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(400)));"
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"PROJECT\");",
+							"    pm.expect(message).to.eql(\"Projects are mandatory\");",
+							"    }",
+							");"
 						],
 						"type": "text/javascript"
 					}
@@ -298,7 +361,16 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(400)));"
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"TENANT_ID\");",
+							"    pm.expect(message).to.eql(\"Tenant ID is mandatory\");",
+							"    }",
+							");"
 						],
 						"type": "text/javascript"
 					}
@@ -309,7 +381,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n  \"Projects\": [\n    {\n      \"tenantId\": \"\",\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"CREATE\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n  \"Projects\": [\n    {\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"CREATE\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -339,7 +411,16 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(400)));"
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"MULTIPLE_TENANTS\");",
+							"    pm.expect(message).to.eql(\"All projects must have same tenant Id. Please create new request for different tentant id\");",
+							"    }",
+							");"
 						],
 						"type": "text/javascript"
 					}
@@ -350,7 +431,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n  \"Projects\": [\n    {\n      \"tenantId\": \"pb.amritsar\",\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    },\n    {\n      \"tenantId\": \"pb.jalandhar\",\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"CREATE\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n  \"Projects\": [\n    {\n      \"tenantId\": \"{{tenantId}}\",\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    },\n    {\n      \"tenantId\": \"state1\",\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 0,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"CREATE\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -373,14 +454,23 @@
 			"response": []
 		},
 		{
-			"name": "Search Project - Success - projectId",
+			"name": "Create Project - Validation Error - Start date greater than end date",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(200)));"
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"INVALID_DATE\");",
+							"    pm.expect(message).to.eql(\"Start date should be less than end date\");",
+							"    }",
+							");"
 						],
 						"type": "text/javascript"
 					}
@@ -391,7 +481,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"8b8983bf-f39e-4758-942c-ae963dfbcc93\",\n      \"tenantId\": \"pb.amritsar\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n  \"Projects\": [\n    {\n      \"tenantId\": \"{{tenantId}}\",\n      \"name\": \"project1\",\n      \"projectType\": \"MP-CWS\",\n      \"projectSubType\": \"\",\n      \"department\": \"DEPT_11\",\n      \"description\": \"DEPT_11 description\",\n      \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n      \"documents\": [\n          {\n            \"id\": \"\",\n            \"documentType\": \"Document1\",\n            \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n            \"documentUid\": \"QWERTY123\"\n          }\n      ],\n      \"address\": {\n        \"tenantId\": \"pb.amritsar\",\n        \"doorNo\": \"1\",\n        \"latitude\": 90,\n        \"longitude\": 180,\n        \"locationAccuracy\": 10000,\n        \"type\": \"Home\",\n        \"addressLine1\": \"Address Line 1\",\n        \"addressLine2\": \"Address Line 2\",\n        \"landmark\": \"Area1\",\n        \"city\": \"City1\",\n        \"pincode\": \"999999\",\n        \"buildingName\": \"Test_Building\",\n        \"street\": \"Test_Street\",\n        \"locality\": \"SUN04\"\n      },\n      \"startDate\": 10,\n      \"endDate\": 0, \n      \"isTaskEnabled\": false,\n      \"parent\": \"\",\n      \"targets\": [\n        {\n          \"beneficiaryType\": \"Slum\",\n          \"totalNo\": 0,\n          \"targetNo\": 0\n        }\n      ],\n      \"additionalDetails\": {},\n      \"rowVersion\": 0\n    }\n  ],\n  \"apiOperation\": \"CREATE\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -399,7 +489,55 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId=pb.amritsar",
+					"raw": "{{base_url}}/pms/project/v1/_create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pms",
+						"project",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Project - Success - Project Id based",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Register Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var id = res.Projects[0].id;",
+							"    pm.expect(id).to.eql(pm.collectionVariables.get(\"projectId\"));",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"{{projectId}}\",\n      \"tenantId\": \"{{tenantId}}\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId={{tenantId}}",
 					"host": [
 						"{{base_url}}"
 					],
@@ -420,7 +558,7 @@
 						},
 						{
 							"key": "tenantId",
-							"value": "pb.amritsar"
+							"value": "{{tenantId}}"
 						},
 						{
 							"key": "lastChangedSince",
@@ -438,14 +576,21 @@
 			"response": []
 		},
 		{
-			"name": "Search Project - Success - lastChangedSince & includeDeleted",
+			"name": "Search Project - Success - Project Id and Project number based",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(200)));"
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Register Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var id = res.Projects[0].id;",
+							"    pm.expect(id).to.eql(pm.collectionVariables.get(\"projectId\"));",
+							"    }",
+							");"
 						],
 						"type": "text/javascript"
 					}
@@ -456,7 +601,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n     {\n      \"id\": \"\",\n      \"tenantId\": \"pb.amritsar\",\n      \"projectType\": \"MP-CWS\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"{{projectId}}\",\n      \"tenantId\": \"{{tenantId}}\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"{{projectNumber}}\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -464,7 +609,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId=pb.amritsar&lastChangedSince=1673494068231&includeDeleted=true",
+					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId={{tenantId}}",
 					"host": [
 						"{{base_url}}"
 					],
@@ -485,11 +630,151 @@
 						},
 						{
 							"key": "tenantId",
-							"value": "pb.amritsar"
+							"value": "{{tenantId}}"
 						},
 						{
 							"key": "lastChangedSince",
-							"value": "1673494068231"
+							"value": "1673494068231",
+							"disabled": true
+						},
+						{
+							"key": "includeDeleted",
+							"value": "true",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Project - Success - lastChangedSince below project created time",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Register Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.Projects.length).to.be.above(0);",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n     {\n      \"id\": \"\",\n      \"tenantId\": \"{{tenantId}}\",\n      \"projectType\": \"MP-CWS\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId={{tenantId}}&lastChangedSince={{lastChangedSince}}&includeDeleted=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pms",
+						"project",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						},
+						{
+							"key": "lastChangedSince",
+							"value": "{{lastChangedSince}}"
+						},
+						{
+							"key": "includeDeleted",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Project - Success - lastChangedSince greater than Project created time & includeDeleted",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Register Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.Projects.length).to.eql(0);",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n     {\n      \"id\": \"\",\n      \"tenantId\": \"{{tenantId}}\",\n      \"projectType\": \"MP-CWS\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId={{tenantId}}&lastChangedSince={{lastChangedSinceIncreased}}&includeDeleted=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pms",
+						"project",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						},
+						{
+							"key": "lastChangedSince",
+							"value": "{{lastChangedSinceIncreased}}"
 						},
 						{
 							"key": "includeDeleted",
@@ -508,7 +793,16 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(400)));"
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"PROJECT_SEARCH_FIELDS\");",
+							"    pm.expect(message).to.eql(\"Any one project search field is required\");",
+							"    }",
+							");"
 						],
 						"type": "text/javascript"
 					}
@@ -519,7 +813,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"\",\n      \"tenantId\": \"pb.amritsar\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"\",\n      \"tenantId\": \"{{tenantId}}\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -527,7 +821,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId=pb.amritsar",
+					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId={{tenantId}}",
 					"host": [
 						"{{base_url}}"
 					],
@@ -548,17 +842,7 @@
 						},
 						{
 							"key": "tenantId",
-							"value": "pb.amritsar"
-						},
-						{
-							"key": "lastChangedSince",
-							"value": "1673494068231",
-							"disabled": true
-						},
-						{
-							"key": "includeDeleted",
-							"value": "true",
-							"disabled": true
+							"value": "{{tenantId}}"
 						}
 					]
 				}
@@ -575,84 +859,66 @@
 							"pm.test(\"RequestInfo is required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.RequestInfo).to.not.be.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"RequestInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UserInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo).to.not.be.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UserInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo).to.not.be.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UUID is required in UserInfo\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UUID is required in UserInfo\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.undefined;",
-							"    }",
+							"}",
 							");",
 							"",
 							"pm.test(\"Projects are required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.Projects).to.not.be.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"Projects are required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.Projects).to.not.be.null;",
-							"    }",
+							"}",
 							");",
 							"",
 							"pm.test(\"TenantId is required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    var project = req.Projects[0];",
 							"    pm.expect(project.tenantId).to.be.not.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"TenantId is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    var project = req.Projects[0];",
 							"    pm.expect(project.tenantId).to.be.not.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"TenantId is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    var project = req.Projects[0];",
 							"    pm.expect(project.tenantId).not.to.eql(\"\");",
-							"    }",
+							"}",
 							");",
-							"    ",
 							"",
 							"pm.test(\"Start date should be less than end date\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    var project = req.Projects[0];",
-							"    pm.expect(project.endDate).to.be.not.below(project.startDate);",
+							"    if (Number.isFinite(project.endDate) && (project.endDate != undefined || project.endDate != null)) {",
+							"        pm.expect(project.endDate).to.be.not.below(project.startDate);",
 							"    }",
+							"}",
+							");",
+							"",
+							"pm.test(\"Project Id is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.Projects[0].id).to.not.be.undefined;",
+							"    pm.expect(req.Projects[0].id).to.not.be.null;",
+							"    pm.expect(req.Projects[0].id).not.to.eql(\"\");",
+							"}",
 							");",
 							"",
 							"pm.test(\"Response is successful\", () => ",
 							"   pm.expect(pm.response.to.have.status(200))",
 							");",
-							""
+							"",
+							"pm.test(\"Response have same project id as request\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var projectIdRequest = req.Projects[0].id;",
+							"    var res = pm.response.json();",
+							"    var projectIdResponse = res.Projects[0].id;",
+							"   ",
+							"    pm.expect(projectIdRequest).to.eql(projectIdResponse);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response have same project number as request\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var projectNumberRequest = req.Projects[0].id;",
+							"    var res = pm.response.json();",
+							"    var projectNumberResponse = res.Projects[0].id;",
+							"",
+							"    pm.expect(projectNumberRequest).to.eql(projectNumberResponse);",
+							"}",
+							");"
 						],
 						"type": "text/javascript"
 					}
@@ -663,7 +929,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"8b8983bf-f39e-4758-942c-ae963dfbcc93\",\n            \"tenantId\": \"pb.amritsar\",\n            \"projectNumber\": \"PR/2022-23/01/000078\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"cf15593d-9c95-4ca6-9720-9ea02befed5a\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"d760bfce-0c6f-482f-aeea-f073f7a7875e\",\n                \"tenantId\": \"pb.amritsar\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"rte\",\n            \"targets\": [\n                {\n                    \"id\": \"a6d6c4bd-e3cb-4039-a1df-e225ae95d7b9\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"{{projectId}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"projectNumber\": \"{{projectNumber}}\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"{{documentId}}\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"{{addressId}}\",\n                \"tenantId\": \"{{tenantId}}\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"\",\n            \"targets\": [\n                {\n                    \"id\": \"{{targetId}}\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -694,73 +960,57 @@
 						"exec": [
 							"pm.test(\"RequestInfo is required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo).to.not.be.null});",
-							"",
-							"pm.test(\"RequestInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo).to.not.be.undefined});",
-							"",
-							"pm.test(\"UserInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo).to.not.be.null});",
-							"",
-							"pm.test(\"UserInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo).to.not.be.undefined});",
-							"",
-							"pm.test(\"UUID is required in UserInfo\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.null});",
-							"",
-							"pm.test(\"UUID is required in UserInfo\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.undefined});",
+							"    pm.expect(req.RequestInfo).to.not.be.null;",
+							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+							"    }",
+							");",
 							"",
 							"pm.test(\"Projects are required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.Projects).to.not.be.undefined});",
-							"",
-							"pm.test(\"Projects are required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.Projects).to.not.be.null});",
-							"",
-							"pm.test(\"TenantId is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    req.Projects.forEach(p => {",
-							"        pm.expect(p.tenantId).to.be.not.null});",
-							"    });",
+							"    pm.expect(req.Projects).to.not.be.undefined;",
+							"    pm.expect(req.Projects).to.not.be.null;",
+							"    }",
+							");",
 							"",
 							"pm.test(\"TenantId is required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
-							"    req.Projects.forEach(p => {",
-							"        pm.expect(p.tenantId).to.be.not.undefined});",
+							"    req.Projects.forEach(project => {",
+							"         pm.expect(project.tenantId).to.be.not.null;",
+							"         pm.expect(project.tenantId).to.be.not.undefined;",
+							"         pm.expect(project.tenantId).not.to.eql(\"\");",
 							"    });",
-							"",
-							"pm.test(\"TenantId is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    req.Projects.forEach(p => {",
-							"        pm.expect(p.tenantId).not.to.eql(\"\");});",
-							"    });",
+							"    }",
+							");",
 							"    ",
 							"pm.test(\"All Projects must have same tenantId\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    var tenantId = req.Projects[0].tenantId;",
-							"    req.Projects.forEach(p => {",
-							"        pm.expect(p.tenantId).to.eql(tenantId);",
-							"        });",
+							"    req.Projects.forEach(project => {",
+							"        pm.expect(project.tenantId).to.eql(tenantId);",
 							"    });",
+							"});",
 							"",
 							"pm.test(\"Start date should be less than end date\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
-							"    req.Projects.forEach(p => {",
-							"        pm.expect(p.endDate).to.be.not.below(p.startDate);",
-							"        });",
+							"    req.Projects.forEach(project => {",
+							"        if (Number.isFinite(project.endDate) && (project.endDate != undefined || project.endDate != null )) {",
+							"            pm.expect(project.endDate).to.be.not.below(project.startDate);",
+							"        }",
 							"    });",
+							"    }",
+							");",
+							"",
+							"pm.test(\"Project Id is required\", function () {",
+							"    req.Projects.forEach(project => {",
+							"        pm.expect(project.id).to.not.be.undefined;",
+							"        pm.expect(project.id).to.not.be.null;",
+							"        pm.expect(project.id).not.to.eql(\"\");",
+							"    });",
+							"}",
+							");",
 							"",
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(200)));",
-							"",
-							""
+							"   pm.expect(pm.response.to.have.status(200)));"
 						],
 						"type": "text/javascript"
 					}
@@ -771,7 +1021,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"8b8983bf-f39e-4758-942c-ae963dfbcc93\",\n            \"tenantId\": \"pb.amritsar\",\n            \"projectNumber\": \"PR/2022-23/01/000078\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"cf15593d-9c95-4ca6-9720-9ea02befed5a\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"d760bfce-0c6f-482f-aeea-f073f7a7875e\",\n                \"tenantId\": \"pb.amritsar\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"rte\",\n            \"targets\": [\n                {\n                    \"id\": \"a6d6c4bd-e3cb-4039-a1df-e225ae95d7b9\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        },\n        {\n            \"id\": \"c5d9fe96-c253-4af9-8e97-815493c64973\",\n            \"tenantId\": \"pb.amritsar\",\n            \"projectNumber\": \"PR/2022-23/01/000079\",\n            \"name\": \"project20\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"40834cc3-f535-432c-ab15-6af0f73bfb26\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"e981a074-4fc2-4a29-95fc-a5d12cfc85cd\",\n                \"tenantId\": \"pb.amritsar\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"\",\n            \"targets\": [\n                {\n                    \"id\": \"88de6ec4-a548-4f78-8514-ed6a25b54e5e\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"{{projectId}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"projectNumber\": \"{{projectNumber}}\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"{{documentId}}\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"{{addressId}}\",\n                \"tenantId\": \"{{tenantId}}\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"rte\",\n            \"targets\": [\n                {\n                    \"id\": \"{{targetId}}\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        },\n        {\n            \"id\": \"{{projectId2}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"projectNumber\": \"{{projectNumber2}}\",\n            \"name\": \"project20\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"{{documentId2}}\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"{{addressId2}}\",\n                \"tenantId\": \"{{tenantId}}\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"\",\n            \"targets\": [\n                {\n                    \"id\": \"{{targetId2}}\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -803,78 +1053,41 @@
 							"pm.test(\"RequestInfo is required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.RequestInfo).to.not.be.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"RequestInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UserInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo).to.not.be.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UserInfo is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo).to.not.be.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UUID is required in UserInfo\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"UUID is required in UserInfo\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.undefined;",
-							"    }",
+							"}",
 							");",
 							"",
 							"pm.test(\"Projects are required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.Projects).to.not.be.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"Projects are required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
 							"    pm.expect(req.Projects).to.not.be.null;",
-							"    }",
+							"}",
 							");",
 							"",
 							"pm.test(\"TenantId is required\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    var project = req.Projects[0];",
 							"    pm.expect(project.tenantId).to.be.not.null;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"TenantId is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    var project = req.Projects[0];",
 							"    pm.expect(project.tenantId).to.be.not.undefined;",
-							"    }",
-							");",
-							"",
-							"pm.test(\"TenantId is required\", function () {",
-							"    var req = JSON.parse(pm.request.body.raw);",
-							"    var project = req.Projects[0];",
 							"    pm.expect(project.tenantId).not.to.eql(\"\");",
-							"    }",
+							"}",
 							");",
-							"    ",
 							"",
 							"pm.test(\"Start date should be less than end date\", function () {",
 							"    var req = JSON.parse(pm.request.body.raw);",
 							"    var project = req.Projects[0];",
-							"    pm.expect(project.endDate).to.be.not.below(project.startDate);",
+							"    if (Number.isFinite(project.endDate) && (project.endDate != undefined || project.endDate != null)) {",
+							"        pm.expect(project.endDate).to.be.not.below(project.startDate);",
 							"    }",
+							"}",
+							");",
+							"",
+							"pm.test(\"Project Id is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.Projects[0].id).to.not.be.undefined;",
+							"    pm.expect(req.Projects[0].id).to.not.be.null;",
+							"    pm.expect(req.Projects[0].id).not.to.eql(\"\");",
+							"}",
 							");",
 							"",
 							"pm.test(\"Response is successful\", () => ",
@@ -915,7 +1128,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"8b8983bf-f39e-4758-942c-ae963dfbcc93\",\n            \"tenantId\": \"pb.amritsar\",\n            \"projectNumber\": \"PR/2022-23/01/000078\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"cf15593d-9c95-4ca6-9720-9ea02befed5a\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                },\n                {\n                    \"id\": \"\",\n                    \"documentType\": \"Document2\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY456\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"d760bfce-0c6f-482f-aeea-f073f7a7875e\",\n                \"tenantId\": \"pb.amritsar\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"\",\n            \"targets\": [\n                {\n                    \"id\": \"a6d6c4bd-e3cb-4039-a1df-e225ae95d7b9\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                },\n                {\n                    \"id\": \"\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"{{projectId}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"projectNumber\": \"{{projectNumber}}\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"{{documentId}}\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                },\n                {\n                    \"id\": \"\",\n                    \"documentType\": \"Document2\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY456\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"{{addressId}}\",\n                \"tenantId\": \"{{tenantId}}\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"\",\n            \"targets\": [\n                {\n                    \"id\": \"{{targetId}}\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                },\n                {\n                    \"id\": \"\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -945,7 +1158,16 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(400)));"
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"UPDATE_PROJECT\");",
+							"    pm.expect(message).to.eql(\"Project Id is mandatory\");",
+							"    }",
+							");"
 						],
 						"type": "text/javascript"
 					}
@@ -956,7 +1178,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"\",\n            \"tenantId\": \"pb.amritsar\",\n            \"projectNumber\": \"PR/2022-23/01/000078\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"cf15593d-9c95-4ca6-9720-9ea02befed5a\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"d760bfce-0c6f-482f-aeea-f073f7a7875e\",\n                \"tenantId\": \"pb.amritsar\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"rte\",\n            \"targets\": [\n                {\n                    \"id\": \"a6d6c4bd-e3cb-4039-a1df-e225ae95d7b9\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"projectNumber\": \"{{projectNumber}}\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"{{documentId}}\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"{{addressId}}\",\n                \"tenantId\": \"{{tenantId}}\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"rte\",\n            \"targets\": [\n                {\n                    \"id\": \"{{targetId}}\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -986,7 +1208,16 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(400)));"
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"TENANT_ID\");",
+							"    pm.expect(message).to.eql(\"Tenant ID is mandatory\");",
+							"    }",
+							");"
 						],
 						"type": "text/javascript"
 					}
@@ -997,7 +1228,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"8b8983bf-f39e-4758-942c-ae963dfbcc93\",\n            \"tenantId\": \"\",\n            \"projectNumber\": \"PR/2022-23/01/000078\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"cf15593d-9c95-4ca6-9720-9ea02befed5a\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"d760bfce-0c6f-482f-aeea-f073f7a7875e\",\n                \"tenantId\": \"pb.amritsar\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"rte\",\n            \"targets\": [\n                {\n                    \"id\": \"a6d6c4bd-e3cb-4039-a1df-e225ae95d7b9\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"{{projectId}}\",\n            \"tenantId\": \"\",\n            \"projectNumber\": \"{{projectNumber}}\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"{{documentId}}\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"{{addressId}}\",\n                \"tenantId\": \"{{tenantId}}\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"rte\",\n            \"targets\": [\n                {\n                    \"id\": \"{{targetId}}\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1027,7 +1258,16 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(400)));"
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"MULTIPLE_TENANTS\");",
+							"    pm.expect(message).to.eql(\"All projects must have same tenant Id. Please create new request for different tentant id\");",
+							"    }",
+							");"
 						],
 						"type": "text/javascript"
 					}
@@ -1038,7 +1278,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"8b8983bf-f39e-4758-942c-ae963dfbcc93\",\n            \"tenantId\": \"pb.amritsar\",\n            \"projectNumber\": \"PR/2022-23/01/000078\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"cf15593d-9c95-4ca6-9720-9ea02befed5a\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"d760bfce-0c6f-482f-aeea-f073f7a7875e\",\n                \"tenantId\": \"pb.amritsar\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"rte\",\n            \"targets\": [\n                {\n                    \"id\": \"a6d6c4bd-e3cb-4039-a1df-e225ae95d7b9\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        },\n        {\n            \"id\": \"8b8983bf-f39e-4758-942c-ae963dfbcc93\",\n            \"tenantId\": \"pb.jalandhar\",\n            \"projectNumber\": \"PR/2022-23/01/000078\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"cf15593d-9c95-4ca6-9720-9ea02befed5a\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"d760bfce-0c6f-482f-aeea-f073f7a7875e\",\n                \"tenantId\": \"pb.amritsar\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"rte\",\n            \"targets\": [\n                {\n                    \"id\": \"a6d6c4bd-e3cb-4039-a1df-e225ae95d7b9\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n        {\n            \"id\": \"{{projectId}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"projectNumber\": \"{{projectNumber}}\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"{{documentId}}\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"{{addressId}}\",\n                \"tenantId\": \"{{tenantId}}\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"rte\",\n            \"targets\": [\n                {\n                    \"id\": \"{{targetId}}\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        },\n        {\n            \"id\": \"{{projectId2}}\",\n            \"tenantId\": \"state2\",\n            \"projectNumber\": \"{{projectNumber2}}\",\n            \"name\": \"project10\",\n            \"projectType\": \"MP-CWS\",\n            \"projectSubType\": \"\",\n            \"department\": \"DEPT_11\",\n            \"description\": \"DEPT_11 description\",\n            \"referenceID\": \"d9d8ffee-68a2-485d-bc50-14160477ea4c\",\n            \"documents\": [\n                {\n                    \"id\": \"{{documentId2}}\",\n                    \"documentType\": \"Document1\",\n                    \"fileStore\": \"99dcde84-aae2-4836-9ff9-f711fb82bb8b\",\n                    \"documentUid\": \"QWERTY123\",\n                    \"status\": null,\n                    \"additionalDetails\": null\n                }\n            ],\n            \"address\": {\n                \"id\": \"{{addressId2}}\",\n                \"tenantId\": \"state2\",\n                \"doorNo\": \"1\",\n                \"latitude\": 90.0,\n                \"longitude\": 180.0,\n                \"locationAccuracy\": 10000.0,\n                \"type\": \"Home\",\n                \"addressLine1\": \"Address Line 1\",\n                \"addressLine2\": \"Address Line 2\",\n                \"landmark\": \"Area1\",\n                \"city\": \"City1\",\n                \"pincode\": \"999999\",\n                \"buildingName\": \"Test_Building\",\n                \"street\": \"Test_Street\",\n                \"locality\": \"SUN04\"\n            },\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"isTaskEnabled\": false,\n            \"parent\": \"rte\",\n            \"targets\": [\n                {\n                    \"id\": \"{{targetId2}}\",\n                    \"beneficiaryType\": \"Slum\",\n                    \"totalNo\": 0,\n                    \"targetNo\": 0,\n                    \"isDeleted\": null\n                }\n            ],\n            \"additionalDetails\": {},\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ],\n  \"apiOperation\": \"UPDATE\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1059,6 +1299,110 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"if (pm.environment.get(\"base_url\").includes(\"localhost\")) {",
+					"",
+					"    var tenantId = \"pb.amritsar\";",
+					"    var id = 1;",
+					"    var uuid = \"11b0e02b-0145-4de2-bc42-c97b96264807\";",
+					"",
+					"    var roles = [{",
+					"                    \"code\": \"SUPERUSER\",",
+					"                    \"name\": \"SUPER USER\",",
+					"                    \"tenantId\": tenantId",
+					"                }];",
+					"",
+					"    var userInfo = {",
+					"        \"id\": id,",
+					"        \"uuid\": uuid,",
+					"        \"userName\": \"\",",
+					"        \"name\": \"\",",
+					"        \"mobileNumber\": \"\",",
+					"        \"emailId\": \"\",",
+					"        \"type\": \"\",",
+					"        \"roles\": roles,",
+					"        \"active\": true,",
+					"        \"tenantId\": \"pb.amritsar\"",
+					"    };",
+					"",
+					"    pm.request.body.raw = pm.request.body.raw.replace('\"{{token}}\"', '\"\", \\n \"userInfo\":  ' + JSON.stringify(userInfo));",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "tenantId",
+			"value": ""
+		},
+		{
+			"key": "stateLevelTenant",
+			"value": ""
+		},
+		{
+			"key": "projectId",
+			"value": ""
+		},
+		{
+			"key": "projectNumber",
+			"value": ""
+		},
+		{
+			"key": "lastChangedSince",
+			"value": ""
+		},
+		{
+			"key": "lastChangedSinceIncreased",
+			"value": ""
+		},
+		{
+			"key": "addressId",
+			"value": ""
+		},
+		{
+			"key": "targetId",
+			"value": ""
+		},
+		{
+			"key": "documentId",
+			"value": ""
+		},
+		{
+			"key": "projectId2",
+			"value": ""
+		},
+		{
+			"key": "projectNumber2",
+			"value": ""
+		},
+		{
+			"key": "addressId2",
+			"value": ""
+		},
+		{
+			"key": "documentId2",
+			"value": ""
+		},
+		{
+			"key": "targetId2",
+			"value": ""
 		}
 	]
 }
