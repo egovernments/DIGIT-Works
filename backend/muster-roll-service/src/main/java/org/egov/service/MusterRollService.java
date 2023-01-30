@@ -6,22 +6,28 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.kafka.Producer;
 import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.MdmsUtil;
+import org.egov.util.MusterRollServiceUtil;
 import org.egov.validator.MusterRollValidator;
-import org.egov.web.models.MusterRoll;
-import org.egov.web.models.MusterRollRequest;
-import org.egov.web.models.MusterRollSearchCriteria;
-import org.egov.web.models.Workflow;
+import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -50,6 +56,18 @@ public class MusterRollService {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private MdmsUtil mdmsUtils;
+
+    @Autowired
+    private MusterRollServiceUtil musterRollServiceUtil;
+
+    @Autowired
+    private MusterRollServiceConfiguration config;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     /**
@@ -104,7 +122,19 @@ public class MusterRollService {
         musterRollValidator.validateSearchMuster(requestInfoWrapper,searchCriteria);
         enrichmentService.enrichSearchRequest(searchCriteria);
         List<MusterRoll> musterRollList = musterRollRepository.getMusterRoll(searchCriteria);
-        return musterRollList;
+        List<MusterRoll> filteredMusterRollList = musterRollList;
+        List<Role> roles = requestInfoWrapper.getRequestInfo().getUserInfo().getRoles();
+        boolean isFilterRequired = roles.stream()
+                .anyMatch(role -> role.getCode().equalsIgnoreCase("ORG_ADMIN") || role.getCode().equalsIgnoreCase("ORG_STAFF"));
+        //filter the muster rolls that corresponds to the user if role is org_admin or org_staff
+        if (!CollectionUtils.isEmpty(musterRollList) && isFilterRequired) {
+            filteredMusterRollList = filterMusterRolls(requestInfoWrapper.getRequestInfo(),searchCriteria,musterRollList);
+        }
+        //apply the limit and offset
+        if (filteredMusterRollList != null && !musterRollServiceUtil.isTenantBasedSearch(searchCriteria)) {
+            applyLimitAndOffset(searchCriteria,filteredMusterRollList);
+        }
+        return filteredMusterRollList;
     }
 
     /**
@@ -117,13 +147,21 @@ public class MusterRollService {
         log.info("MusterRollService::updateMusterRoll");
 
         MusterRoll existingMusterRoll = fetchExistingMusterRoll(musterRollRequest.getMusterRoll());
-        musterRollValidator.validateUpdateMusterRoll(musterRollRequest);
-        enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll);
-        Workflow workflow = musterRollRequest.getWorkflow();
+        log.info("MusterRollService::updateMusterRoll::update request for musterRollNumber::"+existingMusterRoll.getMusterRollNumber());
+
+        boolean isComputeAttendance = isComputeAttendance(musterRollRequest.getMusterRoll());
+        musterRollValidator.validateUpdateMusterRoll(musterRollRequest,existingMusterRoll,isComputeAttendance);
+
+        //fetch MDMS data for muster - skill level
+        String rootTenantId = existingMusterRoll.getTenantId().split("\\.")[0];
+        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
+
+        enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll,mdmsData);
         //If 'computeAttendance' flag is true, re-calculate the attendance from attendanceLogs and update
-        if (isComputeAttendance(musterRollRequest.getMusterRoll())) {
-            calculationService.updateAttendance(musterRollRequest);
+        if (isComputeAttendance) {
+            calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
+
         workflowService.updateWorkflowStatus(musterRollRequest);
         producer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
         return musterRollRequest;
@@ -186,5 +224,63 @@ public class MusterRollService {
            }
        }
        return false;
+    }
+
+    /**
+     * Filters the muster rolls that corresponds to the user ( if role is org_staff or org_admin)
+     * @param requestInfo
+     * @param musterRollList
+     */
+    private List<MusterRoll>  filterMusterRolls(RequestInfo requestInfo, MusterRollSearchCriteria searchCriteria, List<MusterRoll> musterRollList) {
+        String id = requestInfo.getUserInfo().getUuid();
+
+        StringBuilder uri = new StringBuilder();
+        uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
+                .queryParam("tenantId",searchCriteria.getTenantId())
+                .queryParam("staffId",id)
+                .queryParam("status", Status.ACTIVE);
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+        AttendanceRegisterResponse attendanceRegisterResponse = null;
+        log.info("MusterRollService::filterMusterRolls::call attendance register search with tenantId::"+searchCriteria.getTenantId()
+                +"::staffId::"+id);
+
+        try {
+            attendanceRegisterResponse  = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceRegisterResponse.class);
+        }  catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
+            log.error("MusterRollService::filterMusterRolls::Error thrown from attendance register service::"+httpClientOrServerExc.getStatusCode());
+            throw new CustomException("ATTENDANCE_REGISTER_SERVICE_EXCEPTION","Error thrown from attendance register service::"+httpClientOrServerExc.getStatusCode());
+        }
+
+        if (attendanceRegisterResponse == null || CollectionUtils.isEmpty(attendanceRegisterResponse.getAttendanceRegister())) {
+            throw new CustomException("NO_DATA_FOUND","No MusterRoll found for the user");
+        }
+
+        List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
+        List<MusterRoll> filteredMusterRolls = new ArrayList<>();
+        //filteredMusterRolls list has the muster rolls that matches with the registers of the user.
+        for (MusterRoll musterRoll : musterRollList) {
+            boolean isMatch = attendanceRegisters.stream()
+                                                      .anyMatch(register -> register.getId().equalsIgnoreCase(musterRoll.getRegisterId()));
+            if (isMatch) {
+                filteredMusterRolls.add(musterRoll);
+            }
+        }
+        return  filteredMusterRolls;
+    }
+
+    /**
+     * Applies the limit and offset
+     * @param searchCriteria
+     * @param musterRollList
+     * @return
+     */
+    private List<MusterRoll> applyLimitAndOffset(MusterRollSearchCriteria searchCriteria, List<MusterRoll> musterRollList) {
+        List<MusterRoll> musterRolls = musterRollList.stream()
+                        .skip(searchCriteria.getOffset())  // offset
+                        .limit(searchCriteria.getLimit()) // limit
+                        .collect(Collectors.toList());
+        return musterRolls;
     }
 }

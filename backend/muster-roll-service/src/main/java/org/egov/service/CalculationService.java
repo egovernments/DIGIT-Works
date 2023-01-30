@@ -77,8 +77,8 @@ public class CalculationService {
 
         log.info("CalculationService::createAttendance::From MDMS::HALF_DAY_NUM_HOURS::"+halfDayNumHours+"::FULL_DAY_NUM_HOURS::"+fullDayNumHours+"::isRoundOffHours::"+isRoundOffHours);
         AuditDetails auditDetails = musterRoll.getAuditDetails();
-        LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate().longValue()).atZone(ZoneId.of(ZONE)).toLocalDate();
-        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate().longValue()).atZone(ZoneId.of(ZONE)).toLocalDate();
+        LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDate();
+        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDate();
 
         log.debug("CalculationService::calculateAttendance::startDate::"+startDate+"::endDate::"+endDate);
 
@@ -99,16 +99,22 @@ public class CalculationService {
             BigDecimal totalAttendance = new BigDecimal("0.0");
             while (date.isBefore(endDate) || date.isEqual(endDate)) {
                 AttendanceEntry attendanceEntry = new AttendanceEntry();
+                String entryAttendanceLogId = null;
+                String exitAttendanceLogId = null;
                 if (isCreate) {
                     attendanceEntry.setId(UUID.randomUUID().toString());
                 }
-                attendanceEntry.setTime(new BigDecimal(date.atStartOfDay(ZoneId.of(ZONE)).toInstant().toEpochMilli()));
+                attendanceEntry.setTime(new BigDecimal(date.atStartOfDay(ZoneId.of(config.getTimeZone())).toInstant().toEpochMilli()));
 
                 //check if the individual's entry attendance is logged between startDate and endDate
                 LocalDateTime entryTimestamp = null;
                 for (LocalDateTime dateTime : entryTimestampList) {
                     if (date.isEqual(dateTime.toLocalDate())) {
                         entryTimestamp = dateTime;
+                        //populate the attendanceLogId for estimate
+                        if (!isCreate) {
+                            entryAttendanceLogId = getAttendanceLogId(attendanceLogList,individualEntry.getIndividualId(),entryTimestamp,ENTRY_EVENT);
+                        }
                         break;
                     }
                 }
@@ -118,6 +124,10 @@ public class CalculationService {
                 for (LocalDateTime dateTime : exitTimestampList) {
                     if (date.isEqual(dateTime.toLocalDate())) {
                         exitTimestamp = dateTime;
+                        //populate the attendanceLogId for estimate
+                        if (!isCreate) {
+                            exitAttendanceLogId = getAttendanceLogId(attendanceLogList,individualEntry.getIndividualId(),exitTimestamp,EXIT_EVENT);
+                        }
                         break;
                     }
                 }
@@ -126,13 +136,17 @@ public class CalculationService {
 
                 date = date.plusDays(1);
                 attendanceEntry.setAuditDetails(auditDetails);
+                // set attendanceLogId in additionalDetails for attendanceEntry
+                if (!isCreate && StringUtils.isNotBlank(entryAttendanceLogId) && StringUtils.isNotBlank(exitAttendanceLogId)) {
+                    musterRollServiceUtil.populateAdditionalDetailsAttendanceEntry(attendanceEntry,entryAttendanceLogId,exitAttendanceLogId);
+                }
                 attendanceEntries.add(attendanceEntry);
             }
 
             individualEntry.setAttendanceEntries(attendanceEntries);
             log.debug("CalculationService::createAttendance::Attendance Entry::size::"+attendanceEntries.size());
             individualEntry.setAuditDetails(auditDetails);
-            individualEntry.setTotalAttendance(totalAttendance);
+            individualEntry.setActualTotalAttendance(totalAttendance);
             //TODO - user object from the below method will be passed to setAdditionalDetails
             fetchUserDetails(individualEntry);
             //Set skill level - default is "Skill 1"
@@ -185,12 +199,10 @@ public class CalculationService {
      * @param musterRollRequest
      *
      */
-    public void updateAttendance(MusterRollRequest musterRollRequest) {
+    public void updateAttendance(MusterRollRequest musterRollRequest, Object mdmsData) {
 
         //fetch MDMS data for muster - attendance hours and skill level
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
-        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
-        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
 
         //fetch the log events for all individuals in a muster roll
         List<AttendanceLog> attendanceLogList = fetchAttendanceLogsAndHours(musterRollRequest,mdmsData);
@@ -212,7 +224,7 @@ public class CalculationService {
             List<AttendanceEntry> attendanceEntries = individualEntry.getAttendanceEntries();
             BigDecimal totalAttendance = new BigDecimal("0.0");
             for (AttendanceEntry attendanceEntry : attendanceEntries) {
-                LocalDate attendanceDate = Instant.ofEpochMilli(attendanceEntry.getTime().longValue()).atZone(ZoneId.of(ZONE)).toLocalDate();
+                LocalDate attendanceDate = Instant.ofEpochMilli(attendanceEntry.getTime().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDate();
                 LocalDateTime entryTimestamp = entryTimestampList.stream()
                                                         .filter(dateTime -> dateTime.toLocalDate().isEqual(attendanceDate))
                                                         .findFirst().orElse(null);
@@ -226,7 +238,10 @@ public class CalculationService {
                 }
             }
             individualEntry.setAuditDetails(auditDetails);
-            individualEntry.setTotalAttendance(totalAttendance);
+            individualEntry.setActualTotalAttendance(totalAttendance);
+            //During update on RESUBMIT ( if 'computeAttendance' is true), per day attendance and attendance aggregate will be recalculated
+            //so modifiedTotalAttendance will be reset as null as the musterRoll will go through verify action again.
+            individualEntry.setModifiedTotalAttendance(null);
         }
         log.debug("CalculationService::updateAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());
     }
@@ -260,7 +275,7 @@ public class CalculationService {
                 .collect(Collectors.groupingBy(
                         attendanceLog -> attendanceLog.getIndividualId(), //key
                         LinkedHashMap::new, // populate the map
-                        Collectors.mapping(attendanceLog -> Instant.ofEpochMilli(attendanceLog.getTime().longValue()).atZone(ZoneId.of(ZONE)).toLocalDateTime(),Collectors.toList()) //value is the list of timestamp
+                        Collectors.mapping(attendanceLog -> Instant.ofEpochMilli(attendanceLog.getTime().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDateTime(),Collectors.toList()) //value is the list of timestamp
                 ));
 
         return individualAttendanceMap;
@@ -275,18 +290,27 @@ public class CalculationService {
      */
     private List<AttendanceLog> getAttendanceLogs(MusterRoll musterRoll, RequestInfo requestInfo){
 
+        /* UI sends the startDate and endDate. Set the toTime for attendanceLog search api as endDate+23h0m to
+        * fetch the logs till end of the endDate */
+        BigDecimal fromTime = musterRoll.getStartDate();
+        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDate();
+        // set the endTime as endDate's date+23h0min
+        LocalDateTime endTime = endDate.atTime(23,0);
+        BigDecimal toTime = new BigDecimal(endTime.atZone(ZoneId.of(config.getTimeZone())).toInstant().toEpochMilli());
+
         StringBuilder uri = new StringBuilder();
         uri.append(config.getAttendanceLogHost()).append(config.getAttendanceLogEndpoint());
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
                 .queryParam("tenantId",musterRoll.getTenantId())
                 .queryParam("registerId",musterRoll.getRegisterId())
-                .queryParam("fromTime",musterRoll.getStartDate().longValue())
-                .queryParam("toTime",musterRoll.getEndDate().doubleValue())
+                .queryParam("fromTime",fromTime)
+                .queryParam("toTime",toTime)
                 .queryParam("status",Status.ACTIVE);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         AttendanceLogResponse attendanceLogResponse = null;
 
-        log.info("CalculationService::getAttendanceLogs::call attendance log search");
+        log.info("CalculationService::getAttendanceLogs::call attendance log search with tenantId::"+musterRoll.getTenantId()
+                +"::registerId::"+musterRoll.getRegisterId()+"::fromTime::"+musterRoll.getStartDate()+"::toTime::"+musterRoll.getEndDate());
 
         try {
             attendanceLogResponse  = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceLogResponse.class);
@@ -357,6 +381,8 @@ public class CalculationService {
      * @param mdmsData
      */
     private void setAdditionalDetails(IndividualEntry individualEntry, List<IndividualEntry> individualEntriesFromRequest, Object mdmsData) {
+
+        //TODO Default skill code will be fetched from individual service
         String skillCode = DEFAULT_SKILL_LEVEL;
         if (!CollectionUtils.isEmpty(individualEntriesFromRequest)) {
             IndividualEntry individualEntryRequest = individualEntriesFromRequest.stream()
@@ -385,6 +411,20 @@ public class CalculationService {
     private void fetchUserDetails(IndividualEntry individualEntry){
         //TODO Search the individual service using the individualId (from IndividualEntry) and fetch the UUID of the individual
         //Invoke the search api of user using the UUID to get the name, father's name , aadhar and bank details
+    }
+
+    /**
+     * Fetches the id of the attendance log
+     * @return
+     */
+    private String getAttendanceLogId(List<AttendanceLog> attendanceLogList, String individualId, LocalDateTime timestamp, String type) {
+         AttendanceLog attendanceLog = null;
+         BigDecimal time = new BigDecimal(timestamp.atZone(ZoneId.of(config.getTimeZone())).toInstant().toEpochMilli());
+         attendanceLog = attendanceLogList.stream()
+                                            .filter(attnLog -> attnLog.getIndividualId().equalsIgnoreCase(individualId)
+                                                        && attnLog.getTime().compareTo(time) == 0 && attnLog.getType().equalsIgnoreCase(type))
+                                            .findFirst().orElse(null);
+         return attendanceLog != null ? attendanceLog.getId() : "";
     }
 
 }
