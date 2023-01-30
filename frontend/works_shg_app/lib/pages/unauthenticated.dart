@@ -15,32 +15,31 @@ class UnauthenticatedPageWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     Client client = Client();
     return Scaffold(
-        appBar: AppBar(),
         body: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) => AppInitializationBloc(
-                const AppInitializationState(),
-                MdmsRepository(client.init()),
-              )..add(const AppInitializationSetupEvent(selectedLangIndex: 0)),
-            ),
-          ],
-          child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
-              builder: (context, appInitState) {
-            return (appInitState.isInitializationCompleted &&
-                    appInitState.digitRowCardItems != null &&
-                    appInitState.digitRowCardItems!.isNotEmpty)
-                ? BlocBuilder<LocalizationBloc, LocalizationState>(
-                    builder: (context, localeState) {
-                    return localeState.isLocalizationLoadCompleted &&
-                            localeState.localization != null
-                        ? const AutoRouter()
-                        : Loaders.circularLoader(context);
-                    ;
-                  })
-                : Loaders.circularLoader(context);
-            ;
-          }),
-        ));
+      providers: [
+        BlocProvider(
+          create: (context) => AppInitializationBloc(
+            const AppInitializationState(),
+            MdmsRepository(client.init()),
+          )..add(const AppInitializationSetupEvent(selectedLangIndex: 0)),
+        ),
+      ],
+      child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
+          builder: (context, appInitState) {
+        return (appInitState.isInitializationCompleted &&
+                appInitState.digitRowCardItems != null &&
+                appInitState.digitRowCardItems!.isNotEmpty)
+            ? BlocBuilder<LocalizationBloc, LocalizationState>(
+                builder: (context, localeState) {
+                return localeState.isLocalizationLoadCompleted &&
+                        localeState.localization != null
+                    ? const AutoRouter()
+                    : Loaders.circularLoader(context);
+                ;
+              })
+            : Loaders.circularLoader(context);
+        ;
+      }),
+    ));
   }
 }
