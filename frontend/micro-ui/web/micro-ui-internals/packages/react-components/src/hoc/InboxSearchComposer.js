@@ -13,7 +13,11 @@ const InboxSearchComposer = (props) => {
     useEffect(() => {
         const requestBody = configs?.apiDetails?.requestBody
         if(state.searchForm?.data) {
-            requestBody.Projects[0].id = '7c941228-6149-4adc-bdb9-8b77f6c3757d'
+            console.log('state.searchForm?.data', state.searchForm?.data);
+            requestBody.Projects[0].projectNumber = "PR/2022-23/01/000284",
+            requestBody.Projects[0].name = '',
+            requestBody.Projects[0].startDate = '',
+            requestBody.Projects[0].endDate = '',
             setEnable(true)
         }
     }, [state.searchForm])

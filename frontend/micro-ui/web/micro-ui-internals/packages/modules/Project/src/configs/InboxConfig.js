@@ -9,6 +9,7 @@ const inboxConfig = () => {
                     headerStyle : null,
                     primaryLabel: 'Search',
                     secondaryLabel: 'Clear Search',
+                    minReqFields: 1,
                     defaultValues : {
                         projectId: "",
                         department: "",
