@@ -96,9 +96,10 @@ public class AttendanceServiceValidatorTest {
     @Test
     public void validateCreateAttendanceRegister_validateAttendanceRegisterRequest_4(){
         AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequestBuilderTest.builder().attendanceRegisterWithoutTenantId().build();
+        List<AttendanceRegister> attendanceRegister = attendanceRegisterRequest.getAttendanceRegister();
         Map<String, String> errorMap = new HashMap<>();
-        ReflectionTestUtils.invokeMethod(attendanceServiceValidator, "validateAttendanceRegisterRequest", attendanceRegisterRequest.getAttendanceRegister(),errorMap);
-        assertTrue(errorMap.keySet().contains("TENANT_ID"));
+        CustomException exception = assertThrows(CustomException.class,()->ReflectionTestUtils.invokeMethod(attendanceServiceValidator, "validateAttendanceRegisterRequest", attendanceRegister, errorMap));
+        assertTrue(exception.getCode().equals("TENANT_ID"));
     }
 
     @DisplayName("Method validateAttendanceRegisterRequest: Error code NAME")
@@ -115,8 +116,8 @@ public class AttendanceServiceValidatorTest {
     public void validateCreateAttendanceRegister_validateAttendanceRegisterRequest_6(){
         AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequestBuilderTest.builder().attendanceRegisterWithoutStartDate().build();
         Map<String, String> errorMap = new HashMap<>();
-        ReflectionTestUtils.invokeMethod(attendanceServiceValidator, "validateAttendanceRegisterRequest", attendanceRegisterRequest.getAttendanceRegister(),errorMap);
-        assertTrue(errorMap.keySet().contains("START_DATE"));
+        CustomException exception = assertThrows(CustomException.class,()->ReflectionTestUtils.invokeMethod(attendanceServiceValidator, "validateAttendanceRegisterRequest", attendanceRegisterRequest.getAttendanceRegister(),errorMap));
+        assertTrue(exception.getCode().equals("START_DATE"));
     }
 
     @DisplayName("Method validateAttendanceRegisterRequest: Error code DATE")

@@ -4,10 +4,8 @@ import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdGenerationResponse;
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.helper.AttendanceRegisterRequestBuilderTest;
-import org.egov.helper.AttendeeRequestBuilderTest;
 import org.egov.helper.AuditDetailsTestBuilder;
 import org.egov.repository.IdGenRepository;
 import org.egov.tracer.model.CustomException;
@@ -20,15 +18,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -52,7 +47,7 @@ public class RegisterEnrichmentTest {
     @BeforeEach
     void setupBeforeEach() {
         when(config.getIdgenAttendanceRegisterNumberName()).thenReturn("attendance.register.number");
-        when(config.getIdgenAttendanceRegisterNumberFormat()).thenReturn("WR/[fy:yyyy-yy]/[cy:MM]/[cy:dd]/[SEQ_ATTENDANCE_REGISTER_NUM]");
+       // when(config.getIdgenAttendanceRegisterNumberFormat()).thenReturn("WR/[fy:yyyy-yy]/[cy:MM]/[cy:dd]/[SEQ_ATTENDANCE_REGISTER_NUM]");
     }
 
 
@@ -64,10 +59,10 @@ public class RegisterEnrichmentTest {
         List<IdResponse> idResponses = new ArrayList<>();
         IdGenerationResponse idGenerationResponse = IdGenerationResponse.builder().idResponses(idResponses).build();
 
-        lenient().when(idGenRepository.getId(eq(attendanceRegisterRequest.getRequestInfo()), eq("pb"), eq("attendance.register.number"), eq("WR/[fy:yyyy-yy]/[cy:MM]/[cy:dd]/[SEQ_ATTENDANCE_REGISTER_NUM]"), eq(1)))
+        lenient().when(idGenRepository.getId(eq(attendanceRegisterRequest.getRequestInfo()), eq("pb"), eq("attendance.register.number"), eq(""), eq(1)))
                 .thenReturn(idGenerationResponse);
 
-        CustomException exception = assertThrows(CustomException.class,()->registerEnrichment.enrichCreateAttendanceRegister(attendanceRegisterRequest));
+        CustomException exception = assertThrows(CustomException.class,()->registerEnrichment.enrichRegisterOnCreate(attendanceRegisterRequest));
         assertTrue(exception.getCode().contentEquals("IDGEN ERROR"));
     }
 
@@ -82,13 +77,13 @@ public class RegisterEnrichmentTest {
         idResponses.add(idResponse);
         IdGenerationResponse idGenerationResponse = IdGenerationResponse.builder().idResponses(idResponses).build();
 
-        lenient().when(idGenRepository.getId(eq(attendanceRegisterRequest.getRequestInfo()), eq("pb"), eq("attendance.register.number"), eq("WR/[fy:yyyy-yy]/[cy:MM]/[cy:dd]/[SEQ_ATTENDANCE_REGISTER_NUM]"), eq(1)))
+        lenient().when(idGenRepository.getId(eq(attendanceRegisterRequest.getRequestInfo()), eq("pb"), eq("attendance.register.number"), eq(""), eq(1)))
                 .thenReturn(idGenerationResponse);
 
         AuditDetails auditDetails = AuditDetailsTestBuilder.builder().withAuditDetails().build();
         when(attendanceServiceUtil.getAuditDetails(attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid(),null,true)).thenReturn(auditDetails);
 
-        registerEnrichment.enrichCreateAttendanceRegister(attendanceRegisterRequest);
+        registerEnrichment.enrichRegisterOnCreate(attendanceRegisterRequest);
 
         assertTrue(attendanceRegisterRequest.getAttendanceRegister().get(0).getId()!=null);
 

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.helper.AdditionalFields;
 import org.egov.helper.AttendanceLogRequestTestBuilder;
+import org.egov.helper.AttendanceRegisterBuilderTest;
 import org.egov.helper.AuditDetailsTestBuilder;
 import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
@@ -16,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
@@ -197,31 +197,16 @@ public class AttendanceLogServiceValidatorTest {
     @DisplayName("Method validateTenantIdAssociationWithRegisterId: should through exception with error code INVALID_TENANTID")
     @Test
     public void validateCreateAttendanceLogRequest_validateTenantIdAssociationWithRegisterId_1(){
-        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
-        when(attendanceRegisterRepository.getRegister(any(AttendanceRegisterSearchCriteria.class))).thenReturn(null);
-        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateTenantIdAssociationWithRegisterId", attendanceLogRequest));
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
+        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateTenantIdAssociationWithRegisterId", attendanceRegister,"other.tenantId"));
         assertTrue(exception.getCode().equals("INVALID_TENANTID"));
     }
-
-    @DisplayName("Method validateTenantIdAssociationWithRegisterId: should through exception with error code INVALID_TENANTID")
-    @Test
-    public void validateCreateAttendanceLogRequest_validateTenantIdAssociationWithRegisterId_2(){
-        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
-        List<AttendanceRegister> attendanceRegisters = new ArrayList<>();
-        when(attendanceRegisterRepository.getRegister(any(AttendanceRegisterSearchCriteria.class))).thenReturn(attendanceRegisters);
-        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateTenantIdAssociationWithRegisterId", attendanceLogRequest));
-        assertTrue(exception.getCode().equals("INVALID_TENANTID"));
-    }
-
     @DisplayName("Method validateTenantIdAssociationWithRegisterId: should run successfully")
     @Test
-    public void validateCreateAttendanceLogRequest_validateTenantIdAssociationWithRegisterId_3(){
-        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
-        List<AttendanceRegister> attendanceRegisters = new ArrayList<>();
-        attendanceRegisters.add(AttendanceRegister.builder().id("some-id").build());
-        when(attendanceRegisterRepository.getRegister(any(AttendanceRegisterSearchCriteria.class))).thenReturn(attendanceRegisters);
-        assertDoesNotThrow(()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateTenantIdAssociationWithRegisterId", attendanceLogRequest));
-    }
+    public void validateCreateAttendanceLogRequest_validateTenantIdAssociationWithRegisterId_2(){
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
+        assertDoesNotThrow(()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateTenantIdAssociationWithRegisterId", attendanceRegister,"pb.amritsar"));
+ }
 
     @DisplayName("Method validateAttendees: should through exception with error code INTEGRATION_UNDERDEVELOPMENT")
     @Test
