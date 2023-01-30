@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.IndividualEntry;
 import org.egov.web.models.StaffPermission;
@@ -89,5 +90,11 @@ public class AttendanceRegisterBuilderTest {
                 .emailId("xyz@egovernments.org").type("EMPLOYEE").roles(roles).build();
         RequestInfo requestInfo = RequestInfo.builder().apiId("attendance-services").msgId("search with from and to values").userInfo(userInfo).build();
         return requestInfo;
+    }
+
+    public static ResponseInfo getResponseInfo_Success() {
+        ResponseInfo responseInfo = ResponseInfo.builder().apiId("attendance-services").ver(null).ts(null).resMsgId(null).msgId("search with from and to values")
+                .status("successful").build();
+        return responseInfo;
     }
 }

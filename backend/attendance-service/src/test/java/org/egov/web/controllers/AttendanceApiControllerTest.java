@@ -1,25 +1,47 @@
 package org.egov.web.controllers;
 
-import org.junit.Test;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.Main;
+import org.egov.TestConfiguration;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
+import org.egov.helper.AttendanceRegisterBuilderTest;
+import org.egov.helper.AttendanceRegisterRequestBuilderTest;
+import org.egov.repository.AttendanceLogRepository;
+import org.egov.repository.AttendeeRepository;
+import org.egov.repository.RegisterRepository;
+import org.egov.repository.StaffRepository;
+import org.egov.service.AttendanceRegisterService;
+import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ErrorRes;
+import org.egov.util.ResponseInfoFactory;
+import org.egov.web.models.AttendanceRegisterRequest;
+import org.egov.web.models.AttendanceRegisterResponse;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.egov.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
+import javax.servlet.http.HttpServletRequest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
-* API tests for AttendanceApiController
-*/
-@Ignore
-@RunWith(SpringRunner.class)
+ * API tests for AttendanceApiController
+ */
+@ContextConfiguration(classes = Main.class)
 @WebMvcTest(AttendanceApiController.class)
 @Import(TestConfiguration.class)
 public class AttendanceApiControllerTest {
@@ -27,144 +49,76 @@ public class AttendanceApiControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @MockBean
+    private ResponseInfoFactory responseInfoFactory;
+
+    @MockBean
+    private AttendanceLogRepository attendanceLogRepository;
+
+    @MockBean
+    private AttendanceRegisterService attendanceRegisterService;
+
+    @MockBean
+    private AttendeeRepository attendeeRepository;
+
+    @MockBean
+    private RegisterRepository registerRepository;
+
+    @MockBean
+    private StaffRepository staffRepository;
+
+    @MockBean
+    private JdbcTemplate jdbcTemplate;
+
     @Test
-    public void attendanceAttendeeV1CreatePOSTSuccess() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/attendee/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
+    @DisplayName("should pass for correct API operation for create attendance register")
+    public void RegisterCreatePostSuccess() throws Exception {
+
+        AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequestBuilderTest.builder().addGoodRegister()
+                .requestInfoWithoutUserInfo().build();
+        ResponseInfo responseInfo = AttendanceRegisterBuilderTest.getResponseInfo_Success();
+
+        when(attendanceRegisterService.createAttendanceRegister(any(AttendanceRegisterRequest.class))).thenReturn(attendanceRegisterRequest);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true))).thenReturn(responseInfo);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(attendanceRegisterRequest);
+        MvcResult result = mockMvc.perform(post("/v1/_create").contentType(MediaType
+                        .APPLICATION_JSON).content(content))
+                .andExpect(status().isOk()).andReturn();
+        String responseStr = result.getResponse().getContentAsString();
+
+        AttendanceRegisterResponse response = objectMapper.readValue(responseStr, AttendanceRegisterResponse.class);
+
+        assertEquals("successful", response.getResponseInfo().getStatus());
+
     }
 
     @Test
-    public void attendanceAttendeeV1CreatePOSTFailure() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/attendee/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
+    @DisplayName("should fail for incomplete attendance register object in API request")
+    public void RegisterCreatePostFailure() throws Exception {
 
-    @Test
-    public void attendanceAttendeeV1DeletePOSTSuccess() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/attendee/v1/_delete").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
-    }
+        AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequestBuilderTest.builder().attendanceRegisterWithoutStartDate()
+                .withRequestInfo().build();
 
-    @Test
-    public void attendanceAttendeeV1DeletePOSTFailure() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/attendee/v1/_delete").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
+        when(attendanceRegisterService.createAttendanceRegister(any(AttendanceRegisterRequest.class)))
+                .thenThrow(new CustomException("START_DATE", "Start date is mandatory"));
 
-    @Test
-    public void attendanceLogV1CreatePOSTSuccess() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/log/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
-    }
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(attendanceRegisterRequest);
+        MvcResult result = mockMvc.perform(post("/v1/_create").contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isBadRequest()).andReturn();
 
-    @Test
-    public void attendanceLogV1CreatePOSTFailure() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/log/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
+        String responseStr = result.getResponse().getContentAsString();
+        ErrorRes response = objectMapper.readValue(responseStr,
+                ErrorRes.class);
 
-    @Test
-    public void attendanceLogV1SearchPOSTSuccess() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/log/v1/_search").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
+        assertEquals("Start date is mandatory", response.getErrors().get(0).getMessage());
     }
-
-    @Test
-    public void attendanceLogV1SearchPOSTFailure() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/log/v1/_search").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void attendanceLogV1UpdatePOSTSuccess() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/log/v1/_update").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
-    }
-
-    @Test
-    public void attendanceLogV1UpdatePOSTFailure() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/log/v1/_update").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void attendanceStaffV1CreatePOSTSuccess() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/staff/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
-    }
-
-    @Test
-    public void attendanceStaffV1CreatePOSTFailure() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/staff/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void attendanceStaffV1DeletePOSTSuccess() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/staff/v1/_delete").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
-    }
-
-    @Test
-    public void attendanceStaffV1DeletePOSTFailure() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/staff/v1/_delete").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void attendanceV1CreatePOSTSuccess() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
-    }
-
-    @Test
-    public void attendanceV1CreatePOSTFailure() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void attendanceV1SearchPOSTSuccess() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/v1/_search").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
-    }
-
-    @Test
-    public void attendanceV1SearchPOSTFailure() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/v1/_search").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void attendanceV1UpdatePOSTSuccess() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/v1/_update").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
-    }
-
-    @Test
-    public void attendanceV1UpdatePOSTFailure() throws Exception {
-        mockMvc.perform(post("/rushang.dhanesha/Attendance-Service/1.0.0/attendance/v1/_update").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
-    }
-
 }
