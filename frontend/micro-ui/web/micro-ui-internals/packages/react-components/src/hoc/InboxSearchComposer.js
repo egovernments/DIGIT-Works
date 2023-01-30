@@ -9,16 +9,30 @@ const InboxSearchComposer = (props) => {
     const { configs } = props;
     const [enable, setEnable] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialInboxState)
-
+    // const [payload, setPayload] = useState(
+    //     [   
+    //         configs?.apiDetails?.serviceName,
+    //         configs?.apiDetails?.requestParam, 
+    //         configs?.apiDetails?.requestBody,
+    //         {enable:false}
+    //     ]
+    //     )
     useEffect(() => {
         const requestBody = configs?.apiDetails?.requestBody
-        if(state.searchForm?.data) {
-            requestBody.Projects[0].id = '7c941228-6149-4adc-bdb9-8b77f6c3757d'
+        if (Object.keys(state.searchForm)?.length > 0) {
+            //here we can't directly put Projects[0] -> need to generalise this
+            requestBody.Projects[0] = { ...requestBody.Projects[0],...state.searchForm }
+            // requestBody.Projects[0]={...state?.searchForm}
             setEnable(true)
         }
-    }, [state.searchForm])
+    }, [state])
     
    
+    // useEffect(() => {
+    //     //whenever state is update we'll update the payload
+
+    // }, [state])
+
     const requestCriteria = [
         configs?.apiDetails?.serviceName,
         configs?.apiDetails?.requestParam,
@@ -30,7 +44,7 @@ const InboxSearchComposer = (props) => {
     ];
 
     const { isLoading, data, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
-    console.log('project data', data);
+    
     
     useEffect(() => {
         return () => {
@@ -70,7 +84,7 @@ const InboxSearchComposer = (props) => {
                 {
                 configs?.sections?.searchResult?.show &&  
                     <div className="" style={{ overflowX: "scroll" }}>
-                        <ResultsTable config={configs?.sections?.searchResult?.uiConfig}/>
+                        <ResultsTable config={configs?.sections?.searchResult?.uiConfig} data={data} isLoading={isLoading}/>
                     </div>
                 }
             </div>

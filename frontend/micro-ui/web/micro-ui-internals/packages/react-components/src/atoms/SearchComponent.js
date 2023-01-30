@@ -43,8 +43,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     dispatch({
       type: "searchForm",
       state: {
-        data: data,
-        searchClicked: true
+        ...data
       }
     })
     

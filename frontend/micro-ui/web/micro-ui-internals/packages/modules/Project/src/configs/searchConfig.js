@@ -26,7 +26,7 @@ const searchConfig = () => {
                     primaryLabel: 'Search',
                     secondaryLabel: 'Clear Search',
                     defaultValues : {
-                        projectId: "",
+                        projectNumber: "",
                         subProjectId: "",
                         projectName: "",
                         workType: "",
@@ -40,7 +40,7 @@ const searchConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "projectId"
+                                name: "projectNumber"
                             },
                         },
                         {
@@ -111,45 +111,52 @@ const searchConfig = () => {
                     },
                     columns: [
                         {
-                            label: "name",
-                            jsonPath: "name",
+                            label: "WORKS_PRJ_SUB_ID",
+                            jsonPath: "projectNumber",
                             redirectUrl: '/works-ui/employee/project/project-inbox-item'
                         },
                         {
-                            label: "age",
-                            jsonPath: "age"
+                            label: "WORKS_PROJECT_NAME",
+                            jsonPath: "name"
                         },
                         {
-                            label: "gender",
+                            label: "PROJECT_OWNING_DEPT",
                             jsonPath: "gender",
+                            translate:true,
+                            prefix:"COMMON_MASTERS_DEPARTMENT_",
                         },
                         {
-                            label: "company",
-                            jsonPath: "company",
+                            label: "WORKS_PROJECT_TYPE",
+                            jsonPath: "projectType",
                         },
                         {
-                            label: "email",
-                            jsonPath: "email",
+                            label: "WORKS_SUB_PROJECT_TYPE",
+                            jsonPath: "projectSubTyp",
                         },
                         {
-                            label: "phone",
-                            jsonPath: "phone",
+                            label: "WORKS_WORK_NATURE",
+                            jsonPath: "endDate",
                         },
                         {
-                            label: "balance",
-                            jsonPath: "balance",
+                            label: "WORKS_PARENT_PROJECT_ID",
+                            jsonPath: "parent",
                         },
                         {
-                            label: "favoriteFruit",
-                            jsonPath: "favoriteFruit",
+                            label: "WORKS_CREATED_BY",
+                            jsonPath: "auditDetails.createdBy",
                         },
                         {
-                            label: "eyeColor",
-                            jsonPath: "eyeColor",
+                            label: "WORKS_STATUS",
+                            jsonPath: "rowVersion",
+                        },
+                        {
+                            label: "WORKS_TOTAL_AMOUNT",
+                            jsonPath: "startDate",
                         }
                     ],
                     enableGlobalSearch: false,
                     enableColumnSort: true,
+                    resultsJsonPath: "Projects",
                 },
                 children: {},
                 show: true //by default true. 
