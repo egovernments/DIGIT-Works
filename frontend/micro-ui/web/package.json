@@ -12,14 +12,13 @@
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/AttendenceMgmt",
     "micro-ui-internals/packages/modules/Masters",
-    "micro-ui-internals/packages/modules/works",
     "micro-ui-internals/packages/modules/Project",
     "micro-ui-internals/packages/modules/Estimate"
   ],
   "homepage": "/works-ui",
   "dependencies": {
     "@egovernments/digit-ui-libraries": "1.5.0",
-    "@egovernments/digit-ui-module-works": "1.5.0",
+    "@egovernments/digit-ui-module-works": "0.0.1",
     "@egovernments/digit-ui-module-hrms": "1.5.5-alpha.4",
     "@egovernments/digit-ui-module-core": "1.5.5",
     "@egovernments/digit-ui-react-components": "^1.5.0",
