@@ -1,0 +1,31 @@
+name: Node.js Publish Project Package
+
+on:
+  push:
+    branches: [ deploy ]
+    paths:
+      - 'frontend/micro-ui/web/micro-ui-internals/packages/modules/Project/**'
+  pull_request:
+    branches: 
+      # Push events on main branch
+      - 'master'
+      # Push events to branches matching refs/heads/mona/octocat
+      - 'develop'
+      # Push events to branches matching refs/heads/releases/10
+      - 'publish-**' 
+    paths:
+      - 'frontend/micro-ui/web/micro-ui-internals/packages/modules/Project/**'
+ 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - run: cd frontend/micro-ui/web/micro-ui-internals/packages/modules/Project && yarn && yarn prepublish && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
