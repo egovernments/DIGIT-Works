@@ -28,6 +28,9 @@ class AttendanceRegister with _$AttendanceRegister {
     int? startDate,
     int? endDate,
     String? status,
+    @JsonKey(name: 'additionalDetails')
+        AttendanceRegisterAdditionalDetails?
+            attendanceRegisterAdditionalDetails,
     @JsonKey(name: 'staff') List<StaffEntries>? staffEntries,
     @JsonKey(name: 'attendees') List<AttendeesEntries>? attendeesEntries,
   }) = _AttendanceRegister;
@@ -36,6 +39,19 @@ class AttendanceRegister with _$AttendanceRegister {
     Map<String, dynamic> json,
   ) =>
       _$AttendanceRegisterFromJson(json);
+}
+
+@freezed
+class AttendanceRegisterAdditionalDetails
+    with _$AttendanceRegisterAdditionalDetails {
+  const factory AttendanceRegisterAdditionalDetails(
+      {String? contractId,
+      String? orgName}) = _AttendanceRegisterAdditionalDetails;
+
+  factory AttendanceRegisterAdditionalDetails.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$AttendanceRegisterAdditionalDetailsFromJson(json);
 }
 
 @freezed

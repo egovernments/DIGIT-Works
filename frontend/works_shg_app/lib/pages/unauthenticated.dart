@@ -6,6 +6,7 @@ import 'package:works_shg_app/blocs/localization/localization.dart';
 import '../blocs/app_initilization/app_initilization.dart';
 import '../data/remote_client.dart';
 import '../data/repositories/remote/mdms.dart';
+import '../widgets/loaders.dart';
 
 class UnauthenticatedPageWrapper extends StatelessWidget {
   const UnauthenticatedPageWrapper({Key? key}) : super(key: key);
@@ -34,9 +35,11 @@ class UnauthenticatedPageWrapper extends StatelessWidget {
                     return localeState.isLocalizationLoadCompleted &&
                             localeState.localization != null
                         ? const AutoRouter()
-                        : const CircularProgressIndicator();
+                        : Loaders.circularLoader(context);
+                    ;
                   })
-                : const CircularProgressIndicator();
+                : Loaders.circularLoader(context);
+            ;
           }),
         ));
   }
