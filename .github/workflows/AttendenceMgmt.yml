@@ -26,6 +26,7 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
+      - run: cd frontend/micro-ui/web/micro-ui-internals && yarn
       - run: cd frontend/micro-ui/web/micro-ui-internals/packages/modules/AttendenceMgmt && yarn && yarn prepublish && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
