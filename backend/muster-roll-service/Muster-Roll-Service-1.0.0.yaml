@@ -213,162 +213,16 @@ components:
           description: This is an updatable field from the user's input.
 
     AttendanceLog:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: System generated unique identifier for the entry
-          readOnly: true
-        registerId:
-          type: string
-          description: Unique identifier of the register
-        individualId:
-          type: string
-          format: uuid
-          description: The individual for which the attendance is being marked
-        tenantId:
-          type: string
-          example: pb.amritsar
-          description: Tenant Id of the register
-        time:
-          type: number
-          format: timestamp
-          description: The timestamp at which the event has been recorded.
-        type:
-          type: string
-          description: Configurable in MDMS. [ENTRY/EXIT/...]
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-          description: The attendance log of the cancelled event can be marked as inactive.
-        documentIds:
-          description: Used to store file store ids. Need to verify validity of them using file store service.
-          type: array
-          items:
-            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/Document'
-        additionalDetails:
-          type: object
-      required:
-        - registerId
-        - individualId
-        - tenantId
-        - time
-        - type
-    AttendanceLogResponse:
-      type: object
-      properties:
-        responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
-        attendance:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttendanceLog'
+      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceLog'
 
-    StaffPermission:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: System generated unique identifier for the granted permission request
-          readOnly: true
-        registerId:
-          type: string
-          description: Identifier of the register. This field will not be shown when this object is part of the register object. It is present so that we can reuse this object for access permission requests.
-        userId:
-          type: string
-          description: Identifier of the user of the system
-        tenantId:
-          type: string
-          format: string
-          example: pb.amritsar
-          description: Tenant Id to which the staff belongs
-        enrollmentDate:
-          readOnly: true
-          type: number
-          description: The timestamp at which the permission is granted. It is set to the current time when the create api is called.
-        denrollmentDate:
-          readOnly: true
-          type: number
-          description: The timestamp at which the access permission is revoked. It is set to the current time when the delete api is called.
-      required:
-        - registerId
-        - userId
+    AttendanceLogResponse:
+      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceLogResponse'
 
     AttendanceRegister:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          example: 64e33343-7b4c-4353-9abf-4de8f5bcd732
-          description: System generated unique identifier of the register
-          readOnly: true
-        tenantId:
-          type: string
-          example: pb.amritsar
-          description: Tenant Id of the register
-        registerNumber:
-          type: string
-          example: REG/2022-23/001
-          description: System generated id with custom formatting
-          readOnly: true
-        name:
-          type: string
-          example: Class-10-E Physics
-          description: Name of the register
-          maxLength: 140
-        startDate:
-          type: number
-          format: timestamp
-          example: 1665497225000
-          description: Timestamp of the start date in milliseconds
-        endDate:
-          type: number
-          format: timestamp
-          example: 1665497271000
-          description: Timestamp of the end date in milliseconds. After the end date no modifications will be allowed to the register.
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-          description: Stores if the register is active or not. Inactive registers can be archieved later.
-        staff:
-          readOnly: true
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/StaffPermission'
-              - description: 'Entries of the staff members of the register.'
-        attendees:
-          readOnly: true
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/IndividualEntry'
-              - description: 'Entries of the attendees of the register.'
-        auditDetails:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/AuditDetails'
-        additionalDetails:
-          type: object
-          description: Any additional details of the register
-      required:
-        - tenantId
-        - name
+      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceRegister'
 
     AttendanceRegisterResponse:
-      type: object
-      properties:
-        responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
-        attendanceRegister:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttendanceRegister'
+      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceRegisterResponse'
 
     MusterRollRequest:
       type: object
