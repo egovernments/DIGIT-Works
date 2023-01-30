@@ -43,7 +43,7 @@ class LoginPage extends StatelessWidget {
                   builder: (context, state) => DigitElevatedButton(
                     onPressed: state.loading
                         ? null
-                        : () {
+                        : () async {
                             context.read<AuthBloc>().add(
                                   AuthLoginEvent(
                                     userId: userIdController.text,

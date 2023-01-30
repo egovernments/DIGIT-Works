@@ -8,16 +8,18 @@ import 'package:works_shg_app/widgets/ButtonLink.dart';
 
 import '../blocs/attendance/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
+import '../widgets/loaders.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: BlocBuilder<LocalizationBloc, LocalizationState>(
+    return BlocBuilder<LocalizationBloc, LocalizationState>(
         builder: (context, state) {
       return state.isLocalizationLoadCompleted
-          ? ScrollableContent(
+          ? Scaffold(
+              body: ScrollableContent(
               children: [
                 DigitCard(
                   onPressed: null,
@@ -83,8 +85,8 @@ class HomePage extends StatelessWidget {
                   ),
                 )
               ],
-            )
-          : const Text('Unauthenticated');
-    }));
+            ))
+          : Loaders.circularLoader(context);
+    });
   }
 }
