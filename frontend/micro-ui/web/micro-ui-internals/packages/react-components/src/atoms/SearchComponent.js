@@ -1,15 +1,18 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import Header from "../atoms/Header";
+import { InboxContext } from "../hoc/InboxSearchComposerContext";
 import RenderFormFields from "../molecules/RenderFormFields";
+import Header from "../atoms/Header";
 import LinkLabel from '../atoms/LinkLabel';
 import SubmitBar from "../atoms/SubmitBar";
-import { InboxContext } from "../hoc/InboxSearchComposerContext";
+import Toast from "../atoms/Toast";
 
 const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
+  const [showToast,setShowToast] = useState(null)
+  let updatedFields = []
 
   const {
     register,
@@ -38,21 +41,32 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     }
   };
 
+  useEffect(() => {
+    updatedFields = Object.values(formState?.dirtyFields)
+  }, [formState])
+
   const onSubmit = (data) => {
-    //send data to reducer
-    dispatch({
-      type: "searchForm",
-      state: {
-        ...data
-      }
-    })
-    
+    if(updatedFields.length >= uiConfig?.minReqFields) {
+      dispatch({
+        type: "searchForm",
+        state: {
+          ...data
+        }
+      })
+    } else {
+      setShowToast({ warning: true, label: "Please enter minimum 1 search criteria" })
+      setTimeout(closeToast, 3000);
+    }
   }
 
   const clearSearch = () => {
     reset(uiConfig?.defaultValues)
   }
  
+  const closeToast = () => {
+    setShowToast(null);
+  }
+
   return (
     <React.Fragment>
       <div className={'search-wrapper'}>
@@ -77,6 +91,13 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
             </div>
           </div> 
         </form>
+        { showToast && <Toast 
+          error={showToast.error}
+          warning={showToast.warning}
+          label={t(showToast.label)}
+          isDleteBtn={true}
+          onClose={closeToast} />
+        }
       </div>
     </React.Fragment>
   )
