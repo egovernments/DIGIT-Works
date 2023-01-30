@@ -173,9 +173,7 @@ class WorkDetailsCard extends StatelessWidget {
                 );
             if (isManageAttendance) {
               context.read<AttendanceUserSearchBloc>().add(
-                    SearchAttendanceUserEvent(
-                      userIds: userList,
-                    ),
+                    const SearchAttendanceUserEvent(),
                   );
               context.router.push(AttendanceRegisterTableRoute(
                   projectDetails: [cardDetails],

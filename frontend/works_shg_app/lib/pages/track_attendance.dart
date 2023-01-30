@@ -366,7 +366,20 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                     .selectDateRangeFirst),
                                             'ERROR');
                                       } else {
-                                        if (updateAttendeePayload.isNotEmpty) {
+                                        if (updateAttendeePayload.isNotEmpty &&
+                                            createAttendeePayload.isNotEmpty) {
+                                          context
+                                              .read<AttendanceLogCreateBloc>()
+                                              .add(UpdateAttendanceLogEvent(
+                                                  attendanceList:
+                                                      updateAttendeePayload));
+                                          context
+                                              .read<AttendanceLogCreateBloc>()
+                                              .add(CreateAttendanceLogEvent(
+                                                  attendanceList:
+                                                      createAttendeePayload));
+                                        } else if (updateAttendeePayload
+                                            .isNotEmpty) {
                                           context
                                               .read<AttendanceLogCreateBloc>()
                                               .add(UpdateAttendanceLogEvent(
