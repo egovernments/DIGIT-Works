@@ -25,6 +25,7 @@ const searchConfig = () => {
                     headerStyle : null,
                     primaryLabel: 'Search',
                     secondaryLabel: 'Clear Search',
+                    minReqFields: 1,
                     defaultValues : {
                         projectId: "",
                         subProjectId: "",
@@ -40,7 +41,8 @@ const searchConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "projectId"
+                                name: "projectId",
+                                validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
                             },
                         },
                         {
@@ -49,7 +51,8 @@ const searchConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "subProjectId"
+                                name: "subProjectId",
+                                validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
                             },
                         },
                         {
@@ -58,7 +61,8 @@ const searchConfig = () => {
                           isMandatory: false,
                           disable: false,
                           populators: { 
-                              name: "projectName"
+                              name: "projectName",
+                              validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
                           }
                         },
                         {
