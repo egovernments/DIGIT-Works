@@ -1,0 +1,18 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "d-b" ]
+  pull_request:
+    branches: [ "d-b" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: cd frontend && docker build -t egovio/works-ui:develop-3eb63f6365-2 -f Dockerfile .
