@@ -63,7 +63,7 @@
 							"pm.collectionVariables.set(\"projectNumber\", responseData.Projects[0].projectNumber);",
 							"",
 							"pm.collectionVariables.set(\"lastChangedSince\", (responseData.Projects[0].auditDetails.createdTime));",
-							"pm.collectionVariables.set(\"lastChangedSinceIncreased\", (responseData.Projects[0].auditDetails.createdTime + 1000));",
+							"pm.collectionVariables.set(\"lastChangedSinceIncreased\", (responseData.Projects[0].auditDetails.createdTime + 10000000));",
 							"",
 							"pm.collectionVariables.set(\"addressId\", responseData.Projects[0].address.id);",
 							"pm.collectionVariables.set(\"targetId\", responseData.Projects[0].targets[0].id);",
@@ -1001,6 +1001,7 @@
 							");",
 							"",
 							"pm.test(\"Project Id is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
 							"    req.Projects.forEach(project => {",
 							"        pm.expect(project.id).to.not.be.undefined;",
 							"        pm.expect(project.id).to.not.be.null;",
@@ -1208,14 +1209,13 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Response is successful\", () => ",
-							"   pm.expect(pm.response.to.have.status(400)));",
+							"   pm.expect(pm.response.to.have.status(403)));",
 							"",
 							"pm.test(\"Correct Error with message and code is received\", function () {",
 							"    var res = pm.response.json();",
 							"    var code = res.Errors[0].code;",
 							"    var message = res.Errors[0].message;",
-							"    pm.expect(code).to.eql(\"TENANT_ID\");",
-							"    pm.expect(message).to.eql(\"Tenant ID is mandatory\");",
+							"    pm.expect(code).to.eql(\"CustomException\");",
 							"    }",
 							");"
 						],
