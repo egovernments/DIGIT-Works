@@ -60,6 +60,7 @@ class Common {
   String get cancel => 'CS_ACTION_CANCEL';
   String get startDate => 'EVENTS_START_DATE_LABEL';
   String get endDate => 'EVENTS_END_DATE_LABEL';
+  String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
 }
 
 class Home {

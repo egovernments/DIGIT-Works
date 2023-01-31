@@ -68,7 +68,10 @@ class _LoginPage extends State<LoginPage> {
             SchedulerBinding.instance.addPostFrameCallback((_) {
               state.maybeWhen(
                   error: () => Notifiers.getToastMessage(
-                      context, 'Invalid Login', 'ERROR'),
+                      context,
+                      AppLocalizations.of(context)
+                          .translate(i18.common.invalidCredentials),
+                      'ERROR'),
                   orElse: () => Container());
             });
             return Container();
