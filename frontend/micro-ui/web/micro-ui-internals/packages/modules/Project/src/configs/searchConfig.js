@@ -5,11 +5,17 @@ const searchConfig = () => {
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
+                mandatoryFields:{
+                    tenantId: Digit.ULBService.getCurrentTenantId(),
+                },
+                limit:10,
+                offset:0,
                 tenantId: Digit.ULBService.getCurrentTenantId(),
-                limit: 5,
-                offset: 0
             },
             requestBody: {
+                mandatoryFields: {
+                    tenantId: Digit.ULBService.getCurrentTenantId(),
+                },
                 apiOperation: "SEARCH",
                 Projects: [
                     {
@@ -17,7 +23,8 @@ const searchConfig = () => {
                     }
                 ]
             },
-            jsonPath: `Properties[0].address`
+            jsonPath: `Properties[0].address`,
+            preProcessResponese: (data) =>  data
         },
         sections : {
             search : {
@@ -29,10 +36,10 @@ const searchConfig = () => {
                     defaultValues : {
                         projectNumber: "",
                         subProjectId: "",
-                        projectName: "",
+                        name: "",
                         workType: "",
-                        createdFromDate: "",
-                        createdToDate: ""
+                        startDate: "",
+                        endDate: ""
                     },
                     fields : [
                         {
@@ -42,7 +49,7 @@ const searchConfig = () => {
                             disable: false,
                             populators: { 
                                 name: "projectNumber",
-                                validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
+                                // validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
                             },
                         },
                         {
@@ -51,8 +58,8 @@ const searchConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "subProjectId",
-                                validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
+                                name: "projectNumber",
+                                // validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
                             },
                         },
                         {
@@ -61,8 +68,8 @@ const searchConfig = () => {
                           isMandatory: false,
                           disable: false,
                           populators: { 
-                              name: "projectName",
-                              validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
+                              name: "name",
+                            //   validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
                           }
                         },
                         {
@@ -71,14 +78,15 @@ const searchConfig = () => {
                           isMandatory: false,
                           disable: false,
                           populators: {
-                            name: "workType",
-                            optionsKey: "name",
+                            name: "projectType",
+                            optionsKey: "code",
                             mdmsConfig: {
-                              masterName: "TypeOfWork",
+                              masterName: "ProjectType",
                               moduleName: "works",
-                              localePrefix: "WORKS",
+                            //   localePrefix: "WORKS_PROJECT_TYPE",
                             }
-                          }
+                          },
+                          preProcessfn: (project)=> project?.code
                         },
                         {
                           label: "Created from Date",
@@ -86,8 +94,9 @@ const searchConfig = () => {
                           isMandatory: false,
                           disable: false,
                           populators: { 
-                              name: "createdFromDate"
-                          }
+                              name: "startDate"
+                          },
+                          preProcessfn: Digit.Utils.pt.convertDateToEpoch
                         },
                         {
                             label: "Created to Date",
@@ -95,8 +104,9 @@ const searchConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "createdToDate"
-                            }
+                                name: "endDate"
+                            },
+                            preProcessfn: Digit.Utils.pt.convertDateToEpoch
                         }
                     ]
                 },
@@ -125,7 +135,7 @@ const searchConfig = () => {
                         },
                         {
                             label: "PROJECT_OWNING_DEPT",
-                            jsonPath: "gender",
+                            jsonPath: "department",
                             translate:true,
                             prefix:"COMMON_MASTERS_DEPARTMENT_",
                         },
@@ -135,7 +145,7 @@ const searchConfig = () => {
                         },
                         {
                             label: "WORKS_SUB_PROJECT_TYPE",
-                            jsonPath: "projectSubTyp",
+                            jsonPath: "projectSubType",
                         },
                         {
                             label: "WORKS_WORK_NATURE",
@@ -143,19 +153,21 @@ const searchConfig = () => {
                         },
                         {
                             label: "WORKS_PARENT_PROJECT_ID",
-                            jsonPath: "parent",
+                            jsonPath: "parentId",
                         },
                         {
                             label: "WORKS_CREATED_BY",
                             jsonPath: "auditDetails.createdBy",
+                            // jsonPath: "createdBy",
+                            // preProcessfn: (uuid) => Digit.UserService.userSearch
                         },
                         {
                             label: "WORKS_STATUS",
-                            jsonPath: "rowVersion",
+                            jsonPath: "status",
                         },
                         {
                             label: "WORKS_TOTAL_AMOUNT",
-                            jsonPath: "startDate",
+                            jsonPath: "totalAmount",
                         }
                     ],
                     enableGlobalSearch: false,

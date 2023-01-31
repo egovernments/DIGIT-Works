@@ -7,7 +7,8 @@ import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import { InboxContext } from './InboxSearchComposerContext';
 import { Link } from "react-router-dom";
-
+import { Loader } from '../atoms/Loader';
+import Card from '../atoms/Card'
 // const searchResult = [
 //     {
 //         "_id": "63cfb686a362962fa93c03a2",
@@ -208,19 +209,20 @@ import { Link } from "react-router-dom";
 
 
 const ResultsTable = ({ tableContainerClass, config,data,isLoading }) => {
+    
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
     const searchResult = data?.[resultsKey] ? data?.[resultsKey] : []
-    debugger
+    
     const {state,dispatch} = useContext(InboxContext)
-    // debugger
+    
     const tableColumns = useMemo(() => {
         //test if accessor can take jsonPath value only and then check sort and global search work properly
         return config?.columns?.map(column => {
             
             if(column.redirectUrl){
                 return {
-                    Header: t(column?.label) || "NA",
+                    Header: t(column?.label) || t("ES_COMMON_NA"),
                     accessor:column.jsonPath,
                     Cell: ({ value, col, row }) => {
                         //integrate row.original with jsonPath
@@ -228,18 +230,20 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading }) => {
                         //     <Link to={column?.redirectUrl || '/works-ui/employee/project/project-inbox-item'}>{String(t(_.get(row.original, column.jsonPath, "NA")))}</Link>
                         // </span>
                         return <span className="link">
-                            <Link to={column?.redirectUrl || '/works-ui/employee/project/project-inbox-item'}>{String(column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value)}</Link>
+                            <Link to={column?.redirectUrl || '/works-ui/employee/project/project-inbox-item'}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value:t("ES_COMMON_NA"))}</Link>
                         </span>
                     }
                 }
             }
             return {
-                Header: column?.label || "NA",
+                Header: t(column?.label) || t("ES_COMMON_NA"),
                 accessor: column.jsonPath,
                 Cell: ({ value, col, row }) => {
+                    // if (column.preProcessfn){
+                    //     return String( column.preProcessfn("pb.amritsar", { uuid: [uuid] }, {}) || t("ES_COMMON_NA"));
+                    // }
                     // return String(t(_.get(row.original,column.jsonPath,"NA")));
-                    return String(column.translate? t(column.prefix?`${column.prefix}${value}`:value) : value);
-
+                    return String(value ? column.translate? t(column.prefix?`${column.prefix}${value}`:value) : value : t("ES_COMMON_NA"));
                 }
             }
         })
@@ -314,14 +318,24 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading }) => {
         //here update the reducer state
         //call a dispatch to update table's part of the state and update offset, limit, sortOrder
         // this will in turn make the api call and give search results and table will be rendered acc to the new data
-        // debugger
+        
         dispatch({
             type:"tableForm",
             state:{...data}
         })
-        console.log("formData", data);
+        
     }
-    // console.log("curr page", (parseInt(getValues("offset")) / parseInt(getValues("limit")) || 1));
+
+    if (isLoading) return <Loader />
+    if (searchResult.length === 0) return <Card style={{ marginTop: 20 }}>
+        {t("ES_COMMON_NO_DATA")
+            .split("\\n")
+            .map((text, index) => (
+                <p key={index} style={{ textAlign: "center" }}>
+                    {text}
+                </p>
+            ))}
+    </Card>
     return (
         <div >
             {config?.enableGlobalSearch && <div className='card' style={{ "padding": "0px", marginTop: "1rem" }}>

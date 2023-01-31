@@ -18,11 +18,16 @@ const InboxSearchComposer = (props) => {
     //     ]
     //     )
     useEffect(() => {
-        const requestBody = configs?.apiDetails?.requestBody
+        // const requestBody = configs?.apiDetails?.requestBody
+        const apiDetails = configs?.apiDetails
         if (Object.keys(state.searchForm)?.length > 0) {
             //here we can't directly put Projects[0] -> need to generalise this
-            requestBody.Projects[0] = { ...requestBody.Projects[0],...state.searchForm }
+            apiDetails.requestBody.Projects[0] = { tenantId: Digit.ULBService.getCurrentTenantId(),...state.searchForm }
             // requestBody.Projects[0]={...state?.searchForm}
+            setEnable(true)
+        }
+        if(Object.keys(state.tableForm)?.length > 0) {
+            apiDetails.requestParam = { tenantId: Digit.ULBService.getCurrentTenantId(), ...state.tableForm }
             setEnable(true)
         }
     }, [state])
@@ -37,9 +42,9 @@ const InboxSearchComposer = (props) => {
         configs?.apiDetails?.serviceName,
         configs?.apiDetails?.requestParam,
         configs?.apiDetails?.requestBody,
-        {},
         {
-            enabled: enable
+            enabled: enable,
+            // select: config?.apiDetails?.preProcessResponese ? config?.apiDetails?.preProcessResponese : null
         }
     ];
 
@@ -81,9 +86,9 @@ const InboxSearchComposer = (props) => {
                                 screenType={configs?.type}/>
                     </div> 
                 }
-                {
+                {   
                 configs?.sections?.searchResult?.show &&  
-                    <div className="" style={{ overflowX: "scroll" }}>
+                        <div className="" style={data ? { overflowX: "scroll" }:{}} >
                         <ResultsTable config={configs?.sections?.searchResult?.uiConfig} data={data} isLoading={isLoading}/>
                     </div>
                 }
