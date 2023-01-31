@@ -34,11 +34,6 @@ const InboxSearchComposer = (props) => {
         }
     }, [state])
     
-   
-    // useEffect(() => {
-    //     //whenever state is update we'll update the payload
-
-    // }, [state])
 
     const requestCriteria = [
         configs?.apiDetails?.serviceName,
