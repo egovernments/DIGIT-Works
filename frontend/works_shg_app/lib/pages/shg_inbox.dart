@@ -55,6 +55,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
   List<Map<String, dynamic>> updateAttendeePayload = [];
   List<Map<String, dynamic>> createAttendeePayload = [];
   List<TableDataRow> tableData = [];
+  bool hasLoaded = true;
 
   @override
   void initState() {
@@ -71,7 +72,6 @@ class _SHGInboxPage extends State<SHGInboxPage> {
 
   @override
   Widget build(BuildContext context) {
-    bool hasLoaded = false;
     var width = MediaQuery.of(context).size.width < 760
         ? 145.0
         : (MediaQuery.of(context).size.width / 4);
@@ -342,11 +342,19 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                     .addPostFrameCallback((_) {
                                   logState.maybeWhen(
                                       error: () => Notifiers.getToastMessage(
-                                          context, 'Log Failed', 'ERROR'),
+                                          context,
+                                          AppLocalizations.of(context)
+                                              .translate(i18.attendanceMgmt
+                                                  .attendanceLoggedFailed),
+                                          'ERROR'),
                                       loaded: () {
                                         if (!hasLoaded) {
-                                          Notifiers.getToastMessage(context,
-                                              'Logged successfully', 'SUCCESS');
+                                          Notifiers.getToastMessage(
+                                              context,
+                                              AppLocalizations.of(context)
+                                                  .translate(i18.attendanceMgmt
+                                                      .attendanceLoggedSuccess),
+                                              'SUCCESS');
                                           onSubmit(widget.id);
                                           hasLoaded = true;
                                         }
@@ -467,15 +475,25 @@ class _SHGInboxPage extends State<SHGInboxPage> {
   }
 
   void onSubmit(String id) {
-    newList.clear();
-    context.read<MusterRollEstimateBloc>().add(
-          EstimateMusterRollEvent(
-            registerId: id.toString(),
-            tenantId: widget.tenantId,
-            startDate: selectedDateRange!.startDate,
-            endDate: selectedDateRange!.endDate,
-          ),
-        );
+    if (selectedDateRange != null) {
+      newList.clear();
+      updateAttendeePayload.clear();
+      createAttendeePayload.clear();
+      context.read<MusterRollEstimateBloc>().add(
+            EstimateMusterRollEvent(
+              tenantId: widget.tenantId,
+              registerId: id.toString(),
+              startDate: selectedDateRange!.startDate,
+              endDate: selectedDateRange!.endDate,
+            ),
+          );
+    } else {
+      Notifiers.getToastMessage(
+          context,
+          AppLocalizations.of(context)
+              .translate(i18.attendanceMgmt.selectDateRangeFirst),
+          'ERROR');
+    }
   }
 
   List<TableHeader> get headerList => [
@@ -648,16 +666,18 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    12),
+                    13),
                 entryID,
                 exitId,
                 widget.tenantId,
-                auditDetails));
+                auditDetails,
+                true,
+                true));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&
@@ -669,12 +689,12 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    12),
+                    13),
                 widget.tenantId));
           }
         } else if (newList[index].getProperty(day) == 0.5) {
@@ -690,7 +710,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
@@ -699,7 +719,9 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                 entryID,
                 exitId,
                 widget.tenantId,
-                auditDetails));
+                auditDetails,
+                true,
+                true));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&
@@ -711,7 +733,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
@@ -732,34 +754,22 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 entryID,
                 exitId,
                 widget.tenantId,
-                auditDetails));
+                auditDetails,
+                false,
+                false));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&
                 DateFormats.getDay(e['time']).toLowerCase() == day);
-            createAttendeePayload.addAll(createAttendanceLogPayload(
-                newList[index],
-                registerId ?? '',
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    8),
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    8),
-                widget.tenantId));
           }
         }
       });

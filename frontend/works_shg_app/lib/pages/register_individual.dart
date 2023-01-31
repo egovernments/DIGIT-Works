@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../widgets/atoms/back_navigation_help_header.dart';
-import '../widgets/atoms/digit_text_form_field.dart';
 
 class HouseholdLocationPage extends StatelessWidget {
   const HouseholdLocationPage({super.key});
@@ -50,7 +49,7 @@ class HouseholdLocationPage extends StatelessWidget {
                       'household Location',
                       style: theme.textTheme.displayMedium,
                     ),
-                    Column(children: [
+                    Column(children: const [
                       DigitTextFormField(
                         formControlName: 'administrationArea',
                         label: 'Administration Area',

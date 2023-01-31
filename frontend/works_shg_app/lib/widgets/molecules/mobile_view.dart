@@ -6,7 +6,7 @@ import '../atoms/background_container.dart';
 class MobileView extends StatelessWidget {
   final Widget widget;
   final String bannerURL;
-  MobileView(this.widget, this.bannerURL);
+  const MobileView(this.widget, this.bannerURL);
 
   @override
   Widget build(BuildContext context) {

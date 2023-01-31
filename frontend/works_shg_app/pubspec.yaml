@@ -34,7 +34,7 @@ dependencies:
   digit_components:
     git:
       url: https://github.com/egovernments/health-campaign-field-worker-app
-      ref: main-parallel
+      ref: hlm-1030-consumer-localization-data
       path: ./packages/digit_components
   universal_html: ^2.0.8
   flutter_secure_storage: ^7.0.1

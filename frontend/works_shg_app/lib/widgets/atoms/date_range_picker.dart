@@ -2,8 +2,6 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:works_shg_app/widgets/atoms/digit_text_field.dart'
-    as shg_text_field;
 
 class DateRangePicker extends StatelessWidget {
   final format = DateFormat("dd/MM/yyyy");
@@ -89,7 +87,7 @@ class DateRangePicker extends StatelessWidget {
       return Container(
           margin: const EdgeInsets.only(top: 5.0, bottom: 5, right: 8, left: 8),
           child: Column(children: [
-            shg_text_field.DigitTextField(
+            DigitTextField(
                 label: label,
                 readOnly: true,
                 controller: controller,
@@ -121,7 +119,7 @@ class DateRangePicker extends StatelessWidget {
           child: Row(children: [
             SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
-                child: shg_text_field.DigitTextField(
+                child: DigitTextField(
                     label: label,
                     readOnly: true,
                     controller: controller,
@@ -141,7 +139,7 @@ class DateRangePicker extends StatelessWidget {
                                 ));
                               });
                         },
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.date_range,
                         )))),
           ]));

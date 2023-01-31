@@ -94,4 +94,6 @@ class AttendanceMgmt {
   String get addNewWageSeeker => 'ATM_ADD_NEW_WAGE_SEEKER';
   String get selectDateRangeFirst => 'SELECT_DATE_RANGE_FIRST';
   String get individualsCount => 'REGISTER_INDIVIDUAL_COUNT';
+  String get attendanceLoggedSuccess => 'ATM_LOGGED_SUCCESSFULLY';
+  String get attendanceLoggedFailed => 'ATM_LOGGED_FAILED';
 }

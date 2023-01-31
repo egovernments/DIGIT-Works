@@ -23,6 +23,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPage extends State<LoginPage> {
   var userIdController = TextEditingController();
   var passwordController = TextEditingController();
+  var passwordVisible = false;
 
   Widget getLoginCard(BuildContext loginContext) {
     return DigitCard(
@@ -38,11 +39,15 @@ class _LoginPage extends State<LoginPage> {
             label: AppLocalizations.of(loginContext)
                 .translate(i18.login.loginUserName),
             controller: userIdController,
+            maxLength: 10,
           ),
           DigitTextField(
             label: AppLocalizations.of(loginContext)
                 .translate(i18.login.loginPassword),
             controller: passwordController,
+            obscureText: !passwordVisible,
+            suffixIcon: buildPasswordVisibility(),
+            maxLines: 1,
           ),
           const SizedBox(height: 16),
           DigitElevatedButton(
@@ -85,6 +90,20 @@ class _LoginPage extends State<LoginPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildPasswordVisibility() {
+    return IconButton(
+      icon: Icon(
+        passwordVisible ? Icons.visibility : Icons.visibility_off,
+        color: Theme.of(context).primaryColorLight,
+      ),
+      onPressed: () {
+        setState(() {
+          passwordVisible = !passwordVisible;
+        });
+      },
     );
   }
 

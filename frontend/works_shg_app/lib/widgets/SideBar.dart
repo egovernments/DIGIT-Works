@@ -59,7 +59,7 @@ class SideBar extends StatelessWidget {
                 return state.digitRowCardItems != null &&
                         state.isInitializationCompleted
                     ? DigitRowCard(
-                        onPressed: (data) async {
+                        onChanged: (data) async {
                           context.read<AppInitializationBloc>().add(
                               AppInitializationSetupEvent(
                                   selectedLangIndex:
@@ -76,7 +76,7 @@ class SideBar extends StatelessWidget {
                                       GlobalVariables.getTenantId().toString(),
                                   locale: data.value));
                         },
-                        list: state.digitRowCardItems
+                        rowItems: state.digitRowCardItems
                             ?.map((e) => DigitRowCardModel.fromJson(e.toJson()))
                             .toList() as List<DigitRowCardModel>,
                         width: 85)

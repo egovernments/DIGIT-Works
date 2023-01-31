@@ -62,6 +62,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
   List<Map<String, dynamic>> updateAttendeePayload = [];
   List<Map<String, dynamic>> createAttendeePayload = [];
   List<TableDataRow> tableData = [];
+  bool hasLoaded = true;
 
   @override
   void initState() {
@@ -78,7 +79,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool hasLoaded = false;
     var width = MediaQuery.of(context).size.width < 760
         ? 145.0
         : (MediaQuery.of(context).size.width / 4);
@@ -360,11 +360,19 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                     .addPostFrameCallback((_) {
                                   logState.maybeWhen(
                                       error: () => Notifiers.getToastMessage(
-                                          context, 'Log Failed', 'ERROR'),
+                                          context,
+                                          AppLocalizations.of(context)
+                                              .translate(i18.attendanceMgmt
+                                                  .attendanceLoggedFailed),
+                                          'ERROR'),
                                       loaded: () {
                                         if (!hasLoaded) {
-                                          Notifiers.getToastMessage(context,
-                                              'Logged successfully', 'SUCCESS');
+                                          Notifiers.getToastMessage(
+                                              context,
+                                              AppLocalizations.of(context)
+                                                  .translate(i18.attendanceMgmt
+                                                      .attendanceLoggedSuccess),
+                                              'SUCCESS');
                                           onSubmit(widget.id);
                                           hasLoaded = true;
                                         }
@@ -537,6 +545,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
   void onSubmit(String id) {
     if (selectedDateRange != null) {
       newList.clear();
+      updateAttendeePayload.clear();
+      createAttendeePayload.clear();
       context.read<MusterRollEstimateBloc>().add(
             EstimateMusterRollEvent(
               tenantId: widget.tenantId,
@@ -733,11 +743,13 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    14),
+                    13),
                 entryID,
                 exitId,
                 widget.tenantId,
-                auditDetails));
+                auditDetails,
+                true,
+                true));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&
@@ -749,12 +761,12 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    12),
+                    13),
                 widget.tenantId));
           }
         } else if (newList[index].getProperty(day) == 0.5) {
@@ -770,7 +782,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
@@ -779,7 +791,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                 entryID,
                 exitId,
                 widget.tenantId,
-                auditDetails));
+                auditDetails,
+                true,
+                true));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&
@@ -791,7 +805,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
@@ -812,34 +826,22 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 entryID,
                 exitId,
                 widget.tenantId,
-                auditDetails));
+                auditDetails,
+                false,
+                false));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&
                 DateFormats.getDay(e['time']).toLowerCase() == day);
-            createAttendeePayload.addAll(createAttendanceLogPayload(
-                newList[index],
-                registerId ?? '',
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    8),
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    8),
-                widget.tenantId));
           }
         }
       });

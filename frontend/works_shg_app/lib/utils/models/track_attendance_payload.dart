@@ -94,31 +94,47 @@ List<Map<String, dynamic>> updateAttendanceLogPayload(
     String entryId,
     String exitId,
     String tenantId,
-    AuditDetails auditDetails) {
-  return [
-    {
-      "id": entryId,
-      "registerId": registerId,
-      "individualId": attendeeList.individualId,
-      "time": entryTime,
-      "type": "ENTRY",
-      "status": "ACTIVE",
-      "tenantId": tenantId,
-      "documentIds": [],
-      "auditDetails": auditDetails
-    },
-    {
-      "id": exitId,
-      "registerId": registerId,
-      "individualId": attendeeList.individualId,
-      "time": exitTime,
-      "type": "EXIT",
-      "status": "ACTIVE",
-      "tenantId": tenantId,
-      "documentIds": [],
-      "auditDetails": auditDetails
-    }
-  ];
+    AuditDetails auditDetails,
+    bool status,
+    bool onlyExit) {
+  return onlyExit
+      ? [
+          {
+            "id": exitId,
+            "registerId": registerId,
+            "individualId": attendeeList.individualId,
+            "time": exitTime,
+            "type": "EXIT",
+            "status": status ? "ACTIVE" : "INACTIVE",
+            "tenantId": tenantId,
+            "documentIds": [],
+            "auditDetails": auditDetails
+          }
+        ]
+      : [
+          {
+            "id": entryId,
+            "registerId": registerId,
+            "individualId": attendeeList.individualId,
+            "time": entryTime,
+            "type": "ENTRY",
+            "status": status ? "ACTIVE" : "INACTIVE",
+            "tenantId": tenantId,
+            "documentIds": [],
+            "auditDetails": auditDetails
+          },
+          {
+            "id": exitId,
+            "registerId": registerId,
+            "individualId": attendeeList.individualId,
+            "time": exitTime,
+            "type": "EXIT",
+            "status": status ? "ACTIVE" : "INACTIVE",
+            "tenantId": tenantId,
+            "documentIds": [],
+            "auditDetails": auditDetails
+          }
+        ];
 }
 
 List<Map<String, dynamic>> createAttendanceLogPayload(
