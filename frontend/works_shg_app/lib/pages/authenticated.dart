@@ -33,7 +33,7 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                           state.userSearchModel!.user!.first.name.toString(),
                       mobileNumber:
                           state.userSearchModel!.user!.first.mobileNumber,
-                      module: 'rainmaker-works,rainmaker-attendencemgmt',
+                      module: 'rainmaker-common,rainmaker-attendencemgmt',
                     )
                   : Loaders.circularLoader(context);
             }),
@@ -57,7 +57,7 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                   const LocalizationState(),
                   LocalizationRepository(client.init()),
                 )..add(LocalizationEvent.onLoadLocalization(
-                    module: 'rainmaker-works,rainmaker-attendencemgmt',
+                    module: 'rainmaker-common,rainmaker-attendencemgmt',
                     tenantId: GlobalVariables.getTenantId().toString(),
                     locale: GlobalVariables.selectedLocale(),
                   )),

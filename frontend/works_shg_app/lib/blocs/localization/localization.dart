@@ -77,9 +77,19 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
               jsonEncode(result.messages.map((e) => e.toJson()).toList());
         }
       } else {
-        await storage.write(
-            key: event.locale ?? '',
-            value: jsonEncode(result.messages.map((e) => e.toJson()).toList()));
+        var existing = await storage.read(key: event.locale);
+        if (existing != null) {
+          var existingObject = json.decode(existing);
+          existingObject
+              .addAll(result.messages.map((e) => e.toJson()).toList());
+          await storage.write(
+              key: event.locale ?? '', value: jsonEncode(existingObject));
+        } else {
+          await storage.write(
+              key: event.locale ?? '',
+              value:
+                  jsonEncode(result.messages.map((e) => e.toJson()).toList()));
+        }
       }
 
       dynamic localLabelResponse;

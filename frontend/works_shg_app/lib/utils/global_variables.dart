@@ -5,6 +5,7 @@ import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/blocs/localization/selected_localization_model.dart';
 import 'package:works_shg_app/models/app_config/app_config_model.dart';
 
+import '../models/init_mdms/init_mdms_model.dart';
 import '../services/local_storage.dart';
 
 class GlobalVariables {
@@ -73,6 +74,20 @@ class GlobalVariables {
       return jsonDecode(html.window.localStorage['StateInfo'].toString());
     } else {
       return jsonDecode(storage.read(key: 'StateInfo').toString());
+    }
+  }
+
+  static String bannerURL() {
+    if (kIsWeb) {
+      return StateInfoListModel.fromJson(
+                  jsonDecode(html.window.localStorage['StateInfo'].toString()))
+              .bannerUrl ??
+          '';
+    } else {
+      return StateInfoListModel.fromJson(
+                  jsonDecode(storage.read(key: 'StateInfo').toString()))
+              .bannerUrl ??
+          '';
     }
   }
 

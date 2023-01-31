@@ -18,7 +18,7 @@ typedef AttendanceLogCreateEmitter = Emitter<AttendanceLogCreateState>;
 
 class AttendanceLogCreateBloc
     extends Bloc<AttendanceLogCreateEvent, AttendanceLogCreateState> {
-  AttendanceLogCreateBloc() : super(const AttendanceLogCreateState()) {
+  AttendanceLogCreateBloc() : super(const AttendanceLogCreateState.initial()) {
     on<CreateAttendanceLogEvent>(_onCreate);
     on<UpdateAttendanceLogEvent>(_onUpdate);
   }
@@ -26,40 +26,43 @@ class AttendanceLogCreateBloc
   FutureOr<void> _onCreate(
       CreateAttendanceLogEvent event, AttendanceLogCreateEmitter emit) async {
     Client client = Client();
-    emit(state.copyWith(loading: true));
-    AttendanceRegistersModel attendanceRegistersModel =
-        await AttendanceRegisterRepository(client.init()).createAttendanceLog(
-            url: Urls.attendanceRegisterServices.createAttendanceLog,
-            options:
-                Options(extra: {"accessToken": GlobalVariables.getAuthToken()}),
-            body: {"attendance": event.attendanceList});
-    await Future.delayed(const Duration(seconds: 2));
-    emit(state.copyWith(
-        createAttendanceRegistersModel: attendanceRegistersModel,
-        loading: false));
-    // Notifiers.getToastMessage(scaffoldMessengerKey.currentContext!,
-    //     'Created Successfully', 'SUCCESS');
+    try {
+      emit(const AttendanceLogCreateState.loading());
+      AttendanceRegistersModel attendanceRegistersModel =
+          await AttendanceRegisterRepository(client.init()).createAttendanceLog(
+              url: Urls.attendanceRegisterServices.createAttendanceLog,
+              options: Options(
+                  extra: {"accessToken": GlobalVariables.getAuthToken()}),
+              body: {"attendance": event.attendanceList});
+      await Future.delayed(const Duration(seconds: 2));
+      if (attendanceRegistersModel != null) {
+        emit(AttendanceLogCreateState.loaded());
+      }
+    } on DioError catch (e) {
+      emit(const AttendanceLogCreateState.error());
+    }
   }
 
   FutureOr<void> _onUpdate(
       UpdateAttendanceLogEvent event, AttendanceLogCreateEmitter emit) async {
     Client client = Client();
-    emit(state.copyWith(loading: true));
-    AttendanceRegistersModel attendanceRegistersModel =
-        await AttendanceRegisterRepository(client.init()).createAttendanceLog(
-            url: Urls.attendanceRegisterServices.updateAttendanceLog,
-            options: Options(extra: {
-              "accessToken": GlobalVariables.getAuthToken(),
-              "userInfo": GlobalVariables.getUserInfo(),
-            }),
-            body: {"attendance": event.attendanceList});
-    await Future.delayed(const Duration(seconds: 2));
-    emit(state.copyWith(
-      updateAttendanceRegistersModel: attendanceRegistersModel,
-      loading: false,
-    ));
-    // Notifiers.getToastMessage(scaffoldMessengerKey.currentContext!,
-    //     'Created Successfully', 'SUCCESS');
+    try {
+      emit(const AttendanceLogCreateState.loading());
+      AttendanceRegistersModel attendanceRegistersModel =
+          await AttendanceRegisterRepository(client.init()).createAttendanceLog(
+              url: Urls.attendanceRegisterServices.updateAttendanceLog,
+              options: Options(extra: {
+                "accessToken": GlobalVariables.getAuthToken(),
+                "userInfo": GlobalVariables.getUserInfo(),
+              }),
+              body: {"attendance": event.attendanceList});
+      await Future.delayed(const Duration(seconds: 2));
+      if (attendanceRegistersModel != null) {
+        emit(AttendanceLogCreateState.loaded());
+      }
+    } on DioError catch (e) {
+      emit(const AttendanceLogCreateState.error());
+    }
   }
 }
 
@@ -74,10 +77,15 @@ class AttendanceLogCreateEvent with _$AttendanceLogCreateEvent {
 @freezed
 class AttendanceLogCreateState with _$AttendanceLogCreateState {
   const AttendanceLogCreateState._();
+  const factory AttendanceLogCreateState.initial() = _Initial;
+  const factory AttendanceLogCreateState.loading() = _Loading;
+  const factory AttendanceLogCreateState.loaded() = _Loaded;
+  const factory AttendanceLogCreateState.error() = _Error;
 
-  const factory AttendanceLogCreateState({
-    @Default(false) bool loading,
-    AttendanceRegistersModel? createAttendanceRegistersModel,
-    AttendanceRegistersModel? updateAttendanceRegistersModel,
-  }) = _AttendanceLogCreateState;
+  // const factory AttendanceLogCreateState({
+  //   @Default(false) bool loading,
+  //   @Default(true) bool isCompleted,
+  //   AttendanceRegistersModel? createAttendanceRegistersModel,
+  //   AttendanceRegistersModel? updateAttendanceRegistersModel,
+  // }) = _AttendanceLogCreateState;
 }

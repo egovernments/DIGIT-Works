@@ -339,14 +339,59 @@ abstract class AuthLogoutEvent implements AuthEvent {
 
 /// @nodoc
 mixin _$AuthState {
-  bool get initialized => throw _privateConstructorUsedError;
-  bool get loading => throw _privateConstructorUsedError;
-  String? get accessToken => throw _privateConstructorUsedError;
-  String? get refreshToken => throw _privateConstructorUsedError;
-  UserRequestModel? get userRequestModel => throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $AuthStateCopyWith<AuthState> get copyWith =>
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            UserDetailsModel? userDetailsModel, String? accessToken)
+        loaded,
+    required TResult Function() error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserDetailsModel? userDetailsModel, String? accessToken)?
+        loaded,
+    TResult? Function()? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserDetailsModel? userDetailsModel, String? accessToken)?
+        loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) =>
       throw _privateConstructorUsedError;
 }
 
@@ -354,15 +399,6 @@ mixin _$AuthState {
 abstract class $AuthStateCopyWith<$Res> {
   factory $AuthStateCopyWith(AuthState value, $Res Function(AuthState) then) =
       _$AuthStateCopyWithImpl<$Res, AuthState>;
-  @useResult
-  $Res call(
-      {bool initialized,
-      bool loading,
-      String? accessToken,
-      String? refreshToken,
-      UserRequestModel? userRequestModel});
-
-  $UserRequestModelCopyWith<$Res>? get userRequestModel;
 }
 
 /// @nodoc
@@ -374,202 +410,559 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+}
 
-  @pragma('vm:prefer-inline')
+/// @nodoc
+abstract class _$$_InitialCopyWith<$Res> {
+  factory _$$_InitialCopyWith(
+          _$_Initial value, $Res Function(_$_Initial) then) =
+      __$$_InitialCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_InitialCopyWithImpl<$Res>
+    extends _$AuthStateCopyWithImpl<$Res, _$_Initial>
+    implements _$$_InitialCopyWith<$Res> {
+  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Initial extends _Initial with DiagnosticableTreeMixin {
+  const _$_Initial() : super._();
+
   @override
-  $Res call({
-    Object? initialized = null,
-    Object? loading = null,
-    Object? accessToken = freezed,
-    Object? refreshToken = freezed,
-    Object? userRequestModel = freezed,
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthState.initial()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'AuthState.initial'));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Initial);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            UserDetailsModel? userDetailsModel, String? accessToken)
+        loaded,
+    required TResult Function() error,
   }) {
-    return _then(_value.copyWith(
-      initialized: null == initialized
-          ? _value.initialized
-          : initialized // ignore: cast_nullable_to_non_nullable
-              as bool,
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      accessToken: freezed == accessToken
-          ? _value.accessToken
-          : accessToken // ignore: cast_nullable_to_non_nullable
-              as String?,
-      refreshToken: freezed == refreshToken
-          ? _value.refreshToken
-          : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userRequestModel: freezed == userRequestModel
-          ? _value.userRequestModel
-          : userRequestModel // ignore: cast_nullable_to_non_nullable
-              as UserRequestModel?,
-    ) as $Val);
+    return initial();
   }
 
   @override
-  @pragma('vm:prefer-inline')
-  $UserRequestModelCopyWith<$Res>? get userRequestModel {
-    if (_value.userRequestModel == null) {
-      return null;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserDetailsModel? userDetailsModel, String? accessToken)?
+        loaded,
+    TResult? Function()? error,
+  }) {
+    return initial?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserDetailsModel? userDetailsModel, String? accessToken)?
+        loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial();
     }
+    return orElse();
+  }
 
-    return $UserRequestModelCopyWith<$Res>(_value.userRequestModel!, (value) {
-      return _then(_value.copyWith(userRequestModel: value) as $Val);
-    });
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return initial(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return initial?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial(this);
+    }
+    return orElse();
   }
 }
 
-/// @nodoc
-abstract class _$$_AuthStateCopyWith<$Res> implements $AuthStateCopyWith<$Res> {
-  factory _$$_AuthStateCopyWith(
-          _$_AuthState value, $Res Function(_$_AuthState) then) =
-      __$$_AuthStateCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {bool initialized,
-      bool loading,
-      String? accessToken,
-      String? refreshToken,
-      UserRequestModel? userRequestModel});
-
-  @override
-  $UserRequestModelCopyWith<$Res>? get userRequestModel;
+abstract class _Initial extends AuthState {
+  const factory _Initial() = _$_Initial;
+  const _Initial._() : super._();
 }
 
 /// @nodoc
-class __$$_AuthStateCopyWithImpl<$Res>
-    extends _$AuthStateCopyWithImpl<$Res, _$_AuthState>
-    implements _$$_AuthStateCopyWith<$Res> {
-  __$$_AuthStateCopyWithImpl(
-      _$_AuthState _value, $Res Function(_$_AuthState) _then)
+abstract class _$$_LoadingCopyWith<$Res> {
+  factory _$$_LoadingCopyWith(
+          _$_Loading value, $Res Function(_$_Loading) then) =
+      __$$_LoadingCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_LoadingCopyWithImpl<$Res>
+    extends _$AuthStateCopyWithImpl<$Res, _$_Loading>
+    implements _$$_LoadingCopyWith<$Res> {
+  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Loading extends _Loading with DiagnosticableTreeMixin {
+  const _$_Loading() : super._();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthState.loading()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'AuthState.loading'));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Loading);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            UserDetailsModel? userDetailsModel, String? accessToken)
+        loaded,
+    required TResult Function() error,
+  }) {
+    return loading();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserDetailsModel? userDetailsModel, String? accessToken)?
+        loaded,
+    TResult? Function()? error,
+  }) {
+    return loading?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserDetailsModel? userDetailsModel, String? accessToken)?
+        loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loading(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loading?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Loading extends AuthState {
+  const factory _Loading() = _$_Loading;
+  const _Loading._() : super._();
+}
+
+/// @nodoc
+abstract class _$$_LoadedCopyWith<$Res> {
+  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
+      __$$_LoadedCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserDetailsModel? userDetailsModel, String? accessToken});
+
+  $UserDetailsModelCopyWith<$Res>? get userDetailsModel;
+}
+
+/// @nodoc
+class __$$_LoadedCopyWithImpl<$Res>
+    extends _$AuthStateCopyWithImpl<$Res, _$_Loaded>
+    implements _$$_LoadedCopyWith<$Res> {
+  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? initialized = null,
-    Object? loading = null,
+    Object? userDetailsModel = freezed,
     Object? accessToken = freezed,
-    Object? refreshToken = freezed,
-    Object? userRequestModel = freezed,
   }) {
-    return _then(_$_AuthState(
-      initialized: null == initialized
-          ? _value.initialized
-          : initialized // ignore: cast_nullable_to_non_nullable
-              as bool,
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      accessToken: freezed == accessToken
+    return _then(_$_Loaded(
+      freezed == userDetailsModel
+          ? _value.userDetailsModel
+          : userDetailsModel // ignore: cast_nullable_to_non_nullable
+              as UserDetailsModel?,
+      freezed == accessToken
           ? _value.accessToken
           : accessToken // ignore: cast_nullable_to_non_nullable
               as String?,
-      refreshToken: freezed == refreshToken
-          ? _value.refreshToken
-          : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userRequestModel: freezed == userRequestModel
-          ? _value.userRequestModel
-          : userRequestModel // ignore: cast_nullable_to_non_nullable
-              as UserRequestModel?,
     ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $UserDetailsModelCopyWith<$Res>? get userDetailsModel {
+    if (_value.userDetailsModel == null) {
+      return null;
+    }
+
+    return $UserDetailsModelCopyWith<$Res>(_value.userDetailsModel!, (value) {
+      return _then(_value.copyWith(userDetailsModel: value));
+    });
   }
 }
 
 /// @nodoc
 
-class _$_AuthState extends _AuthState with DiagnosticableTreeMixin {
-  const _$_AuthState(
-      {this.initialized = false,
-      this.loading = false,
-      this.accessToken,
-      this.refreshToken,
-      this.userRequestModel})
-      : super._();
+class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
+  const _$_Loaded(this.userDetailsModel, this.accessToken) : super._();
 
   @override
-  @JsonKey()
-  final bool initialized;
-  @override
-  @JsonKey()
-  final bool loading;
+  final UserDetailsModel? userDetailsModel;
   @override
   final String? accessToken;
-  @override
-  final String? refreshToken;
-  @override
-  final UserRequestModel? userRequestModel;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthState(initialized: $initialized, loading: $loading, accessToken: $accessToken, refreshToken: $refreshToken, userRequestModel: $userRequestModel)';
+    return 'AuthState.loaded(userDetailsModel: $userDetailsModel, accessToken: $accessToken)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'AuthState'))
-      ..add(DiagnosticsProperty('initialized', initialized))
-      ..add(DiagnosticsProperty('loading', loading))
-      ..add(DiagnosticsProperty('accessToken', accessToken))
-      ..add(DiagnosticsProperty('refreshToken', refreshToken))
-      ..add(DiagnosticsProperty('userRequestModel', userRequestModel));
+      ..add(DiagnosticsProperty('type', 'AuthState.loaded'))
+      ..add(DiagnosticsProperty('userDetailsModel', userDetailsModel))
+      ..add(DiagnosticsProperty('accessToken', accessToken));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AuthState &&
-            (identical(other.initialized, initialized) ||
-                other.initialized == initialized) &&
-            (identical(other.loading, loading) || other.loading == loading) &&
+            other is _$_Loaded &&
+            (identical(other.userDetailsModel, userDetailsModel) ||
+                other.userDetailsModel == userDetailsModel) &&
             (identical(other.accessToken, accessToken) ||
-                other.accessToken == accessToken) &&
-            (identical(other.refreshToken, refreshToken) ||
-                other.refreshToken == refreshToken) &&
-            (identical(other.userRequestModel, userRequestModel) ||
-                other.userRequestModel == userRequestModel));
+                other.accessToken == accessToken));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, initialized, loading,
-      accessToken, refreshToken, userRequestModel);
+  int get hashCode => Object.hash(runtimeType, userDetailsModel, accessToken);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AuthStateCopyWith<_$_AuthState> get copyWith =>
-      __$$_AuthStateCopyWithImpl<_$_AuthState>(this, _$identity);
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            UserDetailsModel? userDetailsModel, String? accessToken)
+        loaded,
+    required TResult Function() error,
+  }) {
+    return loaded(userDetailsModel, accessToken);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserDetailsModel? userDetailsModel, String? accessToken)?
+        loaded,
+    TResult? Function()? error,
+  }) {
+    return loaded?.call(userDetailsModel, accessToken);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserDetailsModel? userDetailsModel, String? accessToken)?
+        loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(userDetailsModel, accessToken);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(this);
+    }
+    return orElse();
+  }
 }
 
-abstract class _AuthState extends AuthState {
-  const factory _AuthState(
-      {final bool initialized,
-      final bool loading,
-      final String? accessToken,
-      final String? refreshToken,
-      final UserRequestModel? userRequestModel}) = _$_AuthState;
-  const _AuthState._() : super._();
+abstract class _Loaded extends AuthState {
+  const factory _Loaded(
+          final UserDetailsModel? userDetailsModel, final String? accessToken) =
+      _$_Loaded;
+  const _Loaded._() : super._();
+
+  UserDetailsModel? get userDetailsModel;
+  String? get accessToken;
+  @JsonKey(ignore: true)
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$_ErrorCopyWith<$Res> {
+  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
+      __$$_ErrorCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_ErrorCopyWithImpl<$Res>
+    extends _$AuthStateCopyWithImpl<$Res, _$_Error>
+    implements _$$_ErrorCopyWith<$Res> {
+  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Error extends _Error with DiagnosticableTreeMixin {
+  const _$_Error() : super._();
 
   @override
-  bool get initialized;
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthState.error()';
+  }
+
   @override
-  bool get loading;
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'AuthState.error'));
+  }
+
   @override
-  String? get accessToken;
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Error);
+  }
+
   @override
-  String? get refreshToken;
+  int get hashCode => runtimeType.hashCode;
+
   @override
-  UserRequestModel? get userRequestModel;
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            UserDetailsModel? userDetailsModel, String? accessToken)
+        loaded,
+    required TResult Function() error,
+  }) {
+    return error();
+  }
+
   @override
-  @JsonKey(ignore: true)
-  _$$_AuthStateCopyWith<_$_AuthState> get copyWith =>
-      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserDetailsModel? userDetailsModel, String? accessToken)?
+        loaded,
+    TResult? Function()? error,
+  }) {
+    return error?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserDetailsModel? userDetailsModel, String? accessToken)?
+        loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return error(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return error?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Error extends AuthState {
+  const factory _Error() = _$_Error;
+  const _Error._() : super._();
 }

@@ -82,17 +82,3 @@ class AttendeesEntries with _$AttendeesEntries {
   ) =>
       _$AttendeesEntriesFromJson(json);
 }
-
-@freezed
-class AuditDetails with _$AuditDetails {
-  const factory AuditDetails(
-      {String? createdBy,
-      String? lastModifiedBy,
-      int? createdTime,
-      int? lastModifiedTime}) = _AuditDetails;
-
-  factory AuditDetails.fromJson(
-    Map<String, dynamic> json,
-  ) =>
-      _$AuditDetailsFromJson(json);
-}

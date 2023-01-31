@@ -1,6 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/digit_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -77,6 +78,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
 
   @override
   Widget build(BuildContext context) {
+    bool hasLoaded = false;
     var width = MediaQuery.of(context).size.width < 760
         ? 145.0
         : (MediaQuery.of(context).size.width / 4);
@@ -113,6 +115,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                       const SizedBox(
                         height: 20,
                       ),
+                      // DigitSearchBar(borderRadious: 0,),
                       Container(
                           margin: const EdgeInsets.all(8.0),
                           child: TextFormField(
@@ -226,7 +229,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                           satIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendance ?? 0.0,
                                           sunEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
                                           sunExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                          sunIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? 0.0))
+                                          sunIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? 0.0,
+                                          auditDetails: e.attendanceEntries!.first.auditDetails))
                                       .toList();
 
                                   if (newList.isEmpty) {
@@ -261,6 +265,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                       data.sunIndex = item1.sunIndex;
                                       data.sunEntryId = item1.sunEntryId;
                                       data.sunExitId = item1.sunExitId;
+                                      data.auditDetails = item1.auditDetails;
                                       newList.add(data);
                                     }
                                   }
@@ -283,6 +288,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                       data.friIndex = item1.friIndex;
                                       data.satIndex = item1.satIndex;
                                       data.sunIndex = item1.sunIndex;
+                                      data.auditDetails = item1.auditDetails;
                                       newList.add(data);
                                     }
                                   }
@@ -350,6 +356,21 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                               BlocBuilder<AttendanceLogCreateBloc,
                                       AttendanceLogCreateState>(
                                   builder: (context, logState) {
+                                SchedulerBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  logState.maybeWhen(
+                                      error: () => Notifiers.getToastMessage(
+                                          context, 'Log Failed', 'ERROR'),
+                                      loaded: () {
+                                        if (!hasLoaded) {
+                                          Notifiers.getToastMessage(context,
+                                              'Logged successfully', 'SUCCESS');
+                                          onSubmit(widget.id);
+                                          hasLoaded = true;
+                                        }
+                                      },
+                                      orElse: () => Container());
+                                });
                                 return OutlinedButton(
                                     style: OutlinedButton.styleFrom(
                                         backgroundColor: Colors.white,
@@ -366,6 +387,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                     .selectDateRangeFirst),
                                             'ERROR');
                                       } else {
+                                        hasLoaded = false;
                                         if (updateAttendeePayload.isNotEmpty &&
                                             createAttendeePayload.isNotEmpty) {
                                           context
@@ -393,26 +415,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                   attendanceList:
                                                       createAttendeePayload));
                                         }
-                                        Future.delayed(
-                                            const Duration(seconds: 2));
                                       }
-                                      // setState(() {
-                                      //   if (!logState.loading &&
-                                      //       logState.createAttendanceRegistersModel !=
-                                      //           null) {
-                                      //     Future.delayed(
-                                      //         const Duration(seconds: 2), () {
-                                      //       Notifiers.getToastMessage(
-                                      //           context, 'Created', 'SUCCESS');
-                                      //     });
-                                      //   } else {
-                                      //     Future.delayed(
-                                      //         const Duration(seconds: 2), () {
-                                      //       Notifiers.getToastMessage(context,
-                                      //           'Created failed', 'ERROR');
-                                      //     });
-                                      //   }
-                                      // });
                                     },
                                     child: Center(
                                         child: Text(
@@ -543,7 +546,11 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
             ),
           );
     } else {
-      Notifiers.getToastMessage(context, 'Select Date Range', 'ERROR');
+      Notifiers.getToastMessage(
+          context,
+          AppLocalizations.of(context)
+              .translate(i18.attendanceMgmt.selectDateRangeFirst),
+          'ERROR');
     }
   }
 
@@ -600,73 +607,101 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
         apiKey: tableDataModel.monIndex.toString(),
         widget: CircularButton(
           icon: Icons.circle_rounded,
-          size: 10,
+          size: 15,
           color: const Color.fromRGBO(0, 100, 0, 1),
           index: tableDataModel.monIndex ?? 0.0,
           isNotGreyed: false,
-          onTap: () => onTapButton(tableDataModel.individualId ?? '', 'mon',
-              tableDataModel.monEntryId, tableDataModel.monExitId),
+          onTap: () => onTapButton(
+              tableDataModel.individualId ?? '',
+              'mon',
+              tableDataModel.monEntryId,
+              tableDataModel.monExitId,
+              tableDataModel.auditDetails),
         ),
       ),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.tueIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'tue',
-            tableDataModel.tueEntryId, tableDataModel.tueExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'tue',
+            tableDataModel.tueEntryId,
+            tableDataModel.tueExitId,
+            tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.wedIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'wed',
-            tableDataModel.wedEntryId, tableDataModel.wedExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'wed',
+            tableDataModel.wedEntryId,
+            tableDataModel.wedExitId,
+            tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.thuIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'thu',
-            tableDataModel.thuEntryId, tableDataModel.thuExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'thu',
+            tableDataModel.thuEntryId,
+            tableDataModel.thuExitId,
+            tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.friIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'fri',
-            tableDataModel.friEntryId, tableDataModel.friExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'fri',
+            tableDataModel.friEntryId,
+            tableDataModel.friExitId,
+            tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.satIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'sat',
-            tableDataModel.satEntryId, tableDataModel.satExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'sat',
+            tableDataModel.satEntryId,
+            tableDataModel.satExitId,
+            tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.sunIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'sun',
-            tableDataModel.sunEntryId, tableDataModel.sunExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'sun',
+            tableDataModel.sunEntryId,
+            tableDataModel.sunExitId,
+            tableDataModel.auditDetails),
       ))
     ]);
   }
@@ -675,7 +710,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
     return list.map((e) => getAttendanceRow(e)).toList();
   }
 
-  void onTapButton(individualId, day, entryID, exitId) {
+  void onTapButton(individualId, day, entryID, exitId, auditDetails) {
     int index = newList.indexWhere((item) => item.individualId == individualId);
 
     if (index != -1) {
@@ -693,15 +728,16 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    12),
+                    14),
                 entryID,
                 exitId,
-                widget.tenantId));
+                widget.tenantId,
+                auditDetails));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&
@@ -742,7 +778,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                     18),
                 entryID,
                 exitId,
-                widget.tenantId));
+                widget.tenantId,
+                auditDetails));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&
@@ -783,7 +820,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                     8),
                 entryID,
                 exitId,
-                widget.tenantId));
+                widget.tenantId,
+                auditDetails));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&

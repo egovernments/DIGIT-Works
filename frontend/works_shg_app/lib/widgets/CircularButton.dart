@@ -28,8 +28,8 @@ class CircularButton extends StatelessWidget {
       child: GestureDetector(
           onTap: onTap,
           child: Container(
-              height: 20,
-              width: 20,
+              height: 30,
+              width: 30,
               margin: const EdgeInsets.all(2.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,

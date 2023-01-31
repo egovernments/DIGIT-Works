@@ -1,3 +1,5 @@
+import 'package:works_shg_app/models/muster_rolls/muster_roll_model.dart';
+
 class TrackAttendanceTableData {
   String? name;
   String? aadhaar;
@@ -24,6 +26,7 @@ class TrackAttendanceTableData {
   String? sunEntryId;
   String? sunExitId;
   double? sunIndex;
+  AuditDetails? auditDetails;
 
   double? getProperty(String property) {
     switch (property) {
@@ -90,7 +93,8 @@ List<Map<String, dynamic>> updateAttendanceLogPayload(
     int exitTime,
     String entryId,
     String exitId,
-    String tenantId) {
+    String tenantId,
+    AuditDetails auditDetails) {
   return [
     {
       "id": entryId,
@@ -100,7 +104,8 @@ List<Map<String, dynamic>> updateAttendanceLogPayload(
       "type": "ENTRY",
       "status": "ACTIVE",
       "tenantId": tenantId,
-      "documentIds": []
+      "documentIds": [],
+      "auditDetails": auditDetails
     },
     {
       "id": exitId,
@@ -110,7 +115,8 @@ List<Map<String, dynamic>> updateAttendanceLogPayload(
       "type": "EXIT",
       "status": "ACTIVE",
       "tenantId": tenantId,
-      "documentIds": []
+      "documentIds": [],
+      "auditDetails": auditDetails
     }
   ];
 }
