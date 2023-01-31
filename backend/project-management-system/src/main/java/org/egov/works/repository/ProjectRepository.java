@@ -1,6 +1,8 @@
 package org.egov.works.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.works.config.ProjectConfiguration;
 import org.egov.works.repository.querybuilder.DocumentQueryBuilder;
 import org.egov.works.repository.querybuilder.ProjectAddressQueryBuilder;
 import org.egov.works.repository.querybuilder.TargetQueryBuilder;
@@ -13,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,11 +43,17 @@ public class ProjectRepository {
     private JdbcTemplate jdbcTemplate;
 
     /* Search projects for project request and parameters and return list of projects */
-    public List<Project> getProjects(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted) {
+    public List<Project> getProjects(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, Boolean includeAncestors) {
 
         //Fetch Projects based on search criteria
         List<Object> preparedStmtList = new ArrayList<>();
-        List<Project> projects = getProjectsBasedOnSearchCriteria(project, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList);
+        List<Project> projects = getProjectsBasedOnSearchCriteria(project.getProjects(), limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList);
+        List<Project> ancestors = null;
+
+        //Get Project ancestors if includeAncestors flag is true
+        if (includeAncestors) {
+            ancestors = getProjectAncestors(projects);
+        }
 
         List<String> projectIds = projects.stream().map(Project :: getId).collect(Collectors.toList());
 
@@ -57,15 +66,23 @@ public class ProjectRepository {
         List<Document> documents = getDocumentsBasedOnProjectIds(projectIds, preparedStmtListDocument);
 
         //Construct Project Objects with fetched projects, targets and documents using Project id
-        List<Project> result = buildProjectSearchResult(projects, targets, documents);
+        List<Project> result = buildProjectSearchResult(projects, targets, documents, ancestors);
         return result;
     }
 
     /* Fetch Projects based on search criteria */
-    private List<Project> getProjectsBasedOnSearchCriteria(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted,  List<Object> preparedStmtList) {
-        String query = queryBuilder.getProjectSearchQuery(project, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList);
+    private List<Project> getProjectsBasedOnSearchCriteria(List<Project> projectsRequest, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted,  List<Object> preparedStmtList) {
+        String query = queryBuilder.getProjectSearchQuery(projectsRequest, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList);
         List<Project> projects = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         log.info("Fetched project list based on given search criteria");
+        return projects;
+    }
+
+    /* Fetch Projects based on Project ids */
+    private List<Project> getProjectsBasedOnProjectIds(List<String> projectIds,  List<Object> preparedStmtList) {
+        String query = queryBuilder.getProjectSearchQueryBasedOnIds(projectIds, preparedStmtList);
+        List<Project> projects = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+        log.info("Fetched project list based on given Project Ids");
         return projects;
     }
 
@@ -85,8 +102,27 @@ public class ProjectRepository {
         return documents;
     }
 
+    /* Seperates preceeding project ids from project hierarchy, adds them in list and fetches data using those project ids */
+    private List<Project> getProjectAncestors(List<Project> projects) {
+        List<String> ancestorIds = new ArrayList<>();
+        List<Project> ancestors = null;
+
+        for (Project project: projects) {
+            if (StringUtils.isNotBlank(project.getProjectHierarchy())) {
+                List<String> projectHierarchyIds = Arrays.asList(project.getProjectHierarchy().split("\\."));
+                ancestorIds.addAll(projectHierarchyIds);
+            }
+        }
+        if (ancestorIds.size() > 0) {
+            List<Object> preparedStmtListAncestors = new ArrayList<>();
+            ancestors = getProjectsBasedOnProjectIds(ancestorIds, preparedStmtListAncestors);
+        }
+
+        return ancestors;
+    }
+
     /* Constructs Project Objects with fetched projects, targets and documents using Project id and return list of Projects */
-    private List<Project> buildProjectSearchResult(List<Project> projects, List<Target> targets, List<Document> documents) {
+    private List<Project> buildProjectSearchResult(List<Project> projects, List<Target> targets, List<Document> documents, List<Project> ancestors) {
         for (Project project: projects) {
             project.setTargets(new ArrayList<>());
             project.setDocuments(new ArrayList<>());
@@ -101,8 +137,23 @@ public class ProjectRepository {
                     project.getDocuments().add(document);
                 }
             }
+
+            if (ancestors != null && StringUtils.isNotBlank(project.getParent())) {
+                addAncestorsToProjectSearchResult(project, ancestors);
+            }
         }
         return projects;
+    }
+
+    /* Adds ancestors to Project based on project id and Parent id  */
+    private void addAncestorsToProjectSearchResult(Project project, List<Project> ancestors) {
+        Project currentProject = project;
+        while (StringUtils.isNotBlank(currentProject.getParent())) {
+            String parentProjectId = currentProject.getParent();
+            Project parentProject = ancestors.stream().filter(prj -> prj.getId().equals(parentProjectId)).findFirst().orElse(null);
+            currentProject.setAncestors(parentProject);
+            currentProject = currentProject.getAncestors();
+        }
     }
 
 }

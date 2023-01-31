@@ -8,6 +8,7 @@ import org.egov.works.web.models.ProjectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.egov.works.util.ProjectConstants.DOT;
@@ -38,11 +39,11 @@ public class ProjectAddressQueryBuilder {
             "WHERE offset_ > ? AND offset_ <= ?";
 
     /* Constructs project search query based on conditions */
-    public String getProjectSearchQuery(ProjectRequest projectRequest, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStmtList) {
+    public String getProjectSearchQuery(List<Project> projects, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = new StringBuilder(FETCH_PROJECT_ADDRESS_QUERY);
-        Integer count = projectRequest.getProjects().size();
+        Integer count = projects.size();
 
-        for (Project project: projectRequest.getProjects()) {
+        for (Project project: projects) {
 
             if (StringUtils.isNotBlank(tenantId)) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
@@ -118,6 +119,19 @@ public class ProjectAddressQueryBuilder {
         return addPaginationWrapper(queryBuilder.toString(), preparedStmtList, limit, offset);
     }
 
+    /* Constructs project search query based on Project Ids */
+    public String getProjectSearchQueryBasedOnIds(List<String> projectIds, List<Object> preparedStmtList) {
+        StringBuilder queryBuilder = new StringBuilder(FETCH_PROJECT_ADDRESS_QUERY);
+
+        if (projectIds != null && !projectIds.isEmpty()) {
+            addConditionalClause(preparedStmtList, queryBuilder);
+            queryBuilder.append(" prj.id IN (").append(createQuery(projectIds)).append(")");
+            addToPreparedStatement(preparedStmtList, projectIds);
+        }
+
+        return queryBuilder.toString();
+    }
+
     private void addIsDeletedCondition(List<Object> preparedStmtList, StringBuilder queryBuilder, Boolean includeDeleted) {
         if (!includeDeleted) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
@@ -140,6 +154,15 @@ public class ProjectAddressQueryBuilder {
         }
     }
 
+    /* Add conditional clause */
+    private static void addConditionalClause(List<Object> values, StringBuilder queryString) {
+        if (values.isEmpty())
+            queryString.append(" WHERE ");
+        else {
+            queryString.append(" AND ");
+        }
+    }
+
     /* Wrap constructed SQL query with where criteria in pagination query */
     private String addPaginationWrapper(String query,List<Object> preparedStmtList, Integer limitParam, Integer offsetParam){
         Integer limit = (limitParam > config.getMaxLimit()) ? config.getMaxLimit() : limitParam;
@@ -150,6 +173,22 @@ public class ProjectAddressQueryBuilder {
         preparedStmtList.add(limit+offset);
 
         return finalQuery;
+    }
+
+    private String createQuery(Collection<String> ids) {
+        StringBuilder builder = new StringBuilder();
+        int length = ids.size();
+        for (int i = 0; i < length; i++) {
+            builder.append(" ? ");
+            if (i != length - 1) builder.append(",");
+        }
+        return builder.toString();
+    }
+
+    private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
+        ids.forEach(id -> {
+            preparedStmtList.add(id);
+        });
     }
 
 }
