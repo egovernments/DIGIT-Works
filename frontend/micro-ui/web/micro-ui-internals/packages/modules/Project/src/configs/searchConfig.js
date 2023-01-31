@@ -5,17 +5,11 @@ const searchConfig = () => {
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
-                mandatoryFields:{
-                    tenantId: Digit.ULBService.getCurrentTenantId(),
-                },
                 limit:10,
                 offset:0,
                 tenantId: Digit.ULBService.getCurrentTenantId(),
             },
             requestBody: {
-                mandatoryFields: {
-                    tenantId: Digit.ULBService.getCurrentTenantId(),
-                },
                 apiOperation: "SEARCH",
                 Projects: [
                     {
@@ -23,8 +17,17 @@ const searchConfig = () => {
                     }
                 ]
             },
-            jsonPath: `Properties[0].address`,
-            preProcessResponese: (data) =>  data
+            jsonPathForReqBody: `requestBody.Projects[0]`,
+            jsonPathForReqParam:`requestParam`,
+            preProcessResponese: (data) =>  data,
+            mandatoryFieldsInParam: {
+                tenantId: Digit.ULBService.getCurrentTenantId(),
+            },
+            mandatoryFieldsInBody: {
+                tenantId: Digit.ULBService.getCurrentTenantId(),
+            },
+            //Note -> The above mandatory fields should not be dynamic
+            //If they are dynamic they should be part of the reducer state
         },
         sections : {
             search : {

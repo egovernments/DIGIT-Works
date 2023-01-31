@@ -297,7 +297,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading }) => {
         register("offset", 0);
         register("limit", 10);
         // register("sortBy", "department");
-        register("sortOrder", "ASC");
+        
     }, [register]);
 
     function onPageSizeChange(e) {
@@ -316,7 +316,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading }) => {
 
     const onSubmit = (data) => {
         //here update the reducer state
-        //call a dispatch to update table's part of the state and update offset, limit, sortOrder
+        //call a dispatch to update table's part of the state and update offset, limit
         // this will in turn make the api call and give search results and table will be rendered acc to the new data
         
         dispatch({

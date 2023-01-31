@@ -4,6 +4,7 @@ import reducer, { initialInboxState } from "./InboxSearchComposerReducer";
 import InboxSearchLinks from "../atoms/InboxSearchLinks";
 import { InboxContext } from "./InboxSearchComposerContext";
 import SearchComponent from "../atoms/SearchComponent";
+import _ from "lodash";
 
 const InboxSearchComposer = (props) => {
     const { configs } = props;
@@ -22,12 +23,13 @@ const InboxSearchComposer = (props) => {
         const apiDetails = configs?.apiDetails
         if (Object.keys(state.searchForm)?.length > 0) {
             //here we can't directly put Projects[0] -> need to generalise this
-            apiDetails.requestBody.Projects[0] = { tenantId: Digit.ULBService.getCurrentTenantId(),...state.searchForm }
+            // apiDetails.requestBody.Projects[0] = { ...apiDetails.mandatoryFieldsInBody,...state.searchForm }
+            _.set(apiDetails, apiDetails.jsonPathForReqBody, { ...apiDetails.mandatoryFieldsInBody, ...state.searchForm })
             // requestBody.Projects[0]={...state?.searchForm}
             setEnable(true)
         }
         if(Object.keys(state.tableForm)?.length > 0) {
-            apiDetails.requestParam = { tenantId: Digit.ULBService.getCurrentTenantId(), ...state.tableForm }
+            _.set(apiDetails, apiDetails.jsonPathForReqParam, { ...apiDetails.mandatoryFieldsInParam, ...state.tableForm })  
             setEnable(true)
         }
     }, [state])
