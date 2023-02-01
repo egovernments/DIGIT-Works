@@ -5,9 +5,9 @@ const searchConfig = () => {
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
+                limit:10,
+                offset:0,
                 tenantId: Digit.ULBService.getCurrentTenantId(),
-                limit: 5,
-                offset: 0
             },
             requestBody: {
                 apiOperation: "SEARCH",
@@ -17,7 +17,17 @@ const searchConfig = () => {
                     }
                 ]
             },
-            jsonPath: `Properties[0].address`
+            jsonPathForReqBody: `requestBody.Projects[0]`,
+            jsonPathForReqParam:`requestParam`,
+            preProcessResponese: (data) =>  data,
+            mandatoryFieldsInParam: {
+                tenantId: Digit.ULBService.getCurrentTenantId(),
+            },
+            mandatoryFieldsInBody: {
+                tenantId: Digit.ULBService.getCurrentTenantId(),
+            },
+            //Note -> The above mandatory fields should not be dynamic
+            //If they are dynamic they should be part of the reducer state
         },
         sections : {
             search : {
@@ -27,12 +37,12 @@ const searchConfig = () => {
                     secondaryLabel: 'Clear Search',
                     minReqFields: 1,
                     defaultValues : {
-                        projectId: "",
+                        projectNumber: "",
                         subProjectId: "",
-                        projectName: "",
+                        name: "",
                         workType: "",
-                        createdFromDate: "",
-                        createdToDate: ""
+                        startDate: "",
+                        endDate: ""
                     },
                     fields : [
                         {
@@ -41,8 +51,8 @@ const searchConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "projectId",
-                                validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
+                                name: "projectNumber",
+                                // validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
                             },
                         },
                         {
@@ -51,8 +61,8 @@ const searchConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "subProjectId",
-                                validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
+                                name: "projectNumber",
+                                // validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
                             },
                         },
                         {
@@ -61,8 +71,8 @@ const searchConfig = () => {
                           isMandatory: false,
                           disable: false,
                           populators: { 
-                              name: "projectName",
-                              validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
+                              name: "name",
+                            //   validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
                           }
                         },
                         {
@@ -71,14 +81,15 @@ const searchConfig = () => {
                           isMandatory: false,
                           disable: false,
                           populators: {
-                            name: "workType",
-                            optionsKey: "name",
+                            name: "projectType",
+                            optionsKey: "code",
                             mdmsConfig: {
-                              masterName: "TypeOfWork",
+                              masterName: "ProjectType",
                               moduleName: "works",
-                              localePrefix: "WORKS",
+                            //   localePrefix: "WORKS_PROJECT_TYPE",
                             }
-                          }
+                          },
+                          preProcessfn: (project)=> project?.code
                         },
                         {
                           label: "Created from Date",
@@ -86,8 +97,9 @@ const searchConfig = () => {
                           isMandatory: false,
                           disable: false,
                           populators: { 
-                              name: "createdFromDate"
-                          }
+                              name: "startDate"
+                          },
+                          preProcessfn: Digit.Utils.pt.convertDateToEpoch
                         },
                         {
                             label: "Created to Date",
@@ -95,8 +107,9 @@ const searchConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "createdToDate"
-                            }
+                                name: "endDate"
+                            },
+                            preProcessfn: Digit.Utils.pt.convertDateToEpoch
                         }
                     ]
                 },
@@ -115,45 +128,54 @@ const searchConfig = () => {
                     },
                     columns: [
                         {
-                            label: "name",
-                            jsonPath: "name",
+                            label: "WORKS_PRJ_SUB_ID",
+                            jsonPath: "projectNumber",
                             redirectUrl: '/works-ui/employee/project/project-inbox-item'
                         },
                         {
-                            label: "age",
-                            jsonPath: "age"
+                            label: "WORKS_PROJECT_NAME",
+                            jsonPath: "name"
                         },
                         {
-                            label: "gender",
-                            jsonPath: "gender",
+                            label: "PROJECT_OWNING_DEPT",
+                            jsonPath: "department",
+                            translate:true,
+                            prefix:"COMMON_MASTERS_DEPARTMENT_",
                         },
                         {
-                            label: "company",
-                            jsonPath: "company",
+                            label: "WORKS_PROJECT_TYPE",
+                            jsonPath: "projectType",
                         },
                         {
-                            label: "email",
-                            jsonPath: "email",
+                            label: "WORKS_SUB_PROJECT_TYPE",
+                            jsonPath: "projectSubType",
                         },
                         {
-                            label: "phone",
-                            jsonPath: "phone",
+                            label: "WORKS_WORK_NATURE",
+                            jsonPath: "endDate",
                         },
                         {
-                            label: "balance",
-                            jsonPath: "balance",
+                            label: "WORKS_PARENT_PROJECT_ID",
+                            jsonPath: "parentId",
                         },
                         {
-                            label: "favoriteFruit",
-                            jsonPath: "favoriteFruit",
+                            label: "WORKS_CREATED_BY",
+                            jsonPath: "auditDetails.createdBy",
+                            // jsonPath: "createdBy",
+                            // preProcessfn: (uuid) => Digit.UserService.userSearch
                         },
                         {
-                            label: "eyeColor",
-                            jsonPath: "eyeColor",
+                            label: "WORKS_STATUS",
+                            jsonPath: "status",
+                        },
+                        {
+                            label: "WORKS_TOTAL_AMOUNT",
+                            jsonPath: "totalAmount",
                         }
                     ],
                     enableGlobalSearch: false,
                     enableColumnSort: true,
+                    resultsJsonPath: "Projects",
                 },
                 children: {},
                 show: true //by default true. 
