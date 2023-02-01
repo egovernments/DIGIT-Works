@@ -47,10 +47,17 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
 
   const onSubmit = (data) => {
     if(updatedFields.length >= uiConfig?.minReqFields) {
+      //run preprocessing functions(use case -> changing date inputs to epoch)
+      uiConfig.fields.forEach(field=> {
+        if (field.preProcessfn) {
+          data[field.populators.name] = field.preProcessfn(data?.[field.populators.name])
+          // data[field.populators.name] = new Date(data[field.populators.name]).getTime() / 1000
+        }
+      })
       dispatch({
         type: "searchForm",
         state: {
-          data: data
+          ...data
         }
       })
     } else {
@@ -61,6 +68,10 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
 
   const clearSearch = () => {
     reset(uiConfig?.defaultValues)
+    dispatch({
+      type: "clearSearchForm",
+      state:{}
+    })
   }
  
   const closeToast = () => {

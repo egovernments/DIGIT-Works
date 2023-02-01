@@ -1,18 +1,20 @@
 import { useQuery, useQueryClient } from "react-query";
 import { CustomService } from "../services/elements/CustomService";
 
-const useCustomAPIHook = (url, params, body, plainAccessRequest, config = {}) => {
+
+const useCustomAPIHook = (url, params, body, config = {}) => {
   const client = useQueryClient();
   const { isLoading, data } = useQuery(
-    ["CUSTOM", { ...params, ...plainAccessRequest }].filter((e) => e),
-    () => CustomService.getResponse({ url, params, body, plainAccessRequest }),
-    config
+    ["CUSTOM", { ...params,...body.Projects }].filter((e) => e),
+    () => CustomService.getResponse({ url, params, body }),
+    {...config,
+    }
   );
   return {
     isLoading,
     data,
     revalidate: () => {
-      data && client.invalidateQueries({ queryKey: ["CUSTOM", { ...params, ...plainAccessRequest }] });
+      data && client.invalidateQueries({ queryKey: ["CUSTOM", { ...params,...body.Projects }].filter((e) => e) });
     },
   };
 };

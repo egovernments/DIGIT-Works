@@ -4,37 +4,49 @@ import reducer, { initialInboxState } from "./InboxSearchComposerReducer";
 import InboxSearchLinks from "../atoms/InboxSearchLinks";
 import { InboxContext } from "./InboxSearchComposerContext";
 import SearchComponent from "../atoms/SearchComponent";
+import _ from "lodash";
 
 const InboxSearchComposer = (props) => {
     const { configs } = props;
     const [enable, setEnable] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialInboxState)
-
+    // const [payload, setPayload] = useState(
+    //     [   
+    //         configs?.apiDetails?.serviceName,
+    //         configs?.apiDetails?.requestParam, 
+    //         configs?.apiDetails?.requestBody,
+    //         {enable:false}
+    //     ]
+    //     )
     useEffect(() => {
-        const requestBody = configs?.apiDetails?.requestBody
-        if(state.searchForm?.data) {
-            console.log('state.searchForm?.data', state.searchForm?.data);
-            requestBody.Projects[0].projectNumber = "PR/2022-23/01/000284",
-            requestBody.Projects[0].name = '',
-            requestBody.Projects[0].startDate = '',
-            requestBody.Projects[0].endDate = '',
+        // const requestBody = configs?.apiDetails?.requestBody
+        const apiDetails = configs?.apiDetails
+        if (Object.keys(state.searchForm)?.length > 0) {
+            //here we can't directly put Projects[0] -> need to generalise this
+            // apiDetails.requestBody.Projects[0] = { ...apiDetails.mandatoryFieldsInBody,...state.searchForm }
+            _.set(apiDetails, apiDetails.jsonPathForReqBody, { ...apiDetails.mandatoryFieldsInBody, ...state.searchForm })
+            // requestBody.Projects[0]={...state?.searchForm}
             setEnable(true)
         }
-    }, [state.searchForm])
+        if(Object.keys(state.tableForm)?.length > 0) {
+            _.set(apiDetails, apiDetails.jsonPathForReqParam, { ...apiDetails.mandatoryFieldsInParam, ...state.tableForm })  
+            setEnable(true)
+        }
+    }, [state])
     
-   
+
     const requestCriteria = [
         configs?.apiDetails?.serviceName,
         configs?.apiDetails?.requestParam,
         configs?.apiDetails?.requestBody,
-        {},
         {
-            enabled: enable
+            enabled: enable,
+            // select: config?.apiDetails?.preProcessResponese ? config?.apiDetails?.preProcessResponese : null
         }
     ];
 
     const { isLoading, data, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
-    console.log('project data', data);
+    
     
     useEffect(() => {
         return () => {
@@ -71,10 +83,10 @@ const InboxSearchComposer = (props) => {
                                 screenType={configs?.type}/>
                     </div> 
                 }
-                {
+                {   
                 configs?.sections?.searchResult?.show &&  
-                    <div className="" style={{ overflowX: "scroll" }}>
-                        <ResultsTable config={configs?.sections?.searchResult?.uiConfig}/>
+                        <div className="" style={data ? { overflowX: "scroll" }:{}} >
+                        <ResultsTable config={configs?.sections?.searchResult?.uiConfig} data={data} isLoading={isLoading}/>
                     </div>
                 }
             </div>

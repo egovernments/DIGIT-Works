@@ -2,7 +2,7 @@ import { Request } from "../atoms/Utils/Request";
 
 export const CustomService = {
 
-  getResponse: ({url,params,body,plainAccessRequest}) =>
+  getResponse: ({url,params,body}) =>
     Request({
       url: url,
       data: body,
@@ -11,6 +11,5 @@ export const CustomService = {
       method: "POST",
       auth: true,
       params: params,
-      plainAccessRequest:plainAccessRequest
     }),
 };
