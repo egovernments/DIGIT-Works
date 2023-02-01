@@ -41,8 +41,10 @@ class MobileView extends StatelessWidget {
                                         padding: const EdgeInsets.all(8),
                                         child: widget))),
                                 (Positioned(
-                                    bottom: 0.0,
+                                    bottom: 8.0,
                                     left: MediaQuery.of(context).size.width / 4,
+                                    right:
+                                        MediaQuery.of(context).size.width / 4,
                                     child: const Align(
                                         alignment: Alignment.bottomCenter,
                                         child: PoweredByDigit())))
