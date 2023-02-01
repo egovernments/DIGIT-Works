@@ -226,7 +226,7 @@ components:
           format: uuid
           items:
             type: string
-        estimateLineItemId:
+        estimateLineItemIds:
           type: array
           description: Search by estimate line items ids
           format: uuid
@@ -325,11 +325,3 @@ components:
             $ref: '#/components/schemas/Contract'
         pagination:
           $ref: '#/components/schemas/Pagination'
-    
-          
-    
-
-servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/eGovTrial/Contracts-Service/1.0.0
