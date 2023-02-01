@@ -1,6 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/digit_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
@@ -54,6 +55,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
   List<Map<String, dynamic>> updateAttendeePayload = [];
   List<Map<String, dynamic>> createAttendeePayload = [];
   List<TableDataRow> tableData = [];
+  bool hasLoaded = true;
 
   @override
   void initState() {
@@ -148,7 +150,9 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                   musterState.viewMusterRollsModel != null &&
                                   musterState.viewMusterRollsModel!.musterRoll!
                                           .first.individualEntries !=
-                                      null) {
+                                      null &&
+                                  musterState.viewMusterRollsModel!.musterRoll!
+                                      .first.individualEntries!.isNotEmpty) {
                                 List<AttendeesTrackList> attendeeList = state
                                     .individualMusterRollModel!
                                     .musterRoll!
@@ -207,7 +211,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                           satIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendance ?? 0.0,
                                           sunEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
                                           sunExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                          sunIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? 0.0))
+                                          sunIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? 0.0,
+                                          auditDetails: e.attendanceEntries?.first.auditDetails))
                                       .toList();
 
                                   if (newList.isEmpty) {
@@ -242,6 +247,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                       data.sunIndex = item1.sunIndex;
                                       data.sunEntryId = item1.sunEntryId;
                                       data.sunExitId = item1.sunExitId;
+                                      data.auditDetails = item1.auditDetails;
                                       newList.add(data);
                                     }
                                   }
@@ -264,6 +270,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                       data.friIndex = item1.friIndex;
                                       data.satIndex = item1.satIndex;
                                       data.sunIndex = item1.sunIndex;
+                                      data.auditDetails = item1.auditDetails;
                                       newList.add(data);
                                     }
                                   }
@@ -331,6 +338,29 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                               BlocBuilder<AttendanceLogCreateBloc,
                                       AttendanceLogCreateState>(
                                   builder: (context, logState) {
+                                SchedulerBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  logState.maybeWhen(
+                                      error: () => Notifiers.getToastMessage(
+                                          context,
+                                          AppLocalizations.of(context)
+                                              .translate(i18.attendanceMgmt
+                                                  .attendanceLoggedFailed),
+                                          'ERROR'),
+                                      loaded: () {
+                                        if (!hasLoaded) {
+                                          Notifiers.getToastMessage(
+                                              context,
+                                              AppLocalizations.of(context)
+                                                  .translate(i18.attendanceMgmt
+                                                      .attendanceLoggedSuccess),
+                                              'SUCCESS');
+                                          onSubmit(widget.id);
+                                          hasLoaded = true;
+                                        }
+                                      },
+                                      orElse: () => Container());
+                                });
                                 return OutlinedButton(
                                     style: OutlinedButton.styleFrom(
                                         backgroundColor: Colors.white,
@@ -347,6 +377,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                     .selectDateRangeFirst),
                                             'ERROR');
                                       } else {
+                                        hasLoaded = false;
                                         if (updateAttendeePayload.isNotEmpty) {
                                           context
                                               .read<AttendanceLogCreateBloc>()
@@ -361,25 +392,6 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                   attendanceList:
                                                       createAttendeePayload));
                                         }
-                                        Future.delayed(
-                                            const Duration(seconds: 2));
-
-                                        // if (!logState.loading &&
-                                        //     (logState.updateAttendanceRegistersModel !=
-                                        //             null ||
-                                        //         logState.createAttendanceRegistersModel !=
-                                        //             null)) {
-                                        //   Notifiers.getToastMessage(
-                                        //       context,
-                                        //       'Attendance log Updated',
-                                        //       'SUCCESS');
-                                        //   onSubmit(state
-                                        //       .individualAttendanceRegisterModel!
-                                        //       .attendanceRegister!
-                                        //       .first
-                                        //       .id
-                                        //       .toString());
-                                        // }
                                       }
                                     },
                                     child: Center(
@@ -463,15 +475,25 @@ class _SHGInboxPage extends State<SHGInboxPage> {
   }
 
   void onSubmit(String id) {
-    newList.clear();
-    context.read<MusterRollEstimateBloc>().add(
-          EstimateMusterRollEvent(
-            registerId: id.toString(),
-            tenantId: widget.tenantId,
-            startDate: selectedDateRange!.startDate,
-            endDate: selectedDateRange!.endDate,
-          ),
-        );
+    if (selectedDateRange != null) {
+      newList.clear();
+      updateAttendeePayload.clear();
+      createAttendeePayload.clear();
+      context.read<MusterRollEstimateBloc>().add(
+            EstimateMusterRollEvent(
+              tenantId: widget.tenantId,
+              registerId: id.toString(),
+              startDate: selectedDateRange!.startDate,
+              endDate: selectedDateRange!.endDate,
+            ),
+          );
+    } else {
+      Notifiers.getToastMessage(
+          context,
+          AppLocalizations.of(context)
+              .translate(i18.attendanceMgmt.selectDateRangeFirst),
+          'ERROR');
+    }
   }
 
   List<TableHeader> get headerList => [
@@ -523,73 +545,101 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         apiKey: tableDataModel.monIndex.toString(),
         widget: CircularButton(
           icon: Icons.circle_rounded,
-          size: 10,
+          size: 15,
           color: const Color.fromRGBO(0, 100, 0, 1),
           index: tableDataModel.monIndex ?? 0.0,
           isNotGreyed: false,
-          onTap: () => onTapButton(tableDataModel.individualId ?? '', 'mon',
-              tableDataModel.monEntryId, tableDataModel.monExitId),
+          onTap: () => onTapButton(
+              tableDataModel.individualId ?? '',
+              'mon',
+              tableDataModel.monEntryId,
+              tableDataModel.monExitId,
+              tableDataModel.auditDetails),
         ),
       ),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.tueIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'tue',
-            tableDataModel.tueEntryId, tableDataModel.tueExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'tue',
+            tableDataModel.tueEntryId,
+            tableDataModel.tueExitId,
+            tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.wedIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'wed',
-            tableDataModel.wedEntryId, tableDataModel.wedExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'wed',
+            tableDataModel.wedEntryId,
+            tableDataModel.wedExitId,
+            tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.thuIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'thu',
-            tableDataModel.thuEntryId, tableDataModel.thuExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'thu',
+            tableDataModel.thuEntryId,
+            tableDataModel.thuExitId,
+            tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.friIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'fri',
-            tableDataModel.friEntryId, tableDataModel.friExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'fri',
+            tableDataModel.friEntryId,
+            tableDataModel.friExitId,
+            tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.satIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'sat',
-            tableDataModel.satEntryId, tableDataModel.satExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'sat',
+            tableDataModel.satEntryId,
+            tableDataModel.satExitId,
+            tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.sunIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(tableDataModel.individualId ?? '', 'sun',
-            tableDataModel.sunEntryId, tableDataModel.sunExitId),
+        onTap: () => onTapButton(
+            tableDataModel.individualId ?? '',
+            'sun',
+            tableDataModel.sunEntryId,
+            tableDataModel.sunExitId,
+            tableDataModel.auditDetails),
       ))
     ]);
   }
@@ -598,7 +648,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
     return list.map((e) => getAttendanceRow(e)).toList();
   }
 
-  void onTapButton(individualId, day, entryID, exitId) {
+  void onTapButton(individualId, day, entryID, exitId, auditDetails) {
     int index = newList.indexWhere((item) => item.individualId == individualId);
 
     if (index != -1) {
@@ -616,15 +666,18 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    12),
+                    13),
                 entryID,
                 exitId,
-                widget.tenantId));
+                widget.tenantId,
+                auditDetails,
+                true,
+                true));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&
@@ -636,12 +689,12 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    12),
+                    13),
                 widget.tenantId));
           }
         } else if (newList[index].getProperty(day) == 0.5) {
@@ -657,7 +710,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
@@ -665,7 +718,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     18),
                 entryID,
                 exitId,
-                widget.tenantId));
+                widget.tenantId,
+                auditDetails,
+                true,
+                true));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&
@@ -677,7 +733,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
@@ -698,33 +754,22 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 DateFormats.getTimestampFromWeekDay(
                     DateFormats.getDateFromTimestamp(
                         selectedDateRange!.startDate),
                     day,
-                    8),
+                    9),
                 entryID,
                 exitId,
-                widget.tenantId));
+                widget.tenantId,
+                auditDetails,
+                false,
+                false));
           } else {
             createAttendeePayload.removeWhere((e) =>
                 e['individualId'] == individualId &&
                 DateFormats.getDay(e['time']).toLowerCase() == day);
-            createAttendeePayload.addAll(createAttendanceLogPayload(
-                newList[index],
-                registerId ?? '',
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    8),
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    8),
-                widget.tenantId));
           }
         }
       });

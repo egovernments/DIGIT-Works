@@ -30,6 +30,7 @@ import 'blocs/user/user_search.dart';
 import 'data/remote_client.dart';
 import 'data/repositories/remote/localization.dart';
 import 'data/repositories/remote/mdms.dart';
+import 'models/UserDetails/user_details_model.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -77,7 +78,7 @@ class MainApplication extends StatelessWidget {
           )..add(const AppInitializationSetupEvent(selectedLangIndex: 0)),
           lazy: false,
         ),
-        BlocProvider(create: (context) => AuthBloc(const AuthState())),
+        BlocProvider(create: (context) => AuthBloc()),
         BlocProvider(create: (context) => AttendanceRegisterCreateBloc()),
         BlocProvider(
           create: (_) => ApplicationConfigBloc(const ApplicationConfigState())
@@ -163,10 +164,13 @@ class MainApplication extends StatelessWidget {
                         appRouter,
                         navigatorObservers: () => [AppRouterObserver()],
                         routes: (handler) => [
-                          if (authState.isAuthenticated)
-                            const AuthenticatedRouteWrapper()
-                          else
-                            const UnauthenticatedRouteWrapper(),
+                          authState.maybeWhen(
+                              initial: () =>
+                                  const UnauthenticatedRouteWrapper(),
+                              loaded: (UserDetailsModel? userDetailsModel,
+                                      String? accessToken) =>
+                                  const AuthenticatedRouteWrapper(),
+                              orElse: () => const UnauthenticatedRouteWrapper())
                         ],
                       ),
                     ));

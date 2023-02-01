@@ -214,7 +214,9 @@ class WorkDetailsCard extends StatelessWidget {
           children: [
             Container(
                 padding: const EdgeInsets.only(right: 16),
-                width: MediaQuery.of(context).size.width / 3,
+                width: MediaQuery.of(context).size.width > 720
+                    ? MediaQuery.of(context).size.width / 3
+                    : MediaQuery.of(context).size.width / 2.5,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,

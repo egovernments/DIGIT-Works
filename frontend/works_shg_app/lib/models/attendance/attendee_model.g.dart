@@ -53,6 +53,9 @@ _$_AttendeesTrackList _$$_AttendeesTrackListFromJson(
       sunEntryId: json['sunEntryId'] as String?,
       sunExitId: json['sunExitId'] as String?,
       sunIndex: (json['sunIndex'] as num?)?.toDouble() ?? 0.0,
+      auditDetails: json['auditDetails'] == null
+          ? null
+          : AuditDetails.fromJson(json['auditDetails'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_AttendeesTrackListToJson(
@@ -82,4 +85,23 @@ Map<String, dynamic> _$$_AttendeesTrackListToJson(
       'sunEntryId': instance.sunEntryId,
       'sunExitId': instance.sunExitId,
       'sunIndex': instance.sunIndex,
+      'auditDetails': instance.auditDetails,
+    };
+
+_$_AttendeeAuditDetails _$$_AttendeeAuditDetailsFromJson(
+        Map<String, dynamic> json) =>
+    _$_AttendeeAuditDetails(
+      createdBy: json['createdBy'] as String?,
+      lastModifiedBy: json['lastModifiedBy'] as String?,
+      createdTime: json['createdTime'] as int?,
+      lastModifiedTime: json['lastModifiedTime'] as int?,
+    );
+
+Map<String, dynamic> _$$_AttendeeAuditDetailsToJson(
+        _$_AttendeeAuditDetails instance) =>
+    <String, dynamic>{
+      'createdBy': instance.createdBy,
+      'lastModifiedBy': instance.lastModifiedBy,
+      'createdTime': instance.createdTime,
+      'lastModifiedTime': instance.lastModifiedTime,
     };

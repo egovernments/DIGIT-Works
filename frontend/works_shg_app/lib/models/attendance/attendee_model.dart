@@ -2,6 +2,7 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../muster_rolls/muster_roll_model.dart';
 import 'attendance_registry_model.dart';
 
 part 'attendee_model.freezed.dart';
@@ -59,10 +60,25 @@ class AttendeesTrackList with _$AttendeesTrackList {
     String? sunEntryId,
     String? sunExitId,
     @Default(0.0) double? sunIndex,
+    @JsonKey(name: 'auditDetails') AuditDetails? auditDetails,
   }) = _AttendeesTrackList;
 
   factory AttendeesTrackList.fromJson(
     Map<String, dynamic> json,
   ) =>
       _$AttendeesTrackListFromJson(json);
+}
+
+@freezed
+class AttendeeAuditDetails with _$AttendeeAuditDetails {
+  const factory AttendeeAuditDetails(
+      {String? createdBy,
+      String? lastModifiedBy,
+      int? createdTime,
+      int? lastModifiedTime}) = _AttendeeAuditDetails;
+
+  factory AttendeeAuditDetails.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$AttendeeAuditDetailsFromJson(json);
 }

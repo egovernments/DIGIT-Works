@@ -60,6 +60,7 @@ class Common {
   String get cancel => 'CS_ACTION_CANCEL';
   String get startDate => 'EVENTS_START_DATE_LABEL';
   String get endDate => 'EVENTS_END_DATE_LABEL';
+  String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
 }
 
 class Home {
@@ -94,4 +95,6 @@ class AttendanceMgmt {
   String get addNewWageSeeker => 'ATM_ADD_NEW_WAGE_SEEKER';
   String get selectDateRangeFirst => 'SELECT_DATE_RANGE_FIRST';
   String get individualsCount => 'REGISTER_INDIVIDUAL_COUNT';
+  String get attendanceLoggedSuccess => 'ATM_LOGGED_SUCCESSFULLY';
+  String get attendanceLoggedFailed => 'ATM_LOGGED_FAILED';
 }

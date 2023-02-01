@@ -1,3 +1,5 @@
+import 'package:works_shg_app/models/muster_rolls/muster_roll_model.dart';
+
 class TrackAttendanceTableData {
   String? name;
   String? aadhaar;
@@ -24,6 +26,7 @@ class TrackAttendanceTableData {
   String? sunEntryId;
   String? sunExitId;
   double? sunIndex;
+  AuditDetails? auditDetails;
 
   double? getProperty(String property) {
     switch (property) {
@@ -90,29 +93,48 @@ List<Map<String, dynamic>> updateAttendanceLogPayload(
     int exitTime,
     String entryId,
     String exitId,
-    String tenantId) {
-  return [
-    {
-      "id": entryId,
-      "registerId": registerId,
-      "individualId": attendeeList.individualId,
-      "time": entryTime,
-      "type": "ENTRY",
-      "status": "ACTIVE",
-      "tenantId": tenantId,
-      "documentIds": []
-    },
-    {
-      "id": exitId,
-      "registerId": registerId,
-      "individualId": attendeeList.individualId,
-      "time": exitTime,
-      "type": "EXIT",
-      "status": "ACTIVE",
-      "tenantId": tenantId,
-      "documentIds": []
-    }
-  ];
+    String tenantId,
+    AuditDetails auditDetails,
+    bool status,
+    bool onlyExit) {
+  return onlyExit
+      ? [
+          {
+            "id": exitId,
+            "registerId": registerId,
+            "individualId": attendeeList.individualId,
+            "time": exitTime,
+            "type": "EXIT",
+            "status": status ? "ACTIVE" : "INACTIVE",
+            "tenantId": tenantId,
+            "documentIds": [],
+            "auditDetails": auditDetails
+          }
+        ]
+      : [
+          {
+            "id": entryId,
+            "registerId": registerId,
+            "individualId": attendeeList.individualId,
+            "time": entryTime,
+            "type": "ENTRY",
+            "status": status ? "ACTIVE" : "INACTIVE",
+            "tenantId": tenantId,
+            "documentIds": [],
+            "auditDetails": auditDetails
+          },
+          {
+            "id": exitId,
+            "registerId": registerId,
+            "individualId": attendeeList.individualId,
+            "time": exitTime,
+            "type": "EXIT",
+            "status": status ? "ACTIVE" : "INACTIVE",
+            "tenantId": tenantId,
+            "documentIds": [],
+            "auditDetails": auditDetails
+          }
+        ];
 }
 
 List<Map<String, dynamic>> createAttendanceLogPayload(

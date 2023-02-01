@@ -360,6 +360,8 @@ mixin _$AttendeesTrackList {
   String? get sunEntryId => throw _privateConstructorUsedError;
   String? get sunExitId => throw _privateConstructorUsedError;
   double? get sunIndex => throw _privateConstructorUsedError;
+  @JsonKey(name: 'auditDetails')
+  AuditDetails? get auditDetails => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -397,7 +399,10 @@ abstract class $AttendeesTrackListCopyWith<$Res> {
       double? satIndex,
       String? sunEntryId,
       String? sunExitId,
-      double? sunIndex});
+      double? sunIndex,
+      @JsonKey(name: 'auditDetails') AuditDetails? auditDetails});
+
+  $AuditDetailsCopyWith<$Res>? get auditDetails;
 }
 
 /// @nodoc
@@ -437,6 +442,7 @@ class _$AttendeesTrackListCopyWithImpl<$Res, $Val extends AttendeesTrackList>
     Object? sunEntryId = freezed,
     Object? sunExitId = freezed,
     Object? sunIndex = freezed,
+    Object? auditDetails = freezed,
   }) {
     return _then(_value.copyWith(
       name: freezed == name
@@ -535,7 +541,23 @@ class _$AttendeesTrackListCopyWithImpl<$Res, $Val extends AttendeesTrackList>
           ? _value.sunIndex
           : sunIndex // ignore: cast_nullable_to_non_nullable
               as double?,
+      auditDetails: freezed == auditDetails
+          ? _value.auditDetails
+          : auditDetails // ignore: cast_nullable_to_non_nullable
+              as AuditDetails?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $AuditDetailsCopyWith<$Res>? get auditDetails {
+    if (_value.auditDetails == null) {
+      return null;
+    }
+
+    return $AuditDetailsCopyWith<$Res>(_value.auditDetails!, (value) {
+      return _then(_value.copyWith(auditDetails: value) as $Val);
+    });
   }
 }
 
@@ -571,7 +593,11 @@ abstract class _$$_AttendeesTrackListCopyWith<$Res>
       double? satIndex,
       String? sunEntryId,
       String? sunExitId,
-      double? sunIndex});
+      double? sunIndex,
+      @JsonKey(name: 'auditDetails') AuditDetails? auditDetails});
+
+  @override
+  $AuditDetailsCopyWith<$Res>? get auditDetails;
 }
 
 /// @nodoc
@@ -609,6 +635,7 @@ class __$$_AttendeesTrackListCopyWithImpl<$Res>
     Object? sunEntryId = freezed,
     Object? sunExitId = freezed,
     Object? sunIndex = freezed,
+    Object? auditDetails = freezed,
   }) {
     return _then(_$_AttendeesTrackList(
       name: freezed == name
@@ -707,6 +734,10 @@ class __$$_AttendeesTrackListCopyWithImpl<$Res>
           ? _value.sunIndex
           : sunIndex // ignore: cast_nullable_to_non_nullable
               as double?,
+      auditDetails: freezed == auditDetails
+          ? _value.auditDetails
+          : auditDetails // ignore: cast_nullable_to_non_nullable
+              as AuditDetails?,
     ));
   }
 }
@@ -738,7 +769,8 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
       this.satIndex = 0.0,
       this.sunEntryId,
       this.sunExitId,
-      this.sunIndex = 0.0});
+      this.sunIndex = 0.0,
+      @JsonKey(name: 'auditDetails') this.auditDetails});
 
   factory _$_AttendeesTrackList.fromJson(Map<String, dynamic> json) =>
       _$$_AttendeesTrackListFromJson(json);
@@ -798,10 +830,13 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
   @override
   @JsonKey()
   final double? sunIndex;
+  @override
+  @JsonKey(name: 'auditDetails')
+  final AuditDetails? auditDetails;
 
   @override
   String toString() {
-    return 'AttendeesTrackList(name: $name, aadhaar: $aadhaar, individualId: $individualId, monEntryId: $monEntryId, monExitId: $monExitId, monIndex: $monIndex, tueEntryId: $tueEntryId, tueExitId: $tueExitId, tueIndex: $tueIndex, wedEntryId: $wedEntryId, wedExitId: $wedExitId, wedIndex: $wedIndex, thuEntryId: $thuEntryId, thuExitId: $thuExitId, thursIndex: $thursIndex, friEntryId: $friEntryId, friExitId: $friExitId, friIndex: $friIndex, satEntryId: $satEntryId, satExitId: $satExitId, satIndex: $satIndex, sunEntryId: $sunEntryId, sunExitId: $sunExitId, sunIndex: $sunIndex)';
+    return 'AttendeesTrackList(name: $name, aadhaar: $aadhaar, individualId: $individualId, monEntryId: $monEntryId, monExitId: $monExitId, monIndex: $monIndex, tueEntryId: $tueEntryId, tueExitId: $tueExitId, tueIndex: $tueIndex, wedEntryId: $wedEntryId, wedExitId: $wedExitId, wedIndex: $wedIndex, thuEntryId: $thuEntryId, thuExitId: $thuExitId, thursIndex: $thursIndex, friEntryId: $friEntryId, friExitId: $friExitId, friIndex: $friIndex, satEntryId: $satEntryId, satExitId: $satExitId, satIndex: $satIndex, sunEntryId: $sunEntryId, sunExitId: $sunExitId, sunIndex: $sunIndex, auditDetails: $auditDetails)';
   }
 
   @override
@@ -854,7 +889,9 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
             (identical(other.sunExitId, sunExitId) ||
                 other.sunExitId == sunExitId) &&
             (identical(other.sunIndex, sunIndex) ||
-                other.sunIndex == sunIndex));
+                other.sunIndex == sunIndex) &&
+            (identical(other.auditDetails, auditDetails) ||
+                other.auditDetails == auditDetails));
   }
 
   @JsonKey(ignore: true)
@@ -884,7 +921,8 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
         satIndex,
         sunEntryId,
         sunExitId,
-        sunIndex
+        sunIndex,
+        auditDetails
       ]);
 
   @JsonKey(ignore: true)
@@ -904,30 +942,32 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
 
 abstract class _AttendeesTrackList implements AttendeesTrackList {
   const factory _AttendeesTrackList(
-      {final String? name,
-      final String? aadhaar,
-      final String? individualId,
-      final String? monEntryId,
-      final String? monExitId,
-      final double? monIndex,
-      final String? tueEntryId,
-      final String? tueExitId,
-      final double? tueIndex,
-      final String? wedEntryId,
-      final String? wedExitId,
-      final double? wedIndex,
-      final String? thuEntryId,
-      final String? thuExitId,
-      final double? thursIndex,
-      final String? friEntryId,
-      final String? friExitId,
-      final double? friIndex,
-      final String? satEntryId,
-      final String? satExitId,
-      final double? satIndex,
-      final String? sunEntryId,
-      final String? sunExitId,
-      final double? sunIndex}) = _$_AttendeesTrackList;
+          {final String? name,
+          final String? aadhaar,
+          final String? individualId,
+          final String? monEntryId,
+          final String? monExitId,
+          final double? monIndex,
+          final String? tueEntryId,
+          final String? tueExitId,
+          final double? tueIndex,
+          final String? wedEntryId,
+          final String? wedExitId,
+          final double? wedIndex,
+          final String? thuEntryId,
+          final String? thuExitId,
+          final double? thursIndex,
+          final String? friEntryId,
+          final String? friExitId,
+          final double? friIndex,
+          final String? satEntryId,
+          final String? satExitId,
+          final double? satIndex,
+          final String? sunEntryId,
+          final String? sunExitId,
+          final double? sunIndex,
+          @JsonKey(name: 'auditDetails') final AuditDetails? auditDetails}) =
+      _$_AttendeesTrackList;
 
   factory _AttendeesTrackList.fromJson(Map<String, dynamic> json) =
       _$_AttendeesTrackList.fromJson;
@@ -981,7 +1021,217 @@ abstract class _AttendeesTrackList implements AttendeesTrackList {
   @override
   double? get sunIndex;
   @override
+  @JsonKey(name: 'auditDetails')
+  AuditDetails? get auditDetails;
+  @override
   @JsonKey(ignore: true)
   _$$_AttendeesTrackListCopyWith<_$_AttendeesTrackList> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AttendeeAuditDetails _$AttendeeAuditDetailsFromJson(Map<String, dynamic> json) {
+  return _AttendeeAuditDetails.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AttendeeAuditDetails {
+  String? get createdBy => throw _privateConstructorUsedError;
+  String? get lastModifiedBy => throw _privateConstructorUsedError;
+  int? get createdTime => throw _privateConstructorUsedError;
+  int? get lastModifiedTime => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AttendeeAuditDetailsCopyWith<AttendeeAuditDetails> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AttendeeAuditDetailsCopyWith<$Res> {
+  factory $AttendeeAuditDetailsCopyWith(AttendeeAuditDetails value,
+          $Res Function(AttendeeAuditDetails) then) =
+      _$AttendeeAuditDetailsCopyWithImpl<$Res, AttendeeAuditDetails>;
+  @useResult
+  $Res call(
+      {String? createdBy,
+      String? lastModifiedBy,
+      int? createdTime,
+      int? lastModifiedTime});
+}
+
+/// @nodoc
+class _$AttendeeAuditDetailsCopyWithImpl<$Res,
+        $Val extends AttendeeAuditDetails>
+    implements $AttendeeAuditDetailsCopyWith<$Res> {
+  _$AttendeeAuditDetailsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? createdBy = freezed,
+    Object? lastModifiedBy = freezed,
+    Object? createdTime = freezed,
+    Object? lastModifiedTime = freezed,
+  }) {
+    return _then(_value.copyWith(
+      createdBy: freezed == createdBy
+          ? _value.createdBy
+          : createdBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastModifiedBy: freezed == lastModifiedBy
+          ? _value.lastModifiedBy
+          : lastModifiedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdTime: freezed == createdTime
+          ? _value.createdTime
+          : createdTime // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastModifiedTime: freezed == lastModifiedTime
+          ? _value.lastModifiedTime
+          : lastModifiedTime // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_AttendeeAuditDetailsCopyWith<$Res>
+    implements $AttendeeAuditDetailsCopyWith<$Res> {
+  factory _$$_AttendeeAuditDetailsCopyWith(_$_AttendeeAuditDetails value,
+          $Res Function(_$_AttendeeAuditDetails) then) =
+      __$$_AttendeeAuditDetailsCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? createdBy,
+      String? lastModifiedBy,
+      int? createdTime,
+      int? lastModifiedTime});
+}
+
+/// @nodoc
+class __$$_AttendeeAuditDetailsCopyWithImpl<$Res>
+    extends _$AttendeeAuditDetailsCopyWithImpl<$Res, _$_AttendeeAuditDetails>
+    implements _$$_AttendeeAuditDetailsCopyWith<$Res> {
+  __$$_AttendeeAuditDetailsCopyWithImpl(_$_AttendeeAuditDetails _value,
+      $Res Function(_$_AttendeeAuditDetails) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? createdBy = freezed,
+    Object? lastModifiedBy = freezed,
+    Object? createdTime = freezed,
+    Object? lastModifiedTime = freezed,
+  }) {
+    return _then(_$_AttendeeAuditDetails(
+      createdBy: freezed == createdBy
+          ? _value.createdBy
+          : createdBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastModifiedBy: freezed == lastModifiedBy
+          ? _value.lastModifiedBy
+          : lastModifiedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdTime: freezed == createdTime
+          ? _value.createdTime
+          : createdTime // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastModifiedTime: freezed == lastModifiedTime
+          ? _value.lastModifiedTime
+          : lastModifiedTime // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$_AttendeeAuditDetails implements _AttendeeAuditDetails {
+  const _$_AttendeeAuditDetails(
+      {this.createdBy,
+      this.lastModifiedBy,
+      this.createdTime,
+      this.lastModifiedTime});
+
+  factory _$_AttendeeAuditDetails.fromJson(Map<String, dynamic> json) =>
+      _$$_AttendeeAuditDetailsFromJson(json);
+
+  @override
+  final String? createdBy;
+  @override
+  final String? lastModifiedBy;
+  @override
+  final int? createdTime;
+  @override
+  final int? lastModifiedTime;
+
+  @override
+  String toString() {
+    return 'AttendeeAuditDetails(createdBy: $createdBy, lastModifiedBy: $lastModifiedBy, createdTime: $createdTime, lastModifiedTime: $lastModifiedTime)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_AttendeeAuditDetails &&
+            (identical(other.createdBy, createdBy) ||
+                other.createdBy == createdBy) &&
+            (identical(other.lastModifiedBy, lastModifiedBy) ||
+                other.lastModifiedBy == lastModifiedBy) &&
+            (identical(other.createdTime, createdTime) ||
+                other.createdTime == createdTime) &&
+            (identical(other.lastModifiedTime, lastModifiedTime) ||
+                other.lastModifiedTime == lastModifiedTime));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, createdBy, lastModifiedBy, createdTime, lastModifiedTime);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_AttendeeAuditDetailsCopyWith<_$_AttendeeAuditDetails> get copyWith =>
+      __$$_AttendeeAuditDetailsCopyWithImpl<_$_AttendeeAuditDetails>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_AttendeeAuditDetailsToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AttendeeAuditDetails implements AttendeeAuditDetails {
+  const factory _AttendeeAuditDetails(
+      {final String? createdBy,
+      final String? lastModifiedBy,
+      final int? createdTime,
+      final int? lastModifiedTime}) = _$_AttendeeAuditDetails;
+
+  factory _AttendeeAuditDetails.fromJson(Map<String, dynamic> json) =
+      _$_AttendeeAuditDetails.fromJson;
+
+  @override
+  String? get createdBy;
+  @override
+  String? get lastModifiedBy;
+  @override
+  int? get createdTime;
+  @override
+  int? get lastModifiedTime;
+  @override
+  @JsonKey(ignore: true)
+  _$$_AttendeeAuditDetailsCopyWith<_$_AttendeeAuditDetails> get copyWith =>
       throw _privateConstructorUsedError;
 }

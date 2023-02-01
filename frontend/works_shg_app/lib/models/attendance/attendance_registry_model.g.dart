@@ -105,19 +105,3 @@ Map<String, dynamic> _$$_AttendeesEntriesToJson(_$_AttendeesEntries instance) =>
       'individualId': instance.individualId,
       'enrollmentDate': instance.enrollmentDate,
     };
-
-_$_AuditDetails _$$_AuditDetailsFromJson(Map<String, dynamic> json) =>
-    _$_AuditDetails(
-      createdBy: json['createdBy'] as String?,
-      lastModifiedBy: json['lastModifiedBy'] as String?,
-      createdTime: json['createdTime'] as int?,
-      lastModifiedTime: json['lastModifiedTime'] as int?,
-    );
-
-Map<String, dynamic> _$$_AuditDetailsToJson(_$_AuditDetails instance) =>
-    <String, dynamic>{
-      'createdBy': instance.createdBy,
-      'lastModifiedBy': instance.lastModifiedBy,
-      'createdTime': instance.createdTime,
-      'lastModifiedTime': instance.lastModifiedTime,
-    };
