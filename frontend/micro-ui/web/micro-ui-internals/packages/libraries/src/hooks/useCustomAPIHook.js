@@ -3,7 +3,6 @@ import { CustomService } from "../services/elements/CustomService";
 
 
 const useCustomAPIHook = (url, params, body, config = {}) => {
-  debugger;
   const client = useQueryClient();
   const { isLoading, data } = useQuery(
     ["CUSTOM", { ...params,...body?.Projects }].filter((e) => e),

@@ -26,6 +26,14 @@
         gap: 1rem;
         &.inbox {
             grid-column: 2 / span 2;
+            &.filter {
+                button {
+                    width: 100%;
+                }
+                label {
+                    display: none;
+                }
+            }
         }
         &.search {
             grid-column: 3 / span 2;

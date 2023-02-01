@@ -91,23 +91,13 @@ const inboxConfig = () => {
                 uiConfig : {
                     links : [
                         {
-                            text: "ACTION_TEST_PROJECTS",
-                            url: `/employee/contracts/create-contract`,
+                            text: "WORKS_CREATE_PROJECT",
+                            url: `/employee/project/creatxe-project`,
                             roles: [],
                         },
                         {
-                            text: "ACTION_TEST_PROJECTS",
-                            url: `/employee/contracts/create-contract`,
-                            roles: [],
-                        },
-                        {
-                            text: "ACTION_TEST_PROJECTS",
-                            url: `/employee/contracts/create-contract`,
-                            roles: [],
-                        },
-                        {
-                            text: "ACTION_TEST_PROJECTS",
-                            url: `/employee/contracts/create-contract`,
+                            text: "WORKS_SEARCH_PROJECTS",
+                            url: ``,
                             roles: [],
                         }
                     ],
@@ -125,7 +115,7 @@ const inboxConfig = () => {
                     type : 'filter',
                     headerStyle : null,
                     primaryLabel: 'Filter',
-                    secondaryLabel: 'Clear Search',
+                    secondaryLabel: '',
                     defaultValues : {
                         projectId: "",
                         department: "",
@@ -133,43 +123,52 @@ const inboxConfig = () => {
                     },
                     fields : [
                         {
-                            label:"Project ID",
-                            type: "text",
+                            label:"WORKS_PROJECT_CREATED_FROM_DATE",
+                            type: "date",
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "projectId"
+                                name: "projectFromDate"
                             },
                         },
                         {
-                            label: "Department",
+                            label:"WORKS_PROJECT_CREATED_TO_DATE",
+                            type: "date",
+                            isMandatory: false,
+                            disable: false,
+                            populators: { 
+                                name: "projectToDate"
+                            },
+                        },
+                        {
+                            label: "WORKS_CREATED_BY",
                             type: "dropdown",
                             isMandatory: false,
                             disable: false,
                             populators: {
-                              name: "department",
+                              name: "createdBy",
                               optionsKey: "name",
                               mdmsConfig: {
-                                masterName: "Department",
-                                moduleName: "common-masters",
+                                masterName: "TypeOfWork",
+                                moduleName: "works",
                                 localePrefix: "WORKS",
                               }
                             }
                         },
                         {
-                          label: "Type Of Work",
-                          type: "dropdown",
-                          isMandatory: false,
-                          disable: false,
-                          populators: {
-                            name: "workType",
-                            optionsKey: "name",
-                            mdmsConfig: {
-                              masterName: "TypeOfWork",
-                              moduleName: "works",
-                              localePrefix: "WORKS",
+                            label: "WORKS_STATUS",
+                            type: "dropdown",
+                            isMandatory: false,
+                            disable: false,
+                            populators: {
+                              name: "status",
+                              optionsKey: "name",
+                              mdmsConfig: {
+                                masterName: "TypeOfWork",
+                                moduleName: "works",
+                                localePrefix: "WORKS",
+                              }
                             }
-                          }
                         }
                     ]
                 },

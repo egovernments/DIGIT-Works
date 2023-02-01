@@ -12,7 +12,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
   const [showToast,setShowToast] = useState(null)
-  let updatedFields = []
+  let updatedFields = [];
+  const [componentType, setComponentType] = useState(uiConfig?.type);
 
   const {
     register,
@@ -96,7 +97,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
               clearErrors={clearErrors}
               labelStyle={{fontSize: "16px"}}
             />  
-            <div className={`search-button-wrapper ${screenType}`}>
+            <div className={`search-button-wrapper ${screenType} ${componentType}`}>
               <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{uiConfig?.secondaryLabel}</LinkLabel>
               <SubmitBar label={uiConfig?.primaryLabel} submit="submit" disabled={false}/>
             </div>
