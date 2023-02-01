@@ -545,7 +545,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         apiKey: tableDataModel.monIndex.toString(),
         widget: CircularButton(
           icon: Icons.circle_rounded,
-          size: 10,
+          size: 15,
           color: const Color.fromRGBO(0, 100, 0, 1),
           index: tableDataModel.monIndex ?? 0.0,
           isNotGreyed: false,
@@ -560,7 +560,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.tueIndex ?? 0,
         isNotGreyed: false,
@@ -574,7 +574,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.wedIndex ?? 0,
         isNotGreyed: false,
@@ -588,7 +588,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.thuIndex ?? 0,
         isNotGreyed: false,
@@ -602,7 +602,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.friIndex ?? 0,
         isNotGreyed: false,
@@ -616,7 +616,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.satIndex ?? 0,
         isNotGreyed: false,
@@ -630,7 +630,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
-        size: 10,
+        size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.sunIndex ?? 0,
         isNotGreyed: false,
