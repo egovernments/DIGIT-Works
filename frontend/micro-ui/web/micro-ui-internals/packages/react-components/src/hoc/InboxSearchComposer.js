@@ -24,28 +24,43 @@ const InboxSearchComposer = (props) => {
         if (Object.keys(state.searchForm)?.length > 0) {
             //here we can't directly put Projects[0] -> need to generalise this
             // apiDetails.requestBody.Projects[0] = { ...apiDetails.mandatoryFieldsInBody,...state.searchForm }
-            _.set(apiDetails, apiDetails.jsonPathForReqBody, { ...apiDetails.mandatoryFieldsInBody, ...state.searchForm })
+            const mandatoryFields = {}
+            Object.keys(apiDetails.mandatoryFieldsInBody).forEach(key=>{
+                // debugger
+                mandatoryFields[key] = Digit.Utils.commonUiUtils[apiDetails.mandatoryFieldsInBody[key]]()
+            })
+            
+            _.set(apiDetails, apiDetails.jsonPathForReqBody, { ...mandatoryFields, ...state.searchForm })
             // requestBody.Projects[0]={...state?.searchForm}
-            setEnable(true)
+            // setEnable(true)
         }
         if(Object.keys(state.tableForm)?.length > 0) {
-            _.set(apiDetails, apiDetails.jsonPathForReqParam, { ...apiDetails.mandatoryFieldsInParam, ...state.tableForm })  
+            const mandatoryFields = {}
+            Object.keys(apiDetails.mandatoryFieldsInParam).forEach(key => {
+                // debugger
+                mandatoryFields[key] = Digit.Utils.commonUiUtils[apiDetails.mandatoryFieldsInParam[key]]()
+            })
+            _.set(apiDetails, apiDetails.jsonPathForReqParam, { ...mandatoryFields, ...state.tableForm })  
+            // setEnable(true)
+        }
+        if (Object.keys(state.tableForm)?.length > 0 && Object.keys(state.searchForm)?.length >= 1){
             setEnable(true)
         }
     }, [state])
     
 
-    const requestCriteria = [
-        configs?.apiDetails?.serviceName,
-        configs?.apiDetails?.requestParam,
-        configs?.apiDetails?.requestBody,
-        {
+    const requestCriteria = {
+        url:configs?.apiDetails?.serviceName,
+        params:configs?.apiDetails?.requestParam,
+        body:configs?.apiDetails?.requestBody,
+        config: {
             enabled: enable,
             // select: config?.apiDetails?.preProcessResponese ? config?.apiDetails?.preProcessResponese : null
-        }
-    ];
+        },
+        // jsonPath: configs?.apiDetails?.queryNameJsonPath
+    };
 
-    const { isLoading, data, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
+    const { isLoading, data, revalidate } = Digit.Hooks.useCustomAPIHook(requestCriteria);
     
     
     useEffect(() => {

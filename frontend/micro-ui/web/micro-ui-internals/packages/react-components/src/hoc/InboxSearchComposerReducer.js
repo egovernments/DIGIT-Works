@@ -6,7 +6,8 @@ export const initialInboxState = {
 
     },
     tableForm:{
-
+        limit: 10,
+        offset: 0,
     } 
 };
 
@@ -23,7 +24,7 @@ const reducer = (state, action) => {
             return state;
         case "tableForm":
             const updatedTableState = action.state
-            return { ...state, tableForm: updatedTableState };
+            return { ...state, tableForm: {...state.tableForm,...updatedTableState} };
         case "clearSearchForm":
             return {...state,searchForm:action.state}
         default:

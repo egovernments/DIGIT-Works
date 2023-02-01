@@ -50,7 +50,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
       //run preprocessing functions(use case -> changing date inputs to epoch)
       uiConfig.fields.forEach(field=> {
         if (field.preProcessfn) {
-          data[field.populators.name] = field.preProcessfn(data?.[field.populators.name])
+          const func = Digit.Utils.commonUiUtils[field.preProcessfn]
+          data[field.populators.name] = func(data?.[field.populators.name])
           // data[field.populators.name] = new Date(data[field.populators.name]).getTime() / 1000
         }
       })
