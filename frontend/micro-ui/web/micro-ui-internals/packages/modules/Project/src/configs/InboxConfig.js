@@ -2,7 +2,33 @@ const inboxConfig = () => {
     return {
         label : "Inbox",
         type : "inbox", 
-        //classname: search view => 'search', inbox view => 'inbox'(default)
+        apiDetails: {
+            serviceName: "",
+            requestParam: {
+                limit:10,
+                offset:0,
+                tenantId: Digit.ULBService.getCurrentTenantId(),
+            },
+            requestBody: {
+                apiOperation: "FILTER",
+                Projects: [
+                    {
+                        tenantId: Digit.ULBService.getCurrentTenantId()
+                    }
+                ]
+            },
+            jsonPathForReqBody: `requestBody.Projects[0]`,
+            jsonPathForReqParam:`requestParam`,
+            preProcessResponese: (data) =>  data,
+            mandatoryFieldsInParam: {
+                tenantId: Digit.ULBService.getCurrentTenantId(),
+            },
+            mandatoryFieldsInBody: {
+                tenantId: Digit.ULBService.getCurrentTenantId(),
+            },
+            //Note -> The above mandatory fields should not be dynamic
+            //If they are dynamic they should be part of the reducer state
+        },
         sections : {
             search : {
                 uiConfig : {

@@ -3,9 +3,10 @@ import { CustomService } from "../services/elements/CustomService";
 
 
 const useCustomAPIHook = (url, params, body, config = {}) => {
+  debugger;
   const client = useQueryClient();
   const { isLoading, data } = useQuery(
-    ["CUSTOM", { ...params,...body.Projects }].filter((e) => e),
+    ["CUSTOM", { ...params,...body?.Projects }].filter((e) => e),
     () => CustomService.getResponse({ url, params, body }),
     {...config,
     }
@@ -14,7 +15,7 @@ const useCustomAPIHook = (url, params, body, config = {}) => {
     isLoading,
     data,
     revalidate: () => {
-      data && client.invalidateQueries({ queryKey: ["CUSTOM", { ...params,...body.Projects }].filter((e) => e) });
+      data && client.invalidateQueries({ queryKey: ["CUSTOM", { ...params,...body?.Projects }].filter((e) => e) });
     },
   };
 };
