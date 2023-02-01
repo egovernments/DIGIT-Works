@@ -22,7 +22,7 @@ class ToastUtils {
       _overlayEntry = createOverlayEntry(context, message, type);
 
       Overlay.of(context)!.insert(_overlayEntry!);
-      toastTimer = Timer(Duration(seconds: 10), () {
+      toastTimer = Timer(const Duration(seconds: 5), () {
         if (_overlayEntry != null) {
           _overlayEntry!.remove();
         }
@@ -36,7 +36,7 @@ class ToastUtils {
         builder: ((context) => Positioned(
               bottom: 50.0,
               width: MediaQuery.of(context).size.width > 720
-                  ? MediaQuery.of(context).size.width / 4
+                  ? MediaQuery.of(context).size.width / 3
                   : MediaQuery.of(context).size.width,
               left: MediaQuery.of(context).size.width > 720
                   ? MediaQuery.of(context).size.width / 2.55
@@ -45,8 +45,8 @@ class ToastUtils {
                 elevation: 10.0,
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
-                  padding:
-                      EdgeInsets.only(left: 10, right: 10, top: 13, bottom: 10),
+                  padding: const EdgeInsets.only(
+                      left: 10, right: 10, top: 13, bottom: 10),
                   decoration: BoxDecoration(
                       color: type == 'ERROR' ? Colors.red : Colors.green[900]),
                   child: Align(
@@ -67,7 +67,7 @@ class ToastUtils {
                             softWrap: true,
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               color: Color(0xFFFFFFFF),
                             ),
@@ -78,7 +78,7 @@ class ToastUtils {
                             toastTimer!.cancel();
                             _overlayEntry!.remove();
                           },
-                          child: Icon(
+                          child: const Icon(
                             Icons.close,
                             color: Colors.white,
                           ),

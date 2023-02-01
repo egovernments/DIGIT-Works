@@ -48,6 +48,19 @@ class Common {
   String get aadhaarNumber => 'CORE_COMMON_AADHAAR';
   String get bankAccountNumber => 'CORE_COMMON_BANK_ACCOUNT_NO';
   String get searchByNameAadhaar => 'CORE_SEARCH_BY_NAME_AADHAAR';
+  String get mon => 'CORE_MON';
+  String get tue => 'CORE_TUE';
+  String get wed => 'CORE_WED';
+  String get thu => 'CORE_THU';
+  String get fri => 'CORE_FRI';
+  String get sat => 'CORE_SAT';
+  String get sun => 'CORE_SUN';
+  String get attachments => 'CS_COMMON_ATTACHMENTS';
+  String get apply => 'ES_COMMON_APPLY';
+  String get cancel => 'CS_ACTION_CANCEL';
+  String get startDate => 'EVENTS_START_DATE_LABEL';
+  String get endDate => 'EVENTS_END_DATE_LABEL';
+  String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
 }
 
 class Home {
@@ -65,14 +78,23 @@ class WorkOrder {
   const WorkOrder();
   String get warningMsg => 'WRNG_MSG_WORKORDER';
   String get projects => 'WORKS_PROJECT';
+  String get contractID => 'WORKS_CONTRACT_ID';
+  String get contractIssueDate => 'WORKS_CONTRACT_ISSUE_DATE';
+  String get contractAmount => 'WORKS_CONTRACT_AMOUNT';
 }
 
 class AttendanceMgmt {
   const AttendanceMgmt();
   String get enrollWageSeeker => 'WORKS_ENROLL_WAGE_SEEKER';
   String get updateAttendance => 'UPDATE_ATTENDANCE';
-  String get nameOfWork => 'NAME_OF_WORK';
-  String get winCode => 'WIN_CODE';
-  String get engineerInCharge => 'ENGINEER_IN_CHARGE';
-  String get musterRollId => 'MUSTER_ROLL_ID';
+  String get nameOfWork => 'WORKS_NAME_OF_WORK';
+  String get winCode => 'ATM_WIN_CODE';
+  String get engineerInCharge => 'WORKS_INCHARGE_ENGG';
+  String get musterRollId => 'ATM_MUSTER_ROLL_ID';
+  String get markAttendanceForTheWeek => 'ATM_MARK_ATTENDENCE_LABEL';
+  String get addNewWageSeeker => 'ATM_ADD_NEW_WAGE_SEEKER';
+  String get selectDateRangeFirst => 'SELECT_DATE_RANGE_FIRST';
+  String get individualsCount => 'REGISTER_INDIVIDUAL_COUNT';
+  String get attendanceLoggedSuccess => 'ATM_LOGGED_SUCCESSFULLY';
+  String get attendanceLoggedFailed => 'ATM_LOGGED_FAILED';
 }

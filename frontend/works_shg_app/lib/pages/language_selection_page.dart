@@ -26,7 +26,7 @@ class LanguageSelectionPage extends StatelessWidget {
             BlocBuilder<AppInitializationBloc, AppInitializationState>(
               builder: (context, state) {
                 return state.isInitializationCompleted == false
-                    ? Loaders.circularLoader()
+                    ? Loaders.circularLoader(context)
                     : state.digitRowCardItems != null &&
                             state.isInitializationCompleted
                         ? DigitLanguageCard(
@@ -49,8 +49,7 @@ class LanguageSelectionPage extends StatelessWidget {
                               ).load();
                               context.read<LocalizationBloc>().add(
                                   OnLoadLocalizationEvent(
-                                      module:
-                                          'rainmaker-common,rainmaker-works,rainmaker-attendencemgmt',
+                                      module: 'rainmaker-common',
                                       tenantId: state.stateInfoListModel!.code
                                           .toString(),
                                       locale: data.value));
@@ -64,7 +63,7 @@ class LanguageSelectionPage extends StatelessWidget {
                           );
               },
             ),
-            // const PoweredByDigit(),
+            const PoweredByDigit(),
           ],
         ),
       ),

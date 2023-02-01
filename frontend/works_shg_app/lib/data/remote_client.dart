@@ -28,11 +28,11 @@ class ApiInterceptors extends Interceptor {
       "RequestInfo": {
         ...RequestInfoModel(
           apiId: options.extra['apiId'] ?? 'Rainmaker',
-          ver: ".01",
-          ts: "",
+          ver: options.extra['ver'] ?? ".01",
+          ts: options.extra['ts'] ?? "",
           action: options.extra['action'] ?? "_search",
-          did: "1",
-          key: "",
+          did: options.extra['did'] ?? "1",
+          key: options.extra['key'] ?? "",
           msgId: options.extra['msgId'] ?? "20170310130900|en_IN",
           authToken: options.extra['accessToken'],
         ).toJson(),

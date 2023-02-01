@@ -15,15 +15,15 @@ const ProjectBreadCrumb = ({ location }) => {
     },
     {
       path: `/${window.contextPath}/employee/project/create-project`,
-      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_PROJECT")}` : t("WORKS_CREATE_PROJECT"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_PROJECT")}` : t("WORKS_PROJECT"),
       show: location.pathname.includes("/project/create-project") ? true : false,
       isBack: fromScreen && true,
     },
     {
-        path: `/${window.contextPath}/employee/project/project-details`,
-        content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_PROJECT_DETAILS")}` : t("WORKS_PROJECT_DETAILS"),
-        show: location.pathname.includes("/project/project-details") ? true : false,
-        isBack: fromScreen && true,
+      path: `/${window.contextPath}/employee/project/project-details`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_PROJECT_DETAILS")}` : t("WORKS_PROJECT_DETAILS"),
+      show: location.pathname.includes("/project/project-details") ? true : false,
+      isBack: fromScreen && true,
     },
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;

@@ -6,7 +6,7 @@ class DateFormats {
     if (date.trim().isEmpty) return '';
     try {
       var dateTime = DateTime.parse(date).toLocal();
-      return DateFormat(dateFormat ?? "dd-MM-yyyy").format(dateTime);
+      return DateFormat(dateFormat ?? "dd/MM/yyyy").format(dateTime);
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e.toString());
@@ -44,6 +44,44 @@ class DateFormats {
       }
       return null;
     }
+  }
+
+  static String getDateFromTimestamp(int timestamp) {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    return DateFormat("dd/MM/yyyy").format(date);
+  }
+
+  static int getDateTimeWeek(String property) {
+    switch (property) {
+      case 'mon':
+        return DateTime.monday;
+      case 'tue':
+        return DateTime.tuesday;
+      case 'wed':
+        return DateTime.wednesday;
+      case 'thu':
+        return DateTime.thursday;
+      case 'fri':
+        return DateTime.friday;
+      case 'sat':
+        return DateTime.saturday;
+      case 'sun':
+        return DateTime.sunday;
+      default:
+        return 0;
+    }
+  }
+
+  static int getTimestampFromWeekDay(String date, String day, int hours) {
+    DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(date);
+    int dayOfWeek = parsedDate.weekday;
+    int daysToAdd = getDateTimeWeek(day) - dayOfWeek;
+    int daysToSubtract = dayOfWeek - getDateTimeWeek(day);
+    DateTime weekDay = day == 'sun'
+        ? parsedDate.add(Duration(days: daysToAdd))
+        : parsedDate.subtract(Duration(days: daysToSubtract));
+    weekDay = weekDay.add(Duration(hours: hours));
+    return weekDay.millisecondsSinceEpoch;
   }
 
   static String getTime(String date) {
@@ -94,6 +132,15 @@ class DateFormats {
   static String getMonth(DateTime date) {
     try {
       return DateFormat.MMM().format(date);
+    } catch (e) {
+      return '';
+    }
+  }
+
+  static String getDay(int timeInMillis) {
+    try {
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(timeInMillis);
+      return DateFormat.E().format(date);
     } catch (e) {
       return '';
     }

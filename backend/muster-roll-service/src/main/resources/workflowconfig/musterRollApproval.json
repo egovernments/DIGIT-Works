@@ -24,7 +24,7 @@
           "sla": null,
           "state": null,
           "applicationStatus": null,
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
@@ -45,8 +45,8 @@
           "applicationStatus": "SUBMITTED",
           "docUploadRequired": false,
           "isStartState": false,
-          "isTerminateState": true,
-          "isStateUpdatable": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
           "actions": [
             {
               "action": "VERIFY",
@@ -70,7 +70,7 @@
           "applicationStatus": "VERIFIED",
           "docUploadRequired": false,
           "isStartState": false,
-          "isTerminateState": true,
+          "isTerminateState": false,
           "isStateUpdatable": false,
           "actions": [
             {
