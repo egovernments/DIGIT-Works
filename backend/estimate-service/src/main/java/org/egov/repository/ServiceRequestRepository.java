@@ -29,7 +29,7 @@ public class ServiceRequestRepository {
             response = restTemplate.postForObject(uri.toString(), request, Map.class);
         } catch (HttpClientErrorException e) {
             log.error("External Service threw an Exception: ", e);
-            throw new ServiceCallException("Exception occurred while calling the external service for uri : " + uri.toString() + "\n" + e.getResponseBodyAsString());
+            throw new ServiceCallException(e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("Exception while fetching from searcher: ", e);
         }
