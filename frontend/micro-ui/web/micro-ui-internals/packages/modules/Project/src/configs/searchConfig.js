@@ -1,6 +1,6 @@
 const searchConfig = () => {
     return {
-        label : "Search Projects",
+        label : "WORKS_SEARCH_PROJECTS",
         type: 'search',
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
@@ -32,8 +32,8 @@ const searchConfig = () => {
             search : {
                 uiConfig : {
                     headerStyle : null,
-                    primaryLabel: 'Search',
-                    secondaryLabel: 'Clear Search',
+                    primaryLabel: 'ACTION_TEST_SEARCH',
+                    secondaryLabel: 'CLEAR_SEARCH_LINk',
                     minReqFields: 1,
                     defaultValues : {
                         projectNumber: "",
@@ -45,34 +45,40 @@ const searchConfig = () => {
                     },
                     fields : [
                         {
-                            label:"Project ID",
+                            label:"WORKS_PROJECT_ID",
                             type: "text",
                             isMandatory: false,
                             disable: false,
                             populators: { 
                                 name: "projectNumber",
-                            },
+                                error: `PROJECT_PATTERN_ERR_MSG`,
+                                validation: { pattern: /^[a-z0-9\/-]*$/i, minlength : 2 }
+                            }
                         },
                         {
-                            label: "Sub Project ID",
+                            label: "PROJECT_PRJ_SUB_ID",
                             type: "text",
                             isMandatory: false,
                             disable: false,
                             populators: { 
                                 name: "projectNumber",
-                            },
+                                error: `PROJECT_PATTERN_ERR_MSG`,
+                                validation: { pattern: /^[a-z0-9\/-]*$/i, minlength : 2 }
+                            }
                         },
                         {
-                          label: "Name of the Project",
+                          label: "PROJECT_NAME",
                           type: "text",
                           isMandatory: false,
                           disable: false,
                           populators: { 
                               name: "name",
+                              error: `PROJECT_PATTERN_ERR_MSG`,
+                              validation: { pattern: /^[a-z0-9\/-@#]*$/i, minlength : 2 }
                           }
                         },
                         {
-                          label: "Type Of Work",
+                          label: "WORKS_PROJECT_TYPE",
                           type: "dropdown",
                           isMandatory: false,
                           disable: false,
@@ -82,27 +88,31 @@ const searchConfig = () => {
                             mdmsConfig: {
                               masterName: "ProjectType",
                               moduleName: "works",
+                              localePrefix: "ES_COMMON"
                             }
                           },
                           preProcessfn: "getCode"
                         },
                         {
-                          label: "Created from Date",
+                          label: "CREATED_FROM_DATE",
                           type: "date",
                           isMandatory: false,
                           disable: false,
                           populators: { 
-                              name: "startDate"
+                              name: "startDate",
+                              max: new Date().toISOString().split("T")[0]
                           },
                           preProcessfn: "convertDateToEpoch"
                         },
                         {
-                            label: "Created to Date",
+                            label: "CREATED_TO_DATE",
                             type: "date",
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "endDate"
+                                name: "endDate",
+                                error: 'DATE_VALIDATION_MSG',
+                                max: new Date().toISOString().split("T")[0]
                             },
                             preProcessfn: "convertDateToEpoch"
                         }
