@@ -1,6 +1,6 @@
 const searchConfig = () => {
     return {
-        label : "WORKS_SEARCH_PROJECTS",
+        label : "WORKS_SEARCH_PROJECT",
         type: 'search',
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
@@ -15,18 +15,14 @@ const searchConfig = () => {
                     }
                 ]
             },
+            minParametersForSearchForm:1,
+            masterName:"commonUiConfig",
+            moduleName:"SearchProjectConfig",
             jsonPathForReqBody: `requestBody.Projects[0]`,
             jsonPathForReqParam:`requestParam`,
-            mandatoryFieldsInParam: {
-                tenantId: "fetchTenantId"
-            },
-            mandatoryFieldsInBody: {
-                tenantId: "fetchTenantId",
-            },
             tableFormJsonPath:"",
             filterFormJsonPath:"",
             searchFormJsonPath:"",
-            // queryNameJsonPath:"Projects"
         },
         sections : {
             search : {
@@ -91,7 +87,6 @@ const searchConfig = () => {
                               localePrefix: "ES_COMMON"
                             }
                           },
-                          preProcessfn: "getCode"
                         },
                         {
                           label: "CREATED_FROM_DATE",
@@ -100,9 +95,8 @@ const searchConfig = () => {
                           disable: false,
                           populators: { 
                               name: "startDate",
-                              max: new Date().toISOString().split("T")[0]
                           },
-                          preProcessfn: "convertDateToEpoch"
+                        
                         },
                         {
                             label: "CREATED_TO_DATE",
@@ -112,9 +106,7 @@ const searchConfig = () => {
                             populators: { 
                                 name: "endDate",
                                 error: 'DATE_VALIDATION_MSG',
-                                max: new Date().toISOString().split("T")[0]
                             },
-                            preProcessfn: "convertDateToEpoch"
                         }
                     ]
                 },

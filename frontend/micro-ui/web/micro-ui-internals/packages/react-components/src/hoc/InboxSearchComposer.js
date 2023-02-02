@@ -18,38 +18,45 @@ const InboxSearchComposer = (props) => {
     //         {enable:false}
     //     ]
     //     )
+    const apiDetails = configs?.apiDetails
     useEffect(() => {
         // const requestBody = configs?.apiDetails?.requestBody
-        const apiDetails = configs?.apiDetails
+        
         if (Object.keys(state.searchForm)?.length > 0) {
             //here we can't directly put Projects[0] -> need to generalise this
             // apiDetails.requestBody.Projects[0] = { ...apiDetails.mandatoryFieldsInBody,...state.searchForm }
             const mandatoryFields = {}
-            Object.keys(apiDetails.mandatoryFieldsInBody).forEach(key=>{
-                // debugger
-                mandatoryFields[key] = Digit.Utils.commonUiUtils[apiDetails.mandatoryFieldsInBody[key]]()
-            })
+            // Object.keys(apiDetails.mandatoryFieldsInBody).forEach(key=>{
+            //     // debugger
+            //     mandatoryFields[key] = Digit.Utils.commonUiUtils[apiDetails.mandatoryFieldsInBody[key]]()
+            // })
             
-            _.set(apiDetails, apiDetails.jsonPathForReqBody, { ...mandatoryFields, ...state.searchForm })
-            // requestBody.Projects[0]={...state?.searchForm}
+            // _.set(apiDetails, apiDetails.jsonPathForReqBody, { ...mandatoryFields, ...state.searchForm })
+
+            _.set(apiDetails, apiDetails.jsonPathForReqBody, { ...state.searchForm })
+
             // setEnable(true)
         }
         if(Object.keys(state.tableForm)?.length > 0) {
             const mandatoryFields = {}
-            Object.keys(apiDetails.mandatoryFieldsInParam).forEach(key => {
-                // debugger
-                mandatoryFields[key] = Digit.Utils.commonUiUtils[apiDetails.mandatoryFieldsInParam[key]]()
-            })
-            _.set(apiDetails, apiDetails.jsonPathForReqParam, { ...mandatoryFields, ...state.tableForm })  
+            // Object.keys(apiDetails.mandatoryFieldsInParam).forEach(key => {
+            //     // debugger
+            //     mandatoryFields[key] = Digit.Utils.commonUiUtils[apiDetails.mandatoryFieldsInParam[key]]()
+            // })
+            // _.set(apiDetails, apiDetails.jsonPathForReqParam, { ...mandatoryFields, ...state.tableForm })  
+            
+            _.set(apiDetails, apiDetails.jsonPathForReqParam, { ...state.tableForm })  
+
+            
             // setEnable(true)
         }
-        if (Object.keys(state.tableForm)?.length > 0 && Object.keys(state.searchForm)?.length >= 1){
+        if (Object.keys(state.tableForm)?.length > 0 && Object.keys(state.searchForm)?.length >= apiDetails.minParametersForSearchForm){
             setEnable(true)
         }
     }, [state])
     
 
-    const requestCriteria = {
+    let requestCriteria = {
         url:configs?.apiDetails?.serviceName,
         params:configs?.apiDetails?.requestParam,
         body:configs?.apiDetails?.requestBody,
@@ -59,8 +66,11 @@ const InboxSearchComposer = (props) => {
         },
         // jsonPath: configs?.apiDetails?.queryNameJsonPath
     };
+    
+    const updatedReqCriteria =  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName] ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName](requestCriteria) : requestCriteria 
 
-    const { isLoading, data, revalidate } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+    
+    const { isLoading, data, revalidate } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
     
     
     useEffect(() => {
