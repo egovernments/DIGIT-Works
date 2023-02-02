@@ -67,10 +67,10 @@ const InboxSearchComposer = (props) => {
         // jsonPath: configs?.apiDetails?.queryNameJsonPath
     };
     
-    const updatedReqCriteria =  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName] ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName](requestCriteria) : requestCriteria 
+    const updatedReqCriteria = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess(requestCriteria) : requestCriteria 
 
     
-    const { isLoading, data, revalidate } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
+    const { isLoading, data, revalidate,isFetching } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
     
     
     useEffect(() => {
@@ -108,10 +108,11 @@ const InboxSearchComposer = (props) => {
                                 screenType={configs?.type}/>
                     </div> 
                 }
+                {/* data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length>0 */}
                 {   
                 configs?.sections?.searchResult?.show &&  
-                        <div className="" style={data ? { overflowX: "scroll" }:{}} >
-                        <ResultsTable config={configs?.sections?.searchResult?.uiConfig} data={data} isLoading={isLoading}/>
+                        <div className="" style={data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length > 0 ? (!(isLoading || isFetching) ?{ overflowX: "scroll" }: {}) : {  }} >
+                            <ResultsTable config={configs?.sections?.searchResult?.uiConfig} data={data} isLoading={isLoading} isFetching={isFetching} fullConfig={configs}/>
                     </div>
                 }
             </div>

@@ -1,42 +1,48 @@
-
-const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
-    //example input format : "2018-10-02"
-    try {
-        const parts = dateString.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
-        const DateObj = new Date(Date.UTC(parts[1], parts[2] - 1, parts[3]));
-        DateObj.setMinutes(DateObj.getMinutes() + DateObj.getTimezoneOffset());
-        if (dayStartOrEnd === "dayend") {
-            DateObj.setHours(DateObj.getHours() + 24);
-            DateObj.setSeconds(DateObj.getSeconds() - 1);
-        }
-        return DateObj.getTime();
-    } catch (e) {
-        return dateString;
-    }
-};
+import { Link } from "react-router-dom";
+import { useQuery, useQueryClient } from "react-query";
 
 const getCode = (obj) => {
     return obj?.code
-}
-
-const fetchTenantId = () => {
-    return Digit.ULBService.getCurrentTenantId()
 }
 
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
 // these functions will act as middlewares 
-export const UICustomizations = {
-    SearchProjectConfig: (data, form) => {
-        //add tenantId to body and param here
-        
-        const startDate = convertDateToEpoch(data.body.Projects[0]?.startDate)
-        const endDate = convertDateToEpoch(data.body.Projects[0]?.endDate)
-        const projectType = getCode(data.body.Projects[0]?.projectType)
-        data.params = { ...data.params, tenantId:fetchTenantId()}
-        data.body.Projects[0] = { ...data.body.Projects[0], tenantId: fetchTenantId(),startDate,endDate,projectType }
 
-        return data
+export const UICustomizations = {
+    SearchProjectConfig: {
+        preProcess: (data) => {
+            const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.startDate)
+            const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.endDate)
+            const projectType = data.body.Projects[0]?.projectType?.code
+            data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() }
+            data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, projectType }
+
+            return data
+        },
+        // postProcess: ( responseArray, filters, options = {}) => {
+            
+        //     if(responseArray?.length===0) return []
+        //     const listOfUuids = responseArray?.map(row => row.auditDetails.createdBy)
+        //     const data = { uuid: listOfUuids }
+        //     const tenantId = Digit.ULBService.getCurrentTenantId()
+        //     const client = useQueryClient();
+        //     const queryData = useQuery(["USER_SEARCH", filters, data], () => Digit.UserService.userSearch(null, data, {}), options);
+        // },
+        additionalCustomizations: (row,column,columnConfig,value,t) => {
+            //here we can add multiple conditions
+            //like if a cell is link then we return link
+            //first we can identify which column it belongs to then we can return relevant result
+            
+            if (column.label ==="WORKS_PRJ_SUB_ID")
+            {
+                return <span className="link">
+                    <Link to={`/works-ui/employee/project/project-inbox-item?projectNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+                </span>
+            }
+
+        }
     }
 }
+

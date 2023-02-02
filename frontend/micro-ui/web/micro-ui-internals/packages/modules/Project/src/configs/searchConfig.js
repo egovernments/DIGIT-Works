@@ -126,7 +126,7 @@ const searchConfig = () => {
                         {
                             label: "WORKS_PRJ_SUB_ID",
                             jsonPath: "projectNumber",
-                            redirectUrl: '/works-ui/employee/project/project-inbox-item'
+                            additionalCustomization:true
                         },
                         {
                             label: "WORKS_PROJECT_NAME",
