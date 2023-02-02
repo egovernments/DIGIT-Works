@@ -330,4 +330,16 @@ public class AttendanceLogServiceValidatorTest {
 
         assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateDocumentIds", attendanceLogRequest));
     }
+
+    @DisplayName("Method validateAttendanceLogTimeWithRegisterStartEndDate: should run successfully")
+    @Test
+    public void validateCreateAttendanceLogRequest_validateAttendanceLogTimeWithRegisterStartEndDate_1(){
+        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
+        AttendanceLog attendanceLog = attendanceLogRequest.getAttendance().get(0);
+        attendanceLog.setTime(new BigDecimal("1673740800000"));
+        assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendanceLogTimeWithRegisterStartEndDate",attendanceRegister, attendanceLogRequest));
+    }
+
+
 }

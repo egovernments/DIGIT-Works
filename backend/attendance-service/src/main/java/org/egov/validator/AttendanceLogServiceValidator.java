@@ -131,17 +131,36 @@ public class AttendanceLogServiceValidator {
         // Fetch register for given registerId
         List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(registerId);
 
-        // Check register does exists ?
+        // Check existence of register
+        checkRegisterExistence(attendanceRegisters,registerId);
+
+        AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
+
+        // Check register is active ?
+        checkRegisterStatus(attendanceRegister);
+
+        // Check register association with tenantId
+        validateTenantIdAssociationWithRegisterId(attendanceRegister,tenantId);
+
+        // Check attendance log time against register start and end date
+        validateAttendanceLogTimeWithRegisterStartEndDate(attendanceRegister,attendanceLogRequest);
+
+        log.info("Attendance log verification against register params are done. RegisterId ["+registerId+"]");
+    }
+
+    private void checkRegisterStatus(AttendanceRegister attendanceRegister) {
+        if(Status.INACTIVE.equals(attendanceRegister.getStatus())){
+            String registerId = attendanceRegister.getId();
+            log.error("Register ["+registerId+"] is inactive");
+            throw new CustomException("INVALID_REGISTERID", "Given RegisterId ["+registerId+"] is inactive");
+        }
+    }
+
+    private void checkRegisterExistence(List<AttendanceRegister> attendanceRegisters,String registerId) {
         if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
             log.error("Register ["+registerId+"] does not exists");
             throw new CustomException("INVALID_REGISTERID", "Given RegisterId ["+registerId+"] does not exists");
         }
-
-        AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
-
-        validateTenantIdAssociationWithRegisterId(attendanceRegister,tenantId);
-        validateAttendanceLogTimeWithRegisterStartEndDate(attendanceRegister,attendanceLogRequest);
-        log.info("Attendance log verification against register params are done. RegisterId ["+registerId+"]");
     }
 
     private void validateTenantIdAssociationWithRegisterId(AttendanceRegister attendanceRegister,String tenantId) {
@@ -161,16 +180,30 @@ public class AttendanceLogServiceValidator {
 
     private void validateAttendanceLogTimeWithRegisterStartEndDate(AttendanceRegister attendanceRegister,AttendanceLogRequest attendanceLogRequest) {
         Instant registerStartTime = Instant.ofEpochMilli(attendanceRegister.getStartDate().longValue());
-        Instant registerEndTime = Instant.ofEpochMilli(attendanceRegister.getEndDate().longValue());
+
+        Instant registerEndTime = null;
+        if(registerEndTime != null)
+            registerEndTime = Instant.ofEpochMilli(attendanceRegister.getEndDate().longValue());
 
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
-        attendanceLogs.forEach(attendanceLog -> {
-            Instant instantAttendanceAttendeeLogTime = Instant.ofEpochMilli(attendanceLog.getTime().longValue());
+
+        if(registerEndTime != null){
+            for(AttendanceLog attendanceLog : attendanceLogs){
+                Instant instantAttendanceAttendeeLogTime = Instant.ofEpochMilli(attendanceLog.getTime().longValue());
                 if(!(instantAttendanceAttendeeLogTime.compareTo(registerStartTime) >=0 && instantAttendanceAttendeeLogTime.compareTo(registerEndTime) <=0)){
                     log.error("Attendance time ["+instantAttendanceAttendeeLogTime+"] is invalid for register ["+attendanceRegister.getId()+"]");
                     throw new CustomException("INVALID_ATTENDANCE_TIME", "Attendance time ["+instantAttendanceAttendeeLogTime+"] is invalid for register ["+attendanceRegister.getId()+"]");
                 }
-        });
+            }
+        }else{
+            for(AttendanceLog attendanceLog : attendanceLogs){
+                Instant instantAttendanceAttendeeLogTime = Instant.ofEpochMilli(attendanceLog.getTime().longValue());
+                if(!(instantAttendanceAttendeeLogTime.compareTo(registerStartTime) >=0)){
+                    log.error("Attendance time ["+instantAttendanceAttendeeLogTime+"] is invalid for register ["+attendanceRegister.getId()+"]");
+                    throw new CustomException("INVALID_ATTENDANCE_TIME", "Attendance time ["+instantAttendanceAttendeeLogTime+"] is invalid for register ["+attendanceRegister.getId()+"]");
+                }
+            }
+        }
     }
     private void validateDocumentIds(AttendanceLogRequest attendanceLogRequest) {
         if ("TRUE".equalsIgnoreCase(config.getDocumentIdVerificationRequired())) {
