@@ -1,11 +1,6 @@
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "react-query";
 
-const getCode = (obj) => {
-    return obj?.code
-}
-
-
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
 // these functions will act as middlewares 
