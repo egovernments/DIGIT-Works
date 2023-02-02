@@ -50,10 +50,6 @@ const CreateProject = () => {
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
 
-    const navigateToProjectResponse = () =>{
-      history.push(`/${window.contextPath}/employee/project/create-project-response`);
-    }
-
     //clear session data on first init
     useEffect(()=>{
       clearSessionFormData();
