@@ -15,7 +15,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
     const [rows, setRows] = useState(initialState);
     const columns = [
         {label : t('WORKS_SNO'), isMandatory : false },
-        {label : t('WORKS_NAME_OF_WORK'), isMandatory : true },
+        {label : t('WORKS_NAME_OF_SUB_PROJECT'), isMandatory : true },
         {label : t('WORKS_ESTIMATED_AMOUNT'), isMandatory : false },
         {label : t('WORKS_PROJECT_TYPE'), isMandatory : true },
         {label : t('WORKS_SUB_PROJECT_TYPE'), isMandatory : false },
@@ -27,7 +27,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         {label : t('WORKS_WARD'), isMandatory : false },
         {label : t('WORKS_URBAN_LOCAL_BODY'), isMandatory : false },
         {label : t('WORKS_GEO_LOCATION'), isMandatory : false },
-        {label : t('WORKS_UPLOAD_FILES'), isMandatory : false },
+        {label : t('WORKS_UPLOAD_DOCS'), isMandatory : false },
         {label : t('WORKS_ACTIONS'), isMandatory : false }
     ];
     const [subProjectTypeOfProjectOptions, setSubProjectTypeOfProjectOptions] = useState([]);
@@ -114,6 +114,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         if(type === "SNO") {
             return { "minWidth": "2rem" };
         }
+        if(type === "PROJECT_NAME") {
+            return { "minWidth": "20rem" };
+        }
         return { "minWidth": "14rem" };
     }
 
@@ -158,12 +161,22 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
     }
 
     const renderErrorIfAny = (row, name, isErrorForDropdown=false) => {
-        return <>
-            {errors && errors?.[formFieldName]?.[row.key]?.[name]?.type === "pattern" && (
-                <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-            {errors && errors?.[formFieldName]?.[row.key]?.[name]?.type === "required" && (
-                <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
-        </>
+        switch(name) {
+            case "projectName" : {
+                return <>
+                    {errors && ( errors?.[formFieldName]?.[row.key]?.[name]?.type === "pattern" || errors?.[formFieldName]?.[row.key]?.[name]?.type === "required" ) && (
+                        <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`PROJECT_PATTERN_ERR_MSG_PROJECT_NAME`)}</CardLabelError>)}
+                </>
+            }
+            default : {
+                return <>
+                {errors && errors?.[formFieldName]?.[row.key]?.[name]?.type === "pattern" && (
+                    <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                {errors && errors?.[formFieldName]?.[row.key]?.[name]?.type === "required" && (
+                    <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+            </>
+            }
+        }
     }
 
     const renderBody = () => {
@@ -172,9 +185,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
             if (row.isShow) i++
             return row.isShow && <tr key={index} style={{ "height": "50%" }}>
                 <td style={getStyles('SNO')}>{i}</td>
-                <td style={getStyles()} >
+                <td style={getStyles('PROJECT_NAME')} >
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.projectName`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true}) : register({required : false})}/>
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.projectName`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true, pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minLength: 2}) : register({required : false})}/>
                         {renderErrorIfAny(row, "projectName")}
                     </div>
                 </td>
