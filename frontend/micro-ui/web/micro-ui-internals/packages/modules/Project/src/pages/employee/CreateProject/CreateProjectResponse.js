@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Banner, Card, CardText, LinkLabel, EditIcon} from "@egovernments/digit-ui-react-components";
-import useQueryParams from "../../../../../../libraries/src/hooks/useQueryParams";
 
 const CreateProjectResponse = () => {
     const {t} = useTranslation();
     const history = useHistory();
-    const queryStrings = useQueryParams();
+    const queryStrings = Digit.Hooks.useQueryParams();
     const [ projectIDsList, setProjectIDsList ] = useState(queryStrings?.projectIDs.split(','));
     const [ isResponseSuccess, setIsResponseSuccess ] = useState(Boolean(queryStrings?.isSuccess));
 
