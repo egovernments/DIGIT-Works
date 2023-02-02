@@ -75,6 +75,9 @@ public class Project {
     @JsonProperty("ancestors")
     private Project ancestors = null;
 
+    @JsonProperty("descendants")
+    private List<Project> descendants = new ArrayList<>();
+
     @JsonProperty("targets")
     @Valid
     private List<Target> targets = null;
@@ -105,6 +108,14 @@ public class Project {
             this.targets = new ArrayList<>();
         }
         this.targets.add(targetsItem);
+        return this;
+    }
+
+    public Project addDescendant(Project project) {
+        if (this.descendants == null) {
+            this.descendants = new ArrayList<>();
+        }
+        this.descendants.add(project);
         return this;
     }
 

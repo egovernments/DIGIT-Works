@@ -159,7 +159,7 @@ public class ProjectAddressQueryBuilder {
         if (values.isEmpty())
             queryString.append(" WHERE ");
         else {
-            queryString.append(" AND ");
+            queryString.append(" OR ");
         }
     }
 
@@ -191,4 +191,14 @@ public class ProjectAddressQueryBuilder {
         });
     }
 
+    public String getProjectDescendantsSearchQueryBasedOnIds(List<String> projectIds, List<Object> preparedStmtListDescendants) {
+        StringBuilder queryBuilder = new StringBuilder(FETCH_PROJECT_ADDRESS_QUERY);
+        for (String projectId : projectIds) {
+            addConditionalClause(preparedStmtListDescendants, queryBuilder);
+            queryBuilder.append(" ( prj.project_hierarchy LIKE ? )");
+            preparedStmtListDescendants.add('%' + projectId + '%');
+        }
+        
+        return queryBuilder.toString();
+    }
 }
