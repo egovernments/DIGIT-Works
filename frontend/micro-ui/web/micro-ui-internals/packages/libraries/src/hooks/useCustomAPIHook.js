@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "react-query";
 import { CustomService } from "../services/elements/CustomService";
 
 
-const useCustomAPIHook = ({url, params, body, config = {},jsonPath}) => {
+const useCustomAPIHook = ({url, params, body, config = {}}) => {
   const client = useQueryClient();
   
   const { isLoading, data } = useQuery(
