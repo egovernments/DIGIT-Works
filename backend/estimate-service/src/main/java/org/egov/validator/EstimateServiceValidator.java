@@ -90,7 +90,7 @@ public class EstimateServiceValidator {
             throw new CustomException("WORK_FLOW", "Work flow is mandatory");
         }
         if (StringUtils.isBlank(workflow.getAction())) {
-            errorMap.put("WORK_FLOW.ACTION", "Work flow's action is mandatory");
+            throw new CustomException("WORK_FLOW.ACTION", "Work flow's action is mandatory");
         }
         if ((StringUtils.isNotBlank(workflow.getAction()) && !(ACTION_REJECT.equals(workflow.getAction()) || ACTION_ADMIN_SANCTION.equals(workflow.getAction())))
                 && (workflow.getAssignees() == null || workflow.getAssignees().isEmpty() || workflow.getAssignees().size() != 1)) {
@@ -149,6 +149,9 @@ public class EstimateServiceValidator {
             }
         }
 
+        if (!errorMap.isEmpty()) {
+            throw new CustomException(errorMap);
+        }
     }
 
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
@@ -164,12 +167,13 @@ public class EstimateServiceValidator {
     }
 
     private void validateMDMSData(Estimate estimate, Object mdmsData, Map<String, String> errorMap) {
-
-        List<String> reqSorIds = estimate.getEstimateDetails().stream()
-                .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getSorId()))
-                .map(EstimateDetail::getSorId)
-                .collect(Collectors.toList());
-
+        List<String> reqSorIds = new ArrayList<>();
+        if (estimate.getEstimateDetails() != null && !estimate.getEstimateDetails().isEmpty()) {
+            reqSorIds = estimate.getEstimateDetails().stream()
+                    .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getSorId()))
+                    .map(EstimateDetail::getSorId)
+                    .collect(Collectors.toList());
+        }
         final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
         final String jsonPathForSorIds = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_SOR_ID + ".*";
@@ -180,7 +184,7 @@ public class EstimateServiceValidator {
         try {
             deptRes = JsonPath.read(mdmsData, jsonPathForWorksDepartment);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
-           // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
+            // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");

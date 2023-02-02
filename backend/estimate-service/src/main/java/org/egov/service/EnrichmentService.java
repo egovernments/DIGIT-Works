@@ -40,6 +40,7 @@ public class EnrichmentService {
     /**
      * Enrich create estimate with - audit details, estimate number from idGen service,
      * id for the estimate, estimateDetail, address, amountDetail
+     *
      * @param request
      */
     public void enrichEstimateOnCreate(EstimateRequest request) {
@@ -69,10 +70,10 @@ public class EnrichmentService {
 
         address.setId(UUID.randomUUID().toString());
         //enrich estimate detail & amount detail - id(s)
-        for(EstimateDetail estimateDetail : estimateDetails){
+        for (EstimateDetail estimateDetail : estimateDetails) {
             estimateDetail.setId(UUID.randomUUID().toString());
             List<AmountDetail> amountDetails = estimateDetail.getAmountDetail();
-            for(AmountDetail amountDetail : amountDetails){
+            for (AmountDetail amountDetail : amountDetails) {
                 amountDetail.setId(UUID.randomUUID().toString());
             }
         }
@@ -91,7 +92,8 @@ public class EnrichmentService {
      */
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey,
                                    String idformat, int count) {
-        List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses();
+        List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count) != null
+                ? idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses() : new ArrayList<>();
 
         if (CollectionUtils.isEmpty(idResponses))
             throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
@@ -103,6 +105,7 @@ public class EnrichmentService {
     /**
      * enrich the search estimate criteria with default values in case the
      * values are not passed as part of request
+     *
      * @param requestInfo
      * @param searchCriteria
      */
@@ -120,6 +123,7 @@ public class EnrichmentService {
     /**
      * enrich the update estimate request with - audit details,
      * workflow's action, & based on user's roles
+     *
      * @param request
      */
     public void enrichEstimateOnUpdate(EstimateRequest request) {
@@ -167,6 +171,7 @@ public class EnrichmentService {
 
     /**
      * Check the user has edit('or' update) roles
+     *
      * @param requestInfo
      * @return
      */
