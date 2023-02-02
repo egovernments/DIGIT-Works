@@ -14,7 +14,6 @@ export const initialInboxState = {
 const reducer = (state, action) => {
     switch (action.type) {
         case "searchForm":
-            console.log('action SEARCH', action);
             const {state:updatedSearchState} = action
             Object.keys(updatedSearchState).forEach(key => {
                 if(!updatedSearchState[key])  delete updatedSearchState[key] 
