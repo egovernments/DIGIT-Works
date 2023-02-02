@@ -145,7 +145,7 @@ const CreateProject = () => {
 
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
-          setToast(()=>({show : true, label : `Error Creating Projects`, error : true}));
+          setToast(()=>({show : true, label : error?.response?.data?.Errors?.[0]?.message, error : true}));
         },
         onSuccess: async (responseData, variables) => {
           let parentProjectID = responseData?.Projects[0]?.id; //always send the Parent Project ID to respone screen
@@ -154,7 +154,7 @@ const CreateProject = () => {
             payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Projects[0]?.id, tenantId);
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
-                setToast(()=>({show : true, label : `Error Creating Sub Projects`, error : true}));
+                setToast(()=>({show : true, label : error?.response?.data?.Errors?.[0]?.message, error : true}));
               },
               onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
@@ -162,7 +162,7 @@ const CreateProject = () => {
                 }else if(responseData?.ResponseInfo?.status){
                   history.push(`/${window?.contextPath}/employee/project/create-project-response`, { isSuccess : true, projectID : parentProjectID });
                 }else{
-                  setToast(()=>({show : true, label : `Error Creating Projects`, error : true}));
+                  setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
                 }
               }
             })
