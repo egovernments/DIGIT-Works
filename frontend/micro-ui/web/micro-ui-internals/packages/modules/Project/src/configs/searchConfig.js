@@ -112,7 +112,7 @@ const searchConfig = () => {
                             disable: false,
                             populators: { 
                                 name: "endDate",
-                                error: `To date should be greater then from date`,
+                                error: 'DATE_VALIDATION_MSG',
                                 max: new Date().toISOString().split("T")[0]
                             },
                             preProcessfn: Digit.Utils.pt.convertDateToEpoch
