@@ -7,6 +7,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.RegisterEnrichment;
+import org.egov.enrichment.StaffEnrichmentService;
 import org.egov.kafka.Producer;
 import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
@@ -48,6 +49,9 @@ public class AttendanceRegisterService {
     @Autowired
     private AttendeeRepository attendeeRepository;
 
+    @Autowired
+    private StaffEnrichmentService staffEnrichmentService;
+
     /**
      * Create Attendance register
      *
@@ -56,15 +60,15 @@ public class AttendanceRegisterService {
      */
     public AttendanceRegisterRequest createAttendanceRegister(AttendanceRegisterRequest request) {
         attendanceServiceValidator.validateCreateAttendanceRegister(request);
-        registerEnrichment.enrichCreateAttendanceRegister(request);
+        registerEnrichment.enrichRegisterOnCreate(request);
+        log.info("Enriched Register with Register number, Ids, first staff and audit details");
         producer.push(attendanceServiceConfiguration.getSaveAttendanceRegisterTopic(), request);
-        StaffPermissionRequest staffPermissionResponse = staffService.createFirstStaff(request.getRequestInfo(), request.getAttendanceRegister());
-        registerEnrichment.enrichStaffInRegister(request.getAttendanceRegister(), staffPermissionResponse);
+        log.info("Pushed create attendance register request to kafka");
         return request;
     }
 
     /**
-     * Search attendace register based on given search criteria
+     * Search attendance register based on given search criteria
      *
      * @param requestInfoWrapper
      * @param searchCriteria
@@ -89,6 +93,7 @@ public class AttendanceRegisterService {
             /*
                User having the role to perform open search on attendance register.
             */
+            log.info("Searching registers for Superuser or Engineer");
             fetchAndFilterRegisters(searchCriteria, resultAttendanceRegisters);
         }else{
             /*
@@ -135,15 +140,20 @@ public class AttendanceRegisterService {
      */
     public void updateSearchCriteriaAndFetchAndFilterRegisters(Set<String> registers, AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
 
-        if (registers == null || registers.isEmpty())
+        if (registers == null || registers.isEmpty()) {
+            log.info("Registers are empty or null");
             return;
+        }
         if (searchCriteria.getIds() == null) {
+            log.info("Register search criteria does not contain any register ids");
             List<String> registerIds = new ArrayList<>();
             registerIds.addAll(registers);
             searchCriteria.setIds(registerIds);
         } else {
+            log.info("Register search criteria does contains register ids");
             for (String id : searchCriteria.getIds()) {
                 if (!registers.contains(id)) {
+                    log.error( "User can search only associated registers");
                     throw new CustomException("INVALID_REGISTER_ID", "User can search only associated registers");
                 }
             }
@@ -159,6 +169,7 @@ public class AttendanceRegisterService {
      * @param resultAttendanceRegisters
      */
     private void fetchAndFilterRegisters(AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
+        log.info("Fetching registers based on supplied search criteria");
         // Fetch the all registers based on the supplied search criteria
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
         // Create a map with key as registerId and corresponding register list as value
@@ -168,6 +179,7 @@ public class AttendanceRegisterService {
         registerIdsToSearch.addAll(registerIdVsAttendanceRegisters.keySet());
 
         // Fetch and filer staff members based on the supplied search criteria.
+        log.info("Fetch all staff members based on the supplied search criteria");
         List<StaffPermission> staffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
         // Create a map with key as registerId and corresponding staff list as value
         Map<String, List<StaffPermission>> registerIdStaffMapping = staffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
@@ -212,6 +224,7 @@ public class AttendanceRegisterService {
         return attendeeRepository.getAttendees(attendeeSearchCriteria);
     }
 
+    /* Get all staff members associated for the register */
     private List<StaffPermission> fetchAllStaffMembersAssociatedToRegisterIds(List<String> registerIdsToSearch, AttendanceRegisterSearchCriteria searchCriteria) {
         StaffSearchCriteria staffSearchCriteria = null ;
         if(searchCriteria.getStaffId() != null){
@@ -222,6 +235,7 @@ public class AttendanceRegisterService {
         return staffService.getAllStaff(staffSearchCriteria);
     }
 
+    /* Returns list of user roles */
     private Set<String> getUserRoleCodes(RequestInfo requestInfo) {
         Set<String> userRoles = new HashSet<>();
         List<Role> roles = requestInfo.getUserInfo().getRoles();
@@ -230,12 +244,20 @@ public class AttendanceRegisterService {
         return roles.stream().map(e->e.getCode()).collect(Collectors.toSet());
     }
 
+    /* Get all registers associated for the logged in staff  */
     private Set<String> fetchRegistersAssociatedToLoggedInStaffUser(String uuid) {
         List<String> individualIds = new ArrayList<>();
         individualIds.add(uuid);
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().individualIds(individualIds).build();
         List<StaffPermission> staffMembers = staffService.getAllStaff(staffSearchCriteria);
         return staffMembers.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
+    }
+
+    /* Get all registers associated for the logged in attendee  */
+    private Set<String> fetchRegistersAssociatedToLoggedInAttendeeUser(String uuid) {
+        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().individualIds(Collections.singletonList(uuid)).build();
+        List<IndividualEntry> attendees = attendeeRepository.getAttendees(attendeeSearchCriteria);
+        return attendees.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
     }
 
     /**
@@ -246,30 +268,47 @@ public class AttendanceRegisterService {
      */
     public AttendanceRegisterRequest updateAttendanceRegister(AttendanceRegisterRequest attendanceRegisterRequest) {
         attendanceServiceValidator.validateUpdateAttendanceRegisterRequest(attendanceRegisterRequest);
+        log.info("Validated update attendance register request");
+
+        //Create requestInfoWrapper from attendanceRegister request, collect ids in list for search attendance register request parameters
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(attendanceRegisterRequest.getRequestInfo()).build();
         List<String> registerIds = getAttendanceRegisterIdList(attendanceRegisterRequest);
         String tenantId = attendanceRegisterRequest.getAttendanceRegister().get(0).getTenantId();
+        //Get Attendance registers from DB based on register ids, tenantId and requestInfo
         List<AttendanceRegister> attendanceRegistersFromDB = getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+        log.info("Fetched attendance registers for update request");
+
+        //Validate Update attendance register request against attendance registers fetched from database
         attendanceServiceValidator.validateUpdateAgainstDB(attendanceRegisterRequest, attendanceRegistersFromDB);
-        registerEnrichment.enrichUpdateAttendanceRegister(attendanceRegisterRequest, attendanceRegistersFromDB);
+
+        registerEnrichment.enrichRegisterOnUpdate(attendanceRegisterRequest, attendanceRegistersFromDB);
+        log.info("Enriched with register Number, Ids and AuditDetails");
         producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
+        log.info("Pushed update attendance register request to kafka");
 
         return attendanceRegisterRequest;
     }
 
     public List<AttendanceRegister> getAttendanceRegisters(RequestInfoWrapper requestInfoWrapper, List<String> registerIds, String tenantId) {
+
+        //Search criteria for attendance register search request
         AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().ids(registerIds)
                 .tenantId(tenantId).build();
         List<AttendanceRegister> attendanceRegisterList;
+
+        // Calls search attendance register with created request. If some error in searching attendance register, throws error
         try {
             attendanceRegisterList = searchAttendanceRegister(requestInfoWrapper, searchCriteria);
+            log.info("Attendance register search successful");
         } catch (Exception e) {
+            log.info("Error in searching attendance register", e);
             throw new CustomException("SEARCH_ATTENDANCE_REGISTER", "Error in searching attendance register");
         }
 
         return attendanceRegisterList;
     }
 
+    /* Get attendance registers Id list from attendance register request */
     private List<String> getAttendanceRegisterIdList(AttendanceRegisterRequest request) {
         List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
 

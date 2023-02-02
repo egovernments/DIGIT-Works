@@ -24,6 +24,8 @@ public class AttendanceLogEnrichment {
     private AttendanceServiceConfiguration config;
 
     public void enrichAttendanceLogCreateRequest(AttendanceLogRequest attendanceLogRequest) {
+        String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
+        log.info("Enriching attendance log create request for register ["+registerId+"]");
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
         String byUser = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
         AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(byUser, null, true);
@@ -36,9 +38,12 @@ public class AttendanceLogEnrichment {
                 documentId.setId(String.valueOf(UUID.randomUUID()));
             }
         }
+        log.info("Enriched attendance log create request for register ["+registerId+"]");
     }
 
     public void enrichAttendanceLogUpdateRequest(AttendanceLogRequest attendanceLogRequest) {
+        String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
+        log.info("Enriching attendance log update request for register ["+registerId+"]");
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
         String byUser = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
         for (AttendanceLog attendanceLog : attendanceLogs) {
@@ -52,6 +57,8 @@ public class AttendanceLogEnrichment {
                 }
             }
         }
+
+        log.info("Enriched attendance log update request for register ["+registerId+"]");
     }
 
     public void enrichAttendanceLogSearchRequest(RequestInfo requestInfo, AttendanceLogSearchCriteria searchCriteria) {
