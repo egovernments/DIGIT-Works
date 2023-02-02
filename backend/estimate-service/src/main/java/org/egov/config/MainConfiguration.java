@@ -15,7 +15,6 @@ import java.util.TimeZone;
 
 
 @Import({TracerConfiguration.class})
-@Configuration
 public class MainConfiguration {
 
     @Value("${app.timezone}")
