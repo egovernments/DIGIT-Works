@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Banner, Card, CardText, LinkLabel, EditIcon} from "@egovernments/digit-ui-react-components";
+import useQueryParams from "../../../../../../libraries/src/hooks/useQueryParams";
 
 const CreateProjectResponse = () => {
     const {t} = useTranslation();
     const history = useHistory();
-    const location = useLocation();
-    const { isSuccess, projectID } = location?.state;
+    const queryStrings = useQueryParams();
+    const [ projectIDsList, setProjectIDsList ] = useState(queryStrings?.projectIDs.split(','));
+    const [ isResponseSuccess, setIsResponseSuccess ] = useState(Boolean(queryStrings?.isSuccess));
 
     const navigateToCreateProject = () =>{
         history.push(`/${window.contextPath}/employee/project/create-project`);
@@ -15,11 +17,11 @@ const CreateProjectResponse = () => {
     return (
         <Card>
             <Banner 
-                successful={isSuccess}
-                message={`${isSuccess ? t("WORKS_PROJECT_CREATED") : t("WORKS_PROJECT_CREATE_FAILURE")}`}
-                info={`${isSuccess ? t("WORKS_PROJECT_ID") : ""}`}
-                applicationNumber={`${isSuccess ? projectID : ""}`}
-                whichSvg={`${isSuccess ? "tick" : null}`}
+                successful={isResponseSuccess}
+                message={`${isResponseSuccess ? t("WORKS_PROJECT_CREATED") : t("WORKS_PROJECT_CREATE_FAILURE")}`}
+                info={`${isResponseSuccess ? t("WORKS_PROJECT_ID") : ""}`}
+                multipleResponseIDs={projectIDsList}
+                whichSvg={`${isResponseSuccess ? "tick" : null}`}
             />
             <div style={{display: "flex", justifyContent:"space-between"}}>
                 <LinkLabel style={{ display: "flex" }} onClick={navigateToCreateProject}>

@@ -148,19 +148,19 @@ const CreateProject = () => {
           setToast(()=>({show : true, label : error?.response?.data?.Errors?.[0]?.message, error : true}));
         },
         onSuccess: async (responseData, variables) => {
-          let parentProjectID = responseData?.Projects[0]?.id; //always send the Parent Project ID to respone screen
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
           if(selectedProjectType?.code === "COMMON_YES") {
             payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Projects[0]?.id, tenantId);
+            let parentProjectNumber = responseData?.Projects[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
                 setToast(()=>({show : true, label : error?.response?.data?.Errors?.[0]?.message, error : true}));
               },
               onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
-                  history.push(`/${window?.contextPath}/employee/project/create-project-response`, { isSuccess : false, projectID : "" });
+                  setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors?.[0]?.message, error : true}));
                 }else if(responseData?.ResponseInfo?.status){
-                  history.push(`/${window?.contextPath}/employee/project/create-project-response`, { isSuccess : true, projectID : parentProjectID });
+                  sendDataToResponsePage(parentProjectNumber, responseData, true);
                 }else{
                   setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
                 }
@@ -168,15 +168,31 @@ const CreateProject = () => {
             })
           }else{
             if(responseData?.ResponseInfo?.Errors) {
-              history.push(`/${window?.contextPath}/employee/project/create-project-response`, { isSuccess : false, projectID : "" });
+              setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors?.[0]?.message, error : true}));
             }else if(responseData?.ResponseInfo?.status){
-              history.push(`/${window?.contextPath}/employee/project/create-project-response`, { isSuccess : true, projectID : parentProjectID });
+              sendDataToResponsePage("", responseData, true);
             }else{
               setToast(()=>({show : true, label : "Something Went Wrong.", error : true}));
             }
           }
         },
     });
+    }
+
+    const sendDataToResponsePage = (parentProjectNumber, responseData, isSuccess) => {
+      let queryString = parentProjectNumber ? `${parentProjectNumber},` : "";
+      responseData?.Projects?.forEach((project, index ) => {
+        if(index === responseData?.Projects.length - 1){
+          queryString = queryString+project?.projectNumber;
+        }
+        else {
+          queryString = queryString+project?.projectNumber+",";
+        }
+      });
+      history.push({
+        pathname: `/${window?.contextPath}/employee/project/create-project-response`,
+        search: `?projectIDs=${queryString}&isSuccess=${isSuccess}`,
+      }); 
     }
 
     const handleToastClose = () => {
