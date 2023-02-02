@@ -26,8 +26,11 @@ public class AttendanceLogRepository {
 
     public List<AttendanceLog> getAttendanceLogs(AttendanceLogSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
+        log.info("Fetching Attendance Log list. RegisterId ["+searchCriteria.getRegisterId()+"]");
         String query = queryBuilder.getAttendanceLogSearchQuery(searchCriteria, preparedStmtList);
+        log.info("Query build successfully. RegisterId ["+searchCriteria.getRegisterId()+"]");
         List<AttendanceLog> attendanceLogList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+        log.info("Fetched Attendance Log list. RegisterId ["+searchCriteria.getRegisterId()+"]");
         return attendanceLogList;
     }
 }
