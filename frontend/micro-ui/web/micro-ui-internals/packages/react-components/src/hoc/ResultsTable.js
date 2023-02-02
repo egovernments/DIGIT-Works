@@ -15,7 +15,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading }) => {
     
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
-    const searchResult = data?.[resultsKey] ? data?.[resultsKey] : []
+    const searchResult = data?.[resultsKey].length>0 ? data?.[resultsKey] : []
     
     const {state,dispatch} = useContext(InboxContext)
     

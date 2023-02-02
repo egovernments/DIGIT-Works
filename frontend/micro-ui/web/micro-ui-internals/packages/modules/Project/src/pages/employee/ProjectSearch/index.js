@@ -6,7 +6,7 @@ import searchConfig from "../../../configs/searchConfig";
 const ProjectSearch = () => {
     const { t } = useTranslation();
 
-    const configs = searchConfig();
+    // const configs = searchConfig();
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
         tenant,
@@ -18,7 +18,7 @@ const ProjectSearch = () => {
         ]
     );
    
-    // const configs = data?.commonUiConfig?.SearchProjectConfig?.[0]
+    const configs = data?.commonUiConfig?.SearchProjectConfig?.[0]
     
     if(isLoading) return <Loader />
     return (
