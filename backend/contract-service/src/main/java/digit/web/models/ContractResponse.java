@@ -1,22 +1,15 @@
 package digit.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import digit.web.models.Contract;
-import digit.web.models.Pagination;
-import digit.web.models.ResponseInfo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
 
 /**
  * ContractResponse
@@ -28,36 +21,27 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ContractResponse   {
-        @JsonProperty("responseInfo")
-        
-  @Valid
+public class ContractResponse {
+    @JsonProperty("responseInfo")
+    @Valid
+    private ResponseInfo responseInfo = null;
+
+    @JsonProperty("contracts")
+    @Valid
+    private List<Contract> contracts = null;
+
+    @JsonProperty("pagination")
+    @Valid
+    private Pagination pagination = null;
 
 
-        private ResponseInfo responseInfo = null;
-
-        @JsonProperty("contracts")
-        
-  @Valid
-
-
-        private List<Contract> contracts = null;
-
-        @JsonProperty("pagination")
-        
-  @Valid
-
-
-        private Pagination pagination = null;
-
-
-        public ContractResponse addContractsItem(Contract contractsItem) {
-            if (this.contracts == null) {
+    public ContractResponse addContractsItem(Contract contractsItem) {
+        if (this.contracts == null) {
             this.contracts = new ArrayList<>();
-            }
+        }
         this.contracts.add(contractsItem);
         return this;
-        }
+    }
 
 }
 
