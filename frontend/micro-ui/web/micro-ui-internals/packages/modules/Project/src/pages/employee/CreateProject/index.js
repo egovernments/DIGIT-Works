@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
 import _ from "lodash";
 import CreateProjectUtils from "../../../utils/createProjectUtils";
+import CreateProjectResponse from "./CreateProjectResponse";
+import { useHistory } from "react-router-dom";
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
@@ -46,6 +48,11 @@ const CreateProject = () => {
     const [currentFormCategory, setCurrentFormCategory] = useState("project");
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
+    const history = useHistory();
+
+    const navigateToProjectResponse = () =>{
+      history.push(`/${window.contextPath}/employee/project/create-project-response`);
+    }
 
     //clear session data on first init
     useEffect(()=>{
@@ -141,6 +148,7 @@ const CreateProject = () => {
           setToast(()=>({show : true, label : `Error Creating Projects`, error : true}));
         },
         onSuccess: async (responseData, variables) => {
+          let parentProjectID = responseData?.Projects[0]?.id; //always send the Parent Project ID to respone screen
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
           if(selectedProjectType?.code === "COMMON_YES") {
             payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Projects[0]?.id, tenantId);
@@ -150,9 +158,9 @@ const CreateProject = () => {
               },
               onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
-                  setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors?.[0]?.['message'], error : true}));
+                  history.push(`/${window?.contextPath}/employee/project/create-project-response`, { isSuccess : false, projectID : "" });
                 }else if(responseData?.ResponseInfo?.status){
-                  setToast(()=>({show : true, label : responseData?.ResponseInfo?.status, error : false}));
+                  history.push(`/${window?.contextPath}/employee/project/create-project-response`, { isSuccess : true, projectID : parentProjectID });
                 }else{
                   setToast(()=>({show : true, label : `Error Creating Projects`, error : true}));
                 }
@@ -160,9 +168,9 @@ const CreateProject = () => {
             })
           }else{
             if(responseData?.ResponseInfo?.Errors) {
-              setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors[0]['message'], error : true}));
+              history.push(`/${window?.contextPath}/employee/project/create-project-response`, { isSuccess : false, projectID : "" });
             }else if(responseData?.ResponseInfo?.status){
-              setToast(()=>({show : true, label : responseData?.ResponseInfo?.status, error : false}));
+              history.push(`/${window?.contextPath}/employee/project/create-project-response`, { isSuccess : true, projectID : parentProjectID });
             }else{
               setToast(()=>({show : true, label : "Something Went Wrong.", error : true}));
             }
