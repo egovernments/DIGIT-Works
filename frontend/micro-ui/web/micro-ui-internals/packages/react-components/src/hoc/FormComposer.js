@@ -22,6 +22,7 @@ import _ from "lodash";
 import CustomDropdown from "../molecules/CustomDropdown";
 import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
 import HorizontalNav  from "../atoms/HorizontalNav"
+import Toast from "../atoms/Toast";
 
 const wrapperStyles = {
   // "display":"flex",
@@ -78,6 +79,8 @@ export const FormComposer = (props) => {
   const { t } = useTranslation();
   const formData = watch();
   const selectedFormCategory = props?.currentFormCategory;
+  const [showErrorToast, setShowErrorToast] = useState(false); 
+
 
   //clear all errors if user has changed the form category. 
   //This is done in case user first click on submit and have errors in cat 1, switches to cat 2 and hit submit with errors
@@ -85,6 +88,12 @@ export const FormComposer = (props) => {
   useEffect(()=>{
     clearErrors();
   },[selectedFormCategory]);
+
+  useEffect(()=>{
+    if(Object.keys(formState?.errors).length > 0 && formState?.submitCount > 0) {
+      setShowErrorToast(true);
+    }
+  },[formState?.errors, formState?.submitCount]);
 
   useEffect(() => {
     if (
@@ -398,6 +407,10 @@ export const FormComposer = (props) => {
     }
   };
 
+  const closeToast = () => {
+    setShowErrorToast(false);
+  }
+
   const formFields = useCallback(
     (section, index, array, sectionFormCategory) => (
       <React.Fragment key={index}>
@@ -652,6 +665,7 @@ export const FormComposer = (props) => {
           {props.onSkip && props.showSkip && <LinkButton style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)} onClick={props.onSkip} />}
         </ActionBar>
       )}
+      {showErrorToast && <Toast error={true} label={t("WORKS_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={'true'} onClose={closeToast} />}
     </form>
   );
 };
