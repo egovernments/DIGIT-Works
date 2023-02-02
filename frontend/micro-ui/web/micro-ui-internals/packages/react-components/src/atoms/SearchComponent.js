@@ -47,6 +47,12 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
 
   const onSubmit = (data) => {
     if(updatedFields.length >= uiConfig?.minReqFields) {
+      if(formData.startDate && formData.endDate) {
+        if(new Date(formData.startDate).getTime() > new Date(formData.endDate).getTime()) {
+          setError("endDate", { type: "focus" }, { shouldFocus: true })
+          return
+        }
+      }
       //run preprocessing functions(use case -> changing date inputs to epoch)
       uiConfig.fields.forEach(field=> {
         if (field.preProcessfn) {
@@ -61,7 +67,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
         }
       })
     } else {
-      setShowToast({ warning: true, label: "Please enter minimum 1 search criteria" })
+      setShowToast({ warning: true, label: t("MIN_SEARCH_CRITERIA_MSG") })
       setTimeout(closeToast, 3000);
     }
   }
@@ -81,7 +87,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   return (
     <React.Fragment>
       <div className={'search-wrapper'}>
-        {header && <Header styles={uiConfig?.headerStyle}>{header}</Header>}
+        {header && <Header styles={uiConfig?.headerStyle}>{t(header)}</Header>}
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
           <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
             <RenderFormFields 
@@ -97,8 +103,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
               labelStyle={{fontSize: "16px"}}
             />  
             <div className={`search-button-wrapper ${screenType}`}>
-              <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{uiConfig?.secondaryLabel}</LinkLabel>
-              <SubmitBar label={uiConfig?.primaryLabel} submit="submit" disabled={false}/>
+              <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel>
+              <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/>
             </div>
           </div> 
         </form>
