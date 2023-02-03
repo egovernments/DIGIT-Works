@@ -37,9 +37,14 @@ public class ProjectAddressQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
+    private static final String PROJECTS_COUNT_QUERY = "SELECT COUNT(*) FROM eg_pms_project prj ";
+
     /* Constructs project search query based on conditions */
-    public String getProjectSearchQuery(ProjectRequest projectRequest, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStmtList) {
-        StringBuilder queryBuilder = new StringBuilder(FETCH_PROJECT_ADDRESS_QUERY);
+    public String getProjectSearchQuery(ProjectRequest projectRequest, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStmtList, boolean isCountQuery) {
+        //This uses a ternary operator to choose between PROJECTS_COUNT_QUERY or FETCH_PROJECT_ADDRESS_QUERY based on the value of isCountQuery.
+        String query = isCountQuery ? PROJECTS_COUNT_QUERY : FETCH_PROJECT_ADDRESS_QUERY;
+        StringBuilder queryBuilder = new StringBuilder(query);
+
         Integer count = projectRequest.getProjects().size();
 
         for (Project project: projectRequest.getProjects()) {
@@ -101,8 +106,7 @@ public class ProjectAddressQueryBuilder {
 
             if (lastChangedSince != null && lastChangedSince != 0) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" ( prj.created_time >= ? OR prj.last_modified_time >= ? )");
-                preparedStmtList.add(lastChangedSince);
+                queryBuilder.append(" ( prj.last_modified_time >= ? )");
                 preparedStmtList.add(lastChangedSince);
             }
 
@@ -112,6 +116,10 @@ public class ProjectAddressQueryBuilder {
             queryBuilder.append(" )");
             count--;
             addORClause(count, queryBuilder);
+        }
+
+        if (isCountQuery) {
+            return queryBuilder.toString();
         }
 
         //Wrap constructed SQL query with where criteria in pagination query
