@@ -64,10 +64,10 @@ public class ProjectValidator {
 
         //Verify if RequestInfo and UserInfo is present
         validateRequestInfo(requestInfo, errorMap);
-        //Verify if search project request is valid
-        validateSearchProjectRequest(projects, tenantId, errorMap);
         //Verify if search project request parameters are valid
         validateSearchProjectRequestParams(limit, offset, tenantId);
+        //Verify if search project request is valid
+        validateSearchProjectRequest(projects, tenantId, errorMap);
 
         //Get MDMS data for request and tenantId
         Object mdmsData = mdmsUtils.mDMSCall(project, tenantId.split("\\.")[0]);

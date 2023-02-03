@@ -206,6 +206,29 @@ public class ProjectValidatorTest {
     }
 
     @Test
+    void shouldThrowException_IfRequestTenantIdMismathesWithParamTenantIdForSearchProject() {
+        ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProjectForSearch().build();
+        projectRequest.getProjects().get(0).setTenantId("t9");
+        Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
+        CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
+                (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
+                (String) searchParams.get("tenantId")));
+        assertTrue(exception.toString().contains("Tenant Id must be same in URL param and project request"));
+    }
+
+    @Test
+    void shouldThrowException_IfEndDateIsProvidedAndStartDateNotProvidedForSearchProject() {
+        ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProjectForSearch().build();
+        projectRequest.getProjects().get(0).setStartDate(null);
+        projectRequest.getProjects().get(0).setEndDate(1L);
+        Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
+        CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
+                (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
+                (String) searchParams.get("tenantId")));
+        assertTrue(exception.toString().contains("Start date is required if end date is passed"));
+    }
+
+    @Test
     void shouldThrowException_IfProjectIsNullForSearchProject() {
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProjectForSearch().build();
         Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
@@ -223,7 +246,6 @@ public class ProjectValidatorTest {
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
                 (String)searchParams.get("tenantId")));
-        System.out.println(exception.toString());
         assertTrue(exception.toString().contains("Any one project search field is required"));
     }
 
@@ -247,7 +269,7 @@ public class ProjectValidatorTest {
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
                 (String)searchParams.get("tenantId")));
-        assertTrue(exception.toString().contains("All projects must have same tenant Id"));
+        assertTrue(exception.toString().contains("Tenant Id must be same in URL param and project request"));
     }
 
 
