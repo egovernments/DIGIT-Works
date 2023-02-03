@@ -4,8 +4,9 @@ class CircularButton extends StatelessWidget {
   final IconData icon;
   final double size;
   final Color color;
-  final int index;
+  final double index;
   final bool isNotGreyed;
+  final void Function()? onTap;
   //set index -1 to not select the Circular button
   //set index 1 to select half of the Circular button
   //set index 2 to completely select the Circular button
@@ -17,16 +18,18 @@ class CircularButton extends StatelessWidget {
       required this.size,
       required this.color,
       required this.index,
-      required this.isNotGreyed});
+      required this.isNotGreyed,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerLeft,
       child: GestureDetector(
+          onTap: onTap,
           child: Container(
-              height: 20,
-              width: 20,
+              height: 30,
+              width: 30,
               margin: const EdgeInsets.all(2.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -42,9 +45,9 @@ class CircularButton extends StatelessWidget {
                   return LinearGradient(
                     stops: const [0, 0.5, 0.5],
                     colors: [
-                      index.isNegative ? Colors.white : color,
-                      index.isNegative ? Colors.white : color,
-                      index.isNegative ? Colors.white : color.withOpacity(0)
+                      index == 0.0 ? Colors.white : color,
+                      index == 0.0 ? Colors.white : color,
+                      index == 0.0 ? Colors.white : color.withOpacity(0)
                     ],
                   ).createShader(rect);
                 },
@@ -53,9 +56,9 @@ class CircularButton extends StatelessWidget {
                   height: size,
                   child: Icon(icon,
                       size: size,
-                      color: index.isNegative
+                      color: index == 0.0
                           ? Colors.transparent
-                          : index.isOdd
+                          : index == 0.5
                               ? isNotGreyed
                                   ? Colors.white
                                   : const Color.fromRGBO(238, 238, 238, 1)

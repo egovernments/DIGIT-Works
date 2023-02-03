@@ -7,6 +7,7 @@ import '../blocs/attendance/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
+import '../widgets/loaders.dart';
 
 class ManageAttendanceRegisterPage extends StatelessWidget {
   const ManageAttendanceRegisterPage({Key? key}) : super(key: key);
@@ -30,7 +31,9 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
                 .toList();
 
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Back(),
+          Back(
+            backLabel: AppLocalizations.of(context).translate(i18.common.back),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -50,7 +53,8 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
                 )
         ]);
       } else {
-        return const CircularProgressIndicator();
+        return Loaders.circularLoader(context);
+        ;
       }
     })));
   }

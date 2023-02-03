@@ -4,8 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:location/location.dart';
 import 'package:works_shg_app/blocs/user/user_search.dart';
+import 'package:works_shg_app/utils/global_variables.dart';
+import 'package:works_shg_app/widgets/loaders.dart';
 
+import '../blocs/localization/localization.dart';
 import '../blocs/muster_rolls/search_muster_roll.dart';
+import '../data/remote_client.dart';
+import '../data/repositories/remote/localization.dart';
 import '../widgets/SideBar.dart';
 
 class AuthenticatedPageWrapper extends StatelessWidget {
@@ -13,6 +18,8 @@ class AuthenticatedPageWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Client client = Client();
+
     return Scaffold(
       appBar: AppBar(),
       drawer: Container(
@@ -26,8 +33,9 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                           state.userSearchModel!.user!.first.name.toString(),
                       mobileNumber:
                           state.userSearchModel!.user!.first.mobileNumber,
+                      module: 'rainmaker-common,rainmaker-attendencemgmt',
                     )
-                  : const CircularProgressIndicator();
+                  : Loaders.circularLoader(context);
             }),
           )),
       body: MultiBlocProvider(
@@ -44,12 +52,23 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                 MusterRollSearchBloc()..add(const SearchMusterRollEvent()),
           )
         ],
-        child: BlocBuilder<UserSearchBloc, UserSearchState>(
-            builder: (context, state) {
-          return !state.loading && state.userSearchModel != null
-              ? const AutoRouter()
-              : const CircularProgressIndicator();
-        }),
+        child: BlocProvider(
+            create: (context) => LocalizationBloc(
+                  const LocalizationState(),
+                  LocalizationRepository(client.init()),
+                )..add(LocalizationEvent.onLoadLocalization(
+                    module: 'rainmaker-common,rainmaker-attendencemgmt',
+                    tenantId: GlobalVariables.getTenantId().toString(),
+                    locale: GlobalVariables.selectedLocale(),
+                  )),
+            child: BlocBuilder<UserSearchBloc, UserSearchState>(
+                builder: (context, userState) {
+              if (!userState.loading && userState.userSearchModel != null) {
+                return const AutoRouter();
+              } else {
+                return Loaders.circularLoader(context);
+              }
+            })),
       ),
     );
   }

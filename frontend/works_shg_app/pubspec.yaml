@@ -65,6 +65,7 @@ dependencies:
   isar: ^3.0.5
   isar_flutter_libs: ^3.0.5
   kt_dart: ^0.10.0
+  syncfusion_flutter_datepicker: ^20.4.43
   flutter_spinkit: ^5.1.0
   flutter_localizations:
     sdk: flutter
@@ -104,6 +105,19 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/png/
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto/RobotoCondensed-Regular.ttf
+        - asset: assets/fonts/Roboto/Roboto-Regular.ttf
+    - family: Hindhi
+      fonts:
+        - asset: assets/fonts/Roboto/Hind-Regular.ttf
+    - family: Punjabi
+      fonts:
+        - asset: assets/fonts/Roboto/punjabi.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

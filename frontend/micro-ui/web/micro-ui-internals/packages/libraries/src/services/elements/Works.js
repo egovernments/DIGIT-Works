@@ -96,4 +96,15 @@ export const WorksService = {
             userService: true,
             userDownload: true,
         }),
+    createProject: (details) =>
+        Request({
+            url: Urls?.works?.createProject,
+            data: details,
+            useCache: false,
+            setTimeParam: false,
+            userService: true,
+            method: "POST",
+            params: {},
+            auth: true,
+        }),
 }

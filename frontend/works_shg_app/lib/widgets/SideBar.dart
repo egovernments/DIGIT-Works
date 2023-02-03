@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/auth/auth.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/localization/app_localization.dart';
@@ -14,8 +15,12 @@ import '../blocs/localization/localization.dart';
 class SideBar extends StatelessWidget {
   final String? userName;
   final String? mobileNumber;
+  final String module;
   const SideBar(
-      {super.key, required this.userName, required this.mobileNumber});
+      {super.key,
+      this.module = 'rainmaker-common',
+      required this.userName,
+      required this.mobileNumber});
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -54,7 +59,7 @@ class SideBar extends StatelessWidget {
                 return state.digitRowCardItems != null &&
                         state.isInitializationCompleted
                     ? DigitRowCard(
-                        onPressed: (data) async {
+                        onChanged: (data) async {
                           context.read<AppInitializationBloc>().add(
                               AppInitializationSetupEvent(
                                   selectedLangIndex:
@@ -66,11 +71,12 @@ class SideBar extends StatelessWidget {
                           ).load();
                           context.read<LocalizationBloc>().add(
                               OnLoadLocalizationEvent(
-                                  module: 'rainmaker-common',
-                                  tenantId: 'pb',
+                                  module: module,
+                                  tenantId:
+                                      GlobalVariables.getTenantId().toString(),
                                   locale: data.value));
                         },
-                        list: state.digitRowCardItems
+                        rowItems: state.digitRowCardItems
                             ?.map((e) => DigitRowCardModel.fromJson(e.toJson()))
                             .toList() as List<DigitRowCardModel>,
                         width: 85)

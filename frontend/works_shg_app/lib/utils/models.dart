@@ -26,3 +26,10 @@ class TableData {
   ValueChanged<TableData>? callBack;
   TableData({this.label, this.widget, this.style, this.callBack, this.apiKey});
 }
+
+class DateRange {
+  final String range;
+  final int startDate;
+  final int endDate;
+  DateRange(this.range, this.startDate, this.endDate);
+}

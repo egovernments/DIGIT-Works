@@ -43,8 +43,7 @@ public class ProjectRepository {
     public List<Project> getProjects(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, Boolean includeAncestors, Boolean includeDescendants) {
 
         //Fetch Projects based on search criteria
-        List<Object> preparedStmtList = new ArrayList<>();
-        List<Project> projects = getProjectsBasedOnSearchCriteria(project.getProjects(), limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList);
+        List<Project> projects = getProjectsBasedOnSearchCriteria(project.getProjects(), limit, offset, tenantId, lastChangedSince, includeDeleted);
 
         Set<String> projectIds = projects.stream().map(Project :: getId).collect(Collectors.toSet());
 
@@ -64,21 +63,21 @@ public class ProjectRepository {
         }
 
         //Fetch targets based on Project Ids
-        List<Object> preparedStmtListTarget = new ArrayList<>();
-        List<Target> targets = getTargetsBasedOnProjectIds(projectIds, preparedStmtListTarget);
+        List<Target> targets = getTargetsBasedOnProjectIds(projectIds);
 
         //Fetch documents based on Project Ids
-        List<Object> preparedStmtListDocument = new ArrayList<>();
-        List<Document> documents = getDocumentsBasedOnProjectIds(projectIds, preparedStmtListDocument);
+        List<Document> documents = getDocumentsBasedOnProjectIds(projectIds);
 
         //Construct Project Objects with fetched projects, targets and documents using Project id
         return buildProjectSearchResult(projects, targets, documents, ancestors, descendants);
     }
 
     /* Fetch Projects based on search criteria */
-    private List<Project> getProjectsBasedOnSearchCriteria(List<Project> projectsRequest, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted,  List<Object> preparedStmtList) {
-        String query = queryBuilder.getProjectSearchQuery(projectsRequest, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList);
+    private List<Project> getProjectsBasedOnSearchCriteria(List<Project> projectsRequest, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getProjectSearchQuery(projectsRequest, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList, false);
         List<Project> projects = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+
         log.info("Fetched project list based on given search criteria");
         return projects;
     }
@@ -100,7 +99,8 @@ public class ProjectRepository {
     }
 
     /* Fetch targets based on Project Ids */
-    private List<Target> getTargetsBasedOnProjectIds(Set<String> projectIds, List<Object> preparedStmtListTarget) {
+    private List<Target> getTargetsBasedOnProjectIds(Set<String> projectIds) {
+        List<Object> preparedStmtListTarget = new ArrayList<>();
         String queryTarget = targetQueryBuilder.getTargetSearchQuery(projectIds, preparedStmtListTarget);
         List<Target> targets = jdbcTemplate.query(queryTarget, targetRowMapper, preparedStmtListTarget.toArray());
         log.info("Fetched targets based on project Ids");
@@ -108,7 +108,8 @@ public class ProjectRepository {
     }
 
     /* Fetch documents based on Project Ids */
-    private List<Document> getDocumentsBasedOnProjectIds(Set<String> projectIds, List<Object> preparedStmtListDocument) {
+    private List<Document> getDocumentsBasedOnProjectIds(Set<String> projectIds) {
+        List<Object> preparedStmtListDocument = new ArrayList<>();
         String queryDocument = documentQueryBuilder.getDocumentSearchQuery(projectIds, preparedStmtListDocument);
         List<Document> documents = jdbcTemplate.query(queryDocument, documentRowMapper, preparedStmtListDocument.toArray());
         log.info("Fetched documents based on project Ids");
@@ -120,24 +121,29 @@ public class ProjectRepository {
         List<String> ancestorIds = new ArrayList<>();
         List<Project> ancestors = null;
 
+        // Get project Id of ancestor projects from project Hierarchy
         for (Project project: projects) {
             if (StringUtils.isNotBlank(project.getProjectHierarchy())) {
                 List<String> projectHierarchyIds = Arrays.asList(project.getProjectHierarchy().split("\\."));
                 ancestorIds.addAll(projectHierarchyIds);
             }
         }
+        //Fetch projects based on ancestor project Ids
         if (ancestorIds.size() > 0) {
             List<Object> preparedStmtListAncestors = new ArrayList<>();
             ancestors = getProjectsBasedOnProjectIds(ancestorIds, preparedStmtListAncestors);
+            log.info("Fetched ancestor projects");
         }
 
         return ancestors;
     }
 
     private List<Project> getProjectDescendants(List<Project> projects) {
+        //Fetch projects where project hierarchy for projects in db contains project ID of requested project. The descendant project's projectHierarchy will contain parent project id
         List<String> projectIds = projects.stream().map(Project:: getId).collect(Collectors.toList());
 
         List<Object> preparedStmtListDescendants = new ArrayList<>();
+        log.info("Fetching descendant projects");
 
         return getProjectsDescendantsBasedOnProjectIds(projectIds, preparedStmtListDescendants);
     }
@@ -244,7 +250,23 @@ public class ProjectRepository {
 //                }
 //            }
 //        }
+    }
 
+    /**
+     * Get the count of projects based on the given search criteria (using dynamic
+     * query build at the run time)
+     * @return
+     */
+    public Integer getProjectCount(ProjectRequest project, String tenantId, Long lastChangedSince, Boolean includeDeleted) {
+        List<Object> preparedStatement = new ArrayList<>();
+        String query = queryBuilder.getSearchCountQueryString(project.getProjects(), tenantId, lastChangedSince, includeDeleted, preparedStatement);
+
+        if (query == null)
+            return 0;
+
+        Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
+        log.info("Total project count is : " + count);
+        return count;
     }
 
 }

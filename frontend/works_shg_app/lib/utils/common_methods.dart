@@ -12,4 +12,25 @@ class CommonMethods {
       storage.delete(key: GlobalVariables.selectedLocale());
     }
   }
+
+  static DateTime firstDayOfWeek(DateTime date) {
+    int currentDay = date.weekday;
+
+    DateTime firstDayOfWeek = date.subtract(Duration(days: currentDay - 1));
+    // For Sunday as firstDay date.subtract(Duration(days: currentDay)
+    // For Monday as firstDay date.subtract(Duration(days: currentDay - 1)
+    // For Tuesday as firstDay date.subtract(Duration(days: currentDay - 2)
+    // ......so on
+    return firstDayOfWeek;
+  }
+
+  static DateTime endDayOfWeek(DateTime date) {
+    int currentDay = date.weekday;
+    DateTime endDayOfWeek =
+        date.add(Duration(days: DateTime.daysPerWeek - currentDay - 1));
+    // For Saturday as endDay date.add(Duration(days: DateTime.daysPerWeek - currentDay));
+    // For Friday as endDay date.add(Duration(days: DateTime.daysPerWeek - currentDay - 1));
+    // For Sunday as endDay date.add(Duration(days: DateTime.daysPerWeek - currentDay + 1));
+    return endDayOfWeek;
+  }
 }

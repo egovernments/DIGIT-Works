@@ -42,7 +42,8 @@ const Urls = {
     searchEstimate:"/estimate-service/estimate/v1/_search",
     updateLOI:"/loi-service/v1/_update",
     updateEstimate:"/estimate-service/estimate/v1/_update",
-    download_pdf:"/egov-pdf/download/WORKSESTIMATE/estimatepdf"
+    download_pdf:"/egov-pdf/download/WORKSESTIMATE/estimatepdf",
+    createProject : "/pms/project/v1/_create"
   },
 
   fsm: {

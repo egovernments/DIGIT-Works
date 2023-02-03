@@ -7,6 +7,7 @@ import '../blocs/attendance/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
+import '../widgets/loaders.dart';
 
 class AttendanceInboxPage extends StatelessWidget {
   const AttendanceInboxPage({Key? key}) : super(key: key);
@@ -17,20 +18,26 @@ class AttendanceInboxPage extends StatelessWidget {
         AttendanceProjectsSearchBloc,
         AttendanceProjectsSearchState>(builder: (context, state) {
       if (!state.loading && state.attendanceRegistersModel != null) {
-        final List<Map<String, dynamic>> projectList =
-            state.attendanceRegistersModel!.attendanceRegister!
-                .map((e) => {
-                      i18.attendanceMgmt.nameOfWork: e.name,
-                      i18.attendanceMgmt.winCode: e.registerNumber,
-                      i18.attendanceMgmt.engineerInCharge: e.id,
-                      i18.common.dates:
-                          '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                      i18.common.status: e.status
-                    })
-                .toList();
+        final List<Map<String, dynamic>> projectList = state
+            .attendanceRegistersModel!.attendanceRegister!
+            .map((e) => {
+                  i18.attendanceMgmt.nameOfWork: e.name,
+                  i18.attendanceMgmt.winCode:
+                      e.attendanceRegisterAdditionalDetails?.contractId ?? 'NA',
+                  i18.common.startDate: DateFormats.timeStampToDate(e.startDate,
+                      format: "dd/MM/yyyy"),
+                  i18.attendanceMgmt.individualsCount:
+                      e.attendeesEntries?.length ?? 0,
+                  i18.common.endDate: DateFormats.timeStampToDate(e.endDate,
+                      format: "dd/MM/yyyy"),
+                  i18.common.status: e.status
+                })
+            .toList();
 
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Back(),
+          Back(
+            backLabel: AppLocalizations.of(context).translate(i18.common.back),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -50,7 +57,8 @@ class AttendanceInboxPage extends StatelessWidget {
                 )
         ]);
       } else {
-        return const CircularProgressIndicator();
+        return Loaders.circularLoader(context);
+        ;
       }
     })));
   }

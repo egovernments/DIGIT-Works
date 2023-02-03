@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.works.config.ProjectConfiguration;
 import org.egov.works.web.models.Project;
-import org.egov.works.web.models.ProjectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,9 +37,14 @@ public class ProjectAddressQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
+    private static final String PROJECTS_COUNT_QUERY = "SELECT COUNT(*) FROM eg_pms_project prj ";
+
     /* Constructs project search query based on conditions */
-    public String getProjectSearchQuery(List<Project> projects, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStmtList) {
-        StringBuilder queryBuilder = new StringBuilder(FETCH_PROJECT_ADDRESS_QUERY);
+    public String getProjectSearchQuery(List<Project> projects, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStmtList, boolean isCountQuery) {
+        //This uses a ternary operator to choose between PROJECTS_COUNT_QUERY or FETCH_PROJECT_ADDRESS_QUERY based on the value of isCountQuery.
+        String query = isCountQuery ? PROJECTS_COUNT_QUERY : FETCH_PROJECT_ADDRESS_QUERY;
+        StringBuilder queryBuilder = new StringBuilder(query);
+
         Integer count = projects.size();
 
         for (Project project: projects) {
@@ -102,8 +106,7 @@ public class ProjectAddressQueryBuilder {
 
             if (lastChangedSince != null && lastChangedSince != 0) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" ( prj.created_time >= ? OR prj.last_modified_time >= ? )");
-                preparedStmtList.add(lastChangedSince);
+                queryBuilder.append(" ( prj.last_modified_time >= ? )");
                 preparedStmtList.add(lastChangedSince);
             }
 
@@ -113,6 +116,10 @@ public class ProjectAddressQueryBuilder {
             queryBuilder.append(" )");
             count--;
             addORClause(count, queryBuilder);
+        }
+
+        if (isCountQuery) {
+            return queryBuilder.toString();
         }
 
         //Wrap constructed SQL query with where criteria in pagination query
@@ -165,12 +172,22 @@ public class ProjectAddressQueryBuilder {
 
     /* Wrap constructed SQL query with where criteria in pagination query */
     private String addPaginationWrapper(String query,List<Object> preparedStmtList, Integer limitParam, Integer offsetParam){
-        Integer limit = (limitParam > config.getMaxLimit()) ? config.getMaxLimit() : limitParam;
-        Integer offset = (offsetParam > config.getMaxOffset()) ? config.getMaxOffset() : offsetParam;
-        String finalQuery = paginationWrapper.replace("{}",query);
+        int limit = config.getDefaultLimit();
+        int offset = config.getDefaultOffset();
+        String finalQuery = paginationWrapper.replace("{}", query);
+
+        if (limitParam != null) {
+            if (limitParam <= config.getMaxLimit())
+                limit = limitParam;
+            else
+                limit = config.getMaxLimit();
+        }
+
+        if (offsetParam != null)
+            offset = offsetParam;
 
         preparedStmtList.add(offset);
-        preparedStmtList.add(limit+offset);
+        preparedStmtList.add(limit + offset);
 
         return finalQuery;
     }
@@ -186,9 +203,7 @@ public class ProjectAddressQueryBuilder {
     }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+        preparedStmtList.addAll(ids);
     }
 
     public String getProjectDescendantsSearchQueryBasedOnIds(List<String> projectIds, List<Object> preparedStmtListDescendants) {
@@ -201,4 +216,11 @@ public class ProjectAddressQueryBuilder {
         
         return queryBuilder.toString();
     }
+    
+    /* Returns query to get total projects count based on project search params */
+    public String getSearchCountQueryString(List<Project> projects, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStatement) {
+        String query = getProjectSearchQuery(projects, config.getMaxLimit(), config.getDefaultOffset(), tenantId, lastChangedSince, includeDeleted, preparedStatement, true);
+        return query;
+    }
+
 }

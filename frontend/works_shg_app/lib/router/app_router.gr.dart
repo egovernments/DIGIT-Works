@@ -77,7 +77,9 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: SHGInboxPage(
-          args.musterDetails,
+          args.id,
+          args.tenantId,
+          args.projectDetails,
           key: args.key,
         ),
       );
@@ -99,6 +101,8 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: TrackAttendancePage(
+          args.id,
+          args.tenantId,
           args.projectDetails,
           args.attendanceRegister,
           key: args.key,
@@ -158,7 +162,7 @@ class _$AppRouter extends RootStackRouter {
             ),
             RouteConfig(
               SHGInboxRoute.name,
-              path: 'shg-inbox',
+              path: 'shg-inbox/:id/:tenantId',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -173,7 +177,7 @@ class _$AppRouter extends RootStackRouter {
             ),
             RouteConfig(
               TrackAttendanceRoute.name,
-              path: 'track-attendance',
+              path: 'track-attendance/:id/:tenantId',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -323,15 +327,23 @@ class ViewMusterRollsRoute extends PageRouteInfo<void> {
 /// [SHGInboxPage]
 class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
   SHGInboxRoute({
-    required List<Map<String, dynamic>> musterDetails,
+    required String id,
+    required String tenantId,
+    required List<Map<String, dynamic>> projectDetails,
     Key? key,
   }) : super(
           SHGInboxRoute.name,
-          path: 'shg-inbox',
+          path: 'shg-inbox/:id/:tenantId',
           args: SHGInboxRouteArgs(
-            musterDetails: musterDetails,
+            id: id,
+            tenantId: tenantId,
+            projectDetails: projectDetails,
             key: key,
           ),
+          rawPathParams: {
+            'id': id,
+            'tenantId': tenantId,
+          },
         );
 
   static const String name = 'SHGInboxRoute';
@@ -339,17 +351,23 @@ class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
 
 class SHGInboxRouteArgs {
   const SHGInboxRouteArgs({
-    required this.musterDetails,
+    required this.id,
+    required this.tenantId,
+    required this.projectDetails,
     this.key,
   });
 
-  final List<Map<String, dynamic>> musterDetails;
+  final String id;
+
+  final String tenantId;
+
+  final List<Map<String, dynamic>> projectDetails;
 
   final Key? key;
 
   @override
   String toString() {
-    return 'SHGInboxRouteArgs{musterDetails: $musterDetails, key: $key}';
+    return 'SHGInboxRouteArgs{id: $id, tenantId: $tenantId, projectDetails: $projectDetails, key: $key}';
   }
 }
 
@@ -381,17 +399,25 @@ class AttendanceInboxRoute extends PageRouteInfo<void> {
 /// [TrackAttendancePage]
 class TrackAttendanceRoute extends PageRouteInfo<TrackAttendanceRouteArgs> {
   TrackAttendanceRoute({
+    required String id,
+    required String tenantId,
     required List<Map<String, dynamic>> projectDetails,
     required AttendanceRegister? attendanceRegister,
     Key? key,
   }) : super(
           TrackAttendanceRoute.name,
-          path: 'track-attendance',
+          path: 'track-attendance/:id/:tenantId',
           args: TrackAttendanceRouteArgs(
+            id: id,
+            tenantId: tenantId,
             projectDetails: projectDetails,
             attendanceRegister: attendanceRegister,
             key: key,
           ),
+          rawPathParams: {
+            'id': id,
+            'tenantId': tenantId,
+          },
         );
 
   static const String name = 'TrackAttendanceRoute';
@@ -399,10 +425,16 @@ class TrackAttendanceRoute extends PageRouteInfo<TrackAttendanceRouteArgs> {
 
 class TrackAttendanceRouteArgs {
   const TrackAttendanceRouteArgs({
+    required this.id,
+    required this.tenantId,
     required this.projectDetails,
     required this.attendanceRegister,
     this.key,
   });
+
+  final String id;
+
+  final String tenantId;
 
   final List<Map<String, dynamic>> projectDetails;
 
@@ -412,6 +444,6 @@ class TrackAttendanceRouteArgs {
 
   @override
   String toString() {
-    return 'TrackAttendanceRouteArgs{projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
+    return 'TrackAttendanceRouteArgs{id: $id, tenantId: $tenantId, projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
   }
 }

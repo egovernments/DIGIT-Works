@@ -65,7 +65,7 @@ public class ProjectValidator {
         //Verify if RequestInfo and UserInfo is present
         validateRequestInfo(requestInfo, errorMap);
         //Verify if search project request is valid
-        validateSearchProjectRequest(projects, errorMap);
+        validateSearchProjectRequest(projects, tenantId, errorMap);
         //Verify if search project request parameters are valid
         validateSearchProjectRequestParams(limit, offset, tenantId);
 
@@ -153,7 +153,7 @@ public class ProjectValidator {
                 log.error("All projects in Project request must have same tenant Id");
                 errorMap.put("MULTIPLE_TENANTS", "All projects must have same tenant Id. Please create new request for different tentant id");
             }
-            if (project != null &&  (project.getStartDate() != null && project.getEndDate() != null) && (project.getStartDate().compareTo(project.getEndDate()) > 0)) {
+            if (project != null &&  (project.getStartDate() != null && project.getEndDate() != null  && project.getEndDate() != 0) && (project.getStartDate().compareTo(project.getEndDate()) > 0)) {
                 log.error("Start date should be less than end date");
                 errorMap.put("INVALID_DATE", "Start date should be less than end date");
             }
@@ -164,7 +164,7 @@ public class ProjectValidator {
     }
 
     /* Validates Search Project Request body */
-    private void validateSearchProjectRequest(List<Project> projects, Map<String, String> errorMap) {
+    private void validateSearchProjectRequest(List<Project> projects, String tenantId, Map<String, String> errorMap) {
         if (projects == null || projects.size() == 0) {
             log.error("Project list is empty. Projects is mandatory");
             throw new CustomException("PROJECT", "Projects are mandatory");
@@ -175,7 +175,7 @@ public class ProjectValidator {
                 log.error("Project is mandatory in Projects");
                 throw new CustomException("PROJECT", "Project is mandatory");
             }
-            if (project != null && StringUtils.isBlank(project.getTenantId())) {
+            if (StringUtils.isBlank(project.getTenantId())) {
                 log.error("Tenant ID is mandatory in Project request body");
                 throw new CustomException("TENANT_ID", "Tenant ID is mandatory");
             }
@@ -187,10 +187,26 @@ public class ProjectValidator {
                 throw new CustomException("PROJECT_SEARCH_FIELDS", "Any one project search field is required");
             }
 
+            if (!project.getTenantId().equals(tenantId)) {
+                log.error("Tenant Id must be same in URL param as well as project request body");
+                throw new CustomException("MULTIPLE_TENANTS", "Tenant Id must be same in URL param and project request");
+            }
+
             if (!project.getTenantId().equals(projects.get(0).getTenantId())) {
                 log.error("All projects in Project request must have same tenant Id");
                 throw new CustomException("MULTIPLE_TENANTS", "All projects must have same tenant Id. Please create new request for different tentant id");
             }
+
+            if ((project.getStartDate() != null && project.getEndDate() != null && project.getEndDate() != 0) && (project.getStartDate().compareTo(project.getEndDate()) > 0)) {
+                log.error("Start date should be less than end date");
+                throw new CustomException("INVALID_DATE", "Start date should be less than end date");
+            }
+
+            if ((project.getStartDate() == null || project.getStartDate() == 0) && (project.getEndDate() != null && project.getEndDate() != 0)) {
+                log.error("Start date is required if end date is passed");
+                throw new CustomException("INVALID_DATE", "Start date is required if end date is passed");
+            }
+
         }
     }
 

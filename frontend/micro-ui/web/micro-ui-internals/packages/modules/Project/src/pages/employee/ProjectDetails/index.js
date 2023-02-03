@@ -29,7 +29,7 @@ const ProjectDetails = () => {
                 <StatusTable>
                     <Row className="border-none" label={`${t("WORKS_PROJECT_ID")}:`} text={"PR-2102-13130"} textStyle={{ whiteSpace: "pre" }} />
                     <Row className="border-none" label={`${t("PDF_STATIC_LABEL_ESTIMATE_PROPOSAL_DATE")}:`} text={"06/05/2006"} textStyle={{ whiteSpace: "pre" }} />
-                    <Row className="border-none" label={`${t("WORKS_PROJECT_NAME")}:`} text={"RWHS Ward 1"} textStyle={{ whiteSpace: "pre" }} isMandotary={true} />
+                    <Row className="border-none" label={`${t("PDF_STATIC_LABEL_ESTIMATE_PROJECT_NAME")}:`} text={"RWHS Ward 1"} textStyle={{ whiteSpace: "pre" }} isMandotary={true} />
                     <Row className="border-none" label={`${t("PROJECT_DESC")}:`} text={"Rainwater Harvesting Scheme in Ward 1"} textStyle={{ whiteSpace: "pre" }} />
                     <Row className="border-none" label={`${t("WORKS_THE_PROJECT_HAS_SUB_PROJECT_LABEL")}:`} text={"No"} textStyle={{ whiteSpace: "pre" }} />
                     <Row className="border-none" label={`${t("WORKS_PARENT_PROJECT_ID")}:`} text={"PR-2102-13130"} textStyle={{ whiteSpace: "pre" }} isValueLink={{href : ""}} />
@@ -41,7 +41,7 @@ const ProjectDetails = () => {
               />
             </HorizontalNav>
             <ActionBar>
-                <SubmitBar onSubmit={() => { }} label={t("WORKS_CLOSE_PROJECT")} />
+                <SubmitBar onSubmit={() => { }} label={t("WORKS_ACTIONS")} />
             </ActionBar>
         </div>
     )
