@@ -16,7 +16,11 @@ const InboxSearchComposer = (props) => {
     useEffect(() => {
         //here if jsonpaths for search & table are same then searchform gets overridden
         if (Object.keys(state.searchForm)?.length > 0) {
-            _.set(apiDetails, apiDetails.searchFormJsonPath, { ..._.get(apiDetails, apiDetails.searchFormJsonPath,{}), ...state.searchForm })
+            const result = { ..._.get(apiDetails, apiDetails.searchFormJsonPath, {}), ...state.searchForm }
+            Object.keys(result).forEach(key => {
+                if (!result[key]) delete result[key]
+            });
+            _.set(apiDetails, apiDetails.searchFormJsonPath, result)
         }
         if(Object.keys(state.tableForm)?.length > 0) {
             _.set(apiDetails, apiDetails.tableFormJsonPath, { ..._.get(apiDetails, apiDetails.tableFormJsonPath, {}),...state.tableForm })  
