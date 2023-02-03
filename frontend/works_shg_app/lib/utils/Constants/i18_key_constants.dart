@@ -12,7 +12,7 @@ class Login {
   String get loginUserName => 'CORE_LOGIN_USERNAME';
   String get loginPhoneNumber => 'LOGIN_PHONE_NO';
   String get loginPassword => 'CORE_LOGIN_PASSWORD';
-  String get forgotPassword => 'ES_FORGOT_PASSWORD';
+  String get forgotPassword => 'CORE_COMMON_FORGOT_PASSWORD';
   String get invalidCredentials => 'INVALID_CREDENTIALS';
 }
 
@@ -33,7 +33,7 @@ class Common {
   String get transgender => 'CORE_COMMON_GENDER_TRANSGENDER';
   String get backToHome => 'CORE_COMMON_BACK_HOME_BUTTON';
   String get worksSHGLabel => 'CORE_COMMON_MGRAM_SEVA_LABEL';
-  String get home => 'ACTION_TEST_HOME';
+  String get home => 'ES_COMMON_HOME';
   String get editProfile => 'CORE_COMMON_EDIT_PROFILE';
   String get language => 'CS_HOME_HEADER_LANGUAGE';
   String get decline => 'CORE_BUTTON_DECLINE';
@@ -67,7 +67,7 @@ class Home {
   const Home();
   String get registerIndividual => 'REGISTER_INDIVIDUAL';
   String get manageWageSeekers => 'MANAGE_WAGE_SEEKERS';
-  String get workOrder => 'ACTION_TEST_WORK_ORDER';
+  String get workOrder => 'ACTION_TEST_VIEW_WORK_ORDER';
   String get worksMgmt => 'WORKS_MGMT';
   String get attendanceMgmt => 'ACTION_TEST_ATTENDENCEMGMT';
   String get musterRoll => 'ACTION_TEST_MUSTER_ROLL';

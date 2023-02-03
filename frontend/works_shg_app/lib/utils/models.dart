@@ -18,6 +18,12 @@ class TableDataRow {
   TableDataRow(this.tableRow);
 }
 
+class KeyValue {
+  String label;
+  dynamic key;
+  KeyValue(this.label, this.key);
+}
+
 class TableData {
   final String? label;
   final Widget? widget;

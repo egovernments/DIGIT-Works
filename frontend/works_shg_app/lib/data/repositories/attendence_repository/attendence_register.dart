@@ -77,7 +77,7 @@ class AttendanceRegisterRepository {
       );
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
-      throw Exception(ex);
+      rethrow;
     }
   }
 }

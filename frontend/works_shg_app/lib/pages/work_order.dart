@@ -5,6 +5,8 @@ import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 
 import '../blocs/localization/app_localization.dart';
 import '../widgets/Back.dart';
+import '../widgets/SideBar.dart';
+import '../widgets/drawer_wrapper.dart';
 
 class WorkOrderPage extends StatelessWidget {
   const WorkOrderPage({Key? key}) : super(key: key);
@@ -23,6 +25,8 @@ class WorkOrderPage extends StatelessWidget {
             })
         .toList();
     return Scaffold(
+      appBar: AppBar(),
+      drawer: DrawerWrapper(const Drawer(child: SideBar())),
       body: SingleChildScrollView(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

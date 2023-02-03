@@ -2,16 +2,23 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
+import '../widgets/SideBar.dart';
 import '../widgets/atoms/back_navigation_help_header.dart';
+import '../widgets/drawer_wrapper.dart';
 
-class HouseholdLocationPage extends StatelessWidget {
-  const HouseholdLocationPage({super.key});
+class RegisterIndividualPage extends StatelessWidget {
+  const RegisterIndividualPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
+      appBar: AppBar(),
+      drawer: DrawerWrapper(const Drawer(
+          child: SideBar(
+        module: 'rainmaker-common,rainmaker-attendencemgmt',
+      ))),
       body: ReactiveFormBuilder(
         form: buildForm,
         builder: (context, form, child) {
@@ -32,7 +39,7 @@ class HouseholdLocationPage extends StatelessWidget {
                         form.markAllAsTouched();
                       }
                     },
-                    child: Center(
+                    child: const Center(
                       child: Text('Action'),
                     ),
                   ),
@@ -46,7 +53,7 @@ class HouseholdLocationPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'household Location',
+                      'Individual Details',
                       style: theme.textTheme.displayMedium,
                     ),
                     Column(children: const [

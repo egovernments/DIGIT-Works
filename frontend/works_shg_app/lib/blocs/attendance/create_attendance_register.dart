@@ -47,7 +47,13 @@ class AttendanceRegisterCreateBloc
               "startDate": event.startDate,
               "endDate": event.endDate,
               "staff": [],
-              "attendees": []
+              "attendees": [],
+              "additionalDetails": {
+                "contractId": "WIN/2022-23/098/987",
+                "contractCreatedByUUID": "e92e9650-dfea-4f41-863a-0ab1ecb098fb",
+                "contractCreated": "XYZ",
+                "orgName": "ABC"
+              }
             }
           ]
         });

@@ -109,6 +109,12 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    RegisterIndividualRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const RegisterIndividualPage(),
+      );
+    },
   };
 
   @override
@@ -178,6 +184,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               TrackAttendanceRoute.name,
               path: 'track-attendance/:id/:tenantId',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              RegisterIndividualRoute.name,
+              path: 'register-individual',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -446,4 +457,16 @@ class TrackAttendanceRouteArgs {
   String toString() {
     return 'TrackAttendanceRouteArgs{id: $id, tenantId: $tenantId, projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
   }
+}
+
+/// generated route for
+/// [RegisterIndividualPage]
+class RegisterIndividualRoute extends PageRouteInfo<void> {
+  const RegisterIndividualRoute()
+      : super(
+          RegisterIndividualRoute.name,
+          path: 'register-individual',
+        );
+
+  static const String name = 'RegisterIndividualRoute';
 }

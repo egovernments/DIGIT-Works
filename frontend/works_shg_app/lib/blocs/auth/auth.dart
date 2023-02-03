@@ -78,9 +78,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   FutureOr<void> _onLogout(AuthLogoutEvent event, AuthEmitter emit) async {
-    storage.deleteAll();
     emit(const AuthState.loaded(null, null));
-    emit(AuthState.initial());
+    emit(const AuthState.initial());
   }
 }
 
