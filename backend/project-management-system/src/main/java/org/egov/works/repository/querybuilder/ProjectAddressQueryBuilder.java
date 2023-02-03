@@ -206,6 +206,7 @@ public class ProjectAddressQueryBuilder {
         preparedStmtList.addAll(ids);
     }
 
+    /* Returns query to search for projects where project_hierarchy contains project Ids */
     public String getProjectDescendantsSearchQueryBasedOnIds(List<String> projectIds, List<Object> preparedStmtListDescendants) {
         StringBuilder queryBuilder = new StringBuilder(FETCH_PROJECT_ADDRESS_QUERY);
         for (String projectId : projectIds) {

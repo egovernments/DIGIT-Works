@@ -138,8 +138,8 @@ public class ProjectRepository {
         return ancestors;
     }
 
+    /* Fetch projects where project hierarchy for projects in db contains project ID of requested project. The descendant project's projectHierarchy will contain parent project id */
     private List<Project> getProjectDescendants(List<Project> projects) {
-        //Fetch projects where project hierarchy for projects in db contains project ID of requested project. The descendant project's projectHierarchy will contain parent project id
         List<String> projectIds = projects.stream().map(Project:: getId).collect(Collectors.toList());
 
         List<Object> preparedStmtListDescendants = new ArrayList<>();
