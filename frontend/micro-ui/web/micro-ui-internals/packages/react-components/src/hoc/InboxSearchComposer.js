@@ -12,7 +12,9 @@ const InboxSearchComposer = (props) => {
     const [state, dispatch] = useReducer(reducer, initialInboxState)
    
     const apiDetails = configs?.apiDetails
+    
     useEffect(() => {
+        //here if jsonpaths for search & table are same then searchform gets overridden
         if (Object.keys(state.searchForm)?.length > 0) {
             _.set(apiDetails, apiDetails.searchFormJsonPath, { ..._.get(apiDetails, apiDetails.searchFormJsonPath,{}), ...state.searchForm })
         }

@@ -49,6 +49,9 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     if(updatedFields.length >= uiConfig?.minReqFields) {
       
       //@prachi We can't make this validation here as this is a generic comp
+      // tip -> handle it before the onsumbmit 
+      //use custom validation function prop given by userform's register()
+      // try using it using config in renderformfields comp
       if(formData.startDate && formData.endDate) {
         if(new Date(formData.startDate).getTime() > new Date(formData.endDate).getTime()) {
           setError("endDate", { type: "focus" }, { shouldFocus: true })
