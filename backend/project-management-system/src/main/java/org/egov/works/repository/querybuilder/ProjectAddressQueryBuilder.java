@@ -40,14 +40,14 @@ public class ProjectAddressQueryBuilder {
     private static final String PROJECTS_COUNT_QUERY = "SELECT COUNT(*) FROM eg_pms_project prj ";
 
     /* Constructs project search query based on conditions */
-    public String getProjectSearchQuery(ProjectRequest projectRequest, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStmtList, boolean isCountQuery) {
+    public String getProjectSearchQuery(List<Project> projects, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStmtList, boolean isCountQuery) {
         //This uses a ternary operator to choose between PROJECTS_COUNT_QUERY or FETCH_PROJECT_ADDRESS_QUERY based on the value of isCountQuery.
         String query = isCountQuery ? PROJECTS_COUNT_QUERY : FETCH_PROJECT_ADDRESS_QUERY;
         StringBuilder queryBuilder = new StringBuilder(query);
 
-        Integer count = projectRequest.getProjects().size();
+        Integer count = projects.size();
 
-        for (Project project: projectRequest.getProjects()) {
+        for (Project project: projects) {
 
             if (StringUtils.isNotBlank(tenantId)) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
@@ -150,14 +150,30 @@ public class ProjectAddressQueryBuilder {
 
     /* Wrap constructed SQL query with where criteria in pagination query */
     private String addPaginationWrapper(String query,List<Object> preparedStmtList, Integer limitParam, Integer offsetParam){
-        Integer limit = (limitParam > config.getMaxLimit()) ? config.getMaxLimit() : limitParam;
-        Integer offset = (offsetParam > config.getMaxOffset()) ? config.getMaxOffset() : offsetParam;
-        String finalQuery = paginationWrapper.replace("{}",query);
+        int limit = config.getDefaultLimit();
+        int offset = config.getDefaultOffset();
+        String finalQuery = paginationWrapper.replace("{}", query);
+
+        if (limitParam != null) {
+            if (limitParam <= config.getMaxLimit())
+                limit = limitParam;
+            else
+                limit = config.getMaxLimit();
+        }
+
+        if (offsetParam != null)
+            offset = offsetParam;
 
         preparedStmtList.add(offset);
-        preparedStmtList.add(limit+offset);
+        preparedStmtList.add(limit + offset);
 
         return finalQuery;
+    }
+
+    /* Returns query to get total projects count based on project search params */
+    public String getSearchCountQueryString(List<Project> projects, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStatement) {
+        String query = getProjectSearchQuery(projects, config.getMaxLimit(), config.getDefaultOffset(), tenantId, lastChangedSince, includeDeleted, preparedStatement, true);
+        return query;
     }
 
 }

@@ -43,7 +43,7 @@ public class ProjectRepository {
     public List<Project> getProjects(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted) {
 
         //Fetch Projects based on search criteria
-        List<Project> projects = getProjectsBasedOnSearchCriteria(project, limit, offset, tenantId, lastChangedSince, includeDeleted);
+        List<Project> projects = getProjectsBasedOnSearchCriteria(project.getProjects(), limit, offset, tenantId, lastChangedSince, includeDeleted);
 
         List<String> projectIds = projects.stream().map(Project :: getId).collect(Collectors.toList());
 
@@ -59,15 +59,10 @@ public class ProjectRepository {
     }
 
     /* Fetch Projects based on search criteria */
-    private List<Project> getProjectsBasedOnSearchCriteria(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted) {
+    private List<Project> getProjectsBasedOnSearchCriteria(List<Project> projectsRequest, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getProjectSearchQuery(project, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList, false);
+        String query = queryBuilder.getProjectSearchQuery(projectsRequest, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList, false);
         List<Project> projects = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-        /* Fetch total projects count based on project search params */
-        preparedStmtList.clear();
-        String queryForCount = queryBuilder.getProjectSearchQuery(project, limit, offset, tenantId, lastChangedSince, includeDeleted, preparedStmtList, true);
-        Integer searchedProjectsTotalCount = jdbcTemplate.queryForObject(queryForCount, Integer.class, preparedStmtList.toArray());
-        log.info("Total project count is : " + searchedProjectsTotalCount);
 
         log.info("Fetched project list based on given search criteria");
         return projects;
@@ -109,6 +104,23 @@ public class ProjectRepository {
             }
         }
         return projects;
+    }
+
+    /**
+     * Get the count of projects based on the given search criteria (using dynamic
+     * query build at the run time)
+     * @return
+     */
+    public Integer getProjectCount(ProjectRequest project, String tenantId, Long lastChangedSince, Boolean includeDeleted) {
+        List<Object> preparedStatement = new ArrayList<>();
+        String query = queryBuilder.getSearchCountQueryString(project.getProjects(), tenantId, lastChangedSince, includeDeleted, preparedStatement);
+
+        if (query == null)
+            return 0;
+
+        Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
+        log.info("Total project count is : " + count);
+        return count;
     }
 
 }
