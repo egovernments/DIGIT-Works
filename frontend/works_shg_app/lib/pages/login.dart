@@ -12,7 +12,7 @@ import '../widgets/molecules/desktop_view.dart';
 import '../widgets/molecules/mobile_view.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key? key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {

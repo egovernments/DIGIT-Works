@@ -366,12 +366,18 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                 SchedulerBinding.instance
                                     .addPostFrameCallback((_) {
                                   logState.maybeWhen(
-                                      error: () => Notifiers.getToastMessage(
-                                          context,
-                                          AppLocalizations.of(context)
-                                              .translate(i18.attendanceMgmt
-                                                  .attendanceLoggedFailed),
-                                          'ERROR'),
+                                      error: () {
+                                        if (!hasLoaded) {
+                                          Notifiers.getToastMessage(
+                                              context,
+                                              AppLocalizations.of(context)
+                                                  .translate(i18.attendanceMgmt
+                                                      .attendanceLoggedFailed),
+                                              'ERROR');
+                                          onSubmit(widget.id);
+                                          hasLoaded = true;
+                                        }
+                                      },
                                       loaded: () {
                                         if (!hasLoaded) {
                                           Notifiers.getToastMessage(

@@ -97,4 +97,6 @@ class AttendanceMgmt {
   String get individualsCount => 'REGISTER_INDIVIDUAL_COUNT';
   String get attendanceLoggedSuccess => 'ATM_LOGGED_SUCCESSFULLY';
   String get attendanceLoggedFailed => 'ATM_LOGGED_FAILED';
+  String get attendanceCreateFailed => 'ATM_CREATE_REGISTER_FAILED';
+  String get attendanceCreateSuccess => 'ATM_CREATE_REGISTER_SUCCESS';
 }

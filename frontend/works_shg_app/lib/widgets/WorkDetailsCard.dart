@@ -14,7 +14,6 @@ import '../blocs/muster_rolls/search_muster_roll.dart';
 import '../models/attendance/attendance_registry_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
 import '../utils/constants.dart';
-import '../utils/global_variables.dart';
 
 class WorkDetailsCard extends StatelessWidget {
   final List<Map<String, dynamic>> detailsList;
@@ -56,6 +55,14 @@ class WorkDetailsCard extends StatelessWidget {
                       attendanceRegistersModel!.attendanceRegister![i].id,
                   attendanceRegister:
                       attendanceRegistersModel!.attendanceRegister![i])),
+        ));
+      }
+    } else if (isWorkOrderInbox) {
+      for (int i = 0; i < detailsList.length; i++) {
+        list.add(GestureDetector(
+          child: DigitCard(
+              child: getCardDetails(context, detailsList[i]['cardDetails'],
+                  payload: detailsList[i]['payload'])),
         ));
       }
     } else {
@@ -102,7 +109,8 @@ class WorkDetailsCard extends StatelessWidget {
   Widget getCardDetails(BuildContext context, Map<String, dynamic> cardDetails,
       {List<String>? userList,
       AttendanceRegister? attendanceRegister,
-      String? attendanceRegisterId}) {
+      String? attendanceRegisterId,
+      Map<String, dynamic>? payload}) {
     var labelList = <Widget>[];
     for (int j = 0; j < cardDetails.length; j++) {
       labelList.add(getItemWidget(context,
@@ -124,40 +132,39 @@ class WorkDetailsCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            BlocBuilder<AttendanceRegisterCreateBloc,
-                    AttendanceRegisterCreateState>(
-                builder: (context, state) => ButtonGroup(
-                      outlinedButtonLabel,
-                      elevatedButtonLabel,
-                      outLinedCallBack: () => DigitDialog.show(
-                        context,
-                        title: AppLocalizations.of(context)
-                            .translate(i18.common.warning),
-                        content: AppLocalizations.of(context)
-                            .translate(i18.workOrder.warningMsg),
-                        primaryActionLabel: AppLocalizations.of(context)
-                            .translate(i18.common.confirm),
-                        primaryAction: () => Navigator.pop(context),
-                        secondaryActionLabel: AppLocalizations.of(context)
-                            .translate(i18.common.back),
-                        secondaryAction: () => Navigator.pop(context),
+            ButtonGroup(
+              outlinedButtonLabel,
+              elevatedButtonLabel,
+              outLinedCallBack: () => DigitDialog.show(
+                context,
+                title:
+                    AppLocalizations.of(context).translate(i18.common.warning),
+                content: AppLocalizations.of(context)
+                    .translate(i18.workOrder.warningMsg),
+                primaryActionLabel:
+                    AppLocalizations.of(context).translate(i18.common.confirm),
+                primaryAction: () => Navigator.pop(context),
+                secondaryActionLabel:
+                    AppLocalizations.of(context).translate(i18.common.back),
+                secondaryAction: () => Navigator.pop(context),
+              ),
+              elevatedCallBack: () {
+                context.read<AttendanceRegisterCreateBloc>().add(
+                      CreateAttendanceRegisterEvent(
+                        tenantId: payload!['tenantId'],
+                        registerNumber: "",
+                        name: cardDetails.values.elementAt(1).toString(),
+                        contractCreated: payload['contractCreated'],
+                        contractId: cardDetails.values.elementAt(0).toString(),
+                        orgName: payload['orgName'],
+                        startDate: DateTime.now().millisecondsSinceEpoch,
+                        endDate: DateTime.now()
+                            .add(const Duration(days: 7))
+                            .millisecondsSinceEpoch,
                       ),
-                      elevatedCallBack: () {
-                        context.read<AttendanceRegisterCreateBloc>().add(
-                              CreateAttendanceRegisterEvent(
-                                tenantId: '${GlobalVariables.getTenantId()}',
-                                registerNumber:
-                                    cardDetails.values.elementAt(0).toString(),
-                                name:
-                                    cardDetails.values.elementAt(1).toString(),
-                                startDate:
-                                    DateTime.now().millisecondsSinceEpoch,
-                                endDate: DateTime.now().millisecondsSinceEpoch +
-                                    110030000,
-                              ),
-                            );
-                      },
-                    )),
+                    );
+              },
+            ),
           ],
         ),
       ));
