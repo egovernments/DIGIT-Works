@@ -47,19 +47,18 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
 
   const onSubmit = (data) => {
     if(updatedFields.length >= uiConfig?.minReqFields) {
+      
+      //@prachi We can't make this validation here as this is a generic comp
+      // tip -> handle it before the onsumbmit 
+      //use custom validation function prop given by userform's register()
+      // try using it using config in renderformfields comp
       if(formData.startDate && formData.endDate) {
         if(new Date(formData.startDate).getTime() > new Date(formData.endDate).getTime()) {
           setError("endDate", { type: "focus" }, { shouldFocus: true })
           return
         }
       }
-      //run preprocessing functions(use case -> changing date inputs to epoch)
-      uiConfig.fields.forEach(field=> {
-        if (field.preProcessfn) {
-          data[field.populators.name] = field.preProcessfn(data?.[field.populators.name])
-          // data[field.populators.name] = new Date(data[field.populators.name]).getTime() / 1000
-        }
-      })
+      
       dispatch({
         type: "searchForm",
         state: {
