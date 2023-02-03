@@ -6,7 +6,6 @@ class DrawerWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      print(MediaQuery.of(context).size.width * 0.9);
       return SafeArea(
           child: Container(
               width: constraints.maxWidth < 720 ? 290 : 350,
