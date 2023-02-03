@@ -73,10 +73,10 @@ public class Project {
     private String projectHierarchy = null;
 
     @JsonProperty("ancestors")
-    private Project ancestors = null;
+    private List<Project> ancestors = null;
 
     @JsonProperty("descendants")
-    private List<Project> descendants = new ArrayList<>();
+    private List<Project> descendants = null;
 
     @JsonProperty("targets")
     @Valid
