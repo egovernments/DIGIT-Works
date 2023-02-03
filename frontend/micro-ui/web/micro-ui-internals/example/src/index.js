@@ -23,7 +23,7 @@ import "@egovernments/digit-ui-works-css/example/index.css";
 // import { subFormRegistry } from "@egovernments/digit-ui-libraries";
 
 import { pgrCustomizations  } from "./pgr";
-
+import { UICustomizations } from "./UICustomizations";
 var Digit = window.Digit || {};
 
 const enabledModules = [
@@ -92,6 +92,7 @@ const initDigitUI = () => {
       customiseRenewalCreateFormData: (formData, licenceObject) => licenceObject,
       customiseSendbackFormData: (formData, licenceObject) => licenceObject,
     },
+    commonUiConfig: UICustomizations
   };
 
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";

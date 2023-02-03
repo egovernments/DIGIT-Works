@@ -33,13 +33,18 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
 
   const onSubmit = (data) => {
     if(updatedFields.length >= uiConfig?.minReqFields) {
-      //run preprocessing functions(use case -> changing date inputs to epoch)
-      uiConfig.fields.forEach(field=> {
-        if (field.preProcessfn) {
-          data[field.populators.name] = field.preProcessfn(data?.[field.populators.name])
-          // data[field.populators.name] = new Date(data[field.populators.name]).getTime() / 1000
+      
+      //@prachi We can't make this validation here as this is a generic comp
+      // tip -> handle it before the onsumbmit 
+      //use custom validation function prop given by userform's register()
+      // try using it using config in renderformfields comp
+      if(formData.startDate && formData.endDate) {
+        if(new Date(formData.startDate).getTime() > new Date(formData.endDate).getTime()) {
+          setError("endDate", { type: "focus" }, { shouldFocus: true })
+          return
         }
-      })
+      }
+      
       dispatch({
         type: "searchForm",
         state: {
@@ -47,7 +52,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
         }
       })
     } else {
-      setShowToast({ warning: true, label: "Please enter minimum 1 search criteria" })
+      setShowToast({ warning: true, label: t("MIN_SEARCH_CRITERIA_MSG") })
       setTimeout(closeToast, 3000);
     }
   }
@@ -86,21 +91,27 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   return (
     <React.Fragment>
       <div className={'search-wrapper'}>
-        {renderHeader()}
-        <FormProvider {...formMethods}>
-          <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
-            <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
-              <RenderFormFields 
-                fields={uiConfig?.fields} 
-                labelStyle={{fontSize: "16px"}}
-              />  
-              <div className={`search-button-wrapper ${screenType} ${componentType}`}>
-                <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{uiConfig?.secondaryLabel}</LinkLabel>
-                <SubmitBar label={uiConfig?.primaryLabel} submit="submit" disabled={false}/>
-              </div>
-            </div> 
-          </form> 
-        </FormProvider>
+        {header && <Header styles={uiConfig?.headerStyle}>{t(header)}</Header>}
+        <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
+          <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
+            <RenderFormFields 
+              fields={uiConfig?.fields} 
+              control={control} 
+              formData={formData}
+              errors={errors}
+              register={register}
+              setValue={setValue}
+              getValues={getValues}
+              setError={setError}
+              clearErrors={clearErrors}
+              labelStyle={{fontSize: "16px"}}
+            />  
+            <div className={`search-button-wrapper ${screenType}`}>
+              <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel>
+              <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/>
+            </div>
+          </div> 
+        </form>
         { showToast && <Toast 
           error={showToast.error}
           warning={showToast.warning}
