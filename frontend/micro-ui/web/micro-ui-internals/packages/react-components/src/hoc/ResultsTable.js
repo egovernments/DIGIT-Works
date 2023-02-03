@@ -11,30 +11,28 @@ import { Loader } from '../atoms/Loader';
 import Card from '../atoms/Card'
 
 
-const ResultsTable = ({ tableContainerClass, config,data,isLoading }) => {
-    
+const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig }) => {
+    const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
-    const searchResult = data?.[resultsKey] ? data?.[resultsKey] : []
-    
+    const searchResult = data?.[resultsKey].length>0 ? data?.[resultsKey] : []
+   
+    // const searchResultNew = data?.[resultsKey].length > 0 ? data?.[resultsKey] : []
+    // const searchResult = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(searchResultNew) : searchResultNew 
+    //
+
     const {state,dispatch} = useContext(InboxContext)
     
     const tableColumns = useMemo(() => {
         //test if accessor can take jsonPath value only and then check sort and global search work properly
         return config?.columns?.map(column => {
             
-            if(column.redirectUrl){
+            if (column.additionalCustomization){
                 return {
                     Header: t(column?.label) || t("ES_COMMON_NA"),
                     accessor:column.jsonPath,
                     Cell: ({ value, col, row }) => {
-                        //integrate row.original with jsonPath
-                        // return <span className="link">
-                        //     <Link to={column?.redirectUrl || '/works-ui/employee/project/project-inbox-item'}>{String(t(_.get(row.original, column.jsonPath, "NA")))}</Link>
-                        // </span>
-                        return <span className="link">
-                            <Link to={column?.redirectUrl || '/works-ui/employee/project/project-inbox-item'}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value:t("ES_COMMON_NA"))}</Link>
-                        </span>
+                        return  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row.original,column,col,value,t) 
                     }
                 }
             }
@@ -42,10 +40,6 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading }) => {
                 Header: t(column?.label) || t("ES_COMMON_NA"),
                 accessor: column.jsonPath,
                 Cell: ({ value, col, row }) => {
-                    // if (column.preProcessfn){
-                    //     return String( column.preProcessfn("pb.amritsar", { uuid: [uuid] }, {}) || t("ES_COMMON_NA"));
-                    // }
-                    // return String(t(_.get(row.original,column.jsonPath,"NA")));
                     return String(value ? column.translate? t(column.prefix?`${column.prefix}${value}`:value) : value : t("ES_COMMON_NA"));
                 }
             }
@@ -129,7 +123,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading }) => {
         
     }
 
-    if (isLoading) return <Loader />
+    if (isLoading || isFetching) return <Loader />
     if (searchResult.length === 0) return <Card style={{ marginTop: 20 }}>
         {t("ES_COMMON_NO_DATA")
             .split("\\n")
