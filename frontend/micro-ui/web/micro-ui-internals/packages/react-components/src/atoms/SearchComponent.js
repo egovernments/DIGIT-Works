@@ -47,6 +47,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
 
   const onSubmit = (data) => {
     if(updatedFields.length >= uiConfig?.minReqFields) {
+      
+      //@prachi We can't make this validation here as this is a generic comp
       if(formData.startDate && formData.endDate) {
         if(new Date(formData.startDate).getTime() > new Date(formData.endDate).getTime()) {
           setError("endDate", { type: "focus" }, { shouldFocus: true })

@@ -5,31 +5,18 @@ const searchConfig = () => {
         apiDetails: {
             serviceName: "/estimate-service/estimate/v1/_search",
             requestParam: {
-                limit: 10,
-                offset: 0,
-                tenantId: Digit.ULBService.getCurrentTenantId(),
+               
             },
             requestBody: {
-                // apiOperation: "SEARCH",
-                // Projects: [
-                //     {
-                //         tenantId: Digit.ULBService.getCurrentTenantId()
-                //     }
-                // ]
+            
             },
-            jsonPathForReqBody: `requestBody.Projects[0]`,
-            jsonPathForReqParam: `requestParam`,
-            preProcessResponese: (data) => data,
-            mandatoryFieldsInParam: {
-                tenantId: Digit.ULBService.getCurrentTenantId(),
-            },
-            mandatoryFieldsInBody: {
-                tenantId: Digit.ULBService.getCurrentTenantId(),
-            },
-            //Note -> The above mandatory fields should not be dynamic(like limit,offset)
-            //If they are dynamic they should be part of the reducer state
+            minParametersForSearchForm: 1,
+            masterName: "commonUiConfig",
+            moduleName: "SearchEstimateConfig",
+            tableFormJsonPath: "requestParam",
+            filterFormJsonPath: "requestParam",
+            searchFormJsonPath: "requestParam",
         },
-        //estimateNumber,projectId,department,estimateStatus,fromProposalDate,toProposalDate
         sections: {
             search: {
                 uiConfig: {
@@ -53,7 +40,8 @@ const searchConfig = () => {
                             disable: false,
                             populators: {
                                 name: "estimateNumber",
-                                // validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
+                                error: `ESTIMATE_PATTERN_ERR_MSG`,
+                                validation: { pattern: /^[a-z0-9\/-]*$/i, minlength: 2 }
                             },
                         },
                         {
@@ -63,7 +51,8 @@ const searchConfig = () => {
                             disable: false,
                             populators: {
                                 name: "projectId",
-                                // validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
+                                error: `PROJECT_PATTERN_ERR_MSG`,
+                                validation: { pattern: /^[a-z0-9\/-]*$/i, minlength: 2 }
                             },
                         },
                         {
@@ -80,7 +69,6 @@ const searchConfig = () => {
                                     localePrefix: "COMMON_MASTERS_DEPARTMENT",
                                 }
                             },
-                            preProcessfn: (estimate) => estimate?.code
                         },
                         {
                             label: "WORKS_STATUS",
@@ -89,7 +77,6 @@ const searchConfig = () => {
                             disable: false,
                             populators: {
                                 name: "estimateStatus",
-                                //   validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }
                             }
                         },
                         {
@@ -100,7 +87,6 @@ const searchConfig = () => {
                             populators: {
                                 name: "fromProposalDate"
                             },
-                            preProcessfn: Digit.Utils.pt.convertDateToEpoch
                         },
                         {
                             label: "WORKS_COMMON_TO_DATE_LABEL",
@@ -110,7 +96,6 @@ const searchConfig = () => {
                             populators: {
                                 name: "toProposalDate"
                             },
-                            preProcessfn: Digit.Utils.pt.convertDateToEpoch
                         }
                     ]
                 },
@@ -124,14 +109,13 @@ const searchConfig = () => {
                     defaultValues: {
                         offset: 0,
                         limit: 10,
-                        // sortBy: "department",
                         sortOrder: "ASC",
                     },
                     columns: [
                         {
                             label: "WORKS_PRJ_SUB_ID",
                             jsonPath: "projectNumber",
-                            redirectUrl: '/works-ui/employee/project/project-inbox-item'
+                            additionalCustomization: true
                         },
                         {
                             label: "WORKS_PROJECT_NAME",
@@ -162,8 +146,6 @@ const searchConfig = () => {
                         {
                             label: "WORKS_CREATED_BY",
                             jsonPath: "auditDetails.createdBy",
-                            // jsonPath: "createdBy",
-                            // preProcessfn: (uuid) => Digit.UserService.userSearch
                         },
                         {
                             label: "WORKS_STATUS",
@@ -179,7 +161,7 @@ const searchConfig = () => {
                     resultsJsonPath: "Projects",
                 },
                 children: {},
-                show: true //by default true. 
+                show: true
             }
         },
         additionalSections: {}

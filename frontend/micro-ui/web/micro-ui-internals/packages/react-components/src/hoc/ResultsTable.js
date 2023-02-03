@@ -15,7 +15,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
-    const searchResult = data?.[resultsKey].length>0 ? data?.[resultsKey] : []
+    const searchResult = data?.[resultsKey]?.length>0 ? data?.[resultsKey] : []
    
     // const searchResultNew = data?.[resultsKey].length > 0 ? data?.[resultsKey] : []
     // const searchResult = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(searchResultNew) : searchResultNew 
@@ -124,7 +124,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     }
 
     if (isLoading || isFetching) return <Loader />
-    if (searchResult.length === 0) return <Card style={{ marginTop: 20 }}>
+    if (searchResult?.length === 0) return <Card style={{ marginTop: 20 }}>
         {t("ES_COMMON_NO_DATA")
             .split("\\n")
             .map((text, index) => (
@@ -138,7 +138,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
             {config?.enableGlobalSearch && <div className='card' style={{ "padding": "0px", marginTop: "1rem" }}>
             <TextInput className="searchInput"  onChange={(e) => onSearch(e.target.value)} style={{ border: "none", borderRadius: "200px" }} />
              </div>}
-            {searchResult.length > 0 && <Table
+            {searchResult?.length > 0 && <Table
                 //className="table-fixed-first-column-wage-seekers wage-seekers-table"
                 t={t}
                 //customTableWrapperClassName={"dss-table-wrapper"}

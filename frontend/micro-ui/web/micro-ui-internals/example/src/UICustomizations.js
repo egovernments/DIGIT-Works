@@ -38,6 +38,15 @@ export const UICustomizations = {
             }
 
         }
+    },
+    SearchEstimateConfig: {
+        preProcess: (data) => {
+            const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromProposalDate)
+            const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toProposalDate)
+            const department = data?.params?.department?.code
+            data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromProposalDate, toProposalDate, department }
+            return data
+        }
     }
 }
 
