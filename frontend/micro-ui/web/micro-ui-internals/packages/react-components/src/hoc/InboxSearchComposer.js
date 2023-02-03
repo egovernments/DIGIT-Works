@@ -24,7 +24,9 @@ const InboxSearchComposer = (props) => {
         if (Object.keys(state.searchForm)?.length > 0) {
             //here we can't directly put Projects[0] -> need to generalise this
             // apiDetails.requestBody.Projects[0] = { ...apiDetails.mandatoryFieldsInBody,...state.searchForm }
-            _.set(apiDetails, apiDetails.jsonPathForReqBody, { ...apiDetails.mandatoryFieldsInBody, ...state.searchForm })
+            // _.set(apiDetails, apiDetails.jsonPathForReqBody, { ...apiDetails.mandatoryFieldsInBody, ...state.searchForm })
+            _.set(apiDetails, apiDetails.jsonPathForReqParam, { ...apiDetails.mandatoryFieldsInBody, ...state.searchForm })
+
             // requestBody.Projects[0]={...state?.searchForm}
             setEnable(true)
         }
