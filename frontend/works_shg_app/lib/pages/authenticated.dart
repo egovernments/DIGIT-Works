@@ -18,23 +18,6 @@ class AuthenticatedPageWrapper extends StatelessWidget {
     Client client = Client();
 
     return Scaffold(
-      // appBar: AppBar(),
-      // drawer: Container(
-      //     margin: const EdgeInsets.only(top: kToolbarHeight),
-      //     child: Drawer(
-      //       child: BlocBuilder<UserSearchBloc, UserSearchState>(
-      //           builder: (context, state) {
-      //         return !state.loading && state.userSearchModel != null
-      //             ? SideBar(
-      //                 userName:
-      //                     state.userSearchModel!.user!.first.name.toString(),
-      //                 mobileNumber:
-      //                     state.userSearchModel!.user!.first.mobileNumber,
-      //                 module: 'rainmaker-common,rainmaker-attendencemgmt',
-      //               )
-      //             : Loaders.circularLoader(context);
-      //       }),
-      //     )),
       body: MultiBlocProvider(
         providers: [
           BlocProvider(
