@@ -33,7 +33,7 @@ export const UICustomizations = {
             if (column.label ==="WORKS_PRJ_SUB_ID")
             {
                 return <span className="link">
-                    <Link to={`/works-ui/employee/project/project-inbox-item?projectNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+                    <Link to={`/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
                 </span>
             }
 
