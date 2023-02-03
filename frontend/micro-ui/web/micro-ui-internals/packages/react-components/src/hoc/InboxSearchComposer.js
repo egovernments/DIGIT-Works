@@ -14,10 +14,10 @@ const InboxSearchComposer = (props) => {
     const apiDetails = configs?.apiDetails
     useEffect(() => {
         if (Object.keys(state.searchForm)?.length > 0) {
-            _.set(apiDetails, apiDetails.jsonPathForReqBody, { ...state.searchForm })
+            _.set(apiDetails, apiDetails.searchFormJsonPath, { ...state.searchForm })
         }
         if(Object.keys(state.tableForm)?.length > 0) {
-            _.set(apiDetails, apiDetails.jsonPathForReqParam, { ...state.tableForm })  
+            _.set(apiDetails, apiDetails.tableFormJsonPath, { ...state.tableForm })  
         }
         if (Object.keys(state.tableForm)?.length > 0 && Object.keys(state.searchForm)?.length >= apiDetails.minParametersForSearchForm){
             setEnable(true)

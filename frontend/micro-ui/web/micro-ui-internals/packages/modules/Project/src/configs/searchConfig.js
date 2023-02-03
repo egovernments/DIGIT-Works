@@ -18,11 +18,9 @@ const searchConfig = () => {
             minParametersForSearchForm:1,
             masterName:"commonUiConfig",
             moduleName:"SearchProjectConfig",
-            jsonPathForReqBody: `requestBody.Projects[0]`,
-            jsonPathForReqParam:`requestParam`,
-            tableFormJsonPath:"",
-            filterFormJsonPath:"",
-            searchFormJsonPath:"",
+            tableFormJsonPath:"requestParam",
+            filterFormJsonPath:"requestBody.Projects[0]",
+            searchFormJsonPath:"requestBody.Projects[0]",
         },
         sections : {
             search : {
