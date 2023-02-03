@@ -2,6 +2,34 @@
     height: 100%;
     width: 100%;
     padding: 1rem;
+    .filter-header-wrapper {
+        display: grid;
+        grid-template-columns: 15% 1fr 15%;
+        height: 3rem;
+        margin-bottom: 1rem;
+        .icon-refresh {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #00000017;
+            cursor: pointer;
+            svg {
+                height: 60%;
+                width: 40%;
+            }
+        }
+        .label {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .icon-filter {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+    }
 
     .search-field-wrapper {
         display: grid;

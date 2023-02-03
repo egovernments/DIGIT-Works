@@ -7,6 +7,7 @@ import Header from "../atoms/Header";
 import LinkLabel from '../atoms/LinkLabel';
 import SubmitBar from "../atoms/SubmitBar";
 import Toast from "../atoms/Toast";
+import { FilterIcon, RefreshIcon } from "./svgindex";
 
 const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   const { t } = useTranslation();
@@ -63,10 +64,29 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     setShowToast(null);
   }
 
+  const handleFilterRefresh = () => {}
+
+  const renderHeader = () => {
+    switch(uiConfig?.type) {
+      case "filter" : {
+        return (
+          <div className="filter-header-wrapper">
+            <div className="icon-filter"><FilterIcon></FilterIcon></div>
+            <div className="label">{header}</div>
+            <div className="icon-refresh" onClick={handleFilterRefresh}><RefreshIcon></RefreshIcon></div>
+          </div>
+        )
+      }
+      default : {
+        return <Header styles={uiConfig?.headerStyle}>{header}</Header>
+      }
+    }
+  }
+
   return (
     <React.Fragment>
       <div className={'search-wrapper'}>
-        {header && <Header styles={uiConfig?.headerStyle}>{header}</Header>}
+        {renderHeader()}
         <FormProvider {...formMethods}>
           <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
             <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
