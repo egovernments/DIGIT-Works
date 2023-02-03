@@ -16,9 +16,24 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   let updatedFields = [];
   const [componentType, setComponentType] = useState(uiConfig?.type);
 
-  const formMethods = useForm({defaultValues: uiConfig?.defaultValues});
-  const formState = formMethods?.formState;
-  const handleSubmit = formMethods?.handleSubmit;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    reset,
+    watch,
+    trigger,
+    control,
+    formState,
+    errors,
+    setError,
+    clearErrors,
+    unregister,
+  } = useForm({
+    defaultValues: uiConfig?.defaultValues,
+  });
+  const formData = watch();
 
   const checkKeyDown = (e) => {
     const keyCode = e.keyCode ? e.keyCode : e.key ? e.key : e.which;

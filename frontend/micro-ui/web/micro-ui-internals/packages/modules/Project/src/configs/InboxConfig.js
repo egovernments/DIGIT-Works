@@ -92,12 +92,7 @@ const inboxConfig = () => {
                     links : [
                         {
                             text: "WORKS_CREATE_PROJECT",
-                            url: `/employee/project/creatxe-project`,
-                            roles: [],
-                        },
-                        {
-                            text: "WORKS_SEARCH_PROJECTS",
-                            url: ``,
+                            url: `/employee/project/create-project`,
                             roles: [],
                         }
                     ],

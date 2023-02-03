@@ -7,13 +7,11 @@ const InboxSearchLinks = ({headerText, links, businessService, customClass="", l
     const { t } = useTranslation();
     const { roles: userRoles } = Digit.UserService.getUser().info;
     const [linksToShow, setLinksToShow] = useState([]);
-    // const DynamicLogoIcon = lazy(() => import(`./${logoIcon}`));  //Needs a default export
 
     useEffect(() => {
       let linksToShow = links.filter(({ roles }) => roles.some((role) => userRoles.map(({ code }) => code).includes(role)) || !roles?.length);
         setLinksToShow(linksToShow);
     }, []);
-    
     const renderHeader = () => <div className="header">
         <span className="logo">
            {logoIcon?.component === "PropertyHouse" && <PropertyHouse className={logoIcon?.customClass} />}
@@ -27,7 +25,7 @@ const InboxSearchLinks = ({headerText, links, businessService, customClass="", l
                 {linksToShow.map(({ url, text, hyperlink = false}, index) => {
                     return (
                     <span className="link" key={index}>
-                        {hyperlink ? <a href={url}>{t(text)}</a> : <Link to={url}>{t(text)}</Link>}
+                        {hyperlink ? <a href={`/${window?.contextPath}${url}`}>{t(text)}</a> : <Link to={`/${window?.contextPath}${url}`}>{t(text)}</Link>}
                     </span>
                     );
                 })}
