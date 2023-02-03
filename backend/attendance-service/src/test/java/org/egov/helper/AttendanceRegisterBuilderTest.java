@@ -26,6 +26,13 @@ public class AttendanceRegisterBuilderTest {
         return attendanceRegister;
     }
 
+    public static AttendanceRegister getAttendanceRegisterWithoutEndDate(){
+        AttendanceRegister attendanceRegister=AttendanceRegister.builder().id("97ed7da3-753e-426a-b0b0-95dd61029785")
+                .registerNumber("RGN-67124").name("self help3").startDate(new BigDecimal("1673740800000"))
+                .auditDetails(getAuditDetails()).attendees(getAttendees())
+                .tenantId("pb.amritsar").staff(getStaff()).build();
+        return attendanceRegister;
+    }
     public static List<IndividualEntry> getAttendees() {
         IndividualEntry attendeeOne = IndividualEntry.builder().tenantId("pb.amritsar").id("047dc725-3088-45b4-877a-6bfbaf377df9")
                 .individualId("8ybdd-3rdh3").registerId("97ed7da3-753e-426a-b0b0-95dd61029785").enrollmentDate(new BigDecimal("1672129633890"))

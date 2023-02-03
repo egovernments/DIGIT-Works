@@ -317,7 +317,6 @@ public class AttendanceLogServiceValidatorTest {
     public void validateCreateAttendanceLogRequest_validateDocumentIds_1(){
         AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
         when(config.getDocumentIdVerificationRequired()).thenReturn("TRUE");
-
         CustomException exception = assertThrows(CustomException.class, ( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateDocumentIds", attendanceLogRequest)));
         assertTrue(exception.getCode().equals("SERVICE_UNAVAILABLE"));
     }
@@ -327,7 +326,6 @@ public class AttendanceLogServiceValidatorTest {
     public void validateCreateAttendanceLogRequest_validateDocumentIds_2(){
         AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
         when(config.getDocumentIdVerificationRequired()).thenReturn("FALSE");
-
         assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateDocumentIds", attendanceLogRequest));
     }
 
@@ -335,11 +333,121 @@ public class AttendanceLogServiceValidatorTest {
     @Test
     public void validateCreateAttendanceLogRequest_validateAttendanceLogTimeWithRegisterStartEndDate_1(){
         AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
-        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
         AttendanceLog attendanceLog = attendanceLogRequest.getAttendance().get(0);
         attendanceLog.setTime(new BigDecimal("1673740800000"));
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
         assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendanceLogTimeWithRegisterStartEndDate",attendanceRegister, attendanceLogRequest));
     }
 
+    @DisplayName("Method validateAttendanceLogTimeWithRegisterStartEndDate: should through exception with error code INVALID_ATTENDANCE_TIME")
+    @Test
+    public void validateCreateAttendanceLogRequest_validateAttendanceLogTimeWithRegisterStartEndDate_2(){
+        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
+        AttendanceLog attendanceLog = attendanceLogRequest.getAttendance().get(0);
+        attendanceLog.setTime(new BigDecimal("1573740800000"));
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
+        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendanceLogTimeWithRegisterStartEndDate",attendanceRegister, attendanceLogRequest));
+        assertTrue(exception.getCode().equals("INVALID_ATTENDANCE_TIME"));
+    }
 
+    @DisplayName("Method validateAttendanceLogTimeWithRegisterStartEndDate: should through exception with error code INVALID_ATTENDANCE_TIME")
+    @Test
+    public void validateCreateAttendanceLogRequest_validateAttendanceLogTimeWithRegisterStartEndDate_3(){
+        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
+        AttendanceLog attendanceLog = attendanceLogRequest.getAttendance().get(0);
+        attendanceLog.setTime(new BigDecimal("1792057600000"));
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
+        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendanceLogTimeWithRegisterStartEndDate",attendanceRegister, attendanceLogRequest));
+        assertTrue(exception.getCode().equals("INVALID_ATTENDANCE_TIME"));
+    }
+
+    @DisplayName("Method validateAttendanceLogTimeWithRegisterStartEndDate: should run successfully")
+    @Test
+    public void validateCreateAttendanceLogRequest_validateAttendanceLogTimeWithRegisterStartEndDate_4(){
+        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
+        AttendanceLog attendanceLog = attendanceLogRequest.getAttendance().get(0);
+        attendanceLog.setTime(new BigDecimal("1673740800000"));
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
+        assertDoesNotThrow(()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendanceLogTimeWithRegisterStartEndDate",attendanceRegister, attendanceLogRequest));
+    }
+
+    @DisplayName("Method validateAttendanceLogTimeWithRegisterStartEndDate: should run successfully")
+    @Test
+    public void validateCreateAttendanceLogRequest_validateAttendanceLogTimeWithRegisterStartEndDate_5(){
+        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
+        AttendanceLog attendanceLog = attendanceLogRequest.getAttendance().get(0);
+        attendanceLog.setTime(new BigDecimal("1692057600000"));
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
+        assertDoesNotThrow(()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendanceLogTimeWithRegisterStartEndDate",attendanceRegister, attendanceLogRequest));
+    }
+
+    @DisplayName("Method validateAttendanceLogTimeWithRegisterStartEndDate: should run successfully")
+    @Test
+    public void validateCreateAttendanceLogRequest_validateAttendanceLogTimeWithRegisterStartEndDate_6(){
+        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
+        AttendanceLog attendanceLog = attendanceLogRequest.getAttendance().get(0);
+        attendanceLog.setTime(new BigDecimal("1673740800000"));
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegisterWithoutEndDate();
+        assertDoesNotThrow(()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendanceLogTimeWithRegisterStartEndDate",attendanceRegister, attendanceLogRequest));
+    }
+
+    @DisplayName("Method validateAttendanceLogTimeWithRegisterStartEndDate: should run successfully")
+    @Test
+    public void validateCreateAttendanceLogRequest_validateAttendanceLogTimeWithRegisterStartEndDate_7(){
+        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
+        AttendanceLog attendanceLog = attendanceLogRequest.getAttendance().get(0);
+        attendanceLog.setTime(new BigDecimal("1773740800000"));
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegisterWithoutEndDate();
+        assertDoesNotThrow(()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendanceLogTimeWithRegisterStartEndDate",attendanceRegister, attendanceLogRequest));
+    }
+
+    @DisplayName("Method validateAttendanceLogTimeWithRegisterStartEndDate: should run successfully")
+    @Test
+    public void validateCreateAttendanceLogRequest_validateAttendanceLogTimeWithRegisterStartEndDate_8(){
+        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
+        AttendanceLog attendanceLog = attendanceLogRequest.getAttendance().get(0);
+        attendanceLog.setTime(new BigDecimal("1573740800000"));
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegisterWithoutEndDate();
+        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendanceLogTimeWithRegisterStartEndDate",attendanceRegister, attendanceLogRequest));
+        assertTrue(exception.getCode().equals("INVALID_ATTENDANCE_TIME"));
+    }
+    @DisplayName("Method checkRegisterStatus: should run successfully")
+    @Test
+    public void validateCreateAttendanceLogRequest_checkRegisterStatus_1(){
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
+        attendanceRegister.setStatus(Status.ACTIVE);
+        assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "checkRegisterStatus",attendanceRegister));
+    }
+    @DisplayName("Method checkRegisterStatus: should through exception with error code INACTIVE_REGISTER")
+    @Test
+    public void validateCreateAttendanceLogRequest_checkRegisterStatus_2(){
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
+        attendanceRegister.setStatus(Status.INACTIVE);
+        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "checkRegisterStatus",attendanceRegister));
+        assertTrue(exception.getCode().equals("INACTIVE_REGISTER"));
+    }
+
+    @DisplayName("Method checkRegisterExistence: should run successfully")
+    @Test
+    public void validateCreateAttendanceLogRequest_checkRegisterExistence_1(){
+        AttendanceRegister attendanceRegister = AttendanceRegisterBuilderTest.getAttendanceRegister();
+        List<AttendanceRegister> attendanceRegisters = Collections.singletonList(attendanceRegister);
+        assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "checkRegisterExistence",attendanceRegisters,"TestRegisterId"));
+    }
+
+    @DisplayName("Method checkRegisterExistence: should through exception with error code REGISTER_NOT_FOUND")
+    @Test
+    public void validateCreateAttendanceLogRequest_checkRegisterExistence_2(){
+        List<AttendanceRegister> attendanceRegisters = null;
+        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "checkRegisterExistence",attendanceRegisters,"TestRegisterId"));
+        assertTrue(exception.getCode().equals("REGISTER_NOT_FOUND"));
+    }
+
+    @DisplayName("Method checkRegisterExistence: should through exception with error code REGISTER_NOT_FOUND")
+    @Test
+    public void validateCreateAttendanceLogRequest_checkRegisterExistence_3(){
+        List<AttendanceRegister> attendanceRegisters = new ArrayList<>();
+        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "checkRegisterExistence",attendanceRegisters,"TestRegisterId"));
+        assertTrue(exception.getCode().equals("REGISTER_NOT_FOUND"));
+    }
 }

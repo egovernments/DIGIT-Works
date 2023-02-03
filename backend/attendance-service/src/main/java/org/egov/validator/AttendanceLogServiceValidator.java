@@ -152,14 +152,14 @@ public class AttendanceLogServiceValidator {
         if(Status.INACTIVE.equals(attendanceRegister.getStatus())){
             String registerId = attendanceRegister.getId();
             log.error("Register ["+registerId+"] is inactive");
-            throw new CustomException("INVALID_REGISTERID", "Given RegisterId ["+registerId+"] is inactive");
+            throw new CustomException("INACTIVE_REGISTER", "Given RegisterId ["+registerId+"] is inactive");
         }
     }
 
     private void checkRegisterExistence(List<AttendanceRegister> attendanceRegisters,String registerId) {
         if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
             log.error("Register ["+registerId+"] does not exists");
-            throw new CustomException("INVALID_REGISTERID", "Given RegisterId ["+registerId+"] does not exists");
+            throw new CustomException("REGISTER_NOT_FOUND", "Given RegisterId ["+registerId+"] does not exists");
         }
     }
 
@@ -182,7 +182,7 @@ public class AttendanceLogServiceValidator {
         Instant registerStartTime = Instant.ofEpochMilli(attendanceRegister.getStartDate().longValue());
 
         Instant registerEndTime = null;
-        if(registerEndTime != null)
+        if(attendanceRegister.getEndDate() != null)
             registerEndTime = Instant.ofEpochMilli(attendanceRegister.getEndDate().longValue());
 
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
