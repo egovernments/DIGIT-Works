@@ -35,6 +35,10 @@ public class EstimateServiceConfiguration {
     private String saveEstimateTopic;
     @Value("${estimate.kafka.update.topic}")
     private String updateEstimateTopic;
+
+    @Value("${estimate.kafka.enrich.topic}")
+    private String enrichEstimateTopic;
+
     //id format
     @Value("${egov.idgen.estimate.number.name}")
     private String idgenEstimateNumberName;

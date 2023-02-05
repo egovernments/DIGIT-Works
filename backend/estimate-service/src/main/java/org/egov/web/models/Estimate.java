@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.ProcessInstance;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -73,6 +74,13 @@ public class Estimate {
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
+
+    @JsonProperty("project")
+    private Project project = null;
+
+    @JsonProperty("ProcessInstances")
+    @Valid
+    private List<ProcessInstance> processInstances = null;
 
 
     public Estimate addEstimateDetailsItem(EstimateDetail estimateDetailsItem) {

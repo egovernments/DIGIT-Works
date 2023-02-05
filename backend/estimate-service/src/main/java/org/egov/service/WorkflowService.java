@@ -247,7 +247,43 @@ public class WorkflowService {
         url.append("&businessIds=");
         url.append(estimateNumber);
         return url;
+    }
 
+    public ProcessInstanceResponse getProcessInstanceOfWorkFlowWithoutHistory(EstimateRequest estimateRequest) {
+        log.info("WorkflowService::getProcessInstanceOfWorkFlowWithoutHistory");
+        Estimate estimate = estimateRequest.getEstimate();
+        RequestInfo requestInfo = estimateRequest.getRequestInfo();
+
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+        StringBuilder searchUrl = getProcessInstanceSearchURLWithHistory(
+                estimate.getTenantId()
+                , StringUtils.join(estimate.getEstimateNumber(), ',')
+                , Boolean.FALSE);
+
+        Object result = repository.fetchResult(searchUrl, requestInfoWrapper);
+
+        ProcessInstanceResponse processInstanceResponse = null;
+        try {
+            processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
+        }
+
+        if (CollectionUtils.isEmpty(processInstanceResponse.getProcessInstances()))
+            throw new CustomException("WORKFLOW_NOT_FOUND", "The workflow object is not found");
+
+        return processInstanceResponse;
+    }
+
+    public StringBuilder getProcessInstanceSearchURLWithHistory(String tenantId, String estimateNumber, boolean history) {
+        log.info("WorkflowService::getprocessInstanceSearchURLWithHistory");
+        StringBuilder url = new StringBuilder();
+        url.append(serviceConfiguration.getWfHost())
+                .append(serviceConfiguration.getWfProcessInstanceSearchPath())
+                .append("?tenantId=").append(tenantId)
+                .append("&businessIds=").append(estimateNumber)
+                .append("&history").append(history);
+        return url;
     }
 
 }
