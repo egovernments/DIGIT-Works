@@ -42,6 +42,7 @@ public class MDMSUtils {
      * @return
      */
     public Object mDMSCall(EstimateRequest request, String tenantId) {
+        log.info("MDMSUtils::mDMSCall");
         RequestInfo requestInfo = request.getRequestInfo();
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId, request);
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
@@ -57,7 +58,7 @@ public class MDMSUtils {
      * @return
      */
     public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId, EstimateRequest request) {
-
+        log.info("MDMSUtils::getMDMSRequest");
         ModuleDetail estimateDepartmentModuleDetail = getDepartmentModuleRequestData(request);
         ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(request);
         ModuleDetail estimateSorIdModuleDetail = getSorIdModuleRequestData(request);
@@ -72,11 +73,14 @@ public class MDMSUtils {
 
         MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
                 .requestInfo(requestInfo).build();
+
+        log.info("MDMSUtils::search MDMS request -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
         return mdmsCriteriaReq;
     }
 
 
     private ModuleDetail getSorIdModuleRequestData(EstimateRequest request) {
+        log.info("MDMSUtils::getSorIdModuleRequestData");
         List<MasterDetail> estimateSorIdMasterDetails = new ArrayList<>();
 
         MasterDetail departmentMasterDetails = MasterDetail.builder().name(MASTER_SOR_ID)
@@ -91,7 +95,7 @@ public class MDMSUtils {
     }
 
     private ModuleDetail getDepartmentModuleRequestData(EstimateRequest request) {
-
+        log.info("MDMSUtils::getDepartmentModuleRequestData");
         Estimate estimate = request.getEstimate();
         List<MasterDetail> estimateDepartmentMasterDetails = new ArrayList<>();
 
@@ -107,6 +111,7 @@ public class MDMSUtils {
     }
 
     private ModuleDetail getTenantModuleRequestData(EstimateRequest request) {
+        log.info("MDMSUtils::getTenantModuleRequestData");
         Estimate estimate = request.getEstimate();
         List<MasterDetail> estimateTenantMasterDetails = new ArrayList<>();
 

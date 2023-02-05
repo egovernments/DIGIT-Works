@@ -4,6 +4,7 @@ package org.egov.repository;
 import digit.models.coremodels.IdGenerationRequest;
 import digit.models.coremodels.IdGenerationResponse;
 import digit.models.coremodels.IdRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.tracer.model.CustomException;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
+@Slf4j
 public class IdGenRepository {
 
 
@@ -40,7 +42,7 @@ public class IdGenRepository {
      * @return
      */
     public IdGenerationResponse getId(RequestInfo requestInfo, String tenantId, String name, String format, int count) {
-
+        log.info("IdGenRepository::getId");
         List<IdRequest> reqList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             reqList.add(IdRequest.builder().idName(name).format(format).tenantId(tenantId).build());

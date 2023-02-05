@@ -2,6 +2,7 @@ package org.egov.service;
 
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.config.EstimateServiceConfiguration;
@@ -22,6 +23,7 @@ import static org.egov.util.EstimateServiceConstant.ACTION_REJECT;
 import static org.egov.util.EstimateServiceConstant.ALLOW_EDITING_ROLES;
 
 @Service
+@Slf4j
 public class EnrichmentService {
 
     @Autowired
@@ -44,6 +46,7 @@ public class EnrichmentService {
      * @param request
      */
     public void enrichEstimateOnCreate(EstimateRequest request) {
+        log.info("EnrichmentService::enrichEstimateOnCreate");
         RequestInfo requestInfo = request.getRequestInfo();
         Estimate estimate = request.getEstimate();
         List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
@@ -92,6 +95,7 @@ public class EnrichmentService {
      */
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey,
                                    String idformat, int count) {
+        log.info("EnrichmentService::getIdList");
         List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count) != null
                 ? idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses() : new ArrayList<>();
 
@@ -110,6 +114,7 @@ public class EnrichmentService {
      * @param searchCriteria
      */
     public void enrichEstimateOnSearch(RequestInfo requestInfo, EstimateSearchCriteria searchCriteria) {
+        log.info("EnrichmentService::enrichEstimateOnSearch");
         if (searchCriteria.getLimit() == null)
             searchCriteria.setLimit(config.getDefaultLimit());
 
@@ -127,6 +132,7 @@ public class EnrichmentService {
      * @param request
      */
     public void enrichEstimateOnUpdate(EstimateRequest request) {
+        log.info("EnrichmentService::enrichEstimateOnUpdate");
         RequestInfo requestInfo = request.getRequestInfo();
         Estimate estimate = request.getEstimate();
 
@@ -160,6 +166,7 @@ public class EnrichmentService {
      * @param request
      */
     private void enrichUpdateEstimateWorkFlowForActionReject(EstimateRequest request) {
+        log.info("EnrichmentService::enrichUpdateEstimateWorkFlowForActionReject");
         Workflow workflow = request.getWorkflow();
         AuditDetails auditDetails = request.getEstimate().getAuditDetails();
         List<String> updatedAssignees = new ArrayList<>();
@@ -176,6 +183,7 @@ public class EnrichmentService {
      * @return
      */
     private boolean enrichEstimateBasedOnRole(RequestInfo requestInfo) {
+        log.info("EnrichmentService::enrichEstimateBasedOnRole");
         User userInfo = requestInfo.getUserInfo();
         boolean rolePresent = false;
         if (userInfo.getRoles() != null && !userInfo.getRoles().isEmpty()) {

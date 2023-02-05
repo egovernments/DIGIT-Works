@@ -44,6 +44,7 @@ public class ProjectUtil {
      * @return
      */
     public Object getProjectDetails(EstimateRequest estimateRequest) {
+        log.info("ProjectUtil::getProjectDetails");
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
         String projectId = estimateRequest.getEstimate().getProjectId();
         String tenantId = estimateRequest.getEstimate().getTenantId();
@@ -71,7 +72,7 @@ public class ProjectUtil {
         projectSearchReqNode.putPOJO(REQUEST_INFO, requestInfo);
         projectSearchReqNode.putPOJO(PROJECTS, projectArrayNode);
 
-
+        log.info("ProjectUtil::search project request -> {}",projectSearchReqNode);
         Object projectRes = requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
 
         return projectRes;

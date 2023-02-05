@@ -3,6 +3,7 @@ package org.egov.repository.rowmapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.Address;
@@ -22,6 +23,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Repository
+@Slf4j
 public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
     @Autowired
@@ -29,7 +31,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
     @Override
     public List<Estimate> extractData(ResultSet rs) throws SQLException, DataAccessException {
-
+        log.info("EstimateRowMapper::extractData");
         Map<String, Estimate> estimateMap = new LinkedHashMap<>();
         Map<String, EstimateDetail> estimateDetailMap = new LinkedHashMap<>();
         boolean isAddressAdded = false;
@@ -80,6 +82,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
     }
 
     private Address getEstimateAddress(String id, String tenantId, ResultSet rs) throws SQLException {
+        log.debug("EstimateRowMapper::getEstimateAddress");
         Address address = Address.builder()
                 .id(rs.getString("estAddId"))
                 .tenantId(tenantId).addressLine1(rs.getString("address_line_1"))
@@ -94,6 +97,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
     }
 
     private void addEstimateDetails(ResultSet rs, Map<String, EstimateDetail> estimateDetailMap, Estimate estimate) throws SQLException {
+        log.info("EstimateRowMapper::addEstimateDetails");
         String estDetailsId = rs.getString("estDetailId");
         EstimateDetail estimateDetail = EstimateDetail.builder()
                 .id(estDetailsId)
@@ -154,6 +158,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {
+        log.debug("EstimateRowMapper::getAdditionalDetail");
         JsonNode additionalDetails = null;
         try {
             PGobject obj = (PGobject) rs.getObject(columnName);

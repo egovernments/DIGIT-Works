@@ -2,6 +2,7 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -18,6 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class WorkflowService {
 
     @Autowired
@@ -35,6 +37,7 @@ public class WorkflowService {
      *
      */
     public BusinessService getBusinessService(EstimateRequest estimateRequest) {
+        log.info("WorkflowService::getBusinessService");
         String tenantId = estimateRequest.getEstimate().getTenantId();
         StringBuilder url = getSearchURLWithParams(tenantId, serviceConfiguration.getEstimateWFBusinessService());
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
@@ -58,6 +61,7 @@ public class WorkflowService {
      *
      */
     public String updateWorkflowStatus(EstimateRequest estimateRequest) {
+        log.info("WorkflowService::updateWorkflowStatus");
         ProcessInstance processInstance = getProcessInstanceForEstimate(estimateRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(estimateRequest.getRequestInfo(), Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
@@ -84,7 +88,7 @@ public class WorkflowService {
      */
 
     private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
-
+        log.info("WorkflowService::getSearchURLWithParams");
         StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
         url.append(serviceConfiguration.getWfBusinessServiceSearchPath());
         url.append("?tenantId=");
@@ -95,8 +99,7 @@ public class WorkflowService {
     }
 
     public List<EstimateRequest> enrichWorkflow(RequestInfo requestInfo, List<EstimateRequest> estimateRequestList) {
-
-        //
+        log.info("WorkflowService::enrichWorkflow");
         Map<String, List<EstimateRequest>> tenantIdToServiceWrapperMap = getTenantIdToServiceWrapperMap(estimateRequestList);
 
         List<EstimateRequest> enrichedServiceWrappers = new ArrayList<>();
@@ -141,6 +144,7 @@ public class WorkflowService {
     }
 
     private Map<String, List<EstimateRequest>> getTenantIdToServiceWrapperMap(List<EstimateRequest> estimateRequestList) {
+        log.info("WorkflowService::getTenantIdToServiceWrapperMap");
         Map<String, List<EstimateRequest>> resultMap = new HashMap<>();
         for (EstimateRequest estimateRequest : estimateRequestList) {
             if (resultMap.containsKey(estimateRequest.getEstimate().getTenantId())) {
@@ -161,7 +165,7 @@ public class WorkflowService {
      */
 
     private ProcessInstance getProcessInstanceForEstimate(EstimateRequest request) {
-
+        log.info("WorkflowService::getProcessInstanceForEstimate");
         Estimate estimate = request.getEstimate();
         org.egov.web.models.Workflow workflow = request.getWorkflow();
 
@@ -194,7 +198,7 @@ public class WorkflowService {
      */
 
     public Map<String, org.egov.web.models.Workflow> getWorkflow(List<ProcessInstance> processInstances) {
-
+        log.info("WorkflowService::getWorkflow");
         Map<String, org.egov.web.models.Workflow> businessIdToWorkflow = new HashMap<>();
 
         processInstances.forEach(processInstance -> {
@@ -225,7 +229,7 @@ public class WorkflowService {
      * and return wf-response to sets the resultant status
      */
     private State callWorkFlow(ProcessInstanceRequest workflowReq) {
-
+        log.info("WorkflowService::callWorkFlow");
         ProcessInstanceResponse response = null;
         StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost().concat(serviceConfiguration.getWfTransitionPath()));
         Object optional = repository.fetchResult(url, workflowReq);
@@ -235,7 +239,7 @@ public class WorkflowService {
 
 
     public StringBuilder getprocessInstanceSearchURL(String tenantId, String estimateNumber) {
-
+        log.info("WorkflowService::getprocessInstanceSearchURL");
         StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
         url.append(serviceConfiguration.getWfProcessInstanceSearchPath());
         url.append("?tenantId=");

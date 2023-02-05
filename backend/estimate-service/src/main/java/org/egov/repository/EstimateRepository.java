@@ -1,6 +1,7 @@
 package org.egov.repository;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.repository.rowmapper.EstimateQueryBuilder;
 import org.egov.repository.rowmapper.EstimateRowMapper;
 import org.egov.web.models.Estimate;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class EstimateRepository {
 
     @Autowired
@@ -32,6 +34,7 @@ public class EstimateRepository {
      * @return
      */
     public List<Estimate> getEstimate(EstimateSearchCriteria searchCriteria) {
+        log.info("EstimateRepository::getEstimate");
         List<Object> preparedStmtList = new ArrayList<>();
         if (searchCriteria.getIsCountNeeded() == null) {
             searchCriteria.setIsCountNeeded(Boolean.FALSE);
@@ -48,6 +51,7 @@ public class EstimateRepository {
      * @return
      */
     public Integer getEstimateCount(EstimateSearchCriteria criteria) {
+        log.info("EstimateRepository::getEstimateCount");
         List<Object> preparedStatement = new ArrayList<>();
         String query = queryBuilder.getSearchCountQueryString(criteria, preparedStatement);
 

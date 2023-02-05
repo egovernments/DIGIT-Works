@@ -45,6 +45,7 @@ public class EstimateServiceValidator {
      * @param request
      */
     public void validateEstimateOnCreate(EstimateRequest request) {
+        log.info("EstimateServiceValidator::validateEstimateOnCreate");
         Map<String, String> errorMap = new HashMap<>();
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();
@@ -68,6 +69,7 @@ public class EstimateServiceValidator {
     }
 
     private void validateProjectId(EstimateRequest estimateRequest, Map<String, String> errorMap) {
+        log.info("EstimateServiceValidator::validateProjectId");
         final String projectJsonPath = "$.Projects.*";
         List<Object> projects = null;
 
@@ -86,6 +88,7 @@ public class EstimateServiceValidator {
     }
 
     private void validateWorkFlow(Workflow workflow, Map<String, String> errorMap) {
+        log.info("EstimateServiceValidator::validateWorkFlow");
         if (workflow == null) {
             throw new CustomException("WORK_FLOW", "Work flow is mandatory");
         }
@@ -100,6 +103,7 @@ public class EstimateServiceValidator {
     }
 
     private void validateEstimate(Estimate estimate, Map<String, String> errorMap) {
+        log.info("EstimateServiceValidator::validateEstimate");
         if (estimate == null) {
             throw new CustomException("ESTIMATE", "Estimate is mandatory");
         }
@@ -155,6 +159,7 @@ public class EstimateServiceValidator {
     }
 
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
+        log.info("EstimateServiceValidator::validateRequestInfo");
         if (requestInfo == null) {
             throw new CustomException("REQUEST_INFO", "Request info is mandatory");
         }
@@ -167,6 +172,7 @@ public class EstimateServiceValidator {
     }
 
     private void validateMDMSData(Estimate estimate, Object mdmsData, Map<String, String> errorMap) {
+        log.info("EstimateServiceValidator::validateMDMSData");
         List<String> reqSorIds = new ArrayList<>();
         if (estimate.getEstimateDetails() != null && !estimate.getEstimateDetails().isEmpty()) {
             reqSorIds = estimate.getEstimateDetails().stream()
@@ -214,6 +220,7 @@ public class EstimateServiceValidator {
      * @param searchCriteria
      */
     public void validateEstimateOnSearch(RequestInfoWrapper requestInfoWrapper, EstimateSearchCriteria searchCriteria) {
+        log.info("EstimateServiceValidator::validateEstimateOnSearch");
         if (searchCriteria == null || requestInfoWrapper == null || requestInfoWrapper.getRequestInfo() == null) {
             throw new CustomException("ESTIMATE_SEARCH_CRITERIA_REQUEST", "Estimate search criteria request is mandatory");
         }
@@ -233,6 +240,7 @@ public class EstimateServiceValidator {
      * @param request
      */
     public void validateEstimateOnUpdate(EstimateRequest request) {
+        log.info("EstimateServiceValidator::validateEstimateOnUpdate");
         Map<String, String> errorMap = new HashMap<>();
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();

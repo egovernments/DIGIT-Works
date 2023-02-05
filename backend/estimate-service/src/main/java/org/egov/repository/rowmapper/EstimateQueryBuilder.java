@@ -1,5 +1,6 @@
 package org.egov.repository.rowmapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.tracer.model.CustomException;
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
+@Slf4j
 public class EstimateQueryBuilder {
 
     @Autowired
@@ -63,6 +65,7 @@ public class EstimateQueryBuilder {
     }
 
     public String getEstimateQuery(EstimateSearchCriteria searchCriteria, List<Object> preparedStmtList) {
+        log.info("EstimateQueryBuilder::getEstimateQuery");
         StringBuilder queryBuilder = null;
         if (!searchCriteria.getIsCountNeeded())
             queryBuilder = new StringBuilder(FETCH_ESTIMATE_QUERY);
@@ -140,7 +143,7 @@ public class EstimateQueryBuilder {
 
     //TODO : check -> do we need to orderby estimate.totalEstimateAmount ?
     private void addOrderByClause(StringBuilder queryBuilder, EstimateSearchCriteria criteria) {
-
+        log.info("EstimateQueryBuilder::getEstimateQuery");
         //default
         if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
             queryBuilder.append(" ORDER BY est.created_time ");
@@ -191,6 +194,7 @@ public class EstimateQueryBuilder {
 
     private String addPaginationWrapper(String query, List<Object> preparedStmtList,
                                         EstimateSearchCriteria criteria) {
+        log.info("EstimateQueryBuilder::addPaginationWrapper");
         int limit = config.getDefaultLimit();
         int offset = config.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
@@ -212,6 +216,7 @@ public class EstimateQueryBuilder {
     }
 
     public String getSearchCountQueryString(EstimateSearchCriteria criteria, List<Object> preparedStmtList) {
+        log.info("EstimateQueryBuilder::getSearchCountQueryString");
         String query = getEstimateQuery(criteria, preparedStmtList);
         if (query != null)
             return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);

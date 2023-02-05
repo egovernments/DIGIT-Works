@@ -48,6 +48,7 @@ public class EstimateService {
      * @return
      */
     public EstimateRequest createEstimate(EstimateRequest estimateRequest) {
+        log.info("EstimateService::createEstimate");
         serviceValidator.validateEstimateOnCreate(estimateRequest);
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
         workflowService.updateWorkflowStatus(estimateRequest);
@@ -64,6 +65,7 @@ public class EstimateService {
      * @return
      */
     public List<Estimate> searchEstimate(RequestInfoWrapper requestInfoWrapper, EstimateSearchCriteria searchCriteria) {
+        log.info("EstimateService::searchEstimate");
         serviceValidator.validateEstimateOnSearch(requestInfoWrapper, searchCriteria);
         enrichmentService.enrichEstimateOnSearch(requestInfoWrapper.getRequestInfo(), searchCriteria);
 
@@ -83,6 +85,7 @@ public class EstimateService {
      * @return Count of List of matching estimate application
      */
     public Integer countAllEstimateApplications(EstimateSearchCriteria searchCriteria) {
+        log.info("EstimateService::countAllEstimateApplications");
         searchCriteria.setIsCountNeeded(Boolean.TRUE);
         return estimateRepository.getEstimateCount(searchCriteria);
     }
@@ -94,6 +97,7 @@ public class EstimateService {
      * @return
      */
     public EstimateRequest updateEstimate(EstimateRequest estimateRequest) {
+        log.info("EstimateService::updateEstimate");
         serviceValidator.validateEstimateOnUpdate(estimateRequest);
         enrichmentService.enrichEstimateOnUpdate(estimateRequest);
         workflowService.updateWorkflowStatus(estimateRequest);

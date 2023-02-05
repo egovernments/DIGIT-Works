@@ -23,6 +23,7 @@ public class ServiceRequestRepository {
 
 
     public Object fetchResult(StringBuilder uri, Object request) {
+        log.info("ServiceRequestRepository::fetchResult");
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         Object response = null;
         try {
