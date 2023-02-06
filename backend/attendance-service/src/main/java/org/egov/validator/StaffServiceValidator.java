@@ -2,7 +2,6 @@ package org.egov.validator;
 
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.service.AttendanceRegisterService;
@@ -16,10 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
 import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
@@ -47,14 +43,13 @@ public class StaffServiceValidator {
 
         Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
 
-        //check tenant Id
-        log.info("validate tenantId with MDMS");
-        validateMDMSData(tenantId, mdmsData, errorMap);
-
-
         //validate request-info
         log.info("validate request info coming from api request");
         validateRequestInfo(requestInfo, errorMap);
+
+        //check tenant Id
+        log.info("validate tenantId with MDMS");
+        validateMDMSData(tenantId, mdmsData, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -76,10 +71,10 @@ public class StaffServiceValidator {
     }
 
 
-    public void validateStaffPermissionRequestParameters(StaffPermissionRequest staffPermissionRequest) {
+    public void validateStaffPermissionRequestParameters(StaffPermissionRequest staffPermissionRequest, Map<String, String> errorMap) {
         List<StaffPermission> staffPermissionList = staffPermissionRequest.getStaff();
 
-        if (ObjectUtils.isEmpty(staffPermissionList) || ObjectUtils.isEmpty(staffPermissionList.get(0))) {
+        if (staffPermissionList == null || staffPermissionList.isEmpty()) {
             log.error("Staff Object is empty in staff request");
             throw new CustomException("STAFF", "Staff is mandatory");
         }
@@ -88,47 +83,56 @@ public class StaffServiceValidator {
         for (StaffPermission staffPermission : staffPermissionList) {
 
             //validate request parameters for each staff object
-
-            if (ObjectUtils.isEmpty(staffPermission)) {
-                log.error("Staff Object is empty in staff request");
-                throw new CustomException("STAFF", "Staff is mandatory");
-            }
             if (StringUtils.isBlank(staffPermission.getRegisterId())) {
                 log.error("Register id is empty in staff request");
-                throw new CustomException("REGISTER_ID", "Register id is mandatory");
+                errorMap.put("REGISTER_ID", "Register id is mandatory");
             }
 
             if (StringUtils.isBlank(staffPermission.getUserId())) {
                 log.error("User id is empty in staff request");
-                throw new CustomException("USER_ID", "User id is mandatory");
+                errorMap.put("USER_ID", "User id is mandatory");
             }
 
             if (StringUtils.isBlank(staffPermission.getTenantId())) {
                 log.error("Tenant id is empty in staff request");
-                throw new CustomException("TENANT_ID", "Tenant id is mandatory");
+                errorMap.put("TENANT_ID", "Tenant id is mandatory");
             }
+        }
 
-            //validate if all staff in the list have the same tenant id
-            if (!staffPermission.getTenantId().equals(baseTenantId)) {
+        if (!errorMap.isEmpty()) {
+            log.error("Attendee request validation failed");
+            throw new CustomException(errorMap);
+        }
+
+        validateTenantIds(staffPermissionRequest, baseTenantId);
+        validateDuplicateStaffObjects(staffPermissionRequest);
+    }
+
+    public void validateTenantIds(StaffPermissionRequest staffPermissionRequest, String tenantId) {
+        List<StaffPermission> staffPermissionList = staffPermissionRequest.getStaff();
+        //validate if all staff in the list have the same tenant id
+        for (StaffPermission staffPermission : staffPermissionList) {
+            if (!staffPermission.getTenantId().equals(tenantId)) {
                 log.error("All staff objects do not have the same tenant id");
                 throw new CustomException("TENANT_ID", "All Staff to be enrolled or de enrolled must have the same tenant id. Please raise new request for different tenant id");
             }
-
         }
 
-        //check for duplicate staff objects (with same registerId and userId)
-        //1. create unique identity list
-        //2. check for duplicate entries
-        List<String> uniqueIds = new ArrayList<>();
+    }
+
+    public void validateDuplicateStaffObjects(StaffPermissionRequest staffPermissionRequest) {
+        List<StaffPermission> staffPermissionList = staffPermissionRequest.getStaff();
+
+        Set<String> uniqueIds = new HashSet<>();
         for (StaffPermission staffPermission : staffPermissionList) {
-            uniqueIds.add(staffPermission.getRegisterId() + " " + staffPermission.getUserId());
-        }
-        for (String id : uniqueIds) {
-            long count = uniqueIds.stream().filter(uniqueId -> id.equals(uniqueId)).count();
-            if (count > 1) {
+            String uniqueId = staffPermission.getRegisterId() + staffPermission.getUserId();
+            if (uniqueIds.isEmpty()) {
+                uniqueIds.add(staffPermission.getRegisterId() + staffPermission.getUserId());
+            } else if (uniqueIds.contains(uniqueId)) {
                 log.error("Duplicate Staff Objects found in request");
                 throw new CustomException("STAFF", "Duplicate Staff Objects present in request");
             }
+            uniqueIds.add(staffPermission.getRegisterId() + staffPermission.getUserId());
         }
     }
 

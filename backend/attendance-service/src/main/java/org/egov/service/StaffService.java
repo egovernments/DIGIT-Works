@@ -2,13 +2,11 @@ package org.egov.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.StaffEnrichmentService;
 import org.egov.kafka.Producer;
 import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
-import org.egov.tracer.model.CustomException;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.validator.StaffServiceValidator;
@@ -20,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -63,7 +63,8 @@ public class StaffService {
     public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest) {
         //incoming createRequest validation
         log.info("Validating incoming staff request");
-        staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
+        Map<String, String> errorMap = new HashMap<>();
+        staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap);
 
         //extract registerIds and staffUserIds from client request
         String tenantId = staffPermissionRequest.getStaff().get(0).getTenantId();
@@ -109,7 +110,8 @@ public class StaffService {
     public StaffPermissionRequest deleteAttendanceStaff(StaffPermissionRequest staffPermissionRequest) {
         //incoming deleteRequest validation
         log.info("Validating incoming staff request");
-        staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
+        Map<String, String> errorMap = new HashMap<>();
+        staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap);
 
         //extract registerIds and staffUserIds from client request
         String tenantId = staffPermissionRequest.getStaff().get(0).getTenantId();

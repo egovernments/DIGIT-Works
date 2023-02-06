@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -53,7 +55,8 @@ public class AttendeeService {
     public AttendeeCreateRequest createAttendee(AttendeeCreateRequest attendeeCreateRequest) {
         //incoming createRequest validation
         log.info("validating create attendee request parameters");
-        attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest);
+        Map<String, String> errorMap = new HashMap<>();
+        attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest, errorMap);
 
         //extract registerIds and attendee IndividualIds from client request
         String tenantId = attendeeCreateRequest.getAttendees().get(0).getTenantId();
@@ -99,7 +102,8 @@ public class AttendeeService {
     public AttendeeDeleteRequest deleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest) {
         //incoming deleteRequest validation
         log.info("validating delete attendee request parameters");
-        attendeeServiceValidator.validateAttendeeDeleteRequestParameters(attendeeDeleteRequest);
+        Map<String, String> errorMap = new HashMap<>();
+        attendeeServiceValidator.validateAttendeeDeleteRequestParameters(attendeeDeleteRequest, errorMap);
 
         //extract registerIds and attendee IndividualIds from client request
         String tenantId = attendeeDeleteRequest.getAttendees().get(0).getTenantId();

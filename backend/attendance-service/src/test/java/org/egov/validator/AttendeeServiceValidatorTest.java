@@ -2,12 +2,9 @@ package org.egov.validator;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.Main;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.helper.AttendanceRegisterBuilderTest;
 import org.egov.helper.AttendeeRequestBuilderTest;
-import org.egov.repository.AttendeeRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MDMSUtils;
 import org.egov.web.models.AttendanceRegister;
@@ -20,10 +17,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -56,8 +53,8 @@ public class AttendeeServiceValidatorTest {
 
         AttendeeCreateRequest attendeeCreateRequest = AttendeeRequestBuilderTest.getAttendeeCreateRequest();
         attendeeCreateRequest.setAttendees(null);
-
-        assertThrows(CustomException.class, () -> attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest));
+        HashMap<String, String> errorMap = new HashMap<>();
+        assertThrows(CustomException.class, () -> attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest, errorMap));
     }
 
     @DisplayName("register id is null in attendee request")
@@ -70,8 +67,8 @@ public class AttendeeServiceValidatorTest {
 
         AttendeeCreateRequest attendeeCreateRequest = AttendeeRequestBuilderTest.getAttendeeCreateRequest();
         attendeeCreateRequest.setAttendees(Collections.singletonList(attendee));
-
-        assertThrows(CustomException.class, () -> attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest));
+        HashMap<String, String> errorMap = new HashMap<>();
+        assertThrows(CustomException.class, () -> attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest, errorMap));
     }
 
     @DisplayName("individual id is null in attendee request")
@@ -84,8 +81,8 @@ public class AttendeeServiceValidatorTest {
 
         AttendeeCreateRequest attendeeCreateRequest = AttendeeRequestBuilderTest.getAttendeeCreateRequest();
         attendeeCreateRequest.setAttendees(Collections.singletonList(attendee));
-
-        assertThrows(CustomException.class, () -> attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest));
+        HashMap<String, String> errorMap = new HashMap<>();
+        assertThrows(CustomException.class, () -> attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest, errorMap));
     }
 
     @DisplayName("tenantId is null in attendee request")
@@ -98,8 +95,8 @@ public class AttendeeServiceValidatorTest {
 
         AttendeeCreateRequest attendeeCreateRequest = AttendeeRequestBuilderTest.getAttendeeCreateRequest();
         attendeeCreateRequest.setAttendees(Collections.singletonList(attendee));
-
-        assertThrows(CustomException.class, () -> attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest));
+        HashMap<String, String> errorMap = new HashMap<>();
+        assertThrows(CustomException.class, () -> attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest, errorMap));
     }
 
     @DisplayName("tenantId is same for all attendees in the attendee request")
@@ -109,8 +106,8 @@ public class AttendeeServiceValidatorTest {
         AttendeeCreateRequest attendeeCreateRequest = AttendeeRequestBuilderTest.getAttendeeCreateRequest();
         attendeeCreateRequest.getAttendees().get(0).setTenantId("od");
 
-
-        assertThrows(CustomException.class, () -> attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest));
+        HashMap<String, String> errorMap = new HashMap<>();
+        assertThrows(CustomException.class, () -> attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest, errorMap));
     }
 
     @DisplayName("verify tenantId with mdms when tenantId is present in mdms")

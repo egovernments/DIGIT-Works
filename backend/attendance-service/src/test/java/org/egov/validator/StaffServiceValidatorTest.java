@@ -9,7 +9,6 @@ import org.egov.service.AttendanceRegisterService;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MDMSUtils;
 import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.AttendeeCreateRequest;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,10 +20,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -57,8 +58,9 @@ public class StaffServiceValidatorTest {
 
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
         staffPermissionRequest.setStaff(null);
+        Map<String, String> errorMap = new HashMap<>();
 
-        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest));
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap));
     }
 
     @DisplayName("register id is null in staff Permission request")
@@ -67,8 +69,10 @@ public class StaffServiceValidatorTest {
 
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
         staffPermissionRequest.getStaff().get(0).setRegisterId(null);
+        Map<String, String> errorMap = new HashMap<>();
 
-        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest));
+
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap));
     }
 
     @DisplayName("tenant id is null in staff Permission request")
@@ -77,8 +81,10 @@ public class StaffServiceValidatorTest {
 
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
         staffPermissionRequest.getStaff().get(0).setTenantId(null);
+        Map<String, String> errorMap = new HashMap<>();
 
-        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest));
+
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap));
     }
 
     @DisplayName("All staff must have same tenant id in staff Permission request")
@@ -87,8 +93,10 @@ public class StaffServiceValidatorTest {
 
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
         staffPermissionRequest.getStaff().get(0).setTenantId("od");
+        Map<String, String> errorMap = new HashMap<>();
 
-        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest));
+
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap));
     }
 
     @DisplayName("Duplicate staff objects in staff Permission request")
@@ -100,9 +108,11 @@ public class StaffServiceValidatorTest {
                 .denrollmentDate(null).build();
 
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
-        staffPermissionRequest.getStaff().set(1,staffOne);
+        staffPermissionRequest.getStaff().set(1, staffOne);
+        Map<String, String> errorMap = new HashMap<>();
 
-        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest));
+
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap));
     }
 
 
@@ -127,7 +137,7 @@ public class StaffServiceValidatorTest {
         when(mdmsUtils.mDMSCall(any(RequestInfo.class),
                 any(String.class))).thenReturn(mdmsResponse);
 
-        assertThrows(CustomException.class,() -> staffServiceValidator.validateMDMSAndRequestInfoForStaff(staffPermissionRequest));
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateMDMSAndRequestInfoForStaff(staffPermissionRequest));
     }
 
     //check if staff tenant id is same as register tenant id
@@ -135,40 +145,39 @@ public class StaffServiceValidatorTest {
     @Test
     void shouldThrowExceptionWhenStaffTenantIdNotSameAsRegisterTenantId() {
 
-        StaffPermissionRequest staffPermissionRequest=StaffRequestBuilderTest.getStaffPermissionRequest();
-        List<StaffPermission> staffPermissionList=AttendanceRegisterBuilderTest.getStaff();
-        List<AttendanceRegister> attendanceRegisterList= AttendanceRegisterBuilderTest.getAttendanceRegisterList();
+        StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
+        List<StaffPermission> staffPermissionList = AttendanceRegisterBuilderTest.getStaff();
+        List<AttendanceRegister> attendanceRegisterList = AttendanceRegisterBuilderTest.getAttendanceRegisterList();
 
         attendanceRegisterList.get(0).setTenantId("od.odisha");
 
-        assertThrows(CustomException.class,() -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest,staffPermissionList,attendanceRegisterList));
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionList, attendanceRegisterList));
     }
 
     @DisplayName("check if register end date has passed")
     @Test
     void shouldThrowExceptionIfRegisterEndDateHasPassed() {
 
-        StaffPermissionRequest staffPermissionRequest=StaffRequestBuilderTest.getStaffPermissionRequest();
-        List<StaffPermission> staffPermissionList=AttendanceRegisterBuilderTest.getStaff();
-        List<AttendanceRegister> attendanceRegisterList= AttendanceRegisterBuilderTest.getAttendanceRegisterList();
+        StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
+        List<StaffPermission> staffPermissionList = AttendanceRegisterBuilderTest.getStaff();
+        List<AttendanceRegister> attendanceRegisterList = AttendanceRegisterBuilderTest.getAttendanceRegisterList();
 
         attendanceRegisterList.get(0).setEndDate(new BigDecimal("1547733538000"));
 
-        assertThrows(CustomException.class,() -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest,staffPermissionList,attendanceRegisterList));
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionList, attendanceRegisterList));
     }
 
     @DisplayName("check if staff is already enrolled to the given register")
     @Test
     void shouldThrowExceptionIfStaffIsAlreadyEnrolledToTheRegister() {
 
-        StaffPermissionRequest staffPermissionRequest=StaffRequestBuilderTest.getStaffPermissionRequest();
-        List<StaffPermission> staffPermissionList=AttendanceRegisterBuilderTest.getStaff();
-        List<AttendanceRegister> attendanceRegisterList= AttendanceRegisterBuilderTest.getAttendanceRegisterList();
+        StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
+        List<StaffPermission> staffPermissionList = AttendanceRegisterBuilderTest.getStaff();
+        List<AttendanceRegister> attendanceRegisterList = AttendanceRegisterBuilderTest.getAttendanceRegisterList();
 
 
-        assertThrows(CustomException.class,() -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest,staffPermissionList,attendanceRegisterList));
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionList, attendanceRegisterList));
     }
-
 
 
 }

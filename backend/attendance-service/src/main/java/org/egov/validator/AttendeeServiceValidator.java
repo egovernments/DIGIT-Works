@@ -2,7 +2,6 @@ package org.egov.validator;
 
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -16,10 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
 import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
@@ -31,68 +27,76 @@ public class AttendeeServiceValidator {
     @Autowired
     private MDMSUtils mdmsUtils;
 
-    public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
+    public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest, Map<String, String> errorMap) {
         List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
 
-        if (attendeeList == null || attendeeList.size() == 0) {
+        if (attendeeList == null || attendeeList.isEmpty()) {
             log.error("ATTENDEE Object is empty in attendee request");
-            throw new CustomException("ATTENDEES", "ATTENDEE object is mandatory");
+            errorMap.put("ATTENDANCE.TENANTID", "TenantId is mandatory");
         }
 
         String tenantId = attendeeList.get(0).getTenantId();
         for (IndividualEntry attendee : attendeeList) {
 
             //validate request parameters for each attendee object
-
-            if (ObjectUtils.isEmpty(attendee)) {
-                log.error("ATTENDEE Object is empty in attendee request");
-                throw new CustomException("ATTENDEE", "ATTENDEE is mandatory");
-            }
             if (StringUtils.isBlank(attendee.getRegisterId())) {
                 log.error("register id is empty in attendee request");
-                throw new CustomException("REGISTER_ID", "Register id is mandatory");
+                errorMap.put("REGISTER_ID", "Register id is mandatory");
             }
 
             if (StringUtils.isBlank(attendee.getIndividualId())) {
                 log.error("individual id is empty in attendee request");
-                throw new CustomException("INDIVIDUAL_ID", "Individual id is mandatory");
+                errorMap.put("INDIVIDUAL_ID", "Individual id is mandatory");
             }
 
             if (StringUtils.isBlank(attendee.getTenantId())) {
                 log.error("tenant id is empty in attendee request");
-                throw new CustomException("TENANT_ID", "Tenant id is mandatory");
+                errorMap.put("TENANT_ID", "Tenant id is mandatory");
             }
+        }
 
-            //validate if all attendee in the list have the same tenant id
+        if (!errorMap.isEmpty()) {
+            log.error("Attendee request validation failed");
+            throw new CustomException(errorMap);
+        }
+        validateTenantIds(attendeeCreateRequest, tenantId);
+        validateDuplicateAttendeeObjects(attendeeCreateRequest);
+    }
+
+    public void validateTenantIds(AttendeeCreateRequest attendeeCreateRequest, String tenantId) {
+        List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
+        //validate if all attendee in the list have the same tenant id
+        for (IndividualEntry attendee : attendeeList) {
             if (!attendee.getTenantId().equals(tenantId)) {
                 log.error("All attendees dont have the same tenant id in attendee request");
                 throw new CustomException("TENANT_ID", "All Attendees to be enrolled or de enrolled must have the same tenant id. Please raise new request for different tenant id");
             }
-
         }
 
-        //check for duplicate attendee objects (with same registerId and individualId)
-        //1. create unique identity list
-        //2. check for duplicate entries
-        List<String> uniqueIds = new ArrayList<>();
+    }
+
+    public void validateDuplicateAttendeeObjects(AttendeeCreateRequest attendeeCreateRequest) {
+        List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
+
+        Set<String> uniqueIds = new HashSet<>();
         for (IndividualEntry attendee : attendeeList) {
-            uniqueIds.add(attendee.getRegisterId() + " " + attendee.getIndividualId());
-        }
-        for (String id : uniqueIds) {
-            long count = uniqueIds.stream().filter(uniqueId -> id.equals(uniqueId)).count();
-            if (count > 1) {
-                log.error("Duplicate Attendee Objects present in request");
-                throw new CustomException("ATTENDEE", "Duplicate Attendee Objects present in request");
+            String uniqueId = attendee.getRegisterId() + attendee.getIndividualId();
+            if (uniqueIds.isEmpty()) {
+                uniqueIds.add(attendee.getRegisterId() + attendee.getIndividualId());
+            } else if (uniqueIds.contains(uniqueId)) {
+                log.error("Duplicate Attendee Objects found in request");
+                throw new CustomException("ATTENDEE", "Duplicate attendee Objects present in request");
             }
+            uniqueIds.add(attendee.getRegisterId() + attendee.getIndividualId());
         }
     }
 
 
-    public void validateAttendeeDeleteRequestParameters(AttendeeDeleteRequest attendeeDeleteRequest) {
+    public void validateAttendeeDeleteRequestParameters(AttendeeDeleteRequest attendeeDeleteRequest, Map<String, String> errorMap) {
 
         List<IndividualEntry> attendeeList = attendeeDeleteRequest.getAttendees();
 
-        if (attendeeList == null || attendeeList.size() == 0) {
+        if (attendeeList == null || attendeeList.isEmpty()) {
             log.error("ATTENDEE Object is empty in attendee request");
             throw new CustomException("ATTENDEES", "ATTENDEE object is mandatory");
         }
@@ -101,47 +105,56 @@ public class AttendeeServiceValidator {
         for (IndividualEntry attendee : attendeeList) {
 
             //validate request parameters for each attendee object
-
-            if (ObjectUtils.isEmpty(attendee)) {
-                log.error("ATTENDEE Object is empty in attendee request");
-                throw new CustomException("ATTENDEE", "ATTENDEE is mandatory");
-            }
             if (StringUtils.isBlank(attendee.getRegisterId())) {
                 log.error("REGISTER_ID is empty in attendee request");
-                throw new CustomException("REGISTER_ID", "Register id is mandatory");
+                errorMap.put("REGISTER_ID", "Register id is mandatory");
             }
 
             if (StringUtils.isBlank(attendee.getIndividualId())) {
                 log.error("INDIVIDUAL_ID is empty in attendee request");
-                throw new CustomException("INDIVIDUAL_ID", "Individual id is mandatory");
+                errorMap.put("INDIVIDUAL_ID", "Individual id is mandatory");
             }
 
             if (StringUtils.isBlank(attendee.getTenantId())) {
                 log.error("TENANT_ID is empty in attendee request");
-                throw new CustomException("TENANT_ID", "Tenant id is mandatory");
+                errorMap.put("TENANT_ID", "Tenant id is mandatory");
             }
+        }
 
-            //validate if all attendee in the list have the same tenant id
+        if (!errorMap.isEmpty()) {
+            log.error("Attendee request validation failed");
+            throw new CustomException(errorMap);
+        }
+
+        validateTenantIds(attendeeDeleteRequest, tenantId);
+        validateDuplicateAttendeeObjects(attendeeDeleteRequest);
+    }
+
+    public void validateTenantIds(AttendeeDeleteRequest attendeeDeleteRequest, String tenantId) {
+        List<IndividualEntry> attendeeList = attendeeDeleteRequest.getAttendees();
+        //validate if all attendee in the list have the same tenant id
+        for (IndividualEntry attendee : attendeeList) {
             if (!attendee.getTenantId().equals(tenantId)) {
                 log.error("All attendees dont have the same tenant id in attendee request");
                 throw new CustomException("TENANT_ID", "All Attendees to be enrolled or de enrolled must have the same tenant id. Please raise new request for different tenant id");
             }
-
         }
 
-        //check for duplicate attendee objects (with same registerId and individualId)
-        //1. create unique identity list
-        //2. check for duplicate entries
-        List<String> uniqueIds = new ArrayList<>();
+    }
+
+    public void validateDuplicateAttendeeObjects(AttendeeDeleteRequest attendeeDeleteRequest) {
+        List<IndividualEntry> attendeeList = attendeeDeleteRequest.getAttendees();
+
+        Set<String> uniqueIds = new HashSet<>();
         for (IndividualEntry attendee : attendeeList) {
-            uniqueIds.add(attendee.getRegisterId() + " " + attendee.getIndividualId());
-        }
-        for (String id : uniqueIds) {
-            long count = uniqueIds.stream().filter(uniqueId -> id.equals(uniqueId)).count();
-            if (count > 1) {
-                log.error("Duplicate Attendee Objects present in request");
-                throw new CustomException("ATTENDEE", "Duplicate Attendee Objects present in request");
+            String uniqueId = attendee.getRegisterId() + attendee.getIndividualId();
+            if (uniqueIds.isEmpty()) {
+                uniqueIds.add(attendee.getRegisterId() + attendee.getIndividualId());
+            } else if (uniqueIds.contains(uniqueId)) {
+                log.error("Duplicate Attendee Objects found in request");
+                throw new CustomException("ATTENDEE", "Duplicate attendee Objects present in request");
             }
+            uniqueIds.add(attendee.getRegisterId() + attendee.getIndividualId());
         }
     }
 
@@ -249,7 +262,7 @@ public class AttendeeServiceValidator {
     }
 
     public void validateAttendeeOnDelete(AttendeeDeleteRequest attendeeDeleteRequest,
-                                       List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
+                                         List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
         //validate tenantId with MDMS
         log.info("validating tenant id from MDMS and Request info");
         validateMDMSAndRequestInfoForDeleteAttendee(attendeeDeleteRequest);
