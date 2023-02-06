@@ -5,9 +5,8 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 import "./index.css";
 import App from './App';
 import { TLCustomisations } from './Customisations/tl/TLCustomisation';
-import { UICustomizations } from '../micro-ui-internals/example/src/UICustomizations';
 
-// import { UICustomizations } from "./UICustomizations";
+import { UICustomizations } from "./Customisations/UICustomizations";
 
 initLibraries();
 
