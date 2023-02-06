@@ -46,6 +46,26 @@ export const UICustomizations = {
             const department = data?.params?.department?.code
             data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromProposalDate, toProposalDate, department }
             return data
+        },
+        additionalCustomizations: (row, column, columnConfig, value, t) => {
+            //here we can add multiple conditions
+            //like if a cell is link then we return link
+            //first we can identify which column it belongs to then we can return relevant result
+
+            const getAmount = (item) => {
+                return item.amountDetail.reduce((acc,row)=> acc + row.amount, 0 )
+            }
+            if (column.label === "WORKS_ESTIMATE_ID") {
+                return <span className="link">
+                    <Link to={`/works-ui/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+                </span>
+            }
+            if (column.label === "WORKS_ESTIMATED_AMOUNT"){
+                
+               return row?.estimateDetails?.reduce((totalAmount,item)=>totalAmount + getAmount(item),0)
+                
+            }
+
         }
     },
     SearchAttendanceConfig: {

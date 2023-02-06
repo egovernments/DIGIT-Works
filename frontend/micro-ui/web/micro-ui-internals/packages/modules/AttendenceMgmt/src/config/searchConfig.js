@@ -137,11 +137,6 @@ const searchConfig = () => {
             searchResult: {
                 label: "",
                 uiConfig: {
-                    defaultValues: {
-                        offset: 0,
-                        limit: 10,
-                        sortOrder: "ASC",
-                    },
                     columns: [
                         {
                             label: "ATM_MUSTER_ROLL_NUMBER",
