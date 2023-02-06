@@ -27,6 +27,8 @@ import '../utils/models/track_attendance_payload.dart';
 import '../utils/notifiers.dart';
 import '../widgets/ButtonLink.dart';
 import '../widgets/CircularButton.dart';
+import '../widgets/SideBar.dart';
+import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
 
 class TrackAttendancePage extends StatefulWidget {
@@ -83,6 +85,11 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
         ? 145.0
         : (MediaQuery.of(context).size.width / 4);
     return Scaffold(
+      appBar: AppBar(),
+      drawer: DrawerWrapper(const Drawer(
+          child: SideBar(
+        module: 'rainmaker-common,rainmaker-attendencemgmt',
+      ))),
       body: BlocBuilder<AttendanceProjectsSearchBloc,
           AttendanceProjectsSearchState>(builder: (context, state) {
         if (!state.loading && state.individualAttendanceRegisterModel != null) {
@@ -359,12 +366,18 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                 SchedulerBinding.instance
                                     .addPostFrameCallback((_) {
                                   logState.maybeWhen(
-                                      error: () => Notifiers.getToastMessage(
-                                          context,
-                                          AppLocalizations.of(context)
-                                              .translate(i18.attendanceMgmt
-                                                  .attendanceLoggedFailed),
-                                          'ERROR'),
+                                      error: () {
+                                        if (!hasLoaded) {
+                                          Notifiers.getToastMessage(
+                                              context,
+                                              AppLocalizations.of(context)
+                                                  .translate(i18.attendanceMgmt
+                                                      .attendanceLoggedFailed),
+                                              'ERROR');
+                                          onSubmit(widget.id);
+                                          hasLoaded = true;
+                                        }
+                                      },
                                       loaded: () {
                                         if (!hasLoaded) {
                                           Notifiers.getToastMessage(
