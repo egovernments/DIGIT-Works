@@ -28,19 +28,27 @@ import { CustomService } from "../services/elements/CustomService";
  *
  * @returns {Object} Returns the object which contains data and isLoading flag
  */
-const useCustomAPIHook = (url, params, body, plainAccessRequest, options = {}) => {
+import { useQuery, useQueryClient } from "react-query";
+import { CustomService } from "../services/elements/CustomService";
+
+
+const useCustomAPIHook = ({ url, params, body, config = {}, plainAccessRequest }) => {
   const client = useQueryClient();
-  //api name, querystr, reqbody
-  const { isLoading, data } = useQuery(
-    ["CUSTOM", { ...params, ...body, ...plainAccessRequest ,url}].filter((e) => e),
-    () => CustomService.getResponse({ url, params, ...body, plainAccessRequest }),
-    options
+
+  const { isLoading, data, isFetching } = useQuery(
+    [url].filter((e) => e),
+    () => CustomService.getResponse({ url, params, body, plainAccessRequest }),
+    {
+      ...config
+    }
   );
+
   return {
     isLoading,
+    isFetching,
     data,
     revalidate: () => {
-      data && client.invalidateQueries({ queryKey: ["CUSTOM", { ...params, ...body, ...plainAccessRequest }] });
+      data && client.invalidateQueries({ queryKey: [url].filter((e) => e) });
     },
   };
 };
