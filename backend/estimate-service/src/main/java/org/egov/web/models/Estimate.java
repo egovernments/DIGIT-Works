@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.ProcessInstance;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Estimate
@@ -38,7 +39,7 @@ public class Estimate {
     private String projectId = null;
 
     @JsonProperty("proposalDate")
-    private Double proposalDate = null;
+    private BigDecimal proposalDate = null;
 
     @JsonProperty("status")
     private StatusEnum status = null;
@@ -61,8 +62,8 @@ public class Estimate {
     @JsonProperty("address")
     private Address address = null;
 
-    @JsonProperty("totalEstimateAmount")
-    private Double totalEstimateAmount = null;
+//    @JsonProperty("totalEstimateAmount")
+//    private Double totalEstimateAmount = null;
 
     @JsonProperty("estimateDetails")
     @Valid
@@ -73,6 +74,13 @@ public class Estimate {
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
+
+    @JsonProperty("project")
+    private Project project = null;
+
+    @JsonProperty("ProcessInstances")
+    @Valid
+    private List<ProcessInstance> processInstances = null;
 
 
     public Estimate addEstimateDetailsItem(EstimateDetail estimateDetailsItem) {

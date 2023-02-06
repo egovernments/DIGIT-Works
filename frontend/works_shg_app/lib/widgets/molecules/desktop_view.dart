@@ -21,7 +21,10 @@ class DesktopView extends StatelessWidget {
                       padding: const EdgeInsets.all(15),
                       child: Container(
                           padding: const EdgeInsets.all(8), child: widget)))),
-              const Center(child: PoweredByDigit())
+              const Center(
+                  child: PoweredByDigit(
+                isWhiteLogo: true,
+              ))
             ]),
         bannerURL));
   }

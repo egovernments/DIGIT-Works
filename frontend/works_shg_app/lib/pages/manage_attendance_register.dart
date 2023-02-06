@@ -7,6 +7,8 @@ import '../blocs/attendance/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
+import '../widgets/SideBar.dart';
+import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
 
 class ManageAttendanceRegisterPage extends StatelessWidget {
@@ -14,48 +16,58 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SingleChildScrollView(child: BlocBuilder<
-        AttendanceProjectsSearchBloc,
-        AttendanceProjectsSearchState>(builder: (context, state) {
-      if (!state.loading && state.attendanceRegistersModel != null) {
-        final List<Map<String, dynamic>> projectList =
-            state.attendanceRegistersModel!.attendanceRegister!
-                .map((e) => {
-                      i18.attendanceMgmt.nameOfWork: e.name,
-                      i18.attendanceMgmt.winCode: e.registerNumber,
-                      i18.attendanceMgmt.engineerInCharge: e.id,
-                      i18.common.dates:
-                          '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                      i18.common.status: e.status
-                    })
-                .toList();
+    return Scaffold(
+        appBar: AppBar(),
+        drawer: DrawerWrapper(const Drawer(
+            child: SideBar(
+          module: 'rainmaker-common,rainmaker-attendencemgmt',
+        ))),
+        body: SingleChildScrollView(child: BlocBuilder<
+            AttendanceProjectsSearchBloc,
+            AttendanceProjectsSearchState>(builder: (context, state) {
+          if (!state.loading && state.attendanceRegistersModel != null) {
+            final List<Map<String, dynamic>> projectList =
+                state.attendanceRegistersModel!.attendanceRegister!
+                    .map((e) => {
+                          i18.attendanceMgmt.nameOfWork: e.name,
+                          i18.attendanceMgmt.winCode: e.registerNumber,
+                          i18.attendanceMgmt.engineerInCharge: e.id,
+                          i18.common.dates:
+                              '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
+                          i18.common.status: e.status
+                        })
+                    .toList();
 
-        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Back(
-            backLabel: AppLocalizations.of(context).translate(i18.common.back),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              '${AppLocalizations.of(context).translate(i18.workOrder.projects)}(${state.attendanceRegistersModel!.attendanceRegister!.length})',
-              style: Theme.of(context).textTheme.displayMedium,
-              textAlign: TextAlign.left,
-            ),
-          ),
-          projectList.isEmpty
-              ? const Text('No Projects Found')
-              : WorkDetailsCard(
-                  projectList,
-                  isManageAttendance: true,
-                  elevatedButtonLabel: AppLocalizations.of(context)
-                      .translate(i18.attendanceMgmt.enrollWageSeeker),
-                  attendanceRegistersModel: state.attendanceRegistersModel,
-                )
-        ]);
-      } else {
-        return Loaders.circularLoader(context);
-        ;
-      }
-    })));
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Back(
+                    backLabel:
+                        AppLocalizations.of(context).translate(i18.common.back),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      '${AppLocalizations.of(context).translate(i18.workOrder.projects)}(${state.attendanceRegistersModel!.attendanceRegister!.length})',
+                      style: Theme.of(context).textTheme.displayMedium,
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  projectList.isEmpty
+                      ? const Text('No Projects Found')
+                      : WorkDetailsCard(
+                          projectList,
+                          isManageAttendance: true,
+                          elevatedButtonLabel: AppLocalizations.of(context)
+                              .translate(i18.attendanceMgmt.enrollWageSeeker),
+                          attendanceRegistersModel:
+                              state.attendanceRegistersModel,
+                        )
+                ]);
+          } else {
+            return Loaders.circularLoader(context);
+            ;
+          }
+        })));
   }
 }

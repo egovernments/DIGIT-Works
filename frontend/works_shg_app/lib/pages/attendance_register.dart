@@ -14,6 +14,8 @@ import '../blocs/attendance/create_attendee.dart';
 import '../blocs/localization/app_localization.dart';
 import '../router/app_router.dart';
 import '../utils/models.dart';
+import '../widgets/SideBar.dart';
+import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
 
 class AttendanceRegisterTablePage extends StatefulWidget {
@@ -42,6 +44,11 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
     // List<TableDataModel> tableList =
     //     list.map((e) => TableDataModel.fromJson(e)).toList();
     return Scaffold(
+      appBar: AppBar(),
+      drawer: DrawerWrapper(const Drawer(
+          child: SideBar(
+        module: 'rainmaker-common,rainmaker-attendencemgmt',
+      ))),
       body: BlocBuilder<AttendanceUserSearchBloc, AttendanceUserSearchState>(
           builder: (context, state) {
         if (!state.loading && state.userSearchModel != null) {
