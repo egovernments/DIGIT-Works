@@ -37,7 +37,7 @@ const AttendenceMgmtCard = () => {
                 count: 15,
             },
             {
-                label: "Search Attendance",
+                label: t("CS_INBOX_SEARCH"),
                 link: `/${window?.contextPath}/employee/attendencemgmt/search-attendance`,
                 roles: [],
                 count: 0,

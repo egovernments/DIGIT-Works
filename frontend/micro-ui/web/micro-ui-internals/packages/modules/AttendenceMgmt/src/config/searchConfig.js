@@ -99,7 +99,7 @@ const searchConfig = () => {
                             }
                         },
                         {
-                            label: "Muster Roll Status",
+                            label: "ATM_MUSTER_ROLL_STATUS",
                             type: "dropdown",
                             isMandatory: false,
                             disable: false,
@@ -144,7 +144,7 @@ const searchConfig = () => {
                     },
                     columns: [
                         {
-                            label: "Muster Roll Number",
+                            label: "ATM_MUSTER_ROLL_NUMBER",
                             jsonPath: "musterRollNumber",
                             additionalCustomization:true
                         },
@@ -162,7 +162,7 @@ const searchConfig = () => {
                             additionalCustomization:true
                         },
                         {
-                            label: "Muster Roll Status",
+                            label: "ATM_MUSTER_ROLL_STATUS",
                             jsonPath: "musterRollStatus",
                         }
                     ],
