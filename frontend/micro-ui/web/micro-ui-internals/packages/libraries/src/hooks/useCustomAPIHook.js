@@ -28,8 +28,6 @@ import { CustomService } from "../services/elements/CustomService";
  *
  * @returns {Object} Returns the object which contains data and isLoading flag
  */
-import { useQuery, useQueryClient } from "react-query";
-import { CustomService } from "../services/elements/CustomService";
 
 
 const useCustomAPIHook = ({ url, params, body, config = {}, plainAccessRequest }) => {
