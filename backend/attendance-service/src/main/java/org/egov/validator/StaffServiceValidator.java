@@ -106,6 +106,11 @@ public class StaffServiceValidator {
 
         validateTenantIds(staffPermissionRequest, baseTenantId);
         validateDuplicateStaffObjects(staffPermissionRequest);
+
+
+        //validate tenant id with mdms and request info
+        log.info("validating tenant id from MDMS and Request info");
+        validateMDMSAndRequestInfoForStaff(staffPermissionRequest);
     }
 
     public void validateTenantIds(StaffPermissionRequest staffPermissionRequest, String tenantId) {
@@ -139,10 +144,6 @@ public class StaffServiceValidator {
     public void validateStaffPermissionOnCreate(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB,
                                                 List<AttendanceRegister> attendanceRegisterListFromDB) {
 
-        //validate tenant id with mdms and request info
-        log.info("validating tenant id from MDMS and Request info");
-        validateMDMSAndRequestInfoForStaff(request);
-
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
 
         // staff cannot be added to register if register's end date has passed
@@ -173,10 +174,6 @@ public class StaffServiceValidator {
 
     public void validateStaffPermissionOnDelete(StaffPermissionRequest staffPermissionRequest
             , List<StaffPermission> staffPermissionListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
-
-        //validate tenant id with mdms and request info
-        log.info("validating tenant id from MDMS and Request info");
-        validateMDMSAndRequestInfoForStaff(staffPermissionRequest);
 
         RequestInfo requestInfo = staffPermissionRequest.getRequestInfo();
         List<StaffPermission> staffPermissionListFromRequest = staffPermissionRequest.getStaff();

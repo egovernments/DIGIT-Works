@@ -61,6 +61,10 @@ public class AttendeeServiceValidator {
         }
         validateTenantIds(attendeeCreateRequest, tenantId);
         validateDuplicateAttendeeObjects(attendeeCreateRequest);
+
+        //validate tenantId with MDMS
+        log.info("validating tenant id from MDMS and Request info");
+        validateMDMSAndRequestInfoForCreateAttendee(attendeeCreateRequest);
     }
 
     public void validateTenantIds(AttendeeCreateRequest attendeeCreateRequest, String tenantId) {
@@ -128,6 +132,10 @@ public class AttendeeServiceValidator {
 
         validateTenantIds(attendeeDeleteRequest, tenantId);
         validateDuplicateAttendeeObjects(attendeeDeleteRequest);
+
+        //validate tenantId with MDMS
+        log.info("validating tenant id from MDMS and Request info");
+        validateMDMSAndRequestInfoForDeleteAttendee(attendeeDeleteRequest);
     }
 
     public void validateTenantIds(AttendeeDeleteRequest attendeeDeleteRequest, String tenantId) {
@@ -212,10 +220,6 @@ public class AttendeeServiceValidator {
     public void validateAttendeeOnCreate(AttendeeCreateRequest attendeeCreateRequest
             , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
 
-        //validate tenantId with MDMS
-        log.info("validating tenant id from MDMS and Request info");
-        validateMDMSAndRequestInfoForCreateAttendee(attendeeCreateRequest);
-
         List<IndividualEntry> attendeeListFromRequest = attendeeCreateRequest.getAttendees();
 
 
@@ -263,9 +267,6 @@ public class AttendeeServiceValidator {
 
     public void validateAttendeeOnDelete(AttendeeDeleteRequest attendeeDeleteRequest,
                                          List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
-        //validate tenantId with MDMS
-        log.info("validating tenant id from MDMS and Request info");
-        validateMDMSAndRequestInfoForDeleteAttendee(attendeeDeleteRequest);
 
         List<IndividualEntry> attendeeListFromRequest = attendeeDeleteRequest.getAttendees();
 
