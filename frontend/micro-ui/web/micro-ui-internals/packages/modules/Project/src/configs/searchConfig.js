@@ -115,11 +115,6 @@ const searchConfig = () => {
             searchResult: {
                 label: "",
                 uiConfig: {
-                    defaultValues: {
-                        offset: 0,
-                        limit: 10,
-                        sortOrder: "ASC",
-                    },
                     columns: [
                         {
                             label: "WORKS_PRJ_SUB_ID",
