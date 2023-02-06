@@ -36,7 +36,8 @@ class AttendanceUserSearchBloc
 
 @freezed
 class AttendanceUserSearchEvent with _$AttendanceUserSearchEvent {
-  const factory AttendanceUserSearchEvent.search() = SearchAttendanceUserEvent;
+  const factory AttendanceUserSearchEvent.search(
+      {required List<String>? userIds}) = SearchAttendanceUserEvent;
 }
 
 @freezed

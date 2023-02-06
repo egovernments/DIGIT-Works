@@ -1,6 +1,6 @@
 export const dummyTableData = [
     {
-        musterRollNumber: 'MR/2022-23/01/24/000352',
+        mustorRollId: 'MR/2022-23/01/19/000309',
         work: 'Construction Roads',
         week: '02-01-2023 - 08-01-2023' ,
         iaip: 'Jagan',
@@ -8,7 +8,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: "MR/2022-23/01/24/000353",
+        mustorRollId: "MR/2022-23/01/19/000310",
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Jagan',
@@ -16,7 +16,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000354',
+        mustorRollId: 'MR/2022-23/01/19/000311',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -24,7 +24,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000355',
+        mustorRollId: 'MR/2022-23/01/19/000312',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -32,7 +32,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000356',
+        mustorRollId: 'MR/2022-23/01/18/000282',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -40,7 +40,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000357',
+        mustorRollId: 'MR/2022-23/01/12/000213',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -48,7 +48,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000358',
+        mustorRollId: 'MR/2022-23/01/12/000212',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -56,7 +56,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000359',
+        mustorRollId: 'MR/2022-23/01/12/000211',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -64,7 +64,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000360',
+        mustorRollId: 'MR/2022-23/01/12/000210',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -72,7 +72,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000361',
+        mustorRollId: 'MR/2022-23/01/12/000209',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -80,7 +80,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000362',
+        mustorRollId: 'MR/2022-23/01/06/000164',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -88,7 +88,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000363',
+        mustorRollId: 'MR/2022-23/01/06/000163',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -96,7 +96,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000364',
+        mustorRollId: 'MR/2022-23/01/06/000162',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -104,7 +104,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000365',
+        mustorRollId: 'MR/2022-23/01/06/000161',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -112,7 +112,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000348',
+        mustorRollId: 'MR/2022-23/01/05/000156',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',
@@ -120,7 +120,7 @@ export const dummyTableData = [
         slaDays: '5'
     },
     {
-        musterRollNumber: 'MR/2022-23/01/24/000349',
+        mustorRollId: 'MR/2022-23/01/05/000153',
         work: 'Wall Painting',
         week: '22-08-2022 - 29-08-2022' ,
         iaip: 'Maa Bhagavati SHG',

@@ -16,19 +16,20 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AttendanceUserSearchEvent {
+  List<String>? get userIds => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() search,
+    required TResult Function(List<String>? userIds) search,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? search,
+    TResult? Function(List<String>? userIds)? search,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? search,
+    TResult Function(List<String>? userIds)? search,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -48,6 +49,10 @@ mixin _$AttendanceUserSearchEvent {
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $AttendanceUserSearchEventCopyWith<AttendanceUserSearchEvent> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -55,6 +60,8 @@ abstract class $AttendanceUserSearchEventCopyWith<$Res> {
   factory $AttendanceUserSearchEventCopyWith(AttendanceUserSearchEvent value,
           $Res Function(AttendanceUserSearchEvent) then) =
       _$AttendanceUserSearchEventCopyWithImpl<$Res, AttendanceUserSearchEvent>;
+  @useResult
+  $Res call({List<String>? userIds});
 }
 
 /// @nodoc
@@ -67,14 +74,31 @@ class _$AttendanceUserSearchEventCopyWithImpl<$Res,
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? userIds = freezed,
+  }) {
+    return _then(_value.copyWith(
+      userIds: freezed == userIds
+          ? _value.userIds
+          : userIds // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+    ) as $Val);
+  }
 }
 
 /// @nodoc
-abstract class _$$SearchAttendanceUserEventCopyWith<$Res> {
+abstract class _$$SearchAttendanceUserEventCopyWith<$Res>
+    implements $AttendanceUserSearchEventCopyWith<$Res> {
   factory _$$SearchAttendanceUserEventCopyWith(
           _$SearchAttendanceUserEvent value,
           $Res Function(_$SearchAttendanceUserEvent) then) =
       __$$SearchAttendanceUserEventCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<String>? userIds});
 }
 
 /// @nodoc
@@ -85,6 +109,19 @@ class __$$SearchAttendanceUserEventCopyWithImpl<$Res>
   __$$SearchAttendanceUserEventCopyWithImpl(_$SearchAttendanceUserEvent _value,
       $Res Function(_$SearchAttendanceUserEvent) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? userIds = freezed,
+  }) {
+    return _then(_$SearchAttendanceUserEvent(
+      userIds: freezed == userIds
+          ? _value._userIds
+          : userIds // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+    ));
+  }
 }
 
 /// @nodoc
@@ -92,54 +129,74 @@ class __$$SearchAttendanceUserEventCopyWithImpl<$Res>
 class _$SearchAttendanceUserEvent
     with DiagnosticableTreeMixin
     implements SearchAttendanceUserEvent {
-  const _$SearchAttendanceUserEvent();
+  const _$SearchAttendanceUserEvent({required final List<String>? userIds})
+      : _userIds = userIds;
+
+  final List<String>? _userIds;
+  @override
+  List<String>? get userIds {
+    final value = _userIds;
+    if (value == null) return null;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendanceUserSearchEvent.search()';
+    return 'AttendanceUserSearchEvent.search(userIds: $userIds)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-        .add(DiagnosticsProperty('type', 'AttendanceUserSearchEvent.search'));
+      ..add(DiagnosticsProperty('type', 'AttendanceUserSearchEvent.search'))
+      ..add(DiagnosticsProperty('userIds', userIds));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SearchAttendanceUserEvent);
+            other is _$SearchAttendanceUserEvent &&
+            const DeepCollectionEquality().equals(other._userIds, _userIds));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_userIds));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SearchAttendanceUserEventCopyWith<_$SearchAttendanceUserEvent>
+      get copyWith => __$$SearchAttendanceUserEventCopyWithImpl<
+          _$SearchAttendanceUserEvent>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() search,
+    required TResult Function(List<String>? userIds) search,
   }) {
-    return search();
+    return search(userIds);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? search,
+    TResult? Function(List<String>? userIds)? search,
   }) {
-    return search?.call();
+    return search?.call(userIds);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? search,
+    TResult Function(List<String>? userIds)? search,
     required TResult orElse(),
   }) {
     if (search != null) {
-      return search();
+      return search(userIds);
     }
     return orElse();
   }
@@ -174,7 +231,15 @@ class _$SearchAttendanceUserEvent
 }
 
 abstract class SearchAttendanceUserEvent implements AttendanceUserSearchEvent {
-  const factory SearchAttendanceUserEvent() = _$SearchAttendanceUserEvent;
+  const factory SearchAttendanceUserEvent(
+      {required final List<String>? userIds}) = _$SearchAttendanceUserEvent;
+
+  @override
+  List<String>? get userIds;
+  @override
+  @JsonKey(ignore: true)
+  _$$SearchAttendanceUserEventCopyWith<_$SearchAttendanceUserEvent>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc

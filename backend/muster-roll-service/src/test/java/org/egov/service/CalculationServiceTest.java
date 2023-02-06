@@ -45,7 +45,6 @@ public class CalculationServiceTest {
         Object mdmsResponse = MusterRollRequestBuilderTest.getMdmsResponse();
         lenient().when(mdmsUtils.mDMSCallMuster(any(MusterRollRequest.class),
                         any(String.class))).thenReturn(mdmsResponse);
-        lenient().when(config.getTimeZone()).thenReturn("Asia/Kolkata");
     }
 
     @Test
@@ -88,7 +87,7 @@ public class CalculationServiceTest {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         getMockAttendanceLogsSuccess();
         calculationService.createAttendance(musterRollRequest,true);
-        BigDecimal totalAttendance = musterRollRequest.getMusterRoll().getIndividualEntries().get(0).getActualTotalAttendance();
+        BigDecimal totalAttendance = musterRollRequest.getMusterRoll().getIndividualEntries().get(0).getTotalAttendance();
         assertEquals(new BigDecimal("2.0"),totalAttendance);
     }
 

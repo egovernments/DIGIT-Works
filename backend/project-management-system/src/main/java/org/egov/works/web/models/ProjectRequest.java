@@ -21,10 +21,10 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ProjectRequest {
-    @JsonProperty("RequestInfo")
+    @JsonProperty("requestInfo")
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("Projects")
+    @JsonProperty("projects")
     @Valid
     private List<Project> projects = new ArrayList<>();
 

@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.egov.util.MusterRollServiceConstants.ACTION_REJECT;
+import static org.egov.util.MusterRollServiceConstants.DEFAULT_SKILL_LEVEL;
 
 @Service
 @Slf4j
@@ -44,6 +45,9 @@ public class EnrichmentService {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private MdmsUtil mdmsUtils;
 
 
     /**
@@ -104,12 +108,16 @@ public class EnrichmentService {
      * Enrich the muster roll on update
      * @param musterRollRequest
      */
-    public void enrichMusterRollOnUpdate(MusterRollRequest musterRollRequest, MusterRoll existingMusterRoll, Object mdmsData) {
+    public void enrichMusterRollOnUpdate(MusterRollRequest musterRollRequest, MusterRoll existingMusterRoll) {
         log.info("EnrichmentService::enrichMusterRollOnUpdate");
 
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         Workflow workflow = musterRollRequest.getWorkflow();
+
+        //fetch MDMS data for muster - skill level
+        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
+        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
 
         log.info("EnrichmentService::enrichMusterRollOnUpdate::Workflow action is "+workflow.getAction());
 
@@ -122,8 +130,8 @@ public class EnrichmentService {
                     for (IndividualEntry modifiedIndividualEntry : modifiedIndividualEntries)  {
                         if (modifiedIndividualEntry.getId().equalsIgnoreCase(individualEntry.getId())) {
                             //update the total attendance
-                            if (modifiedIndividualEntry.getModifiedTotalAttendance() != null) {
-                                individualEntry.setModifiedTotalAttendance(modifiedIndividualEntry.getModifiedTotalAttendance());
+                            if (modifiedIndividualEntry.getTotalAttendance() != null) {
+                                individualEntry.setTotalAttendance(modifiedIndividualEntry.getTotalAttendance());
                             }
                             if (modifiedIndividualEntry.getAdditionalDetails() != null) {
                                 try {
@@ -202,13 +210,10 @@ public class EnrichmentService {
      * @param musterRoll
      */
     private void populateAuditDetailsIndividualEntry(MusterRoll musterRoll) {
-       if (musterRoll.getIndividualEntries() != null) {
-           for (IndividualEntry individualEntry : musterRoll.getIndividualEntries()) {
-               individualEntry.setAuditDetails(musterRoll.getAuditDetails());
-               populateAuditDetailsAttendanceEntry(individualEntry);
-           }
+       for (IndividualEntry individualEntry : musterRoll.getIndividualEntries()) {
+           individualEntry.setAuditDetails(musterRoll.getAuditDetails());
+           populateAuditDetailsAttendanceEntry(individualEntry);
        }
-
     }
 
     /**
@@ -217,12 +222,9 @@ public class EnrichmentService {
      * @param individualEntry
      */
     private void populateAuditDetailsAttendanceEntry(IndividualEntry individualEntry) {
-        if (individualEntry.getAttendanceEntries() != null) {
-            for (AttendanceEntry attendanceEntry : individualEntry.getAttendanceEntries()) {
-                attendanceEntry.setAuditDetails(individualEntry.getAuditDetails());
-            }
+        for (AttendanceEntry attendanceEntry : individualEntry.getAttendanceEntries()) {
+            attendanceEntry.setAuditDetails(individualEntry.getAuditDetails());
         }
-
     }
 
     /**

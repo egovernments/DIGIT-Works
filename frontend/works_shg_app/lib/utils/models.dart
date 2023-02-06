@@ -18,12 +18,6 @@ class TableDataRow {
   TableDataRow(this.tableRow);
 }
 
-class KeyValue {
-  String label;
-  dynamic key;
-  KeyValue(this.label, this.key);
-}
-
 class TableData {
   final String? label;
   final Widget? widget;
@@ -31,11 +25,4 @@ class TableData {
   final String? apiKey;
   ValueChanged<TableData>? callBack;
   TableData({this.label, this.widget, this.style, this.callBack, this.apiKey});
-}
-
-class DateRange {
-  final String range;
-  final int startDate;
-  final int endDate;
-  DateRange(this.range, this.startDate, this.endDate);
 }

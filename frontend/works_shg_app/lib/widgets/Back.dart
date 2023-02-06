@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 class Back extends StatelessWidget {
   final Widget? widget;
   final VoidCallback? callback;
-  final String? backLabel;
 
-  const Back({Key? key, this.widget, this.callback, this.backLabel})
-      : super(key: key);
+  const Back({Key? key, this.widget, this.callback}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +26,7 @@ class Back extends StatelessWidget {
                         Icons.arrow_left,
                         color: const DigitColors().black,
                       ),
-                      Text(backLabel ?? 'Back',
+                      Text('Back',
                           style: TextStyle(
                             color: const DigitColors().black,
                           ))

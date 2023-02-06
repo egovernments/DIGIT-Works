@@ -61,9 +61,7 @@ public class AttendanceRegisterSearchCriteria {
     }
 
     public enum SortBy {
-        lastModifiedTime,
-        fromDate,
-        toDate
+        lastModifiedTime
     }
 
 }

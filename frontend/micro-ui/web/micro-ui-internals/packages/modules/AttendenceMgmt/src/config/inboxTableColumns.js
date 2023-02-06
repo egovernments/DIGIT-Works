@@ -7,13 +7,13 @@ export const inboxTableColumns = (tenantId, mustorRollIdLabel, workNameLabel, at
     {
       Header: mustorRollIdLabel,
       disableSortBy: true,
-      accessor: "musterRollNumber",
+      accessor: "mustorRollId",
       Cell: ({ row }) => {
         return (
           <div> {
-            row.original.musterRollNumber ? (
+            row.original.mustorRollId ? (
                 <span className="link">
-                <Link to={`view-attendance?tenantId=${tenantId}&musterRollNumber=${row.original.musterRollNumber}`}>{row.original.musterRollNumber || "NA"}</Link>
+                <Link to={`view-attendance?tenantId=${tenantId}&musterRollNumber=${row.original.mustorRollId}`}>{row.original.mustorRollId || "NA"}</Link>
                 </span>
             ) : (<span>{t("NA")}</span>) }
           </div>

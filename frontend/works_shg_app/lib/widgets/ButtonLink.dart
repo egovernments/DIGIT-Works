@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 class ButtonLink extends StatelessWidget {
   final String label;
   final void Function()? widgetFunction;
-  final AlignmentGeometry align;
-  const ButtonLink(this.label, this.widgetFunction,
-      {super.key, this.align = Alignment.centerLeft});
+  const ButtonLink(this.label, this.widgetFunction, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +14,7 @@ class ButtonLink extends StatelessWidget {
           padding:
               const EdgeInsets.only(left: 8, top: 10, bottom: 10, right: 25),
           child: Align(
-              alignment: align,
+              alignment: Alignment.centerLeft,
               child: Text(
                 label,
                 style: TextStyle(

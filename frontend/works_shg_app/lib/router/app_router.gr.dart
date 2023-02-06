@@ -36,9 +36,11 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     LoginRoute.name: (routeData) {
+      final args = routeData.argsAs<LoginRouteArgs>(
+          orElse: () => const LoginRouteArgs());
       return MaterialPageX<dynamic>(
         routeData: routeData,
-        child: const LoginPage(),
+        child: LoginPage(key: args.key),
       );
     },
     HomeRoute.name: (routeData) {
@@ -75,9 +77,7 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: SHGInboxPage(
-          args.id,
-          args.tenantId,
-          args.projectDetails,
+          args.musterDetails,
           key: args.key,
         ),
       );
@@ -99,18 +99,10 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: TrackAttendancePage(
-          args.id,
-          args.tenantId,
           args.projectDetails,
           args.attendanceRegister,
           key: args.key,
         ),
-      );
-    },
-    RegisterIndividualRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-        routeData: routeData,
-        child: const RegisterIndividualPage(),
       );
     },
   };
@@ -166,7 +158,7 @@ class _$AppRouter extends RootStackRouter {
             ),
             RouteConfig(
               SHGInboxRoute.name,
-              path: 'shg-inbox/:id/:tenantId',
+              path: 'shg-inbox',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -181,12 +173,7 @@ class _$AppRouter extends RootStackRouter {
             ),
             RouteConfig(
               TrackAttendanceRoute.name,
-              path: 'track-attendance/:id/:tenantId',
-              parent: AuthenticatedRouteWrapper.name,
-            ),
-            RouteConfig(
-              RegisterIndividualRoute.name,
-              path: 'register-individual',
+              path: 'track-attendance',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -234,14 +221,26 @@ class LanguageSelectionRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [LoginPage]
-class LoginRoute extends PageRouteInfo<void> {
-  const LoginRoute()
+class LoginRoute extends PageRouteInfo<LoginRouteArgs> {
+  LoginRoute({Key? key})
       : super(
           LoginRoute.name,
           path: 'login',
+          args: LoginRouteArgs(key: key),
         );
 
   static const String name = 'LoginRoute';
+}
+
+class LoginRouteArgs {
+  const LoginRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'LoginRouteArgs{key: $key}';
+  }
 }
 
 /// generated route for
@@ -324,23 +323,15 @@ class ViewMusterRollsRoute extends PageRouteInfo<void> {
 /// [SHGInboxPage]
 class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
   SHGInboxRoute({
-    required String id,
-    required String tenantId,
-    required List<Map<String, dynamic>> projectDetails,
+    required List<Map<String, dynamic>> musterDetails,
     Key? key,
   }) : super(
           SHGInboxRoute.name,
-          path: 'shg-inbox/:id/:tenantId',
+          path: 'shg-inbox',
           args: SHGInboxRouteArgs(
-            id: id,
-            tenantId: tenantId,
-            projectDetails: projectDetails,
+            musterDetails: musterDetails,
             key: key,
           ),
-          rawPathParams: {
-            'id': id,
-            'tenantId': tenantId,
-          },
         );
 
   static const String name = 'SHGInboxRoute';
@@ -348,23 +339,17 @@ class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
 
 class SHGInboxRouteArgs {
   const SHGInboxRouteArgs({
-    required this.id,
-    required this.tenantId,
-    required this.projectDetails,
+    required this.musterDetails,
     this.key,
   });
 
-  final String id;
-
-  final String tenantId;
-
-  final List<Map<String, dynamic>> projectDetails;
+  final List<Map<String, dynamic>> musterDetails;
 
   final Key? key;
 
   @override
   String toString() {
-    return 'SHGInboxRouteArgs{id: $id, tenantId: $tenantId, projectDetails: $projectDetails, key: $key}';
+    return 'SHGInboxRouteArgs{musterDetails: $musterDetails, key: $key}';
   }
 }
 
@@ -396,25 +381,17 @@ class AttendanceInboxRoute extends PageRouteInfo<void> {
 /// [TrackAttendancePage]
 class TrackAttendanceRoute extends PageRouteInfo<TrackAttendanceRouteArgs> {
   TrackAttendanceRoute({
-    required String id,
-    required String tenantId,
     required List<Map<String, dynamic>> projectDetails,
     required AttendanceRegister? attendanceRegister,
     Key? key,
   }) : super(
           TrackAttendanceRoute.name,
-          path: 'track-attendance/:id/:tenantId',
+          path: 'track-attendance',
           args: TrackAttendanceRouteArgs(
-            id: id,
-            tenantId: tenantId,
             projectDetails: projectDetails,
             attendanceRegister: attendanceRegister,
             key: key,
           ),
-          rawPathParams: {
-            'id': id,
-            'tenantId': tenantId,
-          },
         );
 
   static const String name = 'TrackAttendanceRoute';
@@ -422,16 +399,10 @@ class TrackAttendanceRoute extends PageRouteInfo<TrackAttendanceRouteArgs> {
 
 class TrackAttendanceRouteArgs {
   const TrackAttendanceRouteArgs({
-    required this.id,
-    required this.tenantId,
     required this.projectDetails,
     required this.attendanceRegister,
     this.key,
   });
-
-  final String id;
-
-  final String tenantId;
 
   final List<Map<String, dynamic>> projectDetails;
 
@@ -441,18 +412,6 @@ class TrackAttendanceRouteArgs {
 
   @override
   String toString() {
-    return 'TrackAttendanceRouteArgs{id: $id, tenantId: $tenantId, projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
+    return 'TrackAttendanceRouteArgs{projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
   }
-}
-
-/// generated route for
-/// [RegisterIndividualPage]
-class RegisterIndividualRoute extends PageRouteInfo<void> {
-  const RegisterIndividualRoute()
-      : super(
-          RegisterIndividualRoute.name,
-          path: 'register-individual',
-        );
-
-  static const String name = 'RegisterIndividualRoute';
 }

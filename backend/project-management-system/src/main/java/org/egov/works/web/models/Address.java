@@ -1,7 +1,6 @@
 package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
@@ -62,10 +61,8 @@ public class Address {
     private String street = null;
 
     @JsonProperty("locality")
-    private String locality = null;
+    private Boundary locality = null;
 
-    @JsonProperty("auditDetails")
-    private AuditDetails auditDetails = null;
 
 }
 

@@ -11,10 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class StaffSearchCriteria {
-
-    @JsonProperty("tenantId")
-    private String tenantId;
-
     @JsonProperty("individualIds")
     private List<String> individualIds;
 

@@ -53,8 +53,6 @@ public class AttendanceLogService {
         // Create the response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceLogRequest.getRequestInfo(), true);
         AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogRequest.getAttendance()).build();
-        String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
-        log.info("Attendance logs created successfully for register ["+registerId+"]");
         return attendanceLogResponse;
     }
 
@@ -75,7 +73,6 @@ public class AttendanceLogService {
         // Create the response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogs).build();
-        log.info("Attendance log response created for register ["+searchCriteria.getRegisterId()+"]");
         return attendanceLogResponse;
     }
 
@@ -95,8 +92,6 @@ public class AttendanceLogService {
         // Create the response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceLogRequest.getRequestInfo(), true);
         AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogRequest.getAttendance()).build();
-        String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
-        log.info("Attendance logs updated successfully for register ["+registerId+"]");
         return attendanceLogResponse;
     }
 }

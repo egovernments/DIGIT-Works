@@ -20,51 +20,42 @@ typedef AttendanceRegisterCreateEmitter
 class AttendanceRegisterCreateBloc
     extends Bloc<AttendanceRegisterCreateEvent, AttendanceRegisterCreateState> {
   AttendanceRegisterCreateBloc()
-      : super(const AttendanceRegisterCreateState.initial()) {
+      : super(const AttendanceRegisterCreateState()) {
     on<CreateAttendanceRegisterEvent>(_onCreate);
   }
 
   FutureOr<void> _onCreate(AttendanceRegisterCreateEvent event,
       AttendanceRegisterCreateEmitter emit) async {
     Client client = Client();
-    try {
-      emit(const AttendanceRegisterCreateState.loading());
-      AttendanceRegistersModel attendanceRegistersModel =
-          await AttendanceRegisterRepository(client.init())
-              .createAttendanceRegisters(
-                  url: Urls.attendanceRegisterServices.createAttendanceRegister,
-                  options: Options(extra: {
-                    "userInfo": GlobalVariables.getUserInfo(),
-                    "accessToken": GlobalVariables.getAuthToken()
-                  }),
-                  body: {
-            "attendanceRegister": [
-              {
-                "id": "",
-                "tenantId": event.tenantId,
-                "registerNumber": event.registerNumber,
-                "name": event.name,
-                "startDate": event.startDate,
-                "endDate": event.endDate,
-                "staff": [],
-                "attendees": [],
-                "additionalDetails": {
-                  "contractId": event.contractId,
-                  "contractCreatedByUUID": GlobalVariables.getUUID(),
-                  "contractCreated": event.contractCreated,
-                  "orgName": event.orgName
-                }
-              }
-            ]
-          });
-      if (attendanceRegistersModel != null) {
-        emit(AttendanceRegisterCreateState.loaded());
-      } else {
-        emit(const AttendanceRegisterCreateState.error());
-      }
-    } on DioError catch (e) {
-      emit(const AttendanceRegisterCreateState.error());
-    }
+    emit(state.copyWith(loading: true));
+    print(event);
+    AttendanceRegistersModel attendanceRegistersModel =
+        await AttendanceRegisterRepository(client.init())
+            .createAttendanceRegisters(
+                url: Urls.attendanceRegisterServices.createAttendanceRegister,
+                options: Options(extra: {
+                  "userInfo": GlobalVariables.getUserInfo(),
+                  "accessToken": GlobalVariables.getAuthToken()
+                }),
+                body: {
+          "attendanceRegister": [
+            {
+              "id": "",
+              "tenantId": event.tenantId,
+              "registerNumber": event.registerNumber,
+              "name": event.name,
+              "startDate": event.startDate,
+              "endDate": event.endDate,
+              "staff": [],
+              "attendees": []
+            }
+          ]
+        });
+    await Future.delayed(const Duration(seconds: 2));
+    emit(state.copyWith(
+        attendanceRegistersModel: attendanceRegistersModel, loading: false));
+    // Notifiers.getToastMessage(scaffoldMessengerKey.currentContext!,
+    //     'Created Successfully', 'SUCCESS');
   }
 }
 
@@ -73,9 +64,6 @@ class AttendanceRegisterCreateEvent with _$AttendanceRegisterCreateEvent {
   const factory AttendanceRegisterCreateEvent.create({
     required String tenantId,
     required String registerNumber,
-    required String contractId,
-    required String contractCreated,
-    required String orgName,
     required String name,
     required int startDate,
     required int endDate,
@@ -85,8 +73,9 @@ class AttendanceRegisterCreateEvent with _$AttendanceRegisterCreateEvent {
 @freezed
 class AttendanceRegisterCreateState with _$AttendanceRegisterCreateState {
   const AttendanceRegisterCreateState._();
-  const factory AttendanceRegisterCreateState.initial() = _Initial;
-  const factory AttendanceRegisterCreateState.loading() = _Loading;
-  const factory AttendanceRegisterCreateState.loaded() = _Loaded;
-  const factory AttendanceRegisterCreateState.error() = _Error;
+
+  const factory AttendanceRegisterCreateState({
+    @Default(false) bool loading,
+    AttendanceRegistersModel? attendanceRegistersModel,
+  }) = _AttendanceRegisterCreateState;
 }

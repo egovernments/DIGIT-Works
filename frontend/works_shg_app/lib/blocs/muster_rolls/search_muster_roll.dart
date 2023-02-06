@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -19,11 +18,10 @@ class MusterRollSearchBloc
     extends Bloc<MusterRollSearchEvent, MusterRollSearchState> {
   MusterRollSearchBloc() : super(const MusterRollSearchState()) {
     on<SearchMusterRollEvent>(_onSearch);
-    on<SearchIndividualMusterRollEvent>(_onIndividualSearch);
   }
 
   FutureOr<void> _onSearch(
-      SearchMusterRollEvent event, MusterRollSearchEmitter emit) async {
+      MusterRollSearchEvent event, MusterRollSearchEmitter emit) async {
     Client client = Client();
     emit(state.copyWith(loading: true));
 
@@ -31,47 +29,16 @@ class MusterRollSearchBloc
         await MusterRollRepository(client.init()).searchMusterRolls(
             url: Urls.musterRollServices.searchMusterRolls,
             queryParameters: {
-              "tenantId": GlobalVariables.getTenantId().toString()
-            },
-            options: Options(extra: {
-              "userInfo": GlobalVariables.getUserInfo(),
-              "accessToken": GlobalVariables.getAuthToken(),
-              "apiId": "asset-services",
-              "msgId": "search with from and to values"
-            }));
+          "tenantId": GlobalVariables.getTenantId().toString()
+        });
     await Future.delayed(const Duration(seconds: 1));
     emit(state.copyWith(musterRollsModel: musterRollsModel, loading: false));
-  }
-
-  FutureOr<void> _onIndividualSearch(SearchIndividualMusterRollEvent event,
-      MusterRollSearchEmitter emit) async {
-    Client client = Client();
-    emit(state.copyWith(loading: true));
-
-    MusterRollsModel individualMuster =
-        await MusterRollRepository(client.init()).searchMusterRolls(
-            url: Urls.musterRollServices.searchMusterRolls,
-            queryParameters: {
-              "tenantId": GlobalVariables.getTenantId().toString(),
-              "ids": event.id
-            },
-            options: Options(extra: {
-              "userInfo": GlobalVariables.getUserInfo(),
-              "accessToken": GlobalVariables.getAuthToken(),
-              "apiId": "asset-services",
-              "msgId": "search with from and to values"
-            }));
-    await Future.delayed(const Duration(seconds: 1));
-    emit(state.copyWith(
-        individualMusterRollModel: individualMuster, loading: false));
   }
 }
 
 @freezed
 class MusterRollSearchEvent with _$MusterRollSearchEvent {
   const factory MusterRollSearchEvent.search() = SearchMusterRollEvent;
-  const factory MusterRollSearchEvent.individualSearch(
-      {@Default('') String id}) = SearchIndividualMusterRollEvent;
 }
 
 @freezed
@@ -81,6 +48,5 @@ class MusterRollSearchState with _$MusterRollSearchState {
   const factory MusterRollSearchState({
     @Default(false) bool loading,
     MusterRollsModel? musterRollsModel,
-    MusterRollsModel? individualMusterRollModel,
   }) = _MusterRollSearchState;
 }

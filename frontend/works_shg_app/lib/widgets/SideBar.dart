@@ -6,24 +6,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/auth/auth.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
-import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
-import '../blocs/user/user_search.dart';
-import 'loaders.dart';
 
-class SideBar extends StatefulWidget {
-  final String module;
-  const SideBar({super.key, this.module = 'rainmaker-common'});
-  @override
-  State<StatefulWidget> createState() {
-    return _SideBar();
-  }
-}
-
-class _SideBar extends State<SideBar> {
+class SideBar extends StatelessWidget {
+  final String? userName;
+  final String? mobileNumber;
+  const SideBar(
+      {super.key, required this.userName, required this.mobileNumber});
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -31,28 +23,22 @@ class _SideBar extends State<SideBar> {
     return ScrollableContent(
       footer: const PoweredByDigit(),
       children: [
-        BlocBuilder<UserSearchBloc, UserSearchState>(
-            builder: (context, userState) {
-          return !userState.loading && userState.userSearchModel != null
-              ? SizedBox(
-                  height: MediaQuery.of(context).size.height / 3,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        userState.userSearchModel!.user!.first.name.toString(),
-                        style: theme.textTheme.displayMedium,
-                      ),
-                      Text(
-                        userState.userSearchModel!.user!.first.mobileNumber
-                            .toString(),
-                        style: theme.textTheme.labelSmall,
-                      ),
-                    ],
-                  ),
-                )
-              : Loaders.circularLoader(context);
-        }),
+        SizedBox(
+          height: MediaQuery.of(context).size.height / 3,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                userName.toString(),
+                style: theme.textTheme.displayMedium,
+              ),
+              Text(
+                mobileNumber.toString(),
+                style: theme.textTheme.labelSmall,
+              ),
+            ],
+          ),
+        ),
         DigitIconTile(
           title: AppLocalizations.of(context).translate(i18.common.home),
           icon: Icons.home,
@@ -60,24 +46,19 @@ class _SideBar extends State<SideBar> {
         ),
         DigitIconTile(
           title: AppLocalizations.of(context).translate(i18.common.language),
-          icon: Icons.translate,
+          icon: Icons.language,
           content: Padding(
             padding: const EdgeInsets.all(16),
             child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
               builder: (context, state) {
-                List<DigitRowCardModel>? digitRowCardItems =
-                    GlobalVariables.getLanguages()
-                        .map<DigitRowCardModel>(
-                            (e) => DigitRowCardModel.fromJson(e))
-                        .toList();
                 return state.digitRowCardItems != null &&
                         state.isInitializationCompleted
                     ? DigitRowCard(
-                        onChanged: (data) async {
+                        onPressed: (data) async {
                           context.read<AppInitializationBloc>().add(
                               AppInitializationSetupEvent(
                                   selectedLangIndex:
-                                      data.value != 'en_IN' ? 1 : 0));
+                                      data.value == 'en_IN' ? 0 : 1));
 
                           await AppLocalizations(
                             Locale(data.value.split('_').first,
@@ -85,28 +66,13 @@ class _SideBar extends State<SideBar> {
                           ).load();
                           context.read<LocalizationBloc>().add(
                               OnLoadLocalizationEvent(
-                                  module: widget.module,
-                                  tenantId:
-                                      GlobalVariables.getTenantId().toString(),
+                                  module: 'rainmaker-common',
+                                  tenantId: 'pb',
                                   locale: data.value));
-                          context.read<AppInitializationBloc>().add(
-                              AppInitializationSetupEvent(
-                                  selectedLangIndex:
-                                      data.value != 'en_IN' ? 1 : 0));
-                          await AppLocalizations(
-                            Locale(data.value.split('_').first,
-                                data.value.split('_').last),
-                          ).load();
                         },
-                        rowItems: digitRowCardItems != null
-                            ? digitRowCardItems
-                                .map((e) =>
-                                    DigitRowCardModel.fromJson(e.toJson()))
-                                .toList()
-                            : state.digitRowCardItems
-                                ?.map((e) =>
-                                    DigitRowCardModel.fromJson(e.toJson()))
-                                .toList() as List<DigitRowCardModel>,
+                        list: state.digitRowCardItems
+                            ?.map((e) => DigitRowCardModel.fromJson(e.toJson()))
+                            .toList() as List<DigitRowCardModel>,
                         width: 85)
                     : const Text('');
               },

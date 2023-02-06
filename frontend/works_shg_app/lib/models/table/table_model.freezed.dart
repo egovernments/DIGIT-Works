@@ -23,12 +23,12 @@ mixin _$TableDataModel {
   String? get name => throw _privateConstructorUsedError;
   String? get aadhaar => throw _privateConstructorUsedError;
   String? get bankNumber => throw _privateConstructorUsedError;
-  double? get monIndex => throw _privateConstructorUsedError;
-  double? get tueIndex => throw _privateConstructorUsedError;
-  double? get wedIndex => throw _privateConstructorUsedError;
-  double? get thursIndex => throw _privateConstructorUsedError;
-  double? get friIndex => throw _privateConstructorUsedError;
-  double? get satIndex => throw _privateConstructorUsedError;
+  int? get monIndex => throw _privateConstructorUsedError;
+  int? get tueIndex => throw _privateConstructorUsedError;
+  int? get wedIndex => throw _privateConstructorUsedError;
+  int? get thursIndex => throw _privateConstructorUsedError;
+  int? get friIndex => throw _privateConstructorUsedError;
+  int? get satIndex => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -46,12 +46,12 @@ abstract class $TableDataModelCopyWith<$Res> {
       {String? name,
       String? aadhaar,
       String? bankNumber,
-      double? monIndex,
-      double? tueIndex,
-      double? wedIndex,
-      double? thursIndex,
-      double? friIndex,
-      double? satIndex});
+      int? monIndex,
+      int? tueIndex,
+      int? wedIndex,
+      int? thursIndex,
+      int? friIndex,
+      int? satIndex});
 }
 
 /// @nodoc
@@ -93,27 +93,27 @@ class _$TableDataModelCopyWithImpl<$Res, $Val extends TableDataModel>
       monIndex: freezed == monIndex
           ? _value.monIndex
           : monIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
       tueIndex: freezed == tueIndex
           ? _value.tueIndex
           : tueIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
       wedIndex: freezed == wedIndex
           ? _value.wedIndex
           : wedIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
       thursIndex: freezed == thursIndex
           ? _value.thursIndex
           : thursIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
       friIndex: freezed == friIndex
           ? _value.friIndex
           : friIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
       satIndex: freezed == satIndex
           ? _value.satIndex
           : satIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
     ) as $Val);
   }
 }
@@ -130,12 +130,12 @@ abstract class _$$_TableDataModelCopyWith<$Res>
       {String? name,
       String? aadhaar,
       String? bankNumber,
-      double? monIndex,
-      double? tueIndex,
-      double? wedIndex,
-      double? thursIndex,
-      double? friIndex,
-      double? satIndex});
+      int? monIndex,
+      int? tueIndex,
+      int? wedIndex,
+      int? thursIndex,
+      int? friIndex,
+      int? satIndex});
 }
 
 /// @nodoc
@@ -175,27 +175,27 @@ class __$$_TableDataModelCopyWithImpl<$Res>
       monIndex: freezed == monIndex
           ? _value.monIndex
           : monIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
       tueIndex: freezed == tueIndex
           ? _value.tueIndex
           : tueIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
       wedIndex: freezed == wedIndex
           ? _value.wedIndex
           : wedIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
       thursIndex: freezed == thursIndex
           ? _value.thursIndex
           : thursIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
       friIndex: freezed == friIndex
           ? _value.friIndex
           : friIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
       satIndex: freezed == satIndex
           ? _value.satIndex
           : satIndex // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as int?,
     ));
   }
 }
@@ -225,17 +225,17 @@ class _$_TableDataModel implements _TableDataModel {
   @override
   final String? bankNumber;
   @override
-  final double? monIndex;
+  final int? monIndex;
   @override
-  final double? tueIndex;
+  final int? tueIndex;
   @override
-  final double? wedIndex;
+  final int? wedIndex;
   @override
-  final double? thursIndex;
+  final int? thursIndex;
   @override
-  final double? friIndex;
+  final int? friIndex;
   @override
-  final double? satIndex;
+  final int? satIndex;
 
   @override
   String toString() {
@@ -289,12 +289,12 @@ abstract class _TableDataModel implements TableDataModel {
       {required final String? name,
       required final String? aadhaar,
       final String? bankNumber,
-      final double? monIndex,
-      final double? tueIndex,
-      final double? wedIndex,
-      final double? thursIndex,
-      final double? friIndex,
-      final double? satIndex}) = _$_TableDataModel;
+      final int? monIndex,
+      final int? tueIndex,
+      final int? wedIndex,
+      final int? thursIndex,
+      final int? friIndex,
+      final int? satIndex}) = _$_TableDataModel;
 
   factory _TableDataModel.fromJson(Map<String, dynamic> json) =
       _$_TableDataModel.fromJson;
@@ -306,17 +306,17 @@ abstract class _TableDataModel implements TableDataModel {
   @override
   String? get bankNumber;
   @override
-  double? get monIndex;
+  int? get monIndex;
   @override
-  double? get tueIndex;
+  int? get tueIndex;
   @override
-  double? get wedIndex;
+  int? get wedIndex;
   @override
-  double? get thursIndex;
+  int? get thursIndex;
   @override
-  double? get friIndex;
+  int? get friIndex;
   @override
-  double? get satIndex;
+  int? get satIndex;
   @override
   @JsonKey(ignore: true)
   _$$_TableDataModelCopyWith<_$_TableDataModel> get copyWith =>

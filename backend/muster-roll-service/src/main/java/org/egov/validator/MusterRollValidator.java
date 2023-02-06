@@ -14,10 +14,6 @@ import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
@@ -43,12 +39,6 @@ public class MusterRollValidator {
 
     @Autowired
     private MusterRollRepository musterRollRepository;
-
-    @Autowired
-    private MusterRollServiceConfiguration config;
-
-    @Autowired
-    private RestTemplate restTemplate;
 
 
     /**
@@ -97,9 +87,6 @@ public class MusterRollValidator {
         Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, rootTenantId);
         validateMDMSData(musterRoll, mdmsData, errorMap);
 
-        //check if the user is enrolled in the attendance register
-        isValidUser(musterRoll, requestInfo);
-
         if (!errorMap.isEmpty()){
             throw new CustomException(errorMap);
         }
@@ -109,10 +96,8 @@ public class MusterRollValidator {
     /**
      * Validate muster roll in update service
      * @param musterRollRequest
-     * @param existingMusterRoll
-     * @param isComputeAttendance
      */
-    public void validateUpdateMusterRoll(MusterRollRequest musterRollRequest,MusterRoll existingMusterRoll,boolean isComputeAttendance) {
+    public void validateUpdateMusterRoll(MusterRollRequest musterRollRequest) {
         log.info("MusterRollValidator::validateUpdateMusterRoll");
 
         Map<String, String> errorMap = new HashMap<>();
@@ -128,11 +113,6 @@ public class MusterRollValidator {
         String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
         Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, rootTenantId);
         validateMDMSData(musterRoll, mdmsData, errorMap);
-
-        //check if the user is enrolled in the attendance register for resubmit
-        if (isComputeAttendance) {
-            isValidUser(existingMusterRoll, requestInfo);
-        }
 
         if (!errorMap.isEmpty()){
             throw new CustomException(errorMap);
@@ -184,7 +164,7 @@ public class MusterRollValidator {
         }
 
         //Check if the startDate is Monday - UI sends the epoch time in IST
-        LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate().longValue()).atZone(ZoneId.of(serviceConfiguration.getTimeZone())).toLocalDate();
+        LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate().longValue()).atZone(ZoneId.of(ZONE)).toLocalDate();
         if (startDate.getDayOfWeek() != DayOfWeek.MONDAY) {
             throw new CustomException("START_DATE_MONDAY","StartDate should be Monday");
         }
@@ -196,7 +176,7 @@ public class MusterRollValidator {
         //Override the endDate as SUNDAY
         LocalDate endDate = startDate.plusDays(6);
         log.info("MusterRollValidator::validateCreateMusterRoll:: calculated endDate::"+endDate);
-        musterRoll.setEndDate(new BigDecimal(endDate.atStartOfDay(ZoneId.of(serviceConfiguration.getTimeZone())).toInstant().toEpochMilli()));
+        musterRoll.setEndDate(new BigDecimal(endDate.atStartOfDay(ZoneId.of(ZONE)).toInstant().toEpochMilli()));
 
     }
 
@@ -261,41 +241,6 @@ public class MusterRollValidator {
         if (CollectionUtils.isEmpty(tenantRes)) {
             log.error("The tenant: " + musterRoll.getTenantId() + " is not present in MDMS");
             errorMap.put("INVALID_TENANT", "The tenant: " + musterRoll.getTenantId() + " is not present in MDMS");
-        }
-
-    }
-
-    /**
-     * Check if the user is valid. User should be enrolled as a staff in the attendance register
-     * @param musterRoll
-     * @param requestInfo
-     */
-    private void isValidUser(MusterRoll musterRoll, RequestInfo requestInfo) {
-        String id = requestInfo.getUserInfo().getUuid();
-
-        StringBuilder uri = new StringBuilder();
-        uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
-                .queryParam("tenantId",musterRoll.getTenantId())
-                .queryParam("ids",musterRoll.getRegisterId())
-                .queryParam("staffId",id)
-                .queryParam("status",Status.ACTIVE);
-        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-
-        AttendanceRegisterResponse attendanceRegisterResponse = null;
-        log.info("MusterRollValidator::isValidUser::call attendance register search with tenantId::"+musterRoll.getTenantId()
-                +"::staffId::"+id);
-
-        try {
-            attendanceRegisterResponse  = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceRegisterResponse.class);
-        }  catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
-            log.error("MusterRollValidator::isValidUser::Error thrown from attendance register service::"+httpClientOrServerExc.getStatusCode());
-            throw new CustomException("ATTENDANCE_REGISTER_SERVICE_EXCEPTION","Error thrown from attendance register service::"+httpClientOrServerExc.getStatusCode());
-        }
-
-        if (attendanceRegisterResponse == null || CollectionUtils.isEmpty(attendanceRegisterResponse.getAttendanceRegister())) {
-            log.error("MusterRollValidator::isValidUser::User with id::" + id + " is not enrolled in the attendance register::"+musterRoll.getRegisterId());
-            throw new CustomException("INVALID_USER","User is not enrolled in the attendance register");
         }
 
     }

@@ -1461,10 +1461,7 @@ definitions:
         minLength: 2
         maxLength: 256
       locality:
-        type: string
-        description: Locality code
-        minLength: 2
-        maxLength: 128
+        $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/egov-location/contracts/v11-0-0.yml#/definitions/Boundary'
 
 
   ProjectType:
@@ -1569,21 +1566,12 @@ definitions:
         maxLength: 64
         description: Unique tenant of the system
         example: 'tenantA'
-      name:
-        type: string
-        description: Name of project
-        minLength: 2
-      projectNumber:
-        type: string
-        description: 'The unique identifier of the project number the custom formatting.'
-        example: 'PR/2022-23/010'
-        readOnly: true
       projectType:
         type: string
         description: Unique ID of project type from master data
         minLength: 2
         maxLength: 64
-      projectSubType:
+      subprojectType:
         type: string
         description: Unique ID of subproject type from master data
         minLength: 2
@@ -1607,10 +1595,6 @@ definitions:
         description: Reference to physical documents that have been attached via file upload
         items:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/Document'
-      projectHierarchy:
-        type: "string"
-        description: "Materialized Path of the hierarchy that this project element belongs to"
-        readOnly: true
       address:
         $ref: '#/definitions/Address'
       startDate:

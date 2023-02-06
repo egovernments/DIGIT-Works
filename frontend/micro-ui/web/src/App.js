@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense }  from "react";
 
 // import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 // import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";

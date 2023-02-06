@@ -1,4 +1,3 @@
-import 'package:digit_components/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 ThemeData get theme => ThemeData(
@@ -10,8 +9,6 @@ ThemeData get theme => ThemeData(
     hintColor: const Color.fromRGBO(177, 180, 182, 1),
     primaryColorDark: const Color.fromRGBO(11, 12, 12, 1),
     primaryColorLight: const Color.fromRGBO(80, 90, 95, 1),
-    indicatorColor: const Color.fromRGBO(35, 107, 9, 1),
-    colorScheme: colorScheme,
     // accentColor:  Color(0xff0B4B66),
 
     appBarTheme: const AppBarTheme(
@@ -90,26 +87,6 @@ ThemeData get theme => ThemeData(
       color: Color.fromRGBO(244, 119, 56, 1),
       // size: 25
     ));
-
-DigitColors get colors => const DigitColors();
-
-ColorScheme get colorScheme => ColorScheme(
-      brightness: Brightness.light,
-      primary: colors.burningOrange,
-      onPrimary: colors.white,
-      secondary: colors.regalBlue,
-      onSecondary: colors.white,
-      error: colors.lavaRed,
-      onError: colors.white,
-      background: colors.seaShellGray,
-      onBackground: colors.woodsmokeBlack,
-      surface: colors.alabasterWhite,
-      onSurface: colors.woodsmokeBlack,
-      onSurfaceVariant: colors.darkSpringGreen,
-      tertiaryContainer: colors.tropicalBlue,
-      inversePrimary: colors.paleLeafGreen,
-      surfaceTint: colors.waterBlue,
-    );
 
 MaterialColor createMaterialColor(Color color) {
   List strengths = <double>[.05];

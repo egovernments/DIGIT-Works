@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/blocs/localization/localization.dart';
-import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../models/localization/localization_model.dart';
 import '../../services/local_storage.dart';
@@ -29,10 +28,10 @@ class AppLocalizations {
     dynamic localLabelResponse;
     if (kIsWeb) {
       localLabelResponse = html.window
-          .localStorage['${locale?.languageCode}_${locale?.countryCode}' ?? ''];
+          .localStorage['${locale!.languageCode}_${locale!.countryCode}' ?? ''];
     } else {
-      localLabelResponse =
-          storage.read(key: GlobalVariables.selectedLocale() ?? '');
+      localLabelResponse = storage.read(
+          key: '${locale!.languageCode}_${locale!.countryCode}' ?? '');
     }
 
     if (localLabelResponse != null && localLabelResponse.trim().isNotEmpty) {
@@ -53,7 +52,11 @@ class AppLocalizations {
 
   Future<bool> load() async {
     if (scaffoldMessengerKey.currentContext != null) {
-      await getLocalizationLabels();
+      localizedStrings = BlocProvider.of<LocalizationBloc>(
+                  scaffoldMessengerKey.currentContext!)
+              .state
+              .localization ??
+          [];
       return true;
     } else {
       return false;

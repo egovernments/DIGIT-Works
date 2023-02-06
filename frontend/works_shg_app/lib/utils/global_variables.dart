@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:universal_html/html.dart' as html;
-import 'package:works_shg_app/blocs/localization/selected_localization_model.dart';
 import 'package:works_shg_app/models/app_config/app_config_model.dart';
 
-import '../models/init_mdms/init_mdms_model.dart';
 import '../services/local_storage.dart';
 
 class GlobalVariables {
@@ -77,20 +75,6 @@ class GlobalVariables {
     }
   }
 
-  static String bannerURL() {
-    if (kIsWeb) {
-      return StateInfoListModel.fromJson(
-                  jsonDecode(html.window.localStorage['StateInfo'].toString()))
-              .bannerUrl ??
-          '';
-    } else {
-      return StateInfoListModel.fromJson(
-                  jsonDecode(storage.read(key: 'StateInfo').toString()))
-              .bannerUrl ??
-          '';
-    }
-  }
-
   static dynamic getLanguages() {
     if (kIsWeb) {
       return jsonDecode(html.window.localStorage['languages'].toString());
@@ -99,31 +83,11 @@ class GlobalVariables {
     }
   }
 
-  static bool isLocaleSelect(String locale, String module) {
-    List<LocalizationLabel>? messages;
-    List<String> modules = module.contains(',')
-        ? module.split(',').map((m) => m.trim()).toList()
-        : [module];
+  static Future<bool> isLocaleSelect(String locale) async {
     if (kIsWeb) {
-      messages = html.window.localStorage.keys.contains(locale)
-          ? jsonDecode(html.window.localStorage[locale].toString())
-              .map<LocalizationLabel>((e) => LocalizationLabel.fromJson(e))
-              .toList()
-          : [];
-      return modules.every((module) {
-        return messages!.any((message) {
-          return message.module == module;
-        });
-      });
+      return html.window.localStorage.keys.contains(locale);
     } else {
-      messages = jsonDecode(storage.read(key: locale).toString())
-          .map<LocalizationLabel>((e) => LocalizationLabel.fromJson(e))
-          .toList();
-      return modules.every((module) {
-        return messages!.any((message) {
-          return message.module == module;
-        });
-      });
+      return await storage.containsKey(key: locale);
     }
   }
 

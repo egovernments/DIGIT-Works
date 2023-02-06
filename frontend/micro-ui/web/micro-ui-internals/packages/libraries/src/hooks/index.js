@@ -32,8 +32,6 @@ import useCreateEvent from "./events/useCreateEvent";
 import useUpdateEvent from "./events/useUpdateEvent";
 import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
-import useGenderMDMS from "./useGenderMDMS";
-import useCustomAPIHook from "./useCustomAPIHook";
 
 import useComplaintDetails from "./pgr/useComplaintDetails";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
@@ -119,7 +117,7 @@ import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
 import useViewFinancialDetails from "./project/useViewFinancialDetails";
-import useCreateProject from "./works/useCreateProject";
+import useCustomAPIHook from "./useCustomAPIHook";
 
 const works = {
   useViewEstimateDetails,
@@ -140,8 +138,7 @@ const works = {
   useApplicationActionsEstimate,
   useSearchApprovedEstimates,
   useInbox: useWorksInbox,
-  useKickoffInbox,
-  useCreateProject
+  useKickoffInbox
 };
 
 const contracts = {
@@ -259,7 +256,6 @@ const Hooks = {
   useTenants,
   useAccessControl,
   usePrivacyContext,
-  useGenderMDMS,
   pgr,
  
   dss,
@@ -273,7 +269,6 @@ const Hooks = {
   works,
   useRouteSubscription,
   useCustomMDMS,
-  useCustomAPIHook,
   useGetHowItWorksJSON,
   useGetFAQsJSON,
   useGetDSSFAQsJSON,
@@ -288,7 +283,8 @@ const Hooks = {
   useLocation,
   bills,
   masters,
-  project
+  project,
+  useCustomAPIHook
 };
 
 export default Hooks;

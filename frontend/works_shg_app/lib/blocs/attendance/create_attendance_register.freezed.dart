@@ -18,51 +18,27 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AttendanceRegisterCreateEvent {
   String get tenantId => throw _privateConstructorUsedError;
   String get registerNumber => throw _privateConstructorUsedError;
-  String get contractId => throw _privateConstructorUsedError;
-  String get contractCreated => throw _privateConstructorUsedError;
-  String get orgName => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   int get startDate => throw _privateConstructorUsedError;
   int get endDate => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String tenantId,
-            String registerNumber,
-            String contractId,
-            String contractCreated,
-            String orgName,
-            String name,
-            int startDate,
-            int endDate)
+    required TResult Function(String tenantId, String registerNumber,
+            String name, int startDate, int endDate)
         create,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            String tenantId,
-            String registerNumber,
-            String contractId,
-            String contractCreated,
-            String orgName,
-            String name,
-            int startDate,
-            int endDate)?
+    TResult? Function(String tenantId, String registerNumber, String name,
+            int startDate, int endDate)?
         create,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            String tenantId,
-            String registerNumber,
-            String contractId,
-            String contractCreated,
-            String orgName,
-            String name,
-            int startDate,
-            int endDate)?
+    TResult Function(String tenantId, String registerNumber, String name,
+            int startDate, int endDate)?
         create,
     required TResult orElse(),
   }) =>
@@ -100,9 +76,6 @@ abstract class $AttendanceRegisterCreateEventCopyWith<$Res> {
   $Res call(
       {String tenantId,
       String registerNumber,
-      String contractId,
-      String contractCreated,
-      String orgName,
       String name,
       int startDate,
       int endDate});
@@ -124,9 +97,6 @@ class _$AttendanceRegisterCreateEventCopyWithImpl<$Res,
   $Res call({
     Object? tenantId = null,
     Object? registerNumber = null,
-    Object? contractId = null,
-    Object? contractCreated = null,
-    Object? orgName = null,
     Object? name = null,
     Object? startDate = null,
     Object? endDate = null,
@@ -139,18 +109,6 @@ class _$AttendanceRegisterCreateEventCopyWithImpl<$Res,
       registerNumber: null == registerNumber
           ? _value.registerNumber
           : registerNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      contractId: null == contractId
-          ? _value.contractId
-          : contractId // ignore: cast_nullable_to_non_nullable
-              as String,
-      contractCreated: null == contractCreated
-          ? _value.contractCreated
-          : contractCreated // ignore: cast_nullable_to_non_nullable
-              as String,
-      orgName: null == orgName
-          ? _value.orgName
-          : orgName // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -180,9 +138,6 @@ abstract class _$$CreateAttendanceRegisterEventCopyWith<$Res>
   $Res call(
       {String tenantId,
       String registerNumber,
-      String contractId,
-      String contractCreated,
-      String orgName,
       String name,
       int startDate,
       int endDate});
@@ -203,9 +158,6 @@ class __$$CreateAttendanceRegisterEventCopyWithImpl<$Res>
   $Res call({
     Object? tenantId = null,
     Object? registerNumber = null,
-    Object? contractId = null,
-    Object? contractCreated = null,
-    Object? orgName = null,
     Object? name = null,
     Object? startDate = null,
     Object? endDate = null,
@@ -218,18 +170,6 @@ class __$$CreateAttendanceRegisterEventCopyWithImpl<$Res>
       registerNumber: null == registerNumber
           ? _value.registerNumber
           : registerNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      contractId: null == contractId
-          ? _value.contractId
-          : contractId // ignore: cast_nullable_to_non_nullable
-              as String,
-      contractCreated: null == contractCreated
-          ? _value.contractCreated
-          : contractCreated // ignore: cast_nullable_to_non_nullable
-              as String,
-      orgName: null == orgName
-          ? _value.orgName
-          : orgName // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -253,9 +193,6 @@ class _$CreateAttendanceRegisterEvent implements CreateAttendanceRegisterEvent {
   const _$CreateAttendanceRegisterEvent(
       {required this.tenantId,
       required this.registerNumber,
-      required this.contractId,
-      required this.contractCreated,
-      required this.orgName,
       required this.name,
       required this.startDate,
       required this.endDate});
@@ -265,12 +202,6 @@ class _$CreateAttendanceRegisterEvent implements CreateAttendanceRegisterEvent {
   @override
   final String registerNumber;
   @override
-  final String contractId;
-  @override
-  final String contractCreated;
-  @override
-  final String orgName;
-  @override
   final String name;
   @override
   final int startDate;
@@ -279,7 +210,7 @@ class _$CreateAttendanceRegisterEvent implements CreateAttendanceRegisterEvent {
 
   @override
   String toString() {
-    return 'AttendanceRegisterCreateEvent.create(tenantId: $tenantId, registerNumber: $registerNumber, contractId: $contractId, contractCreated: $contractCreated, orgName: $orgName, name: $name, startDate: $startDate, endDate: $endDate)';
+    return 'AttendanceRegisterCreateEvent.create(tenantId: $tenantId, registerNumber: $registerNumber, name: $name, startDate: $startDate, endDate: $endDate)';
   }
 
   @override
@@ -291,11 +222,6 @@ class _$CreateAttendanceRegisterEvent implements CreateAttendanceRegisterEvent {
                 other.tenantId == tenantId) &&
             (identical(other.registerNumber, registerNumber) ||
                 other.registerNumber == registerNumber) &&
-            (identical(other.contractId, contractId) ||
-                other.contractId == contractId) &&
-            (identical(other.contractCreated, contractCreated) ||
-                other.contractCreated == contractCreated) &&
-            (identical(other.orgName, orgName) || other.orgName == orgName) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate) &&
@@ -303,8 +229,8 @@ class _$CreateAttendanceRegisterEvent implements CreateAttendanceRegisterEvent {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, tenantId, registerNumber,
-      contractId, contractCreated, orgName, name, startDate, endDate);
+  int get hashCode => Object.hash(
+      runtimeType, tenantId, registerNumber, name, startDate, endDate);
 
   @JsonKey(ignore: true)
   @override
@@ -316,57 +242,33 @@ class _$CreateAttendanceRegisterEvent implements CreateAttendanceRegisterEvent {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String tenantId,
-            String registerNumber,
-            String contractId,
-            String contractCreated,
-            String orgName,
-            String name,
-            int startDate,
-            int endDate)
+    required TResult Function(String tenantId, String registerNumber,
+            String name, int startDate, int endDate)
         create,
   }) {
-    return create(tenantId, registerNumber, contractId, contractCreated,
-        orgName, name, startDate, endDate);
+    return create(tenantId, registerNumber, name, startDate, endDate);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            String tenantId,
-            String registerNumber,
-            String contractId,
-            String contractCreated,
-            String orgName,
-            String name,
-            int startDate,
-            int endDate)?
+    TResult? Function(String tenantId, String registerNumber, String name,
+            int startDate, int endDate)?
         create,
   }) {
-    return create?.call(tenantId, registerNumber, contractId, contractCreated,
-        orgName, name, startDate, endDate);
+    return create?.call(tenantId, registerNumber, name, startDate, endDate);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            String tenantId,
-            String registerNumber,
-            String contractId,
-            String contractCreated,
-            String orgName,
-            String name,
-            int startDate,
-            int endDate)?
+    TResult Function(String tenantId, String registerNumber, String name,
+            int startDate, int endDate)?
         create,
     required TResult orElse(),
   }) {
     if (create != null) {
-      return create(tenantId, registerNumber, contractId, contractCreated,
-          orgName, name, startDate, endDate);
+      return create(tenantId, registerNumber, name, startDate, endDate);
     }
     return orElse();
   }
@@ -405,9 +307,6 @@ abstract class CreateAttendanceRegisterEvent
   const factory CreateAttendanceRegisterEvent(
       {required final String tenantId,
       required final String registerNumber,
-      required final String contractId,
-      required final String contractCreated,
-      required final String orgName,
       required final String name,
       required final int startDate,
       required final int endDate}) = _$CreateAttendanceRegisterEvent;
@@ -416,12 +315,6 @@ abstract class CreateAttendanceRegisterEvent
   String get tenantId;
   @override
   String get registerNumber;
-  @override
-  String get contractId;
-  @override
-  String get contractCreated;
-  @override
-  String get orgName;
   @override
   String get name;
   @override
@@ -436,56 +329,13 @@ abstract class CreateAttendanceRegisterEvent
 
 /// @nodoc
 mixin _$AttendanceRegisterCreateState {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function() loaded,
-    required TResult Function() error,
-  }) =>
+  bool get loading => throw _privateConstructorUsedError;
+  AttendanceRegistersModel? get attendanceRegistersModel =>
       throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function()? loaded,
-    TResult? Function()? error,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function()? loaded,
-    TResult Function()? error,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
-    required TResult Function(_Error value) error,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
-    TResult? Function(_Error value)? error,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
-    TResult Function(_Error value)? error,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $AttendanceRegisterCreateStateCopyWith<AttendanceRegisterCreateState>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -495,6 +345,10 @@ abstract class $AttendanceRegisterCreateStateCopyWith<$Res> {
           $Res Function(AttendanceRegisterCreateState) then) =
       _$AttendanceRegisterCreateStateCopyWithImpl<$Res,
           AttendanceRegisterCreateState>;
+  @useResult
+  $Res call({bool loading, AttendanceRegistersModel? attendanceRegistersModel});
+
+  $AttendanceRegistersModelCopyWith<$Res>? get attendanceRegistersModel;
 }
 
 /// @nodoc
@@ -507,458 +361,138 @@ class _$AttendanceRegisterCreateStateCopyWithImpl<$Res,
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? loading = null,
+    Object? attendanceRegistersModel = freezed,
+  }) {
+    return _then(_value.copyWith(
+      loading: null == loading
+          ? _value.loading
+          : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      attendanceRegistersModel: freezed == attendanceRegistersModel
+          ? _value.attendanceRegistersModel
+          : attendanceRegistersModel // ignore: cast_nullable_to_non_nullable
+              as AttendanceRegistersModel?,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $AttendanceRegistersModelCopyWith<$Res>? get attendanceRegistersModel {
+    if (_value.attendanceRegistersModel == null) {
+      return null;
+    }
+
+    return $AttendanceRegistersModelCopyWith<$Res>(
+        _value.attendanceRegistersModel!, (value) {
+      return _then(_value.copyWith(attendanceRegistersModel: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$_AttendanceRegisterCreateStateCopyWith<$Res>
+    implements $AttendanceRegisterCreateStateCopyWith<$Res> {
+  factory _$$_AttendanceRegisterCreateStateCopyWith(
+          _$_AttendanceRegisterCreateState value,
+          $Res Function(_$_AttendanceRegisterCreateState) then) =
+      __$$_AttendanceRegisterCreateStateCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool loading, AttendanceRegistersModel? attendanceRegistersModel});
+
+  @override
+  $AttendanceRegistersModelCopyWith<$Res>? get attendanceRegistersModel;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$AttendanceRegisterCreateStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$_AttendanceRegisterCreateStateCopyWithImpl<$Res>
+    extends _$AttendanceRegisterCreateStateCopyWithImpl<$Res,
+        _$_AttendanceRegisterCreateState>
+    implements _$$_AttendanceRegisterCreateStateCopyWith<$Res> {
+  __$$_AttendanceRegisterCreateStateCopyWithImpl(
+      _$_AttendanceRegisterCreateState _value,
+      $Res Function(_$_AttendanceRegisterCreateState) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? loading = null,
+    Object? attendanceRegistersModel = freezed,
+  }) {
+    return _then(_$_AttendanceRegisterCreateState(
+      loading: null == loading
+          ? _value.loading
+          : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      attendanceRegistersModel: freezed == attendanceRegistersModel
+          ? _value.attendanceRegistersModel
+          : attendanceRegistersModel // ignore: cast_nullable_to_non_nullable
+              as AttendanceRegistersModel?,
+    ));
+  }
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
-  const _$_Initial() : super._();
+class _$_AttendanceRegisterCreateState extends _AttendanceRegisterCreateState {
+  const _$_AttendanceRegisterCreateState(
+      {this.loading = false, this.attendanceRegistersModel})
+      : super._();
+
+  @override
+  @JsonKey()
+  final bool loading;
+  @override
+  final AttendanceRegistersModel? attendanceRegistersModel;
 
   @override
   String toString() {
-    return 'AttendanceRegisterCreateState.initial()';
+    return 'AttendanceRegisterCreateState(loading: $loading, attendanceRegistersModel: $attendanceRegistersModel)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType &&
+            other is _$_AttendanceRegisterCreateState &&
+            (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(
+                    other.attendanceRegistersModel, attendanceRegistersModel) ||
+                other.attendanceRegistersModel == attendanceRegistersModel));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      Object.hash(runtimeType, loading, attendanceRegistersModel);
 
+  @JsonKey(ignore: true)
   @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function() loaded,
-    required TResult Function() error,
-  }) {
-    return initial();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function()? loaded,
-    TResult? Function()? error,
-  }) {
-    return initial?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function()? loaded,
-    TResult Function()? error,
-    required TResult orElse(),
-  }) {
-    if (initial != null) {
-      return initial();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
-    required TResult Function(_Error value) error,
-  }) {
-    return initial(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
-    TResult? Function(_Error value)? error,
-  }) {
-    return initial?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
-    TResult Function(_Error value)? error,
-    required TResult orElse(),
-  }) {
-    if (initial != null) {
-      return initial(this);
-    }
-    return orElse();
-  }
+  @pragma('vm:prefer-inline')
+  _$$_AttendanceRegisterCreateStateCopyWith<_$_AttendanceRegisterCreateState>
+      get copyWith => __$$_AttendanceRegisterCreateStateCopyWithImpl<
+          _$_AttendanceRegisterCreateState>(this, _$identity);
 }
 
-abstract class _Initial extends AttendanceRegisterCreateState {
-  const factory _Initial() = _$_Initial;
-  const _Initial._() : super._();
-}
-
-/// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$AttendanceRegisterCreateStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
-      : super(_value, _then);
-}
-
-/// @nodoc
-
-class _$_Loading extends _Loading {
-  const _$_Loading() : super._();
+abstract class _AttendanceRegisterCreateState
+    extends AttendanceRegisterCreateState {
+  const factory _AttendanceRegisterCreateState(
+          {final bool loading,
+          final AttendanceRegistersModel? attendanceRegistersModel}) =
+      _$_AttendanceRegisterCreateState;
+  const _AttendanceRegisterCreateState._() : super._();
 
   @override
-  String toString() {
-    return 'AttendanceRegisterCreateState.loading()';
-  }
-
+  bool get loading;
   @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
-  }
-
+  AttendanceRegistersModel? get attendanceRegistersModel;
   @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function() loaded,
-    required TResult Function() error,
-  }) {
-    return loading();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function()? loaded,
-    TResult? Function()? error,
-  }) {
-    return loading?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function()? loaded,
-    TResult Function()? error,
-    required TResult orElse(),
-  }) {
-    if (loading != null) {
-      return loading();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
-    required TResult Function(_Error value) error,
-  }) {
-    return loading(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
-    TResult? Function(_Error value)? error,
-  }) {
-    return loading?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
-    TResult Function(_Error value)? error,
-    required TResult orElse(),
-  }) {
-    if (loading != null) {
-      return loading(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _Loading extends AttendanceRegisterCreateState {
-  const factory _Loading() = _$_Loading;
-  const _Loading._() : super._();
-}
-
-/// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$AttendanceRegisterCreateStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
-      : super(_value, _then);
-}
-
-/// @nodoc
-
-class _$_Loaded extends _Loaded {
-  const _$_Loaded() : super._();
-
-  @override
-  String toString() {
-    return 'AttendanceRegisterCreateState.loaded()';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loaded);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function() loaded,
-    required TResult Function() error,
-  }) {
-    return loaded();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function()? loaded,
-    TResult? Function()? error,
-  }) {
-    return loaded?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function()? loaded,
-    TResult Function()? error,
-    required TResult orElse(),
-  }) {
-    if (loaded != null) {
-      return loaded();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
-    required TResult Function(_Error value) error,
-  }) {
-    return loaded(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
-    TResult? Function(_Error value)? error,
-  }) {
-    return loaded?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
-    TResult Function(_Error value)? error,
-    required TResult orElse(),
-  }) {
-    if (loaded != null) {
-      return loaded(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _Loaded extends AttendanceRegisterCreateState {
-  const factory _Loaded() = _$_Loaded;
-  const _Loaded._() : super._();
-}
-
-/// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$AttendanceRegisterCreateStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
-      : super(_value, _then);
-}
-
-/// @nodoc
-
-class _$_Error extends _Error {
-  const _$_Error() : super._();
-
-  @override
-  String toString() {
-    return 'AttendanceRegisterCreateState.error()';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Error);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function() loaded,
-    required TResult Function() error,
-  }) {
-    return error();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function()? loaded,
-    TResult? Function()? error,
-  }) {
-    return error?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function()? loaded,
-    TResult Function()? error,
-    required TResult orElse(),
-  }) {
-    if (error != null) {
-      return error();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
-    required TResult Function(_Error value) error,
-  }) {
-    return error(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
-    TResult? Function(_Error value)? error,
-  }) {
-    return error?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
-    TResult Function(_Error value)? error,
-    required TResult orElse(),
-  }) {
-    if (error != null) {
-      return error(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _Error extends AttendanceRegisterCreateState {
-  const factory _Error() = _$_Error;
-  const _Error._() : super._();
+  @JsonKey(ignore: true)
+  _$$_AttendanceRegisterCreateStateCopyWith<_$_AttendanceRegisterCreateState>
+      get copyWith => throw _privateConstructorUsedError;
 }

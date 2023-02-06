@@ -20,10 +20,9 @@ class AttendanceProjectsSearchBloc
   AttendanceProjectsSearchBloc()
       : super(const AttendanceProjectsSearchState()) {
     on<SearchAttendanceProjectsEvent>(_onSearch);
-    on<SearchIndividualAttendanceProjectEvent>(_onIndividualSearch);
   }
 
-  FutureOr<void> _onSearch(SearchAttendanceProjectsEvent event,
+  FutureOr<void> _onSearch(AttendanceProjectsSearchEvent event,
       AttendanceProjectsSearchEmitter emit) async {
     Client client = Client();
     emit(state.copyWith(loading: true));
@@ -31,49 +30,20 @@ class AttendanceProjectsSearchBloc
     AttendanceRegistersModel attendanceRegistersModel =
         await AttendanceRegisterRepository(client.init())
             .searchAttendanceProjects(
-      url: Urls.attendanceRegisterServices.searchAttendanceRegister,
-      queryParameters: event.id.trim().toString().isNotEmpty
-          ? {
-              "tenantId": GlobalVariables.getTenantId().toString(),
-              "ids": event.id
-            }
-          : {"tenantId": GlobalVariables.getTenantId().toString()},
-    );
+                url: Urls.attendanceRegisterServices.searchAttendanceRegister,
+                queryParameters: {
+          "tenantId": GlobalVariables.getTenantId().toString()
+        });
     await Future.delayed(const Duration(seconds: 1));
     emit(state.copyWith(
         attendanceRegistersModel: attendanceRegistersModel, loading: false));
-  }
-
-  FutureOr<void> _onIndividualSearch(
-      SearchIndividualAttendanceProjectEvent event,
-      AttendanceProjectsSearchEmitter emit) async {
-    Client client = Client();
-    emit(state.copyWith(loading: true));
-
-    AttendanceRegistersModel attendanceRegistersModel =
-        await AttendanceRegisterRepository(client.init())
-            .searchAttendanceProjects(
-      url: Urls.attendanceRegisterServices.searchAttendanceRegister,
-      queryParameters: event.id.trim().toString().isNotEmpty
-          ? {
-              "tenantId": GlobalVariables.getTenantId().toString(),
-              "ids": event.id
-            }
-          : {"tenantId": GlobalVariables.getTenantId().toString()},
-    );
-    await Future.delayed(const Duration(seconds: 1));
-    emit(state.copyWith(
-        individualAttendanceRegisterModel: attendanceRegistersModel,
-        loading: false));
   }
 }
 
 @freezed
 class AttendanceProjectsSearchEvent with _$AttendanceProjectsSearchEvent {
-  const factory AttendanceProjectsSearchEvent.search({@Default('') String id}) =
+  const factory AttendanceProjectsSearchEvent.search() =
       SearchAttendanceProjectsEvent;
-  const factory AttendanceProjectsSearchEvent.individualSearch(
-      {@Default('') String id}) = SearchIndividualAttendanceProjectEvent;
 }
 
 @freezed
@@ -83,6 +53,5 @@ class AttendanceProjectsSearchState with _$AttendanceProjectsSearchState {
   const factory AttendanceProjectsSearchState({
     @Default(false) bool loading,
     AttendanceRegistersModel? attendanceRegistersModel,
-    AttendanceRegistersModel? individualAttendanceRegisterModel,
   }) = _AttendanceProjectsSearchState;
 }

@@ -3,7 +3,6 @@ package org.egov.works.web.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -22,10 +21,10 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ProjectResponse {
-    @JsonProperty("ResponseInfo")
-    private ResponseInfo responseInfo = null;
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo = null;
 
-    @JsonProperty("Projects")
+    @JsonProperty("Project")
     @Valid
     private List<Project> project = new ArrayList<>();
 

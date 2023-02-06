@@ -2,23 +2,17 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-import '../widgets/SideBar.dart';
 import '../widgets/atoms/back_navigation_help_header.dart';
-import '../widgets/drawer_wrapper.dart';
+import '../widgets/atoms/digit_text_form_field.dart';
 
-class RegisterIndividualPage extends StatelessWidget {
-  const RegisterIndividualPage({super.key});
+class HouseholdLocationPage extends StatelessWidget {
+  const HouseholdLocationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(),
-      drawer: DrawerWrapper(const Drawer(
-          child: SideBar(
-        module: 'rainmaker-common,rainmaker-attendencemgmt',
-      ))),
       body: ReactiveFormBuilder(
         form: buildForm,
         builder: (context, form, child) {
@@ -39,7 +33,7 @@ class RegisterIndividualPage extends StatelessWidget {
                         form.markAllAsTouched();
                       }
                     },
-                    child: const Center(
+                    child: Center(
                       child: Text('Action'),
                     ),
                   ),
@@ -53,10 +47,10 @@ class RegisterIndividualPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Individual Details',
+                      'household Location',
                       style: theme.textTheme.displayMedium,
                     ),
-                    Column(children: const [
+                    Column(children: [
                       DigitTextFormField(
                         formControlName: 'administrationArea',
                         label: 'Administration Area',

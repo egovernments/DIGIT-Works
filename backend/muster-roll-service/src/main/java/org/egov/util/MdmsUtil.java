@@ -125,11 +125,8 @@ public class MdmsUtil {
 
         List<MasterDetail> musterRollMasterDetails = new ArrayList<>();
 
-        MasterDetail musterAttendanceMasterDetails = MasterDetail.builder().name(MASTER_MUSTER_ROLL).build();
-        musterRollMasterDetails.add(musterAttendanceMasterDetails);
-
-        MasterDetail musterWageSeekerSkillsMasterDetails = MasterDetail.builder().name(MASTER_WAGER_SEEKER_SKILLS).build();
-        musterRollMasterDetails.add(musterWageSeekerSkillsMasterDetails);
+        MasterDetail musterHalfDayMasterDetails = MasterDetail.builder().name(MASTER_MUSTER_ROLL).build();
+        musterRollMasterDetails.add(musterHalfDayMasterDetails);
 
         ModuleDetail musterRollModuleDetail = ModuleDetail.builder().masterDetails(musterRollMasterDetails)
                 .moduleName(MDMS_COMMON_MASTERS_MODULE_NAME).build();

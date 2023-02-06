@@ -81,11 +81,11 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
                       updatePayload: prevState.updatePayload.some(item => item.id === row.id) ? 
                           (prevState.updatePayload.map(item => {
                               if(item.id === row.id) {
-                                item.modifiedTotalAttendance = val
+                                item.totalAttendance = val
                               } 
                               return item
                           })) :
-                          [...prevState.updatePayload, {id: row.id, modifiedTotalAttendance: val}]
+                          [...prevState.updatePayload, {id: row.id, totalAttendance: val}]
                       }))
       dispatch({
         type: "updateModifiedTotal",

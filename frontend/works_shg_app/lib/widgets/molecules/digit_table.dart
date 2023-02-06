@@ -26,40 +26,42 @@ class DigitTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height ?? MediaQuery.of(context).size.height,
-      child: HorizontalDataTable(
-          leftHandSideColumnWidth: leftColumnWidth,
-          rightHandSideColumnWidth: rightColumnWidth,
-          isFixedHeader: true,
-          headerWidgets: _getTitleWidget(),
-          leftSideItemBuilder: _generateFirstColumnRow,
-          rightSideItemBuilder: _generateRightHandSideColumnRow,
-          itemCount: tableData.length,
-          elevation: 0,
-          // rowSeparatorWidget: const Divider(
-          //   color: Colors.black54,
-          //   height: 1.0,
-          //   thickness: 0.0,
-          // ),
-          leftHandSideColBackgroundColor: const Color(0xFFFFFFFF),
-          rightHandSideColBackgroundColor: const Color(0xFFFFFFFF),
-          scrollPhysics: scrollPhysics,
-          verticalScrollbarStyle: const ScrollbarStyle(
-            isAlwaysShown: true,
-            thickness: 4.0,
-            radius: Radius.circular(5.0),
-          ),
-          horizontalScrollbarStyle: const ScrollbarStyle(
-            isAlwaysShown: true,
-            thickness: 4.0,
-            radius: Radius.circular(5.0),
-          ),
-          enablePullToRefresh: false),
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      return SizedBox(
+        height: height ?? MediaQuery.of(context).size.height,
+        child: HorizontalDataTable(
+            leftHandSideColumnWidth: leftColumnWidth,
+            rightHandSideColumnWidth: rightColumnWidth,
+            isFixedHeader: true,
+            headerWidgets: _getTitleWidget(constraints),
+            leftSideItemBuilder: _generateFirstColumnRow,
+            rightSideItemBuilder: _generateRightHandSideColumnRow,
+            itemCount: tableData.length,
+            elevation: 0,
+            // rowSeparatorWidget: const Divider(
+            //   color: Colors.black54,
+            //   height: 1.0,
+            //   thickness: 0.0,
+            // ),
+            leftHandSideColBackgroundColor: const Color(0xFFFFFFFF),
+            rightHandSideColBackgroundColor: const Color(0xFFFFFFFF),
+            scrollPhysics: scrollPhysics,
+            verticalScrollbarStyle: const ScrollbarStyle(
+              isAlwaysShown: true,
+              thickness: 4.0,
+              radius: Radius.circular(5.0),
+            ),
+            horizontalScrollbarStyle: const ScrollbarStyle(
+              isAlwaysShown: true,
+              thickness: 4.0,
+              radius: Radius.circular(5.0),
+            ),
+            enablePullToRefresh: false),
+      );
+    });
   }
 
-  List<Widget> _getTitleWidget() {
+  List<Widget> _getTitleWidget(constraints) {
     var index = 0;
     return headerList.map((e) {
       index++;
@@ -69,16 +71,16 @@ class DigitTable extends StatelessWidget {
               padding: EdgeInsets.zero,
             ),
             onPressed: e.callBack == null ? null : () => e.callBack!(e),
-            child: _getTitleItemWidget((e.label),
+            child: _getTitleItemWidget((e.label), constraints,
                 isAscending: e.isAscendingOrder,
                 isBorderRequired: (index - 1) == 0));
       } else {
-        return _getTitleItemWidget(e.label);
+        return _getTitleItemWidget(e.label, constraints!);
       }
     }).toList();
   }
 
-  Widget _getTitleItemWidget(String label,
+  Widget _getTitleItemWidget(String label, constraints,
       {bool? isAscending, bool isBorderRequired = false}) {
     var textWidget = Text(label,
         style: const TextStyle(
@@ -118,40 +120,43 @@ class DigitTable extends StatelessWidget {
   }
 
   Widget _generateFirstColumnRow(BuildContext context, int index) {
-    var data = tableData[index].tableRow.first;
-    return ScrollParent(
-        controller,
-        InkWell(
-          onTap: () {
-            if (data.callBack != null) {
-              data.callBack!(data);
-            }
-          },
-          child: Container(
-            decoration: BoxDecoration(
-                border: Border(
-              left: tableCellBorder,
-              bottom: tableCellBorder,
-              right: tableCellBorder,
-            )),
-            width: leftColumnWidth,
-            height: tableData[index].tableRow.first.label != null &&
-                    tableData[index].tableRow.first.label!.length > 28
-                ? columnRowIncreasedHeight(index)
-                : columnRowFixedHeight,
-            padding:
-                const EdgeInsets.only(left: 17, right: 5, top: 6, bottom: 6),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              tableData[index].tableRow.first.label ?? '',
-              style: tableData[index].tableRow.first.style ??
-                  TextStyle(color: DigitTheme.instance.colorScheme.secondary),
+    return LayoutBuilder(builder: (context, constraints) {
+      var data = tableData[index].tableRow.first;
+      return ScrollParent(
+          controller,
+          InkWell(
+            onTap: () {
+              if (data.callBack != null) {
+                data.callBack!(data);
+              }
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border(
+                left: tableCellBorder,
+                bottom: tableCellBorder,
+                right: tableCellBorder,
+              )),
+              width: leftColumnWidth,
+              height: tableData[index].tableRow.first.label != null &&
+                      tableData[index].tableRow.first.label!.length > 28
+                  ? columnRowIncreasedHeight(index)
+                  : columnRowFixedHeight,
+              padding:
+                  const EdgeInsets.only(left: 17, right: 5, top: 6, bottom: 6),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                tableData[index].tableRow.first.label ?? '',
+                style: tableData[index].tableRow.first.style ??
+                    TextStyle(color: DigitTheme.instance.colorScheme.secondary),
+              ),
             ),
-          ),
-        ));
+          ));
+    });
   }
 
-  Widget _generateColumnRow(BuildContext context, int index, String input,
+  Widget _generateColumnRow(
+      BuildContext context, int index, String input, constraints,
       {Widget? buttonWidget, TextStyle? style}) {
     return Container(
       width: leftColumnWidth,
@@ -179,15 +184,18 @@ class DigitTable extends StatelessWidget {
 
   Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
     var data = tableData[index];
-    var list = <Widget>[];
-    for (int i = 1; i < data.tableRow.length; i++) {
-      list.add(_generateColumnRow(context, index, data.tableRow[i].label ?? '',
-          style: data.tableRow[i].style,
-          buttonWidget: data.tableRow[i].widget));
-    }
-    return Container(
-        color: index % 2 == 0 ? const Color(0xffEEEEEE) : Colors.white,
-        child: Row(children: list));
+    return LayoutBuilder(builder: (context, constraints) {
+      var list = <Widget>[];
+      for (int i = 1; i < data.tableRow.length; i++) {
+        list.add(_generateColumnRow(
+            context, index, data.tableRow[i].label ?? '', constraints,
+            style: data.tableRow[i].style,
+            buttonWidget: data.tableRow[i].widget));
+      }
+      return Container(
+          color: index % 2 == 0 ? const Color(0xffEEEEEE) : Colors.white,
+          child: Row(children: list));
+    });
   }
 
   BorderSide get tableCellBorder =>

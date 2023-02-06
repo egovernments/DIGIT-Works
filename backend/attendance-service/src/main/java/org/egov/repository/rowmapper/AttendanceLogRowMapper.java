@@ -3,7 +3,6 @@ package org.egov.repository.rowmapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceLog;
@@ -22,7 +21,6 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Component
-@Slf4j
 public class AttendanceLogRowMapper implements ResultSetExtractor<List<AttendanceLog>> {
 
     @Autowired
@@ -106,8 +104,7 @@ public class AttendanceLogRowMapper implements ResultSetExtractor<List<Attendanc
                 additionalDetails = mapper.readTree(obj.getValue());
             }
         } catch (IOException e) {
-            log.error("Failed to parse additionalDetail object");
-            throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
+            throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object");
         }
         if (additionalDetails.isEmpty())
             additionalDetails = null;
