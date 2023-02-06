@@ -2,6 +2,7 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import digit.models.coremodels.ProcessInstance;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -104,6 +105,7 @@ public class MusterRollService {
         enrichmentService.enrichMusterRollOnCreate(musterRollRequest);
         calculationService.createAttendance(musterRollRequest,true);
         workflowService.updateWorkflowStatus(musterRollRequest);
+
         producer.push(serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
         return musterRollRequest;
     }
@@ -132,7 +134,7 @@ public class MusterRollService {
         }
         //apply the limit and offset
         if (filteredMusterRollList != null && !musterRollServiceUtil.isTenantBasedSearch(searchCriteria)) {
-            applyLimitAndOffset(searchCriteria,filteredMusterRollList);
+            filteredMusterRollList = applyLimitAndOffset(searchCriteria,filteredMusterRollList);
         }
         return filteredMusterRollList;
     }
@@ -163,6 +165,7 @@ public class MusterRollService {
         }
 
         workflowService.updateWorkflowStatus(musterRollRequest);
+
         producer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
         return musterRollRequest;
     }
