@@ -22,9 +22,6 @@ public class AmountDetail {
     @JsonProperty("id")
     private String id = null;
 
-    @JsonProperty("category")
-    private String category = null;
-
     @JsonProperty("type")
     private String type = null;
 

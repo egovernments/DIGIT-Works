@@ -23,7 +23,7 @@ last_modified_by             character varying(256),
 created_time                 bigint,
 last_modified_time           bigint,
 
-CONSTRAINT uk_eg_wms_estimate UNIQUE (project_id),
+CONSTRAINT uk_eg_wms_estimate UNIQUE (estimate_number),
 CONSTRAINT pk_eg_wms_estimate PRIMARY KEY (id)
 );
 
@@ -32,17 +32,15 @@ id                           character varying(256),
 tenant_id                    character varying(64) NOT NULL,
 estimate_id                  character varying(256) NOT NULL,
 sor_id                       character varying(256),
+category                     character varying(256) NOT NULL,
 name                         character varying(140) NOT NULL,
 description                  character varying(256) NOT NULL,
 unit_rate                    NUMERIC,
 no_of_unit                   NUMERIC,
-total_amount                 NUMERIC,
 uom                          character varying(256),
 uom_value                    NUMERIC,
 additional_details           JSONB,
 CONSTRAINT pk_eg_wms_estimate_detail PRIMARY KEY (id),
-CONSTRAINT uk_eg_wms_estimate_detail_name UNIQUE (name),
-CONSTRAINT uk_eg_wms_estimate_detail_description UNIQUE (description),
 CONSTRAINT fk_eg_wms_estimate_detail FOREIGN KEY (estimate_id) REFERENCES eg_wms_estimate (id)
 );
 
@@ -67,7 +65,6 @@ CREATE TABLE eg_wms_estimate_amount_detail(
 id                           character varying(256),
 tenant_id                    character varying(64) NOT NULL,
 estimate_detail_id           character varying(256) NOT NULL,
-category                     character varying(256) NOT NULL,
 type                         character varying(140) NOT NULL,
 amount                       NUMERIC NOT NULL,
 additional_details           JSONB,
