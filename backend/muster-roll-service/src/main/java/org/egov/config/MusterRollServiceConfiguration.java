@@ -65,11 +65,13 @@ public class MusterRollServiceConfiguration {
     @Value("${musterroll.search.max.limit}")
     private Integer musterMaxLimit;
 
-    //Attendance log service
+    //Attendance service
     @Value("${works.attendance.log.host}")
     private String attendanceLogHost;
     @Value("${works.attendance.log.search.endpoint}")
     private String attendanceLogEndpoint;
+    @Value("${works.attendance.register.search.endpoint}")
+    private String attendanceRegisterEndpoint;
 
     @PostConstruct
     public void initialize() {

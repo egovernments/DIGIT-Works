@@ -132,4 +132,12 @@ public class MusterRollRequestBuilderTest {
         AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().attendance(logs).build();
         return attendanceLogResponse;
     }
+
+    public static AttendanceRegisterResponse getAttendanceRegisterResponse() {
+        List<AttendanceRegister> attendanceRegisterList = new ArrayList<>();
+        AttendanceRegister attendanceRegister = AttendanceRegister.builder().id("196dc78f-54eb-4462-a924-f9e753834228").build();
+        attendanceRegisterList.add(attendanceRegister);
+        AttendanceRegisterResponse response = AttendanceRegisterResponse.builder().attendanceRegister(attendanceRegisterList).build();
+        return response;
+    }
 }

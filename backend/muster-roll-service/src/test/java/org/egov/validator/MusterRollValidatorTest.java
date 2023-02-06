@@ -8,6 +8,8 @@ import org.egov.service.CalculationService;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
+import org.egov.web.models.AttendanceLogResponse;
+import org.egov.web.models.AttendanceRegisterResponse;
 import org.egov.web.models.MusterRollRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,10 @@ public class MusterRollValidatorTest {
     private MdmsUtil mdmsUtils;
     @Mock
     private MusterRollRepository musterRollRepository;
+    @Mock
+    private MusterRollServiceConfiguration config;
+    @Mock
+    private RestTemplate restTemplate;
 
 
     @BeforeEach
@@ -44,11 +50,14 @@ public class MusterRollValidatorTest {
         Object mdmsResponse = MusterRollRequestBuilderTest.getTenantMdmsResponse();
         lenient().when(mdmsUtils.mDMSCall(any(MusterRollRequest.class),
                 any(String.class))).thenReturn(mdmsResponse);
+        lenient().when(serviceConfiguration.getTimeZone()).thenReturn("Asia/Kolkata");
+
     }
 
     @Test
     void shouldNotThrowException_IfCreateValidationSuccess() {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateValidationSuccess();
+        getMockAttendanceRegisterSuccess();
         assertDoesNotThrow(() -> musterRollValidator.validateCreateMusterRoll(musterRollRequest));
     }
 
@@ -133,9 +142,19 @@ public class MusterRollValidatorTest {
     @Test
     void shouldThrowException_IfWorkflowActionIsBlank() {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateValidationSuccess();
+        getMockAttendanceRegisterSuccess();
         musterRollRequest.getWorkflow().setAction("");
         CustomException exception = assertThrows(CustomException.class, ()-> musterRollValidator.validateCreateMusterRoll(musterRollRequest));
         assertNotNull(exception.getErrors().get("WORK_FLOW.ACTION"));
+    }
+
+    void getMockAttendanceRegisterSuccess() {
+        //MOCK Attendance log search service response
+        lenient().when(config.getAttendanceLogHost()).thenReturn("http://localhost:8023");
+        lenient().when(config.getAttendanceRegisterEndpoint()).thenReturn("/attendance/v1/_search");
+        AttendanceRegisterResponse response = MusterRollRequestBuilderTest.getAttendanceRegisterResponse();
+        lenient().when(restTemplate.postForObject(any(String.class),any(Object.class),any())).
+                thenReturn(response);
     }
 
 }

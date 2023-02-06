@@ -22,6 +22,7 @@ import _ from "lodash";
 import CustomDropdown from "../molecules/CustomDropdown";
 import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
 import HorizontalNav  from "../atoms/HorizontalNav"
+import Toast from "../atoms/Toast";
 
 const wrapperStyles = {
   // "display":"flex",
@@ -77,6 +78,22 @@ export const FormComposer = (props) => {
   });
   const { t } = useTranslation();
   const formData = watch();
+  const selectedFormCategory = props?.currentFormCategory;
+  const [showErrorToast, setShowErrorToast] = useState(false); 
+
+
+  //clear all errors if user has changed the form category. 
+  //This is done in case user first click on submit and have errors in cat 1, switches to cat 2 and hit submit with errors
+  //So, he should not get error prompts from previous cat 1 on cat 2 submit.
+  useEffect(()=>{
+    clearErrors();
+  },[selectedFormCategory]);
+
+  useEffect(()=>{
+    if(Object.keys(formState?.errors).length > 0 && formState?.submitCount > 0) {
+      setShowErrorToast(true);
+    }
+  },[formState?.errors, formState?.submitCount]);
 
   useEffect(() => {
     if (
@@ -108,9 +125,9 @@ export const FormComposer = (props) => {
     let disableFormValidation = false;
     // disable form validation if section category does not matches with the current category
     // this will avoid validation for the other categories other than the current category.
-    // sectionFormCategory comes as part of section config and currentFormCategory is a state managed by the FormComposer consumer.
-    if (sectionFormCategory && props?.currentFormCategory) {
-      disableFormValidation = sectionFormCategory !== props?.currentFormCategory ? true : false;
+    // sectionFormCategory comes as part of section config and selectedFormCategory is a state managed by the FormComposer consumer.
+    if (sectionFormCategory && selectedFormCategory) {
+      disableFormValidation = sectionFormCategory !== selectedFormCategory ? true : false;
     }
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
     switch (type) {
@@ -236,6 +253,7 @@ export const FormComposer = (props) => {
                   maxFilesAllowed={populators.maxFilesAllowed}
                   extraStyleName={{ padding: "0.5rem" }}
                   customClass={populators?.customClass}
+                  customErrorMsg={populators?.errorMessage}
                 />
               );
             }}
@@ -287,6 +305,8 @@ export const FormComposer = (props) => {
                 formState={formState}
                 onBlur={props.onBlur}
                 control={control}
+                sectionFormCategory={sectionFormCategory}
+                selectedFormCategory={selectedFormCategory}
                 getValues={getValues}
               />
             )}
@@ -386,6 +406,10 @@ export const FormComposer = (props) => {
       return <div></div>;
     }
   };
+
+  const closeToast = () => {
+    setShowErrorToast(false);
+  }
 
   const formFields = useCallback(
     (section, index, array, sectionFormCategory) => (
@@ -641,6 +665,7 @@ export const FormComposer = (props) => {
           {props.onSkip && props.showSkip && <LinkButton style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)} onClick={props.onSkip} />}
         </ActionBar>
       )}
+      {showErrorToast && <Toast error={true} label={t("WORKS_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={'true'} onClose={closeToast} />}
     </form>
   );
 };

@@ -14,8 +14,11 @@ import '../blocs/attendance/create_attendee.dart';
 import '../blocs/localization/app_localization.dart';
 import '../router/app_router.dart';
 import '../utils/models.dart';
+import '../widgets/SideBar.dart';
+import '../widgets/drawer_wrapper.dart';
+import '../widgets/loaders.dart';
 
-class AttendanceRegisterTablePage extends StatelessWidget {
+class AttendanceRegisterTablePage extends StatefulWidget {
   final List<Map<String, dynamic>> projectDetails;
   final AttendanceRegister? attendanceRegister;
   const AttendanceRegisterTablePage(
@@ -24,15 +27,32 @@ class AttendanceRegisterTablePage extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<StatefulWidget> createState() {
+    return _AttendanceRegisterTablePage();
+  }
+}
+
+class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
+  var searchController = TextEditingController();
+  List<Map<String, dynamic>> userList = [];
+  List<Map<String, dynamic>> filteredUserList = [];
+  List<TableDataModel> userTableList = [];
+
+  @override
   Widget build(BuildContext context) {
     // final List list = json.decode(fakeTableData);
     // List<TableDataModel> tableList =
     //     list.map((e) => TableDataModel.fromJson(e)).toList();
     return Scaffold(
+      appBar: AppBar(),
+      drawer: DrawerWrapper(const Drawer(
+          child: SideBar(
+        module: 'rainmaker-common,rainmaker-attendencemgmt',
+      ))),
       body: BlocBuilder<AttendanceUserSearchBloc, AttendanceUserSearchState>(
           builder: (context, state) {
         if (!state.loading && state.userSearchModel != null) {
-          List<Map<String, dynamic>> userList = state.userSearchModel!.user!
+          userList = state.userSearchModel!.user!
               .map((e) => {
                     "name": e.name,
                     "aadhaar": e.uuid,
@@ -42,13 +62,14 @@ class AttendanceRegisterTablePage extends StatelessWidget {
           List<Map<String, dynamic>> attendeePayLoadList =
               state.userSearchModel!.user!
                   .map((e) => {
-                        "registerId": attendanceRegister?.id.toString(),
+                        "registerId": widget.attendanceRegister?.id.toString(),
                         "individualId": e.uuid,
                         "tenantId": e.tenantId
                       })
                   .toList();
-          List<TableDataModel>? userTableList =
-              userList.map((e) => TableDataModel.fromJson(e)).toList();
+          userTableList = filteredUserList.isNotEmpty
+              ? filteredUserList.map((e) => TableDataModel.fromJson(e)).toList()
+              : userList.map((e) => TableDataModel.fromJson(e)).toList();
           var tableData = getAttendanceData(userTableList);
           return Stack(children: [
             Container(
@@ -58,8 +79,11 @@ class AttendanceRegisterTablePage extends StatelessWidget {
               child: CustomScrollView(slivers: [
                 SliverList(
                     delegate: SliverChildListDelegate([
-                  const Back(),
-                  WorkDetailsCard(projectDetails),
+                  Back(
+                    backLabel:
+                        AppLocalizations.of(context).translate(i18.common.back),
+                  ),
+                  WorkDetailsCard(widget.projectDetails),
                 ])),
                 SliverToBoxAdapter(
                     child: Column(
@@ -72,8 +96,11 @@ class AttendanceRegisterTablePage extends StatelessWidget {
                           margin: const EdgeInsets.all(8.0),
                           child: TextFormField(
                               autofocus: true,
+                              controller: searchController,
+                              onChanged: (val) => onTextSearch(),
                               decoration: InputDecoration(
-                                hintText: "Search by Name/Aadhaar-Number",
+                                hintText: AppLocalizations.of(context)
+                                    .translate(i18.common.searchByNameAadhaar),
                                 border: const OutlineInputBorder(
                                   borderRadius: BorderRadius.zero,
                                 ),
@@ -97,15 +124,15 @@ class AttendanceRegisterTablePage extends StatelessWidget {
                           children: [
                             LayoutBuilder(builder: (context, constraints) {
                               var width = constraints.maxWidth < 760
-                                  ? 145.0
-                                  : (constraints.maxWidth / 4);
+                                  ? 120.0
+                                  : (constraints.maxWidth / 5);
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: shg_app.DigitTable(
                                   headerList: headerList,
                                   tableData: tableData,
                                   leftColumnWidth: width,
-                                  rightColumnWidth: width * 7,
+                                  rightColumnWidth: width * 2,
                                   height: 58 + (52.0 * tableData.length),
                                 ),
                               );
@@ -151,10 +178,31 @@ class AttendanceRegisterTablePage extends StatelessWidget {
             )
           ]);
         } else {
-          return const CircularProgressIndicator();
+          return Loaders.circularLoader(context);
+          ;
         }
       }),
     );
+  }
+
+  void onTextSearch() {
+    if (searchController.text.isNotEmpty) {
+      setState(() {
+        // newList.retainWhere((e) =>
+        // e.name!.toLowerCase().contains(searchController.text) ||
+        //     e.aadhaar!.contains(searchController.text));
+        filteredUserList = userList
+            .where((e) => e["aadhaar"]!.contains(searchController.text))
+            .toList();
+      });
+    } else {
+      setState(() {
+        filteredUserList.clear();
+      });
+      context.read<AttendanceUserSearchBloc>().add(
+            const SearchAttendanceUserEvent(),
+          );
+    }
   }
 
   List<TableHeader> get headerList => [

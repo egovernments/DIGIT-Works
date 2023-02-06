@@ -31,8 +31,8 @@ class AuthRepository {
         json.decode(response.toString()),
       );
     } on DioError catch (ex) {
+      rethrow;
       // Assuming there will be an errorMessage property in the JSON object
-      throw Exception(ex);
     }
   }
 }

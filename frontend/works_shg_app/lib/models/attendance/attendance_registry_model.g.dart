@@ -30,6 +30,10 @@ _$_AttendanceRegister _$$_AttendanceRegisterFromJson(
       startDate: json['startDate'] as int?,
       endDate: json['endDate'] as int?,
       status: json['status'] as String?,
+      attendanceRegisterAdditionalDetails: json['additionalDetails'] == null
+          ? null
+          : AttendanceRegisterAdditionalDetails.fromJson(
+              json['additionalDetails'] as Map<String, dynamic>),
       staffEntries: (json['staff'] as List<dynamic>?)
           ?.map((e) => StaffEntries.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -48,8 +52,24 @@ Map<String, dynamic> _$$_AttendanceRegisterToJson(
       'startDate': instance.startDate,
       'endDate': instance.endDate,
       'status': instance.status,
+      'additionalDetails': instance.attendanceRegisterAdditionalDetails,
       'staff': instance.staffEntries,
       'attendees': instance.attendeesEntries,
+    };
+
+_$_AttendanceRegisterAdditionalDetails
+    _$$_AttendanceRegisterAdditionalDetailsFromJson(
+            Map<String, dynamic> json) =>
+        _$_AttendanceRegisterAdditionalDetails(
+          contractId: json['contractId'] as String?,
+          orgName: json['orgName'] as String?,
+        );
+
+Map<String, dynamic> _$$_AttendanceRegisterAdditionalDetailsToJson(
+        _$_AttendanceRegisterAdditionalDetails instance) =>
+    <String, dynamic>{
+      'contractId': instance.contractId,
+      'orgName': instance.orgName,
     };
 
 _$_StaffEntries _$$_StaffEntriesFromJson(Map<String, dynamic> json) =>
@@ -84,20 +104,4 @@ Map<String, dynamic> _$$_AttendeesEntriesToJson(_$_AttendeesEntries instance) =>
       'registerId': instance.registerId,
       'individualId': instance.individualId,
       'enrollmentDate': instance.enrollmentDate,
-    };
-
-_$_AuditDetails _$$_AuditDetailsFromJson(Map<String, dynamic> json) =>
-    _$_AuditDetails(
-      createdBy: json['createdBy'] as String?,
-      lastModifiedBy: json['lastModifiedBy'] as String?,
-      createdTime: json['createdTime'] as int?,
-      lastModifiedTime: json['lastModifiedTime'] as int?,
-    );
-
-Map<String, dynamic> _$$_AuditDetailsToJson(_$_AuditDetails instance) =>
-    <String, dynamic>{
-      'createdBy': instance.createdBy,
-      'lastModifiedBy': instance.lastModifiedBy,
-      'createdTime': instance.createdTime,
-      'lastModifiedTime': instance.lastModifiedTime,
     };

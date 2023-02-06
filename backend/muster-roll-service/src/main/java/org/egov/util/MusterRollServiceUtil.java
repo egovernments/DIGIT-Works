@@ -7,8 +7,10 @@ import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
+import org.egov.web.models.AttendanceEntry;
 import org.egov.web.models.IndividualEntry;
 import org.egov.web.models.MusterRoll;
+import org.egov.web.models.MusterRollSearchCriteria;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,8 +20,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static org.egov.util.MusterRollServiceConstants.MASTER_MUSTER_ROLL;
-import static org.egov.util.MusterRollServiceConstants.MDMS_COMMON_MASTERS_MODULE_NAME;
+import static org.egov.util.MusterRollServiceConstants.*;
 
 @Component
 @Slf4j
@@ -52,7 +53,7 @@ public class MusterRollServiceUtil {
      *
      */
     public void populateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode) {
-        final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_MUSTER_ROLL + ".*";
+        final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_WAGER_SEEKER_SKILLS + ".*";
         List<LinkedHashMap<String,String>> musterRes = null;
 
         try {
@@ -68,7 +69,7 @@ public class MusterRollServiceUtil {
             for (Object object : musterRes) {
                 LinkedHashMap<String, String> codeValueMap = (LinkedHashMap<String, String>) object;
                 if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
-                    skillValue = codeValueMap.get("value");
+                    skillValue = codeValueMap.get("name");
                     break;
                 }
             }
@@ -92,5 +93,37 @@ public class MusterRollServiceUtil {
             }
         }
 
+    }
+
+    /**
+     *  Sets the attendanceLogId in additionalDetails of the attendanceEntry
+     * @param attendanceEntry
+     * @param entryAttendanceLogId
+     * @param exitAttendanceLogId
+     */
+    public void populateAdditionalDetailsAttendanceEntry (AttendanceEntry attendanceEntry, String entryAttendanceLogId, String exitAttendanceLogId) {
+        JSONObject additionalDetails = new JSONObject();
+        additionalDetails.put("entryAttendanceLogId",entryAttendanceLogId);
+        additionalDetails.put("exitAttendanceLogId",exitAttendanceLogId);
+        try {
+            attendanceEntry.setAdditionalDetails(mapper.readValue(additionalDetails.toString(), Object.class));
+        } catch (IOException e) {
+            throw new CustomException("MusterRollServiceUtil::populateAdditionalDetailsAttendanceEntry::PARSING ERROR", "Failed to set additionalDetail object");
+        }
+    }
+
+    /**
+     * Checks if the search is based only on tenantId
+     * @param searchCriteria
+     * @return
+     */
+    public boolean isTenantBasedSearch(MusterRollSearchCriteria searchCriteria) {
+        if ((searchCriteria.getIds() == null || searchCriteria.getIds().isEmpty()) && StringUtils.isBlank(searchCriteria.getMusterRollNumber())
+                && StringUtils.isBlank(searchCriteria.getRegisterId()) &&  searchCriteria.getFromDate() == null  && searchCriteria.getToDate() == null
+                && searchCriteria.getStatus() == null && StringUtils.isBlank(searchCriteria.getMusterRollStatus())
+                && StringUtils.isNotBlank(searchCriteria.getTenantId())) {
+            return true;
+        }
+        return false;
     }
 }

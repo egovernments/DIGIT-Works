@@ -5,6 +5,7 @@ import ProjectCard from "./components/ProjectCard";
 import SubProjectDetailsTable from "./components/SubProjectDetailsTable";
 import ViewFinancialDetails from "./pageComponents/ViewFinancialDetails";
 import { default as EmployeeApp } from "./pages/employee";
+import CreateProjectResponse from "./pages/employee/CreateProject/CreateProjectResponse";
 import CreateProject from "./pages/employee/CreateProject/index";
 import ProjectDetails from "./pages/employee/ProjectDetails";
 import ProjectSearch from "./pages/employee/ProjectSearch";
@@ -42,8 +43,9 @@ const componentsToRegister = {
     ProjectDetails,
     ViewFinancialDetails,
     ProjectSearch,
+    ProjectSearchAndInbox,
     SubProjectDetailsTable,
-    ProjectSearchAndInbox
+    CreateProjectResponse
 };
 
 export const initProjectComponents = () => {

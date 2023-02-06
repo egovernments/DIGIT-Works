@@ -78,7 +78,8 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
         String id = rs.getString("summaryId");
         String musterId = rs.getString("indMusterId");
         String individualId = rs.getString("IndividualId");
-        BigDecimal totalAttendance = rs.getBigDecimal("totalAttendance");
+        BigDecimal actualTotalAttendance = rs.getBigDecimal("actualTotalAttendance");
+        BigDecimal modifiedtotalAttendance = rs.getBigDecimal("modifiedTotalAttendance");
 
         String createdby = rs.getString("indCreatedBy");
         String lastmodifiedby = rs.getString("indModifiedBy");
@@ -93,7 +94,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
                     .build();
 
             IndividualEntry individualEntry = IndividualEntry.builder().id(id).individualId(individualId)
-                    .totalAttendance(totalAttendance).additionalDetails(additionalDetails).auditDetails(auditDetails).build();
+                    .actualTotalAttendance(actualTotalAttendance).modifiedTotalAttendance(modifiedtotalAttendance).additionalDetails(additionalDetails).auditDetails(auditDetails).build();
 
             if (!individualMap.containsKey(id)) {
                 individualMap.put(id, individualEntry);
