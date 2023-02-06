@@ -375,11 +375,7 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Response is successful\", () => {",
-							"    if (pm.environment.get(\"base_url\").includes(\"localhost\")) { ",
-							"        pm.expect(pm.response.to.have.status(400));",
-							"    } else {",
-							"        pm.expect(pm.response.to.have.status(403));",
-							"    }",
+							"    pm.expect(pm.response.to.have.status(400));",
 							"});",
 							"   ",
 							"",
@@ -387,12 +383,8 @@
 							"    var res = pm.response.json();",
 							"    var code = res.Errors[0].code;",
 							"    var message = res.Errors[0].message;",
-							"    if (pm.environment.get(\"base_url\").includes(\"localhost\")) { ",
-							"        pm.expect(code).to.eql(\"TENANT_ID\");",
-							"        pm.expect(message).to.eql(\"Tenant ID is mandatory\");",
-							"    } else {",
-							"        pm.expect(code).to.eql(\"CustomException\");        ",
-							"    }",
+							"    pm.expect(code).to.eql(\"TENANT_ID\");",
+							"    pm.expect(message).to.eql(\"Tenant ID is mandatory\");",
 							"    }",
 							");"
 						],
