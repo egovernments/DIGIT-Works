@@ -11,12 +11,12 @@ _$_TableDataModel _$$_TableDataModelFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String?,
       aadhaar: json['aadhaar'] as String?,
       bankNumber: json['bankNumber'] as String?,
-      monIndex: json['monIndex'] as int?,
-      tueIndex: json['tueIndex'] as int?,
-      wedIndex: json['wedIndex'] as int?,
-      thursIndex: json['thursIndex'] as int?,
-      friIndex: json['friIndex'] as int?,
-      satIndex: json['satIndex'] as int?,
+      monIndex: (json['monIndex'] as num?)?.toDouble(),
+      tueIndex: (json['tueIndex'] as num?)?.toDouble(),
+      wedIndex: (json['wedIndex'] as num?)?.toDouble(),
+      thursIndex: (json['thursIndex'] as num?)?.toDouble(),
+      friIndex: (json['friIndex'] as num?)?.toDouble(),
+      satIndex: (json['satIndex'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$$_TableDataModelToJson(_$_TableDataModel instance) =>

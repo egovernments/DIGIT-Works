@@ -1,10 +1,10 @@
 import React, { useEffect, useReducer, useState } from "react"
 import UploadFile from "../atoms/UploadFile"
 
-const displayError = ({ t, error, name }) => (
+const displayError = ({ t, error, name }, customErrorMsg) => (
     <span style={{ display: 'flex', flexDirection: 'column' }}>
-        <div className="validation-error">{t(error)}</div>
-        <div className="validation-error">{`${t('ES_COMMON_DOC_FILENAME')} : ${name} ...`}</div>
+        <div className="validation-error">{customErrorMsg ? t(customErrorMsg) : t(error)}</div>
+        <div className="validation-error">{customErrorMsg ? '' : `${t('ES_COMMON_DOC_FILENAME')} : ${name} ...`}</div>
     </span>
 )
 
@@ -54,7 +54,7 @@ const checkIfAllValidFiles = (files, regex, maxSize, t, maxFilesAllowed, state) 
 }
 
 // can use react hook form to set validations @neeraj-egov
-const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.getStateId(), getFormState, requestSpecifcFileRemoval, extraStyleName = "", setuploadedstate = [], showHintBelow, hintText, allowedFileTypesRegex = /(.*?)(jpg|jpeg|webp|aif|png|image|pdf|msword|openxmlformats-officedocument)$/i, allowedMaxSizeInMB = 10, acceptFiles = "image/*, .jpg, .jpeg, .webp, .aif, .png, .image, .pdf, .msword, .openxmlformats-officedocument, .dxf", maxFilesAllowed, customClass="" }) => {
+const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.getStateId(), getFormState, requestSpecifcFileRemoval, extraStyleName = "", setuploadedstate = [], showHintBelow, hintText, allowedFileTypesRegex = /(.*?)(jpg|jpeg|webp|aif|png|image|pdf|msword|openxmlformats-officedocument)$/i, allowedMaxSizeInMB = 10, acceptFiles = "image/*, .jpg, .jpeg, .webp, .aif, .png, .image, .pdf, .msword, .openxmlformats-officedocument, .dxf", maxFilesAllowed, customClass="", customErrorMsg }) => {
     const FILES_UPLOADED = "FILES_UPLOADED"
     const TARGET_FILE_REMOVAL = "TARGET_FILE_REMOVAL"
 
@@ -129,7 +129,7 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
             />
             <span style={{ display: 'flex' }}>
                 {fileErrors.length ? fileErrors.map(({ valid, name, type, size, error }) => (
-                    valid ? null : displayError({ t, error, name })
+                    valid ? null : displayError({ t, error, name }, customErrorMsg)
                 )) : null}
             </span>
         </div>)

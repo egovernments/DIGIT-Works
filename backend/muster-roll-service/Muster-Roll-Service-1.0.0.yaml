@@ -174,10 +174,14 @@ components:
         individualId:
           type: string
           description: Reference of the attendee from the Individual Registry.
-        totalAttendance:
+        actualTotalAttendance:
           type: number
           readOnly: true
-          description: It is the computed sum of attendance in the given time preiod of the muster roll. This will be stored in the msuter roll service's db. It will be computed only when the register is created or edited. So the computation will happen with CREATE and EDIT actions only.
+          description: It is the computed sum of attendance in the given time period of the muster roll. This will be stored in the muster roll service's db. It will be computed only when the muster is created. So the computation will happen with CREATE actions only.
+        modifiedTotalAttendance:
+          type: number
+          readOnly: true
+          description: It is the modified sum of attendance in the given time period of the muster roll. This will be stored in the muster roll service's db. It will be stored when the totalAttendance is edited. So the updation will happen with EDIT actions only.
         attendanceEntries:
           type: array
           readOnly: true
@@ -209,59 +213,16 @@ components:
           description: This is an updatable field from the user's input.
 
     AttendanceLog:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: System generated unique identifier for the entry
-          readOnly: true
-        registerId:
-          type: string
-          description: Unique identifier of the register
-        individualId:
-          type: string
-          format: uuid
-          description: The individual for which the attendance is being marked
-        tenantId:
-          type: string
-          example: pb.amritsar
-          description: Tenant Id of the register
-        time:
-          type: number
-          format: timestamp
-          description: The timestamp at which the event has been recorded.
-        type:
-          type: string
-          description: Configurable in MDMS. [ENTRY/EXIT/...]
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-          description: The attendance log of the cancelled event can be marked as inactive.
-        documentIds:
-          description: Used to store file store ids. Need to verify validity of them using file store service.
-          type: array
-          items:
-            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/Document'
-        additionalDetails:
-          type: object
-      required:
-        - registerId
-        - individualId
-        - tenantId
-        - time
-        - type
+      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceLog'
+
     AttendanceLogResponse:
-      type: object
-      properties:
-        responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
-        attendance:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttendanceLog'
+      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceLogResponse'
+
+    AttendanceRegister:
+      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceRegister'
+
+    AttendanceRegisterResponse:
+      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceRegisterResponse'
 
     MusterRollRequest:
       type: object

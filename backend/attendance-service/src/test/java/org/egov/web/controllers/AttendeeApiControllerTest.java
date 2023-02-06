@@ -6,8 +6,15 @@ import org.egov.Main;
 import org.egov.TestConfiguration;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.enrichment.StaffEnrichmentService;
 import org.egov.helper.AttendeeRequestBuilderTest;
+import org.egov.repository.AttendanceLogRepository;
+import org.egov.repository.AttendeeRepository;
+import org.egov.repository.RegisterRepository;
+import org.egov.repository.StaffRepository;
+import org.egov.service.AttendanceRegisterService;
 import org.egov.service.AttendeeService;
+import org.egov.service.StaffService;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.AttendeeCreateRequest;
@@ -16,11 +23,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -32,13 +41,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Slf4j
+@ContextConfiguration(classes=Main.class)
+@WebMvcTest(AttendeeApiController.class)
 @Import({TestConfiguration.class})
-@SpringBootTest(classes = Main.class)
+//@SpringBootTest(classes = Main.class)
 @AutoConfigureMockMvc
 public class AttendeeApiControllerTest {
-
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -47,9 +55,30 @@ public class AttendeeApiControllerTest {
 
     @MockBean
     private AttendeeService attendeeService;
-
     @MockBean
     private ResponseInfoFactory responseInfoFactory;
+
+    @MockBean
+    private AttendeeRepository attendeeRepository;
+
+    @MockBean
+    private StaffEnrichmentService staffEnrichmentService;
+
+    @MockBean
+    private AttendanceRegisterService attendanceRegisterService;
+
+    @MockBean
+    private StaffRepository staffRepository;
+
+    @MockBean
+    private StaffService staffService;
+
+    @MockBean
+    private AttendanceLogRepository attendanceLogRepository;
+
+    @MockBean
+    private RegisterRepository registerRepository;
+
 
     @Test
     @DisplayName("should pass for correct API operation")

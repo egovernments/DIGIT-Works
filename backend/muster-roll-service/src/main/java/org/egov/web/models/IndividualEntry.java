@@ -37,8 +37,11 @@ public class IndividualEntry {
     @JsonProperty("individualId")
     private String individualId = null;
 
-    @JsonProperty("totalAttendance")
-    private BigDecimal totalAttendance = null;
+    @JsonProperty("actualTotalAttendance")
+    private BigDecimal actualTotalAttendance = null;
+
+    @JsonProperty("modifiedTotalAttendance")
+    private BigDecimal modifiedTotalAttendance = null;
 
     @JsonProperty("attendanceEntries")
     @Valid

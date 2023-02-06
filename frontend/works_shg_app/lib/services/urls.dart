@@ -25,6 +25,8 @@ class UserServices {
 class MusterRollServices {
   const MusterRollServices();
   String get searchMusterRolls => 'muster-roll/v1/_search';
+  String get musterRollsEstimate => 'muster-roll/v1/_estimate';
+  String get createMuster => 'muster-roll/v1/_create';
 }
 
 class AttendanceRegisterServices {
@@ -32,4 +34,6 @@ class AttendanceRegisterServices {
   String get createAttendanceRegister => 'attendance/v1/_create';
   String get searchAttendanceRegister => 'attendance/v1/_search';
   String get createAttendee => 'attendance/attendee/v1/_create';
+  String get createAttendanceLog => 'attendance/log/v1/_create';
+  String get updateAttendanceLog => 'attendance/log/v1/_update';
 }

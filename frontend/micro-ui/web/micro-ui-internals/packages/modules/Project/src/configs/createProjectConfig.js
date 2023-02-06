@@ -2,7 +2,7 @@ import { CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false) => {
+export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false) => {
   const { t } = useTranslation()
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -13,8 +13,8 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
 
   return {
     defaultValues : {
-      dateOfProposal : "01-01-2020",
-      hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"}
+      basicDetails_dateOfProposal : "01-01-2020",
+      basicDetails_hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"},
     },
     form: [
       { 
@@ -25,37 +25,37 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             inline: true,
             label: "PDF_STATIC_LABEL_ESTIMATE_PROPOSAL_DATE",
             isMandatory: false,
-            key: "dateOfProposal",
+            key: "basicDetails_dateOfProposal",
             type: "date",
             disable: true,
-            populators: { name: "dateOfProposal" },
+            populators: { name: "basicDetails_dateOfProposal" },
           },
           {
             inline: true,
             label: "PDF_STATIC_LABEL_ESTIMATE_PROJECT_NAME",
             isMandatory: true,
-            key: "projectName",
+            key: "basicDetails_projectName",
             type: "text",
             disable: false,
-            populators: { name: "projectName", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "basicDetails_projectName", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_NAME"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
             label: "PROJECT_DESC",
             isMandatory: false,
-            key: "projectDesc",
+            key: "basicDetails_projectDesc",
             type: "text",
             disable: false,
-            populators: { name: "projectDesc", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "basicDetails_projectDesc", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_DESC"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             isMandatory: false,
-            key: "hasSubProjects",
+            key: "basicDetails_hasSubProjects",
             type: "radio",
             label: "WORKS_HAS_SUB_PROJECT_LABEL",
             disable: false,
             populators: {
-              name: "hasSubProjects",
+              name: "basicDetails_hasSubProjects",
               optionsKey: "name",
               error: "Required",
               required: false,
@@ -83,17 +83,17 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Project_Details",
-        sectionFormCategory : "projects",
+        sectionFormCategory : "noSubProject",
         head: t(""),
         body: [
           {
             isMandatory: true,
-            key: "owningDepartment",
+            key: "noSubProject_owningDepartment",
             type: "radioordropdown",
             label: "PROJECT_OWNING_DEPT",
             disable: false,
             populators: {
-              name: "owningDepartment",
+              name: "noSubProject_owningDepartment",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -102,19 +102,19 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               },
               mdmsConfig: {
                 masterName: "Department",
-                moduleName: "works",
-                localePrefix: "ES_COMMON",
+                moduleName: "common-masters",
+                localePrefix: "COMMON_MASTERS_DEPARTMENT",
               },
             },
           },
           {
             isMandatory: false,
-            key: "targetDemocracy",
+            key: "noSubProject_targetDemocracy",
             type: "radioordropdown",
-            label: "PROJECT_TARGET_DEMOGRAPHY",
+            label: t("PROJECT_TARGET_DEMOGRAPHY"),
             disable: false,
             populators: {
-              name: "targetDemocracy",
+              name: "noSubProject_targetDemocracy",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -130,37 +130,37 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             inline: true,
-            label: "WORKS_LOR",
+            label: t("WORKS_LOR"),
             isMandatory: false,
-            key: "letterRefNoOrReqNo",
+            key: "noSubProject_letterRefNoOrReqNo",
             type: "text",
             disable: false,
-            populators: { name: "letterRefNoOrReqNo", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "noSubProject_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
-            label: "PROJECT_ESTIMATED_COST_IN_RS",
+            label: t("PROJECT_ESTIMATED_COST_IN_RS"),
             isMandatory: false,
-            key: "estimatedCostInRs",
+            key: "noSubProject_estimatedCostInRs",
             type: "number",
             disable: false,
-            populators: { name: "estimatedCostInRs" }
+            populators: { name: "noSubProject_estimatedCostInRs" }
           },
         ]
       },
       {
         navLink:"Project_Details",
-        sectionFormCategory : "projects",
+        sectionFormCategory : "noSubProject",
         head: t("WORKS_WORK_DETAILS"),
         body: [
           {
             isMandatory: true,
-            key: "typeOfWork",
+            key: "noSubProject_typeOfProject",
             type: "radioordropdown",
-            label: "WORKS_WORK_TYPE",
+            label: "WORKS_PROJECT_TYPE",
             disable: false,
             populators: {
-              name: "typeOfWork",
+              name: "noSubProject_typeOfProject",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -168,7 +168,7 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "TypeOfWork",
+                masterName: "ProjectType",
                 moduleName: "works",
                 localePrefix: "ES_COMMON",
               },
@@ -176,29 +176,29 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: false,
-            key: "subTypeOfWork",
+            key: "noSubProject_subTypeOfProject",
             type: "radioordropdown",
-            label: "PDF_STATIC_LABEL_ESTIMATE_SUB_TYPE_OF_WORK",
+            label: "WORKS_SUB_PROJECT_TYPE",
             disable: false,
             populators: {
-              name: "subTypeOfWork",
+              name: "noSubProject_subTypeOfProject",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              options : subTypeOfWorkOptions
+              options : subTypeOfProjectOptions //TODO:
             },
           },
           {
             isMandatory: false,
-            key: "natureOfWork",
+            key: "noSubProject_natureOfWork",
             type: "radioordropdown",
             label: "WORKS_WORK_NATURE",
             disable: false,
             populators: {
-              name: "natureOfWork",
+              name: "noSubProject_natureOfWork",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -216,30 +216,30 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             inline: true,
             label: "PROJECT_PLANNED_START_DATE",
             isMandatory: false,
-            key:"dob",
+            key:"noSubProject_startDate",
             description: "",
             type: "date",
             disable: false,
-            populators: { name: "dob" },
+            populators: { name: "noSubProject_startDate" },
           },
           {
             inline: true,
             label: "PROJECT_PLANNED_END_DATE",
             isMandatory: false,
-            key:"dob",
+            key:"noSubProject_endDate",
             description: "",
             type: "date",
             disable: false,
-            populators: { name: "dob" },
+            populators: { name: "noSubProject_endDate" },
           },
           {
             isMandatory: false,
-            key: "recommendedModeOfEntrustment",
+            key: "noSubProject_recommendedModeOfEntrustment",
             type: "radioordropdown",
             label: "PDF_STATIC_LABEL_ESTIMATE_ENTRUSTMENT",
             disable: false,
             populators: {
-              name: "recommendedModeOfEntrustment",
+              name: "noSubProject_recommendedModeOfEntrustment",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -257,26 +257,26 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },  
       {
         navLink:"Project_Details",
-        sectionFormCategory : "projects",
+        sectionFormCategory : "noSubProject",
         head: t("PDF_STATIC_LABEL_ESTIMATE_LOC_DETAILS"),
         body: [
           {
             inline: true,
             label: "WORKS_GEO_LOCATION",
             isMandatory: true,
-            key: "geoLocation",
+            key: "noSubProject_geoLocation",
             type: "text",
             disable: false,
-            populators: { name: "geoLocation",  error: t("WORKS_REQUIRED_ERR") }
+            populators: { name: "noSubProject_geoLocation",  error: t("WORKS_REQUIRED_ERR") }
           },
           {
             isMandatory: true,
-            key: "ulb",
+            key: "noSubProject_ulb",
             type: "radioordropdown",
             label: t("ES_COMMON_ULB"),
             disable: false,
             populators: {
-              name: "ulb",
+              name: "noSubProject_ulb",
               optionsKey: "i18nKey",
               options: ULBOptions,
               error: t("WORKS_REQUIRED_ERR"),
@@ -288,12 +288,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: false,
-            key: "ward",
+            key: "noSubProject_ward",
             type: "radioordropdown",
             label: "PDF_STATIC_LABEL_ESTIMATE_WARD",
             disable: false,
             populators: {
-              name: "ward",
+              name: "noSubProject_ward",
               optionsKey: "i18nKey",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -305,12 +305,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: false,
-            key: "locality",
+            key: "noSubProject_locality",
             type: "radioordropdown",
             label: "WORKS_LOCALITY",
             disable: false,
             populators: {
-              name: "locality",
+              name: "noSubProject_locality",
               optionsKey: "i18nKey",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -324,35 +324,36 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Project_Details",
-        sectionFormCategory : "projects",
-        head: t("WORKS_UPLOAD_FILES"),
+        sectionFormCategory : "noSubProject",
+        head: t("WORKS_RELEVANT_DOCS"),
         body: [
           {
             type:"multiupload",
             label: t("WORKS_UPLOAD_FILES"),
             populators:{
-                name: "photograph",
+                name: "noSubProject_uploadedFiles",
                 allowedMaxSizeInMB:2,
                 maxFilesAllowed:2,
-                allowedFileTypes : /(.*?)(jpeg|jpg|png|pdf|image)$/i,
-                customClass : "upload-margin-bottom"
+                allowedFileTypes : /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
+                customClass : "upload-margin-bottom",
+                errorMessage : t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG")
             }
           }
         ]
       },
       {
         navLink:"Financial_Details",
-        sectionFormCategory : "projects",
+        sectionFormCategory : "noSubProject",
         head: t(""),
         body: [
           {
             isMandatory: true,
-            key: "fund",
+            key: "noSubProject_fund",
             type: "radioordropdown",
             label: "WORKS_FUND",
             disable: false,
             populators: {
-              name: "fund",
+              name: "noSubProject_fund",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -362,18 +363,18 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               mdmsConfig: {
                 masterName: "Fund",
                 moduleName: "finance",
-                localePrefix: "ES_COMMON",
+                localePrefix: "ES_COMMON_FIN",
               },
             },
           },
           {
             isMandatory: true,
-            key: "function",
+            key: "noSubProject_function",
             type: "radioordropdown",
             label: "WORKS_FUNCTION",
             disable: false,
             populators: {
-              name: "function",
+              name: "noSubProject_function",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -389,12 +390,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: true,
-            key: "budgetHead",
+            key: "noSubProject_budgetHead",
             type: "radioordropdown",
             label: "WORKS_BUDGET_HEAD",
             disable: false,
             populators: {
-              name: "budgetHead",
+              name: "noSubProject_budgetHead",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -410,12 +411,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: true,
-            key: "scheme",
+            key: "noSubProject_scheme",
             type: "radioordropdown",
             label: "WORKS_SCHEME",
             disable: false,
             populators: {
-              name: "scheme",
+              name: "noSubProject_scheme",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -431,12 +432,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: true,
-            key: "subScheme",
+            key: "noSubProject_subScheme",
             type: "radioordropdown",
             label: "WORKS_SUB_SCHEME",
             disable: false,
             populators: {
-              name: "subScheme",
+              name: "noSubProject_subScheme",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -450,17 +451,17 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Project_Details_In_Sub_Project",
-        sectionFormCategory : "subProjects",
+        sectionFormCategory : "withSubProject",
         head: "",
         body: [
           {
             isMandatory: false,
-            key: "subProjectOwningDepartment",
+            key: "withSubProject_project_owningDepartment",
             type: "radioordropdown",
             label: "PROJECT_OWNING_DEPT",
             disable: false,
             populators: {
-              name: "subProjectOwningDepartment",
+              name: "withSubProject_project_owningDepartment",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -469,19 +470,19 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               },
               mdmsConfig: {
                 masterName: "Department",
-                moduleName: "works",
-                localePrefix: "ES_COMMON",
+                moduleName: "common-masters",
+                localePrefix: "COMMON_MASTERS_DEPARTMENT",
               },
             },
           },
           {
             isMandatory: false,
-            key: "subProjectExecutingDepartment",
+            key: "withSubProject_project_executingDepartment",
             type: "radioordropdown",
             label: "WORKS_EXECUTING_DEPT",
             disable: false,
             populators: {
-              name: "subProjectExecutingDepartment",
+              name: "withSubProject_project_executingDepartment",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -490,19 +491,19 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
               },
               mdmsConfig: {
                 masterName: "Department",
-                moduleName: "works",
-                localePrefix: "ES_COMMON",
+                moduleName: "common-masters",
+                localePrefix: "COMMON_MASTERS_DEPARTMENT",
               },
             },
           },
           {
             isMandatory: false,
-            key: "subProjectBeneficiary",
+            key: "withSubProject_project_beneficiary",
             type: "radioordropdown",
             label: "WORKS_BENEFICIARY",
             disable: false,
             populators: {
-              name: "subProjectBeneficiary",
+              name: "withSubProject_project_beneficiary",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -520,35 +521,35 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
             inline: true,
             label: "WORKS_LOR",
             isMandatory: false,
-            key: "subProjectLetterRefNoOrReqNo",
+            key: "withSubProject_project_LetterRefNoOrReqNo",
             type: "text",
             disable: false,
-            populators: { name: "letterRefNoOrReqNo", error: t("WORKS_REQUIRED_ERR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "withSubProject_project_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
             label: "PROJECT_TOTAL_ESTIMATED_COST_IN_RS",
             isMandatory: false,
-            key: "subProjectTotalEstimatedCostInRs",
+            key: "withSubProject_project_estimatedCostInRs",
             type: "number",
-            disable: true,
-            populators: { name: "totalEstimatedCostInRs" }
+            disable: false,
+            populators: { name: "withSubProject_project_estimatedCostInRs" }
           },
         ]
       },
       {
         navLink:"Financial_Details_In_Sub_Project",
-        sectionFormCategory : "subProjects",
+        sectionFormCategory : "withSubProject",
         head: t(""),
         body: [
           {
             isMandatory: true,
-            key: "subProjectsFund",
+            key: "withSubProject_project_fund",
             type: "radioordropdown",
             label: "WORKS_FUND",
             disable: false,
             populators: {
-              name: "subProjectsFund",
+              name: "withSubProject_project_fund",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -564,12 +565,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: true,
-            key: "subProjectsFunction",
+            key: "withSubProject_project_function",
             type: "radioordropdown",
             label: "WORKS_FUNCTION",
             disable: false,
             populators: {
-              name: "subProjectsFunction",
+              name: "withSubProject_project_function",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -585,12 +586,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: true,
-            key: "subProjectsBudgetHead",
+            key: "withSubProject_project_budgetHead",
             type: "radioordropdown",
             label: "WORKS_BUDGET_HEAD",
             disable: false,
             populators: {
-              name: "subProjectsBudgetHead",
+              name: "withSubProject_project_budgetHead",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -606,12 +607,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: true,
-            key: "subProjectsScheme",
+            key: "withSubProject_project_scheme",
             type: "radioordropdown",
             label: "WORKS_SCHEME",
             disable: false,
             populators: {
-              name: "subProjectsScheme",
+              name: "withSubProject_project_scheme",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -627,12 +628,12 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
           },
           {
             isMandatory: true,
-            key: "subProjectsSubScheme",
+            key: "withSubProject_project_subScheme",
             type: "radioordropdown",
             label: "WORKS_SUB_SCHEME",
             disable: false,
             populators: {
-              name: "subProjectsSubScheme",
+              name: "withSubProject_project_subScheme",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
@@ -646,11 +647,11 @@ export const createProjectSectionConfig = (subTypeOfWorkOptions, subSchemaOption
       },
       {
         navLink:"Sub_Project_Details_In_Sub_Project",
-        sectionFormCategory : "subProjects",
+        sectionFormCategory : "withSubProject",
         head: t(""),
         body: [
           {
-            key: "subProjectDetailsComponent",
+            key: "withSubProject_subProjects_DetailsComponent",
             type: "component",
             component: "SubProjectDetailsTable",
             withoutLabel: true,

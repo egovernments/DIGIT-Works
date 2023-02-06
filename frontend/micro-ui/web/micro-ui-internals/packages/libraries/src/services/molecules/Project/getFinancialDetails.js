@@ -8,7 +8,7 @@ const transformViewDataToApplicationDetails = {
           { title: "WORKS_FUNCTION", value: "Housing and Urban Development Department" },
           { title: "WORKS_BUDGET_HEAD", value: "Local Slums" },
           { title: "WORKS_SCHEME", value: "201/A  - 19 December 2021" },
-          { title: "WORKS_SUB_SCHEME", value: "5,00,000" },
+          { title: "WORKS_SUB_SCHEME", value: "₹ 5,00,000" },
         ],
       };
       const applicationDetails = { applicationDetails: [FinancialDetails] };

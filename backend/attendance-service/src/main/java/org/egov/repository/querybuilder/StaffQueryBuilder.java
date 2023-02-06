@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -48,21 +49,15 @@ public class StaffQueryBuilder {
             query.append(" stf.register_id IN (").append(createQuery(registerIds)).append(")");
             preparedStmtList.addAll(criteria.getRegisterIds());
         }
-        return query.toString();
-    }
 
-    public String getAttendanceStaffFromRegistersSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
-
-        if (!ObjectUtils.isEmpty(criteria.getRegisterIds())) {
-            List<String> registerIds = criteria.getRegisterIds();
+        String tenantId = criteria.getTenantId();
+        if (tenantId != null && !tenantId.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" stf.register_id IN (").append(createQuery(registerIds)).append(")");
-            preparedStmtList.addAll(criteria.getRegisterIds());
+            query.append(" stf.tenantid IN (").append(createQuery(Collections.singletonList(tenantId))).append(")");
+            preparedStmtList.add(criteria.getTenantId());
         }
         return query.toString();
     }
-
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
         if (preparedStmtList.isEmpty()) {
             query.append(" WHERE ");
