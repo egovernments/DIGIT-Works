@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Dropdown, CustomDropdown, Loader, MultiUploadWrapper } from '@egovernments/digit-ui-react-components'
-import { Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import _ from 'lodash';
 
 //Constant Declaration
@@ -12,6 +12,8 @@ const initialState = [
 ];
 //these params depend on what the controller of the associated type is sending.
 const SubProjectDetailsTable = ({t, register, control, setValue, onChange, errors, sectionFormCategory, selectedFormCategory}) => {
+    // testing contexts 
+    const {watch} = useFormContext();
     const [rows, setRows] = useState(initialState);
     const columns = [
         {label : t('WORKS_SNO'), isMandatory : false },

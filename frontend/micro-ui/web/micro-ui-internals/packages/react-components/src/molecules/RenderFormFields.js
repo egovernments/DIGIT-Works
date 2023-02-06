@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from "react-i18next";
-import { Controller } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import CardLabelError from "../atoms/CardLabelError";
 import LabelFieldPair from '../atoms/LabelFieldPair';
 import CardLabel from "../atoms/CardLabel";
@@ -11,7 +11,9 @@ import MobileNumber from '../atoms/MobileNumber';
 
 const RenderFormFields = (props) => {
     const { t } = useTranslation();
-    const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors} = props
+    const { fields } = props;
+    const { control, watch, errors, register, setValue, getValues, setError, clearErrors } = useFormContext();
+    const formData = watch();
 
     const fieldSelector = (type, populators, isMandatory, disable = false, component, config) => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
@@ -45,7 +47,7 @@ const RenderFormFields = (props) => {
                     />
                 );
     
-            case "textarea":
+            case "textarea": 
             return (
               <Controller
                 defaultValue={formData?.[populators.name]}

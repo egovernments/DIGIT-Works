@@ -44,11 +44,12 @@ const inboxConfig = () => {
                     fields : [
                         {
                             label:"Project ID",
-                            type: "text",
+                            type: "component",
+                            component : "SubProjectDetailsTable",
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "projectId"
+                                name: "projectId",
                             },
                         },
                         {

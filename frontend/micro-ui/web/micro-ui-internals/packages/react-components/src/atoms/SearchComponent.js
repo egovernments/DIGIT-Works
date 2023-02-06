@@ -16,23 +16,11 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   let updatedFields = [];
   const [componentType, setComponentType] = useState(uiConfig?.type);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    getValues,
-    reset,
-    watch,
-    trigger,
-    control,
-    formState,
-    errors,
-    setError,
-    clearErrors,
-    unregister,
-  } = useForm({
+  const formMethods = useForm({
     defaultValues: uiConfig?.defaultValues,
   });
+
+  const { handleSubmit, formState, watch } = formMethods;
   const formData = watch();
 
   const checkKeyDown = (e) => {
@@ -107,26 +95,20 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     <React.Fragment>
       <div className={'search-wrapper'}>
         {header && <Header styles={uiConfig?.headerStyle}>{t(header)}</Header>}
-        <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
-          <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
-            <RenderFormFields 
-              fields={uiConfig?.fields} 
-              control={control} 
-              formData={formData}
-              errors={errors}
-              register={register}
-              setValue={setValue}
-              getValues={getValues}
-              setError={setError}
-              clearErrors={clearErrors}
-              labelStyle={{fontSize: "16px"}}
-            />  
-            <div className={`search-button-wrapper ${screenType}`}>
-              <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel>
-              <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/>
-            </div>
-          </div> 
-        </form>
+        <FormProvider {...formMethods}>
+          <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
+            <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
+              <RenderFormFields 
+                fields={uiConfig?.fields} 
+                labelStyle={{fontSize: "16px"}}
+              />  
+              <div className={`search-button-wrapper ${screenType}`}>
+                <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel>
+                <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/>
+              </div>
+            </div> 
+          </form>
+        </FormProvider>
         { showToast && <Toast 
           error={showToast.error}
           warning={showToast.warning}
