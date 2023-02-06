@@ -8,6 +8,8 @@ import { default as EmployeeApp } from "./pages/employee";
 import CreateProjectResponse from "./pages/employee/CreateProject/CreateProjectResponse";
 import CreateProject from "./pages/employee/CreateProject/index";
 import ProjectDetails from "./pages/employee/ProjectDetails";
+import ProjectSearch from "./pages/employee/ProjectSearch";
+import ProjectSearchAndInbox from "./pages/employee/ProjectSearchAndInbox";
 
 export const ProjectModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["Project"];
@@ -40,6 +42,8 @@ const componentsToRegister = {
     CreateProject,
     ProjectDetails,
     ViewFinancialDetails,
+    ProjectSearch,
+    ProjectSearchAndInbox,
     SubProjectDetailsTable,
     CreateProjectResponse
 };
