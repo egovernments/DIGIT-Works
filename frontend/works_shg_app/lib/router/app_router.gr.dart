@@ -36,11 +36,9 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     LoginRoute.name: (routeData) {
-      final args = routeData.argsAs<LoginRouteArgs>(
-          orElse: () => const LoginRouteArgs());
       return MaterialPageX<dynamic>(
         routeData: routeData,
-        child: LoginPage(key: args.key),
+        child: const LoginPage(),
       );
     },
     HomeRoute.name: (routeData) {
@@ -107,6 +105,12 @@ class _$AppRouter extends RootStackRouter {
           args.attendanceRegister,
           key: args.key,
         ),
+      );
+    },
+    RegisterIndividualRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const RegisterIndividualPage(),
       );
     },
   };
@@ -180,6 +184,11 @@ class _$AppRouter extends RootStackRouter {
               path: 'track-attendance/:id/:tenantId',
               parent: AuthenticatedRouteWrapper.name,
             ),
+            RouteConfig(
+              RegisterIndividualRoute.name,
+              path: 'register-individual',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
           ],
         ),
       ];
@@ -225,26 +234,14 @@ class LanguageSelectionRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [LoginPage]
-class LoginRoute extends PageRouteInfo<LoginRouteArgs> {
-  LoginRoute({Key? key})
+class LoginRoute extends PageRouteInfo<void> {
+  const LoginRoute()
       : super(
           LoginRoute.name,
           path: 'login',
-          args: LoginRouteArgs(key: key),
         );
 
   static const String name = 'LoginRoute';
-}
-
-class LoginRouteArgs {
-  const LoginRouteArgs({this.key});
-
-  final Key? key;
-
-  @override
-  String toString() {
-    return 'LoginRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for
@@ -446,4 +443,16 @@ class TrackAttendanceRouteArgs {
   String toString() {
     return 'TrackAttendanceRouteArgs{id: $id, tenantId: $tenantId, projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
   }
+}
+
+/// generated route for
+/// [RegisterIndividualPage]
+class RegisterIndividualRoute extends PageRouteInfo<void> {
+  const RegisterIndividualRoute()
+      : super(
+          RegisterIndividualRoute.name,
+          path: 'register-individual',
+        );
+
+  static const String name = 'RegisterIndividualRoute';
 }

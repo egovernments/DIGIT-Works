@@ -110,14 +110,20 @@ class GlobalVariables {
               .map<LocalizationLabel>((e) => LocalizationLabel.fromJson(e))
               .toList()
           : [];
-      return messages?.where((e) => modules.contains(e.module)).isNotEmpty ??
-          false;
+      return modules.every((module) {
+        return messages!.any((message) {
+          return message.module == module;
+        });
+      });
     } else {
       messages = jsonDecode(storage.read(key: locale).toString())
           .map<LocalizationLabel>((e) => LocalizationLabel.fromJson(e))
           .toList();
-      return messages?.where((e) => modules.contains(e.module)).isNotEmpty ??
-          false;
+      return modules.every((module) {
+        return messages!.any((message) {
+          return message.module == module;
+        });
+      });
     }
   }
 

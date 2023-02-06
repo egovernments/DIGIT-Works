@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { InboxContext } from "../hoc/InboxSearchComposerContext";
 import RenderFormFields from "../molecules/RenderFormFields";
@@ -7,12 +7,14 @@ import Header from "../atoms/Header";
 import LinkLabel from '../atoms/LinkLabel';
 import SubmitBar from "../atoms/SubmitBar";
 import Toast from "../atoms/Toast";
+import { FilterIcon, RefreshIcon } from "./svgindex";
 
 const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
   const [showToast,setShowToast] = useState(null)
-  let updatedFields = []
+  let updatedFields = [];
+  const [componentType, setComponentType] = useState(uiConfig?.type);
 
   const {
     register,
@@ -31,7 +33,6 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   } = useForm({
     defaultValues: uiConfig?.defaultValues,
   });
-
   const formData = watch();
 
   const checkKeyDown = (e) => {
@@ -47,19 +48,18 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
 
   const onSubmit = (data) => {
     if(updatedFields.length >= uiConfig?.minReqFields) {
+      
+      //@prachi We can't make this validation here as this is a generic comp
+      // tip -> handle it before the onsumbmit 
+      //use custom validation function prop given by userform's register()
+      // try using it using config in renderformfields comp
       if(formData.startDate && formData.endDate) {
         if(new Date(formData.startDate).getTime() > new Date(formData.endDate).getTime()) {
           setError("endDate", { type: "focus" }, { shouldFocus: true })
           return
         }
       }
-      //run preprocessing functions(use case -> changing date inputs to epoch)
-      uiConfig.fields.forEach(field=> {
-        if (field.preProcessfn) {
-          data[field.populators.name] = field.preProcessfn(data?.[field.populators.name])
-          // data[field.populators.name] = new Date(data[field.populators.name]).getTime() / 1000
-        }
-      })
+      
       dispatch({
         type: "searchForm",
         state: {
@@ -82,6 +82,25 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
  
   const closeToast = () => {
     setShowToast(null);
+  }
+
+  const handleFilterRefresh = () => {}
+
+  const renderHeader = () => {
+    switch(uiConfig?.type) {
+      case "filter" : {
+        return (
+          <div className="filter-header-wrapper">
+            <div className="icon-filter"><FilterIcon></FilterIcon></div>
+            <div className="label">{header}</div>
+            <div className="icon-refresh" onClick={handleFilterRefresh}><RefreshIcon></RefreshIcon></div>
+          </div>
+        )
+      }
+      default : {
+        return <Header styles={uiConfig?.headerStyle}>{header}</Header>
+      }
+    }
   }
 
   return (

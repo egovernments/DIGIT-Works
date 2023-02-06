@@ -10,42 +10,40 @@ const InboxSearchComposer = (props) => {
     const { configs } = props;
     const [enable, setEnable] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialInboxState)
-    // const [payload, setPayload] = useState(
-    //     [   
-    //         configs?.apiDetails?.serviceName,
-    //         configs?.apiDetails?.requestParam, 
-    //         configs?.apiDetails?.requestBody,
-    //         {enable:false}
-    //     ]
-    //     )
+   
+    const apiDetails = configs?.apiDetails
+    
     useEffect(() => {
-        // const requestBody = configs?.apiDetails?.requestBody
-        const apiDetails = configs?.apiDetails
+        //here if jsonpaths for search & table are same then searchform gets overridden
         if (Object.keys(state.searchForm)?.length > 0) {
-            //here we can't directly put Projects[0] -> need to generalise this
-            // apiDetails.requestBody.Projects[0] = { ...apiDetails.mandatoryFieldsInBody,...state.searchForm }
-            _.set(apiDetails, apiDetails.jsonPathForReqBody, { ...apiDetails.mandatoryFieldsInBody, ...state.searchForm })
-            // requestBody.Projects[0]={...state?.searchForm}
-            setEnable(true)
+            const result = { ..._.get(apiDetails, apiDetails.searchFormJsonPath, {}), ...state.searchForm }
+            Object.keys(result).forEach(key => {
+                if (!result[key]) delete result[key]
+            });
+            _.set(apiDetails, apiDetails.searchFormJsonPath, result)
         }
         if(Object.keys(state.tableForm)?.length > 0) {
-            _.set(apiDetails, apiDetails.jsonPathForReqParam, { ...apiDetails.mandatoryFieldsInParam, ...state.tableForm })  
+            _.set(apiDetails, apiDetails.tableFormJsonPath, { ..._.get(apiDetails, apiDetails.tableFormJsonPath, {}),...state.tableForm })  
+        }
+        if (Object.keys(state.tableForm)?.length > 0 && Object.keys(state.searchForm)?.length >= apiDetails.minParametersForSearchForm){
             setEnable(true)
         }
     }, [state])
     
 
-    const requestCriteria = [
-        configs?.apiDetails?.serviceName,
-        configs?.apiDetails?.requestParam,
-        configs?.apiDetails?.requestBody,
-        {
+    let requestCriteria = {
+        url:configs?.apiDetails?.serviceName,
+        params:configs?.apiDetails?.requestParam,
+        body:configs?.apiDetails?.requestBody,
+        config: {
             enabled: enable,
-            // select: config?.apiDetails?.preProcessResponese ? config?.apiDetails?.preProcessResponese : null
-        }
-    ];
+        },
+    };
+    
+    const updatedReqCriteria = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess(requestCriteria) : requestCriteria 
 
-    const { isLoading, data, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
+    
+    const { isLoading, data, revalidate,isFetching } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
     
     
     useEffect(() => {
@@ -85,8 +83,8 @@ const InboxSearchComposer = (props) => {
                 }
                 {   
                 configs?.sections?.searchResult?.show &&  
-                        <div className="" style={data ? { overflowX: "scroll" }:{}} >
-                        <ResultsTable config={configs?.sections?.searchResult?.uiConfig} data={data} isLoading={isLoading}/>
+                        <div className="" style={data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length > 0 ? (!(isLoading || isFetching) ?{ overflowX: "scroll" }: {}) : {  }} >
+                            <ResultsTable config={configs?.sections?.searchResult?.uiConfig} data={data} isLoading={isLoading} isFetching={isFetching} fullConfig={configs}/>
                     </div>
                 }
             </div>

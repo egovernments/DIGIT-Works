@@ -1,33 +1,26 @@
 const searchConfig = () => {
     return {
-        label : "WORKS_SEARCH_PROJECTS",
+        label : "WORKS_SEARCH_PROJECT",
         type: 'search',
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
-                limit:10,
-                offset:0,
-                tenantId: Digit.ULBService.getCurrentTenantId(),
+                
             },
             requestBody: {
                 apiOperation: "SEARCH",
                 Projects: [
                     {
-                        tenantId: Digit.ULBService.getCurrentTenantId()
+                        
                     }
                 ]
             },
-            jsonPathForReqBody: `requestBody.Projects[0]`,
-            jsonPathForReqParam:`requestParam`,
-            preProcessResponese: (data) =>  data,
-            mandatoryFieldsInParam: {
-                tenantId: Digit.ULBService.getCurrentTenantId(),
-            },
-            mandatoryFieldsInBody: {
-                tenantId: Digit.ULBService.getCurrentTenantId(),
-            },
-            //Note -> The above mandatory fields should not be dynamic
-            //If they are dynamic they should be part of the reducer state
+            minParametersForSearchForm:1,
+            masterName:"commonUiConfig",
+            moduleName:"SearchProjectConfig",
+            tableFormJsonPath:"requestParam",
+            filterFormJsonPath:"requestBody.Projects[0]",
+            searchFormJsonPath:"requestBody.Projects[0]",
         },
         sections : {
             search : {
@@ -40,7 +33,7 @@ const searchConfig = () => {
                         projectNumber: "",
                         subProjectId: "",
                         name: "",
-                        workType: "",
+                        projectType: "",
                         startDate: "",
                         endDate: ""
                     },
@@ -54,7 +47,7 @@ const searchConfig = () => {
                                 name: "projectNumber",
                                 error: `PROJECT_PATTERN_ERR_MSG`,
                                 validation: { pattern: /^[a-z0-9\/-]*$/i, minlength : 2 }
-                            },
+                            }
                         },
                         {
                             label: "PROJECT_PRJ_SUB_ID",
@@ -65,7 +58,7 @@ const searchConfig = () => {
                                 name: "projectNumber",
                                 error: `PROJECT_PATTERN_ERR_MSG`,
                                 validation: { pattern: /^[a-z0-9\/-]*$/i, minlength : 2 }
-                            },
+                            }
                         },
                         {
                           label: "PROJECT_NAME",
@@ -89,10 +82,9 @@ const searchConfig = () => {
                             mdmsConfig: {
                               masterName: "ProjectType",
                               moduleName: "works",
-                              localePrefix: "ES_COMMON",
+                              localePrefix: "ES_COMMON"
                             }
                           },
-                          preProcessfn: (project)=> project?.code
                         },
                         {
                           label: "CREATED_FROM_DATE",
@@ -101,9 +93,8 @@ const searchConfig = () => {
                           disable: false,
                           populators: { 
                               name: "startDate",
-                              max: new Date().toISOString().split("T")[0]
                           },
-                          preProcessfn: Digit.Utils.pt.convertDateToEpoch
+                        
                         },
                         {
                             label: "CREATED_TO_DATE",
@@ -113,9 +104,7 @@ const searchConfig = () => {
                             populators: { 
                                 name: "endDate",
                                 error: 'DATE_VALIDATION_MSG',
-                                max: new Date().toISOString().split("T")[0]
                             },
-                            preProcessfn: Digit.Utils.pt.convertDateToEpoch
                         }
                     ]
                 },
@@ -129,14 +118,13 @@ const searchConfig = () => {
                     defaultValues: {
                         offset: 0,
                         limit: 10,
-                        // sortBy: "department",
                         sortOrder: "ASC",
                     },
                     columns: [
                         {
                             label: "WORKS_PRJ_SUB_ID",
                             jsonPath: "projectNumber",
-                            redirectUrl: '/works-ui/employee/project/project-inbox-item'
+                            additionalCustomization:true
                         },
                         {
                             label: "WORKS_PROJECT_NAME",
@@ -167,8 +155,6 @@ const searchConfig = () => {
                         {
                             label: "WORKS_CREATED_BY",
                             jsonPath: "auditDetails.createdBy",
-                            // jsonPath: "createdBy",
-                            // preProcessfn: (uuid) => Digit.UserService.userSearch
                         },
                         {
                             label: "WORKS_STATUS",
@@ -184,7 +170,7 @@ const searchConfig = () => {
                     resultsJsonPath: "Projects",
                 },
                 children: {},
-                show: true //by default true. 
+                show: true 
             }
         },
         additionalSections : {}

@@ -6,24 +6,21 @@ export const initialInboxState = {
 
     },
     tableForm:{
-
+        limit: 10,
+        offset: 0,
     } 
 };
 
 const reducer = (state, action) => {
     switch (action.type) {
         case "searchForm":
-            console.log('action SEARCH', action);
-            const {state:updatedSearchState} = action
-            Object.keys(updatedSearchState).forEach(key => {
-                if(!updatedSearchState[key])  delete updatedSearchState[key] 
-            }); 
-            return {...state, searchForm: updatedSearchState};
+            const {state:updatedSearchState} = action 
+            return {...state, searchForm: {...state.searchForm,...updatedSearchState}};
         case "filterForm":
             return state;
         case "tableForm":
             const updatedTableState = action.state
-            return { ...state, tableForm: updatedTableState };
+            return { ...state, tableForm: {...state.tableForm,...updatedTableState} };
         case "clearSearchForm":
             return {...state,searchForm:action.state}
         default:

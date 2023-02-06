@@ -34,6 +34,7 @@ const App = ({ path }) => {
   const ProjectDetailsComponent = Digit?.ComponentRegistryService?.getComponent("ProjectDetails");
   const ProjectSearchComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearch");
   const ProjectSearchAndInboxComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearchAndInbox");
+  const CreateProjectResponseComponent = Digit?.ComponentRegistryService?.getComponent("CreateProjectResponse");
 
   return (
     <Switch>
@@ -45,6 +46,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/project-details`} component={() => <ProjectDetailsComponent parentRoute={path}/>} />
         <PrivateRoute path={`${path}/search-project`} component={() => <ProjectSearchComponent parentRoute={path}/>} />
         <PrivateRoute path={`${path}/inbox`} component={() => <ProjectSearchAndInboxComponent parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/create-project-response`} component={() => <CreateProjectResponseComponent parentRoute={path}/>} />
       </AppContainer>
     </Switch>
   );

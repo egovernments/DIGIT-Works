@@ -119,7 +119,6 @@ import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
 import useViewFinancialDetails from "./project/useViewFinancialDetails";
-import useCustomAPIHook from "./useCustomAPIHook";
 import useCreateProject from "./works/useCreateProject";
 
 const works = {
@@ -289,8 +288,7 @@ const Hooks = {
   useLocation,
   bills,
   masters,
-  project,
-  useCustomAPIHook
+  project
 };
 
 export default Hooks;

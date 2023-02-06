@@ -24,6 +24,8 @@ import '../utils/models/track_attendance_payload.dart';
 import '../utils/notifiers.dart';
 import '../widgets/ButtonLink.dart';
 import '../widgets/CircularButton.dart';
+import '../widgets/SideBar.dart';
+import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
 
 class SHGInboxPage extends StatefulWidget {
@@ -76,6 +78,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         ? 145.0
         : (MediaQuery.of(context).size.width / 4);
     return Scaffold(
+      appBar: AppBar(),
+      drawer: DrawerWrapper(const Drawer(
+          child: SideBar(
+        module: 'rainmaker-common,rainmaker-attendencemgmt',
+      ))),
       body: BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
           builder: (context, state) {
         if (!state.loading && state.individualMusterRollModel != null) {
