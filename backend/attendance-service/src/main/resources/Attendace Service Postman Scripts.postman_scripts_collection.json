@@ -2431,7 +2431,7 @@
 									"",
 									"",
 									"pm.test(\"Response is 400. Duplicate attendee objects in the request\", () => ",
-									"   pm.expect(pm.response.to.have.status(200))",
+									"   pm.expect(pm.response.to.have.status(400))",
 									");",
 									"",
 									""
