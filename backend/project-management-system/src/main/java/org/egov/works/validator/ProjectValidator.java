@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.config.ProjectConfiguration;
 import org.egov.works.util.BoundaryUtil;
 import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.*;
@@ -27,30 +28,32 @@ public class ProjectValidator {
     @Autowired
     BoundaryUtil boundaryUtil;
 
+    @Autowired
+    ProjectConfiguration config;
+
     /* Validates create Project request body */
     public void validateCreateProjectRequest(ProjectRequest request) {
         Map<String, String> errorMap = new HashMap<>();
-        List<Project> projects = request.getProjects();
         RequestInfo requestInfo = request.getRequestInfo();
 
         //Verify if RequestInfo and UserInfo is present
-        validateRequestInfo(requestInfo, errorMap);
+        validateRequestInfo(requestInfo);
         //Verify if project request and mandatory fields are present
-        validateProjectRequest(projects, errorMap);
+        validateProjectRequest(request.getProjects());
+        //Verify if project request have multiple tenant Ids
+        validateMultipleTenantIds(request);
 
-        String tenantId = projects.get(0).getTenantId();
-        String rootTenantId = tenantId.split("\\.")[0];
-
-        //Get MDMS data using create project request and tenantId
-        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
-
-        validateMDMSData(projects, mdmsData,  errorMap);
-        log.info("Request data validated with MDMS");
+        String tenantId = request.getProjects().get(0).getTenantId();
+        //Verify MDMS Data
+        validateRequestMDMSData(request, tenantId, errorMap);
 
         //Get localities in list from all Projects in request body for validation
-        List<String> locationsForValidation = getLocationForValidation(projects);
+        List<String> locationsForValidation = getLocationForValidation(request.getProjects());
         validateLocation(locationsForValidation, tenantId, requestInfo, errorMap);
         log.info("Localities in request validated with Location Service");
+
+        // Verify provided documentIds are valid.
+        validateDocumentIds(request);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -59,21 +62,18 @@ public class ProjectValidator {
     /* Validates search Project request body and parameters*/
     public void validateSearchProjectRequest(ProjectRequest project, Integer limit, Integer offset, String tenantId) {
         Map<String, String> errorMap = new HashMap<>();
-        List<Project> projects = project.getProjects();
         RequestInfo requestInfo = project.getRequestInfo();
 
         //Verify if RequestInfo and UserInfo is present
-        validateRequestInfo(requestInfo, errorMap);
+        validateRequestInfo(requestInfo);
         //Verify if search project request parameters are valid
         validateSearchProjectRequestParams(limit, offset, tenantId);
         //Verify if search project request is valid
-        validateSearchProjectRequest(projects, tenantId, errorMap);
-
-        //Get MDMS data for request and tenantId
-        Object mdmsData = mdmsUtils.mDMSCall(project, tenantId.split("\\.")[0]);
-
-        validateMDMSData(projects, mdmsData,  errorMap);
-        log.info("Request data validated with MDMS");
+        validateSearchProjectRequest(project.getProjects(), tenantId);
+        //Verify if project request have multiple tenant Ids
+        validateMultipleTenantIds(project);
+        //Verify MDMS Data
+        validateRequestMDMSData(project, tenantId, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -82,34 +82,35 @@ public class ProjectValidator {
     /* Validates Update Project request body */
     public void validateUpdateProjectRequest(ProjectRequest request) {
         Map<String, String> errorMap = new HashMap<>();
-        List<Project> projects = request.getProjects();
         RequestInfo requestInfo = request.getRequestInfo();
 
         //Verify if RequestInfo and UserInfo is present
-        validateRequestInfo(requestInfo, errorMap);
+        validateRequestInfo(requestInfo);
         //Verify Project request and if mandatory fields are present
-        validateProjectRequest(projects, errorMap);
-
-        String tenantId = projects.get(0).getTenantId();
-        String rootTenantId = tenantId.split("\\.")[0];
+        validateProjectRequest(request.getProjects());
+        //Verify if project request have multiple tenant Ids
+        validateMultipleTenantIds(request);
 
         //Verify if Project id is present
-        for (Project project: projects) {
+        for (Project project: request.getProjects()) {
             if (StringUtils.isBlank(project.getId())) {
                 log.error("Project Id is mandatory");
                 throw new CustomException("UPDATE_PROJECT", "Project Id is mandatory");
             }
         }
 
-        //Get MDMS data for request and tenantId
-        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+        String tenantId = request.getProjects().get(0).getTenantId();
+        //Verify MDMS Data
+        validateRequestMDMSData(request, tenantId, errorMap);
 
-        validateMDMSData(projects, mdmsData,  errorMap);
-        log.info("Request data validated with MDMS");
-
-        List<String> locationsForValidation = getLocationForValidation(projects);
+        //Get localities in list from all Projects in request body for validation
+        List<String> locationsForValidation = getLocationForValidation(request.getProjects());
         validateLocation(locationsForValidation, tenantId, requestInfo, errorMap);
-        log.info("Localities in request validated with MDMS data");
+        log.info("Localities in request validated with Location Service");
+
+        // Verify provided documentIds are valid.
+        validateDocumentIds(request);
+
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -134,7 +135,9 @@ public class ProjectValidator {
     }
 
     /* Validates Project request body for create and update apis */
-    private void validateProjectRequest(List<Project> projects, Map<String, String> errorMap) {
+    private void validateProjectRequest(List<Project> projects) {
+        Map<String, String> errorMap = new HashMap<>();
+
         if (projects == null || projects.size() == 0) {
             log.error("Project list is empty. Projects is mandatory");
             throw new CustomException("PROJECT", "Projects are mandatory");
@@ -143,17 +146,13 @@ public class ProjectValidator {
         for (Project project: projects) {
             if (project == null) {
                 log.error("Project is mandatory in Projects");
-                errorMap.put("PROJECT", "Project is mandatory");
+                throw new CustomException("PROJECT", "Project is mandatory");
             }
-            if (project != null && StringUtils.isBlank(project.getTenantId())) {
+            if (StringUtils.isBlank(project.getTenantId())) {
                 log.error("Tenant ID is mandatory in Project request body");
-                throw new CustomException("TENANT_ID", "Tenant ID is mandatory");
+                errorMap.put("TENANT_ID", "Tenant ID is mandatory");
             }
-            if (project != null &&  !project.getTenantId().equals(projects.get(0).getTenantId())) {
-                log.error("All projects in Project request must have same tenant Id");
-                errorMap.put("MULTIPLE_TENANTS", "All projects must have same tenant Id. Please create new request for different tentant id");
-            }
-            if (project != null &&  (project.getStartDate() != null && project.getEndDate() != null  && project.getEndDate() != 0) && (project.getStartDate().compareTo(project.getEndDate()) > 0)) {
+            if ((project.getStartDate() != null && project.getEndDate() != null  && project.getEndDate() != 0) && (project.getStartDate().compareTo(project.getEndDate()) > 0)) {
                 log.error("Start date should be less than end date");
                 errorMap.put("INVALID_DATE", "Start date should be less than end date");
             }
@@ -164,7 +163,7 @@ public class ProjectValidator {
     }
 
     /* Validates Search Project Request body */
-    private void validateSearchProjectRequest(List<Project> projects, String tenantId, Map<String, String> errorMap) {
+    private void validateSearchProjectRequest(List<Project> projects, String tenantId) {
         if (projects == null || projects.size() == 0) {
             log.error("Project list is empty. Projects is mandatory");
             throw new CustomException("PROJECT", "Projects are mandatory");
@@ -192,11 +191,6 @@ public class ProjectValidator {
                 throw new CustomException("MULTIPLE_TENANTS", "Tenant Id must be same in URL param and project request");
             }
 
-            if (!project.getTenantId().equals(projects.get(0).getTenantId())) {
-                log.error("All projects in Project request must have same tenant Id");
-                throw new CustomException("MULTIPLE_TENANTS", "All projects must have same tenant Id. Please create new request for different tentant id");
-            }
-
             if ((project.getStartDate() != null && project.getEndDate() != null && project.getEndDate() != 0) && (project.getStartDate().compareTo(project.getEndDate()) > 0)) {
                 log.error("Start date should be less than end date");
                 throw new CustomException("INVALID_DATE", "Start date should be less than end date");
@@ -211,20 +205,19 @@ public class ProjectValidator {
     }
 
     /* Validates Request Info and User Info */
-    private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
+    private void validateRequestInfo(RequestInfo requestInfo) {
         if (requestInfo == null) {
             log.error("Request info is mandatory");
-            errorMap.put("REQUEST_INFO", "Request info is mandatory");
-        } else if (requestInfo.getUserInfo() == null) {
-            log.error("UserInfo is mandatory in RequestInfo");
-            errorMap.put("USERINFO", "UserInfo is mandatory");
-        } else if (requestInfo.getUserInfo() != null && StringUtils.isBlank(requestInfo.getUserInfo().getUuid())) {
-            log.error("UUID is mandatory in UserInfo");
-            errorMap.put("USERINFO_UUID", "UUID is mandatory");
+            throw new CustomException("REQUEST_INFO", "Request info is mandatory");
         }
-
-        if (!errorMap.isEmpty())
-            throw new CustomException(errorMap);
+        if (requestInfo.getUserInfo() == null) {
+            log.error("UserInfo is mandatory in RequestInfo");
+            throw new CustomException("USERINFO", "UserInfo is mandatory");
+        }
+        if (requestInfo.getUserInfo() != null && StringUtils.isBlank(requestInfo.getUserInfo().getUuid())) {
+            log.error("UUID is mandatory in UserInfo");
+            throw new CustomException("USERINFO_UUID", "UUID is mandatory");
+        }
     }
 
     /* Validates the request data against MDMS data */
@@ -299,6 +292,17 @@ public class ProjectValidator {
         }
     }
 
+    /* Validate Project Request MDMS data */
+    private void validateRequestMDMSData(ProjectRequest request, String tenantId, Map<String, String> errorMap) {
+        String rootTenantId = tenantId.split("\\.")[0];
+
+        //Get MDMS data using create project request and tenantId
+        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+
+        validateMDMSData(request.getProjects(), mdmsData,  errorMap);
+        log.info("Request data validated with MDMS");
+    }
+
     /* Returns localities in list for all Projects in request body */
     private List<String> getLocationForValidation(List<Project> projects) {
         List<String> localities = new ArrayList<>();
@@ -363,6 +367,26 @@ public class ProjectValidator {
             }
         }
 
+    }
+
+    /* Validates if all Projects have same tenant Id */
+    private void validateMultipleTenantIds(ProjectRequest projectRequest) {
+        List<Project> projects = projectRequest.getProjects();
+        String firstTenantId = projects.get(0).getTenantId();
+        if (projects.stream().anyMatch(p -> !p.getTenantId().equals(firstTenantId))) {
+            log.error("All projects in Project request must have same tenant Id");
+            throw new CustomException("MULTIPLE_TENANTS", "All projects must have same tenant Id. Please create new request for different tentant id");
+        }
+    }
+
+    /* Validate document Ids */
+    private void validateDocumentIds(ProjectRequest projectRequest) {
+        if ("TRUE".equalsIgnoreCase(config.getDocumentIdVerificationRequired())) {
+            //TODO
+            // For now throwing exception. Later implementation will be done
+            log.error("Document service not integrated yet");
+            throw new CustomException("SERVICE_UNAVAILABLE", "Service not integrated yet");
+        }
     }
 
     /* Validates parent data in create request against projects data fetched from database */

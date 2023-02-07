@@ -42,5 +42,8 @@ public class ProjectConfiguration {
     //id format name
     @Value("${egov.idgen.project.number.name}")
     private String idgenProjectNumberName;
+    //Document ID verification
+    @Value("${project.document.id.verification.required}")
+    private String documentIdVerificationRequired;
 
 }
