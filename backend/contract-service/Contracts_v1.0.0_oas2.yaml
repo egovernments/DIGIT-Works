@@ -234,6 +234,8 @@ definitions:
         format: uuid
         items:
           type: string
+      pagination:
+        $ref: '#/definitions/Pagination'
     required:
       - tenantId
   Pagination:
@@ -286,7 +288,7 @@ definitions:
         type: object
         description: >-
           Any additional information that needs to be attached to the estimate.
-          For attachments, fileStoreIds will also be stored here. 
+          For attachments, fileStoreIds will also be stored here.
     required:
       - estimateAmountBreakupId
       - amount
@@ -310,7 +312,7 @@ definitions:
     type: object
     properties:
       requestInfo:
-        $ref: >- 
+        $ref: >-
           https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
 
       contract:

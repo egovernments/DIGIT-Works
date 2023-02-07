@@ -34,6 +34,13 @@ const WorksCard = () => {
         label: t("ACTION_TEST_PROJECTS"),
         link: `/${window?.contextPath}/employee/project/create-project`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
+        count: 1,
+      },
+      {
+        label: t("ACTION_TEST_PROJECT_INBOX"),
+        link: `/${window?.contextPath}/employee/project/inbox`,
+        roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
+        count: 1,
       },
       {
         label: t("WORKS_ESTIMATES"),

@@ -32,6 +32,9 @@ const ProjectBreadCrumb = ({ location }) => {
 const App = ({ path }) => {
   const CreateProjectComponent = Digit?.ComponentRegistryService?.getComponent("CreateProject");
   const ProjectDetailsComponent = Digit?.ComponentRegistryService?.getComponent("ProjectDetails");
+  const ProjectSearchComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearch");
+  const ProjectSearchAndInboxComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearchAndInbox");
+  const CreateProjectResponseComponent = Digit?.ComponentRegistryService?.getComponent("CreateProjectResponse");
 
   return (
     <Switch>
@@ -41,6 +44,9 @@ const App = ({ path }) => {
         </React.Fragment>
         <PrivateRoute path={`${path}/create-project`} component={() => <CreateProjectComponent parentRoute={path}/>} />
         <PrivateRoute path={`${path}/project-details`} component={() => <ProjectDetailsComponent parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/search-project`} component={() => <ProjectSearchComponent parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/inbox`} component={() => <ProjectSearchAndInboxComponent parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/create-project-response`} component={() => <CreateProjectResponseComponent parentRoute={path}/>} />
       </AppContainer>
     </Switch>
   );

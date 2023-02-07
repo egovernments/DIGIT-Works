@@ -28,8 +28,8 @@ class AppLocalizations {
   List<LocalizationMessageModel>? getLocalizationLabels() {
     dynamic localLabelResponse;
     if (kIsWeb) {
-      localLabelResponse =
-          html.window.localStorage[GlobalVariables.selectedLocale() ?? ''];
+      localLabelResponse = html.window
+          .localStorage['${locale?.languageCode}_${locale?.countryCode}' ?? ''];
     } else {
       localLabelResponse =
           storage.read(key: GlobalVariables.selectedLocale() ?? '');

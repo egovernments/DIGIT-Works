@@ -264,6 +264,10 @@ components:
           description: 'Name of non-sor line item'
           maxLength:  128
           minLength: 2
+        category:
+          type: string
+          description: 'Category under which this amount falls'
+          example: 'Overhead, SOR, non-SOR'
         description:
           type: string
           description: 'Description of non-sor item'
@@ -302,10 +306,6 @@ components:
           format: uuid
           example: '251c51eb-e970-4e01-a99a-70136c47a934'
           readOnly: true
-        category:
-          type: string
-          description: 'Category under which this amount falls'
-          example: 'Overhead, SOR, non-SOR'
         type:
           type: string
           description: 'Amount type master'
