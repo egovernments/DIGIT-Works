@@ -32,7 +32,7 @@ public class AttendeeServiceValidator {
 
         if (attendeeList == null || attendeeList.isEmpty()) {
             log.error("ATTENDEE Object is empty in attendee request");
-            errorMap.put("ATTENDANCE.TENANTID", "TenantId is mandatory");
+            throw new CustomException("ATTENDEE", "ATTENDEE Object is empty in attendee request");
         }
 
         String tenantId = attendeeList.get(0).getTenantId();
