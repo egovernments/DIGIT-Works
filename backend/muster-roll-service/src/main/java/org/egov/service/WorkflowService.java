@@ -129,4 +129,47 @@ public class WorkflowService {
         return url;
     }
 
+    /*
+     * Should return the applicable processInstance for the given request
+     *
+     */
+    public ProcessInstance getProcessInstance(MusterRollRequest musterRollRequest) {
+        String tenantId = musterRollRequest.getMusterRoll().getTenantId();
+        String businessId = musterRollRequest.getMusterRoll().getMusterRollNumber();
+        StringBuilder url = getProcessSearchURLWithParams(tenantId, businessId);
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(musterRollRequest.getRequestInfo()).build();
+        Object result = repository.fetchResult(url, requestInfoWrapper);
+        ProcessInstanceResponse response = null;
+        try {
+            response = mapper.convertValue(result, ProcessInstanceResponse.class);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow business service search");
+        }
+
+        if (CollectionUtils.isEmpty(response.getProcessInstances()))
+            throw new CustomException("PROCESSINSTANCE_DOESN'T_EXIST", "The businessId : " + businessId + " doesn't exist");
+
+        return response.getProcessInstances().get(0);
+    }
+
+    /**
+     * Creates url for search based on given tenantId and businessId
+     *
+     * @param tenantId     The tenantId for which url is generated
+     * @param businessId   The businessId for which url is generated
+     * @return The search url
+     */
+
+    private StringBuilder getProcessSearchURLWithParams(String tenantId, String businessId) {
+
+        StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
+        url.append(serviceConfiguration.getWfProcessInstanceSearchPath());
+        url.append("?tenantId=");
+        url.append(tenantId);
+        url.append("&businessIds=");
+        url.append(businessId);
+        url.append("&history=false");
+        return url;
+    }
+
 }

@@ -106,6 +106,10 @@ public class MusterRollService {
         calculationService.createAttendance(musterRollRequest,true);
         workflowService.updateWorkflowStatus(musterRollRequest);
 
+        // Fetch currentProcessInstance from workflow process search for inbox config
+        ProcessInstance processInstance = workflowService.getProcessInstance(musterRollRequest);
+        musterRollRequest.getMusterRoll().setProcessInstance(processInstance);
+
         producer.push(serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
         return musterRollRequest;
     }
@@ -165,6 +169,10 @@ public class MusterRollService {
         }
 
         workflowService.updateWorkflowStatus(musterRollRequest);
+
+        // Fetch currentProcessInstance from workflow process search for inbox config
+        ProcessInstance processInstance = workflowService.getProcessInstance(musterRollRequest);
+        musterRollRequest.getMusterRoll().setProcessInstance(processInstance);
 
         producer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
         return musterRollRequest;
