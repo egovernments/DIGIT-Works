@@ -4,14 +4,28 @@ import { useTranslation } from 'react-i18next';
 import ApplicationDetails from '../../../templates/ApplicationDetails';
 
 const ViewProject = (props) => {
+  const tenantId =  Digit.ULBService.getCurrentTenantId();
+  const queryStrings = Digit.Hooks.useQueryParams();
+  const searchParams = {
+    Projects : [
+        {
+            tenantId : queryStrings?.tenantId,
+            projectNumber : queryStrings?.projectNumber
+        }
+    ]
+  } 
+  const filters = {
+      limit : 10,
+      offset : 0
+  }
     
-    //will fetch project id from props and call this hook useViewProjectDetailsInEstimate to get the details
-    const { t } = useTranslation()
-    let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, "", "");
+  const { t } = useTranslation()
+  const { data, isLoading } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters);
+  console.log(data);
   return (
     <>
         <ApplicationDetails
-            applicationDetails={applicationDetails}
+            applicationDetails={data?.projectDetails?.searchedProject?.details?.projectDetails}
             isLoading={isLoading} 
             applicationData={{}}
             moduleCode="works"

@@ -50,21 +50,81 @@ export const WorksSearch = {
         }
         for(let projectIndex = 0; projectIndex < totalProjects; projectIndex++) {
             let currentProject = response?.Projects[projectIndex];
-            let DepartmentDetails = [];
-            let WorkTypeDetails = [];
-            let LocationDetails = [];
-            let Documents = [];
             const FinancialDetails = {
                 title: " ",
                 asSectionHeader: false,
                 values: [
-                  { title: "WORKS_FUND", value: currentProject?.additionalDetails?.function?.name },
-                  { title: "WORKS_FUNCTION", value: currentProject?.additionalDetails?.fund?.name },
-                  { title: "WORKS_BUDGET_HEAD", value: currentProject?.additionalDetails?.budgetHead },
-                  { title: "WORKS_SCHEME", value: currentProject?.additionalDetails?.scheme },
-                  { title: "WORKS_SUB_SCHEME", value: currentProject?.additionalDetails?.subScheme }
+                  { title: "WORKS_FUND", value: currentProject?.additionalDetails?.function?.name || "NA" },
+                  { title: "WORKS_FUNCTION", value: currentProject?.additionalDetails?.fund?.name || "NA" },
+                  { title: "WORKS_BUDGET_HEAD", value: currentProject?.additionalDetails?.budgetHead || "NA"},
+                  { title: "WORKS_SCHEME", value: currentProject?.additionalDetails?.scheme || "NA"},
+                  { title: "WORKS_SUB_SCHEME", value: currentProject?.additionalDetails?.subScheme || "NA"}
                 ],
               };
+              const DepartmentDetails = {
+                title: " ",
+                asSectionHeader: false,
+                values: [
+                        { title: "PROJECT_OWNING_DEPT", value: currentProject?.department || "NA" },
+                        { title: "PROJECT_TARGET_DEMOGRAPHY", value: "NA" }, //will check with Backend
+                        { title: "WORKS_LOR", value: currentProject?.referenceID || "NA" },
+                        { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs || "NA" },
+                    ]
+                };
+                const WorkTypeDetails = {
+                    title: "PROJECT_WORK_TYPE_DETAILS",
+                    asSectionHeader: true,
+                    values: [
+                        { title: "WORKS_PROJECT_TYPE", value: currentProject?.projectType || "NA" },
+                        { title: "WORKS_SUB_PROJECT_TYPE", value: currentProject?.projectSubType || "NA" },
+                        { title: "WORKS_WORK_NATURE", value: "NA" }, //will check with Backend
+                        { title: "WORKS_MODE_OF_INS", value: "NA" }, //will check with Backend
+                    ],
+                };
+                const LocationDetails = {
+                    title: "WORKS_LOCATION_DETAILS",
+                    asSectionHeader: true,
+                    values: [
+                        { title: "WORKS_LOCALITY",value: currentProject?.address?.locality || "NA" },
+                        { title: "WORKS_WARD", value: "NA" }, //will check with Backend
+                        { title: "PDF_STATIC_LABEL_ESTIMATE_ULB", value: "NA" }, //will check with Backend
+                        { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" }, //will check with Backend
+                    ],
+                };
+                const Documents = { //how to fetch name of the document
+                    title: "CS_COMMON_DOCUMENTS",
+                    asSectionHeader: true,
+                    additionalDetails: {
+                        documentsWithUrl: [
+                            {
+                                title: "",
+                                values: [
+                                    {
+                                        url: "",
+                                        title: "Document 1",
+                                        documentType: "pdf",
+                                    },
+                                    {
+                                        url: "",
+                                        title: "Document 2",
+                                        documentType: "pdf",
+                                    },
+                                    {
+                                        url: "",
+                                        title: "Document 3",
+                                        documentType: "pdf",
+                                    },
+                                    {
+                                        url: "",
+                                        title: "Document 3",
+                                        documentType: "pdf",
+                                    }
+                                ]
+                            }
+                        ],
+                    }
+                };
+    
             if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
                 //all details of searched project will come here
                 const basicDetails = {
@@ -76,7 +136,7 @@ export const WorksSearch = {
                     projectParentProjectID : currentProject?.parent || "NA"
                 }
                 projectDetails.searchedProject['basicDetails'] = basicDetails;
-                projectDetails.searchedProject['details']['projectDetails'].push(DepartmentDetails, WorkTypeDetails, LocationDetails, Documents); //rest categories will come here
+                projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [DepartmentDetails, WorkTypeDetails, LocationDetails, Documents]}; //rest categories will come here
                 projectDetails.searchedProject['details']['financialDetails'] = {applicationDetails :  [FinancialDetails]}; //rest categories will come here
             }else {
                  //all details of searched project will come here
