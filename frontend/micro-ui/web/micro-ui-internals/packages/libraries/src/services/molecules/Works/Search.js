@@ -35,75 +35,41 @@ export const WorksSearch = {
         const response = await WorksService?.loiSearch({tenantId,filters})
         return response?.letterOfIndents
     },
-    viewProjectDetailsScreenInCreateEstimate: async(t, tenantId, estimateNumber)=> {
-        const DepartmentDetails = {
-            title: " ",
-            asSectionHeader: false,
-            values: [
-                { title: "PROJECT_OWNING_DEPT", value: "Housing and Urban Development Department" },
-                { title: "WORKS_EXECUTING_DEPT", value: "Housing and Urban Development Department" },
-                { title: "WORKS_BENEFICIERY", value: "Local Slums" },
-                { title: "WORKS_LOR", value: "201/A  - 19 December 2021" },
-                { title: "PROJECT_ESTIMATED_COST", value: "5,00,000" },
-            ],
-        };
-        const WorkTypeDetails = {
-            title: "PROJECT_WORK_TYPE_DETAILS",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_WORK_TYPE", value: "Rain Water Harvesting" },
-                { title: "WORKS_PROJECT_SUB_TYPE_WORK", value: "NA" },
-                { title: "WORKS_WORK_NATURE", value: "Capital Works" },
-                { title: "WORKS_MODE_OF_INS", value: "Direct Assignment" },
-            ],
-        };
-        const LocationDetails = {
-            title: "WORKS_LOCATION_DETAILS",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_LOCALITY", value: "Vivekananda Nagar" },
-                { title: "WORKS_WARD", value: "1" },
-                { title: "PDF_STATIC_LABEL_ESTIMATE_ULB", value: "Jatni Municipality" },
-                { title: "WORKS_GEO_LOCATION", value: "82.1837913, 19.138134" },
-            ],
-        };
-        const Documents = {
-            title: "CS_COMMON_DOCUMENTS",
-            asSectionHeader: true,
-            additionalDetails: {
-                documentsWithUrl: [
-                    {
-                        title: "",
-                        values: [
-                            {
-                                url: "",
-                                title: "Document 1",
-                                documentType: "pdf",
-                            },
-                            {
-                                url: "",
-                                title: "Document 2",
-                                documentType: "pdf",
-                            },
-                            {
-                                url: "",
-                                title: "Document 3",
-                                documentType: "pdf",
-                            },
-                            {
-                                url: "",
-                                title: "Document 3",
-                                documentType: "pdf",
-                            }
-                        ]
-                    }
-                ],
+    viewProjectDetailsScreen: async(t,tenantId, searchParams, filters = {limit : 10, offset : 0})=> {
+        const response = await WorksService?.searchProject(tenantId, searchParams, filters);
+        let totalProjects = response?.Projects?.length;
+        let projectDetails = {
+            searchedProject : {
+                basicDetails : {},
+                details : []
+            },
+            subProjects : []
+        }
+        for(let projectIndex = 0; projectIndex < totalProjects; projectIndex++) {
+            let currentProject = response?.Projects[projectIndex];
+            let DepartmentDetails = [];
+            let WorkTypeDetails = [];
+            let LocationDetails = [];
+            let Documents = [];
+            if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
+                //all details of searched project will come here
+                const basicDetails = {
+                    projectID : currentProject?.projectNumber,
+                    projectProposalDate : "" || "NA", //need to check this with Chetan
+                    projectName : currentProject?.name || "NA",
+                    projectDesc : currentProject?.description || "NA",
+                    projectHasSubProject : (totalProjects > 1 ? "COMMON_YES" : "COMMON_NO"),
+                    projectParentProjectID : currentProject?.parent || "NA"
+                }
+                projectDetails.searchedProject['basicDetails'] = basicDetails;
+                projectDetails.searchedProject['details'].push(DepartmentDetails, WorkTypeDetails, LocationDetails, Documents); //rest categories will come here
+            }else {
+                 //all details of searched project will come here
+                 projectDetails?.subProjects?.push(DepartmentDetails, WorkTypeDetails, LocationDetails, Documents); //rest categories will come here
             }
-        };
-        const details = [DepartmentDetails, WorkTypeDetails, LocationDetails, Documents]
-
+        }
          return {
-            applicationDetails: details,
+            projectDetails : projectDetails,
             processInstancesDetails: [],
             applicationData: {},
             workflowDetails: [],

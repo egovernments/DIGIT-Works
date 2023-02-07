@@ -1,12 +1,12 @@
 import { WorksSearch } from "../../services/molecules/Works/Search";
 import { useQuery } from "react-query";
 
-const useViewProjectDetailsInEstimate = (t, tenantId="", estimateNumber="", config = { cacheTime: 0 }) => {
+//cache time is req as 0, so that the user wont see the previously fetched data while current project is being fetched.
+const useViewProjectDetailsInEstimate = (t, tenantId, searchParams, filters, config = {cacheTime : 0}) => {
     return useQuery(
-        ["ESTIMATE_WORKS_CREATE_NEW", "ESTIMATE_CREATE", tenantId, estimateNumber],
-        () => WorksSearch.viewProjectDetailsScreenInCreateEstimate(t, tenantId, estimateNumber),
+        ["SEARCH_PROJECTS", tenantId, searchParams?.projectNumber],
+        () => WorksSearch.viewProjectDetailsScreen(t, tenantId, searchParams, filters),
         config
     );
 }
-
-export default useViewProjectDetailsInEstimate
+export default useViewProjectDetailsInEstimate;
