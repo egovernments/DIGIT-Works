@@ -20,9 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -58,9 +56,8 @@ public class StaffServiceValidatorTest {
 
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
         staffPermissionRequest.setStaff(null);
-        Map<String, String> errorMap = new HashMap<>();
 
-        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap));
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest));
     }
 
     @DisplayName("register id is null in staff Permission request")
@@ -69,10 +66,8 @@ public class StaffServiceValidatorTest {
 
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
         staffPermissionRequest.getStaff().get(0).setRegisterId(null);
-        Map<String, String> errorMap = new HashMap<>();
 
-
-        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap));
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest));
     }
 
     @DisplayName("tenant id is null in staff Permission request")
@@ -81,10 +76,8 @@ public class StaffServiceValidatorTest {
 
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
         staffPermissionRequest.getStaff().get(0).setTenantId(null);
-        Map<String, String> errorMap = new HashMap<>();
 
-
-        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap));
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest));
     }
 
     @DisplayName("All staff must have same tenant id in staff Permission request")
@@ -93,10 +86,8 @@ public class StaffServiceValidatorTest {
 
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
         staffPermissionRequest.getStaff().get(0).setTenantId("od");
-        Map<String, String> errorMap = new HashMap<>();
 
-
-        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap));
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest));
     }
 
     @DisplayName("Duplicate staff objects in staff Permission request")
@@ -109,10 +100,8 @@ public class StaffServiceValidatorTest {
 
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
         staffPermissionRequest.getStaff().set(1, staffOne);
-        Map<String, String> errorMap = new HashMap<>();
 
-
-        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest, errorMap));
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest));
     }
 
 

@@ -27,8 +27,9 @@ public class AttendeeServiceValidator {
     @Autowired
     private MDMSUtils mdmsUtils;
 
-    public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest, Map<String, String> errorMap) {
+    public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
+        Map<String, String> errorMap = new HashMap<>();
 
         if (attendeeList == null || attendeeList.isEmpty()) {
             log.error("ATTENDEE Object is empty in attendee request");

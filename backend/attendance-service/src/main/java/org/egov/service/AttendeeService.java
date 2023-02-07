@@ -55,25 +55,20 @@ public class AttendeeService {
     public AttendeeCreateRequest createAttendee(AttendeeCreateRequest attendeeCreateRequest) {
         //incoming createRequest validation
         log.info("validating create attendee request parameters");
-        Map<String, String> errorMap = new HashMap<>();
-        attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest, errorMap);
+        attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest);
 
         //extract registerIds and attendee IndividualIds from client request
         String tenantId = attendeeCreateRequest.getAttendees().get(0).getTenantId();
         List<String> attendeeIds = extractAttendeeIdsFromCreateRequest(attendeeCreateRequest);
         List<String> registerIds = extractRegisterIdsFromCreateRequest(attendeeCreateRequest);
 
-
         //db call to get the attendeeList data
-        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).individualIds(attendeeIds).build();
-        List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendees(attendeeSearchCriteria);
-        log.info("attendee List received From DB : " + attendeeListFromDB.size());
+        List<IndividualEntry> attendeeListFromDB = getAttendees(registerIds,attendeeIds);
 
+        //db call to get registers from db
+        List<AttendanceRegister> attendanceRegisterListFromDB = getAttendanceRegisters(attendeeCreateRequest,registerIds,tenantId);
 
-        //db call to get registers from db and use them to validate request registers
-        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(attendeeCreateRequest.getRequestInfo()).build();
-        List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
-        log.info("attendance register List received From DB : " + attendanceRegisterListFromDB.size());
+        //validate registers from request with registers from DB
         log.info("validating register ids from request against DB");
         attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 
@@ -93,6 +88,27 @@ public class AttendeeService {
         return attendeeCreateRequest;
     }
 
+    public List<IndividualEntry> getAttendees(List<String> registerIds,List<String> attendeeIds){
+        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).individualIds(attendeeIds).build();
+        List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendees(attendeeSearchCriteria);
+        log.info("attendee List received From DB : " + attendeeListFromDB.size());
+        return attendeeListFromDB;
+    }
+
+    public List<AttendanceRegister> getAttendanceRegisters(AttendeeCreateRequest attendeeCreateRequest,List<String> registerIds,String tenantId){
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(attendeeCreateRequest.getRequestInfo()).build();
+        List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+        log.info("attendance register List received From DB : " + attendanceRegisterListFromDB.size());
+        return attendanceRegisterListFromDB;
+    }
+
+    public List<AttendanceRegister> getAttendanceRegisters(AttendeeDeleteRequest attendeeDeleteRequest,List<String> registerIds,String tenantId){
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(attendeeDeleteRequest.getRequestInfo()).build();
+        List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+        log.info("attendance register List received From DB : " + attendanceRegisterListFromDB.size());
+        return attendanceRegisterListFromDB;
+    }
+
     /**
      * Update(Soft Delete) the given attendee
      *
@@ -110,16 +126,13 @@ public class AttendeeService {
         List<String> attendeeIds = extractAttendeeIdsFromDeleteRequest(attendeeDeleteRequest);
         List<String> registerIds = extractRegisterIdsFromDeleteRequest(attendeeDeleteRequest);
 
-
         //db call to get the attendeeList data
-        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).individualIds(attendeeIds).build();
-        List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendees(attendeeSearchCriteria);
-        log.info("attendee List received From DB : " + attendeeListFromDB.size());
+        List<IndividualEntry> attendeeListFromDB = getAttendees(registerIds,attendeeIds);
 
-        //db call to get registers from db and use them to validate request registers
-        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(attendeeDeleteRequest.getRequestInfo()).build();
-        List<AttendanceRegister> attendanceRegisterListFromDB = attendanceRegisterService.getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
-        log.info("attendance register List received From DB : " + attendanceRegisterListFromDB.size());
+        //db call to get registers from db
+        List<AttendanceRegister> attendanceRegisterListFromDB = getAttendanceRegisters(attendeeDeleteRequest,registerIds,tenantId);
+
+        //validate request registers with registers from DB
         log.info("validating register ids from request against DB");
         attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisterListFromDB, tenantId);
 

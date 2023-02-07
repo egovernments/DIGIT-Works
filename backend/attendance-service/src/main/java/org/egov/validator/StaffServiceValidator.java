@@ -71,8 +71,9 @@ public class StaffServiceValidator {
     }
 
 
-    public void validateStaffPermissionRequestParameters(StaffPermissionRequest staffPermissionRequest, Map<String, String> errorMap) {
+    public void validateStaffPermissionRequestParameters(StaffPermissionRequest staffPermissionRequest) {
         List<StaffPermission> staffPermissionList = staffPermissionRequest.getStaff();
+        Map<String, String> errorMap = new HashMap<>();
 
         if (staffPermissionList == null || staffPermissionList.isEmpty()) {
             log.error("Staff Object is empty in staff request");
