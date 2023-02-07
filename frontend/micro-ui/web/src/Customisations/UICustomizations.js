@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "react-query";
 // these functions will act as middlewares 
 var Digit = window.Digit || {};
 
+
 export const UICustomizations = {
     SearchProjectConfig: {
         preProcess: (data) => {
@@ -18,7 +19,7 @@ export const UICustomizations = {
             return data
         },
         // postProcess: ( responseArray, filters, options = {}) => {
-            
+
         //     if(responseArray?.length===0) return []
         //     const listOfUuids = responseArray?.map(row => row.auditDetails.createdBy)
         //     const data = { uuid: listOfUuids }
@@ -26,15 +27,14 @@ export const UICustomizations = {
         //     const client = useQueryClient();
         //     const queryData = useQuery(["USER_SEARCH", filters, data], () => Digit.UserService.userSearch(null, data, {}), options);
         // },
-        additionalCustomizations: (row,column,columnConfig,value,t) => {
+        additionalCustomizations: (row, column, columnConfig, value, t) => {
             //here we can add multiple conditions
             //like if a cell is link then we return link
             //first we can identify which column it belongs to then we can return relevant result
-            
-            if (column.label ==="WORKS_PRJ_SUB_ID")
-            {
+
+            if (column.label === "WORKS_PRJ_SUB_ID") {
                 return <span className="link">
-                    <Link to={`/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+                    <Link to={`/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&projectNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
                 </span>
             }
 
@@ -47,6 +47,26 @@ export const UICustomizations = {
             const department = data?.params?.department?.code
             data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromProposalDate, toProposalDate, department }
             return data
+        },
+        additionalCustomizations: (row, column, columnConfig, value, t) => {
+            //here we can add multiple conditions
+            //like if a cell is link then we return link
+            //first we can identify which column it belongs to then we can return relevant result
+
+            const getAmount = (item) => {
+                return item.amountDetail.reduce((acc, row) => acc + row.amount, 0)
+            }
+            if (column.label === "WORKS_ESTIMATE_ID") {
+                return <span className="link">
+                    <Link to={`/works-ui/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+                </span>
+            }
+            if (column.label === "WORKS_ESTIMATED_AMOUNT") {
+
+                return row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0)
+
+            }
+
         }
     }
 }
