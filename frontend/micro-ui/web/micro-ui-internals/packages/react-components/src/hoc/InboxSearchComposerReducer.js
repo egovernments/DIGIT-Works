@@ -23,6 +23,8 @@ const reducer = (state, action) => {
             return { ...state, tableForm: {...state.tableForm,...updatedTableState} };
         case "clearSearchForm":
             return {...state,searchForm:action.state}
+        case "clearFilterForm":
+            return {...state,filterForm:action.state}
         default:
             return state;
     }

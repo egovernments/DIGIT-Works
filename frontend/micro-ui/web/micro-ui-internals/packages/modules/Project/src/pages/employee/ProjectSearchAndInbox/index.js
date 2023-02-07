@@ -10,7 +10,7 @@ const ProjectSearchAndInboxComponent = () => {
     
     return (
         <React.Fragment>
-            <Header styles={{ fontSize: "32px" }}>{configs?.label}</Header>
+            <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}</Header>
             <div className="inbox-search-wrapper">
                 <InboxSearchComposer configs={configs}></InboxSearchComposer>
             </div>
