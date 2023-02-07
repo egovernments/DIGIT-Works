@@ -41,7 +41,10 @@ export const WorksSearch = {
         let projectDetails = {
             searchedProject : {
                 basicDetails : {},
-                details : []
+                details : {
+                    projectDetails : [],
+                    financialDetails : []
+                }
             },
             subProjects : []
         }
@@ -51,6 +54,17 @@ export const WorksSearch = {
             let WorkTypeDetails = [];
             let LocationDetails = [];
             let Documents = [];
+            const FinancialDetails = {
+                title: " ",
+                asSectionHeader: false,
+                values: [
+                  { title: "WORKS_FUND", value: currentProject?.additionalDetails?.function?.name },
+                  { title: "WORKS_FUNCTION", value: currentProject?.additionalDetails?.fund?.name },
+                  { title: "WORKS_BUDGET_HEAD", value: currentProject?.additionalDetails?.budgetHead },
+                  { title: "WORKS_SCHEME", value: currentProject?.additionalDetails?.scheme },
+                  { title: "WORKS_SUB_SCHEME", value: currentProject?.additionalDetails?.subScheme }
+                ],
+              };
             if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
                 //all details of searched project will come here
                 const basicDetails = {
@@ -62,7 +76,8 @@ export const WorksSearch = {
                     projectParentProjectID : currentProject?.parent || "NA"
                 }
                 projectDetails.searchedProject['basicDetails'] = basicDetails;
-                projectDetails.searchedProject['details'].push(DepartmentDetails, WorkTypeDetails, LocationDetails, Documents); //rest categories will come here
+                projectDetails.searchedProject['details']['projectDetails'].push(DepartmentDetails, WorkTypeDetails, LocationDetails, Documents); //rest categories will come here
+                projectDetails.searchedProject['details']['financialDetails'] = {applicationDetails :  [FinancialDetails]}; //rest categories will come here
             }else {
                  //all details of searched project will come here
                  projectDetails?.subProjects?.push(DepartmentDetails, WorkTypeDetails, LocationDetails, Documents); //rest categories will come here
