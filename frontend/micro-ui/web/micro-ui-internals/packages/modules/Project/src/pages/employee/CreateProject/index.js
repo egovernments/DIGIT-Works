@@ -85,6 +85,15 @@ const CreateProject = () => {
         }
         return mdmsData;
       }
+
+      //remove Toast after 3s
+      useEffect(()=>{
+        if(toast?.show) {
+          setTimeout(()=>{
+            handleToastClose();
+          },3000);
+        }
+      },[toast?.show])
   
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
 
@@ -241,7 +250,7 @@ const CreateProject = () => {
                 currentFormCategory={currentFormCategory}
             />
            )}
-           {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={'true'} onClose={handleToastClose}></Toast>}
+           {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
         </div>
       </React.Fragment>
     )

@@ -335,7 +335,9 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
                 maxFilesAllowed:2,
                 allowedFileTypes : /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
                 customClass : "upload-margin-bottom",
-                errorMessage : t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG")
+                errorMessage : t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
+                hintText : "WORKS_DOC_UPLOAD_HINT_2MB",
+                showHintBelow : true
             }
           }
         ]

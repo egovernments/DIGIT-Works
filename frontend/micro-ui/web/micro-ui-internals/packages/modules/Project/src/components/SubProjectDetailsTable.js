@@ -360,14 +360,14 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                         module="works"
                                         tenantId={Digit.ULBService.getCurrentTenantId()}
                                         getFormState={getFileStoreData}
-                                        showHintBelow={true}
                                         setuploadedstate={value}
                                         allowedFileTypesRegex={/(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i}
                                         allowedMaxSizeInMB={2}
-                                        hintText={""}
                                         maxFilesAllowed={2}
                                         extraStyleName={{ padding: "0.5rem" }}
                                         customClass={"upload-margin-bottom"}
+                                        hintText={"WORKS_DOC_UPLOAD_HINT_2MB"}
+                                        showHintBelow = {true}
                                     />
                                 );
                                 }}
