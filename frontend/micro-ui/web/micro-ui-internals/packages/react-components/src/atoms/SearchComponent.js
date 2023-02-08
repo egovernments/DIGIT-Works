@@ -47,6 +47,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   }, [formState])
 
   const onSubmit = (data) => {
+    // debugger
     if(updatedFields.length >= uiConfig?.minReqFields) {
       
       //@prachi We can't make this validation here as this is a generic comp
@@ -60,8 +61,9 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
         }
       }
       
+      // here based on screenType call respective dispatch fn
       dispatch({
-        type: "searchForm",
+        type: screenType === "search" ? "searchForm" : "filterForm",
         state: {
           ...data
         }
@@ -76,7 +78,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     reset(uiConfig?.defaultValues)
     dispatch({
       type: "clearSearchForm",
-      state:{}
+      state: { ...uiConfig?.defaultValues }
     })
   }
  
