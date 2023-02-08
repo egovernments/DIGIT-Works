@@ -9,12 +9,9 @@ const findCurrentDate = () => {
 } 
 //, validation : {validate : (value) => new Date(value).getTime() < new Date("2020-01-04").getTime()}
 export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false, sessionFormData) => {
-  console.log("SESSION DATA",sessionFormData);
-  console.log(new Date(sessionFormData?.noSubProject_startDate).getTime() < new Date(sessionFormData?.noSubProject_endDate).getTime());
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const ULB = Digit.Utils.locale.getCityLocale(tenantId);
-  
   let ULBOptions = []
   ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
@@ -195,7 +192,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              options : subTypeOfProjectOptions //TODO:
+              options : subTypeOfProjectOptions
             },
           },
           {
@@ -227,11 +224,9 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             description: "",
             type: "date",
             disable: false,
-            populators: { name: "noSubProject_startDate", error : t("DATE_START_DATE_LESS_THAN_END_DATE"), validation : {validate : (value) => 
-              { 
-                // return ( new Date(sessionFormData?.noSubProject_startDate).getTime() < new Date(sessionFormData?.noSubProject_endDate).getTime() ? true : false )
-                return value;
-              }}},
+            populators: { 
+              name: "noSubProject_startDate",
+            }
           },
           {
             inline: true,
@@ -241,10 +236,10 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             description: "",
             type: "date",
             disable: false,
-            populators: { name: "noSubProject_endDate", error : t("DATE_END_DATE_MORE_THAN_START_DATE"), validation : {validate : (value) => 
-              { 
-                return (new Date(sessionFormData?.noSubProject_startDate).getTime() < new Date(sessionFormData?.noSubProject_endDate).getTime() ? true : false )
-              }}},
+            populators: { 
+            name: "noSubProject_endDate",
+            error : "COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE",
+            }
           },
           {
             isMandatory: false,

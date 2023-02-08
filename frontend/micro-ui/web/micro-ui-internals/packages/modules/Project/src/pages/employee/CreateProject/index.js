@@ -82,9 +82,15 @@ const CreateProject = () => {
   
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
 
-    const onFormValueChange = (setValue, formData, formState, reset) => {
+    const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors) => {
         if (!_.isEqual(sessionFormData, formData)) {
           const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
+
+          if((new Date(formData?.noSubProject_startDate).getTime()) > (new Date(formData?.noSubProject_endDate).getTime())) {
+            setError("noSubProject_endDate",{ type: "focus" }, { shouldFocus: true });
+          }else {
+            clearErrors("noSubProject_endDate");
+          }
           if(formData?.basicDetails_hasSubProjects) {
             setSelectedProjectType(formData?.basicDetails_hasSubProjects);
           }
