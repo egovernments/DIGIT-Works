@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class DocumentQueryBuilder {
@@ -14,7 +15,7 @@ public class DocumentQueryBuilder {
             " from eg_pms_document d ";
 
     /* Constructs document search query based on project Ids */
-    public String getDocumentSearchQuery(List<String> projectIds, List<Object> preparedStmtList) {
+    public String getDocumentSearchQuery(Set<String> projectIds, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = null;
         queryBuilder = new StringBuilder(FETCH_DOCUMENT_QUERY);
 
