@@ -7,10 +7,11 @@ const findCurrentDate = () => {
   let date =  new Date().toJSON().slice(0, 10);
   return date;
 } 
-
-export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false) => {
-  const { t } = useTranslation()
-
+//, validation : {validate : (value) => new Date(value).getTime() < new Date("2020-01-04").getTime()}
+export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false, sessionFormData) => {
+  console.log("SESSION DATA",sessionFormData);
+  console.log(new Date(sessionFormData?.noSubProject_startDate).getTime() < new Date(sessionFormData?.noSubProject_endDate).getTime());
+  const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const ULB = Digit.Utils.locale.getCityLocale(tenantId);
   
@@ -43,7 +44,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             key: "basicDetails_projectName",
             type: "text",
             disable: false,
-            populators: { name: "basicDetails_projectName", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_NAME"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "basicDetails_projectName", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_NAME"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
@@ -141,7 +142,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             key: "noSubProject_letterRefNoOrReqNo",
             type: "text",
             disable: false,
-            populators: { name: "noSubProject_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "noSubProject_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
@@ -226,7 +227,11 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             description: "",
             type: "date",
             disable: false,
-            populators: { name: "noSubProject_startDate" },
+            populators: { name: "noSubProject_startDate", error : t("DATE_START_DATE_LESS_THAN_END_DATE"), validation : {validate : (value) => 
+              { 
+                // return ( new Date(sessionFormData?.noSubProject_startDate).getTime() < new Date(sessionFormData?.noSubProject_endDate).getTime() ? true : false )
+                return value;
+              }}},
           },
           {
             inline: true,
@@ -236,7 +241,10 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             description: "",
             type: "date",
             disable: false,
-            populators: { name: "noSubProject_endDate" },
+            populators: { name: "noSubProject_endDate", error : t("DATE_END_DATE_MORE_THAN_START_DATE"), validation : {validate : (value) => 
+              { 
+                return (new Date(sessionFormData?.noSubProject_startDate).getTime() < new Date(sessionFormData?.noSubProject_endDate).getTime() ? true : false )
+              }}},
           },
           {
             isMandatory: false,
@@ -483,12 +491,12 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
           },
           {
             isMandatory: false,
-            key: "withSubProject_project_executingDepartment",
+            key: "withSubProject_project_targetDemography",
             type: "radioordropdown",
-            label: "WORKS_EXECUTING_DEPT",
+            label: "PROJECT_TARGET_DEMOGRAPHY",
             disable: false,
             populators: {
-              name: "withSubProject_project_executingDepartment",
+              name: "withSubProject_project_targetDemography",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -496,29 +504,8 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "Department",
+                masterName: "SocialCategory",
                 moduleName: "common-masters",
-                localePrefix: "COMMON_MASTERS_DEPARTMENT",
-              },
-            },
-          },
-          {
-            isMandatory: false,
-            key: "withSubProject_project_beneficiary",
-            type: "radioordropdown",
-            label: "WORKS_BENEFICIARY",
-            disable: false,
-            populators: {
-              name: "withSubProject_project_beneficiary",
-              optionsKey: "name",
-              error: t("WORKS_REQUIRED_ERR"),
-              required: false,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
-              mdmsConfig: {
-                masterName: "BeneficiaryType",
-                moduleName: "works",
                 localePrefix: "ES_COMMON",
               },
             },
@@ -530,7 +517,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             key: "withSubProject_project_LetterRefNoOrReqNo",
             type: "text",
             disable: false,
-            populators: { name: "withSubProject_project_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "withSubProject_project_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,

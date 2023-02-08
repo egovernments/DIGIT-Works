@@ -49,6 +49,7 @@ const CreateProject = () => {
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
+    let endDate = "";
 
     //clear session data on first init
     useEffect(()=>{
@@ -111,11 +112,11 @@ const CreateProject = () => {
           } 
           if (difference?.withSubProject_project_scheme) {
             setValue("withSubProject_project_subScheme", '');
-          } 
+          }
           setSessionFormData({ ...sessionFormData, ...formData });
         }
     }
-    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel);
+    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel, sessionFormData);
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
@@ -141,7 +142,7 @@ const CreateProject = () => {
 
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
-          setToast(()=>({show : true, label : error?.response?.data?.Errors?.[0]?.message, error : true}));
+          setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
         },
         onSuccess: async (responseData, variables) => {
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
@@ -150,7 +151,7 @@ const CreateProject = () => {
             let parentProjectNumber = responseData?.Projects[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
-                setToast(()=>({show : true, label : error?.response?.data?.Errors?.[0]?.message, error : true}));
+                setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
               },
               onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
@@ -168,7 +169,7 @@ const CreateProject = () => {
             }else if(responseData?.ResponseInfo?.status){
               sendDataToResponsePage("", responseData, true);
             }else{
-              setToast(()=>({show : true, label : "Something Went Wrong.", error : true}));
+              setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
             }
           }
         },

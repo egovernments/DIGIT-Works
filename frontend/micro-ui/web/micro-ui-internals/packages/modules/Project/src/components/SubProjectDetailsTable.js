@@ -23,8 +23,8 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         {label : t('WORKS_PROJECT_START_DATE'), isMandatory : false },
         {label : t('WORKS_PROJECT_END_DATE'), isMandatory : false },
         {label : t('WORKS_MODE_OF_ENTRUSTMENT'), isMandatory : false },
-        {label : t('WORKS_LOCALITY'), isMandatory : false },
         {label : t('WORKS_WARD'), isMandatory : false },
+        {label : t('WORKS_LOCALITY'), isMandatory : false },
         {label : t('WORKS_URBAN_LOCAL_BODY'), isMandatory : false },
         {label : t('WORKS_GEO_LOCATION'), isMandatory : false },
         {label : t('WORKS_UPLOAD_DOCS'), isMandatory : false },
@@ -187,7 +187,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 <td style={getStyles('SNO')}>{i}</td>
                 <td style={getStyles('PROJECT_NAME')} >
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.projectName`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true, pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minLength: 2}) : register({required : false})}/>
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.projectName`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true, pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minLength: 2}) : register({required : false})}/>
                         {renderErrorIfAny(row, "projectName")}
                     </div>
                 </td>
