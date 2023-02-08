@@ -7,6 +7,7 @@ import org.egov.TestConfiguration;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.helper.AttendanceLogRequestTestBuilder;
 import org.egov.kafka.Producer;
+import org.egov.repository.AttendanceLogRepository;
 import org.egov.service.AttendanceLogService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.AttendanceLogRequest;
@@ -15,9 +16,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.http.MediaType;
@@ -29,9 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Slf4j
-@Import({TestConfiguration.class})
-@SpringBootTest(classes = Main.class)
+
+
+@ContextConfiguration(classes = Main.class)
+@WebMvcTest(AttendanceLogApiController.class)
+@Import(TestConfiguration.class)
 @AutoConfigureMockMvc
 
 public class AttendanceLogApiControllerTest {
@@ -49,6 +55,12 @@ public class AttendanceLogApiControllerTest {
 
     @MockBean
     private Producer producer;
+
+    @MockBean
+    private AttendanceLogRepository attendanceLogRepository;
+
+    @MockBean
+    private JdbcTemplate jdbcTemplate;
 
 
     @DisplayName("attendance log request should pass and create attendance log")
