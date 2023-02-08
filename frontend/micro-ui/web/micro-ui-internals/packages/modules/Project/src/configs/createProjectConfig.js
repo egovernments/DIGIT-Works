@@ -2,12 +2,6 @@ import { CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-
-const findCurrentDate = () => {
-  let date =  new Date().toJSON().slice(0, 10);
-  return date;
-} 
-//, validation : {validate : (value) => new Date(value).getTime() < new Date("2020-01-04").getTime()}
 export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false, sessionFormData) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -16,10 +10,6 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
   ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
   return {
-    defaultValues : {
-      basicDetails_dateOfProposal : findCurrentDate(),
-      basicDetails_hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"},
-    },
     form: [
       { 
         head: "",

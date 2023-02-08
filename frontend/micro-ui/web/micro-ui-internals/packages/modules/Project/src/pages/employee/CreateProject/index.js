@@ -42,14 +42,20 @@ const CreateProject = () => {
     const [subSchemaOptions, setSubSchemaOptions] = useState([]);
     const [selectedWard, setSelectedWard] = useState('');
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const orgSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
+    const findCurrentDate = () => {
+      return new Date().toJSON().slice(0, 10);
+    } 
+    const orgSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", 
+    {
+      basicDetails_dateOfProposal : findCurrentDate(),
+      basicDetails_hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"},
+    });
     const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const [currentFormCategory, setCurrentFormCategory] = useState("project");
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
-    let endDate = "";
 
     //clear session data on first init
     useEffect(()=>{
@@ -223,7 +229,7 @@ const CreateProject = () => {
                 fieldStyle={{ marginRight: 0 }}
                 inline={false}
                 className="card-no-margin"
-                defaultValues={createProjectSectionFormConfig?.defaultValues}
+                defaultValues={sessionFormData}
                 showWrapperContainers={false}
                 isDescriptionBold={false}
                 noBreakLine={true}
