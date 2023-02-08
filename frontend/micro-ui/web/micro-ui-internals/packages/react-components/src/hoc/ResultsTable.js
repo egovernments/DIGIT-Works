@@ -8,7 +8,7 @@ import _ from "lodash";
 import { InboxContext } from './InboxSearchComposerContext';
 import { Link } from "react-router-dom";
 import { Loader } from '../atoms/Loader';
-import Card from '../atoms/Card'
+import NoResultsFound from '../atoms/NoResultsFound';
 
 
 const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig }) => {
@@ -129,15 +129,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
 
     
     if (isLoading || isFetching) return <Loader />
-    if (searchResult?.length === 0) return <Card style={{ marginTop: 20 }}>
-        {t("ES_COMMON_NO_DATA")
-            .split("\\n")
-            .map((text, index) => (
-                <p key={index} style={{ textAlign: "center" }}>
-                    {text}
-                </p>
-            ))}
-    </Card>
+    if (searchResult?.length === 0) return <NoResultsFound/>
     return (
         <div >
             {config?.enableGlobalSearch && <div className='card' style={{ "padding": "0px", marginTop: "1rem" }}>
