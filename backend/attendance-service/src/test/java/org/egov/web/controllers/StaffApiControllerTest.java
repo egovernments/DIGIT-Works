@@ -7,6 +7,7 @@ import org.egov.TestConfiguration;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.helper.StaffRequestBuilderTest;
+import org.egov.repository.AttendanceLogRepository;
 import org.egov.service.StaffService;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ErrorRes;
@@ -17,10 +18,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -33,9 +37,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Slf4j
-@Import({TestConfiguration.class})
-@SpringBootTest(classes = Main.class)
+@ContextConfiguration(classes = Main.class)
+@WebMvcTest(StaffApiController.class)
+@Import(TestConfiguration.class)
 @AutoConfigureMockMvc
 public class StaffApiControllerTest {
 
@@ -53,6 +57,12 @@ public class StaffApiControllerTest {
 
     @MockBean
     private StaffService staffService;
+
+    @MockBean
+    private AttendanceLogRepository attendanceLogRepository;
+
+    @MockBean
+    private JdbcTemplate jdbcTemplate;
 
     @Test
     @DisplayName("should pass for correct API operation")
