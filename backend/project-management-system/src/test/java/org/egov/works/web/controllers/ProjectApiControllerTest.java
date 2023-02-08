@@ -130,7 +130,7 @@ public class ProjectApiControllerTest {
     public void searchProjectPostSuccess() throws Exception {
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProjectForSearch().build();
         when(projectService.searchProject(any(ProjectRequest.class), any(Integer.class),
-                any(Integer.class),any(String.class),eq(null),any(Boolean.class))).thenReturn(projectRequest.getProjects());
+                any(Integer.class),any(String.class),eq(null),any(Boolean.class),any(Boolean.class),any(Boolean.class))).thenReturn(projectRequest.getProjects());
 
         ResponseInfo responseInfo = ProjectRequestTestBuilder.builder().getResponseInfo_Success(projectRequest);
         when(responseInfoFactory.createResponseInfoFromRequestInfo(projectRequest.getRequestInfo(),true)).thenReturn(responseInfo);

@@ -28,10 +28,12 @@ public class ProjectConfiguration {
     @Value("${project.management.system.kafka.update.topic}")
     private String updateProjectTopic;
     //search config
-    @Value("${project.max.offset}")
-    private Integer maxOffset;
-    @Value("${project.max.limit}")
+    @Value("${project.search.max.limit}")
     private Integer maxLimit;
+    @Value("${project.default.offset}")
+    private Integer defaultOffset;
+    @Value("${project.default.limit}")
+    private Integer defaultLimit;
     //Idgen Config
     @Value("${egov.idgen.host}")
     private String idGenHost;
@@ -40,5 +42,8 @@ public class ProjectConfiguration {
     //id format name
     @Value("${egov.idgen.project.number.name}")
     private String idgenProjectNumberName;
+    //Document ID verification
+    @Value("${project.document.id.verification.required}")
+    private String documentIdVerificationRequired;
 
 }
