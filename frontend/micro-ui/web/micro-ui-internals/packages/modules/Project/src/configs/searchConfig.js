@@ -93,8 +93,7 @@ const searchConfig = () => {
                           disable: false,
                           populators: { 
                               name: "startDate",
-                          },
-                        
+                          }
                         },
                         {
                             label: "CREATED_TO_DATE",
@@ -103,8 +102,12 @@ const searchConfig = () => {
                             disable: false,
                             populators: { 
                                 name: "endDate",
-                                error: 'DATE_VALIDATION_MSG',
+                                error: 'DATE_VALIDATION_MSG'
                             },
+                            additionalValidation: {
+                                type: 'date',
+                                keys: {start: 'startDate', end: 'endDate'}
+                            }
                         }
                     ]
                 },

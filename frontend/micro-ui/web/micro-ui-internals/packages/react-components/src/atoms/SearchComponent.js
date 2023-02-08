@@ -9,12 +9,13 @@ import SubmitBar from "../atoms/SubmitBar";
 import Toast from "../atoms/Toast";
 import { FilterIcon, RefreshIcon } from "./svgindex";
 
-const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
+const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig}) => {
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
   const [showToast,setShowToast] = useState(null)
   let updatedFields = [];
   const [componentType, setComponentType] = useState(uiConfig?.type);
+  const {apiDetails} = fullConfig
 
   const {
     register,
@@ -114,6 +115,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
               setError={setError}
               clearErrors={clearErrors}
               labelStyle={{fontSize: "16px"}}
+              apiDetails={apiDetails}
             />  
             <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
               { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
