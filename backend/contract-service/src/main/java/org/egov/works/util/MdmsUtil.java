@@ -1,76 +1,70 @@
 package org.egov.works.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.works.config.Configuration;
+import org.egov.works.config.ContractServiceConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.*;
+import org.egov.works.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.egov.works.util.ContractServiceConstants.MASTER_TENANTS;
+import static org.egov.works.util.ContractServiceConstants.MDMS_TENANT_MODULE_NAME;
 
 @Slf4j
 @Component
 public class MdmsUtil {
 
     @Autowired
-    private RestTemplate restTemplate;
+    private ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private ObjectMapper mapper;
+    private ContractServiceConfiguration config;
 
-    @Autowired
-    private Configuration configs;
+    public static final String filterCode = "$.*.code";
 
-
-    public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
-                                                             List<String> masterNameList) {
-        StringBuilder uri = new StringBuilder();
-        uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
-        Object response = new HashMap<>();
-        Integer rate = 0;
-        MdmsResponse mdmsResponse = new MdmsResponse();
-        try {
-            response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-            mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
-        } catch (Exception e) {
-            log.error("Exception occurred while fetching category lists from mdms: ", e);
-        }
-
-        return mdmsResponse.getMdmsRes();
-        //log.info(ulbToCategoryListMap.toString());
+    public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        return result;
     }
 
-    private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,
-                                           String moduleName, List<String> masterNameList) {
-        List<MasterDetail> masterDetailList = new ArrayList<>();
-        for (String masterName : masterNameList) {
-            MasterDetail masterDetail = new MasterDetail();
-            masterDetail.setName(masterName);
-            masterDetailList.add(masterDetail);
-        }
+    public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
 
-        ModuleDetail moduleDetail = new ModuleDetail();
-        moduleDetail.setMasterDetails(masterDetailList);
-        moduleDetail.setModuleName(moduleName);
-        List<ModuleDetail> moduleDetailList = new ArrayList<>();
-        moduleDetailList.add(moduleDetail);
+        ModuleDetail tenantModuleDetail = getTenantModuleRequestData();
 
-        MdmsCriteria mdmsCriteria = new MdmsCriteria();
-        mdmsCriteria.setTenantId(tenantId.split("\\.")[0]);
-        mdmsCriteria.setModuleDetails(moduleDetailList);
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(tenantModuleDetail);
 
-        MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-        mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-        mdmsCriteriaReq.setRequestInfo(requestInfo);
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
+                .build();
 
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
         return mdmsCriteriaReq;
     }
+
+    public StringBuilder getMdmsSearchUrl() {
+        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+    }
+
+    private ModuleDetail getTenantModuleRequestData() {
+        List<MasterDetail> tenantMasterDetails = new ArrayList<>();
+
+        MasterDetail tenantMasterDetail = MasterDetail.builder().name(MASTER_TENANTS)
+                .filter(filterCode).build();
+
+        tenantMasterDetails.add(tenantMasterDetail);
+
+        ModuleDetail tenantModuleDetail = ModuleDetail.builder().masterDetails(tenantMasterDetails)
+                .moduleName(MDMS_TENANT_MODULE_NAME).build();
+
+        return tenantModuleDetail;
+    }
+
 }

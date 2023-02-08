@@ -20,7 +20,7 @@ import java.util.TimeZone;
 @AllArgsConstructor
 @Setter
 @Getter
-public class Configuration {
+public class ContractServiceConfiguration {
     @Value("${app.timezone}")
     private String timeZone;
 

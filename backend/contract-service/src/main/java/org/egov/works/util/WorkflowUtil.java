@@ -1,7 +1,7 @@
 package org.egov.works.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.works.config.Configuration;
+import org.egov.works.config.ContractServiceConfiguration;
 import digit.models.coremodels.*;
 import org.egov.works.repository.ServiceRequestRepository;
 import org.egov.common.contract.request.RequestInfo;
@@ -24,7 +24,7 @@ public class WorkflowUtil {
     private ObjectMapper mapper;
 
     @Autowired
-    private Configuration configs;
+    private ContractServiceConfiguration configs;
 
 
     /**

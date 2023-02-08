@@ -1,6 +1,6 @@
 package org.egov.works.util;
 
-import org.egov.works.config.Configuration;
+import org.egov.works.config.ContractServiceConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class UrlShortenerUtil {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Configuration configs;
+    private ContractServiceConfiguration configs;
 
 
     public String getShortenedUrl(String url) {

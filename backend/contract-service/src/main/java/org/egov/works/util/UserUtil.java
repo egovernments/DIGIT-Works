@@ -1,7 +1,7 @@
 package org.egov.works.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.works.config.Configuration;
+import org.egov.works.config.ContractServiceConfiguration;
 import digit.models.coremodels.UserDetailResponse;
 import digit.models.coremodels.user.Role;
 import digit.models.coremodels.user.User;
@@ -27,7 +27,7 @@ public class UserUtil {
     private ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private Configuration configs;
+    private ContractServiceConfiguration configs;
 
 
     @Autowired
