@@ -2,6 +2,12 @@ import { CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+
+const findCurrentDate = () => {
+  let date =  new Date().toJSON().slice(0, 10);
+  return date;
+} 
+
 export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false) => {
   const { t } = useTranslation()
 
@@ -13,7 +19,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
 
   return {
     defaultValues : {
-      basicDetails_dateOfProposal : "01-01-2020",
+      basicDetails_dateOfProposal : findCurrentDate(),
       basicDetails_hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"},
     },
     form: [
@@ -27,7 +33,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             isMandatory: false,
             key: "basicDetails_dateOfProposal",
             type: "date",
-            disable: true,
+            disable: false,
             populators: { name: "basicDetails_dateOfProposal" },
           },
           {
