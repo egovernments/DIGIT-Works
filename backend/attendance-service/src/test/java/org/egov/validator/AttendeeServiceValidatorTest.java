@@ -2,12 +2,9 @@ package org.egov.validator;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.Main;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.helper.AttendanceRegisterBuilderTest;
 import org.egov.helper.AttendeeRequestBuilderTest;
-import org.egov.repository.AttendeeRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MDMSUtils;
 import org.egov.web.models.AttendanceRegister;
@@ -20,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -109,7 +105,6 @@ public class AttendeeServiceValidatorTest {
         AttendeeCreateRequest attendeeCreateRequest = AttendeeRequestBuilderTest.getAttendeeCreateRequest();
         attendeeCreateRequest.getAttendees().get(0).setTenantId("od");
 
-
         assertThrows(CustomException.class, () -> attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest));
     }
 
@@ -149,7 +144,7 @@ public class AttendeeServiceValidatorTest {
         attendanceRegister.setEndDate(new BigDecimal("1578728218000")); //set a past date
 
         assertThrows(CustomException.class, () -> attendeeServiceValidator
-                .validateCreateAttendee(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
+                .validateAttendeeOnCreate(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
     }
 
     @DisplayName("attendee enrollment date should be after start date and before end date of register")
@@ -163,7 +158,7 @@ public class AttendeeServiceValidatorTest {
         attendeeCreateRequest.getAttendees().get(0).setEnrollmentDate(new BigDecimal("1673422618000"));
 
         assertThrows(CustomException.class, () -> attendeeServiceValidator
-                .validateCreateAttendee(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
+                .validateAttendeeOnCreate(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
     }
 
     @DisplayName("check if attendee is already enrolled to the register")
@@ -175,7 +170,7 @@ public class AttendeeServiceValidatorTest {
         List<IndividualEntry> attendees = attendanceRegister.getAttendees();
 
         assertThrows(CustomException.class, () -> attendeeServiceValidator
-                .validateCreateAttendee(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
+                .validateAttendeeOnCreate(attendeeCreateRequest, attendees, Collections.singletonList(attendanceRegister)));
 
     }
 
