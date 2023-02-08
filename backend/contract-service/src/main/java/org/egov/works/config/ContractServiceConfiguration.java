@@ -11,6 +11,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.util.TimeZone;
 
 @Component
@@ -87,10 +88,13 @@ public class ContractServiceConfiguration {
 
     //attendance service register search config
     @Value("${contract.default.offset}")
-    private Integer contractDefaultOffset;
+    private BigDecimal contractDefaultOffset;
 
     @Value("${contract.default.limit}")
-    private Integer contractDefaultLimit;
+    private BigDecimal contractDefaultLimit;
+
+    @Value("${contract.search.max.limit}")
+    private BigDecimal contractMaxLimit;
 
     @PostConstruct
     public void initialize() {

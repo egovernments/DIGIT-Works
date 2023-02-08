@@ -28,7 +28,7 @@ import java.math.BigDecimal;
 public class Pagination {
     @JsonProperty("limit")
     @Valid
-    @DecimalMax("100")
+//    @DecimalMax("100")
     private BigDecimal limit = null;
 
     @JsonProperty("offSet")

@@ -41,8 +41,10 @@ public class ContractService {
         //Validate the requested parameters
         contractServiceValidator.validateSearchContractRequest(requestInfoWrapper, contractCriteria);
 
-       /* //Enrich requested search criteria
-        contractEnrichment.enrichSearchContractRequest(requestInfoWrapper.getRequestInfo(),contractCriteria);*/
+        //Enrich requested search criteria
+        contractEnrichment.enrichSearchContractRequest(requestInfoWrapper.getRequestInfo(),contractCriteria);
+
+        //get contracts from
 
 
 
