@@ -2,8 +2,6 @@ package org.egov.enrichment;
 
 import digit.models.coremodels.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.config.AttendanceServiceConfiguration;
-import org.egov.service.AttendanceRegisterService;
 import org.egov.util.AttendanceServiceUtil;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
@@ -20,14 +18,7 @@ public class StaffEnrichmentService {
     @Autowired
     private AttendanceServiceUtil attendanceServiceUtil;
 
-    @Autowired
-    private AttendanceServiceConfiguration config;
-
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
-
-
-    public void enrichCreateStaffPermission(StaffPermissionRequest request) {
+    public void enrichStaffPermissionOnCreate(StaffPermissionRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
 
@@ -40,7 +31,7 @@ public class StaffEnrichmentService {
         }
     }
 
-    public void enrichDeleteStaffPermission(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB) {
+    public void enrichStaffPermissionOnDelete(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
 

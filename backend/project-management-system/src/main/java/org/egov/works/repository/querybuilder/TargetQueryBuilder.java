@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class TargetQueryBuilder {
@@ -13,7 +14,7 @@ public class TargetQueryBuilder {
             " from eg_pms_target t ";
 
     /* Constructs target search query based on project Ids */
-    public String getTargetSearchQuery(List<String> projectIds, List<Object> preparedStmtList) {
+    public String getTargetSearchQuery(Set<String> projectIds, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = null;
         queryBuilder = new StringBuilder(FETCH_TARGET_QUERY);
 
