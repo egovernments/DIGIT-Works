@@ -41,6 +41,7 @@ const App = ({ path }) => {
   const location = useLocation();
   const ViewAttendanceApp = Digit?.ComponentRegistryService?.getComponent("ViewAttendance");
   const Inbox = Digit.ComponentRegistryService.getComponent("AttendenceMgmtInbox");
+  const TestInbox = Digit.ComponentRegistryService.getComponent("AttendenceMgmtTestInbox");
 
   return (
     <Switch>
@@ -53,6 +54,12 @@ const App = ({ path }) => {
           path={`${path}/inbox`}
           component={() => (
             <Inbox isInbox parentRoute={path} filterComponent="AttendenceInboxFilter" searchComponent="AttendenceInboxSearch" initialStates={{}} />
+          )}
+        /> 
+        <PrivateRoute
+          path={`${path}/test-inbox`}
+          component={() => (
+            <TestInbox isInbox parentRoute={path}/>
           )}
         />
         <PrivateRoute path={`${path}/response`} component={Response} />

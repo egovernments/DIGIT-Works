@@ -8,7 +8,8 @@
     "packages/css",
     "packages/react-components",
     "packages/modules/Project",
-    "packages/modules/Estimate"
+    "packages/modules/Estimate",
+    "packages/modules/AttendenceMgmt"
     ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
   "license": "MIT",

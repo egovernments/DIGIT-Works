@@ -8,6 +8,7 @@ import mobileInbox from "./components/markAttendenceInbox/mobileInbox";
 import ViewRegister from "./pages/citizen/viewRegister/ViewRegister";
 import ViewProjects from "./components/ViewProjectsInbox.js/ViewProjects";
 import Inbox from "./pages/employee/Inbox";
+import TestInbox from "./pages/employee/TestInbox";
 import AttendenceInboxFilter from "./components/inbox/InboxFilter";
 import AttendenceInboxSearch from "./components/inbox/InboxSearch";
 import ViewAttendance from "./pages/employee/viewAttendance/ViewAttendances";
@@ -35,6 +36,7 @@ const componentsToRegister = {
     AttendenceMgmtCard,
     AttendenceMgmtModule,
     AttendenceMgmtInbox: Inbox,
+    AttendenceMgmtTestInbox: TestInbox,
     ViewAttendance,
     ViewRegister,
     ViewProjects,
