@@ -64,7 +64,7 @@ public class DenormalizeAndEnrichEstimateService {
         if (processInstanceResponse != null
                 && processInstanceResponse.getProcessInstances() != null
                 && !processInstanceResponse.getProcessInstances().isEmpty()) {
-            estimateRequest.getEstimate().setProcessInstances(processInstanceResponse.getProcessInstances());
+            estimateRequest.getEstimate().setProcessInstances(processInstanceResponse.getProcessInstances().get(0));
         }
         return estimateRequest;
     }
