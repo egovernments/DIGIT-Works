@@ -2,7 +2,7 @@ import { CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false, sessionFormData) => {
+export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false, errorOnEndDate) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const ULB = Digit.Utils.locale.getCityLocale(tenantId);
@@ -227,8 +227,17 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             type: "date",
             disable: false,
             populators: { 
-            name: "noSubProject_endDate",
-            error : "COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE",
+              name: "noSubProject_endDate",
+              error : "COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE",
+              validation : {
+                validate : async (value, formValues) => {
+                    if(errorOnEndDate){
+                      return false;
+                    }else{
+                      return true;
+                    }
+                  }              
+              }
             }
           },
           {

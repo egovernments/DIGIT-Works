@@ -25,7 +25,6 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         }
         return tableState;
     }
-    console.log("SESSION", sessionFormData);
     const [rows, setRows] = useState(renderSubProjectsFromSession());
     const columns = [
         {label : t('WORKS_SNO'), isMandatory : false },
@@ -183,7 +182,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
             }
             case "endDate" : {
                 return <>
-                {errors && ( errors?.[formFieldName]?.[row.key]?.[name]?.type === "focus" || errors?.[formFieldName]?.[row.key]?.[name]?.type === "pattern" || errors?.[formFieldName]?.[row.key]?.[name]?.type === "required" ) && (
+                {errors && ( errors?.[formFieldName]?.[row.key]?.[`${name}_custom`]?.type === "custom" || errors?.[formFieldName]?.[row.key]?.[`${name}_custom`]?.type === "pattern" || errors?.[formFieldName]?.[row.key]?.[`${name}_custom`]?.type === "required" ) && (
                     <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE`)}</CardLabelError>)}
                 </>
             }
