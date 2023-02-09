@@ -4,7 +4,12 @@ import CreateProjectForm from "./CreateProjectForm";
 const CreateProject = () => {
 
     const findCurrentDate = () => {
-      return new Date().toJSON().slice(0, 10);
+      //return new Date().toJSON().slice(0, 10);
+      var date = new Date();
+      var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
+                    .toISOString()
+                    .split("T")[0];
+      return dateString;
     } 
     const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", 
     {

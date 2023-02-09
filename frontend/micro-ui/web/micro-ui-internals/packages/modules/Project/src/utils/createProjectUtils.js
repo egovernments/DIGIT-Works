@@ -78,7 +78,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "fund" : project_details?.fund,
             "scheme" :  project_details?.scheme?.code,
             "subScheme" :  project_details?.subScheme?.code,  
-            "dateOfProposal" : basic_details?.dateOfProposal
+            "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal)
           },
           "rowVersion": 0
       }
