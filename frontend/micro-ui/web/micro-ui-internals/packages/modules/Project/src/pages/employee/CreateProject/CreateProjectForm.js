@@ -33,7 +33,6 @@ const whenHasSubProjectsHorizontalNavConfig =  [
 ];
 
 const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFormData}) => {
-    console.log('component reloads');
     const {t} = useTranslation();
     const [selectedProjectType, setSelectedProjectType] = useState({name : "COMMON_YES", code : "COMMON_YES"});
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
@@ -46,7 +45,6 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const [currentFormCategory, setCurrentFormCategory] = useState("project");
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
-    const [errorOnEndDate, setErrorOnEndDate] = useState(false);
     const history = useHistory();
 
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
@@ -84,11 +82,14 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
   
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
 
+    // this validation is handled using useform's setError and custom validation type is added. 
+    // passing a name which is not associalted to any input will persist the error on submit
+    // later on while rendering error, this custom is removed from the name to target the target input element
     const handleDateValiationForSubProjects = (formData, setError, clearErrors) => {
       if(formData?.withSubProject_project_subProjects) {
         let totalProjects = formData?.withSubProject_project_subProjects.length;
         for(let index=1; index<=totalProjects; index++) {
-          if((new Date(formData?.withSubProject_project_subProjects?.[index]?.startDate).getTime()) >= (new Date(formData?.withSubProject_project_subProjects?.[index]?.endDate))) {
+          if((new Date(formData?.withSubProject_project_subProjects?.[index]?.startDate).getTime()) > (new Date(formData?.withSubProject_project_subProjects?.[index]?.endDate))) {
             setError(`withSubProject_project_subProjects.${index}.endDate_custom`,{ type: "custom" }, { shouldFocus: true });
           }else {
             clearErrors(`withSubProject_project_subProjects.${index}.endDate_custom`);
@@ -97,24 +98,12 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
       }
     }
 
-    const handleDateValiationForProjects = (formData, setError, clearErrors) => {
-      if((new Date(formData?.noSubProject_startDate).getTime()) >= (new Date(formData?.noSubProject_endDate).getTime())) {
-        setError("noSubProject_endDate",{ type: "required" }, { shouldFocus: true });
-        setErrorOnEndDate(true);
-      }else {
-        clearErrors("noSubProject_endDate");
-        setErrorOnEndDate(false);
-      }
-    }
-
-    const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors) => {
+    const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger) => {
         if (!_.isEqual(sessionFormData, formData)) {
           const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
           //date validation for sub project table
           handleDateValiationForSubProjects(formData, setError, clearErrors);
-          //date validation for project table
-          handleDateValiationForProjects(formData, setError, clearErrors);
 
           if(formData?.basicDetails_hasSubProjects) {
             setSelectedProjectType(formData?.basicDetails_hasSubProjects);
@@ -145,9 +134,14 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
             setValue("withSubProject_project_subScheme", '');
           }
           setSessionFormData({ ...sessionFormData, ...formData });
+
+          //date validation for project table
+          if (difference?.noSubProject_startDate) {
+            trigger("noSubProject_endDate", {shouldFocus : true});
+          }
         }
     }
-    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel, errorOnEndDate);
+    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel, sessionFormData);
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {

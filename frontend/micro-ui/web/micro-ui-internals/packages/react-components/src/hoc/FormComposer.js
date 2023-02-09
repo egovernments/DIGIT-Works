@@ -118,7 +118,7 @@ export const FormComposer = (props) => {
   }
 
   useEffect(() => {
-    props.onFormValueChange && props.onFormValueChange(setValue, formData, formState, reset, setError, clearErrors);
+    props.onFormValueChange && props.onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger);
   }, [formData]);
 
   const fieldSelector = (type, populators, isMandatory, disable = false, component, config, sectionFormCategory) => {

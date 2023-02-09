@@ -38,7 +38,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         {label : t('WORKS_MODE_OF_ENTRUSTMENT'), isMandatory : false },
         {label : t('WORKS_WARD'), isMandatory : false },
         {label : t('WORKS_LOCALITY'), isMandatory : false },
-        {label : t('WORKS_URBAN_LOCAL_BODY'), isMandatory : false },
+        {label : t('ES_COMMON_ULB'), isMandatory : false },
         {label : t('WORKS_GEO_LOCATION'), isMandatory : false },
         {label : t('WORKS_UPLOAD_DOCS'), isMandatory : false },
         {label : t('WORKS_ACTIONS'), isMandatory : false }
@@ -104,6 +104,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         t={t}
                         select={(e)=>handleDropdownChange(e, props, row, inputName)}
                         onBlur={props?.onBlur}
+                        optionCardStyles={{maxHeight : '15rem'}}
                     />
     }
 
@@ -127,6 +128,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
             return { "minWidth": "2rem" };
         }
         if(type === "PROJECT_NAME") {
+            return { "minWidth": "20rem" };
+        }
+        if(type === "DATE") {
             return { "minWidth": "20rem" };
         }
         return { "minWidth": "14rem" };
@@ -264,7 +268,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     {renderErrorIfAny(row, "natureOfWork", true)}
                     </div>
                 </td>
-                <td style={getStyles()}>
+                <td style={getStyles("DATE")}>
                     <div className='field sub-projects-details-field-mt' style={{ "width": "100%" }} >
                     <TextInput
                         type={"date"}
@@ -276,7 +280,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     {renderErrorIfAny(row, "startDate")}
                     </div>
                 </td>  
-                <td style={getStyles()}>
+                <td style={getStyles("DATE")}>
                     <div className='field sub-projects-details-field-mt' style={{ "width": "100%" }} >
                     <TextInput
                         type={"date"}
@@ -335,13 +339,13 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                         <Controller
                             control={control}
-                            name={`${formFieldName}.${row.key}.urbanLocalBody`}
+                            name={`${formFieldName}.${row.key}.ulb`}
                             rules={{ required: false}}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "urbanLocalBody", props, register, "i18nKey", getCities())
+                                getDropDownDataFromMDMS(t, row, "ulb", props, register, "i18nKey", getCities())
                             )}
                         />
-                    {renderErrorIfAny(row, "urbanLocalBody", true)}
+                    {renderErrorIfAny(row, "ulb", true)}
                     </div>
                 </td> 
                 <td style={getStyles()} >
@@ -380,11 +384,11 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                         getFormState={getFileStoreData}
                                         setuploadedstate={value}
                                         allowedFileTypesRegex={/(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i}
-                                        allowedMaxSizeInMB={2}
+                                        allowedMaxSizeInMB={5}
                                         maxFilesAllowed={2}
                                         extraStyleName={{ padding: "0.5rem" }}
                                         customClass={"upload-margin-bottom"}
-                                        hintText={"WORKS_DOC_UPLOAD_HINT_2MB"}
+                                        hintText={"WORKS_DOC_UPLOAD_HINT"}
                                         showHintBelow = {true}
                                     />
                                 );

@@ -2,7 +2,7 @@ import { CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false, errorOnEndDate) => {
+export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false, sessionFormData) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const ULB = Digit.Utils.locale.getCityLocale(tenantId);
@@ -227,18 +227,16 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             type: "date",
             disable: false,
             populators: { 
-              name: "noSubProject_endDate",
-              error : "COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE",
+              name: "noSubProject_endDate", 
+              error : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), 
               validation : {
-                validate : async (value, formValues) => {
-                    if(errorOnEndDate){
-                      return false;
-                    }else{
-                      return true;
-                    }
-                  }              
-              }
-            }
+                validate : (value, formData) => 
+                { 
+                  let startDate = (new Date(sessionFormData?.noSubProject_startDate)).getTime();
+                  let endDate = (new Date(value)).getTime();
+                  return startDate && endDate && startDate > endDate ? false : true;
+                }
+              }},
           },
           {
             isMandatory: false,
@@ -340,12 +338,12 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             label: t("WORKS_UPLOAD_FILES"),
             populators:{
                 name: "noSubProject_uploadedFiles",
-                allowedMaxSizeInMB:2,
+                allowedMaxSizeInMB:5,
                 maxFilesAllowed:2,
                 allowedFileTypes : /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
                 customClass : "upload-margin-bottom",
                 errorMessage : t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
-                hintText : "WORKS_DOC_UPLOAD_HINT_2MB",
+                hintText : "WORKS_DOC_UPLOAD_HINT",
                 showHintBelow : true
             }
           }

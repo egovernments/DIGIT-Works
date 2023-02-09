@@ -54,7 +54,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "addressLine1": project_details?.geoLocation,
             "addressLine2": "Address Line 2", //Not being captured on UI
             "landmark": "Area1", //Not being captured on UI
-            "city": project_details?.urbanLocalBody?.code, //Not being captured on UI for Projects ( it is captured for sub projects )
+            "city": project_details?.ulb?.code, //Not being captured on UI for Projects ( it is captured for sub projects )
             "pincode": "999999", //Not being captured on UI
             "buildingName": "Test_Building", //Not being captured on UI
             "street": "Test_Street", //Not being captured on UI
