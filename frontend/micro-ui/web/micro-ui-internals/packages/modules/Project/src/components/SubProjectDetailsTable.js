@@ -3,16 +3,30 @@ import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Dropdown, C
 import { Controller } from 'react-hook-form';
 import _ from 'lodash';
 
-//Constant Declaration
-const initialState = [
-    {
-        key: 1,
-        isShow: true,
-    },
-];
 //these params depend on what the controller of the associated type is sending.
 const SubProjectDetailsTable = ({t, register, control, setValue, onChange, errors, sectionFormCategory, selectedFormCategory}) => {
-    const [rows, setRows] = useState(initialState);
+    const orgSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE",{});
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
+
+    //update sub project table with session data
+    const renderSubProjectsFromSession = () => {
+        if(!sessionFormData?.withSubProject_project_subProjects) {
+            return [{
+                key: 1,
+                isShow: true,
+            }];
+        }
+        let tableState = [];
+        for(let i = 1; i<sessionFormData?.withSubProject_project_subProjects?.length; i++) {
+            tableState.push({
+                key: i,
+                isShow: true,
+            })
+        }
+        return tableState;
+    }
+    console.log("SESSION", sessionFormData);
+    const [rows, setRows] = useState(renderSubProjectsFromSession());
     const columns = [
         {label : t('WORKS_SNO'), isMandatory : false },
         {label : t('WORKS_NAME_OF_SUB_PROJECT'), isMandatory : true },
@@ -106,7 +120,6 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         props?.onChange(e);
     }
 
-    //TODOy
     const getStyles = (type) => {
         if(type === "upload") {
             return { "minWidth": "20rem" };
@@ -166,6 +179,12 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 return <>
                     {errors && ( errors?.[formFieldName]?.[row.key]?.[name]?.type === "pattern" || errors?.[formFieldName]?.[row.key]?.[name]?.type === "required" ) && (
                         <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`PROJECT_PATTERN_ERR_MSG_PROJECT_NAME`)}</CardLabelError>)}
+                </>
+            }
+            case "endDate" : {
+                return <>
+                {errors && ( errors?.[formFieldName]?.[row.key]?.[name]?.type === "focus" || errors?.[formFieldName]?.[row.key]?.[name]?.type === "pattern" || errors?.[formFieldName]?.[row.key]?.[name]?.type === "required" ) && (
+                    <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE`)}</CardLabelError>)}
                 </>
             }
             default : {

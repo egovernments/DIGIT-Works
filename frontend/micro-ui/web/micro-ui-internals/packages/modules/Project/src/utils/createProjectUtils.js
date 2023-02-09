@@ -28,6 +28,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
         project_details = data?.withSubProject;
       }
     }
+  
     //iterate till all sub-projects. For noSubProject Case, this will iterate only once
     for(let index=1; index<=total_projects; index++) {
         // In case of Sub Projects having Parent ID, project_details will be each sub-project
@@ -53,7 +54,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "addressLine1": project_details?.geoLocation,
             "addressLine2": "Address Line 2", //Not being captured on UI
             "landmark": "Area1", //Not being captured on UI
-            "city": "City1", //Not being captured on UI
+            "city": project_details?.urbanLocalBody?.code, //Not being captured on UI for Projects ( it is captured for sub projects )
             "pincode": "999999", //Not being captured on UI
             "buildingName": "Test_Building", //Not being captured on UI
             "street": "Test_Street", //Not being captured on UI
@@ -76,7 +77,8 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "function" : project_details?.function,
             "fund" : project_details?.fund,
             "scheme" :  project_details?.scheme?.code,
-            "subScheme" :  project_details?.subScheme?.code,
+            "subScheme" :  project_details?.subScheme?.code,  
+            "dateOfProposal" : basic_details?.dateOfProposal
           },
           "rowVersion": 0
       }
