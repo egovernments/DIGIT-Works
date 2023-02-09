@@ -49,8 +49,9 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
 
   const onSubmit = (data) => {
     if(updatedFields.length >= uiConfig?.minReqFields) {
+     // here based on screenType call respective dispatch fn
       dispatch({
-        type: "searchForm",
+        type: screenType === "search" ? "searchForm" : "filterForm",
         state: {
           ...data
         }
@@ -65,7 +66,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
     reset(uiConfig?.defaultValues)
     dispatch({
       type: "clearSearchForm",
-      state:{}
+      state: { ...uiConfig?.defaultValues }
+      //need to pass form with empty strings 
     })
   }
  
@@ -77,7 +79,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
     reset(uiConfig?.defaultValues)
     dispatch({
       type: "clearFilterForm",
-      state:{}
+      state: { ...uiConfig?.defaultValues }
+      //need to pass form with empty strings 
     })
   }
 
