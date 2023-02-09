@@ -127,15 +127,19 @@ public class MusterRollService {
 
         musterRollValidator.validateSearchMuster(requestInfoWrapper,searchCriteria);
         enrichmentService.enrichSearchRequest(searchCriteria);
-        List<MusterRoll> musterRollList = musterRollRepository.getMusterRoll(searchCriteria);
-        List<MusterRoll> filteredMusterRollList = musterRollList;
+
         List<Role> roles = requestInfoWrapper.getRequestInfo().getUserInfo().getRoles();
         boolean isFilterRequired = roles.stream()
                 .anyMatch(role -> role.getCode().equalsIgnoreCase("ORG_ADMIN") || role.getCode().equalsIgnoreCase("ORG_STAFF"));
-        //filter the muster rolls that corresponds to the user if role is org_admin or org_staff
-        if (!CollectionUtils.isEmpty(musterRollList) && isFilterRequired) {
-            filteredMusterRollList = filterMusterRolls(requestInfoWrapper.getRequestInfo(),searchCriteria,musterRollList);
+        //Fetch the attendance registers that belong to the user and then fetch the musters that belongs to the user
+        List<String> registerIds = new ArrayList<>();
+        if (isFilterRequired) {
+            registerIds = fetchAttendanceRegistersOfUser(requestInfoWrapper.getRequestInfo(),searchCriteria);
         }
+
+        List<MusterRoll> musterRollList = musterRollRepository.getMusterRoll(searchCriteria,registerIds);
+        List<MusterRoll> filteredMusterRollList = musterRollList;
+
         //apply the limit and offset
         if (filteredMusterRollList != null && !musterRollServiceUtil.isTenantBasedSearch(searchCriteria)) {
             filteredMusterRollList = applyLimitAndOffset(searchCriteria,filteredMusterRollList);
@@ -186,7 +190,7 @@ public class MusterRollService {
         MusterRollSearchCriteria searchCriteria = MusterRollSearchCriteria.builder().tenantId(musterRoll.getTenantId())
                 .registerId(musterRoll.getRegisterId()).fromDate(musterRoll.getStartDate())
                 .toDate(musterRoll.getEndDate()).build();
-        List<MusterRoll> musterRolls = musterRollRepository.getMusterRoll(searchCriteria);
+        List<MusterRoll> musterRolls = musterRollRepository.getMusterRoll(searchCriteria,null);
         if (!CollectionUtils.isEmpty(musterRolls)) {
             StringBuffer exceptionMessage = new StringBuffer();
             exceptionMessage.append("Muster roll already exists for the register - ");
@@ -208,7 +212,7 @@ public class MusterRollService {
         List<String> ids = new ArrayList<>();
         ids.add(musterRoll.getId());
         MusterRollSearchCriteria searchCriteria = MusterRollSearchCriteria.builder().ids(ids).tenantId(musterRoll.getTenantId()).build();
-        List<MusterRoll> musterRolls = musterRollRepository.getMusterRoll(searchCriteria);
+        List<MusterRoll> musterRolls = musterRollRepository.getMusterRoll(searchCriteria,null);
         if (CollectionUtils.isEmpty(musterRolls)) {
             throw new CustomException("NO_MATCH_FOUND","Invalid Muster roll id - "+musterRoll.getId());
         }
@@ -238,11 +242,11 @@ public class MusterRollService {
     }
 
     /**
-     * Filters the muster rolls that corresponds to the user ( if role is org_staff or org_admin)
+     * Fetch the registerIds that the user belongs to ( if role is org_staff or org_admin)
      * @param requestInfo
-     * @param musterRollList
+     * @return
      */
-    private List<MusterRoll>  filterMusterRolls(RequestInfo requestInfo, MusterRollSearchCriteria searchCriteria, List<MusterRoll> musterRollList) {
+    private List<String>  fetchAttendanceRegistersOfUser(RequestInfo requestInfo, MusterRollSearchCriteria searchCriteria) {
         String id = requestInfo.getUserInfo().getUuid();
 
         StringBuilder uri = new StringBuilder();
@@ -254,31 +258,26 @@ public class MusterRollService {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
         AttendanceRegisterResponse attendanceRegisterResponse = null;
-        log.info("MusterRollService::filterMusterRolls::call attendance register search with tenantId::"+searchCriteria.getTenantId()
+        log.info("MusterRollService::fetchAttendanceRegistersOfUser::call attendance register search with tenantId::"+searchCriteria.getTenantId()
                 +"::staffId::"+id);
 
         try {
             attendanceRegisterResponse  = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceRegisterResponse.class);
         }  catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
-            log.error("MusterRollService::filterMusterRolls::Error thrown from attendance register service::"+httpClientOrServerExc.getStatusCode());
+            log.error("MusterRollService::fetchAttendanceRegistersOfUser::Error thrown from attendance register service::"+httpClientOrServerExc.getStatusCode());
             throw new CustomException("ATTENDANCE_REGISTER_SERVICE_EXCEPTION","Error thrown from attendance register service::"+httpClientOrServerExc.getStatusCode());
         }
 
         if (attendanceRegisterResponse == null || CollectionUtils.isEmpty(attendanceRegisterResponse.getAttendanceRegister())) {
-            throw new CustomException("NO_DATA_FOUND","No MusterRoll found for the user");
+            throw new CustomException("NO_DATA_FOUND","No Attendance registers found for the user. So no muster created for the register");
         }
 
         List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
-        List<MusterRoll> filteredMusterRolls = new ArrayList<>();
-        //filteredMusterRolls list has the muster rolls that matches with the registers of the user.
-        for (MusterRoll musterRoll : musterRollList) {
-            boolean isMatch = attendanceRegisters.stream()
-                                                      .anyMatch(register -> register.getId().equalsIgnoreCase(musterRoll.getRegisterId()));
-            if (isMatch) {
-                filteredMusterRolls.add(musterRoll);
-            }
-        }
-        return  filteredMusterRolls;
+        List<String> registerIds = attendanceRegisters.stream()
+                .map(register -> register.getId())
+                .collect(Collectors.toList());
+
+        return  registerIds;
     }
 
     /**
