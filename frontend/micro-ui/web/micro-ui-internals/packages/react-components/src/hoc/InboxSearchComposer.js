@@ -81,7 +81,8 @@ const InboxSearchComposer = (props) => {
                             <SearchComponent 
                                 uiConfig={ configs?.sections?.search?.uiConfig} 
                                 header={configs?.sections?.search?.label} 
-                                screenType={configs.type}/>
+                                screenType={configs.type}
+                                fullConfig={configs}/>
                         </div>
                 }
                 {
@@ -90,7 +91,8 @@ const InboxSearchComposer = (props) => {
                         <SearchComponent 
                                 uiConfig={ configs?.sections?.filter?.uiConfig} 
                                 header={configs?.sections?.filter?.label} 
-                                screenType={configs.type}/>
+                                screenType={configs.type}
+                                fullConfig={configs}/>
                     </div> 
                 }
                 {   
