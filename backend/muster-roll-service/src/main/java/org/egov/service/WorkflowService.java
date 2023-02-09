@@ -37,10 +37,12 @@ public class WorkflowService {
     public String updateWorkflowStatus(MusterRollRequest musterRollRequest) {
         ProcessInstance processInstance = getProcessInstanceForMusterRoll(musterRollRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(musterRollRequest.getRequestInfo(), Collections.singletonList(processInstance));
-        State state = callWorkFlow(workflowRequest);
+        ProcessInstance processInstanceResponse = callWorkFlow(workflowRequest);
         //musterRollStatus
-        musterRollRequest.getMusterRoll().setMusterRollStatus(state.getApplicationStatus());
-        return state.getApplicationStatus();
+        musterRollRequest.getMusterRoll().setMusterRollStatus(processInstanceResponse.getState().getApplicationStatus());
+        // Fetch currentProcessInstance from workflow process search for inbox config
+        musterRollRequest.getMusterRoll().setProcessInstance(processInstanceResponse);
+        return processInstanceResponse.getState().getApplicationStatus();
     }
 
     private ProcessInstance getProcessInstanceForMusterRoll(MusterRollRequest request) {
@@ -79,13 +81,13 @@ public class WorkflowService {
      * <p>
      * and return wf-response to sets the resultant status
      */
-    private State callWorkFlow(ProcessInstanceRequest workflowReq) {
+    private ProcessInstance callWorkFlow(ProcessInstanceRequest workflowReq) {
 
         ProcessInstanceResponse response = null;
         StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost().concat(serviceConfiguration.getWfTransitionPath()));
         Object optional = repository.fetchResult(url, workflowReq);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
-        return response.getProcessInstances().get(0).getState();
+        return response.getProcessInstances().get(0);
     }
 
     /*
