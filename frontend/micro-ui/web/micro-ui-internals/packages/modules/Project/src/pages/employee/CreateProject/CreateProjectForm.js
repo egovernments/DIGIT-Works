@@ -46,6 +46,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const [currentFormCategory, setCurrentFormCategory] = useState("project");
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
+    const [errorOnEndDate, setErrorOnEndDate] = useState(false);
     const history = useHistory();
 
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
@@ -83,20 +84,38 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
   
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
 
+    const handleDateValiationForSubProjects = (formData, setError, clearErrors) => {
+      if(formData?.withSubProject_project_subProjects) {
+        let totalProjects = formData?.withSubProject_project_subProjects.length;
+        for(let index=1; index<=totalProjects; index++) {
+          if((new Date(formData?.withSubProject_project_subProjects?.[index]?.startDate).getTime()) >= (new Date(formData?.withSubProject_project_subProjects?.[index]?.endDate))) {
+            setError(`withSubProject_project_subProjects.${index}.endDate_custom`,{ type: "custom" }, { shouldFocus: true });
+          }else {
+            clearErrors(`withSubProject_project_subProjects.${index}.endDate_custom`);
+          }
+        }
+      }
+    }
+
+    const handleDateValiationForProjects = (formData, setError, clearErrors) => {
+      if((new Date(formData?.noSubProject_startDate).getTime()) >= (new Date(formData?.noSubProject_endDate).getTime())) {
+        setError("noSubProject_endDate",{ type: "required" }, { shouldFocus: true });
+        setErrorOnEndDate(true);
+      }else {
+        clearErrors("noSubProject_endDate");
+        setErrorOnEndDate(false);
+      }
+    }
+
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors) => {
         if (!_.isEqual(sessionFormData, formData)) {
           const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
-          if((new Date(formData?.noSubProject_startDate).getTime()) > (new Date(formData?.noSubProject_endDate).getTime())) {
-            setError("noSubProject_endDate",{ type: "focus" }, { shouldFocus: true });
-          }else {
-            clearErrors("noSubProject_endDate");
-          }
-          if((new Date(formData?.noSubProject_startDate).getTime()) > (new Date(formData?.noSubProject_endDate).getTime())) {
-            setError("noSubProject_endDate",{ type: "focus" }, { shouldFocus: true });
-          }else {
-            clearErrors("noSubProject_endDate");
-          }
+          //date validation for sub project table
+          handleDateValiationForSubProjects(formData, setError, clearErrors);
+          //date validation for project table
+          handleDateValiationForProjects(formData, setError, clearErrors);
+
           if(formData?.basicDetails_hasSubProjects) {
             setSelectedProjectType(formData?.basicDetails_hasSubProjects);
           }
@@ -128,7 +147,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
           setSessionFormData({ ...sessionFormData, ...formData });
         }
     }
-    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel, sessionFormData);
+    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel, errorOnEndDate);
 
     useEffect(()=>{
         if(selectedProjectType?.code === "COMMON_YES") {
@@ -154,7 +173,11 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
 
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
-          setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
+          if(error?.response?.data?.Errors?.[0]?.code === "INVALID_DATE") {
+            setToast(()=>({show : true, label : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), error : true}));
+          }else {
+            setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
+          }
         },
         onSuccess: async (responseData, variables) => {
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
@@ -163,7 +186,11 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
             let parentProjectNumber = responseData?.Projects[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
-                setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
+                if(error?.response?.data?.Errors?.[0]?.code === "INVALID_DATE") {
+                  setToast(()=>({show : true, label : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), error : true}));
+                }else {
+                  setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
+                }
               },
               onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
