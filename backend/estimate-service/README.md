@@ -36,3 +36,5 @@ estimate.kafka.create.topic=save-estimate
 
 estimate.kafka.update.topic=update-estimate
 
+estimate.kafka.enrich.topic=enrich-estimate
+

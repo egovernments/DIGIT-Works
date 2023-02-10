@@ -1,5 +1,6 @@
 import { Request } from "../atoms/Utils/Request";
 import Urls from "../atoms/urls";
+import { filter } from "lodash";
 export const WorksService = {
     createLOI: (details) =>
         Request({
@@ -107,4 +108,15 @@ export const WorksService = {
             params: {},
             auth: true,
         }),
+    searchProject:(tenantId, details, filters)=>
+        Request({
+           url: Urls.works.searchProject,
+           data:details,
+           useCache:false,
+           setTimeParam:false,
+           userService:true,
+           method:"POST",
+           params: {tenantId, limit : filters?.limit, offset : filters?.offset},
+           auth:true,
+       }),
 }

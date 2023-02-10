@@ -9,12 +9,13 @@ import SubmitBar from "../atoms/SubmitBar";
 import Toast from "../atoms/Toast";
 import { FilterIcon, RefreshIcon } from "./svgindex";
 
-const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
+const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig}) => {
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
   const [showToast,setShowToast] = useState(null)
   let updatedFields = [];
   const [componentType, setComponentType] = useState(uiConfig?.type);
+  const {apiDetails} = fullConfig
 
   const {
     register,
@@ -48,8 +49,9 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
 
   const onSubmit = (data) => {
     if(updatedFields.length >= uiConfig?.minReqFields) {
+     // here based on screenType call respective dispatch fn
       dispatch({
-        type: "searchForm",
+        type: screenType === "search" ? "searchForm" : "filterForm",
         state: {
           ...data
         }
@@ -64,7 +66,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     reset(uiConfig?.defaultValues)
     dispatch({
       type: "clearSearchForm",
-      state:{}
+      state: { ...uiConfig?.defaultValues }
+      //need to pass form with empty strings 
     })
   }
  
@@ -76,7 +79,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     reset(uiConfig?.defaultValues)
     dispatch({
       type: "clearFilterForm",
-      state:{}
+      state: { ...uiConfig?.defaultValues }
+      //need to pass form with empty strings 
     })
   }
 
@@ -114,6 +118,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
               setError={setError}
               clearErrors={clearErrors}
               labelStyle={{fontSize: "16px"}}
+              apiDetails={apiDetails}
             />  
             <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
               { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }

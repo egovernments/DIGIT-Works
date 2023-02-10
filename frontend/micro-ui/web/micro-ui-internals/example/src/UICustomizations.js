@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "react-query";
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
 // these functions will act as middlewares 
+var Digit = window.Digit || {};
 
 export const UICustomizations = {
     SearchProjectConfig: {
@@ -37,6 +38,11 @@ export const UICustomizations = {
                 </span>
             }
 
+        },
+        additionalValidations: (type, data, keys) => {
+            if(type == 'date') {
+                return (data[keys.start] && data[keys.end]) ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true
+            }
         }
     },
     SearchEstimateConfig: {
