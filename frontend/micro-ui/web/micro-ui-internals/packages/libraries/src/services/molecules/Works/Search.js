@@ -35,7 +35,7 @@ export const WorksSearch = {
         const response = await WorksService?.loiSearch({tenantId,filters})
         return response?.letterOfIndents
     },
-    viewProjectDetailsScreen: async(t,tenantId, searchParams, filters = {limit : 10, offset : 0})=> {
+    viewProjectDetailsScreen: async(t,tenantId, searchParams, filters = {limit : 10, offset : 0, includeAncestors : true})=> {
         const response = await WorksService?.searchProject(tenantId, searchParams, filters);
         let totalProjects = response?.Projects?.length;
         let projectDetails = {
@@ -129,7 +129,7 @@ export const WorksSearch = {
                 //all details of searched project will come here
                 const basicDetails = {
                     projectID : currentProject?.projectNumber,
-                    projectProposalDate : "" || "NA", //need to check this with Chetan
+                    projectProposalDate : convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA", //need to check this with Chetan
                     projectName : currentProject?.name || "NA",
                     projectDesc : currentProject?.description || "NA",
                     projectHasSubProject : (totalProjects > 1 ? "COMMON_YES" : "COMMON_NO"),

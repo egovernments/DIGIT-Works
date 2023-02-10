@@ -85,11 +85,13 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     // this validation is handled using useform's setError and custom validation type is added. 
     // passing a name which is not associalted to any input will persist the error on submit
     // later on while rendering error, this custom is removed from the name to target the target input element
-    const handleDateValiationForSubProjects = (formData, setError, clearErrors) => {
+    const handleErrorForEndDateInSubProjects = (formData, setError, clearErrors, setValue) => {
       if(formData?.withSubProject_project_subProjects) {
         let totalProjects = formData?.withSubProject_project_subProjects.length;
+        let subProjects = formData?.withSubProject_project_subProjects;
         for(let index=1; index<=totalProjects; index++) {
-          if((new Date(formData?.withSubProject_project_subProjects?.[index]?.startDate).getTime()) > (new Date(formData?.withSubProject_project_subProjects?.[index]?.endDate))) {
+          //handle date validation for sub-projects
+          if((new Date(subProjects?.[index]?.startDate).getTime()) > (new Date(subProjects?.[index]?.endDate))) {
             setError(`withSubProject_project_subProjects.${index}.endDate_custom`,{ type: "custom" }, { shouldFocus: true });
           }else {
             clearErrors(`withSubProject_project_subProjects.${index}.endDate_custom`);
@@ -98,12 +100,29 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
       }
     }
 
-    const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger) => {
+    const sumTotalEstimatedCost = (sessionFormData, setValue, getValues) => {
+      let totalEstimatedCost = 0;
+      if(sessionFormData?.withSubProject_project_subProjects) {
+        let totalProjects = sessionFormData?.withSubProject_project_subProjects.length;
+        let subProjects = sessionFormData?.withSubProject_project_subProjects;
+        for(let index=1; index<=totalProjects; index++) {
+          if(subProjects[index]?.estimatedCostInRs){
+            totalEstimatedCost += Number(getValues(`withSubProject_project_subProjects.${index}.estimatedCostInRs`));
+          }
+        }
+      }
+      setValue('withSubProject_project_estimatedCostInRs', totalEstimatedCost);
+    }
+
+    const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
           const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
           //date validation for sub project table
-          handleDateValiationForSubProjects(formData, setError, clearErrors);
+          handleErrorForEndDateInSubProjects(formData, setError, clearErrors, setValue);
+
+          //handle sum of estimated amounts
+          sumTotalEstimatedCost(sessionFormData, setValue, getValues);
 
           if(formData?.basicDetails_hasSubProjects) {
             setSelectedProjectType(formData?.basicDetails_hasSubProjects);

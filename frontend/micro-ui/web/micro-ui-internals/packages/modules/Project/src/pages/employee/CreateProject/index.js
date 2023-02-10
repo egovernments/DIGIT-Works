@@ -15,6 +15,7 @@ const CreateProject = () => {
     {
       basicDetails_dateOfProposal : findCurrentDate(),
       basicDetails_hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"},
+      withSubProject_project_estimatedCostInRs : 0
     });
     const [sessionFormData, setSessionFormData, clearSessionFormData] = projectSession;
 

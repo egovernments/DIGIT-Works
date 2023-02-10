@@ -519,7 +519,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             isMandatory: false,
             key: "withSubProject_project_estimatedCostInRs",
             type: "number",
-            disable: false,
+            disable: true,
             populators: { name: "withSubProject_project_estimatedCostInRs" }
           },
         ]
