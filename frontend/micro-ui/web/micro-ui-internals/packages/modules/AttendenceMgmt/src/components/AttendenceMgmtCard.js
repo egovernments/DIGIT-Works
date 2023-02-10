@@ -35,6 +35,12 @@ const AttendenceMgmtCard = () => {
                 link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
                 roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
                 count: 15,
+            },
+            {
+                label: t("CS_INBOX_SEARCH"),
+                link: `/${window?.contextPath}/employee/attendencemgmt/search-attendance`,
+                roles: [],
+                count: 0,
             }
         ],
     };

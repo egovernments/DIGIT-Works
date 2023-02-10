@@ -16,6 +16,7 @@ import org.egov.service.AttendanceRegisterService;
 import org.egov.service.AttendeeService;
 import org.egov.service.StaffService;
 import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ErrorRes;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.AttendeeCreateRequest;
 import org.egov.web.models.AttendeeCreateResponse;
@@ -108,17 +109,22 @@ public class AttendeeApiControllerTest {
     public void attendeeCreatePostFailure() throws Exception {
 
         AttendeeCreateRequest attendeeCreateRequest = AttendeeRequestBuilderTest.getAttendeeCreateRequest();
-        ResponseInfo responseInfo = AttendeeRequestBuilderTest.getResponseInfo_Success();
 
         attendeeCreateRequest.getAttendees().get(0).setIndividualId(null);
 
-        when(attendeeService.createAttendee(any(AttendeeCreateRequest.class))).thenThrow(CustomException.class);
+        when(attendeeService.createAttendee(any(AttendeeCreateRequest.class))).thenThrow(new CustomException("ATTENDEE", "ATTENDEE is mandatory"));
 
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(attendeeCreateRequest);
-        MvcResult result = mockMvc.perform(post("/attendee/v1/_create").contentType(MediaType
+        MvcResult result=mockMvc.perform(post("/attendee/v1/_create").contentType(MediaType
                         .APPLICATION_JSON).content(content))
                 .andExpect(status().isBadRequest()).andReturn();
+
+        String responseStr = result.getResponse().getContentAsString();
+        ErrorRes response  = objectMapper.readValue(responseStr,
+                ErrorRes.class);
+
+        assertEquals("ATTENDEE is mandatory",response.getErrors().get(0).getMessage());
     }
 
 }

@@ -1,6 +1,6 @@
 const searchConfig = () => {
     return {
-        label: "Search Projects",
+        label: "WORKS_SEARCH_ESTIMATES",
         type: 'search',
         apiDetails: {
             serviceName: "/estimate-service/estimate/v1/_search",
@@ -105,60 +105,42 @@ const searchConfig = () => {
             },
             searchResult: {
                 label: "",
+                estimateNumber: "",
+                projectId: "",
+                department: "",
+                estimateStatus: "",
+                fromProposalDate: "",
+                toProposalDate: "",
                 uiConfig: {
-                    defaultValues: {
-                        offset: 0,
-                        limit: 10,
-                        sortOrder: "ASC",
-                    },
                     columns: [
                         {
-                            label: "WORKS_PRJ_SUB_ID",
-                            jsonPath: "projectNumber",
+                            label: "WORKS_ESTIMATE_ID",
+                            jsonPath: "estimateNumber",
                             additionalCustomization: true
                         },
                         {
-                            label: "WORKS_PROJECT_NAME",
-                            jsonPath: "name"
+                            label: "WORKS_PROJECT_ID",
+                            jsonPath: "projectId"
                         },
                         {
                             label: "PROJECT_OWNING_DEPT",
-                            jsonPath: "department",
+                            jsonPath: "executingDepartment",
                             translate: true,
                             prefix: "COMMON_MASTERS_DEPARTMENT_",
                         },
                         {
-                            label: "WORKS_PROJECT_TYPE",
-                            jsonPath: "projectType",
-                        },
-                        {
-                            label: "WORKS_SUB_PROJECT_TYPE",
-                            jsonPath: "projectSubType",
-                        },
-                        {
-                            label: "WORKS_WORK_NATURE",
-                            jsonPath: "endDate",
-                        },
-                        {
-                            label: "WORKS_PARENT_PROJECT_ID",
-                            jsonPath: "parentId",
-                        },
-                        {
-                            label: "WORKS_CREATED_BY",
-                            jsonPath: "auditDetails.createdBy",
-                        },
-                        {
                             label: "WORKS_STATUS",
-                            jsonPath: "status",
+                            jsonPath: "wfStatus",
                         },
                         {
-                            label: "WORKS_TOTAL_AMOUNT",
-                            jsonPath: "totalAmount",
-                        }
+                            label: "WORKS_ESTIMATED_AMOUNT",
+                            jsonPath: "estimateDetails",
+                            additionalCustomization:true
+                        },
                     ],
                     enableGlobalSearch: false,
                     enableColumnSort: true,
-                    resultsJsonPath: "Projects",
+                    resultsJsonPath: "estimates",
                 },
                 children: {},
                 show: true

@@ -93,8 +93,7 @@ const searchConfig = () => {
                           disable: false,
                           populators: { 
                               name: "startDate",
-                          },
-                        
+                          }
                         },
                         {
                             label: "CREATED_TO_DATE",
@@ -103,8 +102,12 @@ const searchConfig = () => {
                             disable: false,
                             populators: { 
                                 name: "endDate",
-                                error: 'DATE_VALIDATION_MSG',
+                                error: 'DATE_VALIDATION_MSG'
                             },
+                            additionalValidation: {
+                                type: 'date',
+                                keys: {start: 'startDate', end: 'endDate'}
+                            }
                         }
                     ]
                 },
@@ -115,11 +118,6 @@ const searchConfig = () => {
             searchResult: {
                 label: "",
                 uiConfig: {
-                    defaultValues: {
-                        offset: 0,
-                        limit: 10,
-                        sortOrder: "ASC",
-                    },
                     columns: [
                         {
                             label: "WORKS_PRJ_SUB_ID",

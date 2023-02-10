@@ -1,58 +1,56 @@
 const inboxConfig = () => {
     return {
-        label : "Inbox",
+        label : "ES_COMMON_INBOX",
         type : "inbox", 
+        //Added search config, will be updated with inbox api config while integration
         apiDetails: {
-            serviceName: "",
+            serviceName: "/pms/project/v1/_search",
             requestParam: {
                 limit:10,
                 offset:0,
                 tenantId: Digit.ULBService.getCurrentTenantId(),
             },
             requestBody: {
-                apiOperation: "FILTER",
+                apiOperation: "SEARCH",
                 Projects: [
                     {
                         tenantId: Digit.ULBService.getCurrentTenantId()
                     }
                 ]
             },
-            jsonPathForReqBody: `requestBody.Projects[0]`,
-            jsonPathForReqParam:`requestParam`,
-            preProcessResponese: (data) =>  data,
-            mandatoryFieldsInParam: {
-                tenantId: Digit.ULBService.getCurrentTenantId(),
-            },
-            mandatoryFieldsInBody: {
-                tenantId: Digit.ULBService.getCurrentTenantId(),
-            },
-            //Note -> The above mandatory fields should not be dynamic
-            //If they are dynamic they should be part of the reducer state
+            minParametersForSearchForm:1,
+            masterName:"commonUiConfig",
+            moduleName:"SearchProjectConfig",
+            tableFormJsonPath:"requestParam",
+            filterFormJsonPath:"requestBody.Projects[0]",
+            searchFormJsonPath:"requestBody.Projects[0]"
         },
         sections : {
             search : {
                 uiConfig : {
                     headerStyle : null,
-                    primaryLabel: 'Search',
-                    secondaryLabel: 'Clear Search',
+                    primaryLabel: 'ACTION_TEST_SEARCH',
+                    secondaryLabel: 'CLEAR_SEARCH_LINk',
                     minReqFields: 1,
                     defaultValues : {
-                        projectId: "",
+                        projectNumber: "",
                         department: "",
-                        workType: ""
+                        projectType: ""
                     },
                     fields : [
                         {
-                            label:"Project ID",
+                            label:"WORKS_PROJECT_ID",
                             type: "text",
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "projectId"
-                            },
+                                name: "projectNumber",
+                                error: `PROJECT_PATTERN_ERR_MSG`,
+                                validation: { pattern: /^[a-z0-9\/-]*$/i, minlength : 2 }
+                            }
                         },
                         {
-                            label: "Department",
+                            label: "ACTION_TEST_DEPARTMENT",
                             type: "dropdown",
                             isMandatory: false,
                             disable: false,
@@ -62,22 +60,22 @@ const inboxConfig = () => {
                               mdmsConfig: {
                                 masterName: "Department",
                                 moduleName: "common-masters",
-                                localePrefix: "WORKS",
+                                localePrefix: "COMMON_MASTERS_DEPARTMENT",
                               }
                             }
                         },
                         {
-                          label: "Type Of Work",
+                          label: "WORKS_PROJECT_TYPE",
                           type: "dropdown",
                           isMandatory: false,
                           disable: false,
                           populators: {
-                            name: "workType",
-                            optionsKey: "name",
+                            name: "projectType",
+                            optionsKey: "code",
                             mdmsConfig: {
-                              masterName: "TypeOfWork",
+                              masterName: "ProjectType",
                               moduleName: "works",
-                              localePrefix: "WORKS",
+                              localePrefix: "ES_COMMON",
                             }
                           }
                         }
@@ -109,12 +107,14 @@ const inboxConfig = () => {
                 uiConfig : {
                     type : 'filter',
                     headerStyle : null,
-                    primaryLabel: 'Filter',
+                    primaryLabel: 'ACTION_TEST_APPLY',
+                    minReqFields: 0,
                     secondaryLabel: '',
                     defaultValues : {
-                        projectId: "",
-                        department: "",
-                        workType: ""
+                        projectFromDate: "",
+                        projectToDate: "",
+                        createdBy: "",
+                        status: ""
                     },
                     fields : [
                         {
@@ -167,62 +167,63 @@ const inboxConfig = () => {
                         }
                     ]
                 },
-                label : "Filter",
+                label : "FILTERS",
                 show : true
             },
-            searchResult : {
-                label : "",
+            searchResult: {
+                label: "",
                 uiConfig: {
-                    defaultValues: {
-                        offset: 0,
-                        limit: 10,
-                        // sortBy: "department",
-                        sortOrder: "ASC",
-                    },
                     columns: [
                         {
-                            label: "name",
-                            jsonPath: "name",
-                            redirectUrl: '/works-ui/employee/project/project-inbox-item'
+                            label: "WORKS_PRJ_SUB_ID",
+                            jsonPath: "projectNumber",
+                            additionalCustomization:true
                         },
                         {
-                            label: "age",
-                            jsonPath: "age"   
+                            label: "WORKS_PROJECT_NAME",
+                            jsonPath: "name"
                         },
                         {
-                            label: "gender",
-                            jsonPath: "gender",  
+                            label: "PROJECT_OWNING_DEPT",
+                            jsonPath: "department",
+                            translate:true,
+                            prefix:"COMMON_MASTERS_DEPARTMENT_",
                         },
                         {
-                            label: "company",
-                            jsonPath: "company",
+                            label: "WORKS_PROJECT_TYPE",
+                            jsonPath: "projectType",
                         },
                         {
-                            label: "email",
-                            jsonPath: "email",  
+                            label: "WORKS_SUB_PROJECT_TYPE",
+                            jsonPath: "projectSubType",
                         },
                         {
-                            label: "phone",
-                            jsonPath: "phone",
+                            label: "WORKS_WORK_NATURE",
+                            jsonPath: "endDate",
                         },
                         {
-                            label: "balance",
-                            jsonPath: "balance",  
+                            label: "WORKS_PARENT_PROJECT_ID",
+                            jsonPath: "parentId",
                         },
                         {
-                            label: "favoriteFruit",
-                            jsonPath: "favoriteFruit",
+                            label: "WORKS_CREATED_BY",
+                            jsonPath: "auditDetails.createdBy",
                         },
                         {
-                            label: "eyeColor",
-                            jsonPath: "eyeColor",                
+                            label: "WORKS_STATUS",
+                            jsonPath: "status",
+                        },
+                        {
+                            label: "WORKS_TOTAL_AMOUNT",
+                            jsonPath: "totalAmount",
                         }
                     ],
                     enableGlobalSearch: false,
                     enableColumnSort: true,
+                    resultsJsonPath: "Projects",
                 },
-                children : {},
-                show : true //by default true. 
+                children: {},
+                show: true 
             }
         },
         additionalSections : {

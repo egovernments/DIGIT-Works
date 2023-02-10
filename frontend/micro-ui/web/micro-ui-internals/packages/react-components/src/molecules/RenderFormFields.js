@@ -11,10 +11,12 @@ import MobileNumber from '../atoms/MobileNumber';
 
 const RenderFormFields = (props) => {
     const { t } = useTranslation();
-    const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors} = props
+    const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors, apiDetails} = props
 
     const fieldSelector = (type, populators, isMandatory, disable = false, component, config) => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
+        let customValidations = config?.additionalValidation ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalValidations(config?.additionalValidation?.type, formData, config?.additionalValidation?.keys) : null
+        const customRules = customValidations ? { validate: customValidations} : {}
         switch (type) {
             case "date":
             case "text":
@@ -40,7 +42,7 @@ const RenderFormFields = (props) => {
                         />
                         )}
                         name={populators.name}
-                        rules={{required: isMandatory, ...populators.validation }}
+                        rules={{required: isMandatory, ...populators.validation, ...customRules }}
                         control={control}
                     />
                 );

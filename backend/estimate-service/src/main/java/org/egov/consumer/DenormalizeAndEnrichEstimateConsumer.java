@@ -12,8 +12,6 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-
 @Component
 @Slf4j
 public class DenormalizeAndEnrichEstimateConsumer {
@@ -31,10 +29,11 @@ public class DenormalizeAndEnrichEstimateConsumer {
     private DenormalizeAndEnrichEstimateService denormalizeAndEnrichEstimateService;
 
     @KafkaListener(topics = {"${estimate.kafka.create.topic}"})
-    public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    public void listen(final String record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("DenormalizeAndEnrichEstimateConsumer::listen");
         try {
-            EstimateRequest estimateRequest = mapper.convertValue(record, EstimateRequest.class);
+
+            EstimateRequest estimateRequest = mapper.readValue(record, EstimateRequest.class);
             if (estimateRequest != null && estimateRequest.getEstimate() != null && estimateRequest.getRequestInfo() != null) {
                 EstimateRequest enrichedEstimateRequest = denormalizeAndEnrichEstimateService.denormalizeAndEnrich(estimateRequest);
                 producer.push(serviceConfiguration.getEnrichEstimateTopic(), enrichedEstimateRequest);
