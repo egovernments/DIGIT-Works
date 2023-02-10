@@ -17,6 +17,22 @@ const convertEpochToDate = (dateEpoch) => {
     return `${day}/${month}/${year}`;
 };
 
+const createDocumentsObject = (documents) => {
+    let documents_payload_list = [];
+    if(!documents) {
+        return documents_payload_list;
+    }
+    for(let index in documents) {
+      let payload_modal = {};
+      payload_modal.id = index;
+      payload_modal.documentType = documents[index][1]['file']['type'];
+      payload_modal.url = "";
+      payload_modal.title = "";
+      documents_payload_list.push(payload_modal);
+    }
+    return documents_payload_list;
+  }
+
 
 export const WorksSearch = {
     searchEstimate: async (tenantId="pb.jalandhar", filters = {} ) => {
@@ -101,28 +117,7 @@ export const WorksSearch = {
                         documentsWithUrl: [
                             {
                                 title: "",
-                                values: [
-                                    {
-                                        url: "",
-                                        title: "Document 1",
-                                        documentType: "pdf",
-                                    },
-                                    {
-                                        url: "",
-                                        title: "Document 2",
-                                        documentType: "pdf",
-                                    },
-                                    {
-                                        url: "",
-                                        title: "Document 3",
-                                        documentType: "pdf",
-                                    },
-                                    {
-                                        url: "",
-                                        title: "Document 3",
-                                        documentType: "pdf",
-                                    }
-                                ]
+                                values: createDocumentsObject(currentProject?.documents)
                             }
                         ],
                     }
