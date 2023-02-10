@@ -144,11 +144,11 @@ const searchConfig = () => {
                         },
                         {
                             label: "WORKS_WORK_NATURE",
-                            jsonPath: "endDate",
+                            jsonPath: "natureOfWork",
                         },
                         {
                             label: "WORKS_PARENT_PROJECT_ID",
-                            jsonPath: "parentId",
+                            jsonPath: "ancestors[0].projectNumber",
                         },
                         {
                             label: "WORKS_CREATED_BY",
@@ -160,7 +160,7 @@ const searchConfig = () => {
                         },
                         {
                             label: "WORKS_TOTAL_AMOUNT",
-                            jsonPath: "totalAmount",
+                            jsonPath: "additionalDetails.estimatedCostInRs",
                         }
                     ],
                     enableGlobalSearch: false,
