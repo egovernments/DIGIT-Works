@@ -274,10 +274,10 @@ const ApplicationDetails = (props) => {
             const state = {
               header: response?.header,
               message: response?.message,
-              info: t("ATM_REGISTER_ID_WEEK"),
-              id: `${musterRoll.registerId} | ${format(new Date(musterRoll.startDate), "dd/MM/yyyy")} - ${format(new Date(musterRoll.endDate), "dd/MM/yyyy")}`,
+              info: t("ATM_MUSTER_ROLL_WEEK"),
+              id: `${musterRoll.musterRollNumber} | ${format(new Date(musterRoll.startDate), "dd/MM/yyyy")} - ${format(new Date(musterRoll.endDate), "dd/MM/yyyy")}`,
             }
-            history.push(`/${window.contextPath}/employee/attendencemgmt/response`, state)
+            history.push(`/${window.contextPath}/employee/attendencemgmt/response?musterRollNumber=${musterRoll.musterRollNumber}`, state)
           }
           setShowToast({ key: "success", action: selectedAction });
           clearDataDetails && setTimeout(clearDataDetails, 3000);

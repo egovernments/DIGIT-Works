@@ -34,6 +34,7 @@
     "dev:estimate": "cd packages/modules/Estimate && yarn start",
     "dev:example": "cd example && yarn start",
     "build": "run-p build:**",
+    "buildD": "run-p buildD:**",
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "buildD:works": "cd packages/modules/works && yarn build",

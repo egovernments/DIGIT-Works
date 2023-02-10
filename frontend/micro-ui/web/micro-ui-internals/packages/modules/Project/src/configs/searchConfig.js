@@ -2,6 +2,7 @@ const searchConfig = () => {
     return {
         label : "WORKS_SEARCH_PROJECT",
         type: 'search',
+        postProcessResult:true,
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
@@ -93,8 +94,7 @@ const searchConfig = () => {
                           disable: false,
                           populators: { 
                               name: "startDate",
-                          },
-                        
+                          }
                         },
                         {
                             label: "CREATED_TO_DATE",
@@ -103,8 +103,12 @@ const searchConfig = () => {
                             disable: false,
                             populators: { 
                                 name: "endDate",
-                                error: 'DATE_VALIDATION_MSG',
+                                error: 'DATE_VALIDATION_MSG'
                             },
+                            additionalValidation: {
+                                type: 'date',
+                                keys: {start: 'startDate', end: 'endDate'}
+                            }
                         }
                     ]
                 },
@@ -141,15 +145,15 @@ const searchConfig = () => {
                         },
                         {
                             label: "WORKS_WORK_NATURE",
-                            jsonPath: "endDate",
+                            jsonPath: "natureOfWork",
                         },
                         {
                             label: "WORKS_PARENT_PROJECT_ID",
-                            jsonPath: "parentId",
+                            jsonPath: "ancestors[0].projectNumber",
                         },
                         {
                             label: "WORKS_CREATED_BY",
-                            jsonPath: "auditDetails.createdBy",
+                            jsonPath: "createdBy",
                         },
                         {
                             label: "WORKS_STATUS",
@@ -157,7 +161,7 @@ const searchConfig = () => {
                         },
                         {
                             label: "WORKS_TOTAL_AMOUNT",
-                            jsonPath: "totalAmount",
+                            jsonPath: "additionalDetails.estimatedCostInRs",
                         }
                     ],
                     enableGlobalSearch: false,
