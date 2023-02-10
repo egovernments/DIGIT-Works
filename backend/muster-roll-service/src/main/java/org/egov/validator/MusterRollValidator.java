@@ -278,13 +278,12 @@ public class MusterRollValidator {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
                 .queryParam("tenantId",musterRoll.getTenantId())
                 .queryParam("ids",musterRoll.getRegisterId())
-                .queryParam("staffId",id)
                 .queryParam("status",Status.ACTIVE);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
         AttendanceRegisterResponse attendanceRegisterResponse = null;
         log.info("MusterRollValidator::isValidUser::call attendance register search with tenantId::"+musterRoll.getTenantId()
-                +"::staffId::"+id);
+                +"::for user::"+id);
 
         try {
             attendanceRegisterResponse  = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceRegisterResponse.class);
