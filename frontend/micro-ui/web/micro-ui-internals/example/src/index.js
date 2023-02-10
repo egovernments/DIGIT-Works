@@ -94,6 +94,7 @@ const initDigitUI = () => {
     },
     commonUiConfig: UICustomizations
   };
+  const registry = window?.Digit.ComponentRegistryService.getRegistry();
 
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
