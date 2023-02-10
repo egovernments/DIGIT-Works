@@ -54,7 +54,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "addressLine1": project_details?.geoLocation,
             "addressLine2": "Address Line 2", //Not being captured on UI
             "landmark": "Area1", //Not being captured on UI
-            "city": project_details?.ulb?.code, //Not being captured on UI for Projects ( it is captured for sub projects )
+            "city": project_details?.ulb?.i18nKey, //Not being captured on UI for Projects ( it is captured for sub projects )
             "pincode": "999999", //Not being captured on UI
             "buildingName": "Test_Building", //Not being captured on UI
             "street": "Test_Street", //Not being captured on UI
@@ -74,8 +74,8 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
           "additionalDetails": { //These are financial details. Adding them here as they will be integrated with a different service.
             "budgetHead" : project_details?.budgetHead?.code,
             "estimatedCostInRs" : project_details?.estimatedCostInRs,
-            "function" : project_details?.function,
-            "fund" : project_details?.fund,
+            "function" : project_details?.function?.code,
+            "fund" : project_details?.fund?.code,
             "scheme" :  project_details?.scheme?.code,
             "subScheme" :  project_details?.subScheme?.code,  
             "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal)

@@ -6,6 +6,8 @@ import ApplicationDetails from '../../../templates/ApplicationDetails';
 const ViewFinancialDetails = (props) => {
   const tenantId =  Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
+  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+
   const searchParams = {
     Projects : [
         {
@@ -20,7 +22,7 @@ const ViewFinancialDetails = (props) => {
   }
     
   const { t } = useTranslation()
-  const { data, isLoading } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters);
+  const { data, isLoading } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
   return (
     <>
         <ApplicationDetails

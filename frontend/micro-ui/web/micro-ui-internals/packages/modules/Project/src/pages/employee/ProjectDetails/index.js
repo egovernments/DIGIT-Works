@@ -21,6 +21,8 @@ const ProjectDetails = () => {
     const tenantId =  Digit.ULBService.getCurrentTenantId();
     const queryStrings = Digit.Hooks.useQueryParams();
     const history = useHistory();
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+
     const searchParams = {
         Projects : [
             {
@@ -39,7 +41,7 @@ const ProjectDetails = () => {
         history.push(`/${window.contextPath}/employee/project/project-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${parentProjectNumber}`);
     }
 
-    const { data } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters);
+    const { data } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
 
     return (
         <div className={"employee-main-application-details"}>

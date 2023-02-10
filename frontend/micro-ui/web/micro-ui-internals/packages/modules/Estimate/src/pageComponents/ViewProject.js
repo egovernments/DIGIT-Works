@@ -6,6 +6,8 @@ import ApplicationDetails from '../../../templates/ApplicationDetails';
 const ViewProject = (props) => {
   const tenantId =  Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
+  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+
   const searchParams = {
     Projects : [
         {   //will update this once integration for view is completed
@@ -21,7 +23,7 @@ const ViewProject = (props) => {
   }
     
   const { t } = useTranslation()
-  const { data, isLoading } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters);
+  const { data, isLoading } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
   console.log(data);
   return (
     <>
