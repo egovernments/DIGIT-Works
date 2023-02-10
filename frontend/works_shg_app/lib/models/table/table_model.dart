@@ -10,12 +10,12 @@ class TableDataModel with _$TableDataModel {
     required String? name,
     required String? aadhaar,
     String? bankNumber,
-    int? monIndex,
-    int? tueIndex,
-    int? wedIndex,
-    int? thursIndex,
-    int? friIndex,
-    int? satIndex,
+    double? monIndex,
+    double? tueIndex,
+    double? wedIndex,
+    double? thursIndex,
+    double? friIndex,
+    double? satIndex,
   }) = _TableDataModel;
 
   factory TableDataModel.fromJson(Map<String, dynamic> json) =>

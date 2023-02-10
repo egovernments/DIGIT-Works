@@ -1,5 +1,6 @@
 package org.egov.works.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,16 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class Boundary {
+
+    @JsonProperty("id")
+    private String id = null;
+
+    @JsonProperty("parentid")
+    private String parentid = null;
+
+    @JsonProperty("addressid")
+    private String addressid = null;
+
     @JsonProperty("code")
     private String code = null;
 

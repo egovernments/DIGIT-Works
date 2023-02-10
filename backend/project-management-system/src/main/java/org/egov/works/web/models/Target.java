@@ -1,6 +1,8 @@
 package org.egov.works.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -18,6 +20,9 @@ import org.springframework.validation.annotation.Validated;
 public class Target {
     @JsonProperty("id")
     private String id = null;
+
+    @JsonIgnore
+    private String projectid = null;
 
     @JsonProperty("beneficiaryType")
     private String beneficiaryType = null;

@@ -32,6 +32,8 @@ import useCreateEvent from "./events/useCreateEvent";
 import useUpdateEvent from "./events/useUpdateEvent";
 import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
+import useGenderMDMS from "./useGenderMDMS";
+import useCustomAPIHook from "./useCustomAPIHook";
 
 import useComplaintDetails from "./pgr/useComplaintDetails";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
@@ -102,6 +104,7 @@ import useViewLOIDetails from "./works/useViewLOIDetails";
 import useCreateLOI from "./works/useCreateLOI";
 import useEstimateSearch from "./works/useSearch";
 import useCreateEstimate from "./works/useCreateEstimate";
+import useCreateEstimateNew from "./works/useCreateEstimateNew";
 import useSearchEstimate from "./works/userSearchEstimate";
 import useApplicationActionsLOI from "./works/useApplicationActions";
 import useApplicationActionsEstimate from "./works/useUpdateEstimate";
@@ -111,10 +114,12 @@ import useKickoffInbox from "./works/useKickoffInbox";
 import useViewContractDetails from "./contracts/useViewContractDetails";
 import useViewContractDetailsClosureScreen from "./contracts/useViewContractDetailsClosureScreen";
 import useViewAttendance from "./attendance/useViewAttendance";
+import useUpdateAttendance from "./attendance/useUpdateAttendance";
 import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
 import useViewFinancialDetails from "./project/useViewFinancialDetails";
+import useCreateProject from "./works/useCreateProject";
 
 const works = {
   useViewEstimateDetails,
@@ -128,13 +133,15 @@ const works = {
   useEstimateSearch,
   useSearchWORKS,
   useCreateEstimate,
+  useCreateEstimateNew,
   useSearchEstimate,
   useApplicationActionsLOI,
   useUpdateEstimate,
   useApplicationActionsEstimate,
   useSearchApprovedEstimates,
   useInbox: useWorksInbox,
-  useKickoffInbox
+  useKickoffInbox,
+  useCreateProject
 };
 
 const contracts = {
@@ -207,6 +214,7 @@ const survey = {
 
 const attendance = {
   useViewAttendance,
+  useUpdateAttendance
 };
 
 const bills = {
@@ -251,6 +259,7 @@ const Hooks = {
   useTenants,
   useAccessControl,
   usePrivacyContext,
+  useGenderMDMS,
   pgr,
  
   dss,
@@ -264,6 +273,7 @@ const Hooks = {
   works,
   useRouteSubscription,
   useCustomMDMS,
+  useCustomAPIHook,
   useGetHowItWorksJSON,
   useGetFAQsJSON,
   useGetDSSFAQsJSON,

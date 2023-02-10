@@ -11,11 +11,11 @@ CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_executing_department ON eg_wms_
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_detail_id ON eg_wms_estimate_detail (id);
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_detail_tenant_id ON eg_wms_estimate_detail (tenant_id);
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_detail_estimate_id ON eg_wms_estimate_detail (estimate_id);
+CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_detail_category ON eg_wms_estimate_detail (category);
 
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_amount_detail_id ON eg_wms_estimate_amount_detail (id);
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_amount_detail_tenant_id ON eg_wms_estimate_amount_detail (tenant_id);
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_amount_detail_estimate_detail_id ON eg_wms_estimate_amount_detail (estimate_detail_id);
-CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_amount_detail_category ON eg_wms_estimate_amount_detail (category);
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_amount_detail_type ON eg_wms_estimate_amount_detail (type);
 
 CREATE INDEX IF NOT EXISTS index_eg_wms_estimate_address_id ON eg_wms_estimate_address (id);

@@ -13,7 +13,7 @@ import { initExpenditureComponents } from "@egovernments/digit-ui-module-expendi
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
-import { HRMSModule, initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
+import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initProjectComponents } from  "@egovernments/digit-ui-module-project";
 import "@egovernments/digit-ui-works-css/example/index.css";
@@ -22,8 +22,8 @@ import "@egovernments/digit-ui-works-css/example/index.css";
 
 // import { subFormRegistry } from "@egovernments/digit-ui-libraries";
 
-import { pgrCustomizations, pgrComponents } from "./pgr";
-
+import { pgrCustomizations  } from "./pgr";
+import { UICustomizations } from "./UICustomizations";
 var Digit = window.Digit || {};
 
 const enabledModules = [
@@ -92,12 +92,12 @@ const initDigitUI = () => {
       customiseRenewalCreateFormData: (formData, licenceObject) => licenceObject,
       customiseSendbackFormData: (formData, licenceObject) => licenceObject,
     },
+    commonUiConfig: UICustomizations
   };
 
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
 
-  const registry = window?.Digit.ComponentRegistryService.getRegistry();
   ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
 };
 

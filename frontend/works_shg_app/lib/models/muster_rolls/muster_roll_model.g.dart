@@ -61,6 +61,10 @@ _$_IndividualEntries _$$_IndividualEntriesFromJson(Map<String, dynamic> json) =>
       attendanceEntries: (json['attendanceEntries'] as List<dynamic>?)
           ?.map((e) => AttendanceEntries.fromJson(e as Map<String, dynamic>))
           .toList(),
+      musterIndividualAdditionalDetails: json['additionalDetails'] == null
+          ? null
+          : MusterIndividualAdditionalDetails.fromJson(
+              json['additionalDetails'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_IndividualEntriesToJson(
@@ -70,6 +74,7 @@ Map<String, dynamic> _$$_IndividualEntriesToJson(
       'individualId': instance.individualId,
       'totalAttendance': instance.totalAttendance,
       'attendanceEntries': instance.attendanceEntries,
+      'additionalDetails': instance.musterIndividualAdditionalDetails,
     };
 
 _$_MusterAdditionalDetails _$$_MusterAdditionalDetailsFromJson(
@@ -88,6 +93,28 @@ Map<String, dynamic> _$$_MusterAdditionalDetailsToJson(
       'orgName': instance.orgName,
     };
 
+_$_MusterIndividualAdditionalDetails
+    _$$_MusterIndividualAdditionalDetailsFromJson(Map<String, dynamic> json) =>
+        _$_MusterIndividualAdditionalDetails(
+          userName: json['userName'] as String?,
+          fatherName: json['fatherName'] as String?,
+          aadharNumber: json['aadharNumber'] as String?,
+          bankDetails: json['bankDetails'] as String?,
+          skillCode: json['skillCode'] as String?,
+          skillValue: json['skillValue'] as String?,
+        );
+
+Map<String, dynamic> _$$_MusterIndividualAdditionalDetailsToJson(
+        _$_MusterIndividualAdditionalDetails instance) =>
+    <String, dynamic>{
+      'userName': instance.userName,
+      'fatherName': instance.fatherName,
+      'aadharNumber': instance.aadharNumber,
+      'bankDetails': instance.bankDetails,
+      'skillCode': instance.skillCode,
+      'skillValue': instance.skillValue,
+    };
+
 _$_AttendanceEntries _$$_AttendanceEntriesFromJson(Map<String, dynamic> json) =>
     _$_AttendanceEntries(
       id: json['id'] as String?,
@@ -96,6 +123,10 @@ _$_AttendanceEntries _$$_AttendanceEntriesFromJson(Map<String, dynamic> json) =>
       auditDetails: json['auditDetails'] == null
           ? null
           : AuditDetails.fromJson(json['auditDetails'] as Map<String, dynamic>),
+      attendanceEntriesAdditionalDetails: json['additionalDetails'] == null
+          ? null
+          : AttendanceEntriesAdditionalDetails.fromJson(
+              json['additionalDetails'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_AttendanceEntriesToJson(
@@ -105,6 +136,21 @@ Map<String, dynamic> _$$_AttendanceEntriesToJson(
       'attendance': instance.attendance,
       'time': instance.time,
       'auditDetails': instance.auditDetails,
+      'additionalDetails': instance.attendanceEntriesAdditionalDetails,
+    };
+
+_$_AttendanceEntriesAdditionalDetails
+    _$$_AttendanceEntriesAdditionalDetailsFromJson(Map<String, dynamic> json) =>
+        _$_AttendanceEntriesAdditionalDetails(
+          entryAttendanceLogId: json['entryAttendanceLogId'] as String?,
+          exitAttendanceLogId: json['exitAttendanceLogId'] as String?,
+        );
+
+Map<String, dynamic> _$$_AttendanceEntriesAdditionalDetailsToJson(
+        _$_AttendanceEntriesAdditionalDetails instance) =>
+    <String, dynamic>{
+      'entryAttendanceLogId': instance.entryAttendanceLogId,
+      'exitAttendanceLogId': instance.exitAttendanceLogId,
     };
 
 _$_AuditDetails _$$_AuditDetailsFromJson(Map<String, dynamic> json) =>

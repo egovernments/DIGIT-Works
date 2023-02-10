@@ -8,6 +8,7 @@ import * as privacy from "./privacy";
 import PDFUtil, { downloadReceipt ,downloadPDFFromLink,downloadBill ,getFileUrl} from "./pdf";
 import getFileTypeFromFileStoreURL from "./fileType";
 
+
 const GetParamFromUrl = (key, fallback, search) => {
   if (typeof window !== "undefined") {
     search = search || window.location.search;
@@ -307,6 +308,5 @@ export default {
   tlAccess,
   wsAccess,
   swAccess,
-
   ...privacy
 };

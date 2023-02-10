@@ -67,6 +67,7 @@ export const Request = async ({
   multipartFormData = false,
   multipartData = {},
   reqTimestamp = false,
+  plainAccessRequest = null
 }) => {
   const ts = new Date().getTime();
   if (method.toUpperCase() === "POST") {

@@ -9,16 +9,18 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:works_shg_app/blocs/attendance/attendance_user_search.dart';
 import 'package:works_shg_app/blocs/attendance/search_projects.dart';
+import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
+import 'package:works_shg_app/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
 import 'package:works_shg_app/router/app_navigator_observer.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/constants.dart';
-import 'package:works_shg_app/widgets/loaders.dart';
 
 import 'Env/app_config.dart';
 import 'blocs/app_bloc_observer.dart';
 import 'blocs/app_config/app_config.dart';
 import 'blocs/app_initilization/app_initilization.dart';
+import 'blocs/attendance/attendance_create_log.dart';
 import 'blocs/attendance/create_attendance_register.dart';
 import 'blocs/attendance/create_attendee.dart';
 import 'blocs/auth/auth.dart';
@@ -28,6 +30,7 @@ import 'blocs/user/user_search.dart';
 import 'data/remote_client.dart';
 import 'data/repositories/remote/localization.dart';
 import 'data/repositories/remote/mdms.dart';
+import 'models/UserDetails/user_details_model.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -75,7 +78,7 @@ class MainApplication extends StatelessWidget {
           )..add(const AppInitializationSetupEvent(selectedLangIndex: 0)),
           lazy: false,
         ),
-        BlocProvider(create: (context) => AuthBloc(const AuthState())),
+        BlocProvider(create: (context) => AuthBloc()),
         BlocProvider(create: (context) => AttendanceRegisterCreateBloc()),
         BlocProvider(
           create: (_) => ApplicationConfigBloc(const ApplicationConfigState())
@@ -96,6 +99,9 @@ class MainApplication extends StatelessWidget {
             create: (context) =>
                 AttendanceUserSearchBloc(const AttendanceUserSearchState())),
         BlocProvider(create: (context) => AttendeeCreateBloc()),
+        BlocProvider(create: (context) => MusterRollEstimateBloc()),
+        BlocProvider(create: (context) => AttendanceLogCreateBloc()),
+        BlocProvider(create: (context) => MusterCreateBloc()),
       ],
       child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
           builder: (context, appInitState) {
@@ -111,8 +117,7 @@ class MainApplication extends StatelessWidget {
                               const LocalizationState(),
                               LocalizationRepository(client.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
-                                module:
-                                    'rainmaker-common,rainmaker-works,rainmaker-attendencemgmt',
+                                module: 'rainmaker-common',
                                 tenantId: appInitState.initMdmsModel!.tenant!
                                     .tenantListModel!.first.code
                                     .toString(),
@@ -159,15 +164,18 @@ class MainApplication extends StatelessWidget {
                         appRouter,
                         navigatorObservers: () => [AppRouterObserver()],
                         routes: (handler) => [
-                          if (authState.isAuthenticated)
-                            const AuthenticatedRouteWrapper()
-                          else
-                            const UnauthenticatedRouteWrapper(),
+                          authState.maybeWhen(
+                              initial: () =>
+                                  const UnauthenticatedRouteWrapper(),
+                              loaded: (UserDetailsModel? userDetailsModel,
+                                      String? accessToken) =>
+                                  const AuthenticatedRouteWrapper(),
+                              orElse: () => const UnauthenticatedRouteWrapper())
                         ],
                       ),
                     ));
               })
-            : Loaders.circularLoader();
+            : Container();
       }),
     );
   }

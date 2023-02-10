@@ -52,7 +52,7 @@ export const WorksSearch = {
             asSectionHeader: true,
             values: [
                 { title: "WORKS_WORK_TYPE", value: "Rain Water Harvesting" },
-                { title: "WORKS_SUB_TYPE_WORK", value: "NA" },
+                { title: "WORKS_PROJECT_SUB_TYPE_WORK", value: "NA" },
                 { title: "WORKS_WORK_NATURE", value: "Capital Works" },
                 { title: "WORKS_MODE_OF_INS", value: "Direct Assignment" },
             ],

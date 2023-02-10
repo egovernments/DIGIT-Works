@@ -1,63 +1,108 @@
 package org.egov.validator;
 
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.MDMSUtils;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendeeCreateRequest;
 import org.egov.web.models.AttendeeDeleteRequest;
 import org.egov.web.models.IndividualEntry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
+import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
 
 @Component
 @Slf4j
 public class AttendeeServiceValidator {
-    public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
-            List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
 
-            if (attendeeList == null || attendeeList.size() == 0) {
-                throw new CustomException("ATTENDEES", "ATTENDEE object is mandatory");
+    @Autowired
+    private MDMSUtils mdmsUtils;
+
+    public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
+        List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
+        Map<String, String> errorMap = new HashMap<>();
+
+        if (attendeeList == null || attendeeList.isEmpty()) {
+            log.error("ATTENDEE Object is empty in attendee request");
+            throw new CustomException("ATTENDEE", "ATTENDEE Object is empty in attendee request");
+        }
+
+        String tenantId = attendeeList.get(0).getTenantId();
+        for (IndividualEntry attendee : attendeeList) {
+
+            //validate request parameters for each attendee object
+            if (StringUtils.isBlank(attendee.getRegisterId())) {
+                log.error("register id is empty in attendee request");
+                errorMap.put("REGISTER_ID", "Register id is mandatory");
             }
 
-            String tenantId = attendeeList.get(0).getTenantId();
-            for (IndividualEntry attendee : attendeeList) {
+            if (StringUtils.isBlank(attendee.getIndividualId())) {
+                log.error("individual id is empty in attendee request");
+                errorMap.put("INDIVIDUAL_ID", "Individual id is mandatory");
+            }
 
-                //validate request parameters for each attendee object
-
-                if (ObjectUtils.isEmpty(attendee)) {
-                    throw new CustomException("ATTENDEE", "ATTENDEE is mandatory");
-                }
-                if (StringUtils.isBlank(attendee.getRegisterId())) {
-                    throw new CustomException("REGISTER_ID", "Register id is mandatory");
-                }
-
-                if (StringUtils.isBlank(attendee.getIndividualId())) {
-                    throw new CustomException("INDIVIDUAL_ID", "Individual id is mandatory");
-                }
-
-                if (StringUtils.isBlank(attendee.getTenantId())) {
-                    throw new CustomException("TENANT_ID", "Tenant id is mandatory");
-                }
-
-                //validate if all attendee in the list have the same tenant id
-                if (!attendee.getTenantId().equals(tenantId)) {
-                    throw new CustomException("TENANT_ID", "All Attendees to be enrolled or de enrolled must have the same tenant id. Please raise new request for different tenant id");
-                }
-
+            if (StringUtils.isBlank(attendee.getTenantId())) {
+                log.error("tenant id is empty in attendee request");
+                errorMap.put("TENANT_ID", "Tenant id is mandatory");
             }
         }
 
+        if (!errorMap.isEmpty()) {
+            log.error("Attendee request validation failed");
+            throw new CustomException(errorMap);
+        }
+        validateTenantIds(attendeeCreateRequest, tenantId);
+        validateDuplicateAttendeeObjects(attendeeCreateRequest);
 
-    public void validateAttendeeDeleteRequestParameters(AttendeeDeleteRequest attendeeDeleteRequest) {
-    {
+        //validate tenantId with MDMS
+        log.info("validating tenant id from MDMS and Request info");
+        validateMDMSAndRequestInfoForCreateAttendee(attendeeCreateRequest);
+    }
+
+    public void validateTenantIds(AttendeeCreateRequest attendeeCreateRequest, String tenantId) {
+        List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
+        //validate if all attendee in the list have the same tenant id
+        for (IndividualEntry attendee : attendeeList) {
+            if (!attendee.getTenantId().equals(tenantId)) {
+                log.error("All attendees dont have the same tenant id in attendee request");
+                throw new CustomException("TENANT_ID", "All Attendees to be enrolled or de enrolled must have the same tenant id. Please raise new request for different tenant id");
+            }
+        }
+
+    }
+
+    public void validateDuplicateAttendeeObjects(AttendeeCreateRequest attendeeCreateRequest) {
+        List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
+
+        Set<String> uniqueIds = new HashSet<>();
+        for (IndividualEntry attendee : attendeeList) {
+            String uniqueId = attendee.getRegisterId() + attendee.getIndividualId();
+            if (uniqueIds.isEmpty()) {
+                uniqueIds.add(attendee.getRegisterId() + attendee.getIndividualId());
+            } else if (uniqueIds.contains(uniqueId)) {
+                log.error("Duplicate Attendee Objects found in request");
+                throw new CustomException("ATTENDEE", "Duplicate attendee Objects present in request");
+            }
+            uniqueIds.add(attendee.getRegisterId() + attendee.getIndividualId());
+        }
+    }
+
+
+    public void validateAttendeeDeleteRequestParameters(AttendeeDeleteRequest attendeeDeleteRequest, Map<String, String> errorMap) {
+
         List<IndividualEntry> attendeeList = attendeeDeleteRequest.getAttendees();
 
-        if(attendeeList==null || attendeeList.size()==0){
+        if (attendeeList == null || attendeeList.isEmpty()) {
+            log.error("ATTENDEE Object is empty in attendee request");
             throw new CustomException("ATTENDEES", "ATTENDEE object is mandatory");
         }
 
@@ -65,53 +110,122 @@ public class AttendeeServiceValidator {
         for (IndividualEntry attendee : attendeeList) {
 
             //validate request parameters for each attendee object
-
-            if (ObjectUtils.isEmpty(attendee)) {
-                throw new CustomException("ATTENDEE", "ATTENDEE is mandatory");
-            }
             if (StringUtils.isBlank(attendee.getRegisterId())) {
-                throw new CustomException("REGISTER_ID", "Register id is mandatory");
+                log.error("REGISTER_ID is empty in attendee request");
+                errorMap.put("REGISTER_ID", "Register id is mandatory");
             }
 
             if (StringUtils.isBlank(attendee.getIndividualId())) {
-                throw new CustomException("INDIVIDUAL_ID", "Individual id is mandatory");
+                log.error("INDIVIDUAL_ID is empty in attendee request");
+                errorMap.put("INDIVIDUAL_ID", "Individual id is mandatory");
             }
 
             if (StringUtils.isBlank(attendee.getTenantId())) {
-                throw new CustomException("TENANT_ID", "Tenant id is mandatory");
+                log.error("TENANT_ID is empty in attendee request");
+                errorMap.put("TENANT_ID", "Tenant id is mandatory");
             }
-
-            //validate if all attendee in the list have the same tenant id
-            if (!attendee.getTenantId().equals(tenantId)) {
-                throw new CustomException("TENANT_ID", "All Attendees to be enrolled or de enrolled must have the same tenant id. Please raise new request for different tenant id");
-            }
-
         }
 
-            //check for duplicate attendee objects (with same registerId and individualId)
-            //1. create unique identity list
-            //2. check for duplicate entries
-            List<String> uniqueIds = new ArrayList<>();
-            for (IndividualEntry attendee : attendeeList) {
-                uniqueIds.add(attendee.getRegisterId() + " " + attendee.getIndividualId());
+        if (!errorMap.isEmpty()) {
+            log.error("Attendee request validation failed");
+            throw new CustomException(errorMap);
+        }
+
+        validateTenantIds(attendeeDeleteRequest, tenantId);
+        validateDuplicateAttendeeObjects(attendeeDeleteRequest);
+
+        //validate tenantId with MDMS
+        log.info("validating tenant id from MDMS and Request info");
+        validateMDMSAndRequestInfoForDeleteAttendee(attendeeDeleteRequest);
+    }
+
+    public void validateTenantIds(AttendeeDeleteRequest attendeeDeleteRequest, String tenantId) {
+        List<IndividualEntry> attendeeList = attendeeDeleteRequest.getAttendees();
+        //validate if all attendee in the list have the same tenant id
+        for (IndividualEntry attendee : attendeeList) {
+            if (!attendee.getTenantId().equals(tenantId)) {
+                log.error("All attendees dont have the same tenant id in attendee request");
+                throw new CustomException("TENANT_ID", "All Attendees to be enrolled or de enrolled must have the same tenant id. Please raise new request for different tenant id");
             }
-            for (String id : uniqueIds) {
-                long count = uniqueIds.stream().filter(uniqueId -> id.equals(uniqueId)).count();
-                if (count > 1) {
-                    throw new CustomException("ATTENDEE", "Duplicate Attendee Objects present in request");
-                }
+        }
+
+    }
+
+    public void validateDuplicateAttendeeObjects(AttendeeDeleteRequest attendeeDeleteRequest) {
+        List<IndividualEntry> attendeeList = attendeeDeleteRequest.getAttendees();
+
+        Set<String> uniqueIds = new HashSet<>();
+        for (IndividualEntry attendee : attendeeList) {
+            String uniqueId = attendee.getRegisterId() + attendee.getIndividualId();
+            if (uniqueIds.isEmpty()) {
+                uniqueIds.add(attendee.getRegisterId() + attendee.getIndividualId());
+            } else if (uniqueIds.contains(uniqueId)) {
+                log.error("Duplicate Attendee Objects found in request");
+                throw new CustomException("ATTENDEE", "Duplicate attendee Objects present in request");
             }
+            uniqueIds.add(attendee.getRegisterId() + attendee.getIndividualId());
         }
     }
 
+    public void validateMDMSAndRequestInfoForCreateAttendee(AttendeeCreateRequest attendeeCreateRequest) {
 
-    public void validateCreateAttendee(AttendeeCreateRequest attendeeCreateRequest
+        RequestInfo requestInfo = attendeeCreateRequest.getRequestInfo();
+        List<IndividualEntry> attendeeListFromRequest = attendeeCreateRequest.getAttendees();
+        Map<String, String> errorMap = new HashMap<>();
+
+        String tenantId = attendeeListFromRequest.get(0).getTenantId();
+        //split the tenantId
+        String rootTenantId = tenantId.split("\\.")[0];
+
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+
+        //check tenant Id
+        log.info("validate tenantId with MDMS");
+        validateMDMSData(tenantId, mdmsData, errorMap);
+
+
+        //validate request-info
+        log.info("validate request info coming from api request");
+        validateRequestInfo(requestInfo, errorMap);
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
+
+    public void validateMDMSAndRequestInfoForDeleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest) {
+
+        RequestInfo requestInfo = attendeeDeleteRequest.getRequestInfo();
+        List<IndividualEntry> attendeeListFromRequest = attendeeDeleteRequest.getAttendees();
+        Map<String, String> errorMap = new HashMap<>();
+
+        String tenantId = attendeeListFromRequest.get(0).getTenantId();
+        //split the tenantId
+        String rootTenantId = tenantId.split("\\.")[0];
+
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+
+        //check tenant Id
+        log.info("validate tenantId with MDMS");
+        validateMDMSData(tenantId, mdmsData, errorMap);
+
+
+        //validate request-info
+        log.info("validate request info coming from api request");
+        validateRequestInfo(requestInfo, errorMap);
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
+
+
+    public void validateAttendeeOnCreate(AttendeeCreateRequest attendeeCreateRequest
             , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
 
         List<IndividualEntry> attendeeListFromRequest = attendeeCreateRequest.getAttendees();
 
 
         // attendee cannot be added to register if register's end date has passed
+        log.info("verifying that attendee cannot be added to register if register's end date has passed");
         BigDecimal currentDate = new BigDecimal(System.currentTimeMillis());
         for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
             int dateComparisonResult = attendanceRegister.getEndDate().compareTo(currentDate);
@@ -121,6 +235,7 @@ public class AttendeeServiceValidator {
         }
 
         //attendee enrollment date, if present in request should be after start date and before end date of register
+        log.info("checking attendee enrollment date should be after start date and before end date of register");
         for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
             for (IndividualEntry attendeeFromRequest : attendeeListFromRequest) {
                 if (attendanceRegister.getId().equals(attendeeFromRequest.getRegisterId())) {
@@ -137,7 +252,7 @@ public class AttendeeServiceValidator {
         }
 
         //check if attendee is already enrolled to the register
-        currentDate = new BigDecimal(System.currentTimeMillis());
+        log.info("checking if attendee is already enrolled to the register");
         for (IndividualEntry attendeeFromRequest : attendeeListFromRequest) {
             for (IndividualEntry attendeeFromDB : attendeeListFromDB) {
                 if (attendeeFromRequest.getRegisterId().equals(attendeeFromDB.getRegisterId())
@@ -149,16 +264,16 @@ public class AttendeeServiceValidator {
                 }
             }
         }
-
     }
 
-    public void validateDeleteAttendee(AttendeeDeleteRequest attendeeDeleteRequest,
-                                       List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
+    public void validateAttendeeOnDelete(AttendeeDeleteRequest attendeeDeleteRequest,
+                                         List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
 
         List<IndividualEntry> attendeeListFromRequest = attendeeDeleteRequest.getAttendees();
 
 
         //attendee de-enrollment date, if present in request should be before end date and after start date of register
+        log.info("verifying attendee de-enrollment date, if present in request should be before end date and after start date of register");
         for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
             for (IndividualEntry attendeeFromRequest : attendeeListFromRequest) {
                 if (attendeeFromRequest.getDenrollmentDate() != null) {
@@ -173,8 +288,8 @@ public class AttendeeServiceValidator {
         }
 
         //check if attendee is already de-enrolled from the register
+        log.info("checking if attendee is already de-enrolled from the register");
         boolean attendeeDeEnrolled = true;
-        BigDecimal currentDate = new BigDecimal(System.currentTimeMillis());
         for (IndividualEntry attendeeFromRequest : attendeeListFromRequest) {
             for (IndividualEntry attendeeFromDB : attendeeListFromDB) {
                 if (attendeeFromRequest.getRegisterId().equals(attendeeFromDB.getRegisterId()) && attendeeFromDB.getIndividualId().equals(attendeeFromRequest.getIndividualId())) { //attendee present in db
@@ -189,6 +304,36 @@ public class AttendeeServiceValidator {
             }
         }
 
+    }
+
+    private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
+        if (requestInfo == null) {
+            log.error("Request info is null");
+            throw new CustomException("REQUEST_INFO", "Request info is mandatory");
+        }
+        if (requestInfo.getUserInfo() == null) {
+            log.error("User info is null");
+            throw new CustomException("USERINFO", "UserInfo is mandatory");
+        }
+        if (requestInfo.getUserInfo() != null && StringUtils.isBlank(requestInfo.getUserInfo().getUuid())) {
+            log.error("User's UUID field is empty");
+            throw new CustomException("USERINFO_UUID", "User's UUID is mandatory");
+        }
+    }
+
+    private void validateMDMSData(String tenantId, Object mdmsData, Map<String, String> errorMap) {
+        final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
+
+        List<Object> tenantRes = null;
+        try {
+            tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
+        }
+
+        if (CollectionUtils.isEmpty(tenantRes))
+            errorMap.put("INVALID_TENANT", "The tenant: " + tenantId + " is not present in MDMS");
     }
 }
 

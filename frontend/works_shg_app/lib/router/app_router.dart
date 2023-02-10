@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:works_shg_app/pages/attendance_inbox.dart';
 import 'package:works_shg_app/pages/manage_attendance_register.dart';
+import 'package:works_shg_app/pages/register_individual.dart';
 import 'package:works_shg_app/pages/shg_inbox.dart';
 import 'package:works_shg_app/pages/track_attendance.dart';
 
@@ -42,11 +43,13 @@ part 'app_router.gr.dart';
         AutoRoute(page: AttendanceRegisterTablePage, path: 'manageAttendance'),
         AutoRoute(page: WorkOrderPage, path: 'work-orders'),
         AutoRoute(page: ViewMusterRollsPage, path: 'muster-rolls'),
-        AutoRoute(page: SHGInboxPage, path: 'shg-inbox'),
+        AutoRoute(page: SHGInboxPage, path: 'shg-inbox/:id/:tenantId'),
         AutoRoute(
             page: ManageAttendanceRegisterPage, path: 'manage-attendance'),
         AutoRoute(page: AttendanceInboxPage, path: 'attendance-inbox'),
-        AutoRoute(page: TrackAttendancePage, path: 'track-attendance')
+        AutoRoute(
+            page: TrackAttendancePage, path: 'track-attendance/:id/:tenantId'),
+        AutoRoute(page: RegisterIndividualPage, path: 'register-individual')
       ],
     ),
   ],

@@ -584,6 +584,9 @@ mixin _$IndividualEntries {
   @JsonKey(name: 'attendanceEntries')
   List<AttendanceEntries>? get attendanceEntries =>
       throw _privateConstructorUsedError;
+  @JsonKey(name: 'additionalDetails')
+  MusterIndividualAdditionalDetails? get musterIndividualAdditionalDetails =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -602,7 +605,13 @@ abstract class $IndividualEntriesCopyWith<$Res> {
       String? individualId,
       double? totalAttendance,
       @JsonKey(name: 'attendanceEntries')
-          List<AttendanceEntries>? attendanceEntries});
+          List<AttendanceEntries>? attendanceEntries,
+      @JsonKey(name: 'additionalDetails')
+          MusterIndividualAdditionalDetails?
+              musterIndividualAdditionalDetails});
+
+  $MusterIndividualAdditionalDetailsCopyWith<$Res>?
+      get musterIndividualAdditionalDetails;
 }
 
 /// @nodoc
@@ -622,6 +631,7 @@ class _$IndividualEntriesCopyWithImpl<$Res, $Val extends IndividualEntries>
     Object? individualId = freezed,
     Object? totalAttendance = freezed,
     Object? attendanceEntries = freezed,
+    Object? musterIndividualAdditionalDetails = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -640,7 +650,27 @@ class _$IndividualEntriesCopyWithImpl<$Res, $Val extends IndividualEntries>
           ? _value.attendanceEntries
           : attendanceEntries // ignore: cast_nullable_to_non_nullable
               as List<AttendanceEntries>?,
+      musterIndividualAdditionalDetails: freezed ==
+              musterIndividualAdditionalDetails
+          ? _value.musterIndividualAdditionalDetails
+          : musterIndividualAdditionalDetails // ignore: cast_nullable_to_non_nullable
+              as MusterIndividualAdditionalDetails?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $MusterIndividualAdditionalDetailsCopyWith<$Res>?
+      get musterIndividualAdditionalDetails {
+    if (_value.musterIndividualAdditionalDetails == null) {
+      return null;
+    }
+
+    return $MusterIndividualAdditionalDetailsCopyWith<$Res>(
+        _value.musterIndividualAdditionalDetails!, (value) {
+      return _then(
+          _value.copyWith(musterIndividualAdditionalDetails: value) as $Val);
+    });
   }
 }
 
@@ -657,7 +687,14 @@ abstract class _$$_IndividualEntriesCopyWith<$Res>
       String? individualId,
       double? totalAttendance,
       @JsonKey(name: 'attendanceEntries')
-          List<AttendanceEntries>? attendanceEntries});
+          List<AttendanceEntries>? attendanceEntries,
+      @JsonKey(name: 'additionalDetails')
+          MusterIndividualAdditionalDetails?
+              musterIndividualAdditionalDetails});
+
+  @override
+  $MusterIndividualAdditionalDetailsCopyWith<$Res>?
+      get musterIndividualAdditionalDetails;
 }
 
 /// @nodoc
@@ -675,6 +712,7 @@ class __$$_IndividualEntriesCopyWithImpl<$Res>
     Object? individualId = freezed,
     Object? totalAttendance = freezed,
     Object? attendanceEntries = freezed,
+    Object? musterIndividualAdditionalDetails = freezed,
   }) {
     return _then(_$_IndividualEntries(
       id: freezed == id
@@ -693,6 +731,11 @@ class __$$_IndividualEntriesCopyWithImpl<$Res>
           ? _value._attendanceEntries
           : attendanceEntries // ignore: cast_nullable_to_non_nullable
               as List<AttendanceEntries>?,
+      musterIndividualAdditionalDetails: freezed ==
+              musterIndividualAdditionalDetails
+          ? _value.musterIndividualAdditionalDetails
+          : musterIndividualAdditionalDetails // ignore: cast_nullable_to_non_nullable
+              as MusterIndividualAdditionalDetails?,
     ));
   }
 }
@@ -705,7 +748,9 @@ class _$_IndividualEntries implements _IndividualEntries {
       this.individualId,
       this.totalAttendance,
       @JsonKey(name: 'attendanceEntries')
-          final List<AttendanceEntries>? attendanceEntries})
+          final List<AttendanceEntries>? attendanceEntries,
+      @JsonKey(name: 'additionalDetails')
+          this.musterIndividualAdditionalDetails})
       : _attendanceEntries = attendanceEntries;
 
   factory _$_IndividualEntries.fromJson(Map<String, dynamic> json) =>
@@ -728,8 +773,12 @@ class _$_IndividualEntries implements _IndividualEntries {
   }
 
   @override
+  @JsonKey(name: 'additionalDetails')
+  final MusterIndividualAdditionalDetails? musterIndividualAdditionalDetails;
+
+  @override
   String toString() {
-    return 'IndividualEntries(id: $id, individualId: $individualId, totalAttendance: $totalAttendance, attendanceEntries: $attendanceEntries)';
+    return 'IndividualEntries(id: $id, individualId: $individualId, totalAttendance: $totalAttendance, attendanceEntries: $attendanceEntries, musterIndividualAdditionalDetails: $musterIndividualAdditionalDetails)';
   }
 
   @override
@@ -743,13 +792,22 @@ class _$_IndividualEntries implements _IndividualEntries {
             (identical(other.totalAttendance, totalAttendance) ||
                 other.totalAttendance == totalAttendance) &&
             const DeepCollectionEquality()
-                .equals(other._attendanceEntries, _attendanceEntries));
+                .equals(other._attendanceEntries, _attendanceEntries) &&
+            (identical(other.musterIndividualAdditionalDetails,
+                    musterIndividualAdditionalDetails) ||
+                other.musterIndividualAdditionalDetails ==
+                    musterIndividualAdditionalDetails));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, individualId,
-      totalAttendance, const DeepCollectionEquality().hash(_attendanceEntries));
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      individualId,
+      totalAttendance,
+      const DeepCollectionEquality().hash(_attendanceEntries),
+      musterIndividualAdditionalDetails);
 
   @JsonKey(ignore: true)
   @override
@@ -768,12 +826,14 @@ class _$_IndividualEntries implements _IndividualEntries {
 
 abstract class _IndividualEntries implements IndividualEntries {
   const factory _IndividualEntries(
-          {final String? id,
-          final String? individualId,
-          final double? totalAttendance,
-          @JsonKey(name: 'attendanceEntries')
-              final List<AttendanceEntries>? attendanceEntries}) =
-      _$_IndividualEntries;
+      {final String? id,
+      final String? individualId,
+      final double? totalAttendance,
+      @JsonKey(name: 'attendanceEntries')
+          final List<AttendanceEntries>? attendanceEntries,
+      @JsonKey(name: 'additionalDetails')
+          final MusterIndividualAdditionalDetails?
+              musterIndividualAdditionalDetails}) = _$_IndividualEntries;
 
   factory _IndividualEntries.fromJson(Map<String, dynamic> json) =
       _$_IndividualEntries.fromJson;
@@ -787,6 +847,9 @@ abstract class _IndividualEntries implements IndividualEntries {
   @override
   @JsonKey(name: 'attendanceEntries')
   List<AttendanceEntries>? get attendanceEntries;
+  @override
+  @JsonKey(name: 'additionalDetails')
+  MusterIndividualAdditionalDetails? get musterIndividualAdditionalDetails;
   @override
   @JsonKey(ignore: true)
   _$$_IndividualEntriesCopyWith<_$_IndividualEntries> get copyWith =>
@@ -979,6 +1042,267 @@ abstract class _MusterAdditionalDetails implements MusterAdditionalDetails {
       get copyWith => throw _privateConstructorUsedError;
 }
 
+MusterIndividualAdditionalDetails _$MusterIndividualAdditionalDetailsFromJson(
+    Map<String, dynamic> json) {
+  return _MusterIndividualAdditionalDetails.fromJson(json);
+}
+
+/// @nodoc
+mixin _$MusterIndividualAdditionalDetails {
+  String? get userName => throw _privateConstructorUsedError;
+  String? get fatherName => throw _privateConstructorUsedError;
+  String? get aadharNumber => throw _privateConstructorUsedError;
+  String? get bankDetails => throw _privateConstructorUsedError;
+  String? get skillCode => throw _privateConstructorUsedError;
+  String? get skillValue => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $MusterIndividualAdditionalDetailsCopyWith<MusterIndividualAdditionalDetails>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MusterIndividualAdditionalDetailsCopyWith<$Res> {
+  factory $MusterIndividualAdditionalDetailsCopyWith(
+          MusterIndividualAdditionalDetails value,
+          $Res Function(MusterIndividualAdditionalDetails) then) =
+      _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
+          MusterIndividualAdditionalDetails>;
+  @useResult
+  $Res call(
+      {String? userName,
+      String? fatherName,
+      String? aadharNumber,
+      String? bankDetails,
+      String? skillCode,
+      String? skillValue});
+}
+
+/// @nodoc
+class _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
+        $Val extends MusterIndividualAdditionalDetails>
+    implements $MusterIndividualAdditionalDetailsCopyWith<$Res> {
+  _$MusterIndividualAdditionalDetailsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? userName = freezed,
+    Object? fatherName = freezed,
+    Object? aadharNumber = freezed,
+    Object? bankDetails = freezed,
+    Object? skillCode = freezed,
+    Object? skillValue = freezed,
+  }) {
+    return _then(_value.copyWith(
+      userName: freezed == userName
+          ? _value.userName
+          : userName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fatherName: freezed == fatherName
+          ? _value.fatherName
+          : fatherName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      aadharNumber: freezed == aadharNumber
+          ? _value.aadharNumber
+          : aadharNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      bankDetails: freezed == bankDetails
+          ? _value.bankDetails
+          : bankDetails // ignore: cast_nullable_to_non_nullable
+              as String?,
+      skillCode: freezed == skillCode
+          ? _value.skillCode
+          : skillCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      skillValue: freezed == skillValue
+          ? _value.skillValue
+          : skillValue // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_MusterIndividualAdditionalDetailsCopyWith<$Res>
+    implements $MusterIndividualAdditionalDetailsCopyWith<$Res> {
+  factory _$$_MusterIndividualAdditionalDetailsCopyWith(
+          _$_MusterIndividualAdditionalDetails value,
+          $Res Function(_$_MusterIndividualAdditionalDetails) then) =
+      __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? userName,
+      String? fatherName,
+      String? aadharNumber,
+      String? bankDetails,
+      String? skillCode,
+      String? skillValue});
+}
+
+/// @nodoc
+class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
+    extends _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
+        _$_MusterIndividualAdditionalDetails>
+    implements _$$_MusterIndividualAdditionalDetailsCopyWith<$Res> {
+  __$$_MusterIndividualAdditionalDetailsCopyWithImpl(
+      _$_MusterIndividualAdditionalDetails _value,
+      $Res Function(_$_MusterIndividualAdditionalDetails) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? userName = freezed,
+    Object? fatherName = freezed,
+    Object? aadharNumber = freezed,
+    Object? bankDetails = freezed,
+    Object? skillCode = freezed,
+    Object? skillValue = freezed,
+  }) {
+    return _then(_$_MusterIndividualAdditionalDetails(
+      userName: freezed == userName
+          ? _value.userName
+          : userName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fatherName: freezed == fatherName
+          ? _value.fatherName
+          : fatherName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      aadharNumber: freezed == aadharNumber
+          ? _value.aadharNumber
+          : aadharNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      bankDetails: freezed == bankDetails
+          ? _value.bankDetails
+          : bankDetails // ignore: cast_nullable_to_non_nullable
+              as String?,
+      skillCode: freezed == skillCode
+          ? _value.skillCode
+          : skillCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      skillValue: freezed == skillValue
+          ? _value.skillValue
+          : skillValue // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$_MusterIndividualAdditionalDetails
+    implements _MusterIndividualAdditionalDetails {
+  const _$_MusterIndividualAdditionalDetails(
+      {this.userName,
+      this.fatherName,
+      this.aadharNumber,
+      this.bankDetails,
+      this.skillCode,
+      this.skillValue});
+
+  factory _$_MusterIndividualAdditionalDetails.fromJson(
+          Map<String, dynamic> json) =>
+      _$$_MusterIndividualAdditionalDetailsFromJson(json);
+
+  @override
+  final String? userName;
+  @override
+  final String? fatherName;
+  @override
+  final String? aadharNumber;
+  @override
+  final String? bankDetails;
+  @override
+  final String? skillCode;
+  @override
+  final String? skillValue;
+
+  @override
+  String toString() {
+    return 'MusterIndividualAdditionalDetails(userName: $userName, fatherName: $fatherName, aadharNumber: $aadharNumber, bankDetails: $bankDetails, skillCode: $skillCode, skillValue: $skillValue)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_MusterIndividualAdditionalDetails &&
+            (identical(other.userName, userName) ||
+                other.userName == userName) &&
+            (identical(other.fatherName, fatherName) ||
+                other.fatherName == fatherName) &&
+            (identical(other.aadharNumber, aadharNumber) ||
+                other.aadharNumber == aadharNumber) &&
+            (identical(other.bankDetails, bankDetails) ||
+                other.bankDetails == bankDetails) &&
+            (identical(other.skillCode, skillCode) ||
+                other.skillCode == skillCode) &&
+            (identical(other.skillValue, skillValue) ||
+                other.skillValue == skillValue));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, userName, fatherName,
+      aadharNumber, bankDetails, skillCode, skillValue);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_MusterIndividualAdditionalDetailsCopyWith<
+          _$_MusterIndividualAdditionalDetails>
+      get copyWith => __$$_MusterIndividualAdditionalDetailsCopyWithImpl<
+          _$_MusterIndividualAdditionalDetails>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_MusterIndividualAdditionalDetailsToJson(
+      this,
+    );
+  }
+}
+
+abstract class _MusterIndividualAdditionalDetails
+    implements MusterIndividualAdditionalDetails {
+  const factory _MusterIndividualAdditionalDetails(
+      {final String? userName,
+      final String? fatherName,
+      final String? aadharNumber,
+      final String? bankDetails,
+      final String? skillCode,
+      final String? skillValue}) = _$_MusterIndividualAdditionalDetails;
+
+  factory _MusterIndividualAdditionalDetails.fromJson(
+          Map<String, dynamic> json) =
+      _$_MusterIndividualAdditionalDetails.fromJson;
+
+  @override
+  String? get userName;
+  @override
+  String? get fatherName;
+  @override
+  String? get aadharNumber;
+  @override
+  String? get bankDetails;
+  @override
+  String? get skillCode;
+  @override
+  String? get skillValue;
+  @override
+  @JsonKey(ignore: true)
+  _$$_MusterIndividualAdditionalDetailsCopyWith<
+          _$_MusterIndividualAdditionalDetails>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 AttendanceEntries _$AttendanceEntriesFromJson(Map<String, dynamic> json) {
   return _AttendanceEntries.fromJson(json);
 }
@@ -989,6 +1313,9 @@ mixin _$AttendanceEntries {
   double? get attendance => throw _privateConstructorUsedError;
   int? get time => throw _privateConstructorUsedError;
   AuditDetails? get auditDetails => throw _privateConstructorUsedError;
+  @JsonKey(name: 'additionalDetails')
+  AttendanceEntriesAdditionalDetails? get attendanceEntriesAdditionalDetails =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1003,9 +1330,17 @@ abstract class $AttendanceEntriesCopyWith<$Res> {
       _$AttendanceEntriesCopyWithImpl<$Res, AttendanceEntries>;
   @useResult
   $Res call(
-      {String? id, double? attendance, int? time, AuditDetails? auditDetails});
+      {String? id,
+      double? attendance,
+      int? time,
+      AuditDetails? auditDetails,
+      @JsonKey(name: 'additionalDetails')
+          AttendanceEntriesAdditionalDetails?
+              attendanceEntriesAdditionalDetails});
 
   $AuditDetailsCopyWith<$Res>? get auditDetails;
+  $AttendanceEntriesAdditionalDetailsCopyWith<$Res>?
+      get attendanceEntriesAdditionalDetails;
 }
 
 /// @nodoc
@@ -1025,6 +1360,7 @@ class _$AttendanceEntriesCopyWithImpl<$Res, $Val extends AttendanceEntries>
     Object? attendance = freezed,
     Object? time = freezed,
     Object? auditDetails = freezed,
+    Object? attendanceEntriesAdditionalDetails = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -1043,6 +1379,11 @@ class _$AttendanceEntriesCopyWithImpl<$Res, $Val extends AttendanceEntries>
           ? _value.auditDetails
           : auditDetails // ignore: cast_nullable_to_non_nullable
               as AuditDetails?,
+      attendanceEntriesAdditionalDetails: freezed ==
+              attendanceEntriesAdditionalDetails
+          ? _value.attendanceEntriesAdditionalDetails
+          : attendanceEntriesAdditionalDetails // ignore: cast_nullable_to_non_nullable
+              as AttendanceEntriesAdditionalDetails?,
     ) as $Val);
   }
 
@@ -1057,6 +1398,21 @@ class _$AttendanceEntriesCopyWithImpl<$Res, $Val extends AttendanceEntries>
       return _then(_value.copyWith(auditDetails: value) as $Val);
     });
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $AttendanceEntriesAdditionalDetailsCopyWith<$Res>?
+      get attendanceEntriesAdditionalDetails {
+    if (_value.attendanceEntriesAdditionalDetails == null) {
+      return null;
+    }
+
+    return $AttendanceEntriesAdditionalDetailsCopyWith<$Res>(
+        _value.attendanceEntriesAdditionalDetails!, (value) {
+      return _then(
+          _value.copyWith(attendanceEntriesAdditionalDetails: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -1068,10 +1424,19 @@ abstract class _$$_AttendanceEntriesCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? id, double? attendance, int? time, AuditDetails? auditDetails});
+      {String? id,
+      double? attendance,
+      int? time,
+      AuditDetails? auditDetails,
+      @JsonKey(name: 'additionalDetails')
+          AttendanceEntriesAdditionalDetails?
+              attendanceEntriesAdditionalDetails});
 
   @override
   $AuditDetailsCopyWith<$Res>? get auditDetails;
+  @override
+  $AttendanceEntriesAdditionalDetailsCopyWith<$Res>?
+      get attendanceEntriesAdditionalDetails;
 }
 
 /// @nodoc
@@ -1089,6 +1454,7 @@ class __$$_AttendanceEntriesCopyWithImpl<$Res>
     Object? attendance = freezed,
     Object? time = freezed,
     Object? auditDetails = freezed,
+    Object? attendanceEntriesAdditionalDetails = freezed,
   }) {
     return _then(_$_AttendanceEntries(
       id: freezed == id
@@ -1107,6 +1473,11 @@ class __$$_AttendanceEntriesCopyWithImpl<$Res>
           ? _value.auditDetails
           : auditDetails // ignore: cast_nullable_to_non_nullable
               as AuditDetails?,
+      attendanceEntriesAdditionalDetails: freezed ==
+              attendanceEntriesAdditionalDetails
+          ? _value.attendanceEntriesAdditionalDetails
+          : attendanceEntriesAdditionalDetails // ignore: cast_nullable_to_non_nullable
+              as AttendanceEntriesAdditionalDetails?,
     ));
   }
 }
@@ -1115,7 +1486,12 @@ class __$$_AttendanceEntriesCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_AttendanceEntries implements _AttendanceEntries {
   const _$_AttendanceEntries(
-      {this.id, this.attendance, this.time, this.auditDetails});
+      {this.id,
+      this.attendance,
+      this.time,
+      this.auditDetails,
+      @JsonKey(name: 'additionalDetails')
+          this.attendanceEntriesAdditionalDetails});
 
   factory _$_AttendanceEntries.fromJson(Map<String, dynamic> json) =>
       _$$_AttendanceEntriesFromJson(json);
@@ -1128,10 +1504,13 @@ class _$_AttendanceEntries implements _AttendanceEntries {
   final int? time;
   @override
   final AuditDetails? auditDetails;
+  @override
+  @JsonKey(name: 'additionalDetails')
+  final AttendanceEntriesAdditionalDetails? attendanceEntriesAdditionalDetails;
 
   @override
   String toString() {
-    return 'AttendanceEntries(id: $id, attendance: $attendance, time: $time, auditDetails: $auditDetails)';
+    return 'AttendanceEntries(id: $id, attendance: $attendance, time: $time, auditDetails: $auditDetails, attendanceEntriesAdditionalDetails: $attendanceEntriesAdditionalDetails)';
   }
 
   @override
@@ -1144,13 +1523,17 @@ class _$_AttendanceEntries implements _AttendanceEntries {
                 other.attendance == attendance) &&
             (identical(other.time, time) || other.time == time) &&
             (identical(other.auditDetails, auditDetails) ||
-                other.auditDetails == auditDetails));
+                other.auditDetails == auditDetails) &&
+            (identical(other.attendanceEntriesAdditionalDetails,
+                    attendanceEntriesAdditionalDetails) ||
+                other.attendanceEntriesAdditionalDetails ==
+                    attendanceEntriesAdditionalDetails));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, attendance, time, auditDetails);
+  int get hashCode => Object.hash(runtimeType, id, attendance, time,
+      auditDetails, attendanceEntriesAdditionalDetails);
 
   @JsonKey(ignore: true)
   @override
@@ -1172,7 +1555,10 @@ abstract class _AttendanceEntries implements AttendanceEntries {
       {final String? id,
       final double? attendance,
       final int? time,
-      final AuditDetails? auditDetails}) = _$_AttendanceEntries;
+      final AuditDetails? auditDetails,
+      @JsonKey(name: 'additionalDetails')
+          final AttendanceEntriesAdditionalDetails?
+              attendanceEntriesAdditionalDetails}) = _$_AttendanceEntries;
 
   factory _AttendanceEntries.fromJson(Map<String, dynamic> json) =
       _$_AttendanceEntries.fromJson;
@@ -1186,9 +1572,186 @@ abstract class _AttendanceEntries implements AttendanceEntries {
   @override
   AuditDetails? get auditDetails;
   @override
+  @JsonKey(name: 'additionalDetails')
+  AttendanceEntriesAdditionalDetails? get attendanceEntriesAdditionalDetails;
+  @override
   @JsonKey(ignore: true)
   _$$_AttendanceEntriesCopyWith<_$_AttendanceEntries> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+AttendanceEntriesAdditionalDetails _$AttendanceEntriesAdditionalDetailsFromJson(
+    Map<String, dynamic> json) {
+  return _AttendanceEntriesAdditionalDetails.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AttendanceEntriesAdditionalDetails {
+  String? get entryAttendanceLogId => throw _privateConstructorUsedError;
+  String? get exitAttendanceLogId => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AttendanceEntriesAdditionalDetailsCopyWith<
+          AttendanceEntriesAdditionalDetails>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AttendanceEntriesAdditionalDetailsCopyWith<$Res> {
+  factory $AttendanceEntriesAdditionalDetailsCopyWith(
+          AttendanceEntriesAdditionalDetails value,
+          $Res Function(AttendanceEntriesAdditionalDetails) then) =
+      _$AttendanceEntriesAdditionalDetailsCopyWithImpl<$Res,
+          AttendanceEntriesAdditionalDetails>;
+  @useResult
+  $Res call({String? entryAttendanceLogId, String? exitAttendanceLogId});
+}
+
+/// @nodoc
+class _$AttendanceEntriesAdditionalDetailsCopyWithImpl<$Res,
+        $Val extends AttendanceEntriesAdditionalDetails>
+    implements $AttendanceEntriesAdditionalDetailsCopyWith<$Res> {
+  _$AttendanceEntriesAdditionalDetailsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entryAttendanceLogId = freezed,
+    Object? exitAttendanceLogId = freezed,
+  }) {
+    return _then(_value.copyWith(
+      entryAttendanceLogId: freezed == entryAttendanceLogId
+          ? _value.entryAttendanceLogId
+          : entryAttendanceLogId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      exitAttendanceLogId: freezed == exitAttendanceLogId
+          ? _value.exitAttendanceLogId
+          : exitAttendanceLogId // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_AttendanceEntriesAdditionalDetailsCopyWith<$Res>
+    implements $AttendanceEntriesAdditionalDetailsCopyWith<$Res> {
+  factory _$$_AttendanceEntriesAdditionalDetailsCopyWith(
+          _$_AttendanceEntriesAdditionalDetails value,
+          $Res Function(_$_AttendanceEntriesAdditionalDetails) then) =
+      __$$_AttendanceEntriesAdditionalDetailsCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? entryAttendanceLogId, String? exitAttendanceLogId});
+}
+
+/// @nodoc
+class __$$_AttendanceEntriesAdditionalDetailsCopyWithImpl<$Res>
+    extends _$AttendanceEntriesAdditionalDetailsCopyWithImpl<$Res,
+        _$_AttendanceEntriesAdditionalDetails>
+    implements _$$_AttendanceEntriesAdditionalDetailsCopyWith<$Res> {
+  __$$_AttendanceEntriesAdditionalDetailsCopyWithImpl(
+      _$_AttendanceEntriesAdditionalDetails _value,
+      $Res Function(_$_AttendanceEntriesAdditionalDetails) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entryAttendanceLogId = freezed,
+    Object? exitAttendanceLogId = freezed,
+  }) {
+    return _then(_$_AttendanceEntriesAdditionalDetails(
+      entryAttendanceLogId: freezed == entryAttendanceLogId
+          ? _value.entryAttendanceLogId
+          : entryAttendanceLogId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      exitAttendanceLogId: freezed == exitAttendanceLogId
+          ? _value.exitAttendanceLogId
+          : exitAttendanceLogId // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$_AttendanceEntriesAdditionalDetails
+    implements _AttendanceEntriesAdditionalDetails {
+  const _$_AttendanceEntriesAdditionalDetails(
+      {this.entryAttendanceLogId, this.exitAttendanceLogId});
+
+  factory _$_AttendanceEntriesAdditionalDetails.fromJson(
+          Map<String, dynamic> json) =>
+      _$$_AttendanceEntriesAdditionalDetailsFromJson(json);
+
+  @override
+  final String? entryAttendanceLogId;
+  @override
+  final String? exitAttendanceLogId;
+
+  @override
+  String toString() {
+    return 'AttendanceEntriesAdditionalDetails(entryAttendanceLogId: $entryAttendanceLogId, exitAttendanceLogId: $exitAttendanceLogId)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_AttendanceEntriesAdditionalDetails &&
+            (identical(other.entryAttendanceLogId, entryAttendanceLogId) ||
+                other.entryAttendanceLogId == entryAttendanceLogId) &&
+            (identical(other.exitAttendanceLogId, exitAttendanceLogId) ||
+                other.exitAttendanceLogId == exitAttendanceLogId));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, entryAttendanceLogId, exitAttendanceLogId);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_AttendanceEntriesAdditionalDetailsCopyWith<
+          _$_AttendanceEntriesAdditionalDetails>
+      get copyWith => __$$_AttendanceEntriesAdditionalDetailsCopyWithImpl<
+          _$_AttendanceEntriesAdditionalDetails>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_AttendanceEntriesAdditionalDetailsToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AttendanceEntriesAdditionalDetails
+    implements AttendanceEntriesAdditionalDetails {
+  const factory _AttendanceEntriesAdditionalDetails(
+          {final String? entryAttendanceLogId,
+          final String? exitAttendanceLogId}) =
+      _$_AttendanceEntriesAdditionalDetails;
+
+  factory _AttendanceEntriesAdditionalDetails.fromJson(
+          Map<String, dynamic> json) =
+      _$_AttendanceEntriesAdditionalDetails.fromJson;
+
+  @override
+  String? get entryAttendanceLogId;
+  @override
+  String? get exitAttendanceLogId;
+  @override
+  @JsonKey(ignore: true)
+  _$$_AttendanceEntriesAdditionalDetailsCopyWith<
+          _$_AttendanceEntriesAdditionalDetails>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 AuditDetails _$AuditDetailsFromJson(Map<String, dynamic> json) {

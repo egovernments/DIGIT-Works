@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
+import { format } from "date-fns";
 
 import { Loader } from "@egovernments/digit-ui-react-components";
 
@@ -23,7 +24,8 @@ const ApplicationDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [isWarningPop, setWarningPopUp] = useState(false);
-  const [modify, setModify] = useState(false)
+  const [modify, setModify] = useState(false);
+  const [saveAttendanceState, setSaveAttendanceState] = useState({ displaySave : false, updatePayload: []})
 
   const {
     applicationDetails,
@@ -77,7 +79,8 @@ const ApplicationDetails = (props) => {
         }
         
       } else if (!action?.redirectionUrl) {
-        setShowModal(true);
+        if(action?.action === 'EDIT') setModify(true)
+        else setShowModal(true);
       } else {
         history.push({
           pathname: action.redirectionUrl?.pathname,
@@ -148,10 +151,24 @@ const ApplicationDetails = (props) => {
     }
   }
 
+  const getAttendanceResponseHeaderAndMessage = (action) => {
+    let response = {}
+    if (action?.includes("VERIFY")) {
+      response.header = t("ATM_ATTENDANCE_VERIFIED")
+      response.message = t("ATM_ATTENDANCE_VERIFIED_SUCCESS")
+    } else if (action?.includes("REJECT")) {
+      response.header = t("ATM_ATTENDANCE_REJECTED")
+      response.message = t("ATM_ATTENDANCE_REJECTED_SUCCESS")
+    } else if (action?.includes("APPROVE")) {
+      response.header = t("ATM_ATTENDANCE_APPROVED")
+      response.message = t("ATM_ATTENDANCE_APPROVED_SUCCESS")
+    } 
+    return response
+  }
+
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
     const performedAction = data?.workflow?.action
     setIsEnableLoader(true);
-
     if (mutate) {
       setIsEnableLoader(true);
       mutate(data, {
@@ -251,6 +268,17 @@ const ApplicationDetails = (props) => {
             }            
             return
           }
+          if(data?.musterRolls?.[0]) {
+            const musterRoll = data?.musterRolls?.[0]
+            const response = getAttendanceResponseHeaderAndMessage(performedAction)
+            const state = {
+              header: response?.header,
+              message: response?.message,
+              info: t("ATM_MUSTER_ROLL_WEEK"),
+              id: `${musterRoll.musterRollNumber} | ${format(new Date(musterRoll.startDate), "dd/MM/yyyy")} - ${format(new Date(musterRoll.endDate), "dd/MM/yyyy")}`,
+            }
+            history.push(`/${window.contextPath}/employee/attendencemgmt/response?musterRollNumber=${musterRoll.musterRollNumber}`, state)
+          }
           setShowToast({ key: "success", action: selectedAction });
           clearDataDetails && setTimeout(clearDataDetails, 3000);
           setTimeout(closeToast, 5000);
@@ -288,6 +316,7 @@ const ApplicationDetails = (props) => {
             noBoxShadow={noBoxShadow}
             sectionHeadStyle={sectionHeadStyle}
             modify={modify}
+            setSaveAttendanceState={setSaveAttendanceState}
           />
           {showModal ? (
             <ActionModal
@@ -304,6 +333,7 @@ const ApplicationDetails = (props) => {
               businessService={businessService}
               workflowDetails={workflowDetails}
               moduleCode={moduleCode}
+              saveAttendanceState={saveAttendanceState}
             />
           ) : null}
           {isWarningPop ? (
@@ -325,6 +355,7 @@ const ApplicationDetails = (props) => {
             forcedActionPrefix={forcedActionPrefix}
             ActionBarStyle={ActionBarStyle}
             MenuStyle={MenuStyle}
+            saveAttendanceState={saveAttendanceState}
           />}
         </React.Fragment>
       ) : (

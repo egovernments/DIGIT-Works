@@ -20,6 +20,9 @@
 
 @import "./pages/employee/index.scss";
 @import "./components/uploadcomponents.scss";
+@import "./pages/works/inboxSearchComposer.scss";
+@import "./pages/works/InboxLinks.scss";
+@import "./pages/works/inboxSearch.scss";
 
 
 .display-none {
@@ -182,7 +185,7 @@
 }
 
 .card-date-input {
-  @apply absolute top-0 left-0 w-3/4 bg-white pl-sm border border-input-border border-solid border-r-0;
+  @apply absolute top-0 left-0 w-3/4 bg-white pl-sm border-input-border border-solid border-r-0;
   outline: transparent solid 1px;
   height: 2.5rem;
 }
@@ -798,4 +801,36 @@ input[type="number"] {
 
 .status-value-link {
   color: #F47738;
+}
+
+.info-banner-wrap {
+  &.project-banner {
+    background: #FFE2B5;
+    p{
+      font-size: 16px;
+      color: #CC7B2F;
+    } 
+    h2{
+      font-size: 18px;
+      color: #CC7B2F;
+    }
+  }
+}
+
+.sub-project-table-wrapper {
+  overflow-x: scroll;
+  .project-details-table {
+    position: relative;
+    .sub-projects-details-field-mt {
+      margin-top: 1.5rem;
+    }    
+    .projects-subProject-details-error {
+      width : 100%;
+      position : absolute;
+      margin-top: 3px;
+      &.dropdown-field {
+        margin-top: -21px;
+      }
+    }
+  }
 }
