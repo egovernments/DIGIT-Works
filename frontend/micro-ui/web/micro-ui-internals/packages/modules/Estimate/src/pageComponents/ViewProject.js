@@ -8,9 +8,9 @@ const ViewProject = (props) => {
   const queryStrings = Digit.Hooks.useQueryParams();
   const searchParams = {
     Projects : [
-        {
-            tenantId : queryStrings?.tenantId,
-            projectNumber : queryStrings?.projectNumber
+        {   //will update this once integration for view is completed
+            tenantId : queryStrings?.tenantId || "pb.amritsar" ,
+            projectNumber : queryStrings?.projectNumber || "PR/2022-23/02/000725"
         }
     ]
   } 

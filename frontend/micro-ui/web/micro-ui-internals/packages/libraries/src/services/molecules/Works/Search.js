@@ -37,6 +37,10 @@ export const WorksSearch = {
     },
     viewProjectDetailsScreen: async(t,tenantId, searchParams, filters = {limit : 10, offset : 0, includeAncestors : true})=> {
         const response = await WorksService?.searchProject(tenantId, searchParams, filters);
+        //Categoring the response into an object of searched project and its sub-projects ( if any )
+        //searched projects will have basic details, project details and financial details
+        //subprojects will be shown in a table similar to what create project has
+
         let totalProjects = response?.Projects?.length;
         let projectDetails = {
             searchedProject : {
@@ -87,7 +91,7 @@ export const WorksSearch = {
                     values: [
                         { title: "WORKS_LOCALITY",value: currentProject?.address?.locality || "NA" },
                         { title: "WORKS_WARD", value: "NA" }, //will check with Backend
-                        { title: "PDF_STATIC_LABEL_ESTIMATE_ULB", value: "NA" }, //will check with Backend
+                        { title: "PDF_STATIC_LABEL_ESTIMATE_ULB", value: currentProject?.address?.city || "NA" }, //will check with Backend
                         { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" }, //will check with Backend
                     ],
                 };
@@ -133,14 +137,14 @@ export const WorksSearch = {
                     projectName : currentProject?.name || "NA",
                     projectDesc : currentProject?.description || "NA",
                     projectHasSubProject : (totalProjects > 1 ? "COMMON_YES" : "COMMON_NO"),
-                    projectParentProjectID : currentProject?.parent || "NA"
+                    projectParentProjectID : currentProject?.ancestors?.[0]?.projectNumber || "NA"
                 }
                 projectDetails.searchedProject['basicDetails'] = basicDetails;
                 projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [DepartmentDetails, WorkTypeDetails, LocationDetails, Documents]}; //rest categories will come here
                 projectDetails.searchedProject['details']['financialDetails'] = {applicationDetails :  [FinancialDetails]}; //rest categories will come here
             }else {
                  //all details of searched project will come here
-                 projectDetails?.subProjects?.push(DepartmentDetails, WorkTypeDetails, LocationDetails, Documents); //rest categories will come here
+                 projectDetails?.subProjects?.push(DepartmentDetails, WorkTypeDetails, LocationDetails, Documents); //rest categories will come here //TODO:
             }
         }
          return {
