@@ -18,7 +18,6 @@ export const UICustomizations = {
             return data
         },
         // postProcess: ( responseArray,isLoading,isFetching) => {
-        //     debugger
         //     const listOfUuids = responseArray?.map(row => row.auditDetails.createdBy)
         //     const tenantId = Digit.ULBService.getCurrentTenantId()
         //     const reqCriteria = {
@@ -28,7 +27,6 @@ export const UICustomizations = {
         //         config:{
         //             enabled:(isLoading || isFetching) ? false : true,
         //             select: (data) => {
-        //                 debugger
         //                 return data
         //             }
         //         }

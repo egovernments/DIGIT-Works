@@ -24,7 +24,6 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     //     isUsersResponseLoading,
     //     usersResponse }  =  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(searchResult) 
 
-    //     debugger
     // }
 
     const {state,dispatch} = useContext(InboxContext)
