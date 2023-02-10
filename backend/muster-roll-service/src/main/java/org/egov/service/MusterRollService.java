@@ -2,7 +2,6 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.ProcessInstance;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -106,10 +105,6 @@ public class MusterRollService {
         calculationService.createAttendance(musterRollRequest,true);
         workflowService.updateWorkflowStatus(musterRollRequest);
 
-        // Fetch currentProcessInstance from workflow process search for inbox config
-        /*ProcessInstance processInstance = workflowService.getProcessInstance(musterRollRequest);
-        musterRollRequest.getMusterRoll().setProcessInstance(processInstance);*/
-
         producer.push(serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
         return musterRollRequest;
     }
@@ -171,12 +166,7 @@ public class MusterRollService {
         if (isComputeAttendance) {
             calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
-
         workflowService.updateWorkflowStatus(musterRollRequest);
-
-        // Fetch currentProcessInstance from workflow process search for inbox config
-       /* ProcessInstance processInstance = workflowService.getProcessInstance(musterRollRequest);
-        musterRollRequest.getMusterRoll().setProcessInstance(processInstance);*/
 
         producer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
         return musterRollRequest;
