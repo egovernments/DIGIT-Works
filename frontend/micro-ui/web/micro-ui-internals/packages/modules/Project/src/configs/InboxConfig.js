@@ -92,6 +92,11 @@ const inboxConfig = () => {
                             text: "WORKS_CREATE_PROJECT",
                             url: `/employee/project/create-project`,
                             roles: [],
+                        },
+                        {
+                            text: "WORKS_SEARCH_PROJECTS",
+                            url: `/employee/project/search-project`,
+                            roles: [],
                         }
                     ],
                     label : "ACTION_TEST_PROJECT_INBOX",
