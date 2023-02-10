@@ -15,11 +15,16 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
-    const searchResult = data?.[resultsKey]?.length>0 ? data?.[resultsKey] : []
-   
-    // const searchResultNew = data?.[resultsKey].length > 0 ? data?.[resultsKey] : []
-    // const searchResult = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(searchResultNew) : searchResultNew 
-    //
+    let searchResult = data?.[resultsKey]?.length>0 ? data?.[resultsKey] : []
+    searchResult = searchResult.reverse()
+    //reversing reason -> for some reason if we enable sorting on columns results from the api are reversed and shown, for now -> reversing the results(max size 50 so not a performance issue)
+    
+    // if(fullConfig?.postProcess){
+    // var { isUsersResponseFetching,
+    //     isUsersResponseLoading,
+    //     usersResponse }  =  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(searchResult) 
+
+    // }
 
     const {state,dispatch} = useContext(InboxContext)
     

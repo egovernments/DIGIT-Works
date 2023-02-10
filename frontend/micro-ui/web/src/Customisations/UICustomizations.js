@@ -13,7 +13,7 @@ export const UICustomizations = {
             const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.startDate)
             const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.endDate)
             const projectType = data.body.Projects[0]?.projectType?.code
-            data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() }
+            data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors:true }
             data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, projectType }
 
             return data
