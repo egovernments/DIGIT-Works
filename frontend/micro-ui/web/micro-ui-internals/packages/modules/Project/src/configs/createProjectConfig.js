@@ -546,7 +546,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
               mdmsConfig: {
                 masterName: "Fund",
                 moduleName: "finance",
-                localePrefix: "ES_COMMON",
+                localePrefix: "ES_COMMON_FIN",
               },
             },
           },
