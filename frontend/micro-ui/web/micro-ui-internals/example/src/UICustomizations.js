@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useQuery, useQueryClient } from "react-query";
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
@@ -17,29 +16,37 @@ export const UICustomizations = {
 
             return data
         },
-        // postProcess: ( responseArray,isLoading,isFetching) => {
-        //     const listOfUuids = responseArray?.map(row => row.auditDetails.createdBy)
-        //     const tenantId = Digit.ULBService.getCurrentTenantId()
-        //     const reqCriteria = {
-        //         url:"/user/_search",
-        //         params:{tenantId,pageSize:100,uuid:[...listOfUuids]},
-        //         body:{},
-        //         config:{
-        //             enabled:(isLoading || isFetching) ? false : true,
-        //             select: (data) => {
-        //                 return data
-        //             }
-        //         }
+        postProcess: (responseArray) => {
+            
+            const listOfUuids = responseArray?.map(row => row.auditDetails.createdBy)
+            const uniqueUuids = listOfUuids?.filter(function (item, i, ar) { return ar.indexOf(item) === i; });
+            const tenantId = Digit.ULBService.getCurrentTenantId()
+            const reqCriteria = {
+                url:"/user/_search",
+                params:{},
+                body: { tenantId, pageSize: 100, uuid: [...uniqueUuids] },
+                config:{
+                    enabled:responseArray?.length > 0 ? true : false,
+                    select: (data) => {
+                        const usersResponse = data?.user
+                        responseArray?.forEach((row)=> {
+                            const uuid = row?.auditDetails?.createdBy
+                            const user = usersResponse?.filter(user => user.uuid === uuid)
+                            row.createdBy = user?.[0].name
+                        } )
+                        return responseArray
+                    }
+                }
 
-        //     }
-        //     const { isLoading:isUsersResponseLoading, data:usersResponse, isFetching:isUsersResponseFetching } = Digit.Hooks.useCustomAPIHook(reqCriteria);
+            }
+            const { isLoading: isPostProcessLoading, data: combinedResponse, isFetching: isPostProcessFetching } = Digit.Hooks.useCustomAPIHook(reqCriteria);
 
-        //     return {
-        //         isUsersResponseFetching,
-        //         isUsersResponseLoading,
-        //         usersResponse
-        //     }
-        // },
+            return {
+                isPostProcessFetching,
+                isPostProcessLoading,
+                combinedResponse
+            }
+        },
         additionalCustomizations: (row,column,columnConfig,value,t) => {
             //here we can add multiple conditions
             //like if a cell is link then we return link

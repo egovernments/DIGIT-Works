@@ -2,6 +2,7 @@ const searchConfig = () => {
     return {
         label : "WORKS_SEARCH_PROJECT",
         type: 'search',
+        postProcessResult:true,
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
@@ -152,7 +153,7 @@ const searchConfig = () => {
                         },
                         {
                             label: "WORKS_CREATED_BY",
-                            jsonPath: "auditDetails.createdBy",
+                            jsonPath: "createdBy",
                         },
                         {
                             label: "WORKS_STATUS",
