@@ -31,7 +31,7 @@ import java.util.UUID;
 public class LineItems {
     @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("estimateId")
     @NotNull
@@ -54,6 +54,10 @@ public class LineItems {
     @JsonProperty("noOfunit")
     @Valid
     private BigDecimal noOfunit = null;
+
+    @JsonProperty("status")
+    @Valid
+    private Status status = null;
 
     @JsonProperty("amountBreakups")
     @Valid

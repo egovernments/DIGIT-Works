@@ -9,10 +9,8 @@ import org.springframework.context.annotation.Import;
 
 @Import({TracerConfiguration.class})
 @SpringBootApplication
-@ComponentScan(basePackages = {"digit", "digit.web.controllers", "digit.config"})
+@ComponentScan(basePackages = {"org.egov.works", "org.egov.works.web.controllers", "org.egov.works.config"})
 public class Main {
-
-
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Main.class, args);
     }

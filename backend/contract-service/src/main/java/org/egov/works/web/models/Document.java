@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 /**
@@ -35,6 +36,10 @@ public class Document {
     @JsonProperty("documentUid")
     @Size(max = 64)
     private String documentUid = null;
+
+    @JsonProperty("status")
+    @Valid
+    private Status status = null;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;

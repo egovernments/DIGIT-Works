@@ -20,25 +20,9 @@ import java.util.TimeZone;
 @AllArgsConstructor
 @Setter
 @Getter
-public class Configuration {
+public class ContractServiceConfiguration {
     @Value("${app.timezone}")
     private String timeZone;
-
-    // User Config
-    @Value("${egov.user.host}")
-    private String userHost;
-
-    @Value("${egov.user.context.path}")
-    private String userContextPath;
-
-    @Value("${egov.user.create.path}")
-    private String userCreateEndpoint;
-
-    @Value("${egov.user.search.path}")
-    private String userSearchEndpoint;
-
-    @Value("${egov.user.update.path}")
-    private String userUpdateEndpoint;
 
     //Idgen Config
     @Value("${egov.idgen.host}")
@@ -46,6 +30,9 @@ public class Configuration {
 
     @Value("${egov.idgen.path}")
     private String idGenPath;
+
+    @Value("${egov.idgen.contract.number.name}")
+    private String idgenContractNumberName;
 
     //Workflow Config
     @Value("${egov.workflow.host}")
@@ -67,23 +54,16 @@ public class Configuration {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
 
-    //HRMS
-    @Value("${egov.hrms.host}")
-    private String hrmsHost;
+    // kafka topics
+    @Value("${contract.kafka.create.topic}")
+    private String createContractTopic;
 
-    @Value("${egov.hrms.search.endpoint}")
-    private String hrmsEndPoint;
-
-    //URLShortening
-    @Value("${egov.url.shortner.host}")
-    private String urlShortnerHost;
-
-    @Value("${egov.url.shortner.endpoint}")
-    private String urlShortnerEndpoint;
+    @Value("${contract.kafka.update.topic}")
+    private String updateContractTopic;
 
     //SMSNotification
-    @Value("${egov.sms.notification.topic}")
-    private String smsNotificationTopic;
+//    @Value("${egov.sms.notification.topic}")
+//    private String smsNotificationTopic;
 
     //attendance service register search config
     @Value("${contract.default.offset}")
@@ -91,6 +71,19 @@ public class Configuration {
 
     @Value("${contract.default.limit}")
     private Integer contractDefaultLimit;
+
+    //Estimate service
+    @Value("${works.estimate.host}")
+    private String estimateHost;
+
+    @Value("${works.estimate.search.endpoint}")
+    private String estimateEndpoint;
+
+    @Value("${contract.document.id.verification.required}")
+    private String documentIdVerificationRequired;
+
+    @Value("${contract.org.id.verification.required}")
+    private String orgIdVerificationRequired;
 
     @PostConstruct
     public void initialize() {

@@ -25,17 +25,21 @@ import java.util.UUID;
 public class AmountBreakup {
     @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("estimateAmountBreakupId")
     @NotNull
     @Valid
-    private UUID estimateAmountBreakupId = null;
+    private String estimateAmountBreakupId = null;
 
     @JsonProperty("amount")
     @NotNull
     @Valid
-    private BigDecimal amount = null;
+    private Double amount = null;
+
+    @JsonProperty("status")
+    @Valid
+    private Status status = null;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;

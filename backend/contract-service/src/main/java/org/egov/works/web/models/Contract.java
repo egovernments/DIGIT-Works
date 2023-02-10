@@ -33,7 +33,7 @@ import java.util.UUID;
 public class Contract {
     @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("contractNumber")
     @Size(min = 1, max = 64)
@@ -81,6 +81,11 @@ public class Contract {
     @JsonProperty("endDate")
     @Valid
     private BigDecimal endDate = null;
+
+    @JsonProperty("status")
+    @Valid
+    private Status status = null;
+
     @JsonProperty("lineItems")
     @Valid
     private List<LineItems> lineItems = null;
