@@ -1,0 +1,20 @@
+{
+  "ResponseInfo": null,
+  "MdmsRes": {
+    "works": {},
+    "common-masters": {
+      "Department": [
+        {
+          "name": "Street Lights",
+          "code": "DEPT_1",
+          "active": true
+        }
+      ]
+    },
+    "tenant": {
+      "tenants": [
+        "pb.amritsar"
+      ]
+    }
+  }
+}

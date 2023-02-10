@@ -11,6 +11,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.util.TimeZone;
 
 @Component
@@ -71,6 +72,9 @@ public class ContractServiceConfiguration {
 
     @Value("${contract.default.limit}")
     private Integer contractDefaultLimit;
+
+    @Value("${contract.search.max.limit}")
+    private Integer contractMaxLimit;
 
     //Estimate service
     @Value("${works.estimate.host}")

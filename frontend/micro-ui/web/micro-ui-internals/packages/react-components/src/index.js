@@ -66,7 +66,6 @@ import { LastRow, MediaRow, Row, StatusTable } from "./atoms/StatusTable";
 import SubmitBar from "./atoms/SubmitBar";
 import StandaloneSearchBar from "./atoms/StandaloneSearchBar";
 import ULBHomeCard from "./atoms/ULBHomeCard";
-
 import {
   AnnouncementIcon,
   ArrowDown,
@@ -239,6 +238,9 @@ import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
 import HorizontalNav from "./atoms/HorizontalNav";
 import NoResultsFound from "./atoms/NoResultsFound";
 import { ViewImages } from "./atoms/ViewImages";
+import InboxSearchComposer from "./hoc/InboxSearchComposer";
+import InboxSearchLinks from "./atoms/InboxSearchLinks";
+
 export {
   ViewImages,
   Phone,
@@ -406,6 +408,8 @@ export {
   Poll,
   Details,
   InboxComposer,
+  InboxSearchComposer,
+  InboxSearchLinks,
   // Icons
   FilterIcon,
   FilterSvg,

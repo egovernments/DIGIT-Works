@@ -28,6 +28,9 @@ public class EstimateDetail {
     @JsonProperty("sorId")
     private String sorId = null;
 
+    @JsonProperty("category")
+    private String category = null;
+
     @JsonProperty("name")
     private String name = null;
 
@@ -50,8 +53,8 @@ public class EstimateDetail {
     @Valid
     private List<AmountDetail> amountDetail = null;
 
-    @JsonProperty("totalAmount")
-    private Double totalAmount = null;
+//    @JsonProperty("totalAmount")
+//    private Double totalAmount = null;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;

@@ -4,6 +4,7 @@ import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-component
 import { Switch, useLocation } from "react-router-dom";
 
 import CreateEstimate from "./Estimates/CreateEstimate/CreateEstimate";
+import EstimateSearch from "./EstimateSearch";
 
 const EstimateBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
@@ -78,6 +79,8 @@ const App = ({ path }) => {
                         <EstimateBreadCrumbs location={location} />
                     </div>
                     <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{ path }} EstimateSession={EstimateSession} />} />
+                    <PrivateRoute path={`${path}/search-estimate`} component={() => <EstimateSearch {...{ path }} />} />
+
                     <PrivateRoute path={`${path}/search`} component={() => <div>Search</div>} />
                     <PrivateRoute path={`${path}/inbox`} component={() =><div>Inbox</div> }/>
                 </div>

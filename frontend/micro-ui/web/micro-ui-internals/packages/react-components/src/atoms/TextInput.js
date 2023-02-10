@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 const TextInput = (props) => {
+  
   const user_type = Digit.SessionStorage.get("userType");
   const [date, setDate] = useState(props?.type==="date"&&props?.value);
   const data = props?.watch
@@ -96,7 +97,7 @@ const TextInput = (props) => {
             disabled={props.disabled}
           />
         )}
-        {props.type === "date" && <DatePicker {...props} date={date} setDate={setDate} data={data} />}
+        {/* {props.type === "date" && <DatePicker {...props} date={date} setDate={setDate} data={data} />} */}
         {props.signature ? props.signatureImg : null}
       </div>
     </React.Fragment>

@@ -1,0 +1,42 @@
+.inbox-search-links-container {
+    height: 100%;
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    .header {
+        display: grid;
+        grid-template-columns: 30% 1fr;
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            .inbox-search-icon--projects {
+                fill : red;
+                height: 3rem;
+                width: 3rem;
+            }
+        }
+        .text {
+            font-size: 24px;
+            line-height: 32px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+    }
+    .contents {
+        margin-top: 1rem;
+        box-sizing: border-box;
+        padding: 0 1rem;
+        display: flex;
+        flex-direction: column;
+        .link {
+            padding: 8px;
+            --text-opacity: 1;
+            color: #f47738;
+            color: rgba(244, 119, 56, var(--text-opacity));
+        }
+    }
+}

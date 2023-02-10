@@ -1,11 +1,13 @@
 package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -25,6 +27,11 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ContractCriteria {
+
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo = null;
+
+
     @JsonProperty("tenantId")
     @NotNull
     @Size(min = 2, max = 64)

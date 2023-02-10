@@ -11,7 +11,6 @@ import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 import 'package:works_shg_app/services/urls.dart';
-import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/repositories/remote/mdms.dart';
 import '../../services/local_storage.dart';
@@ -70,8 +69,7 @@ class AppInitializationBloc
           return element;
         }
       })
-    ]..toList());
-
+    ].toList());
     if (kIsWeb) {
       html.window.localStorage['initData'] = jsonEncode(result.toJson());
       html.window.localStorage['StateInfo'] = jsonEncode(ss);
@@ -104,14 +102,23 @@ class AppInitializationBloc
         localLanguageData != null) {
       initMdmsModelData = InitMdmsModel.fromJson(jsonDecode(localInitData));
       stateInfoListModel =
-          StateInfoListModel.fromJson(GlobalVariables.getStateInfo());
-      digitRowCardItems = GlobalVariables.getLanguages()
+          StateInfoListModel.fromJson(jsonDecode(localStateData));
+      digitRowCardItems = jsonDecode(localLanguageData)
           .map<DigitRowCardModel>((e) => DigitRowCardModel.fromJson(e))
           .toList();
     }
     await AppLocalizations(
-      Locale(digitRowCardItems!.first.value.split('_').first,
-          digitRowCardItems!.first.value.split('_').last),
+      Locale(
+          digitRowCardItems!
+              .firstWhere((e) => e.isSelected)
+              .value
+              .split('_')
+              .first,
+          digitRowCardItems!
+              .firstWhere((e) => e.isSelected)
+              .value
+              .split('_')
+              .last),
     ).load();
 
     emit(state.copyWith(
@@ -119,6 +126,19 @@ class AppInitializationBloc
         initMdmsModel: initMdmsModelData,
         stateInfoListModel: stateInfoListModel,
         digitRowCardItems: digitRowCardItems));
+    await AppLocalizations(
+      Locale(
+          digitRowCardItems!
+              .firstWhere((e) => e.isSelected)
+              .value
+              .split('_')
+              .first,
+          digitRowCardItems!
+              .firstWhere((e) => e.isSelected)
+              .value
+              .split('_')
+              .last),
+    ).load();
   }
 }
 

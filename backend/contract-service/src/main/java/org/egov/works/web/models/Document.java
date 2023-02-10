@@ -1,6 +1,8 @@
 package org.egov.works.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,8 +43,14 @@ public class Document {
     @Valid
     private Status status = null;
 
+    @Size(max = 64)
+    private String contractId = null;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
+
+    @JsonIgnore
+    private AuditDetails auditDetails = null;
 
 
 }

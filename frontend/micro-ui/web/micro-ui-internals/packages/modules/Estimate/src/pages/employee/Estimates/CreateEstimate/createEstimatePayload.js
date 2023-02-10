@@ -57,6 +57,7 @@ export const createEstimatePayload = (data) => {
             "referenceNumber": "File-18430283",
             "description": "Construct new schools",
             "executingDepartment": filteredFormData?.selectedDept?.code,
+            "projectId":"7c941228-6149-4adc-bdb9-8b77f6c3757d",//static for now
             "address": {
                 "tenantId": "pb.jalandhar",
                 "latitude": 0,

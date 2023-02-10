@@ -47,7 +47,9 @@ class MobileView extends StatelessWidget {
                                         MediaQuery.of(context).size.width / 4,
                                     child: const Align(
                                         alignment: Alignment.bottomCenter,
-                                        child: PoweredByDigit())))
+                                        child: PoweredByDigit(
+                                          isWhiteLogo: true,
+                                        ))))
                               ]),
                               bannerURL)))
                 ])));
