@@ -19,13 +19,16 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     searchResult = searchResult.reverse()
     //reversing reason -> for some reason if we enable sorting on columns results from the api are reversed and shown, for now -> reversing the results(max size 50 so not a performance issue)
     
-    // if(fullConfig?.postProcess){
-    // var { isUsersResponseFetching,
-    //     isUsersResponseLoading,
-    //     usersResponse }  =  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(searchResult) 
+    if (fullConfig?.postProcessResult){
+        var { isPostProcessFetching,
+            isPostProcessLoading,
+            combinedResponse }  =  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(searchResult) 
 
-    //     debugger
-    // }
+        if(combinedResponse?.length > 0){
+            searchResult = combinedResponse
+        } 
+    }
+    
 
     const {state,dispatch} = useContext(InboxContext)
     
@@ -134,14 +137,14 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     }
 
     
-    if (isLoading || isFetching) return <Loader />
+    if (isLoading || isFetching || isPostProcessFetching || isPostProcessLoading) return <Loader />
     if (searchResult?.length === 0) return <NoResultsFound/>
     return (
         <div >
             {config?.enableGlobalSearch && <div className='card' style={{ "padding": "0px", marginTop: "1rem" }}>
             <TextInput className="searchInput"  onChange={(e) => onSearch(e.target.value)} style={{ border: "none", borderRadius: "200px" }} />
              </div>}
-            {searchResult?.length > 0 && <Table
+            {!fullConfig?.postProcessResult ? (searchResult?.length > 0 && <Table
                 //className="table-fixed-first-column-wage-seekers wage-seekers-table"
                 t={t}
                 //customTableWrapperClassName={"dss-table-wrapper"}
@@ -166,7 +169,34 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                         },
                     };
                 }}
-            />}
+            />) : (combinedResponse?.length > 0 && <Table
+                //className="table-fixed-first-column-wage-seekers wage-seekers-table"
+                t={t}
+                //customTableWrapperClassName={"dss-table-wrapper"}
+                disableSort={config?.enableColumnSort ? false : true}
+                autoSort={config?.enableColumnSort ? true : false}
+                globalSearch={config?.enableGlobalSearch ? filterValue : undefined}
+                onSearch={config?.enableGlobalSearch ? searchQuery : undefined}
+                data={combinedResponse}
+                totalRecords={data?.count || data?.TotalCount}
+                columns={tableColumns}
+                isPaginationRequired={true}
+                onPageSizeChange={onPageSizeChange}
+                currentPage={getValues("offset") / getValues("limit")}
+                onNextPage={nextPage}
+                onPrevPage={previousPage}
+                pageSizeLimit={getValues("limit")}
+                getCellProps={(cellInfo) => {
+                    return {
+                        style: {
+                            padding: "20px 18px",
+                            fontSize: "16px",
+                        },
+                    };
+                }}
+            />)
+            
+            }
         </div>
     )
 }
