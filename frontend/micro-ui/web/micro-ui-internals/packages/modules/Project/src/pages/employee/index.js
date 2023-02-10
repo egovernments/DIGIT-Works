@@ -20,6 +20,12 @@ const ProjectBreadCrumb = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
+      path: `/${window.contextPath}/employee/project/search-project`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_SEARCH_PROJECTS")}` : t("WORKS_SEARCH_PROJECTS"),
+      show: location.pathname.includes("/project/search-project") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
       path: `/${window.contextPath}/employee/project/project-details`,
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_PROJECT_DETAILS")}` : t("WORKS_PROJECT_DETAILS"),
       show: location.pathname.includes("/project/project-details") ? true : false,
@@ -42,7 +48,7 @@ const App = ({ path }) => {
   //remove session form data if user navigates away from the project create screen
   useEffect(()=>{
     return () => {
-      if (!window.location.href.includes("create-project") && Object.keys(sessionFormData) != 0) {
+      if (!window.location.href.includes("create-project") && sessionFormData && Object.keys(sessionFormData) != 0) {
         clearSessionFormData();
       }
     };

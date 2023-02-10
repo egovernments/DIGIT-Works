@@ -24,7 +24,6 @@ const ViewProject = (props) => {
     
   const { t } = useTranslation()
   const { data, isLoading } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
-  console.log(data);
   return (
     <>
         <ApplicationDetails
