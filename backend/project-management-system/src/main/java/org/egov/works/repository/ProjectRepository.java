@@ -1,9 +1,7 @@
 package org.egov.works.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.works.config.ProjectConfiguration;
 import org.egov.works.repository.querybuilder.DocumentQueryBuilder;
 import org.egov.works.repository.querybuilder.ProjectAddressQueryBuilder;
 import org.egov.works.repository.querybuilder.TargetQueryBuilder;
