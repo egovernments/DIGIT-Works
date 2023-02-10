@@ -12,19 +12,35 @@ export const UICustomizations = {
             const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.startDate)
             const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.endDate)
             const projectType = data.body.Projects[0]?.projectType?.code
-            data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() }
+            data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors:true }
             data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, projectType }
 
             return data
         },
-        // postProcess: ( responseArray, filters, options = {}) => {
-            
-        //     if(responseArray?.length===0) return []
+        // postProcess: ( responseArray,isLoading,isFetching) => {
+        //     debugger
         //     const listOfUuids = responseArray?.map(row => row.auditDetails.createdBy)
-        //     const data = { uuid: listOfUuids }
         //     const tenantId = Digit.ULBService.getCurrentTenantId()
-        //     const client = useQueryClient();
-        //     const queryData = useQuery(["USER_SEARCH", filters, data], () => Digit.UserService.userSearch(null, data, {}), options);
+        //     const reqCriteria = {
+        //         url:"/user/_search",
+        //         params:{tenantId,pageSize:100,uuid:[...listOfUuids]},
+        //         body:{},
+        //         config:{
+        //             enabled:(isLoading || isFetching) ? false : true,
+        //             select: (data) => {
+        //                 debugger
+        //                 return data
+        //             }
+        //         }
+
+        //     }
+        //     const { isLoading:isUsersResponseLoading, data:usersResponse, isFetching:isUsersResponseFetching } = Digit.Hooks.useCustomAPIHook(reqCriteria);
+
+        //     return {
+        //         isUsersResponseFetching,
+        //         isUsersResponseLoading,
+        //         usersResponse
+        //     }
         // },
         additionalCustomizations: (row,column,columnConfig,value,t) => {
             //here we can add multiple conditions
