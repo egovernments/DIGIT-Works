@@ -26,21 +26,23 @@ public class ContractServiceValidator {
     @Autowired
     private MdmsUtil mdmsUtils;
 
-    public void validateSearchContractRequest(RequestInfoWrapper requestInfoWrapper, ContractCriteria contractCriteria) {
+    public void validateSearchContractRequest(RequestInfo requestInfo, ContractCriteria contractCriteria) {
 
-        if (contractCriteria == null || requestInfoWrapper == null) {
+        if (contractCriteria == null || requestInfo == null) {
             log.error("Contract search criteria request is mandatory");
             throw new CustomException("CONTRACT_SEARCH_CRITERIA_REQUEST", "Contract search criteria request is mandatory");
         }
 
         //validate request info
-        RequestInfo requestInfo=requestInfoWrapper.getRequestInfo();
+        log.info("validate request info");
         validateRequestInfo(requestInfo);
 
         //validate request parameters
+        log.info("validate request parameters");
         validateSearchContractRequestParameters(contractCriteria);
 
         //validate tenantId with MDMS
+        log.info("validate tenantId with MDMS");
         validateTenantIdWithMDMS(requestInfo,contractCriteria);
 
     }

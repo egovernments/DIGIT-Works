@@ -3,6 +3,7 @@ package org.egov.works.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.service.ContractService;
 import org.egov.works.util.ResponseInfoFactory;
@@ -60,11 +61,12 @@ public class ContractApiController {
     }
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
-    public ResponseEntity<ContractResponse> contractV1SearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @ApiParam(value = "") @Valid @RequestBody ContractCriteria contractCriteria, @ApiParam(value = "") @Valid @RequestBody Pagination pagination) {
+    public ResponseEntity<ContractResponse> contractV1SearchPost(@ApiParam(value = "") @Valid @RequestBody ContractCriteria contractCriteria) {
 
-        List<Contract> contracts = contractService.searchContracts(requestInfoWrapper, contractCriteria);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        ContractResponse contractResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(contracts).pagination(pagination).build();
+        RequestInfo requestInfo=contractCriteria.getRequestInfo();
+        List<Contract> contracts = contractService.searchContracts(requestInfo, contractCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
+        ContractResponse contractResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(contracts).pagination(contractCriteria.getPagination()).build();
         return new ResponseEntity<ContractResponse>(contractResponse, HttpStatus.OK);
     }
 

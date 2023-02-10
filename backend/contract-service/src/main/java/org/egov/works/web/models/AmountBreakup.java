@@ -1,6 +1,8 @@
 package org.egov.works.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,20 +27,29 @@ import java.util.UUID;
 public class AmountBreakup {
     @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("estimateAmountBreakupId")
     @NotNull
     @Valid
-    private UUID estimateAmountBreakupId = null;
+    private String estimateAmountBreakupId = null;
 
     @JsonProperty("amount")
     @NotNull
     @Valid
     private BigDecimal amount = null;
 
+    @JsonIgnore
+    private String lineItemId = null;
+
+    @JsonIgnore
+    private String status = null;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
+
+    @JsonIgnore
+    private AuditDetails auditDetails;
 
 
 }

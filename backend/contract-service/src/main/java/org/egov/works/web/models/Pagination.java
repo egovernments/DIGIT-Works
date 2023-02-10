@@ -29,15 +29,15 @@ public class Pagination {
     @JsonProperty("limit")
     @Valid
 //    @DecimalMax("100")
-    private BigDecimal limit = null;
+    private Integer limit = null;
 
     @JsonProperty("offSet")
     @Valid
-    private BigDecimal offSet = null;
+    private Integer offSet = null;
 
     @JsonProperty("totalCount")
     @Valid
-    private BigDecimal totalCount = null;
+    private Integer totalCount = null;
 
     @JsonProperty("sortBy")
     private String sortBy = null;

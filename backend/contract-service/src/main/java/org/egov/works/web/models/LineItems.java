@@ -1,5 +1,6 @@
 package org.egov.works.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
@@ -31,7 +32,7 @@ import java.util.UUID;
 public class LineItems {
     @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("estimateId")
     @NotNull
@@ -65,6 +66,12 @@ public class LineItems {
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
+
+    @JsonIgnore
+    private String contractId;
+
+    @JsonIgnore
+    private String status;
 
 
     public LineItems addAmountBreakupsItem(AmountBreakup amountBreakupsItem) {

@@ -1,6 +1,7 @@
 package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import digit.models.coremodels.AuditDetails;
@@ -33,7 +34,7 @@ import java.util.UUID;
 public class Contract {
     @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("contractNumber")
     @Size(min = 1, max = 64)
@@ -81,6 +82,10 @@ public class Contract {
     @JsonProperty("endDate")
     @Valid
     private BigDecimal endDate = null;
+
+    @JsonIgnore
+    private String status = null;
+
     @JsonProperty("lineItems")
     @Valid
     private List<LineItems> lineItems = null;

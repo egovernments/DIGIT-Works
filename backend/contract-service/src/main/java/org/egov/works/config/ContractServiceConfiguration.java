@@ -86,15 +86,15 @@ public class ContractServiceConfiguration {
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
 
-    //attendance service register search config
+    //contract service search config
     @Value("${contract.default.offset}")
-    private BigDecimal contractDefaultOffset;
+    private Integer contractDefaultOffset;
 
     @Value("${contract.default.limit}")
-    private BigDecimal contractDefaultLimit;
+    private Integer contractDefaultLimit;
 
     @Value("${contract.search.max.limit}")
-    private BigDecimal contractMaxLimit;
+    private Integer contractMaxLimit;
 
     @PostConstruct
     public void initialize() {
