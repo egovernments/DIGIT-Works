@@ -3,16 +3,29 @@ import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Dropdown, C
 import { Controller } from 'react-hook-form';
 import _ from 'lodash';
 
-//Constant Declaration
-const initialState = [
-    {
-        key: 1,
-        isShow: true,
-    },
-];
 //these params depend on what the controller of the associated type is sending.
 const SubProjectDetailsTable = ({t, register, control, setValue, onChange, errors, sectionFormCategory, selectedFormCategory}) => {
-    const [rows, setRows] = useState(initialState);
+    const orgSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE",{});
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
+
+    //update sub project table with session data
+    const renderSubProjectsFromSession = () => {
+        if(!sessionFormData?.withSubProject_project_subProjects) {
+            return [{
+                key: 1,
+                isShow: true,
+            }];
+        }
+        let tableState = [];
+        for(let i = 1; i<sessionFormData?.withSubProject_project_subProjects?.length; i++) {
+            tableState.push({
+                key: i,
+                isShow: true,
+            })
+        }
+        return tableState;
+    }
+    const [rows, setRows] = useState(renderSubProjectsFromSession());
     const columns = [
         {label : t('WORKS_SNO'), isMandatory : false },
         {label : t('WORKS_NAME_OF_SUB_PROJECT'), isMandatory : true },
@@ -23,9 +36,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         {label : t('WORKS_PROJECT_START_DATE'), isMandatory : false },
         {label : t('WORKS_PROJECT_END_DATE'), isMandatory : false },
         {label : t('WORKS_MODE_OF_ENTRUSTMENT'), isMandatory : false },
-        {label : t('WORKS_LOCALITY'), isMandatory : false },
         {label : t('WORKS_WARD'), isMandatory : false },
-        {label : t('WORKS_URBAN_LOCAL_BODY'), isMandatory : false },
+        {label : t('WORKS_LOCALITY'), isMandatory : false },
+        {label : t('ES_COMMON_ULB'), isMandatory : false },
         {label : t('WORKS_GEO_LOCATION'), isMandatory : false },
         {label : t('WORKS_UPLOAD_DOCS'), isMandatory : false },
         {label : t('WORKS_ACTIONS'), isMandatory : false }
@@ -91,6 +104,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         t={t}
                         select={(e)=>handleDropdownChange(e, props, row, inputName)}
                         onBlur={props?.onBlur}
+                        optionCardStyles={{maxHeight : '15rem'}}
                     />
     }
 
@@ -106,7 +120,6 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         props?.onChange(e);
     }
 
-    //TODOy
     const getStyles = (type) => {
         if(type === "upload") {
             return { "minWidth": "20rem" };
@@ -115,6 +128,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
             return { "minWidth": "2rem" };
         }
         if(type === "PROJECT_NAME") {
+            return { "minWidth": "20rem" };
+        }
+        if(type === "DATE") {
             return { "minWidth": "20rem" };
         }
         return { "minWidth": "14rem" };
@@ -168,6 +184,12 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                         <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`PROJECT_PATTERN_ERR_MSG_PROJECT_NAME`)}</CardLabelError>)}
                 </>
             }
+            case "endDate" : {
+                return <>
+                {errors && ( errors?.[formFieldName]?.[row.key]?.[`${name}_custom`]?.type === "custom" || errors?.[formFieldName]?.[row.key]?.[`${name}_custom`]?.type === "pattern" || errors?.[formFieldName]?.[row.key]?.[`${name}_custom`]?.type === "required" ) && (
+                    <CardLabelError className={!isErrorForDropdown ? 'projects-subProject-details-error' : 'projects-subProject-details-error dropdown-field'} >{t(`COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE`)}</CardLabelError>)}
+                </>
+            }
             default : {
                 return <>
                 {errors && errors?.[formFieldName]?.[row.key]?.[name]?.type === "pattern" && (
@@ -187,7 +209,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 <td style={getStyles('SNO')}>{i}</td>
                 <td style={getStyles('PROJECT_NAME')} >
                     <div className='field' style={{ "width": "100%" }} >
-                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.projectName`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true, pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minLength: 2}) : register({required : false})}/>
+                        <TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.projectName`} inputRef={(selectedFormCategory === sectionFormCategory) ? register({required : true, pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minLength: 2}) : register({required : false})}/>
                         {renderErrorIfAny(row, "projectName")}
                     </div>
                 </td>
@@ -246,7 +268,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     {renderErrorIfAny(row, "natureOfWork", true)}
                     </div>
                 </td>
-                <td style={getStyles()}>
+                <td style={getStyles("DATE")}>
                     <div className='field sub-projects-details-field-mt' style={{ "width": "100%" }} >
                     <TextInput
                         type={"date"}
@@ -258,7 +280,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     {renderErrorIfAny(row, "startDate")}
                     </div>
                 </td>  
-                <td style={getStyles()}>
+                <td style={getStyles("DATE")}>
                     <div className='field sub-projects-details-field-mt' style={{ "width": "100%" }} >
                     <TextInput
                         type={"date"}
@@ -317,13 +339,13 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                     <div className='field sub-projects-details-field-mt ' style={{ "width": "100%" }} >
                         <Controller
                             control={control}
-                            name={`${formFieldName}.${row.key}.urbanLocalBody`}
+                            name={`${formFieldName}.${row.key}.ulb`}
                             rules={{ required: false}}
                             render={(props)=>(
-                                getDropDownDataFromMDMS(t, row, "urbanLocalBody", props, register, "i18nKey", getCities())
+                                getDropDownDataFromMDMS(t, row, "ulb", props, register, "i18nKey", getCities())
                             )}
                         />
-                    {renderErrorIfAny(row, "urbanLocalBody", true)}
+                    {renderErrorIfAny(row, "ulb", true)}
                     </div>
                 </td> 
                 <td style={getStyles()} >
@@ -360,14 +382,14 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                         module="works"
                                         tenantId={Digit.ULBService.getCurrentTenantId()}
                                         getFormState={getFileStoreData}
-                                        showHintBelow={true}
                                         setuploadedstate={value}
                                         allowedFileTypesRegex={/(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i}
-                                        allowedMaxSizeInMB={2}
-                                        hintText={""}
+                                        allowedMaxSizeInMB={5}
                                         maxFilesAllowed={2}
                                         extraStyleName={{ padding: "0.5rem" }}
                                         customClass={"upload-margin-bottom"}
+                                        hintText={"WORKS_DOC_UPLOAD_HINT"}
+                                        showHintBelow = {true}
                                     />
                                 );
                                 }}

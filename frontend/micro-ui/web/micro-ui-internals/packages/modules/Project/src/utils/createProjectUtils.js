@@ -28,6 +28,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
         project_details = data?.withSubProject;
       }
     }
+  
     //iterate till all sub-projects. For noSubProject Case, this will iterate only once
     for(let index=1; index<=total_projects; index++) {
         // In case of Sub Projects having Parent ID, project_details will be each sub-project
@@ -37,7 +38,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
         let payload =   {
           "tenantId": tenantId,
           "name": parentProjectID ? project_details?.projectName : basic_details?.projectName,
-          "projectType": project_details?.typeOfProject?.code || "MP-CWS" , //BE throwing null pointer Exception if send null and giving error on  empty string. But for Sub-projects's Parent, this field is not captured on UI. -- Need to check with CHetan.
+          "projectType": project_details?.typeOfProject?.code, 
           "projectSubType": project_details?.subTypeOfProject?.code , 
           "department": project_details?.owningDepartment?.code,
           "description":  parentProjectID ? project_details?.projectDesc : basic_details?.projectDesc,
@@ -53,7 +54,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "addressLine1": project_details?.geoLocation,
             "addressLine2": "Address Line 2", //Not being captured on UI
             "landmark": "Area1", //Not being captured on UI
-            "city": "City1", //Not being captured on UI
+            "city": project_details?.ulb?.i18nKey, //Not being captured on UI for Projects ( it is captured for sub projects )
             "pincode": "999999", //Not being captured on UI
             "buildingName": "Test_Building", //Not being captured on UI
             "street": "Test_Street", //Not being captured on UI
@@ -63,9 +64,9 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
           "endDate": convertDateToEpoch(project_details?.endDate), 
           "isTaskEnabled": false, //Not being captured on UI //For Health Team Project
           "parent": parentProjectID || "", // In case of Single project, Parent ID is empty.
-          "targets": [ //Not being captured on UI //For Health Team Project
+          "targets": [ //this is target demograph, captured on UI //For Health Team Project
             {
-              "beneficiaryType": "Slum",
+              "beneficiaryType": "Slum", //project_details?.targetDemocracy?.code,
               "totalNo": 0,
               "targetNo": 0
             }
@@ -73,10 +74,11 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
           "additionalDetails": { //These are financial details. Adding them here as they will be integrated with a different service.
             "budgetHead" : project_details?.budgetHead?.code,
             "estimatedCostInRs" : project_details?.estimatedCostInRs,
-            "function" : project_details?.function,
-            "fund" : project_details?.fund,
+            "function" : project_details?.function?.code,
+            "fund" : project_details?.fund?.code,
             "scheme" :  project_details?.scheme?.code,
-            "subScheme" :  project_details?.subScheme?.code,
+            "subScheme" :  project_details?.subScheme?.code,  
+            "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal)
           },
           "rowVersion": 0
       }
