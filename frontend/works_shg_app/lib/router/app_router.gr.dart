@@ -166,7 +166,7 @@ class _$AppRouter extends RootStackRouter {
             ),
             RouteConfig(
               SHGInboxRoute.name,
-              path: 'shg-inbox//:tenantId/:musterRollNo',
+              path: 'shg-inbox/:tenantId/:musterRollNo',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -330,7 +330,7 @@ class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
     Key? key,
   }) : super(
           SHGInboxRoute.name,
-          path: 'shg-inbox//:tenantId/:musterRollNo',
+          path: 'shg-inbox/:tenantId/:musterRollNo',
           args: SHGInboxRouteArgs(
             tenantId: tenantId,
             musterRollNo: musterRollNo,

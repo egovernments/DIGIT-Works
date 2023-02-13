@@ -17,6 +17,7 @@ import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/get_muster_workflow.dart';
 import '../blocs/muster_rolls/muster_roll_estimate.dart';
 import '../models/attendance/attendee_model.dart';
+import '../models/muster_rolls/muster_workflow_model.dart';
 import '../router/app_router.dart';
 import '../utils/constants.dart';
 import '../utils/date_formats.dart';
@@ -63,7 +64,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
   bool updateLoaded = true;
   List<EntryExitModel>? entryExitList;
   DaysInRange? daysInRange;
-
+  bool inWorkFlow = true;
+  bool workFlowLoaded = true;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
@@ -91,8 +93,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width < 760
-        ? 145.0
-        : (MediaQuery.of(context).size.width / 4);
+        ? 130.0
+        : (MediaQuery.of(context).size.width / 6);
     return Scaffold(
         appBar: AppBar(),
         drawer: DrawerWrapper(const Drawer(
@@ -383,111 +385,175 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                               ),
                               child: SizedBox(
                                 height: 100,
-                                child: Column(
-                                  children: [
-                                    BlocBuilder<AttendanceLogCreateBloc,
-                                            AttendanceLogCreateState>(
-                                        builder: (context, logState) {
-                                      SchedulerBinding.instance
-                                          .addPostFrameCallback((_) {
-                                        logState.maybeWhen(
-                                            error: () {
-                                              if (!hasLoaded) {
-                                                Notifiers.getToastMessage(
-                                                    context,
-                                                    AppLocalizations.of(context)
-                                                        .translate(i18
-                                                            .attendanceMgmt
-                                                            .attendanceLoggedFailed),
-                                                    'ERROR');
-                                                onSubmit(registerId.toString());
-                                                hasLoaded = true;
-                                              }
-                                            },
-                                            loaded: () {
-                                              if (!hasLoaded) {
-                                                Notifiers.getToastMessage(
-                                                    context,
-                                                    AppLocalizations.of(context)
-                                                        .translate(i18
-                                                            .attendanceMgmt
-                                                            .attendanceLoggedSuccess),
-                                                    'SUCCESS');
-                                                onSubmit(registerId.toString());
-                                                hasLoaded = true;
-                                              }
-                                            },
-                                            orElse: () => Container());
-                                      });
-                                      return OutlinedButton(
-                                          style: OutlinedButton.styleFrom(
-                                              backgroundColor: Colors.white,
-                                              side: BorderSide(
-                                                  width: 2,
-                                                  color: DigitTheme.instance
-                                                      .colorScheme.secondary)),
-                                          onPressed: () {
-                                            if (selectedDateRange == null) {
-                                              Notifiers.getToastMessage(
-                                                  context,
-                                                  AppLocalizations.of(context)
-                                                      .translate(i18
-                                                          .attendanceMgmt
-                                                          .selectDateRangeFirst),
-                                                  'ERROR');
-                                            } else {
-                                              hasLoaded = false;
-                                              if (updateAttendeePayload
-                                                      .isNotEmpty &&
-                                                  createAttendeePayload
-                                                      .isNotEmpty) {
-                                                context
-                                                    .read<
-                                                        AttendanceLogCreateBloc>()
-                                                    .add(UpdateAttendanceLogEvent(
-                                                        attendanceList:
-                                                            updateAttendeePayload));
-                                                context
-                                                    .read<
-                                                        AttendanceLogCreateBloc>()
-                                                    .add(CreateAttendanceLogEvent(
-                                                        attendanceList:
-                                                            createAttendeePayload));
-                                              } else if (updateAttendeePayload
-                                                  .isNotEmpty) {
-                                                context
-                                                    .read<
-                                                        AttendanceLogCreateBloc>()
-                                                    .add(UpdateAttendanceLogEvent(
-                                                        attendanceList:
-                                                            updateAttendeePayload));
-                                              } else if (createAttendeePayload
-                                                  .isNotEmpty) {
-                                                context
-                                                    .read<
-                                                        AttendanceLogCreateBloc>()
-                                                    .add(CreateAttendanceLogEvent(
-                                                        attendanceList:
-                                                            createAttendeePayload));
-                                              }
-                                            }
-                                          },
-                                          child: Center(
-                                              child: Text(
+                                child: BlocBuilder<MusterGetWorkflowBloc,
+                                        MusterGetWorkflowState>(
+                                    builder: (context, workflowState) {
+                                  SchedulerBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    workflowState.maybeWhen(
+                                        initial: () {
+                                          workFlowLoaded = false;
+                                        },
+                                        loading: () {
+                                          workFlowLoaded = false;
+                                        },
+                                        error: () => Notifiers.getToastMessage(
+                                            context,
                                             AppLocalizations.of(context)
-                                                .translate(
-                                                    i18.common.saveAsDraft),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall,
-                                          )));
-                                    }),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    BlocBuilder<MusterGetWorkflowBloc,
-                                            MusterGetWorkflowState>(
-                                        builder: (context, workflowState) {
+                                                .translate(i18.attendanceMgmt
+                                                    .unableToCheckWorkflowStatus),
+                                            'ERROR'),
+                                        loaded: (MusterWorkFlowModel?
+                                            musterWorkFlowModel) {
+                                          if (!workFlowLoaded) {
+                                            if (musterWorkFlowModel!
+                                                    .processInstances!
+                                                    .isNotEmpty &&
+                                                (musterWorkFlowModel
+                                                        .processInstances
+                                                        ?.first
+                                                        .workflowState
+                                                        ?.applicationStatus ==
+                                                    'REJECTED')) {
+                                              inWorkFlow = false;
+                                            } else {
+                                              if (state
+                                                  .individualMusterRollModel!
+                                                  .musterRoll!
+                                                  .isNotEmpty) {
+                                                Notifiers.getToastMessage(
+                                                    context,
+                                                    AppLocalizations.of(context)
+                                                        .translate(i18
+                                                            .attendanceMgmt
+                                                            .applicationInWorkFlow),
+                                                    'ERROR');
+
+                                                inWorkFlow = true;
+                                              }
+                                              inWorkFlow = true;
+                                            }
+                                            workFlowLoaded = true;
+                                          }
+                                        },
+                                        orElse: () => Container());
+                                  });
+                                  return Column(
+                                    children: [
+                                      BlocBuilder<AttendanceLogCreateBloc,
+                                              AttendanceLogCreateState>(
+                                          builder: (context, logState) {
+                                        SchedulerBinding.instance
+                                            .addPostFrameCallback((_) {
+                                          logState.maybeWhen(
+                                              error: () {
+                                                if (!hasLoaded) {
+                                                  Notifiers.getToastMessage(
+                                                      context,
+                                                      AppLocalizations.of(
+                                                              context)
+                                                          .translate(i18
+                                                              .attendanceMgmt
+                                                              .attendanceLoggedFailed),
+                                                      'ERROR');
+                                                  onSubmit(
+                                                      registerId.toString());
+                                                  hasLoaded = true;
+                                                }
+                                              },
+                                              loaded: () {
+                                                if (!hasLoaded) {
+                                                  Notifiers.getToastMessage(
+                                                      context,
+                                                      AppLocalizations.of(
+                                                              context)
+                                                          .translate(i18
+                                                              .attendanceMgmt
+                                                              .attendanceLoggedSuccess),
+                                                      'SUCCESS');
+                                                  onSubmit(
+                                                      registerId.toString());
+                                                  hasLoaded = true;
+                                                }
+                                              },
+                                              orElse: () => Container());
+                                        });
+                                        return OutlinedButton(
+                                            style: OutlinedButton.styleFrom(
+                                                backgroundColor: Colors.white,
+                                                side: BorderSide(
+                                                    width: 2,
+                                                    color: DigitTheme
+                                                        .instance
+                                                        .colorScheme
+                                                        .secondary)),
+                                            onPressed: () {
+                                              if (selectedDateRange == null) {
+                                                Notifiers.getToastMessage(
+                                                    context,
+                                                    AppLocalizations.of(context)
+                                                        .translate(i18
+                                                            .attendanceMgmt
+                                                            .selectDateRangeFirst),
+                                                    'ERROR');
+                                              } else {
+                                                hasLoaded = false;
+                                                if (updateAttendeePayload
+                                                        .isNotEmpty &&
+                                                    createAttendeePayload
+                                                        .isNotEmpty) {
+                                                  context
+                                                      .read<
+                                                          AttendanceLogCreateBloc>()
+                                                      .add(UpdateAttendanceLogEvent(
+                                                          attendanceList:
+                                                              updateAttendeePayload));
+                                                  context
+                                                      .read<
+                                                          AttendanceLogCreateBloc>()
+                                                      .add(CreateAttendanceLogEvent(
+                                                          attendanceList:
+                                                              createAttendeePayload));
+                                                } else if (updateAttendeePayload
+                                                    .isNotEmpty) {
+                                                  context
+                                                      .read<
+                                                          AttendanceLogCreateBloc>()
+                                                      .add(UpdateAttendanceLogEvent(
+                                                          attendanceList:
+                                                              updateAttendeePayload));
+                                                } else if (createAttendeePayload
+                                                    .isNotEmpty) {
+                                                  context
+                                                      .read<
+                                                          AttendanceLogCreateBloc>()
+                                                      .add(CreateAttendanceLogEvent(
+                                                          attendanceList:
+                                                              createAttendeePayload));
+                                                }
+                                              }
+                                            },
+                                            child: Center(
+                                                child: Text(
+                                              AppLocalizations.of(context)
+                                                  .translate(
+                                                      i18.common.saveAsDraft),
+                                              style: inWorkFlow
+                                                  ? Theme.of(context)
+                                                      .textTheme
+                                                      .titleSmall
+                                                      ?.apply(
+                                                          color: const Color
+                                                                  .fromRGBO(
+                                                              149, 148, 148, 1))
+                                                  : Theme.of(context)
+                                                      .textTheme
+                                                      .titleSmall,
+                                            )));
+                                      }),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
                                       BlocBuilder<MusterCreateBloc,
                                               MusterCreateState>(
                                           builder:
@@ -528,22 +594,9 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                               orElse: () => Container());
                                         });
                                         return Container();
-                                      });
-                                      return DigitElevatedButton(
-                                        onPressed: workflowState
-                                                        .musterWorkFlowModel
-                                                        ?.processInstances
-                                                        ?.first
-                                                        .workflowState
-                                                        ?.applicationStatus ==
-                                                    'REJECTED' ||
-                                                workflowState
-                                                        .musterWorkFlowModel
-                                                        ?.processInstances
-                                                        ?.first
-                                                        .workflowState
-                                                        ?.applicationStatus ==
-                                                    'REJECT'
+                                      }),
+                                      DigitElevatedButton(
+                                        onPressed: !inWorkFlow
                                             ? () {
                                                 if (selectedDateRange == null) {
                                                   Notifiers.getToastMessage(
@@ -559,10 +612,38 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                   context
                                                       .read<MusterCreateBloc>()
                                                       .add(UpdateMusterEvent(
-                                                          tenantId:
-                                                              widget.tenantId,
-                                                          id: musterId
-                                                              .toString()));
+                                                        tenantId:
+                                                            widget.tenantId,
+                                                        id: musterId.toString(),
+                                                        contractId: state
+                                                                .individualMusterRollModel!
+                                                                .musterRoll!
+                                                                .first
+                                                                .musterAdditionalDetails!
+                                                                .contractId ??
+                                                            'NA',
+                                                        registerNo: state
+                                                                .individualMusterRollModel!
+                                                                .musterRoll!
+                                                                .first
+                                                                .musterAdditionalDetails!
+                                                                .attendanceRegisterNo ??
+                                                            'NA',
+                                                        registerName: state
+                                                                .individualMusterRollModel!
+                                                                .musterRoll!
+                                                                .first
+                                                                .musterAdditionalDetails!
+                                                                .attendanceRegisterName ??
+                                                            'NA',
+                                                        orgName: state
+                                                                .individualMusterRollModel!
+                                                                .musterRoll!
+                                                                .first
+                                                                .musterAdditionalDetails!
+                                                                .contractId ??
+                                                            'NA',
+                                                      ));
                                                   Future.delayed(const Duration(
                                                       seconds: 2));
                                                   onSubmit(state
@@ -582,10 +663,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                 .textTheme
                                                 .titleSmall!
                                                 .apply(color: Colors.white)),
-                                      );
-                                    }),
-                                  ],
-                                ),
+                                      )
+                                    ],
+                                  );
+                                }),
                               ),
                             ),
                           );
@@ -631,6 +712,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                 tenantId: widget.tenantId,
                 musterRollNumber: widget.musterRollNo),
           );
+      workFlowLoaded = false;
     } else {
       Notifiers.getToastMessage(
           context,

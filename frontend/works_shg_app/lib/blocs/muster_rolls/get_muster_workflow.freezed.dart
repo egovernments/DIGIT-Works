@@ -244,12 +244,55 @@ abstract class GetMusterWorkflowEvent implements MusterGetWorkflowEvent {
 
 /// @nodoc
 mixin _$MusterGetWorkflowState {
-  bool get loading => throw _privateConstructorUsedError;
-  MusterWorkFlowModel? get musterWorkFlowModel =>
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(MusterWorkFlowModel? musterWorkFlowModel) loaded,
+    required TResult Function() error,
+  }) =>
       throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $MusterGetWorkflowStateCopyWith<MusterGetWorkflowState> get copyWith =>
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(MusterWorkFlowModel? musterWorkFlowModel)? loaded,
+    TResult? Function()? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(MusterWorkFlowModel? musterWorkFlowModel)? loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) =>
       throw _privateConstructorUsedError;
 }
 
@@ -258,10 +301,6 @@ abstract class $MusterGetWorkflowStateCopyWith<$Res> {
   factory $MusterGetWorkflowStateCopyWith(MusterGetWorkflowState value,
           $Res Function(MusterGetWorkflowState) then) =
       _$MusterGetWorkflowStateCopyWithImpl<$Res, MusterGetWorkflowState>;
-  @useResult
-  $Res call({bool loading, MusterWorkFlowModel? musterWorkFlowModel});
-
-  $MusterWorkFlowModelCopyWith<$Res>? get musterWorkFlowModel;
 }
 
 /// @nodoc
@@ -274,23 +313,264 @@ class _$MusterGetWorkflowStateCopyWithImpl<$Res,
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+}
+
+/// @nodoc
+abstract class _$$_InitialCopyWith<$Res> {
+  factory _$$_InitialCopyWith(
+          _$_Initial value, $Res Function(_$_Initial) then) =
+      __$$_InitialCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_InitialCopyWithImpl<$Res>
+    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Initial>
+    implements _$$_InitialCopyWith<$Res> {
+  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Initial extends _Initial {
+  const _$_Initial() : super._();
+
+  @override
+  String toString() {
+    return 'MusterGetWorkflowState.initial()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Initial);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(MusterWorkFlowModel? musterWorkFlowModel) loaded,
+    required TResult Function() error,
+  }) {
+    return initial();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(MusterWorkFlowModel? musterWorkFlowModel)? loaded,
+    TResult? Function()? error,
+  }) {
+    return initial?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(MusterWorkFlowModel? musterWorkFlowModel)? loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return initial(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return initial?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Initial extends MusterGetWorkflowState {
+  const factory _Initial() = _$_Initial;
+  const _Initial._() : super._();
+}
+
+/// @nodoc
+abstract class _$$_LoadingCopyWith<$Res> {
+  factory _$$_LoadingCopyWith(
+          _$_Loading value, $Res Function(_$_Loading) then) =
+      __$$_LoadingCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_LoadingCopyWithImpl<$Res>
+    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Loading>
+    implements _$$_LoadingCopyWith<$Res> {
+  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Loading extends _Loading {
+  const _$_Loading() : super._();
+
+  @override
+  String toString() {
+    return 'MusterGetWorkflowState.loading()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Loading);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(MusterWorkFlowModel? musterWorkFlowModel) loaded,
+    required TResult Function() error,
+  }) {
+    return loading();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(MusterWorkFlowModel? musterWorkFlowModel)? loaded,
+    TResult? Function()? error,
+  }) {
+    return loading?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(MusterWorkFlowModel? musterWorkFlowModel)? loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loading(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loading?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Loading extends MusterGetWorkflowState {
+  const factory _Loading() = _$_Loading;
+  const _Loading._() : super._();
+}
+
+/// @nodoc
+abstract class _$$_LoadedCopyWith<$Res> {
+  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
+      __$$_LoadedCopyWithImpl<$Res>;
+  @useResult
+  $Res call({MusterWorkFlowModel? musterWorkFlowModel});
+
+  $MusterWorkFlowModelCopyWith<$Res>? get musterWorkFlowModel;
+}
+
+/// @nodoc
+class __$$_LoadedCopyWithImpl<$Res>
+    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Loaded>
+    implements _$$_LoadedCopyWith<$Res> {
+  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+      : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = null,
     Object? musterWorkFlowModel = freezed,
   }) {
-    return _then(_value.copyWith(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      musterWorkFlowModel: freezed == musterWorkFlowModel
+    return _then(_$_Loaded(
+      freezed == musterWorkFlowModel
           ? _value.musterWorkFlowModel
           : musterWorkFlowModel // ignore: cast_nullable_to_non_nullable
               as MusterWorkFlowModel?,
-    ) as $Val);
+    ));
   }
 
   @override
@@ -302,105 +582,237 @@ class _$MusterGetWorkflowStateCopyWithImpl<$Res,
 
     return $MusterWorkFlowModelCopyWith<$Res>(_value.musterWorkFlowModel!,
         (value) {
-      return _then(_value.copyWith(musterWorkFlowModel: value) as $Val);
+      return _then(_value.copyWith(musterWorkFlowModel: value));
     });
   }
 }
 
 /// @nodoc
-abstract class _$$_MusterGetWorkflowStateCopyWith<$Res>
-    implements $MusterGetWorkflowStateCopyWith<$Res> {
-  factory _$$_MusterGetWorkflowStateCopyWith(_$_MusterGetWorkflowState value,
-          $Res Function(_$_MusterGetWorkflowState) then) =
-      __$$_MusterGetWorkflowStateCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({bool loading, MusterWorkFlowModel? musterWorkFlowModel});
 
-  @override
-  $MusterWorkFlowModelCopyWith<$Res>? get musterWorkFlowModel;
-}
+class _$_Loaded extends _Loaded {
+  const _$_Loaded(this.musterWorkFlowModel) : super._();
 
-/// @nodoc
-class __$$_MusterGetWorkflowStateCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowStateCopyWithImpl<$Res,
-        _$_MusterGetWorkflowState>
-    implements _$$_MusterGetWorkflowStateCopyWith<$Res> {
-  __$$_MusterGetWorkflowStateCopyWithImpl(_$_MusterGetWorkflowState _value,
-      $Res Function(_$_MusterGetWorkflowState) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? loading = null,
-    Object? musterWorkFlowModel = freezed,
-  }) {
-    return _then(_$_MusterGetWorkflowState(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      musterWorkFlowModel: freezed == musterWorkFlowModel
-          ? _value.musterWorkFlowModel
-          : musterWorkFlowModel // ignore: cast_nullable_to_non_nullable
-              as MusterWorkFlowModel?,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$_MusterGetWorkflowState extends _MusterGetWorkflowState {
-  const _$_MusterGetWorkflowState(
-      {this.loading = false, this.musterWorkFlowModel})
-      : super._();
-
-  @override
-  @JsonKey()
-  final bool loading;
   @override
   final MusterWorkFlowModel? musterWorkFlowModel;
 
   @override
   String toString() {
-    return 'MusterGetWorkflowState(loading: $loading, musterWorkFlowModel: $musterWorkFlowModel)';
+    return 'MusterGetWorkflowState.loaded(musterWorkFlowModel: $musterWorkFlowModel)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MusterGetWorkflowState &&
-            (identical(other.loading, loading) || other.loading == loading) &&
+            other is _$_Loaded &&
             (identical(other.musterWorkFlowModel, musterWorkFlowModel) ||
                 other.musterWorkFlowModel == musterWorkFlowModel));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, loading, musterWorkFlowModel);
+  int get hashCode => Object.hash(runtimeType, musterWorkFlowModel);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MusterGetWorkflowStateCopyWith<_$_MusterGetWorkflowState> get copyWith =>
-      __$$_MusterGetWorkflowStateCopyWithImpl<_$_MusterGetWorkflowState>(
-          this, _$identity);
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(MusterWorkFlowModel? musterWorkFlowModel) loaded,
+    required TResult Function() error,
+  }) {
+    return loaded(musterWorkFlowModel);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(MusterWorkFlowModel? musterWorkFlowModel)? loaded,
+    TResult? Function()? error,
+  }) {
+    return loaded?.call(musterWorkFlowModel);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(MusterWorkFlowModel? musterWorkFlowModel)? loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(musterWorkFlowModel);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(this);
+    }
+    return orElse();
+  }
 }
 
-abstract class _MusterGetWorkflowState extends MusterGetWorkflowState {
-  const factory _MusterGetWorkflowState(
-          {final bool loading,
-          final MusterWorkFlowModel? musterWorkFlowModel}) =
-      _$_MusterGetWorkflowState;
-  const _MusterGetWorkflowState._() : super._();
+abstract class _Loaded extends MusterGetWorkflowState {
+  const factory _Loaded(final MusterWorkFlowModel? musterWorkFlowModel) =
+      _$_Loaded;
+  const _Loaded._() : super._();
+
+  MusterWorkFlowModel? get musterWorkFlowModel;
+  @JsonKey(ignore: true)
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$_ErrorCopyWith<$Res> {
+  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
+      __$$_ErrorCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_ErrorCopyWithImpl<$Res>
+    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Error>
+    implements _$$_ErrorCopyWith<$Res> {
+  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Error extends _Error {
+  const _$_Error() : super._();
 
   @override
-  bool get loading;
+  String toString() {
+    return 'MusterGetWorkflowState.error()';
+  }
+
   @override
-  MusterWorkFlowModel? get musterWorkFlowModel;
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Error);
+  }
+
   @override
-  @JsonKey(ignore: true)
-  _$$_MusterGetWorkflowStateCopyWith<_$_MusterGetWorkflowState> get copyWith =>
-      throw _privateConstructorUsedError;
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(MusterWorkFlowModel? musterWorkFlowModel) loaded,
+    required TResult Function() error,
+  }) {
+    return error();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(MusterWorkFlowModel? musterWorkFlowModel)? loaded,
+    TResult? Function()? error,
+  }) {
+    return error?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(MusterWorkFlowModel? musterWorkFlowModel)? loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return error(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return error?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Error extends MusterGetWorkflowState {
+  const factory _Error() = _$_Error;
+  const _Error._() : super._();
 }

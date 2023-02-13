@@ -17,24 +17,56 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$MusterCreateEvent {
   String get tenantId => throw _privateConstructorUsedError;
+  String get contractId => throw _privateConstructorUsedError;
+  String get orgName => throw _privateConstructorUsedError;
+  String get registerNo => throw _privateConstructorUsedError;
+  String get registerName => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String registerId, int startDate)
+    required TResult Function(
+            String tenantId,
+            String registerId,
+            String contractId,
+            String orgName,
+            String registerNo,
+            String registerName,
+            int startDate)
         create,
-    required TResult Function(String tenantId, String id) update,
+    required TResult Function(String tenantId, String id, String orgName,
+            String contractId, String registerNo, String registerName)
+        update,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String registerId, int startDate)?
+    TResult? Function(
+            String tenantId,
+            String registerId,
+            String contractId,
+            String orgName,
+            String registerNo,
+            String registerName,
+            int startDate)?
         create,
-    TResult? Function(String tenantId, String id)? update,
+    TResult? Function(String tenantId, String id, String orgName,
+            String contractId, String registerNo, String registerName)?
+        update,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String registerId, int startDate)? create,
-    TResult Function(String tenantId, String id)? update,
+    TResult Function(
+            String tenantId,
+            String registerId,
+            String contractId,
+            String orgName,
+            String registerNo,
+            String registerName,
+            int startDate)?
+        create,
+    TResult Function(String tenantId, String id, String orgName,
+            String contractId, String registerNo, String registerName)?
+        update,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -69,7 +101,12 @@ abstract class $MusterCreateEventCopyWith<$Res> {
           MusterCreateEvent value, $Res Function(MusterCreateEvent) then) =
       _$MusterCreateEventCopyWithImpl<$Res, MusterCreateEvent>;
   @useResult
-  $Res call({String tenantId});
+  $Res call(
+      {String tenantId,
+      String contractId,
+      String orgName,
+      String registerNo,
+      String registerName});
 }
 
 /// @nodoc
@@ -86,11 +123,31 @@ class _$MusterCreateEventCopyWithImpl<$Res, $Val extends MusterCreateEvent>
   @override
   $Res call({
     Object? tenantId = null,
+    Object? contractId = null,
+    Object? orgName = null,
+    Object? registerNo = null,
+    Object? registerName = null,
   }) {
     return _then(_value.copyWith(
       tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
+              as String,
+      contractId: null == contractId
+          ? _value.contractId
+          : contractId // ignore: cast_nullable_to_non_nullable
+              as String,
+      orgName: null == orgName
+          ? _value.orgName
+          : orgName // ignore: cast_nullable_to_non_nullable
+              as String,
+      registerNo: null == registerNo
+          ? _value.registerNo
+          : registerNo // ignore: cast_nullable_to_non_nullable
+              as String,
+      registerName: null == registerName
+          ? _value.registerName
+          : registerName // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -104,7 +161,14 @@ abstract class _$$CreateMusterEventCopyWith<$Res>
       __$$CreateMusterEventCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String tenantId, String registerId, int startDate});
+  $Res call(
+      {String tenantId,
+      String registerId,
+      String contractId,
+      String orgName,
+      String registerNo,
+      String registerName,
+      int startDate});
 }
 
 /// @nodoc
@@ -120,6 +184,10 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
   $Res call({
     Object? tenantId = null,
     Object? registerId = null,
+    Object? contractId = null,
+    Object? orgName = null,
+    Object? registerNo = null,
+    Object? registerName = null,
     Object? startDate = null,
   }) {
     return _then(_$CreateMusterEvent(
@@ -130,6 +198,22 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
       registerId: null == registerId
           ? _value.registerId
           : registerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      contractId: null == contractId
+          ? _value.contractId
+          : contractId // ignore: cast_nullable_to_non_nullable
+              as String,
+      orgName: null == orgName
+          ? _value.orgName
+          : orgName // ignore: cast_nullable_to_non_nullable
+              as String,
+      registerNo: null == registerNo
+          ? _value.registerNo
+          : registerNo // ignore: cast_nullable_to_non_nullable
+              as String,
+      registerName: null == registerName
+          ? _value.registerName
+          : registerName // ignore: cast_nullable_to_non_nullable
               as String,
       startDate: null == startDate
           ? _value.startDate
@@ -145,6 +229,10 @@ class _$CreateMusterEvent implements CreateMusterEvent {
   const _$CreateMusterEvent(
       {required this.tenantId,
       required this.registerId,
+      required this.contractId,
+      required this.orgName,
+      required this.registerNo,
+      required this.registerName,
       required this.startDate});
 
   @override
@@ -152,11 +240,19 @@ class _$CreateMusterEvent implements CreateMusterEvent {
   @override
   final String registerId;
   @override
+  final String contractId;
+  @override
+  final String orgName;
+  @override
+  final String registerNo;
+  @override
+  final String registerName;
+  @override
   final int startDate;
 
   @override
   String toString() {
-    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, startDate: $startDate)';
+    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, contractId: $contractId, orgName: $orgName, registerNo: $registerNo, registerName: $registerName, startDate: $startDate)';
   }
 
   @override
@@ -168,12 +264,20 @@ class _$CreateMusterEvent implements CreateMusterEvent {
                 other.tenantId == tenantId) &&
             (identical(other.registerId, registerId) ||
                 other.registerId == registerId) &&
+            (identical(other.contractId, contractId) ||
+                other.contractId == contractId) &&
+            (identical(other.orgName, orgName) || other.orgName == orgName) &&
+            (identical(other.registerNo, registerNo) ||
+                other.registerNo == registerNo) &&
+            (identical(other.registerName, registerName) ||
+                other.registerName == registerName) &&
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, tenantId, registerId, startDate);
+  int get hashCode => Object.hash(runtimeType, tenantId, registerId, contractId,
+      orgName, registerNo, registerName, startDate);
 
   @JsonKey(ignore: true)
   @override
@@ -184,32 +288,63 @@ class _$CreateMusterEvent implements CreateMusterEvent {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String registerId, int startDate)
+    required TResult Function(
+            String tenantId,
+            String registerId,
+            String contractId,
+            String orgName,
+            String registerNo,
+            String registerName,
+            int startDate)
         create,
-    required TResult Function(String tenantId, String id) update,
+    required TResult Function(String tenantId, String id, String orgName,
+            String contractId, String registerNo, String registerName)
+        update,
   }) {
-    return create(tenantId, registerId, startDate);
+    return create(tenantId, registerId, contractId, orgName, registerNo,
+        registerName, startDate);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String registerId, int startDate)?
+    TResult? Function(
+            String tenantId,
+            String registerId,
+            String contractId,
+            String orgName,
+            String registerNo,
+            String registerName,
+            int startDate)?
         create,
-    TResult? Function(String tenantId, String id)? update,
+    TResult? Function(String tenantId, String id, String orgName,
+            String contractId, String registerNo, String registerName)?
+        update,
   }) {
-    return create?.call(tenantId, registerId, startDate);
+    return create?.call(tenantId, registerId, contractId, orgName, registerNo,
+        registerName, startDate);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String registerId, int startDate)? create,
-    TResult Function(String tenantId, String id)? update,
+    TResult Function(
+            String tenantId,
+            String registerId,
+            String contractId,
+            String orgName,
+            String registerNo,
+            String registerName,
+            int startDate)?
+        create,
+    TResult Function(String tenantId, String id, String orgName,
+            String contractId, String registerNo, String registerName)?
+        update,
     required TResult orElse(),
   }) {
     if (create != null) {
-      return create(tenantId, registerId, startDate);
+      return create(tenantId, registerId, contractId, orgName, registerNo,
+          registerName, startDate);
     }
     return orElse();
   }
@@ -250,11 +385,23 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
   const factory CreateMusterEvent(
       {required final String tenantId,
       required final String registerId,
+      required final String contractId,
+      required final String orgName,
+      required final String registerNo,
+      required final String registerName,
       required final int startDate}) = _$CreateMusterEvent;
 
   @override
   String get tenantId;
   String get registerId;
+  @override
+  String get contractId;
+  @override
+  String get orgName;
+  @override
+  String get registerNo;
+  @override
+  String get registerName;
   int get startDate;
   @override
   @JsonKey(ignore: true)
@@ -270,7 +417,13 @@ abstract class _$$UpdateMusterEventCopyWith<$Res>
       __$$UpdateMusterEventCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String tenantId, String id});
+  $Res call(
+      {String tenantId,
+      String id,
+      String orgName,
+      String contractId,
+      String registerNo,
+      String registerName});
 }
 
 /// @nodoc
@@ -286,6 +439,10 @@ class __$$UpdateMusterEventCopyWithImpl<$Res>
   $Res call({
     Object? tenantId = null,
     Object? id = null,
+    Object? orgName = null,
+    Object? contractId = null,
+    Object? registerNo = null,
+    Object? registerName = null,
   }) {
     return _then(_$UpdateMusterEvent(
       tenantId: null == tenantId
@@ -296,6 +453,22 @@ class __$$UpdateMusterEventCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      orgName: null == orgName
+          ? _value.orgName
+          : orgName // ignore: cast_nullable_to_non_nullable
+              as String,
+      contractId: null == contractId
+          ? _value.contractId
+          : contractId // ignore: cast_nullable_to_non_nullable
+              as String,
+      registerNo: null == registerNo
+          ? _value.registerNo
+          : registerNo // ignore: cast_nullable_to_non_nullable
+              as String,
+      registerName: null == registerName
+          ? _value.registerName
+          : registerName // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -303,16 +476,30 @@ class __$$UpdateMusterEventCopyWithImpl<$Res>
 /// @nodoc
 
 class _$UpdateMusterEvent implements UpdateMusterEvent {
-  const _$UpdateMusterEvent({required this.tenantId, required this.id});
+  const _$UpdateMusterEvent(
+      {required this.tenantId,
+      required this.id,
+      required this.orgName,
+      required this.contractId,
+      required this.registerNo,
+      required this.registerName});
 
   @override
   final String tenantId;
   @override
   final String id;
+  @override
+  final String orgName;
+  @override
+  final String contractId;
+  @override
+  final String registerNo;
+  @override
+  final String registerName;
 
   @override
   String toString() {
-    return 'MusterCreateEvent.update(tenantId: $tenantId, id: $id)';
+    return 'MusterCreateEvent.update(tenantId: $tenantId, id: $id, orgName: $orgName, contractId: $contractId, registerNo: $registerNo, registerName: $registerName)';
   }
 
   @override
@@ -322,11 +509,19 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             other is _$UpdateMusterEvent &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
-            (identical(other.id, id) || other.id == id));
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.orgName, orgName) || other.orgName == orgName) &&
+            (identical(other.contractId, contractId) ||
+                other.contractId == contractId) &&
+            (identical(other.registerNo, registerNo) ||
+                other.registerNo == registerNo) &&
+            (identical(other.registerName, registerName) ||
+                other.registerName == registerName));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, tenantId, id);
+  int get hashCode => Object.hash(
+      runtimeType, tenantId, id, orgName, contractId, registerNo, registerName);
 
   @JsonKey(ignore: true)
   @override
@@ -337,32 +532,62 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String registerId, int startDate)
+    required TResult Function(
+            String tenantId,
+            String registerId,
+            String contractId,
+            String orgName,
+            String registerNo,
+            String registerName,
+            int startDate)
         create,
-    required TResult Function(String tenantId, String id) update,
+    required TResult Function(String tenantId, String id, String orgName,
+            String contractId, String registerNo, String registerName)
+        update,
   }) {
-    return update(tenantId, id);
+    return update(tenantId, id, orgName, contractId, registerNo, registerName);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String registerId, int startDate)?
+    TResult? Function(
+            String tenantId,
+            String registerId,
+            String contractId,
+            String orgName,
+            String registerNo,
+            String registerName,
+            int startDate)?
         create,
-    TResult? Function(String tenantId, String id)? update,
+    TResult? Function(String tenantId, String id, String orgName,
+            String contractId, String registerNo, String registerName)?
+        update,
   }) {
-    return update?.call(tenantId, id);
+    return update?.call(
+        tenantId, id, orgName, contractId, registerNo, registerName);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String registerId, int startDate)? create,
-    TResult Function(String tenantId, String id)? update,
+    TResult Function(
+            String tenantId,
+            String registerId,
+            String contractId,
+            String orgName,
+            String registerNo,
+            String registerName,
+            int startDate)?
+        create,
+    TResult Function(String tenantId, String id, String orgName,
+            String contractId, String registerNo, String registerName)?
+        update,
     required TResult orElse(),
   }) {
     if (update != null) {
-      return update(tenantId, id);
+      return update(
+          tenantId, id, orgName, contractId, registerNo, registerName);
     }
     return orElse();
   }
@@ -402,11 +627,23 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
 abstract class UpdateMusterEvent implements MusterCreateEvent {
   const factory UpdateMusterEvent(
       {required final String tenantId,
-      required final String id}) = _$UpdateMusterEvent;
+      required final String id,
+      required final String orgName,
+      required final String contractId,
+      required final String registerNo,
+      required final String registerName}) = _$UpdateMusterEvent;
 
   @override
   String get tenantId;
   String get id;
+  @override
+  String get orgName;
+  @override
+  String get contractId;
+  @override
+  String get registerNo;
+  @override
+  String get registerName;
   @override
   @JsonKey(ignore: true)
   _$$UpdateMusterEventCopyWith<_$UpdateMusterEvent> get copyWith =>

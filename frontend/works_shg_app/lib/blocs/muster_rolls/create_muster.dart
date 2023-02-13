@@ -37,6 +37,12 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
               "tenantId": event.tenantId,
               "registerId": event.registerId,
               "startDate": event.startDate,
+              "additonalDetails": {
+                "orgName": event.orgName,
+                "contractId": event.contractId,
+                "attendanceRegisterNo": event.registerNo,
+                "attendanceRegisterName": event.registerName
+              }
             },
             "workflow": {"action": "SUBMIT", "comments": "Submit muster roll"}
           });
@@ -66,6 +72,12 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
             "musterRoll": {
               "tenantId": event.tenantId,
               "id": event.id,
+              "additonalDetails": {
+                "orgName": event.orgName,
+                "contractId": event.contractId,
+                "attendanceRegisterNo": event.registerNo,
+                "attendanceRegisterName": event.registerName
+              }
             },
             "workflow": {
               "action": "RESUBMIT",
@@ -89,11 +101,19 @@ class MusterCreateEvent with _$MusterCreateEvent {
   const factory MusterCreateEvent.create({
     required String tenantId,
     required String registerId,
+    required String contractId,
+    required String orgName,
+    required String registerNo,
+    required String registerName,
     required int startDate,
   }) = CreateMusterEvent;
   const factory MusterCreateEvent.update({
     required String tenantId,
     required String id,
+    required String orgName,
+    required String contractId,
+    required String registerNo,
+    required String registerName,
   }) = UpdateMusterEvent;
 }
 
@@ -104,8 +124,4 @@ class MusterCreateState with _$MusterCreateState {
   const factory MusterCreateState.loading() = _Loading;
   const factory MusterCreateState.loaded() = _Loaded;
   const factory MusterCreateState.error() = _Error;
-  // const factory MusterCreateState({
-  //   @Default(false) bool loading,
-  //   MusterRollsModel? musterRollsModel,
-  // }) = _MusterCreateState;
 }

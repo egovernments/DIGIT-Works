@@ -44,7 +44,7 @@ part 'app_router.gr.dart';
         AutoRoute(page: WorkOrderPage, path: 'work-orders'),
         AutoRoute(page: ViewMusterRollsPage, path: 'muster-rolls'),
         AutoRoute(
-            page: SHGInboxPage, path: 'shg-inbox//:tenantId/:musterRollNo'),
+            page: SHGInboxPage, path: 'shg-inbox/:tenantId/:musterRollNo'),
         AutoRoute(
             page: ManageAttendanceRegisterPage, path: 'manage-attendance'),
         AutoRoute(page: AttendanceInboxPage, path: 'attendance-inbox'),
