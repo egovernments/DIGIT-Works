@@ -38,7 +38,7 @@ public class ContractServiceValidator {
         log.info("Validate contract create request");
 
         // Validate the Request Info object
-        validateRequestInfo(contractRequest);
+        validateRequestInfo(contractRequest.getRequestInfo());
 
         // Validate required parameters
         validateRequestedContractRequiredParameters(contractRequest);
@@ -50,7 +50,7 @@ public class ContractServiceValidator {
         validateContractDates(contractRequest);
 
         // Validate tenantId against MDMS data
-        validateTenantIdAgainstMDMS(contractRequest);
+        validateTenantIdAgainstMDMS(contractRequest.getRequestInfo(),contractRequest.getContract().getTenantId());
 
         // Validate estimateIds against estimate service
         validateRequestedEstimateIdsAgainstEstimateService(contractRequest);
@@ -196,10 +196,7 @@ public class ContractServiceValidator {
         return fetchedEstimateIdWithEstimateDetailIds;
     }
 
-    private void validateTenantIdAgainstMDMS(ContractRequest contractRequest) {
-        RequestInfo requestInfo = contractRequest.getRequestInfo();
-        Contract contract = contractRequest.getContract();
-        String tenantId = contract.getTenantId();
+    private void validateTenantIdAgainstMDMS(RequestInfo requestInfo,String tenantId) {
         String rootTenantId = tenantId.split("\\.")[0];
 
         //Get MDMS data using create attendance register request and tenantId
@@ -225,13 +222,10 @@ public class ContractServiceValidator {
 
     /**
      * Validate the Request Info object.
-     * @param contractRequest
+     * @param requestInfo
      */
 
-    private void validateRequestInfo(ContractRequest contractRequest) {
-
-        RequestInfo requestInfo = contractRequest.getRequestInfo();
-
+    private void validateRequestInfo(RequestInfo requestInfo) {
         if (requestInfo == null) {
             log.error("Request info is mandatory");
             throw new CustomException("REQUEST_INFO", "Request info is mandatory");
@@ -320,6 +314,35 @@ public class ContractServiceValidator {
                 log.error("Contract and corresponding lineItems should belong to same tenantId");
                 throw new CustomException("MULTIPLE_TENANTIDS","Contract and corresponding lineItems should belong to same tenantId");
             }
+        }
+    }
+
+    public void validateSearchContractRequest(RequestInfo requestInfo, ContractCriteria contractCriteria) {
+
+        if (contractCriteria == null || requestInfo == null) {
+            log.error("Contract search criteria request is mandatory");
+            throw new CustomException("CONTRACT_SEARCH_CRITERIA_REQUEST", "Contract search criteria request is mandatory");
+        }
+
+        //validate request info
+        log.info("validate request info");
+        validateRequestInfo(requestInfo);
+
+        //validate request parameters
+        log.info("validate request parameters");
+        validateSearchContractRequestParameters(contractCriteria);
+
+        //validate tenantId with MDMS
+        log.info("validate tenantId with MDMS");
+        validateTenantIdAgainstMDMS(requestInfo,contractCriteria.getTenantId());
+
+    }
+
+    private void validateSearchContractRequestParameters(ContractCriteria contractCriteria){
+
+        if (StringUtils.isBlank(contractCriteria.getTenantId())) {
+            log.error("Tenant is mandatory");
+            throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
     }
 }

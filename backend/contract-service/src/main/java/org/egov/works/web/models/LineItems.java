@@ -74,9 +74,6 @@ public class LineItems {
     @JsonIgnore
     private String contractId;
 
-    @JsonIgnore
-    private String status;
-
 
     public LineItems addAmountBreakupsItem(AmountBreakup amountBreakupsItem) {
         if (this.amountBreakups == null) {

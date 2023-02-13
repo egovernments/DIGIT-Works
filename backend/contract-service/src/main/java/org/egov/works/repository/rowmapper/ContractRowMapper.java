@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.Contract;
 import org.egov.works.web.models.Document;
+import org.egov.works.web.models.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -72,7 +73,7 @@ public class ContractRowMapper implements ResultSetExtractor<List<Contract>> {
                     .orgId(orgId)
                     .startDate(startDate)
                     .endDate(endDate)
-                    .status(status)
+                    .status(Status.fromValue(status))
                     .additionalDetails(additionalDetails)
                     .auditDetails(auditDetails)
                     .build();
@@ -95,7 +96,7 @@ public class ContractRowMapper implements ResultSetExtractor<List<Contract>> {
                     .documentType(rs.getString("docDocumentType"))
                     .fileStore(rs.getString("docFileStoreId"))
                     .documentUid(rs.getString("docDocumentUid"))
-                    .status(rs.getString("docStatus"))
+                    .status(Status.fromValue(rs.getString("docStatus")))
                     .contractId(rs.getString("docContractIid"))
                     .build();
 

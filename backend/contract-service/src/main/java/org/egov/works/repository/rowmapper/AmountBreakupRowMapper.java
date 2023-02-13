@@ -6,6 +6,7 @@ import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.AmountBreakup;
+import org.egov.works.web.models.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -55,7 +56,7 @@ public class AmountBreakupRowMapper implements ResultSetExtractor<List<AmountBre
                     .estimateAmountBreakupId(estimateAmountBreakupId)
                     .lineItemId(lineItemId)
                     .amount(amount)
-                    .status(status)
+                    .status(Status.fromValue(status))
                     .additionalDetails(additionalDetails)
                     .auditDetails(auditDetails)
                     .build();

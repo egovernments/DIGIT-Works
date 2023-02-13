@@ -123,8 +123,7 @@ public class ContractEnrichment {
         String rootTenantId = contract.getTenantId().split("\\.")[0];
         List<String> idList = idgenUtil.getIdList(requestInfo, rootTenantId, config.getIdgenContractNumberName(), "", 1);
         contract.setContractNumber(idList.get(0));
-    private ContractServiceConfiguration config;
-
+    }
     public void enrichSearchContractRequest(RequestInfo requestInfo, ContractCriteria contractCriteria) {
 
         Pagination pagination=contractCriteria.getPagination();

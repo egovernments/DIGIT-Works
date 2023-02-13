@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.AmountBreakup;
 import org.egov.works.web.models.LineItems;
+import org.egov.works.web.models.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -60,7 +61,7 @@ public class LineItemsRowMapper implements ResultSetExtractor<List<LineItems>> {
                     .tenantId(tenantId)
                     .unitRate(unitRate)
                     .noOfunit(noOfUnit)
-                    .status(status)
+                    .status(Status.fromValue(status))
                     .additionalDetails(additionalDetails)
                     .auditDetails(auditDetails)
                     .build();
@@ -83,7 +84,7 @@ public class LineItemsRowMapper implements ResultSetExtractor<List<LineItems>> {
                     .estimateAmountBreakupId(rs.getString("amtEstimateAmountBreakupId"))
                     .lineItemId(rs.getString("amtLineItemId"))
                     .amount(rs.getBigDecimal("amtAmount"))
-                    .status(rs.getString("amtStatus"))
+                    .status(Status.fromValue(rs.getString("amtStatus")))
                     .build();
 
             JsonNode additionalDetails = getAdditionalDetail("amtAdditionalDetails", rs);

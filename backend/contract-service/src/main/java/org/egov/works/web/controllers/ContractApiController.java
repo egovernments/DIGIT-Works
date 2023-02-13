@@ -44,9 +44,6 @@ public class ContractApiController {
     private ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    private ContractService contractService;
-
-    @Autowired
     public ContractApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;

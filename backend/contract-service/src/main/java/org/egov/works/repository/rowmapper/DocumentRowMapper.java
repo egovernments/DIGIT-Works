@@ -6,6 +6,7 @@ import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.Document;
+import org.egov.works.web.models.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -55,7 +56,7 @@ public class DocumentRowMapper implements ResultSetExtractor<List<Document>> {
                     .fileStore(fileStoreId)
                     .documentType(documentType)
                     .documentUid(documentUid)
-                    .status(status)
+                    .status(Status.fromValue(status))
                     .contractId(contractId)
                     .additionalDetails(additionalDetails)
                     .auditDetails(auditDetails)

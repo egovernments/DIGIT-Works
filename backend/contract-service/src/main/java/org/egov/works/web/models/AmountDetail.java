@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
+
 /**
  * AmountDetail
  */
@@ -21,7 +23,7 @@ public class AmountDetail {
     private String id = null;
 
     @JsonProperty("amount")
-    private Double amount = null;
+    private BigDecimal amount = null;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
