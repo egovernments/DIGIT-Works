@@ -30,7 +30,7 @@ function PropertyDocuments({ documents, svgStyles = {}, isSendBackFlow=false }) 
     }
     else if(filesArray?.length)
    { 
-     Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()).then((res) => {
+     Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getCurrentTenantId()).then((res) => {
       setPdfFiles(res?.data);
      });
     }
