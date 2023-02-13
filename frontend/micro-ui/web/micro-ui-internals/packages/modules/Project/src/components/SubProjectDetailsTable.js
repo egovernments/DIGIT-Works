@@ -141,6 +141,9 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
             if(column.label === t("WORKS_ACTIONS") || column.label === t("WORKS_SNO")) {
                 return <th key={index} style={getStyles("SNO")} >{column?.label}{column?.isMandatory && '*'} </th>
             }
+            if(column.label === t("WORKS_UPLOAD_DOCS")) {
+                return <th key={index} style={getStyles()} >{column?.label}{` (${t("WORKS_DOC_UPLOAD_HINT")})`} </th>
+            }
             return <th key={index} style={getStyles()} >{column?.label}{column?.isMandatory && '*'} </th>
         })
     }
@@ -388,8 +391,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                         maxFilesAllowed={2}
                                         extraStyleName={{ padding: "0.5rem" }}
                                         customClass={"upload-margin-bottom"}
-                                        hintText={"WORKS_DOC_UPLOAD_HINT"}
-                                        showHintBelow = {true}
+                                        showHintBelow = {false}
                                     />
                                 );
                                 }}

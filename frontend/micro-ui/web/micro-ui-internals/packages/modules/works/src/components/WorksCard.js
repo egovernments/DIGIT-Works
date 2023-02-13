@@ -31,7 +31,7 @@ const WorksCard = () => {
     ],
     links: [
       {
-        label: t("ACTION_TEST_PROJECT_INBOX"),
+        label: t("ACTION_TEST_PROJECT"),
         link: `/${window?.contextPath}/employee/project/inbox`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
         count: 1,

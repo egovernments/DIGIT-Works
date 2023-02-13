@@ -1,10 +1,11 @@
 import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
 
 const createDocumentsPayload = (documents) => {
+  debugger;
   let documents_payload_list = [];
   for(let index in documents) {
     let payload_modal = {};
-    payload_modal.documentType = documents[index][1]['file']['type'];
+    payload_modal.documentType = "others";
     payload_modal.fileStore = documents[index][1]['fileStoreId']['fileStoreId'];
     payload_modal.documentUid = "";
     documents_payload_list.push(payload_modal);
