@@ -59,7 +59,7 @@ public class LineItemsQueryBuilder {
         List<String> lineItemIds = criteria.getEstimateLineItemIds();
         if (lineItemIds != null && !lineItemIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" lineItems.id IN (").append(createQuery(lineItemIds)).append(")");
+            query.append(" lineItems.estimate_line_item_id IN (").append(createQuery(lineItemIds)).append(")");
             addToPreparedStatement(preparedStmtList, lineItemIds);
         }
 

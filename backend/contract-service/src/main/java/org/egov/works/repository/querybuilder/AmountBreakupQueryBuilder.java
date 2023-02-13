@@ -24,12 +24,11 @@ public class AmountBreakupQueryBuilder {
 
     public String getAmountBreakupSearchQuery(ContractCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(AMOUNT_BREAKUP_SELECT_QUERY);
-
-        List<String> ids = criteria.getIds();
-        if (ids != null && !ids.isEmpty()) {
+        List<String> estimateLineItemIds = criteria.getEstimateLineItemIds();
+        if (estimateLineItemIds != null && !estimateLineItemIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" amountBreakup.line_item_id IN (").append(createQuery(ids)).append(")");
-            addToPreparedStatement(preparedStmtList, ids);
+            query.append(" amountBreakup.line_item_id IN (").append(createQuery(estimateLineItemIds)).append(")");
+            addToPreparedStatement(preparedStmtList, estimateLineItemIds);
         }
         return query.toString();
     }
