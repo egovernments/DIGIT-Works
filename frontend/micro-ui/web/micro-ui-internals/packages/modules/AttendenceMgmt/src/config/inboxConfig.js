@@ -1,9 +1,44 @@
 import { useTranslation } from "react-i18next";
+import { DateRangeNew } from "@egovernments/digit-ui-react-components";
+import React, { useCallback, useEffect, useState } from "react";
+
+const musterRollStatus = [
+    {
+        name: 'Submitted',
+        code: 'SUBMITTED',
+        i18nKey: 'SUBMITTED'
+    },
+    {
+        name: 'Approved',
+        code: 'APPROVED',
+        i18nKey: 'APPROVED'
+    },
+    {
+        name: 'Rejected',
+        code: 'REJECTED',
+        i18nKey: 'REJECTED'
+    },
+    {
+        name: 'Verified',
+        code: 'VERIFIED',
+        i18nKey: 'VERIFIED'
+    }
+]
 
 const InboxConfig = () => {
     const { t } = useTranslation();
+    const [localSearchParams, setLocalSearchParams] = useState(null);
+    const [disabled, setDisabled] = useState(true);
 
+    const handleChange = useCallback((data) => {
+        setLocalSearchParams(() => ({ ...data }));
+      }, []);
+    
+  useEffect(() => {
+    localSearchParams ? setDisabled(false) : setDisabled(true);
+  }, [localSearchParams]);
     const tenant = Digit.ULBService.getStateId();
+    console.log(localSearchParams);
 
     //TODO: update api call to fetch agencies/partners
     const { isLoading, data: agencyData } = Digit.Hooks.useCustomMDMS(
@@ -20,11 +55,11 @@ const InboxConfig = () => {
         var { Department: Agencies } = agencyData?.[`common-masters`]
     }
     Agencies?.map((item)=> Object.assign(item, {i18nKey:t(`ES_COMMON_${item?.code}`)}))
-    console.log(Agencies);
+
     return {
         label : "ES_COMMON_INBOX",
         type : "inbox", 
-        //Added search config, will be updated with inbox api config while integration
+        //Added inbox config, will be updated with inbox api config while integration
         apiDetails: {
             serviceName: "/muster-roll/v1/_search",
             requestParam: {},
@@ -55,7 +90,7 @@ const InboxConfig = () => {
                             disable: false,
                             populators: { 
                                 name: "workName",
-                                //validation: { pattern: /^[a-z0-9\/-]*$/i, minlength : 2 }
+                                validation: { minlength : 2 }
                             }
                         },
                         {
@@ -65,9 +100,12 @@ const InboxConfig = () => {
                             disable: false,
                             populators: {
                               name: "iaip",
-                              optionsKey: "i18nKey",
-                              //optionsKey: "code",
-                              options: Agencies,
+                              optionsKey: "code",
+                              mdmsConfig: {
+                                masterName: "Department",
+                                moduleName: "common-masters",
+                                localePrefix: "ES_COMMON",
+                              }
                             }
                         },
 
@@ -90,7 +128,10 @@ const InboxConfig = () => {
                     logoIcon : { //Pass the name of the Icon Component as String here and map it in the InboxSearchLinks Component   
                         component : "BioMetricIcon",
                         customClass : "search-icon--projects"       
-                    }
+                    },
+                    defaultValues : {
+                        musterRollStatus: "",
+                    },
                 },
                 children : {},
                 show : true //by default true. 
@@ -107,12 +148,42 @@ const InboxConfig = () => {
                     },
                     fields : [
                         {
-                            label:"ATM_MUSTER_ROLL_DATE_RANE",
-                            type: "date",
+                            label:"",
+                            type: "dateRange",
                             isMandatory: false,
                             disable: false,
                             populators: { 
                                 name: "musterRolldateRange"
+                            },
+                        }, //DateRangeNew integrated in RenderFormFields component
+                        {
+                            label:"",
+                            type: "custom",
+                            isMandatory: false,
+                            disable: false,
+                            populators: {
+                              name: "musterRolldateRange",
+                              customProps: { t, optionKey: "i18nKey" },
+                              component: (props, customProps) => (
+                                <DateRangeNew
+                                  {...customProps}
+                                  values={localSearchParams?.range}
+                                  label={t("ATM_MUSTER_ROLL_DATE_RANE")}
+                                  onFilterChange={handleChange}
+                                  customStyles={{ marginBottom: "0px", fontSize: "16px" }}
+                                />
+                              ),
+                            },
+                        }, //DateRangeNew used directly here in config, make changes to reset the form 
+                        {
+                            label: "ATM_MUSTER_ROLL_STATUS",
+                            type: "dropdown",
+                            isMandatory: false,
+                            disable: false,
+                            populators: {
+                                name: "musterRollStatus",
+                                optionsKey: "i18nKey",
+                                options: musterRollStatus
                             },
                         },
                     ]
