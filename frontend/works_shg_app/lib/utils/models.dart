@@ -24,6 +24,26 @@ class KeyValue {
   KeyValue(this.label, this.key);
 }
 
+class DaysInRange {
+  bool monday;
+  bool tuesday;
+  bool wednesday;
+  bool thursday;
+  bool friday;
+  bool saturday;
+  bool sunday;
+
+  DaysInRange({
+    this.monday = false,
+    this.tuesday = false,
+    this.wednesday = false,
+    this.thursday = false,
+    this.friday = false,
+    this.saturday = false,
+    this.sunday = false,
+  });
+}
+
 class TableData {
   final String? label;
   final Widget? widget;

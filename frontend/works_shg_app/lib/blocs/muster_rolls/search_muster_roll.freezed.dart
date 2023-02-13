@@ -19,19 +19,28 @@ mixin _$MusterRollSearchEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() search,
-    required TResult Function(String id) individualSearch,
+    required TResult Function(String id, String tenantId) individualSearch,
+    required TResult Function(
+            String registerId, String tenantId, int fromDate, int toDate)
+        fromToDateSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? search,
-    TResult? Function(String id)? individualSearch,
+    TResult? Function(String id, String tenantId)? individualSearch,
+    TResult? Function(
+            String registerId, String tenantId, int fromDate, int toDate)?
+        fromToDateSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? search,
-    TResult Function(String id)? individualSearch,
+    TResult Function(String id, String tenantId)? individualSearch,
+    TResult Function(
+            String registerId, String tenantId, int fromDate, int toDate)?
+        fromToDateSearch,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -40,18 +49,22 @@ mixin _$MusterRollSearchEvent {
     required TResult Function(SearchMusterRollEvent value) search,
     required TResult Function(SearchIndividualMusterRollEvent value)
         individualSearch,
+    required TResult Function(SearchMusterRollFromToDateEvent value)
+        fromToDateSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SearchMusterRollEvent value)? search,
     TResult? Function(SearchIndividualMusterRollEvent value)? individualSearch,
+    TResult? Function(SearchMusterRollFromToDateEvent value)? fromToDateSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SearchMusterRollEvent value)? search,
     TResult Function(SearchIndividualMusterRollEvent value)? individualSearch,
+    TResult Function(SearchMusterRollFromToDateEvent value)? fromToDateSearch,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -123,7 +136,10 @@ class _$SearchMusterRollEvent
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() search,
-    required TResult Function(String id) individualSearch,
+    required TResult Function(String id, String tenantId) individualSearch,
+    required TResult Function(
+            String registerId, String tenantId, int fromDate, int toDate)
+        fromToDateSearch,
   }) {
     return search();
   }
@@ -132,7 +148,10 @@ class _$SearchMusterRollEvent
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? search,
-    TResult? Function(String id)? individualSearch,
+    TResult? Function(String id, String tenantId)? individualSearch,
+    TResult? Function(
+            String registerId, String tenantId, int fromDate, int toDate)?
+        fromToDateSearch,
   }) {
     return search?.call();
   }
@@ -141,7 +160,10 @@ class _$SearchMusterRollEvent
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? search,
-    TResult Function(String id)? individualSearch,
+    TResult Function(String id, String tenantId)? individualSearch,
+    TResult Function(
+            String registerId, String tenantId, int fromDate, int toDate)?
+        fromToDateSearch,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -156,6 +178,8 @@ class _$SearchMusterRollEvent
     required TResult Function(SearchMusterRollEvent value) search,
     required TResult Function(SearchIndividualMusterRollEvent value)
         individualSearch,
+    required TResult Function(SearchMusterRollFromToDateEvent value)
+        fromToDateSearch,
   }) {
     return search(this);
   }
@@ -165,6 +189,7 @@ class _$SearchMusterRollEvent
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SearchMusterRollEvent value)? search,
     TResult? Function(SearchIndividualMusterRollEvent value)? individualSearch,
+    TResult? Function(SearchMusterRollFromToDateEvent value)? fromToDateSearch,
   }) {
     return search?.call(this);
   }
@@ -174,6 +199,7 @@ class _$SearchMusterRollEvent
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SearchMusterRollEvent value)? search,
     TResult Function(SearchIndividualMusterRollEvent value)? individualSearch,
+    TResult Function(SearchMusterRollFromToDateEvent value)? fromToDateSearch,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -194,7 +220,7 @@ abstract class _$$SearchIndividualMusterRollEventCopyWith<$Res> {
           $Res Function(_$SearchIndividualMusterRollEvent) then) =
       __$$SearchIndividualMusterRollEventCopyWithImpl<$Res>;
   @useResult
-  $Res call({String id});
+  $Res call({String id, String tenantId});
 }
 
 /// @nodoc
@@ -211,11 +237,16 @@ class __$$SearchIndividualMusterRollEventCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? tenantId = null,
   }) {
     return _then(_$SearchIndividualMusterRollEvent(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      tenantId: null == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -226,15 +257,18 @@ class __$$SearchIndividualMusterRollEventCopyWithImpl<$Res>
 class _$SearchIndividualMusterRollEvent
     with DiagnosticableTreeMixin
     implements SearchIndividualMusterRollEvent {
-  const _$SearchIndividualMusterRollEvent({this.id = ''});
+  const _$SearchIndividualMusterRollEvent({this.id = '', this.tenantId = ''});
 
   @override
   @JsonKey()
   final String id;
+  @override
+  @JsonKey()
+  final String tenantId;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'MusterRollSearchEvent.individualSearch(id: $id)';
+    return 'MusterRollSearchEvent.individualSearch(id: $id, tenantId: $tenantId)';
   }
 
   @override
@@ -243,7 +277,8 @@ class _$SearchIndividualMusterRollEvent
     properties
       ..add(
           DiagnosticsProperty('type', 'MusterRollSearchEvent.individualSearch'))
-      ..add(DiagnosticsProperty('id', id));
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('tenantId', tenantId));
   }
 
   @override
@@ -251,11 +286,13 @@ class _$SearchIndividualMusterRollEvent
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SearchIndividualMusterRollEvent &&
-            (identical(other.id, id) || other.id == id));
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.tenantId, tenantId) ||
+                other.tenantId == tenantId));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id);
+  int get hashCode => Object.hash(runtimeType, id, tenantId);
 
   @JsonKey(ignore: true)
   @override
@@ -268,29 +305,38 @@ class _$SearchIndividualMusterRollEvent
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() search,
-    required TResult Function(String id) individualSearch,
+    required TResult Function(String id, String tenantId) individualSearch,
+    required TResult Function(
+            String registerId, String tenantId, int fromDate, int toDate)
+        fromToDateSearch,
   }) {
-    return individualSearch(id);
+    return individualSearch(id, tenantId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? search,
-    TResult? Function(String id)? individualSearch,
+    TResult? Function(String id, String tenantId)? individualSearch,
+    TResult? Function(
+            String registerId, String tenantId, int fromDate, int toDate)?
+        fromToDateSearch,
   }) {
-    return individualSearch?.call(id);
+    return individualSearch?.call(id, tenantId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? search,
-    TResult Function(String id)? individualSearch,
+    TResult Function(String id, String tenantId)? individualSearch,
+    TResult Function(
+            String registerId, String tenantId, int fromDate, int toDate)?
+        fromToDateSearch,
     required TResult orElse(),
   }) {
     if (individualSearch != null) {
-      return individualSearch(id);
+      return individualSearch(id, tenantId);
     }
     return orElse();
   }
@@ -301,6 +347,8 @@ class _$SearchIndividualMusterRollEvent
     required TResult Function(SearchMusterRollEvent value) search,
     required TResult Function(SearchIndividualMusterRollEvent value)
         individualSearch,
+    required TResult Function(SearchMusterRollFromToDateEvent value)
+        fromToDateSearch,
   }) {
     return individualSearch(this);
   }
@@ -310,6 +358,7 @@ class _$SearchIndividualMusterRollEvent
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SearchMusterRollEvent value)? search,
     TResult? Function(SearchIndividualMusterRollEvent value)? individualSearch,
+    TResult? Function(SearchMusterRollFromToDateEvent value)? fromToDateSearch,
   }) {
     return individualSearch?.call(this);
   }
@@ -319,6 +368,7 @@ class _$SearchIndividualMusterRollEvent
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SearchMusterRollEvent value)? search,
     TResult Function(SearchIndividualMusterRollEvent value)? individualSearch,
+    TResult Function(SearchMusterRollFromToDateEvent value)? fromToDateSearch,
     required TResult orElse(),
   }) {
     if (individualSearch != null) {
@@ -330,12 +380,223 @@ class _$SearchIndividualMusterRollEvent
 
 abstract class SearchIndividualMusterRollEvent
     implements MusterRollSearchEvent {
-  const factory SearchIndividualMusterRollEvent({final String id}) =
-      _$SearchIndividualMusterRollEvent;
+  const factory SearchIndividualMusterRollEvent(
+      {final String id,
+      final String tenantId}) = _$SearchIndividualMusterRollEvent;
 
   String get id;
+  String get tenantId;
   @JsonKey(ignore: true)
   _$$SearchIndividualMusterRollEventCopyWith<_$SearchIndividualMusterRollEvent>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SearchMusterRollFromToDateEventCopyWith<$Res> {
+  factory _$$SearchMusterRollFromToDateEventCopyWith(
+          _$SearchMusterRollFromToDateEvent value,
+          $Res Function(_$SearchMusterRollFromToDateEvent) then) =
+      __$$SearchMusterRollFromToDateEventCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String registerId, String tenantId, int fromDate, int toDate});
+}
+
+/// @nodoc
+class __$$SearchMusterRollFromToDateEventCopyWithImpl<$Res>
+    extends _$MusterRollSearchEventCopyWithImpl<$Res,
+        _$SearchMusterRollFromToDateEvent>
+    implements _$$SearchMusterRollFromToDateEventCopyWith<$Res> {
+  __$$SearchMusterRollFromToDateEventCopyWithImpl(
+      _$SearchMusterRollFromToDateEvent _value,
+      $Res Function(_$SearchMusterRollFromToDateEvent) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? registerId = null,
+    Object? tenantId = null,
+    Object? fromDate = null,
+    Object? toDate = null,
+  }) {
+    return _then(_$SearchMusterRollFromToDateEvent(
+      registerId: null == registerId
+          ? _value.registerId
+          : registerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      tenantId: null == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
+              as String,
+      fromDate: null == fromDate
+          ? _value.fromDate
+          : fromDate // ignore: cast_nullable_to_non_nullable
+              as int,
+      toDate: null == toDate
+          ? _value.toDate
+          : toDate // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SearchMusterRollFromToDateEvent
+    with DiagnosticableTreeMixin
+    implements SearchMusterRollFromToDateEvent {
+  const _$SearchMusterRollFromToDateEvent(
+      {this.registerId = '',
+      this.tenantId = '',
+      this.fromDate = 0,
+      this.toDate = 0});
+
+  @override
+  @JsonKey()
+  final String registerId;
+  @override
+  @JsonKey()
+  final String tenantId;
+  @override
+  @JsonKey()
+  final int fromDate;
+  @override
+  @JsonKey()
+  final int toDate;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'MusterRollSearchEvent.fromToDateSearch(registerId: $registerId, tenantId: $tenantId, fromDate: $fromDate, toDate: $toDate)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(
+          DiagnosticsProperty('type', 'MusterRollSearchEvent.fromToDateSearch'))
+      ..add(DiagnosticsProperty('registerId', registerId))
+      ..add(DiagnosticsProperty('tenantId', tenantId))
+      ..add(DiagnosticsProperty('fromDate', fromDate))
+      ..add(DiagnosticsProperty('toDate', toDate));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SearchMusterRollFromToDateEvent &&
+            (identical(other.registerId, registerId) ||
+                other.registerId == registerId) &&
+            (identical(other.tenantId, tenantId) ||
+                other.tenantId == tenantId) &&
+            (identical(other.fromDate, fromDate) ||
+                other.fromDate == fromDate) &&
+            (identical(other.toDate, toDate) || other.toDate == toDate));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, registerId, tenantId, fromDate, toDate);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SearchMusterRollFromToDateEventCopyWith<_$SearchMusterRollFromToDateEvent>
+      get copyWith => __$$SearchMusterRollFromToDateEventCopyWithImpl<
+          _$SearchMusterRollFromToDateEvent>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() search,
+    required TResult Function(String id, String tenantId) individualSearch,
+    required TResult Function(
+            String registerId, String tenantId, int fromDate, int toDate)
+        fromToDateSearch,
+  }) {
+    return fromToDateSearch(registerId, tenantId, fromDate, toDate);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? search,
+    TResult? Function(String id, String tenantId)? individualSearch,
+    TResult? Function(
+            String registerId, String tenantId, int fromDate, int toDate)?
+        fromToDateSearch,
+  }) {
+    return fromToDateSearch?.call(registerId, tenantId, fromDate, toDate);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? search,
+    TResult Function(String id, String tenantId)? individualSearch,
+    TResult Function(
+            String registerId, String tenantId, int fromDate, int toDate)?
+        fromToDateSearch,
+    required TResult orElse(),
+  }) {
+    if (fromToDateSearch != null) {
+      return fromToDateSearch(registerId, tenantId, fromDate, toDate);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(SearchMusterRollEvent value) search,
+    required TResult Function(SearchIndividualMusterRollEvent value)
+        individualSearch,
+    required TResult Function(SearchMusterRollFromToDateEvent value)
+        fromToDateSearch,
+  }) {
+    return fromToDateSearch(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(SearchMusterRollEvent value)? search,
+    TResult? Function(SearchIndividualMusterRollEvent value)? individualSearch,
+    TResult? Function(SearchMusterRollFromToDateEvent value)? fromToDateSearch,
+  }) {
+    return fromToDateSearch?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SearchMusterRollEvent value)? search,
+    TResult Function(SearchIndividualMusterRollEvent value)? individualSearch,
+    TResult Function(SearchMusterRollFromToDateEvent value)? fromToDateSearch,
+    required TResult orElse(),
+  }) {
+    if (fromToDateSearch != null) {
+      return fromToDateSearch(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SearchMusterRollFromToDateEvent
+    implements MusterRollSearchEvent {
+  const factory SearchMusterRollFromToDateEvent(
+      {final String registerId,
+      final String tenantId,
+      final int fromDate,
+      final int toDate}) = _$SearchMusterRollFromToDateEvent;
+
+  String get registerId;
+  String get tenantId;
+  int get fromDate;
+  int get toDate;
+  @JsonKey(ignore: true)
+  _$$SearchMusterRollFromToDateEventCopyWith<_$SearchMusterRollFromToDateEvent>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -345,6 +606,7 @@ mixin _$MusterRollSearchState {
   MusterRollsModel? get musterRollsModel => throw _privateConstructorUsedError;
   MusterRollsModel? get individualMusterRollModel =>
       throw _privateConstructorUsedError;
+  MusterRollsModel? get musterRollsSearch => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MusterRollSearchStateCopyWith<MusterRollSearchState> get copyWith =>
@@ -360,10 +622,12 @@ abstract class $MusterRollSearchStateCopyWith<$Res> {
   $Res call(
       {bool loading,
       MusterRollsModel? musterRollsModel,
-      MusterRollsModel? individualMusterRollModel});
+      MusterRollsModel? individualMusterRollModel,
+      MusterRollsModel? musterRollsSearch});
 
   $MusterRollsModelCopyWith<$Res>? get musterRollsModel;
   $MusterRollsModelCopyWith<$Res>? get individualMusterRollModel;
+  $MusterRollsModelCopyWith<$Res>? get musterRollsSearch;
 }
 
 /// @nodoc
@@ -383,6 +647,7 @@ class _$MusterRollSearchStateCopyWithImpl<$Res,
     Object? loading = null,
     Object? musterRollsModel = freezed,
     Object? individualMusterRollModel = freezed,
+    Object? musterRollsSearch = freezed,
   }) {
     return _then(_value.copyWith(
       loading: null == loading
@@ -396,6 +661,10 @@ class _$MusterRollSearchStateCopyWithImpl<$Res,
       individualMusterRollModel: freezed == individualMusterRollModel
           ? _value.individualMusterRollModel
           : individualMusterRollModel // ignore: cast_nullable_to_non_nullable
+              as MusterRollsModel?,
+      musterRollsSearch: freezed == musterRollsSearch
+          ? _value.musterRollsSearch
+          : musterRollsSearch // ignore: cast_nullable_to_non_nullable
               as MusterRollsModel?,
     ) as $Val);
   }
@@ -424,6 +693,18 @@ class _$MusterRollSearchStateCopyWithImpl<$Res,
       return _then(_value.copyWith(individualMusterRollModel: value) as $Val);
     });
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $MusterRollsModelCopyWith<$Res>? get musterRollsSearch {
+    if (_value.musterRollsSearch == null) {
+      return null;
+    }
+
+    return $MusterRollsModelCopyWith<$Res>(_value.musterRollsSearch!, (value) {
+      return _then(_value.copyWith(musterRollsSearch: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -437,12 +718,15 @@ abstract class _$$_MusterRollSearchStateCopyWith<$Res>
   $Res call(
       {bool loading,
       MusterRollsModel? musterRollsModel,
-      MusterRollsModel? individualMusterRollModel});
+      MusterRollsModel? individualMusterRollModel,
+      MusterRollsModel? musterRollsSearch});
 
   @override
   $MusterRollsModelCopyWith<$Res>? get musterRollsModel;
   @override
   $MusterRollsModelCopyWith<$Res>? get individualMusterRollModel;
+  @override
+  $MusterRollsModelCopyWith<$Res>? get musterRollsSearch;
 }
 
 /// @nodoc
@@ -459,6 +743,7 @@ class __$$_MusterRollSearchStateCopyWithImpl<$Res>
     Object? loading = null,
     Object? musterRollsModel = freezed,
     Object? individualMusterRollModel = freezed,
+    Object? musterRollsSearch = freezed,
   }) {
     return _then(_$_MusterRollSearchState(
       loading: null == loading
@@ -473,6 +758,10 @@ class __$$_MusterRollSearchStateCopyWithImpl<$Res>
           ? _value.individualMusterRollModel
           : individualMusterRollModel // ignore: cast_nullable_to_non_nullable
               as MusterRollsModel?,
+      musterRollsSearch: freezed == musterRollsSearch
+          ? _value.musterRollsSearch
+          : musterRollsSearch // ignore: cast_nullable_to_non_nullable
+              as MusterRollsModel?,
     ));
   }
 }
@@ -484,7 +773,8 @@ class _$_MusterRollSearchState extends _MusterRollSearchState
   const _$_MusterRollSearchState(
       {this.loading = false,
       this.musterRollsModel,
-      this.individualMusterRollModel})
+      this.individualMusterRollModel,
+      this.musterRollsSearch})
       : super._();
 
   @override
@@ -494,10 +784,12 @@ class _$_MusterRollSearchState extends _MusterRollSearchState
   final MusterRollsModel? musterRollsModel;
   @override
   final MusterRollsModel? individualMusterRollModel;
+  @override
+  final MusterRollsModel? musterRollsSearch;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'MusterRollSearchState(loading: $loading, musterRollsModel: $musterRollsModel, individualMusterRollModel: $individualMusterRollModel)';
+    return 'MusterRollSearchState(loading: $loading, musterRollsModel: $musterRollsModel, individualMusterRollModel: $individualMusterRollModel, musterRollsSearch: $musterRollsSearch)';
   }
 
   @override
@@ -508,7 +800,8 @@ class _$_MusterRollSearchState extends _MusterRollSearchState
       ..add(DiagnosticsProperty('loading', loading))
       ..add(DiagnosticsProperty('musterRollsModel', musterRollsModel))
       ..add(DiagnosticsProperty(
-          'individualMusterRollModel', individualMusterRollModel));
+          'individualMusterRollModel', individualMusterRollModel))
+      ..add(DiagnosticsProperty('musterRollsSearch', musterRollsSearch));
   }
 
   @override
@@ -521,12 +814,14 @@ class _$_MusterRollSearchState extends _MusterRollSearchState
                 other.musterRollsModel == musterRollsModel) &&
             (identical(other.individualMusterRollModel,
                     individualMusterRollModel) ||
-                other.individualMusterRollModel == individualMusterRollModel));
+                other.individualMusterRollModel == individualMusterRollModel) &&
+            (identical(other.musterRollsSearch, musterRollsSearch) ||
+                other.musterRollsSearch == musterRollsSearch));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, loading, musterRollsModel, individualMusterRollModel);
+  int get hashCode => Object.hash(runtimeType, loading, musterRollsModel,
+      individualMusterRollModel, musterRollsSearch);
 
   @JsonKey(ignore: true)
   @override
@@ -538,10 +833,10 @@ class _$_MusterRollSearchState extends _MusterRollSearchState
 
 abstract class _MusterRollSearchState extends MusterRollSearchState {
   const factory _MusterRollSearchState(
-          {final bool loading,
-          final MusterRollsModel? musterRollsModel,
-          final MusterRollsModel? individualMusterRollModel}) =
-      _$_MusterRollSearchState;
+      {final bool loading,
+      final MusterRollsModel? musterRollsModel,
+      final MusterRollsModel? individualMusterRollModel,
+      final MusterRollsModel? musterRollsSearch}) = _$_MusterRollSearchState;
   const _MusterRollSearchState._() : super._();
 
   @override
@@ -550,6 +845,8 @@ abstract class _MusterRollSearchState extends MusterRollSearchState {
   MusterRollsModel? get musterRollsModel;
   @override
   MusterRollsModel? get individualMusterRollModel;
+  @override
+  MusterRollsModel? get musterRollsSearch;
   @override
   @JsonKey(ignore: true)
   _$$_MusterRollSearchStateCopyWith<_$_MusterRollSearchState> get copyWith =>

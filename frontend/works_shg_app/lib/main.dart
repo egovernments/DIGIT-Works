@@ -21,11 +21,13 @@ import 'blocs/app_bloc_observer.dart';
 import 'blocs/app_config/app_config.dart';
 import 'blocs/app_initilization/app_initilization.dart';
 import 'blocs/attendance/attendance_create_log.dart';
+import 'blocs/attendance/attendance_hours_mdms.dart';
 import 'blocs/attendance/create_attendance_register.dart';
 import 'blocs/attendance/create_attendee.dart';
 import 'blocs/auth/auth.dart';
 import 'blocs/localization/app_localization.dart';
 import 'blocs/localization/localization.dart';
+import 'blocs/muster_rolls/get_muster_workflow.dart';
 import 'blocs/user/user_search.dart';
 import 'data/remote_client.dart';
 import 'data/repositories/remote/localization.dart';
@@ -102,6 +104,10 @@ class MainApplication extends StatelessWidget {
         BlocProvider(create: (context) => MusterRollEstimateBloc()),
         BlocProvider(create: (context) => AttendanceLogCreateBloc()),
         BlocProvider(create: (context) => MusterCreateBloc()),
+        BlocProvider(create: (context) => MusterGetWorkflowBloc()),
+        BlocProvider(
+            create: (context) => AttendanceHoursBloc(
+                const AttendanceHoursState(), MdmsRepository(client.init()))),
       ],
       child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
           builder: (context, appInitState) {
