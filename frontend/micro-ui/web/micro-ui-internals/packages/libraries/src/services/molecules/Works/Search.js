@@ -109,18 +109,26 @@ export const WorksSearch = {
                         { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" }, //will check with Backend
                     ],
                 };
-                const Documents = { //how to fetch name of the document
-                    title: "CS_COMMON_DOCUMENTS",
+
+                const documentDetails = {
+                    title: "",
                     asSectionHeader: true,
                     additionalDetails: {
-                        documentsWithUrl: [
-                            {
-                                title: "",
-                                values: [] //createDocumentsObject(currentProject?.documents)
-                            }
-                        ],
+                        documents: [{
+                            title: "CS_COMMON_DOCUMENTS",
+                            BS : 'Works',
+                            values: currentProject?.documents?.map((document) => {
+                                return {
+                                    title: document?.additionalDetails?.fileName,
+                                    documentType: document?.documentType,
+                                    documentUid: document?.fileStore,
+                                    fileStoreId: document?.fileStore,
+                                };
+                            }),
+                        },
+                        ]
                     }
-                };
+                }
     
             if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
                 //all details of searched project will come here
@@ -133,7 +141,7 @@ export const WorksSearch = {
                     projectParentProjectID : currentProject?.ancestors?.[0]?.projectNumber || "NA"
                 }
                 projectDetails.searchedProject['basicDetails'] = basicDetails;
-                projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [DepartmentDetails, WorkTypeDetails, LocationDetails, Documents]}; //rest categories will come here
+                projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [DepartmentDetails, WorkTypeDetails, LocationDetails, documentDetails]}; //rest categories will come here
                 projectDetails.searchedProject['details']['financialDetails'] = {applicationDetails :  [FinancialDetails]}; //rest categories will come here
             }else {
                  //all details of searched project will come here
