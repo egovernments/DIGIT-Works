@@ -99,11 +99,11 @@ const getCitizenStyles = (value) => {
         maxHeight: "34px"
       },   
       inputStyles: {
-        width: "43%",
+        width: "42%",
         minHeight: "42px",
         maxHeight: "42px",
-        top: "5px",
-        left: "5px"
+        top: "12px",
+        left: "12px"
       },
       buttonStyles: {
         height: "auto",

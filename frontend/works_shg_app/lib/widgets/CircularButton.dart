@@ -35,7 +35,9 @@ class CircularButton extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(
                   width: 2,
-                  color: color,
+                  color: onTap != null
+                      ? color
+                      : const Color.fromRGBO(149, 148, 148, 1),
                   style: BorderStyle.solid,
                 ),
               ),

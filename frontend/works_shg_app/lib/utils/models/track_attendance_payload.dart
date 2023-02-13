@@ -76,14 +76,15 @@ class TrackAttendanceTableData {
   }
 }
 
-class CreateAttendanceLogPayloadData {
-  // String? registerId;
-  // String? individualId;
-  // int? time;
-  // String? type;
-  // String? status;
-  // String? tenantId;
-  // List<String>? documentIds;
+class EntryExitModel {
+  int? hours;
+  String? code;
+  EntryExitModel({this.hours, this.code});
+}
+
+class EntryExitList {
+  List<EntryExitModel> entryExitList;
+  EntryExitList(this.entryExitList);
 }
 
 List<Map<String, dynamic>> updateAttendanceLogPayload(

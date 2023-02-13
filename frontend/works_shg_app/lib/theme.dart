@@ -36,8 +36,8 @@ ThemeData get theme => ThemeData(
             fontFamily: 'Roboto Condensed',
             fontStyle: FontStyle.normal,
             color: Color.fromRGBO(11, 12, 12, 1)),
-        subtitle1: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
-        subtitle2: const TextStyle(
+        titleMedium: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
+        titleSmall: const TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 16,
             color: Color.fromRGBO(

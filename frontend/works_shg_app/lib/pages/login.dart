@@ -85,7 +85,8 @@ class _LoginPage extends State<LoginPage> {
                   'Please contact the administrator if you have forgotten your password',
               primaryActionLabel:
                   AppLocalizations.of(context).translate(i18.common.oK),
-              primaryAction: () => Navigator.pop(context),
+              primaryAction: () =>
+                  Navigator.of(context, rootNavigator: true).pop(),
             ),
             child: Center(
                 child: Text(AppLocalizations.of(context)

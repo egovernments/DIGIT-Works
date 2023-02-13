@@ -2,20 +2,14 @@ import { CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false) => {
-  const { t } = useTranslation()
-
+export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel=false, sessionFormData) => {
+  const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const ULB = Digit.Utils.locale.getCityLocale(tenantId);
-  
   let ULBOptions = []
   ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
   return {
-    defaultValues : {
-      basicDetails_dateOfProposal : "01-01-2020",
-      basicDetails_hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"},
-    },
     form: [
       { 
         head: "",
@@ -27,7 +21,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             isMandatory: false,
             key: "basicDetails_dateOfProposal",
             type: "date",
-            disable: true,
+            disable: false,
             populators: { name: "basicDetails_dateOfProposal" },
           },
           {
@@ -37,7 +31,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             key: "basicDetails_projectName",
             type: "text",
             disable: false,
-            populators: { name: "basicDetails_projectName", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_NAME"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "basicDetails_projectName", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_NAME"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
@@ -135,7 +129,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             key: "noSubProject_letterRefNoOrReqNo",
             type: "text",
             disable: false,
-            populators: { name: "noSubProject_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "noSubProject_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
@@ -188,7 +182,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
               optionsCustomStyle : {
                 top : "2.5rem"
               },
-              options : subTypeOfProjectOptions //TODO:
+              options : subTypeOfProjectOptions
             },
           },
           {
@@ -220,7 +214,9 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             description: "",
             type: "date",
             disable: false,
-            populators: { name: "noSubProject_startDate" },
+            populators: { 
+              name: "noSubProject_startDate",
+            }
           },
           {
             inline: true,
@@ -230,7 +226,17 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             description: "",
             type: "date",
             disable: false,
-            populators: { name: "noSubProject_endDate" },
+            populators: { 
+              name: "noSubProject_endDate", 
+              error : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), 
+              validation : {
+                validate : (value, formData) => 
+                { 
+                  let startDate = (new Date(sessionFormData?.noSubProject_startDate)).getTime();
+                  let endDate = (new Date(value)).getTime();
+                  return startDate && endDate && startDate > endDate ? false : true;
+                }
+              }},
           },
           {
             isMandatory: false,
@@ -332,11 +338,13 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             label: t("WORKS_UPLOAD_FILES"),
             populators:{
                 name: "noSubProject_uploadedFiles",
-                allowedMaxSizeInMB:2,
+                allowedMaxSizeInMB:5,
                 maxFilesAllowed:2,
                 allowedFileTypes : /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
                 customClass : "upload-margin-bottom",
-                errorMessage : t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG")
+                errorMessage : t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
+                hintText : "WORKS_DOC_UPLOAD_HINT",
+                showHintBelow : true
             }
           }
         ]
@@ -477,12 +485,12 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
           },
           {
             isMandatory: false,
-            key: "withSubProject_project_executingDepartment",
+            key: "withSubProject_project_targetDemography",
             type: "radioordropdown",
-            label: "WORKS_EXECUTING_DEPT",
+            label: "PROJECT_TARGET_DEMOGRAPHY",
             disable: false,
             populators: {
-              name: "withSubProject_project_executingDepartment",
+              name: "withSubProject_project_targetDemography",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,
@@ -490,29 +498,8 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "Department",
+                masterName: "SocialCategory",
                 moduleName: "common-masters",
-                localePrefix: "COMMON_MASTERS_DEPARTMENT",
-              },
-            },
-          },
-          {
-            isMandatory: false,
-            key: "withSubProject_project_beneficiary",
-            type: "radioordropdown",
-            label: "WORKS_BENEFICIARY",
-            disable: false,
-            populators: {
-              name: "withSubProject_project_beneficiary",
-              optionsKey: "name",
-              error: t("WORKS_REQUIRED_ERR"),
-              required: false,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
-              mdmsConfig: {
-                masterName: "BeneficiaryType",
-                moduleName: "works",
                 localePrefix: "ES_COMMON",
               },
             },
@@ -524,7 +511,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             key: "withSubProject_project_LetterRefNoOrReqNo",
             type: "text",
             disable: false,
-            populators: { name: "withSubProject_project_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
+            populators: { name: "withSubProject_project_letterRefNoOrReqNo", error: t("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2 }}
           },
           {
             inline: true,
@@ -532,7 +519,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             isMandatory: false,
             key: "withSubProject_project_estimatedCostInRs",
             type: "number",
-            disable: false,
+            disable: true,
             populators: { name: "withSubProject_project_estimatedCostInRs" }
           },
         ]
@@ -559,7 +546,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
               mdmsConfig: {
                 masterName: "Fund",
                 moduleName: "finance",
-                localePrefix: "ES_COMMON",
+                localePrefix: "ES_COMMON_FIN",
               },
             },
           },
