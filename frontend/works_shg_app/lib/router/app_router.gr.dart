@@ -75,8 +75,8 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: SHGInboxPage(
-          args.id,
           args.tenantId,
+          args.musterRollNo,
           args.projectDetails,
           key: args.key,
         ),
@@ -166,7 +166,7 @@ class _$AppRouter extends RootStackRouter {
             ),
             RouteConfig(
               SHGInboxRoute.name,
-              path: 'shg-inbox/:id/:tenantId',
+              path: 'shg-inbox//:tenantId/:musterRollNo',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -324,22 +324,22 @@ class ViewMusterRollsRoute extends PageRouteInfo<void> {
 /// [SHGInboxPage]
 class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
   SHGInboxRoute({
-    required String id,
     required String tenantId,
+    required String musterRollNo,
     required List<Map<String, dynamic>> projectDetails,
     Key? key,
   }) : super(
           SHGInboxRoute.name,
-          path: 'shg-inbox/:id/:tenantId',
+          path: 'shg-inbox//:tenantId/:musterRollNo',
           args: SHGInboxRouteArgs(
-            id: id,
             tenantId: tenantId,
+            musterRollNo: musterRollNo,
             projectDetails: projectDetails,
             key: key,
           ),
           rawPathParams: {
-            'id': id,
             'tenantId': tenantId,
+            'musterRollNo': musterRollNo,
           },
         );
 
@@ -348,15 +348,15 @@ class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
 
 class SHGInboxRouteArgs {
   const SHGInboxRouteArgs({
-    required this.id,
     required this.tenantId,
+    required this.musterRollNo,
     required this.projectDetails,
     this.key,
   });
 
-  final String id;
-
   final String tenantId;
+
+  final String musterRollNo;
 
   final List<Map<String, dynamic>> projectDetails;
 
@@ -364,7 +364,7 @@ class SHGInboxRouteArgs {
 
   @override
   String toString() {
-    return 'SHGInboxRouteArgs{id: $id, tenantId: $tenantId, projectDetails: $projectDetails, key: $key}';
+    return 'SHGInboxRouteArgs{tenantId: $tenantId, musterRollNo: $musterRollNo, projectDetails: $projectDetails, key: $key}';
   }
 }
 

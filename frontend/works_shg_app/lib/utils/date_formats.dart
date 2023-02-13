@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
+import 'models.dart';
+
 class DateFormats {
   static getFilteredDate(String date, {String? dateFormat}) {
     if (date.trim().isEmpty) return '';
@@ -72,6 +74,52 @@ class DateFormats {
     }
   }
 
+  static DaysInRange checkDaysInRange(int selectedStartDate,
+      int selectedEndDate, int registerStartDate, int registerEndDate) {
+    DateTime start = DateTime.fromMillisecondsSinceEpoch(selectedStartDate);
+    DateTime end = DateTime.fromMillisecondsSinceEpoch(selectedEndDate);
+
+    DaysInRange daysInRange = DaysInRange();
+
+    while (start.isBefore(end)) {
+      DateTime currentDay = DateTime(start.year, start.month, start.day);
+      int currentDayTimestamp = currentDay.millisecondsSinceEpoch;
+      switch (start.weekday) {
+        case 1:
+          daysInRange.monday = currentDayTimestamp >= registerStartDate &&
+              currentDayTimestamp <= registerEndDate;
+          break;
+        case 2:
+          daysInRange.tuesday = currentDayTimestamp >= registerStartDate &&
+              currentDayTimestamp <= registerEndDate;
+          break;
+        case 3:
+          daysInRange.wednesday = currentDayTimestamp >= registerStartDate &&
+              currentDayTimestamp <= registerEndDate;
+          break;
+        case 4:
+          daysInRange.thursday = currentDayTimestamp >= registerStartDate &&
+              currentDayTimestamp <= registerEndDate;
+          break;
+        case 5:
+          daysInRange.friday = currentDayTimestamp >= registerStartDate &&
+              currentDayTimestamp <= registerEndDate;
+          break;
+        case 6:
+          daysInRange.saturday = currentDayTimestamp >= registerStartDate &&
+              currentDayTimestamp <= registerEndDate;
+          break;
+        case 7:
+          daysInRange.sunday = currentDayTimestamp >= registerStartDate &&
+              currentDayTimestamp <= registerEndDate;
+          break;
+      }
+      start = start.add(const Duration(days: 1));
+    }
+
+    return daysInRange;
+  }
+
   static int getTimestampFromWeekDay(String date, String day, int hours) {
     DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(date);
     int dayOfWeek = parsedDate.weekday;
@@ -80,7 +128,9 @@ class DateFormats {
     DateTime weekDay = day == 'sun'
         ? parsedDate.add(Duration(days: daysToAdd))
         : parsedDate.subtract(Duration(days: daysToSubtract));
-    weekDay = weekDay.add(Duration(hours: hours));
+    weekDay = weekDay
+        .add(Duration(hours: hours))
+        .subtract(const Duration(seconds: 1));
     return weekDay.millisecondsSinceEpoch;
   }
 
@@ -89,7 +139,7 @@ class DateFormats {
     try {
       var dateTime = getDateFromString(date);
       return DateFormat.Hms().format(dateTime!);
-    } on Exception catch (e, stackTrace) {
+    } on Exception catch (e) {
       if (kDebugMode) {
         print(e.toString());
       }
@@ -101,7 +151,7 @@ class DateFormats {
     try {
       var dateTime = getDateFromString(date);
       return DateFormat.jm().format(dateTime!);
-    } on Exception catch (e, stackTrace) {
+    } on Exception catch (e) {
       if (kDebugMode) {
         print(e.toString());
       }

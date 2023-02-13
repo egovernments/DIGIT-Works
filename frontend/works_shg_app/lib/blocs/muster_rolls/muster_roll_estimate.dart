@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:works_shg_app/data/repositories/muster_roll_repository/muster_roll.dart';
@@ -21,6 +19,7 @@ class MusterRollEstimateBloc
   MusterRollEstimateBloc() : super(const MusterRollEstimateState()) {
     on<EstimateMusterRollEvent>(_onEstimate);
     on<ViewEstimateMusterRollEvent>(_onViewEstimate);
+    on<DisposeEstimateMusterRollEvent>(_onDispose);
   }
 
   FutureOr<void> _onEstimate(
@@ -46,6 +45,11 @@ class MusterRollEstimateBloc
             }));
     await Future.delayed(const Duration(seconds: 1));
     emit(state.copyWith(loading: false, musterRollsModel: musterRollsModel));
+  }
+
+  FutureOr<void> _onDispose(DisposeEstimateMusterRollEvent event,
+      MusterRollEstimateEmitter emit) async {
+    emit(state.copyWith(loading: false, musterRollsModel: null));
   }
 
   FutureOr<void> _onViewEstimate(
@@ -89,6 +93,8 @@ class MusterRollEstimateEvent with _$MusterRollEstimateEvent {
     required String registerId,
     required String tenantId,
   }) = ViewEstimateMusterRollEvent;
+  const factory MusterRollEstimateEvent.dispose() =
+      DisposeEstimateMusterRollEvent;
 }
 
 @freezed
