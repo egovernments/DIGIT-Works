@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { PropertyHouse } from "./svgindex";
+import { PropertyHouse, BioMetricIcon} from "./svgindex";
 
 const InboxSearchLinks = ({headerText, links, businessService, customClass="", logoIcon}) => {
     const { t } = useTranslation();
@@ -15,6 +15,7 @@ const InboxSearchLinks = ({headerText, links, businessService, customClass="", l
     const renderHeader = () => <div className="header">
         <span className="logo">
            {logoIcon?.component === "PropertyHouse" && <PropertyHouse className={logoIcon?.customClass} />}
+           {logoIcon?.component === "BioMetricIcon" && <BioMetricIcon className={logoIcon?.customClass} />}
         </span>
         <span className="text">{t(headerText)}</span>
     </div>

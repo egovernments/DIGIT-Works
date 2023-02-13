@@ -8,7 +8,8 @@
     "packages/css",
     "packages/react-components",
     "packages/modules/Project",
-    "packages/modules/Estimate"
+    "packages/modules/Estimate",
+    "packages/modules/AttendenceMgmt"
     ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
   "license": "MIT",
@@ -44,6 +45,7 @@
     "buildD:masters": "cd packages/modules/Masters && yarn build",
     "build:estimate": "cd packages/modules/Estimate && yarn build",
     "build:project": "cd packages/modules/Project && yarn build",
+    "build:attendencemgmt": "cd packages/modules/AttendenceMgmt && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh",
     "clean": "rm -rf node_modules"
   },
