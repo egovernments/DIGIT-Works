@@ -82,6 +82,8 @@ paths:
         - $ref: '#/parameters/includeDeleted'
         - $ref: '#/parameters/includeAncestors'
         - $ref: '#/parameters/includeDescendants'
+        - $ref: '#/parameters/createdFrom'
+        - $ref: '#/parameters/createdTo'
       tags:
         - Project
       responses:
@@ -1210,6 +1212,24 @@ parameters:
     type: boolean
     default: false
     required: false
+
+  createdFrom:
+    name: createdFrom
+    description: |
+      Used in project search API to limit the search results to only those projects whose creation date is after the specified 'createdFrom' date.
+    in: query
+    required: false
+    type: integer
+    format: int64
+
+  createdTo:
+    name: createdTo
+    description: |
+      Used in project search API to limit the search results to only those projects whose creation date is before the specified 'createdTo' date.
+    in: query
+    required: false
+    type: integer
+    format: int64
 
 definitions:
 
