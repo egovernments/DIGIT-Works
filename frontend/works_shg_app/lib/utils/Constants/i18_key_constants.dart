@@ -105,4 +105,5 @@ class AttendanceMgmt {
   String get musterSentForApproval => 'MUSTER_SENt_FOR_APPROVAL_SUCCESS';
   String get applicationInWorkFlow => 'MUSTER_ROLL_IN_WORKFLOW_STATE';
   String get unableToCheckWorkflowStatus => 'MUSTER_ROLL_WORKFLOW_CHECK_FAIL';
+  String get resubmitMusterRoll => 'RESUBMIT_MUSTER_ROLL';
 }

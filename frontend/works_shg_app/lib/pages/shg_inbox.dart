@@ -657,8 +657,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                             : null,
                                         child: Text(
                                             AppLocalizations.of(context)
-                                                .translate(
-                                                    i18.common.sendForApproval),
+                                                .translate(i18.attendanceMgmt
+                                                    .resubmitMusterRoll),
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .titleSmall!
