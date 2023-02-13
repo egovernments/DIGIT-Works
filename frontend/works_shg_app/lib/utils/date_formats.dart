@@ -78,10 +78,9 @@ class DateFormats {
       int selectedEndDate, int registerStartDate, int registerEndDate) {
     DateTime start = DateTime.fromMillisecondsSinceEpoch(selectedStartDate);
     DateTime end = DateTime.fromMillisecondsSinceEpoch(selectedEndDate);
-
     DaysInRange daysInRange = DaysInRange();
 
-    while (start.isBefore(end)) {
+    while (start.isBefore(end) || start.isAtSameMomentAs(end)) {
       DateTime currentDay = DateTime(start.year, start.month, start.day);
       int currentDayTimestamp = currentDay.millisecondsSinceEpoch;
       switch (start.weekday) {
@@ -130,7 +129,7 @@ class DateFormats {
         : parsedDate.subtract(Duration(days: daysToSubtract));
     weekDay = weekDay
         .add(Duration(hours: hours))
-        .subtract(const Duration(seconds: 1));
+        .subtract(Duration(minutes: hours > 12 ? 1 : 0));
     return weekDay.millisecondsSinceEpoch;
   }
 

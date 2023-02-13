@@ -209,20 +209,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                             .first
                                             .individualEntries!
                                             .isNotEmpty) {
-                                      List<AttendeesTrackList> attendeeList = state
-                                          .individualMusterRollModel!
-                                          .musterRoll!
-                                          .first
-                                          .individualEntries!
-                                          .map((e) => AttendeesTrackList(
-                                              name: e
-                                                  .musterIndividualAdditionalDetails
-                                                  ?.userName,
-                                              aadhaar: e
-                                                  .musterIndividualAdditionalDetails
-                                                  ?.aadharNumber,
-                                              individualId: e.individualId))
-                                          .toList();
+                                      List<AttendeesTrackList> attendeeList =
+                                          [];
 
                                       if (musterState
                                           .viewMusterRollsModel!
@@ -450,6 +438,22 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                             } else {
                                               hasLoaded = false;
                                               if (updateAttendeePayload
+                                                      .isNotEmpty &&
+                                                  createAttendeePayload
+                                                      .isNotEmpty) {
+                                                context
+                                                    .read<
+                                                        AttendanceLogCreateBloc>()
+                                                    .add(UpdateAttendanceLogEvent(
+                                                        attendanceList:
+                                                            updateAttendeePayload));
+                                                context
+                                                    .read<
+                                                        AttendanceLogCreateBloc>()
+                                                    .add(CreateAttendanceLogEvent(
+                                                        attendanceList:
+                                                            createAttendeePayload));
+                                              } else if (updateAttendeePayload
                                                   .isNotEmpty) {
                                                 context
                                                     .read<
@@ -475,7 +479,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                     i18.common.saveAsDraft),
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .subtitle2,
+                                                .titleSmall,
                                           )));
                                     }),
                                     const SizedBox(
@@ -615,7 +619,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
       updateAttendeePayload.clear();
       createAttendeePayload.clear();
       context.read<MusterRollEstimateBloc>().add(
-            EstimateMusterRollEvent(
+            ViewEstimateMusterRollEvent(
               tenantId: widget.tenantId,
               registerId: registerId.toString(),
               startDate: selectedDateRange!.startDate,
@@ -689,12 +693,21 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           color: const Color.fromRGBO(0, 100, 0, 1),
           index: tableDataModel.monIndex ?? 0.0,
           isNotGreyed: false,
-          onTap: () => onTapButton(
-              tableDataModel.individualId ?? '',
-              'mon',
-              tableDataModel.monEntryId,
-              tableDataModel.monExitId,
-              tableDataModel.auditDetails),
+          onTap: daysInRange == null || !daysInRange!.tuesday
+              ? null
+              : entryExitList!.length > 2
+                  ? () => onTapButton(
+                      tableDataModel.individualId ?? '',
+                      'mon',
+                      tableDataModel.monEntryId,
+                      tableDataModel.monExitId,
+                      tableDataModel.auditDetails)
+                  : () => onTapOnlyAbsentPresent(
+                      tableDataModel.individualId ?? '',
+                      'mon',
+                      tableDataModel.monEntryId,
+                      tableDataModel.monExitId,
+                      tableDataModel.auditDetails),
         ),
       ),
       TableData(
@@ -704,12 +717,21 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.tueIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(
-            tableDataModel.individualId ?? '',
-            'tue',
-            tableDataModel.tueEntryId,
-            tableDataModel.tueExitId,
-            tableDataModel.auditDetails),
+        onTap: daysInRange == null || !daysInRange!.tuesday
+            ? null
+            : entryExitList!.length > 2
+                ? () => onTapButton(
+                    tableDataModel.individualId ?? '',
+                    'tue',
+                    tableDataModel.tueEntryId,
+                    tableDataModel.tueExitId,
+                    tableDataModel.auditDetails)
+                : () => onTapOnlyAbsentPresent(
+                    tableDataModel.individualId ?? '',
+                    'tue',
+                    tableDataModel.tueEntryId,
+                    tableDataModel.tueExitId,
+                    tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
@@ -718,12 +740,21 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.wedIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(
-            tableDataModel.individualId ?? '',
-            'wed',
-            tableDataModel.wedEntryId,
-            tableDataModel.wedExitId,
-            tableDataModel.auditDetails),
+        onTap: daysInRange == null || !daysInRange!.wednesday
+            ? null
+            : entryExitList!.length > 2
+                ? () => onTapButton(
+                    tableDataModel.individualId ?? '',
+                    'wed',
+                    tableDataModel.wedEntryId,
+                    tableDataModel.wedExitId,
+                    tableDataModel.auditDetails)
+                : () => onTapOnlyAbsentPresent(
+                    tableDataModel.individualId ?? '',
+                    'wed',
+                    tableDataModel.wedEntryId,
+                    tableDataModel.wedExitId,
+                    tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
@@ -732,12 +763,21 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.thuIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(
-            tableDataModel.individualId ?? '',
-            'thu',
-            tableDataModel.thuEntryId,
-            tableDataModel.thuExitId,
-            tableDataModel.auditDetails),
+        onTap: daysInRange == null || !daysInRange!.thursday
+            ? null
+            : entryExitList!.length > 2
+                ? () => onTapButton(
+                    tableDataModel.individualId ?? '',
+                    'thu',
+                    tableDataModel.thuEntryId,
+                    tableDataModel.thuExitId,
+                    tableDataModel.auditDetails)
+                : () => onTapOnlyAbsentPresent(
+                    tableDataModel.individualId ?? '',
+                    'thu',
+                    tableDataModel.thuEntryId,
+                    tableDataModel.thuExitId,
+                    tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
@@ -746,12 +786,21 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.friIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(
-            tableDataModel.individualId ?? '',
-            'fri',
-            tableDataModel.friEntryId,
-            tableDataModel.friExitId,
-            tableDataModel.auditDetails),
+        onTap: daysInRange == null || !daysInRange!.friday
+            ? null
+            : entryExitList!.length > 2
+                ? () => onTapButton(
+                    tableDataModel.individualId ?? '',
+                    'fri',
+                    tableDataModel.friEntryId,
+                    tableDataModel.friExitId,
+                    tableDataModel.auditDetails)
+                : () => onTapOnlyAbsentPresent(
+                    tableDataModel.individualId ?? '',
+                    'fri',
+                    tableDataModel.friEntryId,
+                    tableDataModel.friExitId,
+                    tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
@@ -760,12 +809,21 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.satIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(
-            tableDataModel.individualId ?? '',
-            'sat',
-            tableDataModel.satEntryId,
-            tableDataModel.satExitId,
-            tableDataModel.auditDetails),
+        onTap: daysInRange == null || !daysInRange!.saturday
+            ? null
+            : entryExitList!.length > 2
+                ? () => onTapButton(
+                    tableDataModel.individualId ?? '',
+                    'sat',
+                    tableDataModel.satEntryId,
+                    tableDataModel.satExitId,
+                    tableDataModel.auditDetails)
+                : () => onTapOnlyAbsentPresent(
+                    tableDataModel.individualId ?? '',
+                    'sat',
+                    tableDataModel.satEntryId,
+                    tableDataModel.satExitId,
+                    tableDataModel.auditDetails),
       )),
       TableData(
           widget: CircularButton(
@@ -774,12 +832,21 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.sunIndex ?? 0,
         isNotGreyed: false,
-        onTap: () => onTapButton(
-            tableDataModel.individualId ?? '',
-            'sun',
-            tableDataModel.sunEntryId,
-            tableDataModel.sunExitId,
-            tableDataModel.auditDetails),
+        onTap: daysInRange == null || !daysInRange!.sunday
+            ? null
+            : entryExitList!.length > 2
+                ? () => onTapButton(
+                    tableDataModel.individualId ?? '',
+                    'sun',
+                    tableDataModel.sunEntryId,
+                    tableDataModel.sunExitId,
+                    tableDataModel.auditDetails)
+                : () => onTapOnlyAbsentPresent(
+                    tableDataModel.individualId ?? '',
+                    'sun',
+                    tableDataModel.sunEntryId,
+                    tableDataModel.sunExitId,
+                    tableDataModel.auditDetails),
       ))
     ]);
   }
@@ -799,7 +866,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
 
     if (index != -1) {
       setState(() {
-        if (newList[index].getProperty(day) == 0.0) {
+        if (newList[index].getProperty(day) == 0.0 ||
+            newList[index].getProperty(day) == -1) {
           newList[index].setProperty(day, 0.5);
           if (entryID != null && exitId != null) {
             updateAttendeePayload.removeWhere((e) =>
