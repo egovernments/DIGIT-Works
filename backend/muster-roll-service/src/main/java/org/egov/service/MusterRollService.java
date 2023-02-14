@@ -26,6 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -124,8 +125,13 @@ public class MusterRollService {
         enrichmentService.enrichSearchRequest(searchCriteria);
 
         List<Role> roles = requestInfoWrapper.getRequestInfo().getUserInfo().getRoles();
-        boolean isFilterRequired = roles.stream()
-                .anyMatch(role -> role.getCode().equalsIgnoreCase("ORG_ADMIN") || role.getCode().equalsIgnoreCase("ORG_STAFF"));
+        boolean isFilterRequired = false;
+        if (config.getRestrictedSearchRoles() != null && !config.getRestrictedSearchRoles().isEmpty()) {
+            List<String> restrictedRoles = Arrays.asList(config.getRestrictedSearchRoles().split(","));
+            isFilterRequired = roles.stream()
+                    .anyMatch(role -> restrictedRoles.contains(role.getCode()));
+        }
+
         //Fetch the attendance registers that belong to the user and then fetch the musters that belongs to the user
         List<String> registerIds = new ArrayList<>();
         if (isFilterRequired) {
