@@ -56,7 +56,7 @@ const App = ({ path }) => {
 
     switch (true) {
       case screenType?.includes("/create"):
-        return { marginLeft: "10px" };
+        return { marginLeft: "0px" };
 
       case screenType?.includes("/view"):
         return { marginLeft: "4px" };
@@ -82,7 +82,7 @@ const App = ({ path }) => {
   return (
     <Switch>
       <React.Fragment>
-        <div>
+        <div className="ground-container">
           <div style={getBreadCrumbStyles(window.location.href)}>
             <ContractsBreadCrumbs location={location} />
           </div>
