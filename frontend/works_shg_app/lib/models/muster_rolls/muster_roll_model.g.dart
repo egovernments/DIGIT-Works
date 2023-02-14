@@ -83,6 +83,7 @@ _$_MusterAdditionalDetails _$$_MusterAdditionalDetailsFromJson(
       attendanceRegisterName: json['attendanceRegisterName'] as String?,
       attendanceRegisterNo: json['attendanceRegisterNo'] as String?,
       orgName: json['orgName'] as String?,
+      contractId: json['contractId'] as String?,
     );
 
 Map<String, dynamic> _$$_MusterAdditionalDetailsToJson(
@@ -91,6 +92,7 @@ Map<String, dynamic> _$$_MusterAdditionalDetailsToJson(
       'attendanceRegisterName': instance.attendanceRegisterName,
       'attendanceRegisterNo': instance.attendanceRegisterNo,
       'orgName': instance.orgName,
+      'contractId': instance.contractId,
     };
 
 _$_MusterIndividualAdditionalDetails

@@ -72,15 +72,18 @@ class WorkDetailsCard extends StatelessWidget {
               ? () {
                   context.read<MusterRollSearchBloc>().add(
                         SearchIndividualMusterRollEvent(
-                          id: musterRollsModel!.musterRoll![i].id ?? '',
-                        ),
+                            id: musterRollsModel!.musterRoll![i].id ?? '',
+                            tenantId: musterRollsModel!.musterRoll![i].tenantId
+                                .toString()),
                       );
                   context.router.push(SHGInboxRoute(
                       projectDetails: [
                         detailsList[i],
                       ],
-                      id: musterRollsModel!.musterRoll![i].registerId ?? '',
-                      tenantId: musterRollsModel!.musterRoll![i].tenantId
+                      tenantId:
+                          musterRollsModel!.musterRoll![i].tenantId.toString(),
+                      musterRollNo: musterRollsModel!
+                          .musterRoll![i].musterRollNumber
                           .toString()));
                   context.read<MusterRollEstimateBloc>().add(
                         ViewEstimateMusterRollEvent(
@@ -143,10 +146,12 @@ class WorkDetailsCard extends StatelessWidget {
                     .translate(i18.workOrder.warningMsg),
                 primaryActionLabel:
                     AppLocalizations.of(context).translate(i18.common.confirm),
-                primaryAction: () => Navigator.pop(context),
+                primaryAction: () =>
+                    Navigator.of(context, rootNavigator: true).pop(),
                 secondaryActionLabel:
                     AppLocalizations.of(context).translate(i18.common.back),
-                secondaryAction: () => Navigator.pop(context),
+                secondaryAction: () =>
+                    Navigator.of(context, rootNavigator: true).pop(),
               ),
               elevatedCallBack: () {
                 context.read<AttendanceRegisterCreateBloc>().add(
@@ -173,12 +178,12 @@ class WorkDetailsCard extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: DigitElevatedButton(
           onPressed: () {
-            context.read<AttendanceProjectsSearchBloc>().add(
-                  SearchIndividualAttendanceProjectEvent(
-                    id: attendanceRegisterId ?? '',
-                  ),
-                );
             if (isManageAttendance) {
+              context.read<AttendanceProjectsSearchBloc>().add(
+                    SearchIndividualAttendanceProjectEvent(
+                      id: attendanceRegisterId ?? '',
+                    ),
+                  );
               context.read<AttendanceUserSearchBloc>().add(
                     const SearchAttendanceUserEvent(),
                   );
@@ -198,7 +203,7 @@ class WorkDetailsCard extends StatelessWidget {
               child: Text(elevatedButtonLabel,
                   style: Theme.of(context)
                       .textTheme
-                      .subtitle1!
+                      .titleMedium!
                       .apply(color: Colors.white))),
         ),
       ));
@@ -222,8 +227,8 @@ class WorkDetailsCard extends StatelessWidget {
             Container(
                 padding: const EdgeInsets.only(right: 16),
                 width: MediaQuery.of(context).size.width > 720
-                    ? MediaQuery.of(context).size.width / 3
-                    : MediaQuery.of(context).size.width / 2.5,
+                    ? MediaQuery.of(context).size.width / 3.5
+                    : MediaQuery.of(context).size.width / 3,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,

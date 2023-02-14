@@ -46,7 +46,8 @@ class _WorkOrderPage extends State<WorkOrderPage> {
         .toList();
     return Scaffold(
       appBar: AppBar(),
-      drawer: DrawerWrapper(const Drawer(child: SideBar())),
+      drawer: DrawerWrapper(const Drawer(
+          child: SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
       body: SingleChildScrollView(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
