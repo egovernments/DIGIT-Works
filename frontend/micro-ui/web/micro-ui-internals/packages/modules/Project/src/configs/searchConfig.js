@@ -2,7 +2,6 @@ const searchConfig = () => {
     return {
         label : "WORKS_SEARCH_PROJECT",
         type: 'search',
-        postProcessResult:true,
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
@@ -150,6 +149,7 @@ const searchConfig = () => {
                         {
                             label: "WORKS_PARENT_PROJECT_ID",
                             jsonPath: "ancestors[0].projectNumber",
+                            additionalCustomization:true
                         },
                         {
                             label: "WORKS_CREATED_BY",

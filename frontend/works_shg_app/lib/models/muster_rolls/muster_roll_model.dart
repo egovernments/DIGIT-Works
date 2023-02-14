@@ -65,6 +65,7 @@ class MusterAdditionalDetails with _$MusterAdditionalDetails {
     String? attendanceRegisterName,
     String? attendanceRegisterNo,
     String? orgName,
+    String? contractId,
   }) = _MusterAdditionalDetails;
 
   factory MusterAdditionalDetails.fromJson(

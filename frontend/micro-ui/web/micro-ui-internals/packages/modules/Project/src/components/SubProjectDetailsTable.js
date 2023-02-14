@@ -389,7 +389,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                         allowedFileTypesRegex={/(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i}
                                         allowedMaxSizeInMB={5}
                                         maxFilesAllowed={2}
-                                        extraStyleName={{ padding: "0.5rem" }}
+                                        extraStyleName={""}
                                         customClass={"upload-margin-bottom"}
                                         showHintBelow = {false}
                                     />

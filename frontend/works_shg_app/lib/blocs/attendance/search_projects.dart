@@ -21,6 +21,7 @@ class AttendanceProjectsSearchBloc
       : super(const AttendanceProjectsSearchState()) {
     on<SearchAttendanceProjectsEvent>(_onSearch);
     on<SearchIndividualAttendanceProjectEvent>(_onIndividualSearch);
+    on<DisposeAttendanceRegisterEvent>(_onDispose);
   }
 
   FutureOr<void> _onSearch(SearchAttendanceProjectsEvent event,
@@ -44,6 +45,12 @@ class AttendanceProjectsSearchBloc
         attendanceRegistersModel: attendanceRegistersModel, loading: false));
   }
 
+  FutureOr<void> _onDispose(DisposeAttendanceRegisterEvent event,
+      AttendanceProjectsSearchEmitter emit) async {
+    emit(state.copyWith(
+        loading: false, individualAttendanceRegisterModel: null));
+  }
+
   FutureOr<void> _onIndividualSearch(
       SearchIndividualAttendanceProjectEvent event,
       AttendanceProjectsSearchEmitter emit) async {
@@ -55,10 +62,7 @@ class AttendanceProjectsSearchBloc
             .searchAttendanceProjects(
       url: Urls.attendanceRegisterServices.searchAttendanceRegister,
       queryParameters: event.id.trim().toString().isNotEmpty
-          ? {
-              "tenantId": GlobalVariables.getTenantId().toString(),
-              "ids": event.id
-            }
+          ? {"tenantId": event.tenantId, "ids": event.id}
           : {"tenantId": GlobalVariables.getTenantId().toString()},
     );
     await Future.delayed(const Duration(seconds: 1));
@@ -73,7 +77,10 @@ class AttendanceProjectsSearchEvent with _$AttendanceProjectsSearchEvent {
   const factory AttendanceProjectsSearchEvent.search({@Default('') String id}) =
       SearchAttendanceProjectsEvent;
   const factory AttendanceProjectsSearchEvent.individualSearch(
-      {@Default('') String id}) = SearchIndividualAttendanceProjectEvent;
+      {@Default('') String id,
+      @Default('') String tenantId}) = SearchIndividualAttendanceProjectEvent;
+  const factory AttendanceProjectsSearchEvent.dispose() =
+      DisposeAttendanceRegisterEvent;
 }
 
 @freezed

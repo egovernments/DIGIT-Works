@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:works_shg_app/data/repositories/muster_roll_repository/muster_roll.dart';
@@ -17,33 +15,84 @@ part 'create_muster.freezed.dart';
 typedef MusterCreateEmitter = Emitter<MusterCreateState>;
 
 class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
-  MusterCreateBloc() : super(const MusterCreateState()) {
+  MusterCreateBloc() : super(const MusterCreateState.initial()) {
     on<CreateMusterEvent>(_onCreate);
+    on<UpdateMusterEvent>(_onUpdate);
   }
 
   FutureOr<void> _onCreate(
       CreateMusterEvent event, MusterCreateEmitter emit) async {
     Client client = Client();
-    emit(state.copyWith(loading: true));
-    MusterRollsModel musterRollsModel =
-        await MusterRollRepository(client.init()).createMuster(
-            url: Urls.musterRollServices.createMuster,
-            options: Options(extra: {
-              "userInfo": GlobalVariables.getUserInfo(),
-              "accessToken": GlobalVariables.getAuthToken()
-            }),
-            body: {
-          "musterRoll": {
-            "tenantId": event.tenantId,
-            "registerId": event.registerId,
-            "startDate": event.startDate,
-          },
-          "workflow": {"action": "SUBMIT", "comments": "Submit muster roll"}
-        });
-    await Future.delayed(const Duration(seconds: 2));
-    emit(state.copyWith(musterRollsModel: musterRollsModel, loading: false));
-    // Notifiers.getToastMessage(scaffoldMessengerKey.currentContext!,
-    //     'Created Successfully', 'SUCCESS');
+    try {
+      emit(const MusterCreateState.loading());
+      MusterRollsModel musterRollsModel =
+          await MusterRollRepository(client.init()).createMuster(
+              url: Urls.musterRollServices.createMuster,
+              options: Options(extra: {
+                "userInfo": GlobalVariables.getUserInfo(),
+                "accessToken": GlobalVariables.getAuthToken()
+              }),
+              body: {
+            "musterRoll": {
+              "tenantId": event.tenantId,
+              "registerId": event.registerId,
+              "startDate": event.startDate,
+              "additonalDetails": {
+                "orgName": event.orgName,
+                "contractId": event.contractId,
+                "attendanceRegisterNo": event.registerNo,
+                "attendanceRegisterName": event.registerName
+              }
+            },
+            "workflow": {"action": "SUBMIT", "comments": "Submit muster roll"}
+          });
+      if (musterRollsModel != null) {
+        emit(const MusterCreateState.loaded());
+      } else {
+        emit(const MusterCreateState.error());
+      }
+    } on DioError catch (e) {
+      emit(const MusterCreateState.error());
+    }
+  }
+
+  FutureOr<void> _onUpdate(
+      UpdateMusterEvent event, MusterCreateEmitter emit) async {
+    Client client = Client();
+    try {
+      emit(const MusterCreateState.loading());
+      MusterRollsModel musterRollsModel =
+          await MusterRollRepository(client.init()).createMuster(
+              url: Urls.musterRollServices.updateMuster,
+              options: Options(extra: {
+                "userInfo": GlobalVariables.getUserInfo(),
+                "accessToken": GlobalVariables.getAuthToken()
+              }),
+              body: {
+            "musterRoll": {
+              "tenantId": event.tenantId,
+              "id": event.id,
+              "additonalDetails": {
+                "orgName": event.orgName,
+                "contractId": event.contractId,
+                "attendanceRegisterNo": event.registerNo,
+                "attendanceRegisterName": event.registerName
+              }
+            },
+            "workflow": {
+              "action": "RESUBMIT",
+              "comments": "Resubmit muster roll",
+              "assignees": [GlobalVariables.getUUID()]
+            }
+          });
+      if (musterRollsModel != null) {
+        emit(const MusterCreateState.loaded());
+      } else {
+        emit(const MusterCreateState.error());
+      }
+    } on DioError catch (e) {
+      emit(const MusterCreateState.error());
+    }
   }
 }
 
@@ -52,16 +101,27 @@ class MusterCreateEvent with _$MusterCreateEvent {
   const factory MusterCreateEvent.create({
     required String tenantId,
     required String registerId,
+    required String contractId,
+    required String orgName,
+    required String registerNo,
+    required String registerName,
     required int startDate,
   }) = CreateMusterEvent;
+  const factory MusterCreateEvent.update({
+    required String tenantId,
+    required String id,
+    required String orgName,
+    required String contractId,
+    required String registerNo,
+    required String registerName,
+  }) = UpdateMusterEvent;
 }
 
 @freezed
 class MusterCreateState with _$MusterCreateState {
   const MusterCreateState._();
-
-  const factory MusterCreateState({
-    @Default(false) bool loading,
-    MusterRollsModel? musterRollsModel,
-  }) = _MusterCreateState;
+  const factory MusterCreateState.initial() = _Initial;
+  const factory MusterCreateState.loading() = _Loading;
+  const factory MusterCreateState.loaded() = _Loaded;
+  const factory MusterCreateState.error() = _Error;
 }

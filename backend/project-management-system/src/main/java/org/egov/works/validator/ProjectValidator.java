@@ -274,7 +274,7 @@ public class ProjectValidator {
                 }
             }
 
-            if (project.getTargets() != null) {
+            if (project.getTargets() != null && !StringUtils.isBlank(project.getProjectType())) {
                 for (Target target: project.getTargets()) {
                     //Verify if beneficiary is present for project type
                     if (isProjectPresentInMDMS && !StringUtils.isBlank(target.getBeneficiaryType())) {
