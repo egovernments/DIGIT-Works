@@ -99,8 +99,8 @@ public class MusterRollService {
     public MusterRollRequest createMusterRoll(MusterRollRequest musterRollRequest) {
         log.info("MusterRollService::createMusterRoll");
 
-        checkMusterRollExists(musterRollRequest.getMusterRoll());
         musterRollValidator.validateCreateMusterRoll(musterRollRequest);
+        checkMusterRollExists(musterRollRequest.getMusterRoll());
         enrichmentService.enrichMusterRollOnCreate(musterRollRequest);
         calculationService.createAttendance(musterRollRequest,true);
         workflowService.updateWorkflowStatus(musterRollRequest);
@@ -151,11 +151,11 @@ public class MusterRollService {
     public MusterRollRequest updateMusterRoll(MusterRollRequest musterRollRequest) {
         log.info("MusterRollService::updateMusterRoll");
 
+        musterRollValidator.validateUpdateMusterRoll(musterRollRequest);
+
+        //check if the user is enrolled in the attendance register for resubmit
         MusterRoll existingMusterRoll = fetchExistingMusterRoll(musterRollRequest.getMusterRoll());
         log.info("MusterRollService::updateMusterRoll::update request for musterRollNumber::"+existingMusterRoll.getMusterRollNumber());
-
-        boolean isComputeAttendance = isComputeAttendance(musterRollRequest.getMusterRoll());
-        musterRollValidator.validateUpdateMusterRoll(musterRollRequest,existingMusterRoll,isComputeAttendance);
 
         //fetch MDMS data for muster - skill level
         String rootTenantId = existingMusterRoll.getTenantId().split("\\.")[0];
@@ -163,7 +163,10 @@ public class MusterRollService {
 
         enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll,mdmsData);
         //If 'computeAttendance' flag is true, re-calculate the attendance from attendanceLogs and update
+        boolean isComputeAttendance = isComputeAttendance(musterRollRequest.getMusterRoll());
         if (isComputeAttendance) {
+            RequestInfo requestInfo = musterRollRequest.getRequestInfo();
+            musterRollValidator.isValidUser(existingMusterRoll, requestInfo);
             calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
         workflowService.updateWorkflowStatus(musterRollRequest);
