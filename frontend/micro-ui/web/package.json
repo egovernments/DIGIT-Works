@@ -11,7 +11,8 @@
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/Project",
-    "micro-ui-internals/packages/modules/Estimate"
+    "micro-ui-internals/packages/modules/Estimate",
+    "micro-ui-internals/packages/Mukta"
   ],
   "homepage": "/works-ui",
   "dependencies": {
@@ -26,6 +27,7 @@
     "@egovernments/digit-ui-module-expenditure": "0.0.3",
     "@egovernments/digit-ui-module-masters": "0.0.3",
     "@egovernments/digit-ui-module-project": "0.0.4",
+    "@egovernments/digit-ui-customisation-mukta": "0.0.1",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
