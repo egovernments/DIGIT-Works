@@ -114,6 +114,36 @@ export const UICustomizations = {
                 return <div>{value?.length}</div>
             }
         }
+    },
+    AttendanceInboxConfig: {
+        preProcess: (data) => {
+            debugger
+            const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.startDate)
+            const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.endDate)
+            const musterRollStatus = data.body.inbox?.moduleSearchCriteria?.musterRollStatus?.code
+            data.body.inbox = { 
+                ...data.body.inbox, 
+                tenantId: Digit.ULBService.getCurrentTenantId(), 
+                processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
+                moduleSearchCriteria: {tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus}
+            }
+            console.log('data', data);
+            return data
+        },
+        additionalCustomizations: (row,column,columnConfig,value,t) => {
+            if (column.label === "ATM_MUSTER_ROLL_ID") {
+                return <span className="link">
+                    <Link to={`/works-ui/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId() }&musterRollNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+                </span>
+            }
+            if( column.label === "ATM_ATTENDANCE_WEEK") {
+                const week = `${Digit.DateUtils.ConvertTimestampToDate(value?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(value?.endDate, 'dd/MM/yyyy')}`
+                return <div>{week}</div>
+            }
+            if (column.label === "ATM_NO_OF_INDIVIDUALS") {
+                return <div>{value?.length}</div>
+            }
+        }
     }
 }
 

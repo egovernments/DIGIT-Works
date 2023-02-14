@@ -40,6 +40,9 @@ const InboxSearchComposer = (props) => {
         if (Object.keys(state.tableForm)?.length > 0 && (searchFormParamCount >= apiDetails.minParametersForSearchForm || filterFormParamCount >= apiDetails.minParametersForFilterForm)){
             setEnable(true)
         }
+
+        console.log('fianl', apiDetails);
+        if(configs?.type === 'inbox') setEnable(true)
     }, [state])
     
 

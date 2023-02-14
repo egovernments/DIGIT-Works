@@ -25,15 +25,25 @@ const inboxConfig = () => {
         label : "ES_COMMON_INBOX",
         type : "inbox", 
         apiDetails: {
-            serviceName: "/muster-roll/v1/_search",
+            serviceName: "/inbox/v2/_search",
             requestParam: {},
-            requestBody: {},
+            requestBody: {
+                inbox: {
+                    processSearchCriteria: {
+                        businessService: [
+                            "muster-roll-approval"
+                        ],
+                        moduleName: "muster-roll-service"
+                    },
+                    moduleSearchCriteria: {}
+                }
+            },
             minParametersForSearchForm:1,
             masterName:"commonUiConfig",
-            moduleName:"SearchAttendanceConfig",
-            tableFormJsonPath:"requestParam",
-            filterFormJsonPath:"rrequestParam",
-            searchFormJsonPath:"requestParam",
+            moduleName:"AttendanceInboxConfig",
+            tableFormJsonPath:"requestBody.inbox",
+            filterFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
+            searchFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
         },
         sections : {
             search : {
@@ -140,23 +150,26 @@ const inboxConfig = () => {
                     columns: [
                         {
                             label: "ATM_MUSTER_ROLL_ID",
-                            jsonPath: "musterRollNumber",
+                            jsonPath: "businessObject.musterRollNumber",
+                            additionalCustomization:true 
                         },
                         {
                             label: "WORKS_NAME_OF_WORK",
-                            jsonPath: "work",
+                            jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
                         },
                         {
                             label: "ATM_ATTENDANCE_WEEK",
-                            jsonPath: "week",
+                            jsonPath: "businessObject",
+                            additionalCustomization:true
                         },
                         {
                             label: "ATM_IA_AP",
-                            jsonPath: "iaip",
+                            jsonPath: "businessObject.additionalDetails.orgName",
                         },
                         {
                             label: "ATM_NO_OF_INDIVIDUALS",
-                            jsonPath: "individualCount",
+                            jsonPath: "businessObject.individualEntries",
+                            additionalCustomization:true 
                         },
                         {
                             label: "ATM_SLA",
@@ -165,7 +178,7 @@ const inboxConfig = () => {
                     ],
                     enableGlobalSearch: false,
                     enableColumnSort: true,
-                    resultsJsonPath: "musterRolls",
+                    resultsJsonPath: "items",
                 },
                 children: {},
                 show: true 
