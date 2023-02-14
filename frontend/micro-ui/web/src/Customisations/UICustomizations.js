@@ -59,6 +59,14 @@ export const UICustomizations = {
                 </span>
             }
 
+            if (column.label === "WORKS_PARENT_PROJECT_ID") {
+                return value ?
+                    <span className="link">
+                        <Link to={`/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&projectNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+                    </span>
+                    : t("ES_COMMON_NA")
+            }
+
         },
         additionalValidations: (type, data, keys) => {
             if(type == 'date') {
