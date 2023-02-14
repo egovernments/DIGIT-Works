@@ -11,7 +11,8 @@ import { Loader } from '../atoms/Loader';
 import NoResultsFound from '../atoms/NoResultsFound';
 
 
-const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig }) => {
+const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate }) => {
+    
     const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
@@ -19,16 +20,19 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     searchResult = searchResult.reverse()
     //reversing reason -> for some reason if we enable sorting on columns results from the api are reversed and shown, for now -> reversing the results(max size 50 so not a performance issue)
     
-    if (fullConfig?.postProcessResult){
-        var { isPostProcessFetching,
-            isPostProcessLoading,
-            combinedResponse }  =  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(searchResult) 
+    // if (fullConfig?.postProcessResult){
+    //     var { isPostProcessFetching,
+    //         isPostProcessLoading,
+    //         combinedResponse }  =  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(searchResult) 
 
-        if(combinedResponse?.length > 0){
-            searchResult = combinedResponse
-        } 
-    }
+    //     if(combinedResponse?.length > 0){
+    //         searchResult = combinedResponse
+    //     } 
+    // }
     
+ 
+
+   
 
     const {state,dispatch} = useContext(InboxContext)
     
@@ -105,8 +109,6 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     useEffect(() => {
         register("offset", 0);
         register("limit", 10);
-        // register("sortBy", "department");
-        
     }, [register]);
 
     function onPageSizeChange(e) {
@@ -137,7 +139,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     }
 
     
-    if (isLoading || isFetching || isPostProcessFetching || isPostProcessLoading) return <Loader />
+    if (isLoading || isFetching ) return <Loader />
     if (searchResult?.length === 0) return <NoResultsFound/>
     return (
         <div >
