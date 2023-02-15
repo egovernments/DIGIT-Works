@@ -68,7 +68,7 @@ const searchConfig = () => {
                           populators: { 
                               name: "name",
                               error: `PROJECT_PATTERN_ERR_MSG`,
-                              validation: { pattern: /^[a-z0-9\/-@#]*$/i, minlength : 2 }
+                              validation: { pattern: /^[a-z0-9\/-@# ]*$/i, minlength : 2 }
                           }
                         },
                         {
@@ -92,7 +92,7 @@ const searchConfig = () => {
                           isMandatory: false,
                           disable: false,
                           populators: { 
-                              name: "startDate",
+                              name: "createdFrom",
                           }
                         },
                         {
@@ -101,7 +101,7 @@ const searchConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "endDate",
+                                name: "createdTo",
                                 error: 'DATE_VALIDATION_MSG'
                             },
                             additionalValidation: {
