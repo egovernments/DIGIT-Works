@@ -41,7 +41,6 @@ const InboxSearchComposer = (props) => {
             setEnable(true)
         }
 
-        console.log('fianl', apiDetails);
         if(configs?.type === 'inbox') setEnable(true)
     }, [state])
     
@@ -85,24 +84,33 @@ const InboxSearchComposer = (props) => {
                                 uiConfig={ configs?.sections?.search?.uiConfig} 
                                 header={configs?.sections?.search?.label} 
                                 screenType={configs.type}
-                                fullConfig={configs}/>
+                                fullConfig={configs}
+                                data={data}
+                                />
                         </div>
                 }
                 {
-                configs?.sections?.filter?.show &&  
-                    <div className="section filter">
-                        <SearchComponent 
+                    configs?.sections?.filter?.show &&  
+                        <div className="section filter">
+                            <SearchComponent 
                                 uiConfig={ configs?.sections?.filter?.uiConfig} 
                                 header={configs?.sections?.filter?.label} 
                                 screenType={configs.type}
-                                fullConfig={configs}/>
-                    </div> 
-                }
+                                fullConfig={configs}
+                                data={data}
+                                />
+                        </div> 
+                    }
                 {   
-                configs?.sections?.searchResult?.show &&  
+                    configs?.sections?.searchResult?.show &&  
                         <div className="" style={data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length > 0 ? (!(isLoading || isFetching) ?{ overflowX: "scroll" }: {}) : {  }} >
-                            <ResultsTable config={configs?.sections?.searchResult?.uiConfig} data={data} isLoading={isLoading} isFetching={isFetching} fullConfig={configs}/>
-                    </div>
+                            <ResultsTable 
+                                config={configs?.sections?.searchResult?.uiConfig} 
+                                data={data} 
+                                isLoading={isLoading} 
+                                isFetching={isFetching} 
+                                fullConfig={configs}/>
+                        </div>
                 }
             </div>
             <div className="additional-sections-parent">

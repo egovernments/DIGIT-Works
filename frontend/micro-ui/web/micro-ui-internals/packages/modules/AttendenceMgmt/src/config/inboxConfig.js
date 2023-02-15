@@ -1,25 +1,3 @@
-const musterRollStatus = [
-    {
-        name: 'Submitted',
-        code: 'SUBMITTED',
-        i18nKey: 'SUBMITTED'
-    },
-    {
-        name: 'Approved',
-        code: 'APPROVED',
-        i18nKey: 'APPROVED'
-    },
-    {
-        name: 'Rejected',
-        code: 'REJECTED',
-        i18nKey: 'REJECTED'
-    },
-    {
-        name: 'Verified',
-        code: 'VERIFIED',
-        i18nKey: 'VERIFIED'
-    }
-]
 const inboxConfig = () => {
     return {
         label : "ES_COMMON_INBOX",
@@ -136,7 +114,7 @@ const inboxConfig = () => {
                             populators: {
                                 name: "musterRollStatus",
                                 optionsKey: "i18nKey",
-                                options: musterRollStatus
+                                options: []
                             },
                         },
                     ]
