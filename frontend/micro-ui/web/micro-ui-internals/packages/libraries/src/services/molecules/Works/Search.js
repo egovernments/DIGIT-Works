@@ -17,7 +17,7 @@ const convertEpochToDate = (dateEpoch) => {
     return `${day}/${month}/${year}`;
 };
 
-const createProjectsArray = (t, project, searchParams) => {
+const createProjectsArray = (t, project, searchParams, headerLocale) => {
 
     let totalProjects = {
         searchedProject : {},
@@ -152,14 +152,14 @@ export const WorksSearch = {
         //Upon Search, we will get a response of one Project which will be our Searched Projects
         //That project will have descendants, which will be the part of Sub-Projects.
 
-        let projects = createProjectsArray(t, response?.Projects, searchParams);
+        let projects = createProjectsArray(t, response?.Projects, searchParams, headerLocale);
         //searched Project details
         projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
         projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.departmentDetails, projects?.searchedProject?.workTypeDetails, projects?.searchedProject?.locationDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
         projectDetails.searchedProject['details']['financialDetails'] = {applicationDetails :  [projects?.searchedProject?.financialDetails]}; //rest categories will come here
 
         if(response?.Projects?.[0]?.descendants) {
-            projects = createProjectsArray(t, response?.Projects?.[0]?.descendants, searchParams);
+            projects = createProjectsArray(t, response?.Projects?.[0]?.descendants, searchParams, headerLocale);
             //all details of searched project will come here
             projectDetails.subProjects = projects?.subProjects;
         }
