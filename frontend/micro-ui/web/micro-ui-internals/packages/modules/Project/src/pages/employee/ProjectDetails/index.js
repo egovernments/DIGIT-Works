@@ -19,6 +19,7 @@ const ProjectDetails = () => {
     const { t } = useTranslation();
     const [activeLink, setActiveLink] = useState("Project_Details");
     const tenantId =  Digit.ULBService.getCurrentTenantId();
+    debugger;
     const queryStrings = Digit.Hooks.useQueryParams();
     const history = useHistory();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
@@ -40,6 +41,10 @@ const ProjectDetails = () => {
 
     const handleParentProjectSearch = (parentProjectNumber) => {
         history.push(`/${window.contextPath}/employee/project/project-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${parentProjectNumber}`);
+    }
+
+    const handleNavigateToEstimatesScreen = () => {
+        history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
     }
 
     const { data } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
@@ -66,7 +71,7 @@ const ProjectDetails = () => {
               />
             </HorizontalNav>
             <ActionBar>
-                <SubmitBar onSubmit={() => { }} label={t("WORKS_ACTIONS")} />
+                <SubmitBar onSubmit={handleNavigateToEstimatesScreen} label={t("ACTION_TEST_CREATE_ESTIMATE")} />
             </ActionBar>
         </div>
     )
