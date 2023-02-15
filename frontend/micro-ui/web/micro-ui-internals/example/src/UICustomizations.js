@@ -61,14 +61,14 @@ export const UICustomizations = {
             if (column.label ==="WORKS_PRJ_SUB_ID")
             {
                 return <span className="link">
-                    <Link to={`/works-ui/employee/project/project-details?tenantId=${row.tenantId }&projectNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+                    <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row.tenantId }&projectNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
                 </span>
             }
 
             if (column.label === "WORKS_PARENT_PROJECT_ID") {
                return value ?
                  <span className="link">
-                    <Link to={`/works-ui/employee/project/project-details?tenantId=${row.tenantId}&projectNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+                    <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row.tenantId}&projectNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
                 </span>
                 :  t("ES_COMMON_NA")
             }
@@ -99,7 +99,7 @@ export const UICustomizations = {
             }
             if (column.label === "WORKS_ESTIMATE_ID") {
                 return <span className="link">
-                    <Link to={`/works-ui/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+                    <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
                 </span>
             }
             if (column.label === "WORKS_ESTIMATED_AMOUNT"){
@@ -122,7 +122,7 @@ export const UICustomizations = {
         additionalCustomizations: (row,column,columnConfig,value,t) => {
             if (column.label === "ATM_MUSTER_ROLL_NUMBER") {
                 return <span className="link">
-                    <Link to={`/works-ui/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId() }&musterRollNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+                    <Link to={`/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId() }&musterRollNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
                 </span>
             }
             if (column.label === "ATM_NO_OF_INDIVIDUALS") {
