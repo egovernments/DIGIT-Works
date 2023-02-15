@@ -19,7 +19,6 @@ const ProjectDetails = () => {
     const { t } = useTranslation();
     const [activeLink, setActiveLink] = useState("Project_Details");
     const tenantId =  Digit.ULBService.getCurrentTenantId();
-    debugger;
     const queryStrings = Digit.Hooks.useQueryParams();
     const history = useHistory();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);

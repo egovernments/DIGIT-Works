@@ -11,8 +11,8 @@ const ViewProject = (props) => {
   const searchParams = {
     Projects : [
         {   //will update this once integration for view is completed
-            tenantId : queryStrings?.tenantId || "pb.amritsar" ,
-            projectNumber : queryStrings?.projectNumber || "PR/2022-23/02/000725"
+            tenantId : queryStrings?.tenantId,
+            projectNumber : queryStrings?.projectNumber
         }
     ]
   } 
