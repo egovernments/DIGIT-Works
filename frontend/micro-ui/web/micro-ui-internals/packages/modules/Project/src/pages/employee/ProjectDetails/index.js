@@ -26,7 +26,7 @@ const ProjectDetails = () => {
     const searchParams = {
         Projects : [
             {
-                tenantId : queryStrings?.tenantId,
+                tenantId : queryStrings?.tenantId || tenantId,
                 projectNumber : queryStrings?.projectNumber
             }
         ]
@@ -34,7 +34,8 @@ const ProjectDetails = () => {
     const filters = {
         limit : 11,
         offset : 0,
-        includeAncestors : true
+        includeAncestors : true,
+        includeDescendants : true
     }
 
     const handleParentProjectSearch = (parentProjectNumber) => {
@@ -42,7 +43,6 @@ const ProjectDetails = () => {
     }
 
     const { data } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
-
     return (
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>

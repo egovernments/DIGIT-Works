@@ -19,7 +19,8 @@ const ViewProject = (props) => {
   const filters = {
       limit : 10,
       offset : 0,
-      includeAncestors : true
+      includeAncestors : true,
+      includeDescendants : true
   }
     
   const { t } = useTranslation()

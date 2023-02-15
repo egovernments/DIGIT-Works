@@ -18,7 +18,9 @@ const ViewFinancialDetails = (props) => {
   } 
   const filters = {
       limit : 10,
-      offset : 0
+      offset : 0,
+      includeAncestors : true,
+      includeDescendants : true
   }
     
   const { t } = useTranslation()
