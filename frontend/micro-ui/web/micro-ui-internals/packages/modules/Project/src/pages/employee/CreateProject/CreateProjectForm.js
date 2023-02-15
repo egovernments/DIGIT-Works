@@ -252,10 +252,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
 
     return (
         <React.Fragment>
-        <div className={"employee-main-application-details"}>
-          <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-            <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_CREATE_PROJECT")}</Header>
-          </div>
+            <Header styles={{fontSize: "32px"}}>{t("WORKS_CREATE_PROJECT")}</Header>
           {
             createProjectSectionFormConfig?.form && (
               <FormComposer
@@ -270,7 +267,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
                 submitInForm={false}
                 fieldStyle={{ marginRight: 0 }}
                 inline={false}
-                className="card-no-margin"
+                className="form-no-margin"
                 defaultValues={sessionFormData}
                 showWrapperContainers={false}
                 isDescriptionBold={false}
@@ -284,7 +281,6 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
             />
            )}
            {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
-        </div>
       </React.Fragment>
     )
 }

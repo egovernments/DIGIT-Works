@@ -12,6 +12,7 @@ import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { initProjectComponents } from "@egovernments/digit-ui-module-project";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
+import {initMuktaCustomisations} from "@egovernments/digit-ui-customisation-mukta";
 
 
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
@@ -45,6 +46,7 @@ const enabledModules = [
   "Masters",
   "Estimate",
   "Project",
+  "Mukta"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({});
 
@@ -62,6 +64,8 @@ initProjectComponents();
 const moduleReducers = (initData) => ({
   initData,
 });
+
+initMuktaCustomisations();
 
 function App() {
   window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
