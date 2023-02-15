@@ -134,6 +134,7 @@ export const WorksSearch = {
     },
     viewProjectDetailsScreen: async(t,tenantId, searchParams, filters = {limit : 10, offset : 0, includeAncestors : true, includeDescendants : true}, headerLocale)=> {
         const response = await WorksService?.searchProject(tenantId, searchParams, filters);
+
         //Categoring the response into an object of searched project and its sub-projects ( if any )
         //searched projects will have basic details, project details and financial details
         //subprojects will be shown in a table similar to what create project has
@@ -145,21 +146,24 @@ export const WorksSearch = {
                     financialDetails : []
                 }
             },
-            subProjects : []
+            subProjects : {}
         }
 
-        let projects = createProjectsArray(t, response, searchParams);
+        //Upon Search, we will get a response of one Project which will be our Searched Projects
+        //That project will have descendants, which will be the part of Sub-Projects.
+
+        let projects = createProjectsArray(t, response?.Projects, searchParams);
         //searched Project details
         projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
         projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.departmentDetails, projects?.searchedProject?.workTypeDetails, projects?.searchedProject?.locationDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
         projectDetails.searchedProject['details']['financialDetails'] = {applicationDetails :  [projects?.searchedProject?.financialDetails]}; //rest categories will come here
-        
-        if(response?.descendants) {
-            projects = createProjectsArray(t, response?.descendants, searchParams);
+
+        if(response?.Projects?.[0]?.descendants) {
+            projects = createProjectsArray(t, response?.Projects?.[0]?.descendants, searchParams);
             //all details of searched project will come here
-            projectDetails?.subProjects?.push(projects?.searchedProject?.subProjects);
+            projectDetails.subProjects = projects?.subProjects;
         }
-        console.log(projectDetails);
+
         return {
             projectDetails : projectDetails,
             processInstancesDetails: [],
