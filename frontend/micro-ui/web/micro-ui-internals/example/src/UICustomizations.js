@@ -69,7 +69,7 @@ export const UICustomizations = {
 
         },
         additionalValidations: (type, data, keys) => {
-            if(type == 'date') {
+            if(type === 'date') {
                 return (data[keys.start] && data[keys.end]) ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true
             }
         }
@@ -125,17 +125,18 @@ export const UICustomizations = {
     },
     AttendanceInboxConfig: {
         preProcess: (data) => {
-            debugger
-            const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.startDate)
-            const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.endDate)
+            const convertedStartDate = Digit.DateUtils.ConvertTimestampToDate(data.body.inbox?.moduleSearchCriteria?.musterRolldateRange?.range?.startDate, 'yyyy-MM-dd')
+            const convertedEndDate = Digit.DateUtils.ConvertTimestampToDate(data.body.inbox?.moduleSearchCriteria?.musterRolldateRange?.range?.endDate, 'yyyy-MM-dd')
+            const startDate = Digit.Utils.pt.convertDateToEpoch(convertedStartDate, 'dayStart')
+            const endDate = Digit.Utils.pt.convertDateToEpoch(convertedEndDate, 'dayStart')
+            const attendanceRegisterName = data.body.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim()
             const musterRollStatus = data.body.inbox?.moduleSearchCriteria?.musterRollStatus?.code
             data.body.inbox = { 
                 ...data.body.inbox, 
                 tenantId: Digit.ULBService.getCurrentTenantId(), 
                 processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-                moduleSearchCriteria: {tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus}
+                moduleSearchCriteria: {tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName}
             }
-            console.log('data', data);
             return data
         },
         additionalCustomizations: (row,column,columnConfig,value,t) => {
@@ -150,6 +151,11 @@ export const UICustomizations = {
             }
             if (column.label === "ATM_NO_OF_INDIVIDUALS") {
                 return <div>{value?.length}</div>
+            }
+            if (column.label === "ATM_SLA") {
+                return (
+                    parseInt(value) > 0 ? <span className="sla-cell-success">{ t(value) || ""}</span> : <span className="sla-cell-error">{ t(value )|| ""}</span>
+                );
             }
         }
     }

@@ -35,7 +35,6 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
     defaultValues: uiConfig?.defaultValues,
   });
   const formData = watch();
-
   const checkKeyDown = (e) => {
     const keyCode = e.keyCode ? e.keyCode : e.key ? e.key : e.which;
     if (keyCode === 13) {
@@ -51,7 +50,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
     if(updatedFields.length >= uiConfig?.minReqFields) {
      // here based on screenType call respective dispatch fn
       dispatch({
-        type: screenType === "search" ? "searchForm" : "filterForm",
+        type: uiConfig?.type === "filter" ? "filterForm" : "searchForm",
         state: {
           ...data
         }

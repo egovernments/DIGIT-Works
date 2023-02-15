@@ -173,7 +173,8 @@ const inboxConfig = () => {
                         },
                         {
                             label: "ATM_SLA",
-                            jsonPath: "slaDays",
+                            jsonPath: "businessObject.serviceSla",
+                            additionalCustomization:true
                         }
                     ],
                     enableGlobalSearch: false,
