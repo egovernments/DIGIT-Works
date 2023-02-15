@@ -1,5 +1,5 @@
-import { FormComposer } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
+import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import _ from "lodash";
@@ -266,20 +266,23 @@ const CreateContractForm = ({ onFormSubmit, estimateNumber, task, subEstimate, s
   };
 
   return (
-    <FormComposer
-      heading={t("WORKS_CREATE_CONTRACT")}
-      label={t("WORKS_PROCEED_FORWARD")}
-      config={configs.map((config) => {
-        return {
-          ...config,
-          body: config.body.filter((a) => !a.hideInEmployee),
-        };
-      })}
-      defaultValues={sessionFormData}
-      onFormValueChange={onFormValueChange}
-      onSubmit={onFormSubmit}
-      fieldStyle={{ marginRight: 0 }}
-    />
+    <React.Fragment>
+      <Header styles={{fontSize: "32px"}}>{t("WORKS_CREATE_CONTRACT")}</Header>
+      <FormComposer
+        label={t("WORKS_PROCEED_FORWARD")}
+        config={configs.map((config) => {
+          return {
+            ...config,
+            body: config.body.filter((a) => !a.hideInEmployee),
+          };
+        })}
+        defaultValues={sessionFormData}
+        onFormValueChange={onFormValueChange}
+        onSubmit={onFormSubmit}
+        fieldStyle={{ marginRight: 0 }}
+        className="form-no-margin"
+      />
+    </React.Fragment>
   );
 };
 
