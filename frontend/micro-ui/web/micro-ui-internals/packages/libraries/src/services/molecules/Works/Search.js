@@ -146,7 +146,7 @@ export const WorksSearch = {
                     financialDetails : []
                 }
             },
-            subProjects : {}
+            subProjects : []
         }
 
         //Upon Search, we will get a response of one Project which will be our Searched Projects
@@ -161,9 +161,8 @@ export const WorksSearch = {
         if(response?.Projects?.[0]?.descendants) {
             projects = createProjectsArray(t, response?.Projects?.[0]?.descendants, searchParams, headerLocale);
             //all details of searched project will come here
-            projectDetails.subProjects = projects?.subProjects;
+            projectDetails.subProjects.push(projects?.subProjects);
         }
-
         return {
             projectDetails : projectDetails,
             processInstancesDetails: [],

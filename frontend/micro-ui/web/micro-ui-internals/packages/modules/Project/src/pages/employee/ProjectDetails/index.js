@@ -1,19 +1,8 @@
 import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav } from '@egovernments/digit-ui-react-components'
-import React, { Fragment,useState } from 'react'
+import React, { Fragment,useEffect,useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 import ProjectDetailsNavDetails from './ProjectDetailsNavDetails'
-
-const configNavItems = [
-    {
-        "name":"Project_Details",
-        "code":"WORKS_PROJECT_DETAILS",
-    },
-    {
-        "name":"Financial_Details",
-        "code":"WORKS_FINANCIAL_DETAILS"
-    }
-]
 
 const ProjectDetails = () => {
     const { t } = useTranslation();
@@ -22,6 +11,24 @@ const ProjectDetails = () => {
     const queryStrings = Digit.Hooks.useQueryParams();
     const history = useHistory();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+    const [configNavItems, setNavTypeConfig] = useState([]);
+    const navConfigs = [
+        {
+            "name":"Project_Details",
+            "code":"WORKS_PROJECT_DETAILS",
+            "active" : true 
+        },
+        {
+            "name":"Financial_Details",
+            "code":"WORKS_FINANCIAL_DETAILS",
+            "active" : true 
+        },
+        {
+            "name":"Sub_Projects_Details",
+            "code":"PROJECTS_SUB_PROJECT_DETAILS",
+            "active" : false 
+        }
+    ]
 
     const searchParams = {
         Projects : [
@@ -47,6 +54,17 @@ const ProjectDetails = () => {
     }
 
     const { data } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
+
+    //update config for Nav once we get the data
+    useEffect(()=>{
+        if(data?.projectDetails?.subProjects.length > 0) {
+            navConfigs[2].active = true;
+        }else{
+            navConfigs[2].active = false;
+        }
+        let filterdNavConfig = navConfigs.filter((config)=>config.active === true);
+        setNavTypeConfig(filterdNavConfig);
+    },[data]);
     return (
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
