@@ -96,11 +96,7 @@ public class ContractService {
         //collect lineItems for each contract
         Map<String, List<LineItems>> lineItemsMap= lineItems.stream().collect(Collectors.groupingBy(LineItems::getContractId));
 
-        //get contract ids from lineItems
-        if(contractCriteria.getIds()==null || contractCriteria.getIds().isEmpty()){
-            contractCriteria.setIds(new ArrayList<>(lineItemsMap.keySet()));
-        }
-        else contractCriteria.getIds().addAll(lineItemsMap.keySet());
+        contractCriteria.setIds(new ArrayList<>(lineItemsMap.keySet()));
 
         //get contracts from db
         log.info("get contracts from db");

@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,18 @@ public class ContractCriteria {
 
     @JsonProperty("estimateLineItemIds")
     private List<String> estimateLineItemIds = null;
+
+    @JsonProperty("contractType")
+    private String contractType = null;
+
+    @JsonProperty("orgIds")
+    private List<String> orgIds = null;
+
+    @JsonProperty("fromDate")
+    private BigDecimal fromDate = null;
+
+    @JsonProperty("toDate")
+    private BigDecimal toDate = null;
 
     @JsonProperty("pagination")
     private Pagination pagination = null;
