@@ -88,6 +88,8 @@ const ProjectDetails = () => {
               <ProjectDetailsNavDetails 
                 activeLink={activeLink}
                 subProjects={subProjects}
+                searchParams={searchParams}
+                filters={filters}
               />
             </HorizontalNav>
             <ActionBar>

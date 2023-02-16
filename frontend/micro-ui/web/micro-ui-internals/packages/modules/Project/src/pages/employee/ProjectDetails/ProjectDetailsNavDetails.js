@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-const ProjectDetailsNavDetails = ({activeLink, subProjects}) => {
+const ProjectDetailsNavDetails = ({activeLink, subProjects, searchParams, filters}) => {
     const ViewProjectComponent = Digit?.ComponentRegistryService?.getComponent("ViewProject"); 
     const ViewFinancialDetailsComponent = Digit?.ComponentRegistryService?.getComponent("ViewFinancialDetails"); 
     const ViewSubProjectsDetailsComponent = Digit?.ComponentRegistryService?.getComponent("ViewSubProjectsDetails");
@@ -9,12 +9,12 @@ const ProjectDetailsNavDetails = ({activeLink, subProjects}) => {
         <>
         {
             (activeLink === "Project_Details") && (
-                <ViewProjectComponent ></ViewProjectComponent>
+                <ViewProjectComponent searchParams={searchParams} filters={filters}></ViewProjectComponent>
             )
         }
         {
             (activeLink === "Financial_Details") && (
-                <ViewFinancialDetailsComponent ></ViewFinancialDetailsComponent>
+                <ViewFinancialDetailsComponent searchParams={searchParams} filters={filters} ></ViewFinancialDetailsComponent>
             )
         }
         {

@@ -2,20 +2,7 @@ import cloneDeep from "lodash/cloneDeep";
 import _ from "lodash";
 import { WorksService } from "../../elements/Works";
 import HrmsService from "../../elements/HRMS";
-
-
-const convertEpochToDate = (dateEpoch) => {
-    if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
-        return "NA";
-    }
-    const dateFromApi = new Date(dateEpoch);
-    let month = dateFromApi.getMonth() + 1;
-    let day = dateFromApi.getDate();
-    let year = dateFromApi.getFullYear();
-    month = (month > 9 ? "" : "0") + month;
-    day = (day > 9 ? "" : "0") + day;
-    return `${day}/${month}/${year}`;
-};
+import { convertEpochToDate } from "../../../utils/pt";
 
 const createProjectsArray = (t, project, searchParams, headerLocale) => {
 
