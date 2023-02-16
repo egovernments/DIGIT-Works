@@ -74,7 +74,6 @@ const ProjectDetails = () => {
             </div>
 
             <Card className={"employeeCard-override"} >
-                <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t("WORKS_PROJECT_DETAILS")}</CardSubHeader>
                 <StatusTable>
                     <Row className="border-none" label={`${t("WORKS_PROJECT_ID")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectID} textStyle={{ whiteSpace: "pre" }} />
                     <Row className="border-none" label={`${t("PDF_STATIC_LABEL_ESTIMATE_PROPOSAL_DATE")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate} textStyle={{ whiteSpace: "pre" }} />
