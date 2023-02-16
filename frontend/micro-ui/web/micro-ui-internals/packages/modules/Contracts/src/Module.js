@@ -7,7 +7,7 @@ import SearchContractApplication from "./components/SearchContract";
 import ContractsCard from "./components/ContractsCard";
 
 const ContractsModule = ({ stateCode, userType, tenants }) => {
-    const moduleCode = ["Contracts"];
+    const moduleCode = ["Contracts","common-masters"];
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
     const { isLoading, data: store } = Digit.Services.useStore({

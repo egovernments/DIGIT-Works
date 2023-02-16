@@ -102,7 +102,7 @@ const initDigitUI = () => {
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
   initMuktaCustomisations();
-  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
+  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} defaultLanding="employee" />, document.getElementById("root"));
 };
 
 initLibraries().then(() => {

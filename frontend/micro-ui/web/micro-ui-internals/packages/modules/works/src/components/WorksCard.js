@@ -38,7 +38,7 @@ const WorksCard = () => {
       },
       {
         label: t("WORKS_ESTIMATES"),
-        link: `/${window?.contextPath}/employee/works/inbox`,
+        link: `/${window?.contextPath}/employee/estimate/inbox`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
         count: 1,
       },

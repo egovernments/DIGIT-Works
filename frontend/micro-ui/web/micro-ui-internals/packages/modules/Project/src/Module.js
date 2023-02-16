@@ -13,7 +13,7 @@ import ProjectSearch from "./pages/employee/ProjectSearch";
 import ProjectSearchAndInbox from "./pages/employee/ProjectSearchAndInbox";
 
 export const ProjectModule = ({ stateCode, userType, tenants }) => {
-  const moduleCode = ["Project"];
+  const moduleCode = ["Project","common-masters"];
   const { path, url } = useRouteMatch();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const language = Digit.StoreData.getCurrentLanguage();
