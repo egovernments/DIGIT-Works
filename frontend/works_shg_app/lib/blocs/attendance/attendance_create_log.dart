@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:works_shg_app/models/attendance/attendance_registry_model.dart';
@@ -83,11 +81,4 @@ class AttendanceLogCreateState with _$AttendanceLogCreateState {
   const factory AttendanceLogCreateState.loading() = _Loading;
   const factory AttendanceLogCreateState.loaded() = _Loaded;
   const factory AttendanceLogCreateState.error() = _Error;
-
-  // const factory AttendanceLogCreateState({
-  //   @Default(false) bool loading,
-  //   @Default(true) bool isCompleted,
-  //   AttendanceRegistersModel? createAttendanceRegistersModel,
-  //   AttendanceRegistersModel? updateAttendanceRegistersModel,
-  // }) = _AttendanceLogCreateState;
 }

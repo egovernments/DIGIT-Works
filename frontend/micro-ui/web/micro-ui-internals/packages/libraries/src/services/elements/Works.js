@@ -107,4 +107,15 @@ export const WorksService = {
             params: {},
             auth: true,
         }),
+    searchProject:(tenantId, details, filters)=>
+        Request({
+           url: Urls.works.searchProject,
+           data:details,
+           useCache:false,
+           setTimeParam:false,
+           userService:true,
+           method:"POST",
+           params: {tenantId, limit : filters?.limit, offset : filters?.offset, includeAncestors : filters?.includeAncestors },
+           auth:true,
+       }),
 }

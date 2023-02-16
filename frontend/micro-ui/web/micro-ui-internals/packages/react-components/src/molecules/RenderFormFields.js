@@ -8,6 +8,7 @@ import TextInput from "../atoms/TextInput";
 import TextArea from "../atoms/TextArea";
 import CustomDropdown from './CustomDropdown';
 import MobileNumber from '../atoms/MobileNumber';
+import DateRangeNew from './DateRangeNew';
 
 const RenderFormFields = (props) => {
     const { t } = useTranslation();
@@ -156,12 +157,32 @@ const RenderFormFields = (props) => {
                         errorStyle={errors?.[populators.name]}
                     />
                     )}
-                    rules={{ required: isMandatory, ...populators.validation}}
+                    rules={{ required: isMandatory, ...populators.validation }}
                     defaultValue={formData?.[populators.name]}
                     name={populators?.name}
                     control={control}
-                />
+                  />
                 );
+
+            case "dateRange":
+              return (
+                <Controller
+                  render={(props) => (
+                    <DateRangeNew
+                      t={t}
+                      values={formData?.[populators.name]?.range}
+                      name={populators.name}
+                      onFilterChange={props.onChange}
+                      inputRef={props.ref}
+                      errorStyle={errors?.[populators.name]}
+                    />                  
+                  )}
+                  rules={{ required: isMandatory, ...populators.validation }}
+                  defaultValue={formData?.[populators.name]}
+                  name={populators?.name}
+                  control={control}
+                />
+              );
 
             case "component":
             return (

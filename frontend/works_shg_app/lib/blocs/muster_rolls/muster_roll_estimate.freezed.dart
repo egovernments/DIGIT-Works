@@ -16,10 +16,6 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$MusterRollEstimateEvent {
-  int get startDate => throw _privateConstructorUsedError;
-  int get endDate => throw _privateConstructorUsedError;
-  String get registerId => throw _privateConstructorUsedError;
-  String get tenantId => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(
@@ -28,6 +24,7 @@ mixin _$MusterRollEstimateEvent {
     required TResult Function(
             int startDate, int endDate, String registerId, String tenantId)
         viewEstimate,
+    required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -38,6 +35,7 @@ mixin _$MusterRollEstimateEvent {
     TResult? Function(
             int startDate, int endDate, String registerId, String tenantId)?
         viewEstimate,
+    TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -48,6 +46,7 @@ mixin _$MusterRollEstimateEvent {
     TResult Function(
             int startDate, int endDate, String registerId, String tenantId)?
         viewEstimate,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -55,24 +54,23 @@ mixin _$MusterRollEstimateEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(EstimateMusterRollEvent value) estimate,
     required TResult Function(ViewEstimateMusterRollEvent value) viewEstimate,
+    required TResult Function(DisposeEstimateMusterRollEvent value) dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(EstimateMusterRollEvent value)? estimate,
     TResult? Function(ViewEstimateMusterRollEvent value)? viewEstimate,
+    TResult? Function(DisposeEstimateMusterRollEvent value)? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(EstimateMusterRollEvent value)? estimate,
     TResult Function(ViewEstimateMusterRollEvent value)? viewEstimate,
+    TResult Function(DisposeEstimateMusterRollEvent value)? dispose,
     required TResult orElse(),
   }) =>
-      throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $MusterRollEstimateEventCopyWith<MusterRollEstimateEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -81,8 +79,6 @@ abstract class $MusterRollEstimateEventCopyWith<$Res> {
   factory $MusterRollEstimateEventCopyWith(MusterRollEstimateEvent value,
           $Res Function(MusterRollEstimateEvent) then) =
       _$MusterRollEstimateEventCopyWithImpl<$Res, MusterRollEstimateEvent>;
-  @useResult
-  $Res call({int startDate, int endDate, String registerId, String tenantId});
 }
 
 /// @nodoc
@@ -95,43 +91,13 @@ class _$MusterRollEstimateEventCopyWithImpl<$Res,
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? startDate = null,
-    Object? endDate = null,
-    Object? registerId = null,
-    Object? tenantId = null,
-  }) {
-    return _then(_value.copyWith(
-      startDate: null == startDate
-          ? _value.startDate
-          : startDate // ignore: cast_nullable_to_non_nullable
-              as int,
-      endDate: null == endDate
-          ? _value.endDate
-          : endDate // ignore: cast_nullable_to_non_nullable
-              as int,
-      registerId: null == registerId
-          ? _value.registerId
-          : registerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      tenantId: null == tenantId
-          ? _value.tenantId
-          : tenantId // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
 }
 
 /// @nodoc
-abstract class _$$EstimateMusterRollEventCopyWith<$Res>
-    implements $MusterRollEstimateEventCopyWith<$Res> {
+abstract class _$$EstimateMusterRollEventCopyWith<$Res> {
   factory _$$EstimateMusterRollEventCopyWith(_$EstimateMusterRollEvent value,
           $Res Function(_$EstimateMusterRollEvent) then) =
       __$$EstimateMusterRollEventCopyWithImpl<$Res>;
-  @override
   @useResult
   $Res call({int startDate, int endDate, String registerId, String tenantId});
 }
@@ -231,6 +197,7 @@ class _$EstimateMusterRollEvent implements EstimateMusterRollEvent {
     required TResult Function(
             int startDate, int endDate, String registerId, String tenantId)
         viewEstimate,
+    required TResult Function() dispose,
   }) {
     return estimate(startDate, endDate, registerId, tenantId);
   }
@@ -244,6 +211,7 @@ class _$EstimateMusterRollEvent implements EstimateMusterRollEvent {
     TResult? Function(
             int startDate, int endDate, String registerId, String tenantId)?
         viewEstimate,
+    TResult? Function()? dispose,
   }) {
     return estimate?.call(startDate, endDate, registerId, tenantId);
   }
@@ -257,6 +225,7 @@ class _$EstimateMusterRollEvent implements EstimateMusterRollEvent {
     TResult Function(
             int startDate, int endDate, String registerId, String tenantId)?
         viewEstimate,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (estimate != null) {
@@ -270,6 +239,7 @@ class _$EstimateMusterRollEvent implements EstimateMusterRollEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(EstimateMusterRollEvent value) estimate,
     required TResult Function(ViewEstimateMusterRollEvent value) viewEstimate,
+    required TResult Function(DisposeEstimateMusterRollEvent value) dispose,
   }) {
     return estimate(this);
   }
@@ -279,6 +249,7 @@ class _$EstimateMusterRollEvent implements EstimateMusterRollEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(EstimateMusterRollEvent value)? estimate,
     TResult? Function(ViewEstimateMusterRollEvent value)? viewEstimate,
+    TResult? Function(DisposeEstimateMusterRollEvent value)? dispose,
   }) {
     return estimate?.call(this);
   }
@@ -288,6 +259,7 @@ class _$EstimateMusterRollEvent implements EstimateMusterRollEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(EstimateMusterRollEvent value)? estimate,
     TResult Function(ViewEstimateMusterRollEvent value)? viewEstimate,
+    TResult Function(DisposeEstimateMusterRollEvent value)? dispose,
     required TResult orElse(),
   }) {
     if (estimate != null) {
@@ -304,28 +276,21 @@ abstract class EstimateMusterRollEvent implements MusterRollEstimateEvent {
       required final String registerId,
       required final String tenantId}) = _$EstimateMusterRollEvent;
 
-  @override
   int get startDate;
-  @override
   int get endDate;
-  @override
   String get registerId;
-  @override
   String get tenantId;
-  @override
   @JsonKey(ignore: true)
   _$$EstimateMusterRollEventCopyWith<_$EstimateMusterRollEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$ViewEstimateMusterRollEventCopyWith<$Res>
-    implements $MusterRollEstimateEventCopyWith<$Res> {
+abstract class _$$ViewEstimateMusterRollEventCopyWith<$Res> {
   factory _$$ViewEstimateMusterRollEventCopyWith(
           _$ViewEstimateMusterRollEvent value,
           $Res Function(_$ViewEstimateMusterRollEvent) then) =
       __$$ViewEstimateMusterRollEventCopyWithImpl<$Res>;
-  @override
   @useResult
   $Res call({int startDate, int endDate, String registerId, String tenantId});
 }
@@ -426,6 +391,7 @@ class _$ViewEstimateMusterRollEvent implements ViewEstimateMusterRollEvent {
     required TResult Function(
             int startDate, int endDate, String registerId, String tenantId)
         viewEstimate,
+    required TResult Function() dispose,
   }) {
     return viewEstimate(startDate, endDate, registerId, tenantId);
   }
@@ -439,6 +405,7 @@ class _$ViewEstimateMusterRollEvent implements ViewEstimateMusterRollEvent {
     TResult? Function(
             int startDate, int endDate, String registerId, String tenantId)?
         viewEstimate,
+    TResult? Function()? dispose,
   }) {
     return viewEstimate?.call(startDate, endDate, registerId, tenantId);
   }
@@ -452,6 +419,7 @@ class _$ViewEstimateMusterRollEvent implements ViewEstimateMusterRollEvent {
     TResult Function(
             int startDate, int endDate, String registerId, String tenantId)?
         viewEstimate,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (viewEstimate != null) {
@@ -465,6 +433,7 @@ class _$ViewEstimateMusterRollEvent implements ViewEstimateMusterRollEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(EstimateMusterRollEvent value) estimate,
     required TResult Function(ViewEstimateMusterRollEvent value) viewEstimate,
+    required TResult Function(DisposeEstimateMusterRollEvent value) dispose,
   }) {
     return viewEstimate(this);
   }
@@ -474,6 +443,7 @@ class _$ViewEstimateMusterRollEvent implements ViewEstimateMusterRollEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(EstimateMusterRollEvent value)? estimate,
     TResult? Function(ViewEstimateMusterRollEvent value)? viewEstimate,
+    TResult? Function(DisposeEstimateMusterRollEvent value)? dispose,
   }) {
     return viewEstimate?.call(this);
   }
@@ -483,6 +453,7 @@ class _$ViewEstimateMusterRollEvent implements ViewEstimateMusterRollEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(EstimateMusterRollEvent value)? estimate,
     TResult Function(ViewEstimateMusterRollEvent value)? viewEstimate,
+    TResult Function(DisposeEstimateMusterRollEvent value)? dispose,
     required TResult orElse(),
   }) {
     if (viewEstimate != null) {
@@ -499,18 +470,140 @@ abstract class ViewEstimateMusterRollEvent implements MusterRollEstimateEvent {
       required final String registerId,
       required final String tenantId}) = _$ViewEstimateMusterRollEvent;
 
-  @override
   int get startDate;
-  @override
   int get endDate;
-  @override
   String get registerId;
-  @override
   String get tenantId;
-  @override
   @JsonKey(ignore: true)
   _$$ViewEstimateMusterRollEventCopyWith<_$ViewEstimateMusterRollEvent>
       get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DisposeEstimateMusterRollEventCopyWith<$Res> {
+  factory _$$DisposeEstimateMusterRollEventCopyWith(
+          _$DisposeEstimateMusterRollEvent value,
+          $Res Function(_$DisposeEstimateMusterRollEvent) then) =
+      __$$DisposeEstimateMusterRollEventCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$DisposeEstimateMusterRollEventCopyWithImpl<$Res>
+    extends _$MusterRollEstimateEventCopyWithImpl<$Res,
+        _$DisposeEstimateMusterRollEvent>
+    implements _$$DisposeEstimateMusterRollEventCopyWith<$Res> {
+  __$$DisposeEstimateMusterRollEventCopyWithImpl(
+      _$DisposeEstimateMusterRollEvent _value,
+      $Res Function(_$DisposeEstimateMusterRollEvent) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$DisposeEstimateMusterRollEvent
+    implements DisposeEstimateMusterRollEvent {
+  const _$DisposeEstimateMusterRollEvent();
+
+  @override
+  String toString() {
+    return 'MusterRollEstimateEvent.dispose()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DisposeEstimateMusterRollEvent);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(
+            int startDate, int endDate, String registerId, String tenantId)
+        estimate,
+    required TResult Function(
+            int startDate, int endDate, String registerId, String tenantId)
+        viewEstimate,
+    required TResult Function() dispose,
+  }) {
+    return dispose();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(
+            int startDate, int endDate, String registerId, String tenantId)?
+        estimate,
+    TResult? Function(
+            int startDate, int endDate, String registerId, String tenantId)?
+        viewEstimate,
+    TResult? Function()? dispose,
+  }) {
+    return dispose?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(
+            int startDate, int endDate, String registerId, String tenantId)?
+        estimate,
+    TResult Function(
+            int startDate, int endDate, String registerId, String tenantId)?
+        viewEstimate,
+    TResult Function()? dispose,
+    required TResult orElse(),
+  }) {
+    if (dispose != null) {
+      return dispose();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(EstimateMusterRollEvent value) estimate,
+    required TResult Function(ViewEstimateMusterRollEvent value) viewEstimate,
+    required TResult Function(DisposeEstimateMusterRollEvent value) dispose,
+  }) {
+    return dispose(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(EstimateMusterRollEvent value)? estimate,
+    TResult? Function(ViewEstimateMusterRollEvent value)? viewEstimate,
+    TResult? Function(DisposeEstimateMusterRollEvent value)? dispose,
+  }) {
+    return dispose?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(EstimateMusterRollEvent value)? estimate,
+    TResult Function(ViewEstimateMusterRollEvent value)? viewEstimate,
+    TResult Function(DisposeEstimateMusterRollEvent value)? dispose,
+    required TResult orElse(),
+  }) {
+    if (dispose != null) {
+      return dispose(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DisposeEstimateMusterRollEvent
+    implements MusterRollEstimateEvent {
+  const factory DisposeEstimateMusterRollEvent() =
+      _$DisposeEstimateMusterRollEvent;
 }
 
 /// @nodoc

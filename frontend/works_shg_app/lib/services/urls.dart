@@ -4,6 +4,12 @@ class Urls {
   static MusterRollServices musterRollServices = const MusterRollServices();
   static AttendanceRegisterServices attendanceRegisterServices =
       const AttendanceRegisterServices();
+  static CommonServices commonServices = const CommonServices();
+}
+
+class CommonServices {
+  const CommonServices();
+  String get workflow => 'egov-workflow-v2/egov-wf/process/_search';
 }
 
 class InitServices {
@@ -27,6 +33,7 @@ class MusterRollServices {
   String get searchMusterRolls => 'muster-roll/v1/_search';
   String get musterRollsEstimate => 'muster-roll/v1/_estimate';
   String get createMuster => 'muster-roll/v1/_create';
+  String get updateMuster => 'muster-roll/v1/_update';
 }
 
 class AttendanceRegisterServices {

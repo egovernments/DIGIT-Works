@@ -13,6 +13,11 @@ const CreateProjectResponse = () => {
     const navigateToCreateProject = () =>{
         history.push(`/${window.contextPath}/employee/project/create-project`);
     }
+
+    const navigateToSearchProject = () =>{
+        history.push(`/${window.contextPath}/employee/project/search-project`);
+    }
+
     return (
         <Card>
             <Banner 
@@ -25,7 +30,10 @@ const CreateProjectResponse = () => {
             <div style={{display: "flex", justifyContent:"space-between"}}>
                 <LinkLabel style={{ display: "flex" }} onClick={navigateToCreateProject}>
                     <EditIcon style={{marginRight: "8px"}}/>{t("WORKS_CREATE_PROJECT")}
-                </LinkLabel>   
+                </LinkLabel>
+                <LinkLabel style={{ display: "flex" }} onClick={navigateToSearchProject}>
+                    <EditIcon style={{marginRight: "8px"}}/>{t("WORKS_SEARCH_PROJECTS")}
+                </LinkLabel>      
             </div>
         </Card>
     )

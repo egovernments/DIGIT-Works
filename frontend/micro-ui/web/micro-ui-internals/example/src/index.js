@@ -17,6 +17,7 @@ import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initProjectComponents } from  "@egovernments/digit-ui-module-project";
 import "@egovernments/digit-ui-works-css/example/index.css";
+import {initMuktaCustomisations} from "@egovernments/digit-ui-customisation-mukta";
 
 // import * as comps from "@egovernments/digit-ui-react-components";
 
@@ -35,6 +36,8 @@ const enabledModules = [
   "Masters",
   "Estimate",
   "Project",
+  "Mukta"
+
   // "Engagement"
 ];
 
@@ -94,10 +97,11 @@ const initDigitUI = () => {
     },
     commonUiConfig: UICustomizations
   };
+  const registry = window?.Digit.ComponentRegistryService.getRegistry();
 
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
-
+  initMuktaCustomisations();
   ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
 };
 

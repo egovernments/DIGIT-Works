@@ -257,7 +257,7 @@ public class WorkflowService {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         StringBuilder searchUrl = getProcessInstanceSearchURLWithHistory(
                 estimate.getTenantId()
-                , StringUtils.join(estimate.getEstimateNumber(), ',')
+                , estimate.getEstimateNumber()
                 , Boolean.FALSE);
 
         Object result = repository.fetchResult(searchUrl, requestInfoWrapper);
@@ -282,7 +282,7 @@ public class WorkflowService {
                 .append(serviceConfiguration.getWfProcessInstanceSearchPath())
                 .append("?tenantId=").append(tenantId)
                 .append("&businessIds=").append(estimateNumber)
-                .append("&history").append(history);
+                .append("&history=").append(history);
         return url;
     }
 
