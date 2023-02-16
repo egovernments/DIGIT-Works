@@ -89,7 +89,6 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                     ]
                 }
             }
-
             if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
                 basicDetails = {
                     projectID : currentProject?.projectNumber,
@@ -109,7 +108,22 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 }
             }else {
                 //sub projects dont have financial details
-                totalProjects.subProjects.push({applicationDetails : [departmentDetails, workTypeDetails, locationDetails, documentDetails]});
+                //these keys are mapped to the view table
+                totalProjects.subProjects.push({
+                    name :  currentProject?.name || "NA",
+                    estimatedAmount : currentProject?.additionalDetails?.estimatedCostInRs || "NA",
+                    type : currentProject?.projectType || "NA",
+                    subType : currentProject?.projectSubType || "NA",
+                    natureOfWork : currentProject?.natureOfWork || "NA", //not consumed by API
+                    startDate : currentProject?.startDate || "NA",
+                    endDate : currentProject?.endDate || "NA",
+                    modeOfEntrustment : currentProject?.modeOfEntrustment || "NA", //not consumed by API
+                    ward : currentProject?.ward || "NA", //not consumed by API
+                    locality : currentProject?.address?.locality || "NA",
+                    ulb : currentProject?.address?.city || "NA",
+                    geoLocation : currentProject?.address?.addressLine1 || "NA", // this will change to Latitude and Longitude
+                    uploadedDocuments : currentProject?.documents || [], // this will change to Latitude and Longitude
+                });
             }
     }
     return totalProjects;

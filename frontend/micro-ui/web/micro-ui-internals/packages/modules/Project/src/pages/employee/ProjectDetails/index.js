@@ -12,6 +12,7 @@ const ProjectDetails = () => {
     const history = useHistory();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const [configNavItems, setNavTypeConfig] = useState([]);
+    const [subProjects, setSubProjects] = useState([]);
     const navConfigs = [
         {
             "name":"Project_Details",
@@ -59,6 +60,7 @@ const ProjectDetails = () => {
     useEffect(()=>{
         if(data?.projectDetails?.subProjects.length > 0) {
             navConfigs[2].active = true;
+            setSubProjects(data?.projectDetails?.subProjects);
         }else{
             navConfigs[2].active = false;
         }
@@ -85,6 +87,7 @@ const ProjectDetails = () => {
             <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>  
               <ProjectDetailsNavDetails 
                 activeLink={activeLink}
+                subProjects={subProjects}
               />
             </HorizontalNav>
             <ActionBar>
