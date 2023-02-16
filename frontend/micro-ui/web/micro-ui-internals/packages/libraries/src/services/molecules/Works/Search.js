@@ -122,7 +122,18 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                     locality : currentProject?.address?.locality || "NA",
                     ulb : currentProject?.address?.city || "NA",
                     geoLocation : currentProject?.address?.addressLine1 || "NA", // this will change to Latitude and Longitude
-                    uploadedDocuments : currentProject?.documents || [], // this will change to Latitude and Longitude
+                    uploadedDocuments : [{
+                        BS : 'Works',
+                        values: currentProject?.documents?.map((document) => {
+                                return {
+                                    title: document?.additionalDetails?.fileName,
+                                    documentType: document?.documentType,
+                                    documentUid: document?.fileStore,
+                                    fileStoreId: document?.fileStore,
+                                };
+                            }),
+                        },
+                    ]
                 });
             }
     }

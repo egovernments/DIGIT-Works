@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
+import PropertyDocuments from "../../../templates/ApplicationDetails/components/PropertyDocuments";
 
 const convertEpochToDate = (dateEpoch) => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
@@ -130,7 +131,7 @@ const ViewSubProjectsDetails = ({subProjects}) => {
                 </td>
                 <td style={getStyles("upload")}>
                     <div className='field' style={{ "width": "100%" }} >
-                        <p>Uploaded Files</p>
+                        <PropertyDocuments documents={subProject?.uploadedDocuments} />
                     </div>
                 </td> 
             </tr>
