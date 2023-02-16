@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:works_shg_app/services/urls.dart';
-import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/repositories/remote/mdms.dart';
 import '../../models/mdms/attendance_hours.dart';
+import '../../utils/constants.dart';
 
 part 'attendance_hours_mdms.freezed.dart';
 
@@ -26,7 +26,7 @@ class AttendanceHoursBloc
     emit(state.copyWith(isAttendanceMDMSLoaded: false));
     AttendanceHoursList result = await mdmsRepository.attendanceHoursMDMS(
         apiEndPoint: Urls.initServices.mdms,
-        tenantId: GlobalVariables.getTenantId().toString(),
+        tenantId: Constants.mdms_tenant_id,
         moduleDetails: [
           {
             "moduleName": "common-masters",

@@ -11,6 +11,7 @@ import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 import 'package:works_shg_app/services/urls.dart';
+import 'package:works_shg_app/utils/constants.dart';
 
 import '../../data/repositories/remote/mdms.dart';
 import '../../services/local_storage.dart';
@@ -33,9 +34,11 @@ class AppInitializationBloc
     AppInitializationSetupEvent event,
     AppInitializationEmitter emit,
   ) async {
+    // var global = client.get(Constants.devAssets);
+    // global['globalConfigs'].getConfig("STATE_LEVEL_TENANT_ID");
     InitMdmsModel result = await mdmsRepository.initMdmsRegistry(
         apiEndPoint: Urls.initServices.mdms,
-        tenantId: 'pb',
+        tenantId: Constants.mdms_tenant_id,
         moduleDetails: [
           {
             "moduleName": "common-masters",

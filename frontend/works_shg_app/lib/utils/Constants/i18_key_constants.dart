@@ -106,4 +106,6 @@ class AttendanceMgmt {
   String get applicationInWorkFlow => 'MUSTER_ROLL_IN_WORKFLOW_STATE';
   String get unableToCheckWorkflowStatus => 'MUSTER_ROLL_WORKFLOW_CHECK_FAIL';
   String get resubmitMusterRoll => 'RESUBMIT_MUSTER_ROLL';
+  String get attendeeCreateFailed => 'ATTENDEE_CREATE_FAILED';
+  String get attendeeCreateSuccess => 'ATTENDEE_CREATE_SUCCESS';
 }

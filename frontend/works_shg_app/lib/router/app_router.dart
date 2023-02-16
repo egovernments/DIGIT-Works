@@ -7,7 +7,7 @@ import 'package:works_shg_app/pages/shg_inbox.dart';
 import 'package:works_shg_app/pages/track_attendance.dart';
 
 import '../models/attendance/attendance_registry_model.dart';
-import '../pages/attendance_register.dart';
+import '../pages/attendance_register_table.dart';
 import '../pages/authenticated.dart';
 import '../pages/home.dart';
 import '../pages/language_selection_page.dart';
@@ -40,7 +40,9 @@ part 'app_router.gr.dart';
       path: '/',
       children: [
         AutoRoute(page: HomePage, path: ''),
-        AutoRoute(page: AttendanceRegisterTablePage, path: 'manageAttendance'),
+        AutoRoute(
+            page: AttendanceRegisterTablePage,
+            path: 'manageAttendanceTable/:registerId/:tenantId'),
         AutoRoute(page: WorkOrderPage, path: 'work-orders'),
         AutoRoute(page: ViewMusterRollsPage, path: 'muster-rolls'),
         AutoRoute(

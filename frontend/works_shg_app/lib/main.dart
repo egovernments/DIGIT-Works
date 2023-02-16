@@ -98,8 +98,8 @@ class MainApplication extends StatelessWidget {
             ..add(const SearchAttendanceProjectsEvent()),
         ),
         BlocProvider(
-            create: (context) =>
-                AttendanceUserSearchBloc(const AttendanceUserSearchState())),
+            create: (context) => AttendanceUserSearchBloc(
+                const AttendanceUserSearchState.initial())),
         BlocProvider(create: (context) => AttendeeCreateBloc()),
         BlocProvider(create: (context) => MusterRollEstimateBloc()),
         BlocProvider(create: (context) => AttendanceLogCreateBloc()),

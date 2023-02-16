@@ -18,33 +18,39 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AttendanceUserSearchEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() search,
+    required TResult Function(String? mobileNumber) search,
+    required TResult Function(List<String>? uuids) uuidSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? search,
+    TResult? Function(String? mobileNumber)? search,
+    TResult? Function(List<String>? uuids)? uuidSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? search,
+    TResult Function(String? mobileNumber)? search,
+    TResult Function(List<String>? uuids)? uuidSearch,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(SearchAttendanceUserEvent value) search,
+    required TResult Function(SearchAttendanceUserUuidEvent value) uuidSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SearchAttendanceUserEvent value)? search,
+    TResult? Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SearchAttendanceUserEvent value)? search,
+    TResult Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -75,6 +81,8 @@ abstract class _$$SearchAttendanceUserEventCopyWith<$Res> {
           _$SearchAttendanceUserEvent value,
           $Res Function(_$SearchAttendanceUserEvent) then) =
       __$$SearchAttendanceUserEventCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String? mobileNumber});
 }
 
 /// @nodoc
@@ -85,6 +93,19 @@ class __$$SearchAttendanceUserEventCopyWithImpl<$Res>
   __$$SearchAttendanceUserEventCopyWithImpl(_$SearchAttendanceUserEvent _value,
       $Res Function(_$SearchAttendanceUserEvent) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? mobileNumber = freezed,
+  }) {
+    return _then(_$SearchAttendanceUserEvent(
+      mobileNumber: freezed == mobileNumber
+          ? _value.mobileNumber
+          : mobileNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
 }
 
 /// @nodoc
@@ -92,54 +113,70 @@ class __$$SearchAttendanceUserEventCopyWithImpl<$Res>
 class _$SearchAttendanceUserEvent
     with DiagnosticableTreeMixin
     implements SearchAttendanceUserEvent {
-  const _$SearchAttendanceUserEvent();
+  const _$SearchAttendanceUserEvent({this.mobileNumber});
+
+  @override
+  final String? mobileNumber;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendanceUserSearchEvent.search()';
+    return 'AttendanceUserSearchEvent.search(mobileNumber: $mobileNumber)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-        .add(DiagnosticsProperty('type', 'AttendanceUserSearchEvent.search'));
+      ..add(DiagnosticsProperty('type', 'AttendanceUserSearchEvent.search'))
+      ..add(DiagnosticsProperty('mobileNumber', mobileNumber));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SearchAttendanceUserEvent);
+            other is _$SearchAttendanceUserEvent &&
+            (identical(other.mobileNumber, mobileNumber) ||
+                other.mobileNumber == mobileNumber));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, mobileNumber);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SearchAttendanceUserEventCopyWith<_$SearchAttendanceUserEvent>
+      get copyWith => __$$SearchAttendanceUserEventCopyWithImpl<
+          _$SearchAttendanceUserEvent>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() search,
+    required TResult Function(String? mobileNumber) search,
+    required TResult Function(List<String>? uuids) uuidSearch,
   }) {
-    return search();
+    return search(mobileNumber);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? search,
+    TResult? Function(String? mobileNumber)? search,
+    TResult? Function(List<String>? uuids)? uuidSearch,
   }) {
-    return search?.call();
+    return search?.call(mobileNumber);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? search,
+    TResult Function(String? mobileNumber)? search,
+    TResult Function(List<String>? uuids)? uuidSearch,
     required TResult orElse(),
   }) {
     if (search != null) {
-      return search();
+      return search(mobileNumber);
     }
     return orElse();
   }
@@ -148,6 +185,7 @@ class _$SearchAttendanceUserEvent
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(SearchAttendanceUserEvent value) search,
+    required TResult Function(SearchAttendanceUserUuidEvent value) uuidSearch,
   }) {
     return search(this);
   }
@@ -156,6 +194,7 @@ class _$SearchAttendanceUserEvent
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SearchAttendanceUserEvent value)? search,
+    TResult? Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
   }) {
     return search?.call(this);
   }
@@ -164,6 +203,7 @@ class _$SearchAttendanceUserEvent
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SearchAttendanceUserEvent value)? search,
+    TResult Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -174,16 +214,223 @@ class _$SearchAttendanceUserEvent
 }
 
 abstract class SearchAttendanceUserEvent implements AttendanceUserSearchEvent {
-  const factory SearchAttendanceUserEvent() = _$SearchAttendanceUserEvent;
+  const factory SearchAttendanceUserEvent({final String? mobileNumber}) =
+      _$SearchAttendanceUserEvent;
+
+  String? get mobileNumber;
+  @JsonKey(ignore: true)
+  _$$SearchAttendanceUserEventCopyWith<_$SearchAttendanceUserEvent>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SearchAttendanceUserUuidEventCopyWith<$Res> {
+  factory _$$SearchAttendanceUserUuidEventCopyWith(
+          _$SearchAttendanceUserUuidEvent value,
+          $Res Function(_$SearchAttendanceUserUuidEvent) then) =
+      __$$SearchAttendanceUserUuidEventCopyWithImpl<$Res>;
+  @useResult
+  $Res call({List<String>? uuids});
+}
+
+/// @nodoc
+class __$$SearchAttendanceUserUuidEventCopyWithImpl<$Res>
+    extends _$AttendanceUserSearchEventCopyWithImpl<$Res,
+        _$SearchAttendanceUserUuidEvent>
+    implements _$$SearchAttendanceUserUuidEventCopyWith<$Res> {
+  __$$SearchAttendanceUserUuidEventCopyWithImpl(
+      _$SearchAttendanceUserUuidEvent _value,
+      $Res Function(_$SearchAttendanceUserUuidEvent) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uuids = freezed,
+  }) {
+    return _then(_$SearchAttendanceUserUuidEvent(
+      uuids: freezed == uuids
+          ? _value._uuids
+          : uuids // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SearchAttendanceUserUuidEvent
+    with DiagnosticableTreeMixin
+    implements SearchAttendanceUserUuidEvent {
+  const _$SearchAttendanceUserUuidEvent({final List<String>? uuids})
+      : _uuids = uuids;
+
+  final List<String>? _uuids;
+  @override
+  List<String>? get uuids {
+    final value = _uuids;
+    if (value == null) return null;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AttendanceUserSearchEvent.uuidSearch(uuids: $uuids)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AttendanceUserSearchEvent.uuidSearch'))
+      ..add(DiagnosticsProperty('uuids', uuids));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SearchAttendanceUserUuidEvent &&
+            const DeepCollectionEquality().equals(other._uuids, _uuids));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_uuids));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SearchAttendanceUserUuidEventCopyWith<_$SearchAttendanceUserUuidEvent>
+      get copyWith => __$$SearchAttendanceUserUuidEventCopyWithImpl<
+          _$SearchAttendanceUserUuidEvent>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? mobileNumber) search,
+    required TResult Function(List<String>? uuids) uuidSearch,
+  }) {
+    return uuidSearch(uuids);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? mobileNumber)? search,
+    TResult? Function(List<String>? uuids)? uuidSearch,
+  }) {
+    return uuidSearch?.call(uuids);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? mobileNumber)? search,
+    TResult Function(List<String>? uuids)? uuidSearch,
+    required TResult orElse(),
+  }) {
+    if (uuidSearch != null) {
+      return uuidSearch(uuids);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(SearchAttendanceUserEvent value) search,
+    required TResult Function(SearchAttendanceUserUuidEvent value) uuidSearch,
+  }) {
+    return uuidSearch(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(SearchAttendanceUserEvent value)? search,
+    TResult? Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
+  }) {
+    return uuidSearch?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SearchAttendanceUserEvent value)? search,
+    TResult Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
+    required TResult orElse(),
+  }) {
+    if (uuidSearch != null) {
+      return uuidSearch(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SearchAttendanceUserUuidEvent
+    implements AttendanceUserSearchEvent {
+  const factory SearchAttendanceUserUuidEvent({final List<String>? uuids}) =
+      _$SearchAttendanceUserUuidEvent;
+
+  List<String>? get uuids;
+  @JsonKey(ignore: true)
+  _$$SearchAttendanceUserUuidEventCopyWith<_$SearchAttendanceUserUuidEvent>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 mixin _$AttendanceUserSearchState {
-  bool get loading => throw _privateConstructorUsedError;
-  UserSearchModel? get userSearchModel => throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $AttendanceUserSearchStateCopyWith<AttendanceUserSearchState> get copyWith =>
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(UserSearchModel? userSearchModel) loaded,
+    required TResult Function() error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserSearchModel? userSearchModel)? loaded,
+    TResult? Function()? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserSearchModel? userSearchModel)? loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) =>
       throw _privateConstructorUsedError;
 }
 
@@ -192,10 +439,6 @@ abstract class $AttendanceUserSearchStateCopyWith<$Res> {
   factory $AttendanceUserSearchStateCopyWith(AttendanceUserSearchState value,
           $Res Function(AttendanceUserSearchState) then) =
       _$AttendanceUserSearchStateCopyWithImpl<$Res, AttendanceUserSearchState>;
-  @useResult
-  $Res call({bool loading, UserSearchModel? userSearchModel});
-
-  $UserSearchModelCopyWith<$Res>? get userSearchModel;
 }
 
 /// @nodoc
@@ -208,23 +451,278 @@ class _$AttendanceUserSearchStateCopyWithImpl<$Res,
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+}
+
+/// @nodoc
+abstract class _$$_InitialCopyWith<$Res> {
+  factory _$$_InitialCopyWith(
+          _$_Initial value, $Res Function(_$_Initial) then) =
+      __$$_InitialCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_InitialCopyWithImpl<$Res>
+    extends _$AttendanceUserSearchStateCopyWithImpl<$Res, _$_Initial>
+    implements _$$_InitialCopyWith<$Res> {
+  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Initial extends _Initial with DiagnosticableTreeMixin {
+  const _$_Initial() : super._();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AttendanceUserSearchState.initial()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(DiagnosticsProperty('type', 'AttendanceUserSearchState.initial'));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Initial);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(UserSearchModel? userSearchModel) loaded,
+    required TResult Function() error,
+  }) {
+    return initial();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserSearchModel? userSearchModel)? loaded,
+    TResult? Function()? error,
+  }) {
+    return initial?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserSearchModel? userSearchModel)? loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return initial(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return initial?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Initial extends AttendanceUserSearchState {
+  const factory _Initial() = _$_Initial;
+  const _Initial._() : super._();
+}
+
+/// @nodoc
+abstract class _$$_LoadingCopyWith<$Res> {
+  factory _$$_LoadingCopyWith(
+          _$_Loading value, $Res Function(_$_Loading) then) =
+      __$$_LoadingCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_LoadingCopyWithImpl<$Res>
+    extends _$AttendanceUserSearchStateCopyWithImpl<$Res, _$_Loading>
+    implements _$$_LoadingCopyWith<$Res> {
+  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Loading extends _Loading with DiagnosticableTreeMixin {
+  const _$_Loading() : super._();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AttendanceUserSearchState.loading()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(DiagnosticsProperty('type', 'AttendanceUserSearchState.loading'));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Loading);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(UserSearchModel? userSearchModel) loaded,
+    required TResult Function() error,
+  }) {
+    return loading();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserSearchModel? userSearchModel)? loaded,
+    TResult? Function()? error,
+  }) {
+    return loading?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserSearchModel? userSearchModel)? loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loading(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loading?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Loading extends AttendanceUserSearchState {
+  const factory _Loading() = _$_Loading;
+  const _Loading._() : super._();
+}
+
+/// @nodoc
+abstract class _$$_LoadedCopyWith<$Res> {
+  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
+      __$$_LoadedCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserSearchModel? userSearchModel});
+
+  $UserSearchModelCopyWith<$Res>? get userSearchModel;
+}
+
+/// @nodoc
+class __$$_LoadedCopyWithImpl<$Res>
+    extends _$AttendanceUserSearchStateCopyWithImpl<$Res, _$_Loaded>
+    implements _$$_LoadedCopyWith<$Res> {
+  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+      : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = null,
     Object? userSearchModel = freezed,
   }) {
-    return _then(_value.copyWith(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      userSearchModel: freezed == userSearchModel
+    return _then(_$_Loaded(
+      freezed == userSearchModel
           ? _value.userSearchModel
           : userSearchModel // ignore: cast_nullable_to_non_nullable
               as UserSearchModel?,
-    ) as $Val);
+    ));
   }
 
   @override
@@ -235,75 +733,29 @@ class _$AttendanceUserSearchStateCopyWithImpl<$Res,
     }
 
     return $UserSearchModelCopyWith<$Res>(_value.userSearchModel!, (value) {
-      return _then(_value.copyWith(userSearchModel: value) as $Val);
+      return _then(_value.copyWith(userSearchModel: value));
     });
   }
 }
 
 /// @nodoc
-abstract class _$$_UserSearchStateCopyWith<$Res>
-    implements $AttendanceUserSearchStateCopyWith<$Res> {
-  factory _$$_UserSearchStateCopyWith(
-          _$_UserSearchState value, $Res Function(_$_UserSearchState) then) =
-      __$$_UserSearchStateCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({bool loading, UserSearchModel? userSearchModel});
 
-  @override
-  $UserSearchModelCopyWith<$Res>? get userSearchModel;
-}
+class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
+  const _$_Loaded(this.userSearchModel) : super._();
 
-/// @nodoc
-class __$$_UserSearchStateCopyWithImpl<$Res>
-    extends _$AttendanceUserSearchStateCopyWithImpl<$Res, _$_UserSearchState>
-    implements _$$_UserSearchStateCopyWith<$Res> {
-  __$$_UserSearchStateCopyWithImpl(
-      _$_UserSearchState _value, $Res Function(_$_UserSearchState) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? loading = null,
-    Object? userSearchModel = freezed,
-  }) {
-    return _then(_$_UserSearchState(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      userSearchModel: freezed == userSearchModel
-          ? _value.userSearchModel
-          : userSearchModel // ignore: cast_nullable_to_non_nullable
-              as UserSearchModel?,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$_UserSearchState extends _UserSearchState with DiagnosticableTreeMixin {
-  const _$_UserSearchState({this.loading = false, this.userSearchModel})
-      : super._();
-
-  @override
-  @JsonKey()
-  final bool loading;
   @override
   final UserSearchModel? userSearchModel;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendanceUserSearchState(loading: $loading, userSearchModel: $userSearchModel)';
+    return 'AttendanceUserSearchState.loaded(userSearchModel: $userSearchModel)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'AttendanceUserSearchState'))
-      ..add(DiagnosticsProperty('loading', loading))
+      ..add(DiagnosticsProperty('type', 'AttendanceUserSearchState.loaded'))
       ..add(DiagnosticsProperty('userSearchModel', userSearchModel));
   }
 
@@ -311,34 +763,221 @@ class _$_UserSearchState extends _UserSearchState with DiagnosticableTreeMixin {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_UserSearchState &&
-            (identical(other.loading, loading) || other.loading == loading) &&
+            other is _$_Loaded &&
             (identical(other.userSearchModel, userSearchModel) ||
                 other.userSearchModel == userSearchModel));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, loading, userSearchModel);
+  int get hashCode => Object.hash(runtimeType, userSearchModel);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_UserSearchStateCopyWith<_$_UserSearchState> get copyWith =>
-      __$$_UserSearchStateCopyWithImpl<_$_UserSearchState>(this, _$identity);
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(UserSearchModel? userSearchModel) loaded,
+    required TResult Function() error,
+  }) {
+    return loaded(userSearchModel);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserSearchModel? userSearchModel)? loaded,
+    TResult? Function()? error,
+  }) {
+    return loaded?.call(userSearchModel);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserSearchModel? userSearchModel)? loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(userSearchModel);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(this);
+    }
+    return orElse();
+  }
 }
 
-abstract class _UserSearchState extends AttendanceUserSearchState {
-  const factory _UserSearchState(
-      {final bool loading,
-      final UserSearchModel? userSearchModel}) = _$_UserSearchState;
-  const _UserSearchState._() : super._();
+abstract class _Loaded extends AttendanceUserSearchState {
+  const factory _Loaded(final UserSearchModel? userSearchModel) = _$_Loaded;
+  const _Loaded._() : super._();
+
+  UserSearchModel? get userSearchModel;
+  @JsonKey(ignore: true)
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$_ErrorCopyWith<$Res> {
+  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
+      __$$_ErrorCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_ErrorCopyWithImpl<$Res>
+    extends _$AttendanceUserSearchStateCopyWithImpl<$Res, _$_Error>
+    implements _$$_ErrorCopyWith<$Res> {
+  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Error extends _Error with DiagnosticableTreeMixin {
+  const _$_Error() : super._();
 
   @override
-  bool get loading;
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AttendanceUserSearchState.error()';
+  }
+
   @override
-  UserSearchModel? get userSearchModel;
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(DiagnosticsProperty('type', 'AttendanceUserSearchState.error'));
+  }
+
   @override
-  @JsonKey(ignore: true)
-  _$$_UserSearchStateCopyWith<_$_UserSearchState> get copyWith =>
-      throw _privateConstructorUsedError;
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Error);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(UserSearchModel? userSearchModel) loaded,
+    required TResult Function() error,
+  }) {
+    return error();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserSearchModel? userSearchModel)? loaded,
+    TResult? Function()? error,
+  }) {
+    return error?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserSearchModel? userSearchModel)? loaded,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return error(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return error?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Error extends AttendanceUserSearchState {
+  const factory _Error() = _$_Error;
+  const _Error._() : super._();
 }

@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:works_shg_app/Env/app_config.dart';
 import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 
 import '../../../models/mdms/attendance_hours.dart';
@@ -18,7 +19,8 @@ class MdmsRepository {
     required List<Map> moduleDetails,
   }) async {
     try {
-      var response = await _client.post(apiEndPoint, data: {
+      var response = await _client
+          .post('${EnvironmentVariables.baseUrl}$apiEndPoint', data: {
         "MdmsCriteria": {
           "tenantId": tenantId,
           "moduleDetails": moduleDetails,
@@ -40,7 +42,8 @@ class MdmsRepository {
     required List<Map> moduleDetails,
   }) async {
     try {
-      var response = await _client.post(apiEndPoint, data: {
+      var response = await _client
+          .post('${EnvironmentVariables.baseUrl}$apiEndPoint', data: {
         "MdmsCriteria": {
           "tenantId": tenantId,
           "moduleDetails": moduleDetails,

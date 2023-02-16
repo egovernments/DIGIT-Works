@@ -10,6 +10,7 @@ import 'package:works_shg_app/services/urls.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/remote_client.dart';
+import '../../utils/constants.dart';
 
 part 'search_muster_roll.freezed.dart';
 
@@ -31,9 +32,7 @@ class MusterRollSearchBloc
     MusterRollsModel musterRollsModel =
         await MusterRollRepository(client.init()).searchMusterRolls(
             url: Urls.musterRollServices.searchMusterRolls,
-            queryParameters: {
-              "tenantId": GlobalVariables.getTenantId().toString()
-            },
+            queryParameters: {"tenantId": Constants.app_tenant_id},
             options: Options(extra: {
               "userInfo": GlobalVariables.getUserInfo(),
               "accessToken": GlobalVariables.getAuthToken(),

@@ -5,9 +5,7 @@ import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/atoms/button_group.dart';
 
-import '../blocs/attendance/attendance_user_search.dart';
 import '../blocs/attendance/create_attendance_register.dart';
-import '../blocs/attendance/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/muster_roll_estimate.dart';
 import '../blocs/muster_rolls/search_muster_roll.dart';
@@ -179,17 +177,11 @@ class WorkDetailsCard extends StatelessWidget {
         child: DigitElevatedButton(
           onPressed: () {
             if (isManageAttendance) {
-              context.read<AttendanceProjectsSearchBloc>().add(
-                    SearchIndividualAttendanceProjectEvent(
-                      id: attendanceRegisterId ?? '',
-                    ),
-                  );
-              context.read<AttendanceUserSearchBloc>().add(
-                    const SearchAttendanceUserEvent(),
-                  );
               context.router.push(AttendanceRegisterTableRoute(
                   projectDetails: [cardDetails],
-                  attendanceRegister: attendanceRegister));
+                  attendanceRegister: attendanceRegister,
+                  registerId: attendanceRegisterId.toString(),
+                  tenantId: attendanceRegister!.tenantId.toString()));
             } else {
               context.router.push(TrackAttendanceRoute(
                   id: attendanceRegisterId.toString(),

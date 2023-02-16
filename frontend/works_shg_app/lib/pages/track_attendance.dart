@@ -1,4 +1,5 @@
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,9 +83,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
   }
 
   afterViewBuild() {
-    context.read<MusterRollEstimateBloc>().add(
-          const DisposeEstimateMusterRollEvent(),
-        );
+
     context.read<AttendanceProjectsSearchBloc>().add(
           SearchIndividualAttendanceProjectEvent(
               id: widget.id ?? '', tenantId: widget.tenantId),
@@ -376,7 +375,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                           ]);
                                     } else {
                                       if (musterState.loading) {
-                                        Loaders.circularLoader(context);
+                                        return Loaders.circularLoader(context);
                                       }
                                       return Container();
                                     }
@@ -447,13 +446,18 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                           .addPostFrameCallback((_) {
                                         workflowState.maybeWhen(
                                             initial: () => Container(),
-                                            error: () => Notifiers.getToastMessage(
-                                                context,
-                                                AppLocalizations.of(context)
-                                                    .translate(i18
+                                            error: ()
+                                            {
+                                            if (!workFlowLoaded) {
+                                                Notifiers.getToastMessage(
+                                                    context,
+                                                    AppLocalizations.of(context)
+                                                        .translate(i18
                                                         .attendanceMgmt
                                                         .unableToCheckWorkflowStatus),
-                                                'ERROR'),
+                                                    'ERROR');
+                                                workFlowLoaded = true;
+                                              }},
                                             loaded: (MusterWorkFlowModel?
                                                 musterWorkFlowModel) {
                                               if (!workFlowLoaded) {
@@ -919,6 +923,10 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
               .translate(i18.common.aadhaarNumber),
           apiKey: 'aadhaarNumber',
         ),
+    TableHeader(
+      AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+          .translate('Skill'),
+    ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.mon),
@@ -953,6 +961,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
     return TableDataRow([
       TableData(label: tableDataModel.name, apiKey: tableDataModel.name),
       TableData(label: tableDataModel.aadhaar, apiKey: tableDataModel.aadhaar),
+      TableData(apiKey: tableDataModel.skillSet,
+      widget: DigitDropdown(label: '', menuItems: [], formControlName: '', onChanged: (String? value) {  },)),
       TableData(
         apiKey: tableDataModel.monIndex.toString(),
         widget: CircularButton(

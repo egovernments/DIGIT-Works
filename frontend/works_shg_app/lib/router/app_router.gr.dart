@@ -52,6 +52,8 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: AttendanceRegisterTablePage(
+          args.registerId,
+          args.tenantId,
           args.projectDetails,
           args.attendanceRegister,
           key: args.key,
@@ -151,7 +153,7 @@ class _$AppRouter extends RootStackRouter {
             ),
             RouteConfig(
               AttendanceRegisterTableRoute.name,
-              path: 'manageAttendance',
+              path: 'manageAttendanceTable/:registerId/:tenantId',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -261,17 +263,25 @@ class HomeRoute extends PageRouteInfo<void> {
 class AttendanceRegisterTableRoute
     extends PageRouteInfo<AttendanceRegisterTableRouteArgs> {
   AttendanceRegisterTableRoute({
+    required String registerId,
+    required String tenantId,
     required List<Map<String, dynamic>> projectDetails,
     required AttendanceRegister? attendanceRegister,
     Key? key,
   }) : super(
           AttendanceRegisterTableRoute.name,
-          path: 'manageAttendance',
+          path: 'manageAttendanceTable/:registerId/:tenantId',
           args: AttendanceRegisterTableRouteArgs(
+            registerId: registerId,
+            tenantId: tenantId,
             projectDetails: projectDetails,
             attendanceRegister: attendanceRegister,
             key: key,
           ),
+          rawPathParams: {
+            'registerId': registerId,
+            'tenantId': tenantId,
+          },
         );
 
   static const String name = 'AttendanceRegisterTableRoute';
@@ -279,10 +289,16 @@ class AttendanceRegisterTableRoute
 
 class AttendanceRegisterTableRouteArgs {
   const AttendanceRegisterTableRouteArgs({
+    required this.registerId,
+    required this.tenantId,
     required this.projectDetails,
     required this.attendanceRegister,
     this.key,
   });
+
+  final String registerId;
+
+  final String tenantId;
 
   final List<Map<String, dynamic>> projectDetails;
 
@@ -292,7 +308,7 @@ class AttendanceRegisterTableRouteArgs {
 
   @override
   String toString() {
-    return 'AttendanceRegisterTableRouteArgs{projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
+    return 'AttendanceRegisterTableRouteArgs{registerId: $registerId, tenantId: $tenantId, projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
   }
 }
 

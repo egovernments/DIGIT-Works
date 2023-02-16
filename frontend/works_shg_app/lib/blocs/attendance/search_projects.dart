@@ -4,11 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:works_shg_app/services/urls.dart';
-import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/remote_client.dart';
 import '../../data/repositories/attendence_repository/attendence_register.dart';
 import '../../models/attendance/attendance_registry_model.dart';
+import '../../utils/constants.dart';
 
 part 'search_projects.freezed.dart';
 
@@ -34,11 +34,8 @@ class AttendanceProjectsSearchBloc
             .searchAttendanceProjects(
       url: Urls.attendanceRegisterServices.searchAttendanceRegister,
       queryParameters: event.id.trim().toString().isNotEmpty
-          ? {
-              "tenantId": GlobalVariables.getTenantId().toString(),
-              "ids": event.id
-            }
-          : {"tenantId": GlobalVariables.getTenantId().toString()},
+          ? {"tenantId": Constants.app_tenant_id, "ids": event.id}
+          : {"tenantId": Constants.app_tenant_id},
     );
     await Future.delayed(const Duration(seconds: 1));
     emit(state.copyWith(
@@ -63,7 +60,7 @@ class AttendanceProjectsSearchBloc
       url: Urls.attendanceRegisterServices.searchAttendanceRegister,
       queryParameters: event.id.trim().toString().isNotEmpty
           ? {"tenantId": event.tenantId, "ids": event.id}
-          : {"tenantId": GlobalVariables.getTenantId().toString()},
+          : {"tenantId": Constants.app_tenant_id},
     );
     await Future.delayed(const Duration(seconds: 1));
     emit(state.copyWith(
