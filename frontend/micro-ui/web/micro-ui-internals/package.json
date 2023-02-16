@@ -9,6 +9,7 @@
     "packages/react-components",
     "packages/modules/Project",
     "packages/modules/Estimate",
+    "packages/modules/AttendenceMgmt",
     "packages/Mukta"
     ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
@@ -47,6 +48,7 @@
     "build:estimate": "cd packages/modules/Estimate && yarn build",
     "build:mukta": "cd packages/Mukta && yarn build",
     "build:project": "cd packages/modules/Project && yarn build",
+    "build:attendencemgmt": "cd packages/modules/AttendenceMgmt && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh",
     "clean": "rm -rf node_modules"
   },
