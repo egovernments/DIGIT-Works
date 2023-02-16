@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
+import org.egov.works.repository.ContractRepository;
+import org.egov.works.repository.LineItemsRepository;
 import org.egov.works.util.EstimateServiceUtil;
 import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.*;
@@ -14,12 +16,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-import static org.egov.works.util.ContractServiceConstants.MASTER_TENANTS;
-import static org.egov.works.util.ContractServiceConstants.MDMS_TENANT_MODULE_NAME;
+import static org.egov.works.util.ContractServiceConstants.*;
 
 @Component
 @Slf4j
@@ -34,6 +35,12 @@ public class ContractServiceValidator {
     @Autowired
     private ContractServiceConfiguration config;
 
+    @Autowired
+    private LineItemsRepository lineItemsRepository;
+
+    @Autowired
+    private ContractRepository contractRepository;
+
     public void validateCreateContractRequest(ContractRequest contractRequest) {
         log.info("Validate contract create request");
 
@@ -41,7 +48,7 @@ public class ContractServiceValidator {
         validateRequestInfo(contractRequest.getRequestInfo());
 
         // Validate required parameters
-        validateRequestedContractRequiredParameters(contractRequest);
+        validateRequiredParameters(contractRequest);
 
         // Validate contract and corresponding lineItems tenantId's
         validateMultipleTenantIds(contractRequest);
@@ -49,36 +56,212 @@ public class ContractServiceValidator {
         // Validate Contract dates
         validateContractDates(contractRequest);
 
-        // Validate tenantId against MDMS data
-        validateTenantIdAgainstMDMS(contractRequest.getRequestInfo(),contractRequest.getContract().getTenantId());
+        // Validate request fields against MDMS data
+        validateRequestFieldsAgainstMDMS(contractRequest);
 
-        // Validate estimateIds against estimate service
-        validateRequestedEstimateIdsAgainstEstimateService(contractRequest);
-
-        // Validate executingAuthority against MDMS data
-        validateExecutingAuthorityAgainstMDMS(contractRequest);
+        // Validate estimateIds against estimate service and DB
+        validateCreateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
 
         // Validate orgId against Organization service data
         validateOrganizationIdAgainstOrgService(contractRequest);
 
-        // Validate all documentUid against the Document Service
-        validateDocumentIds(contractRequest);
-        /**
-         * Make sure estimateLineItemId should be associated with one contract only.
-         * This will be a query across all contracts to search for this line item ID.
-         */
-
-        validateEstimateLineItemAssociationWithOtherContracts(contractRequest);
+        log.info("Contract create request validated");
     }
 
-    private void validateEstimateLineItemAssociationWithOtherContracts(ContractRequest contractRequest) {
+    public void validateUpdateContractRequest(ContractRequest contractRequest) {
+        log.info("Validate contract update request");
 
+        // Validate the Request Info object
+        validateRequestInfo(contractRequest.getRequestInfo());
+
+        // Validate required parameters
+        validateRequiredParameters(contractRequest);
+
+        // Validate contract and corresponding lineItems tenantId's
+        validateMultipleTenantIds(contractRequest);
+
+        // Validate Contract dates
+        validateContractDates(contractRequest);
+
+        // Validate provided contract for update should exist in DB
+        validateContractAgainstDB(contractRequest);
+
+        // Validate request fields against MDMS data
+        validateRequestFieldsAgainstMDMS(contractRequest);
+
+        // Validate estimateIds against estimate service and DB
+        validateUpdateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
+
+        // Validate orgId against Organization service data
+        validateOrganizationIdAgainstOrgService(contractRequest);
+
+        log.info("Contract create request validated");
     }
 
-    private void validateExecutingAuthorityAgainstMDMS(ContractRequest contractRequest) {
-        if(contractRequest.getContract().getExecutingAuthority() == null){
-            log.error("Executing Authority is mandatory");
-            throw new CustomException("CONTRACT.EXECUTINGAUTHORITY", "Executing Authority is mandatory");
+    private void validateContractAgainstDB(ContractRequest contractRequest) {
+        String contractId = contractRequest.getContract().getId();
+        List<String> contracts = new ArrayList<>();
+        contracts.add(contractId);
+
+        ContractCriteria contractCriteria = ContractCriteria.builder().ids(contracts).build();
+        List<Contract> fetchedContracts = contractRepository.getContracts(contractCriteria);
+        if(fetchedContracts.isEmpty()){
+            log.error("Provided contract for update ["+contractId+"] not exists");
+            throw new CustomException("CONTRACT_NOT_FOUND","Provided contract for update ["+contractId+"] not exists");
+        }
+    }
+
+    /**
+     * Validate requested estimateIDs/estimateLineItemId/estimateAmountBreakupId against estimate service.
+     * Also Make sure that provided estimateLineItemId are not associated with other contract.
+     * and if they are associated it should be requested contract.
+     * @param contractRequest
+     */
+    private void validateUpdateRequestedEstimateIdsAgainstEstimateServiceAndDB(ContractRequest contractRequest) {
+        Map<String, Set<String>> fetchedEstimateIdWithEstimateDetailIds = validateRequestedEstimateIdsAgainstEstimateService(contractRequest);
+        validateUpdateEstimateLineItemAssociationWithOtherContracts(contractRequest,fetchedEstimateIdWithEstimateDetailIds);
+    }
+
+    /**
+     * Validate requested estimateIDs/estimateLineItemId/estimateAmountBreakupId against estimate service.
+     * Make sure that provided estimateLineItemId are not associated with other contract.
+     * @param contractRequest
+     */
+    private void validateCreateRequestedEstimateIdsAgainstEstimateServiceAndDB(ContractRequest contractRequest) {
+        Map<String, Set<String>> fetchedEstimateIdWithEstimateDetailIds = validateRequestedEstimateIdsAgainstEstimateService(contractRequest);
+        validateCreateEstimateLineItemAssociationWithOtherContracts(contractRequest,fetchedEstimateIdWithEstimateDetailIds);
+    }
+
+    private void validateRequestFieldsAgainstMDMS(ContractRequest contractRequest) {
+        Contract contract = contractRequest.getContract();
+        String tenantId = contract.getTenantId();
+        RequestInfo requestInfo = contractRequest.getRequestInfo();
+
+        //Fetch MDMS data
+        Object mdmsData = fetchMDMSData(requestInfo,tenantId);
+
+        // Validate tenantId against MDMS data
+        validateTenantIdAgainstMDMS(mdmsData, contract.getTenantId());
+
+        // Validate executingAuthority against MDMS data
+        validateExecutingAuthorityAgainstMDMS(mdmsData, contract.getExecutingAuthority());
+
+        // Validate executingAuthority against MDMS data
+        validateContractTypeAgainstMDMS(mdmsData, contract.getContractType());
+
+        // Validate document type against MDMS date
+        validateDocumentTypeAgainstMDMS(mdmsData, contract.getDocuments());
+
+        log.info("Request Fields validated against MDMS");
+    }
+
+    private Object fetchMDMSData(RequestInfo requestInfo, String tenantId){
+        String rootTenantId = tenantId.split("\\.")[0];
+        return mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+
+    }
+    private void validateTenantIdAgainstMDMS(Object mdmsData,String tenantId) {
+        List<Object> tenantRes = parseMDMSData(mdmsData,JSON_PATH_FOR_TENANTS_VERIFICATION);
+        if (CollectionUtils.isEmpty(tenantRes) || !tenantRes.contains(tenantId)){
+            log.error("The tenant: " + tenantId + " is not present in MDMS");
+            throw new CustomException("INVALID_TENANT","The tenant: " + tenantId + " is not present in MDMS");
+        }
+        log.info("TenantId data validated against MDMS");
+    }
+    private void validateDocumentTypeAgainstMDMS(Object mdmsData, List<Document> documents) {
+        List<Object> documentTypeAuthorityRes = parseMDMSData(mdmsData,JSON_PATH_FOR_DOCUMENT_TYPE_VERIFICATION);
+        for(Document document: documents){
+            String documentType = document.getDocumentType();
+            if (CollectionUtils.isEmpty(documentTypeAuthorityRes) || !documentTypeAuthorityRes.contains(documentType)){
+                log.error("The Document Type [" + documentType + "] is not present in MDMS");
+                throw new CustomException("INVALID_DOCUMENT_TYPE","The Document Type [" + documentType + "] is not present in MDMS");
+            }
+        }
+        log.info("Document Type data validated against MDMS");
+    }
+
+    private void validateContractTypeAgainstMDMS(Object mdmsData, String contractType) {
+        List<Object> contractTypeAuthorityRes = parseMDMSData(mdmsData,JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION);
+        log.info("contractTypeAuthorityRes =====>"+contractTypeAuthorityRes);
+        if (CollectionUtils.isEmpty(contractTypeAuthorityRes) || !contractTypeAuthorityRes.contains(contractType)){
+            log.error("The Contract Type [" + contractType + "] is not present in MDMS");
+            throw new CustomException("INVALID_CONTRACT_TYPE","The Contract Type [" + contractType + "] is not present in MDMS");
+        }
+
+        log.info("Contract Type data validated against MDMS");
+    }
+
+    private void validateExecutingAuthorityAgainstMDMS(Object mdmsData, String executingAuthority) {
+        List<Object> executingAuthorityRes = parseMDMSData(mdmsData,JSON_PATH_FOR_EXECUTING_AUTHORITY_VERIFICATION);
+        log.info("executingAuthorityRes =====>"+executingAuthorityRes);
+        if (CollectionUtils.isEmpty(executingAuthorityRes) || !executingAuthorityRes.contains(executingAuthority)){
+            log.error("The Executing Authority [" + executingAuthority + "] is not present in MDMS");
+            throw new CustomException("INVALID_EXECUTING_AUTHORITY","The Executing Authority [" + executingAuthority + "] is not present in MDMS");
+        }
+
+        log.info("Executing Authority data validated against MDMS");
+    }
+
+    /**
+     * Make sure that provided estimateLineItemId are not associated with other contract.
+     * @param contractRequest
+     * @param estimateIdWithEstimateDetailIds
+     */
+    private void validateCreateEstimateLineItemAssociationWithOtherContracts(ContractRequest contractRequest, Map<String, Set<String>> estimateIdWithEstimateDetailIds) {
+        Contract contract = contractRequest.getContract();
+        List<String> estimatedLineItemIdsList = new ArrayList<>();
+        List<LineItems> lineItems = contract.getLineItems();
+        for(LineItems lineItem : lineItems){
+            String estimateId = lineItem.getEstimateId();
+            String estimateLineItemId = lineItem.getEstimateLineItemId();
+            if(estimateLineItemId == null){
+                estimatedLineItemIdsList.addAll(estimateIdWithEstimateDetailIds.get(estimateId));
+            } else {
+                estimatedLineItemIdsList.add(estimateLineItemId);
+            }
+        }
+        ContractCriteria contractCriteria = ContractCriteria.builder().estimateLineItemIds(estimatedLineItemIdsList).build();
+        List<LineItems> fetchedLineItems = lineItemsRepository.getLineItems(contractCriteria);
+        List<LineItems> filteredLineItems = fetchedLineItems.stream().filter(e -> e.getStatus().equals(Status.ACTIVE)).collect(Collectors.toList());
+        if(!filteredLineItems.isEmpty()){
+            Set<String> collect = filteredLineItems.stream().map(e -> e.getEstimateLineItemId()).collect(Collectors.toSet());
+            log.info("Estimate Line Items "+collect+" are already associated with other contract");
+            throw new CustomException("INVALID_ESTIMATELINEITEMID","Estimate Line Items "+collect+" are already associated with other contract");
+        }
+
+        log.info("Estimate LineItem association with other contracts done");
+    }
+
+    /**
+     * Make sure that provided estimateLineItemId are not associated with other contract.
+     * And if they are associated it should be requested contract.
+     * @param contractRequest
+     * @param estimateIdWithEstimateDetailIds
+     */
+    private void validateUpdateEstimateLineItemAssociationWithOtherContracts(ContractRequest contractRequest, Map<String, Set<String>> estimateIdWithEstimateDetailIds) {
+        Contract contract = contractRequest.getContract();
+        List<String> estimatedLineItemIds =  new ArrayList<>();;
+        List<LineItems> lineItems = contract.getLineItems();
+
+        for(LineItems lineItem : lineItems){
+            String estimateId = lineItem.getEstimateId();
+            String estimateLineItemId = lineItem.getEstimateLineItemId();
+            if(estimateLineItemId == null){
+                estimatedLineItemIds.addAll(estimateIdWithEstimateDetailIds.get(estimateId));
+            } else {
+                estimatedLineItemIds.add(estimateLineItemId);
+            }
+        }
+
+        ContractCriteria contractCriteria = ContractCriteria.builder().estimateLineItemIds(estimatedLineItemIds).build();
+        List<LineItems> fetchedLineItems = lineItemsRepository.getLineItems(contractCriteria);
+
+        if (!fetchedLineItems.isEmpty()) {
+            Set<String> setOfContractIds = fetchedLineItems.stream().filter(e -> e.getStatus().equals(Status.ACTIVE)).map(e -> e.getContractId()).collect(Collectors.toSet());
+            if (!(setOfContractIds.size() == 1 && setOfContractIds.contains(contract.getId()))) {
+                log.info("Estimate Line Items are already associated with other contract");
+                throw new CustomException("INVALID_ESTIMATELINEITEMID", "Estimate Line Items are already associated with other contract");
+            }
         }
     }
 
@@ -88,15 +271,6 @@ public class ContractServiceValidator {
             // For now throwing exception. Later implementation will be done
             log.error("Org service not integrated yet");
             throw new CustomException("SERVICE_UNAVAILABLE", "Org service not integrated yet");
-        }
-    }
-
-    private void validateDocumentIds(ContractRequest contractRequest) {
-        if ("TRUE".equalsIgnoreCase(config.getDocumentIdVerificationRequired())) {
-            //TODO
-            // For now throwing exception. Later implementation will be done
-            log.error("Document service not integrated yet");
-            throw new CustomException("SERVICE_UNAVAILABLE", "Service not integrated yet");
         }
     }
 
@@ -113,7 +287,11 @@ public class ContractServiceValidator {
 
         log.info("agreementDate "+agreementDate + " startDate "+startDate+" endDate "+endDate);
 
-        if(agreementDate != null && startDate != null && startDate.compareTo(agreementDate)<0)
+        if(agreementDate == null){
+            agreementDate =BigDecimal.valueOf(Instant.now().toEpochMilli());
+        }
+
+        if(startDate != null && startDate.compareTo(agreementDate)<0)
         {
             log.error("Contract start date should be greater than or equal to agreementDate");
             errorMap.put("INVALID_STARTDATE","Invalid contract start date");
@@ -129,15 +307,16 @@ public class ContractServiceValidator {
             throw new CustomException(errorMap);
         }
 
+        log.info("Contract dates validation done");
+
     }
 
-    private void validateRequestedEstimateIdsAgainstEstimateService(ContractRequest contractRequest) {
+    private Map<String, Set<String>> validateRequestedEstimateIdsAgainstEstimateService(ContractRequest contractRequest) {
         RequestInfo requestInfo = contractRequest.getRequestInfo();
         Contract contract = contractRequest.getContract();
         String tenantId = contract.getTenantId();
         List<LineItems> lineItems = contract.getLineItems();
         Set<String> providedEstimateIds = lineItems.stream().map(e -> e.getEstimateId()).collect(Collectors.toSet());
-
         List<Estimate> fetchedEstimates = estimateServiceUtil.fetchEstimates(requestInfo,tenantId,providedEstimateIds);
 
         Map<String, List<LineItems>> providedLineItemsMap = lineItems.stream().collect(Collectors.groupingBy(LineItems::getEstimateId));
@@ -165,10 +344,13 @@ public class ContractServiceValidator {
                     }
                 }
             } else {
-                log.error("EstimateId is invalid");
-                throw new CustomException("INVALID_ESTIMATEID","EstimateId ["+estimateId + "] is invalid");
+                log.error("EstimateId ["+estimateId + "] not found");
+                throw new CustomException("ESTIMATEID_NOT_FOUND","EstimateId ["+estimateId + "] not found");
             }
         }
+
+        log.info("EstimateIds validated against Estimate Service");
+        return fetchedEstimateDetailIdWithAccountDetailIds;
     }
 
     private Map<String, Set<String>> getFetchedEstimateDetailIdWithAccountDetailIds(Map<String, List<Estimate>> fetchedEstimatesMap) {
@@ -182,7 +364,6 @@ public class ContractServiceValidator {
             }
         }
         return fetchedEstimateDetailIdWithAccountDetailIds;
-
     }
 
     private Map<String, Set<String>> getFetchedEstimateIdWithEstimateDetailIds(Map<String, List<Estimate>> fetchedEstimatesMap) {
@@ -194,30 +375,6 @@ public class ContractServiceValidator {
             }
         }
         return fetchedEstimateIdWithEstimateDetailIds;
-    }
-
-    private void validateTenantIdAgainstMDMS(RequestInfo requestInfo,String tenantId) {
-        String rootTenantId = tenantId.split("\\.")[0];
-
-        //Get MDMS data using create attendance register request and tenantId
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
-
-        final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
-
-        List<Object> tenantRes = null;
-        try {
-            tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
-        }
-
-        if (CollectionUtils.isEmpty(tenantRes)){
-            log.error("The tenant: " + tenantId + " is not present in MDMS");
-            throw new CustomException("INVALID_TENANT","The tenant: " + tenantId + " is not present in MDMS");
-        }
-
-        log.info("TenantId data validated against MDMS");
     }
 
     /**
@@ -242,7 +399,7 @@ public class ContractServiceValidator {
         log.info("Request Info object validation done");
     }
 
-    private void validateRequestedContractRequiredParameters(ContractRequest contractRequest) {
+    private void validateRequiredParameters(ContractRequest contractRequest) {
         Map<String, String> errorMap = new HashMap<>();
         Contract contract = contractRequest.getContract();
 
@@ -259,6 +416,11 @@ public class ContractServiceValidator {
         if (contract.getExecutingAuthority() == null) {
             log.error("Executing Authority is mandatory");
             errorMap.put("CONTRACT.EXECUTINGAUTHORITY", "Executing Authority is mandatory");
+        }
+
+        if (contract.getContractType() == null) {
+            log.error("Contract Type is mandatory");
+            errorMap.put("CONTRACT.CONTRACTTYPE", "Contract Type is mandatory");
         }
 
         if (StringUtils.isBlank(contract.getOrgId())) {
@@ -315,6 +477,8 @@ public class ContractServiceValidator {
                 throw new CustomException("MULTIPLE_TENANTIDS","Contract and corresponding lineItems should belong to same tenantId");
             }
         }
+
+        log.info("Multiple tenantId validation done");
     }
 
     public void validateSearchContractRequest(RequestInfo requestInfo, ContractCriteria contractCriteria) {
@@ -334,8 +498,13 @@ public class ContractServiceValidator {
 
         //validate tenantId with MDMS
         log.info("validate tenantId with MDMS");
-        validateTenantIdAgainstMDMS(requestInfo,contractCriteria.getTenantId());
+        validateSearchTenantIdAgainstMDMS(requestInfo,contractCriteria.getTenantId());
 
+    }
+
+    private void validateSearchTenantIdAgainstMDMS(RequestInfo requestInfo, String tenantId) {
+        Object mdmsData = fetchMDMSData(requestInfo, tenantId);
+        validateTenantIdAgainstMDMS(mdmsData,tenantId);
     }
 
     private void validateSearchContractRequestParameters(ContractCriteria contractCriteria){
@@ -343,6 +512,15 @@ public class ContractServiceValidator {
         if (StringUtils.isBlank(contractCriteria.getTenantId())) {
             log.error("Tenant is mandatory");
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
+        }
+    }
+
+    private List<Object> parseMDMSData(Object mdmsData, String path){
+        try {
+            return JsonPath.read(mdmsData, path);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
         }
     }
 }

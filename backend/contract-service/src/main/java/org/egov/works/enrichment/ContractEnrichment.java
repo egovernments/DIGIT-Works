@@ -14,14 +14,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.web.models.ContractCriteria;
 import org.egov.works.web.models.Pagination;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
 @Slf4j
@@ -45,8 +39,39 @@ public class ContractEnrichment {
         // Enrich Contract Number
         enrichContractNumber(contractRequest);
         // Enrich UUID and AuditDetails
-        enrichIdsAndAuditDetails(contractRequest);
+        enrichIdsAndAuditDetailsOnCreate(contractRequest);
 
+    }
+
+    public void enrichContractOnUpdate(ContractRequest contractRequest){
+        // Enrich LineItems
+        enrichContractLineItems(contractRequest);
+        // Enrich UUID and AuditDetails
+        enrichIdsAndAuditDetailsOnUpdate(contractRequest);
+    }
+
+    private void enrichIdsAndAuditDetailsOnUpdate(ContractRequest contractRequest) {
+        Contract contract = contractRequest.getContract();
+        AuditDetails providedAuditDetails = contractRequest.getContract().getAuditDetails();
+        AuditDetails auditDetails = contractServiceUtil.getAuditDetails(contractRequest.getRequestInfo().getUserInfo().getUuid(), providedAuditDetails, false);
+        contract.setAuditDetails(auditDetails);
+        for(LineItems lineItem : contract.getLineItems()){
+            if(lineItem.getId() == null) {
+                lineItem.setId(String.valueOf(UUID.randomUUID()));
+            }
+            lineItem.setAuditDetails(auditDetails);
+            for(AmountBreakup amountBreakup : lineItem.getAmountBreakups()){
+                if(amountBreakup.getId() == null) {
+                    amountBreakup.setId(String.valueOf(UUID.randomUUID()));
+                }
+            }
+            List<Document> documents = contract.getDocuments();
+            for (Document document : documents) {
+                if(document.getId() == null) {
+                    document.setId(String.valueOf(UUID.randomUUID()));
+                }
+            }
+        }
     }
 
     private void enrichContractLineItems(ContractRequest contractRequest) {
@@ -74,6 +99,7 @@ public class ContractEnrichment {
                                 .noOfunit(fetchedEstimateDetail.getNoOfunit())
                                 .unitRate(fetchedEstimateDetail.getUnitRate())
                                 .tenantId(providedLineItem.getTenantId())
+                                .status(Status.ACTIVE)
                                 .additionalDetails(fetchedEstimateDetail.getAdditionalDetails())
                                 .build();
 
@@ -84,6 +110,7 @@ public class ContractEnrichment {
                                     .estimateAmountBreakupId(amountDetail.getId())
                                     .amount(amountDetail.getAmount())
                                     .additionalDetails(amountDetail.getAdditionalDetails())
+                                    .status(Status.ACTIVE)
                                     .build();
                             lineItem.addAmountBreakupsItem(amountBreakup);
                         }
@@ -99,7 +126,7 @@ public class ContractEnrichment {
         contract.setLineItems(refinedLineItems);
     }
 
-    private void enrichIdsAndAuditDetails(ContractRequest contractRequest) {
+    private void enrichIdsAndAuditDetailsOnCreate(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
         contract.setId(String.valueOf(UUID.randomUUID()));
         AuditDetails auditDetails = contractServiceUtil.getAuditDetails(contractRequest.getRequestInfo().getUserInfo().getUuid(), null, true);

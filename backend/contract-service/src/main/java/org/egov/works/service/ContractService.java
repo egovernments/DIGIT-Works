@@ -68,6 +68,16 @@ public class ContractService {
         return attendanceLogResponse;
     }
 
+    public ContractResponse updateContract(ContractRequest contractRequest){
+        // Validate contract request
+        contractServiceValidator.validateUpdateContractRequest(contractRequest);
+        contractEnrichment.enrichContractOnUpdate(contractRequest);
+        producer.push(contractServiceConfiguration.getUpdateContractTopic(),contractRequest);
+
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractRequest.getRequestInfo(), true);
+        ContractResponse attendanceLogResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(Collections.singletonList(contractRequest.getContract())).build();
+        return attendanceLogResponse;
+    }
 
 
     public List<Contract> searchContracts(RequestInfo requestInfo, ContractCriteria contractCriteria) {

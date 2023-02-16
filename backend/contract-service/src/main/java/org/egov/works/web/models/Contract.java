@@ -50,10 +50,10 @@ public class Contract {
 
     @JsonProperty("executingAuthority")
     @NotNull
-    private ExecutingAuthorityEnum executingAuthority = null;
+    private String executingAuthority = null;
 
     @JsonProperty("contractType")
-    private ContractTypeEnum contractType = null;
+    private String contractType = null;
 
     @JsonProperty("totalContractedamount")
     @Valid
@@ -120,64 +120,64 @@ public class Contract {
     /**
      * The executing authority of the given contract
      */
-    public enum ExecutingAuthorityEnum {
-        DEPARTMENT("DEPARTMENT"),
-
-        CONTRACTOR("CONTRACTOR");
-
-        private String value;
-
-        ExecutingAuthorityEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonCreator
-        public static ExecutingAuthorityEnum fromValue(String text) {
-            for (ExecutingAuthorityEnum b : ExecutingAuthorityEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+//    public enum ExecutingAuthorityEnum {
+//        DEPARTMENT("DEPARTMENT"),
+//
+//        CONTRACTOR("CONTRACTOR");
+//
+//        private String value;
+//
+//        ExecutingAuthorityEnum(String value) {
+//            this.value = value;
+//        }
+//
+//        @JsonCreator
+//        public static ExecutingAuthorityEnum fromValue(String text) {
+//            for (ExecutingAuthorityEnum b : ExecutingAuthorityEnum.values()) {
+//                if (String.valueOf(b.value).equals(text)) {
+//                    return b;
+//                }
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        @JsonValue
+//        public String toString() {
+//            return String.valueOf(value);
+//        }
+//    }
 
     /**
      * Type of the contract. This will decide the other attributes of the contract and how it will be processed down the line.
      */
-    public enum ContractTypeEnum {
-        WORK_ORDER("WORK_ORDER"),
-
-        PURCHASE_ORDER("PURCHASE_ORDER");
-
-        private String value;
-
-        ContractTypeEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonCreator
-        public static ContractTypeEnum fromValue(String text) {
-            for (ContractTypeEnum b : ContractTypeEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+//    public enum ContractTypeEnum {
+//        WORK_ORDER("WORK_ORDER"),
+//
+//        PURCHASE_ORDER("PURCHASE_ORDER");
+//
+//        private String value;
+//
+//        ContractTypeEnum(String value) {
+//            this.value = value;
+//        }
+//
+//        @JsonCreator
+//        public static ContractTypeEnum fromValue(String text) {
+//            for (ContractTypeEnum b : ContractTypeEnum.values()) {
+//                if (String.valueOf(b.value).equals(text)) {
+//                    return b;
+//                }
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        @JsonValue
+//        public String toString() {
+//            return String.valueOf(value);
+//        }
+//    }
 
 }
 
