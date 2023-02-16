@@ -115,7 +115,7 @@ export const WorksService = {
            setTimeParam:false,
            userService:true,
            method:"POST",
-           params: {tenantId, limit : filters?.limit, offset : filters?.offset, includeAncestors : filters?.includeAncestors },
+           params: {tenantId, limit : filters?.limit, offset : filters?.offset, includeAncestors : filters?.includeAncestors, includeDescendants : filters?.includeDescendants},
            auth:true,
        }),
 }
