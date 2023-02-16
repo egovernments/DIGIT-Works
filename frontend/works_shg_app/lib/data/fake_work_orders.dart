@@ -7,7 +7,7 @@ List<Map<String, dynamic>> fakeWorkOrderDetails = [
     "Engineer-in-charge": "Jagan",
     "Status": "ACTIVE",
     "Attachments": "Address Proof",
-    "tenantId": "pb.amritsar",
+    "tenantId": "pg.citya",
     "contractCreated": "476655G",
     "orgName": "mSeva"
   },
@@ -19,7 +19,7 @@ List<Map<String, dynamic>> fakeWorkOrderDetails = [
     "Engineer-in-charge": "Kumar",
     "Status": "ACTIVE",
     "Attachments": "Address Proof",
-    "tenantId": "pb.amritsar",
+    "tenantId": "pg.cityb",
     "contractCreated": "XY56788Z",
     "orgName": "Bihar Jal Proyajan"
   },
@@ -31,7 +31,7 @@ List<Map<String, dynamic>> fakeWorkOrderDetails = [
     "Engineer-in-charge": "Sameer",
     "Status": "ACTIVE",
     "Attachments": "Address Proof",
-    "tenantId": "pb.amritsar",
+    "tenantId": "pg.cityc",
     "contractCreated": "H5678FD",
     "orgName": "Kerala FSM"
   }
