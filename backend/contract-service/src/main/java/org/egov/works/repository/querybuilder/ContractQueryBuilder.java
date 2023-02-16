@@ -1,12 +1,16 @@
 package org.egov.works.repository.querybuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
+import org.egov.works.web.models.Contract;
 import org.egov.works.web.models.ContractCriteria;
 import org.egov.works.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.*;
 
 @Component
@@ -60,17 +64,48 @@ public class ContractQueryBuilder {
             addToPreparedStatement(preparedStmtList, ids);
         }
 
+        List<String> orgIds = criteria.getOrgIds();
+        if (orgIds != null && !orgIds.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.org_id IN (").append(createQuery(orgIds)).append(")");
+            addToPreparedStatement(preparedStmtList, orgIds);
+        }
+
+        if (StringUtils.isNotBlank(criteria.getContractType()) && Contract.ContractTypeEnum.fromValue(criteria.getContractType())!=null) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.contract_type=? ");
+            preparedStmtList.add(criteria.getContractType());
+        }
+
         if (StringUtils.isNotBlank(criteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" contract.tenant_id=? ");
             preparedStmtList.add(criteria.getTenantId());
         }
 
+        if (criteria.getFromDate() != null) {
+            addClauseIfRequired(query, preparedStmtList);
+
+            //If user does not specify toDate, take today's date as toDate by default.
+            if (criteria.getToDate() == null) {
+                criteria.setToDate(BigDecimal.valueOf(Instant.now().toEpochMilli()));
+            }
+
+            query.append(" contract.start_date BETWEEN ? AND ?");
+            preparedStmtList.add(criteria.getFromDate());
+            preparedStmtList.add(criteria.getToDate());
+
+        } else {
+            //if only toDate is provided as parameter without fromDate parameter, throw an exception.
+            if (criteria.getToDate() != null) {
+                throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify toDate without a fromDate");
+            }
+        }
+
         addOrderByClause(query, criteria, preparedStmtList);
 
         addLimitAndOffset(query, criteria, preparedStmtList);
 
-//        return addPaginationWrapper(query.toString(),preparedStmtList,criteria);
         return query.toString();
     }
 

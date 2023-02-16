@@ -86,7 +86,7 @@ public class LineItemsQueryBuilder {
         if (preparedStmtList.isEmpty()) {
             query.append(" WHERE ");
         } else {
-            query.append(" OR ");
+            query.append(" AND ");
         }
     }
 
