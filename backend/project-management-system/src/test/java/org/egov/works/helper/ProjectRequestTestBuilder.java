@@ -107,6 +107,8 @@ public class ProjectRequestTestBuilder {
         searchParamsMap.put("tenantId", "t1");
         searchParamsMap.put("lastChangedSince", null);
         searchParamsMap.put("includeDeleted", false);
+        searchParamsMap.put("includeAncestors", false);
+        searchParamsMap.put("includeDescendants", false);
 
         return searchParamsMap;
     }

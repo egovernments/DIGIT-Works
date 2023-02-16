@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useForm, FormProvider, useFormContext } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { InboxContext } from "../hoc/InboxSearchComposerContext";
 import RenderFormFields from "../molecules/RenderFormFields";
@@ -9,12 +9,19 @@ import SubmitBar from "../atoms/SubmitBar";
 import Toast from "../atoms/Toast";
 import { FilterIcon, RefreshIcon } from "./svgindex";
 
-const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
+const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data}) => {
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
   const [showToast,setShowToast] = useState(null)
   let updatedFields = [];
-  const [componentType, setComponentType] = useState(uiConfig?.type);
+  const {apiDetails} = fullConfig
+
+  if(uiConfig?.type === 'filter') {
+    let fieldConfig = uiConfig?.fields?.filter(item => item.type === 'dropdown' && item.populators.name === 'musterRollStatus')
+    if(fieldConfig.length) { 
+      fieldConfig[0].populators.options = data?.statusMap?.map(item => ({ code: item.applicationstatus, i18nKey: `ES_COMMON_${item.applicationstatus}`}))
+    }
+  }
 
   const {
     register,
@@ -34,7 +41,6 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     defaultValues: uiConfig?.defaultValues,
   });
   const formData = watch();
-
   const checkKeyDown = (e) => {
     const keyCode = e.keyCode ? e.keyCode : e.key ? e.key : e.which;
     if (keyCode === 13) {
@@ -48,20 +54,9 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
 
   const onSubmit = (data) => {
     if(updatedFields.length >= uiConfig?.minReqFields) {
-      
-      //@prachi We can't make this validation here as this is a generic comp
-      // tip -> handle it before the onsumbmit 
-      //use custom validation function prop given by userform's register()
-      // try using it using config in renderformfields comp
-      if(formData.startDate && formData.endDate) {
-        if(new Date(formData.startDate).getTime() > new Date(formData.endDate).getTime()) {
-          setError("endDate", { type: "focus" }, { shouldFocus: true })
-          return
-        }
-      }
-      
+     // here based on screenType call respective dispatch fn
       dispatch({
-        type: "searchForm",
+        type: uiConfig?.type === "filter" ? "filterForm" : "searchForm",
         state: {
           ...data
         }
@@ -76,7 +71,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     reset(uiConfig?.defaultValues)
     dispatch({
       type: "clearSearchForm",
-      state:{}
+      state: { ...uiConfig?.defaultValues }
+      //need to pass form with empty strings 
     })
   }
  
@@ -84,7 +80,14 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
     setShowToast(null);
   }
 
-  const handleFilterRefresh = () => {}
+  const handleFilterRefresh = () => {
+    reset(uiConfig?.defaultValues)
+    dispatch({
+      type: "clearFilterForm",
+      state: { ...uiConfig?.defaultValues }
+      //need to pass form with empty strings 
+    })
+  }
 
   const renderHeader = () => {
     switch(uiConfig?.type) {
@@ -92,13 +95,13 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
         return (
           <div className="filter-header-wrapper">
             <div className="icon-filter"><FilterIcon></FilterIcon></div>
-            <div className="label">{header}</div>
+            <div className="label">{t(header)}</div>
             <div className="icon-refresh" onClick={handleFilterRefresh}><RefreshIcon></RefreshIcon></div>
           </div>
         )
       }
       default : {
-        return <Header styles={uiConfig?.headerStyle}>{header}</Header>
+        return <Header styles={uiConfig?.headerStyle}>{t(header)}</Header>
       }
     }
   }
@@ -106,7 +109,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
   return (
     <React.Fragment>
       <div className={'search-wrapper'}>
-        {header && <Header styles={uiConfig?.headerStyle}>{t(header)}</Header>}
+        {header && renderHeader()}
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
           <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
             <RenderFormFields 
@@ -120,10 +123,11 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search"}) => {
               setError={setError}
               clearErrors={clearErrors}
               labelStyle={{fontSize: "16px"}}
+              apiDetails={apiDetails}
             />  
-            <div className={`search-button-wrapper ${screenType}`}>
-              <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel>
-              <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/>
+            <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
+              { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
+              { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
             </div>
           </div> 
         </form>

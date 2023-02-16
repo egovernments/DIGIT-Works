@@ -12,8 +12,6 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-
 @Component
 @Slf4j
 public class DenormalizeAndEnrichEstimateConsumer {
@@ -30,11 +28,28 @@ public class DenormalizeAndEnrichEstimateConsumer {
     @Autowired
     private DenormalizeAndEnrichEstimateService denormalizeAndEnrichEstimateService;
 
+    /**
+     * It consumes the message from 'save-estimate' topic and do the
+     * <p>
+     * 1. denormalization & enrichment of project
+     * 2. Enrichment of current process instance
+     * <p>
+     * in estimate And finally produce the enriched estimate to the 'enrich-estimate'
+     * topic. And indexer consumes the same enriched estimate message from 'enrich-estimate'
+     * topic and do the processing to elastic index.
+     * <p>
+     * This is introduced to get the search - criteria & result of project and status of workflow in
+     * estimate-inbox
+     *
+     * @param record
+     * @param topic
+     */
     @KafkaListener(topics = {"${estimate.kafka.create.topic}"})
-    public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    public void listen(final String record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("DenormalizeAndEnrichEstimateConsumer::listen");
         try {
-            EstimateRequest estimateRequest = mapper.convertValue(record, EstimateRequest.class);
+
+            EstimateRequest estimateRequest = mapper.readValue(record, EstimateRequest.class);
             if (estimateRequest != null && estimateRequest.getEstimate() != null && estimateRequest.getRequestInfo() != null) {
                 EstimateRequest enrichedEstimateRequest = denormalizeAndEnrichEstimateService.denormalizeAndEnrich(estimateRequest);
                 producer.push(serviceConfiguration.getEnrichEstimateTopic(), enrichedEstimateRequest);

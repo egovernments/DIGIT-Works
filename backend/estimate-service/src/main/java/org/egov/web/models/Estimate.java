@@ -80,7 +80,7 @@ public class Estimate {
 
     @JsonProperty("ProcessInstances")
     @Valid
-    private List<ProcessInstance> processInstances = null;
+    private ProcessInstance processInstances = null;
 
 
     public Estimate addEstimateDetailsItem(EstimateDetail estimateDetailsItem) {
