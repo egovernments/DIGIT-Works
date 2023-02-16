@@ -27,8 +27,8 @@ const inboxConfig = () => {
             search : {
                 uiConfig : {
                     headerStyle : null,
-                    primaryLabel: 'ACTION_TEST_SEARCH',
-                    secondaryLabel: 'CLEAR_SEARCH_LINk',
+                    primaryLabel: 'ES_COMMON_SEARCH',
+                    secondaryLabel: 'ES_COMMON_CLEAR_SEARCH',
                     minReqFields: 1,
                     defaultValues : {
                         attendanceRegisterName: "",
@@ -89,7 +89,7 @@ const inboxConfig = () => {
                 uiConfig : {
                     type : 'filter',
                     headerStyle : null,
-                    primaryLabel: 'ACTION_TEST_APPLY',
+                    primaryLabel: 'ES_COMMON_APPLY',
                     minReqFields: 0,
                     secondaryLabel: '',
                     defaultValues : {
