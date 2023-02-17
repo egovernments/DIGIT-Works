@@ -64,6 +64,8 @@ public class MusterRollServiceConfiguration {
     private Integer musterDefaultLimit;
     @Value("${musterroll.search.max.limit}")
     private Integer musterMaxLimit;
+    @Value("${muster.restricted.search.roles}")
+    private String restrictedSearchRoles;
 
     //Attendance service
     @Value("${works.attendance.log.host}")

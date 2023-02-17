@@ -65,6 +65,7 @@ const moduleReducers = (initData) => ({
   initData,
 });
 
+//keep this at last to compile all Mukta specific changes at last
 initMuktaCustomisations();
 
 function App() {

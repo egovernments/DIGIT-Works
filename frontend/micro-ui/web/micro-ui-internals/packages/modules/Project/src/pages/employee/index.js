@@ -31,6 +31,12 @@ const ProjectBreadCrumb = ({ location }) => {
       show: location.pathname.includes("/project/project-details") ? true : false,
       isBack: fromScreen && true,
     },
+    {
+      path: `/${window.contextPath}/employee/project/inbox`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_PROJECT")}` : t("WORKS_PROJECT"),
+      show: location.pathname.includes("/project/inbox") ? true : false,
+      isBack: fromScreen && true,
+    }
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 };

@@ -128,7 +128,7 @@ const ViewSubProjectsDetails = ({subProjects}) => {
 
     return <>
         <div className="sub-project-table-wrapper no-padding">
-            <table className='table reports-table sub-work-table project-details-table'>
+            <table className='table sub-work-table project-details-table'>
                 <thead>
                     <tr>{renderHeader()}</tr>
                 </thead>

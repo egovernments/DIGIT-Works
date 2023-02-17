@@ -109,10 +109,8 @@ public class MusterRollValidator {
     /**
      * Validate muster roll in update service
      * @param musterRollRequest
-     * @param existingMusterRoll
-     * @param isComputeAttendance
      */
-    public void validateUpdateMusterRoll(MusterRollRequest musterRollRequest,MusterRoll existingMusterRoll,boolean isComputeAttendance) {
+    public void validateUpdateMusterRoll(MusterRollRequest musterRollRequest) {
         log.info("MusterRollValidator::validateUpdateMusterRoll");
 
         Map<String, String> errorMap = new HashMap<>();
@@ -128,11 +126,6 @@ public class MusterRollValidator {
         String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
         Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, rootTenantId);
         validateMDMSData(musterRoll, mdmsData, errorMap);
-
-        //check if the user is enrolled in the attendance register for resubmit
-        if (isComputeAttendance) {
-            isValidUser(existingMusterRoll, requestInfo);
-        }
 
         if (!errorMap.isEmpty()){
             throw new CustomException(errorMap);
@@ -188,6 +181,7 @@ public class MusterRollValidator {
         if (startDate.getDayOfWeek() != DayOfWeek.MONDAY) {
             throw new CustomException("START_DATE_MONDAY","StartDate should be Monday");
         }
+        musterRoll.setStartDate(new BigDecimal(startDate.atStartOfDay(ZoneId.of(serviceConfiguration.getTimeZone())).toInstant().toEpochMilli()));
 
         log.info("MusterRollValidator::validateCreateMusterRoll::startDate in epoch::"+musterRoll.getStartDate());
         log.info("MusterRollValidator::validateCreateMusterRoll::startDate::"+startDate);
@@ -270,7 +264,7 @@ public class MusterRollValidator {
      * @param musterRoll
      * @param requestInfo
      */
-    private void isValidUser(MusterRoll musterRoll, RequestInfo requestInfo) {
+    public void isValidUser(MusterRoll musterRoll, RequestInfo requestInfo) {
         String id = requestInfo.getUserInfo().getUuid();
 
         StringBuilder uri = new StringBuilder();
@@ -278,13 +272,12 @@ public class MusterRollValidator {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
                 .queryParam("tenantId",musterRoll.getTenantId())
                 .queryParam("ids",musterRoll.getRegisterId())
-                .queryParam("staffId",id)
                 .queryParam("status",Status.ACTIVE);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
         AttendanceRegisterResponse attendanceRegisterResponse = null;
         log.info("MusterRollValidator::isValidUser::call attendance register search with tenantId::"+musterRoll.getTenantId()
-                +"::staffId::"+id);
+                +"::for user::"+id);
 
         try {
             attendanceRegisterResponse  = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceRegisterResponse.class);
