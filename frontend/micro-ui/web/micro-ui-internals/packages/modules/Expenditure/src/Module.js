@@ -8,9 +8,10 @@ import ViewBillsMenu from "./pages/employee/viewBills/viewBillsMenu";
 import ViewBills from "./pages/employee/viewBills/viewBills";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
-    const moduleCode = ["Expenditure","common-masters"];
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const moduleCode = ["Expenditure","common-masters",tenantId];
     const { isLoading, data: store } = Digit.Services.useStore({
         stateCode,
         moduleCode,
