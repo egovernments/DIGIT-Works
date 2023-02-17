@@ -4,6 +4,7 @@ import { useRouteMatch } from "react-router-dom";
 import ProjectCard from "./components/ProjectCard";
 import SubProjectDetailsTable from "./components/SubProjectDetailsTable";
 import ViewFinancialDetails from "./pageComponents/ViewFinancialDetails";
+import ViewSubProjectsDetails from "./pageComponents/ViewSubProjectsDetails";
 import { default as EmployeeApp } from "./pages/employee";
 import CreateProjectForm from "./pages/employee/CreateProject/CreateProjectForm";
 import CreateProjectResponse from "./pages/employee/CreateProject/CreateProjectResponse";
@@ -47,7 +48,8 @@ const componentsToRegister = {
     ProjectSearchAndInbox,
     SubProjectDetailsTable,
     CreateProjectResponse,
-    CreateProjectForm
+    CreateProjectForm,
+    ViewSubProjectsDetails
 };
 
 export const initProjectComponents = () => {

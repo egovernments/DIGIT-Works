@@ -821,6 +821,9 @@ input[type="number"] {
 .sub-project-table-wrapper {
   overflow-x: scroll;
   padding-bottom: 9rem;
+  &.no-padding {
+    padding: 0;
+  }
   .project-details-table {
     position: relative;
     .sub-projects-details-field-mt {
@@ -839,4 +842,14 @@ input[type="number"] {
 
 .form-no-margin {
   margin-left: -1rem;
+}
+
+.sla-cell-success {
+  padding: 8px 16px;
+  border-radius: 16px;
+}
+
+.sla-cell-error {
+  padding: 8px 16px;
+  border-radius: 16px;
 }

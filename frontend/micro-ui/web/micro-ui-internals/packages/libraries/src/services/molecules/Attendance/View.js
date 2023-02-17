@@ -73,6 +73,8 @@ const getAttendanceTableData = (data, skills) => {
 }
 
 const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills) => {
+  if(data.musterRolls.length === 0) return;
+  
   const musterRoll = data.musterRolls[0]
   const attendanceTableData = getAttendanceTableData(musterRoll, skills)
   const weekDates = getWeekDates(musterRoll)
