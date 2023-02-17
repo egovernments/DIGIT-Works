@@ -2,6 +2,7 @@
 const fetchEstimateDetails = (data) => {
     
     let sornonSORData = data?.nonSORTablev1?.filter(row=> row)?.map(row => {
+        
         return {
             "sorId": 45,
             "category": "SOR/Non SOR",
@@ -9,7 +10,7 @@ const fetchEstimateDetails = (data) => {
             "description": row?.description,
             "unitRate": row?.rate,
             "noOfunit": row?.estimatedQuantity,
-            "uom": row?.uom,
+            "uom": row?.uom?.code,
             "uomValue": 10, //not sure what is this field
             "amountDetail": [
                 {
@@ -22,10 +23,11 @@ const fetchEstimateDetails = (data) => {
         }
     })
     let overHeadsData = data?.overheadDetails?.filter(row => row)?.map(row => {
+        
         return {
             "category": "Overheads",
-            "name": row?.name,
-            "description": row?.name,
+            "name": row?.name?.name,
+            "description": row?.name?.description,
             "amountDetail": [
                 {
                     "additionalDetails":{},
@@ -42,34 +44,24 @@ const fetchEstimateDetails = (data) => {
     return [...sornonSORData,...overHeadsData]
 }
 
-export const createEstimatePayload = (data) => {
-    
+export const createEstimatePayload = (data,projectData) => {
     let filteredFormData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
     const tenantId = Digit.ULBService.getCurrentTenantId()
-    //let Zone = tenantId === "pb.jalandhar" ? "JZN1" : "Z1"
+    
     let payload = {
         estimate:{
             "tenantId": tenantId,
-            "projectId": "uuuid-oi123467-Qastry",
+            "projectId": projectData?.projectDetails?.searchedProject?.basicDetails?.uuid,
             "status": "ACTIVE",
             "wfStatus": "CREATED",
-            "name": "Construct new schools",
-            "referenceNumber": "File-18430283",
-            "description": "Construct new schools",
+            "name": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
+            // "referenceNumber": "File-18430283",
+            "description": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc,
             "executingDepartment": filteredFormData?.selectedDept?.code,
-            "projectId":"7c941228-6149-4adc-bdb9-8b77f6c3757d",//static for now
+            // "projectId":"7c941228-6149-4adc-bdb9-8b77f6c3757d",//static for now
             "address": {
-                "tenantId": "pb.jalandhar",
-                "latitude": 0,
-                "longitude": 0,
-                "addressNumber": "kormangla",
-                "addressLine1": "forum 1",
-                "addressLine2": "string",
-                "landmark": "circle",
-                "city": "bangalore",
-                "pincode": "560150",
-                "detail": "string"
-            },
+                ...projectData?.projectDetails?.searchedProject?.basicDetails?.address
+            },//get from project search
             "estimateDetails": fetchEstimateDetails(filteredFormData),
             "additionalDetails": {
                 "uploads":data?.uploads?.length > 0 ? data?.uploads : []

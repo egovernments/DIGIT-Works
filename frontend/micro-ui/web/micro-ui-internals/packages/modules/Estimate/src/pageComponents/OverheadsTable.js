@@ -1,8 +1,10 @@
 import React, { Fragment, useState,useEffect } from 'react'
-import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError } from '@egovernments/digit-ui-react-components'
+import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError,Loader,Dropdown } from '@egovernments/digit-ui-react-components'
+import { Controller } from 'react-hook-form';
 
 
-const OverheadsTable = (props) => {
+const OverheadsTable = ({control,watch,...props}) => {
+    
     const [totalAmount,setTotalAmount] = useState(100)
     const formFieldName = "overheadDetails" // this will be the key under which the data for this table will be present on onFormSubmit
     
@@ -16,7 +18,7 @@ const OverheadsTable = (props) => {
     ];
     const [rows, setRows] = useState(initialState);
 
-    const { t, register, errors, setValues, getValues, formData } = props
+    const { t, register, errors, setValue, getValues, formData } = props
 
     const setTotal = (formData) => {
         const tableData = formData?.[formFieldName]
@@ -92,6 +94,74 @@ const OverheadsTable = (props) => {
         obj.key = rows[rows.length - 1].key + 1
         setRows(prev => [...prev, obj])
     }
+
+    const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey = "name", options = []) => {
+        const { isLoading, data } = Digit.Hooks.useCustomMDMS(
+            Digit.ULBService.getStateId(),
+            options?.mdmsConfig?.moduleName,
+            [{ name: options?.mdmsConfig?.masterName }],
+            {
+                select: (data) => {
+                    const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
+                    return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
+                },
+                enabled: options?.mdmsConfig ? true : false,
+            }
+        );
+        
+        if (isLoading) {
+            return <Loader />;
+            //show MDMS data if options are not provided. Options are in use here for pre defined options from config. 
+            //Usage example : dependent dropdown
+        } else return <Dropdown
+            inputRef={register()}
+            option={options?.mdmsConfig ? data : options}
+            selected={props?.value}
+            optionKey={optionKey}
+            t={t}
+            select={(e) => {
+                props.onChange(e);
+                handleDropdownChange(e, props, row, inputName)
+            }}
+            onBlur={props?.onBlur}
+            optionCardStyles={{ maxHeight: '15rem' }}
+            style={{ marginBottom: "0px" }}
+        />
+    }
+
+    const handleDropdownChange = (e, props, row, inputName) => {
+        const sorTotal = formData?.nonSORTablev1?.reduce((acc, row) => row?.estimatedAmount ? parseFloat(row?.estimatedAmount) + acc:acc,0)
+
+        //here there are multiple cases that we need to handle
+        //1-> if autoCalculated field is true, populate the percentage/lumpsum(type field) , amount field and disable both of them
+        //2-> if autocal is false,then let user enter the percentage/lumpsum(type field), amount field
+
+        if (e.isAutoCalculated) {
+            if(e.type==="percentage"){
+                //set the percentage field
+                //set the amount field
+                //disable both the fields
+                const amount = (parseFloat(sorTotal) * (parseFloat(e.value)/100)).toFixed(1)
+                setValue(`overheadDetails.${row.key}.percentage`,`${e.value} ${t("WORKS_PERCENT")}`)
+                setValue(`overheadDetails.${row.key}.amount`,amount)
+
+            }else if(e.type === "lumpsum"){
+                //set both lumpsum and amount field
+                setValue(`overheadDetails.${row.key}.percentage`, `${t("WORKS_LUMPSUM")}`)
+                setValue(`overheadDetails.${row.key}.amount`, e.value)
+            }
+        }
+        else {
+            setValue(`overheadDetails.${row.key}.percentage`, `${t("WORKS_LUMPSUM")}`)
+        }
+    }
+
+    const isInputDisabled = (inputKey) => {
+       const value = watch(inputKey)
+       if(value?.isAutoCalculated) return true
+       else return false
+    }
+
     const renderBody = () => {
         let i = 0
         return rows.map((row, index) => {
@@ -99,30 +169,48 @@ const OverheadsTable = (props) => {
             return row.isShow && <tr key={index} style={{ "height": "50%" }}>
                 <td style={getStyles(1)}>{i}</td>
                 
-                <td style={getStyles(2)} ><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.name`} inputRef={register({
-                    required: false,
-                    //@Burhan-j Don't remove this whitespace in pattern, it is used for validation
-                    pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
-                })
-                }
-                />{errors && errors?.[formFieldName]?.[row.key]?.name?.type === "pattern" && (
+                <td style={getStyles(2)} >
+                    <div>
+                        <Controller
+                            control={control}
+                            name={`${formFieldName}.${row.key}.name`}
+                            rules={{
+                                required: true,
+                                pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
+                            }}
+                            render={(props) => (
+                                getDropDownDataFromMDMS(t, row, "name", props, register, "name", {
+                                    mdmsConfig: {
+                                        masterName: "Overheads",
+                                        moduleName: "works",
+                                        localePrefix: "ES_COMMON_OVERHEADS",
+                                    }
+                                })
+                            )}
+                        />
+                        {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "pattern" && (
                         <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-                    {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "required" && (
-                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+                        {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "required" && (
+                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                    </div>
+                </td>
                 
                 <td style={getStyles(3)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.percentage`} inputRef={register({
-                    required: false,
-                    pattern: /^[0-9]*$/
+                    required: true,
+                    pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
                 })}
+                // disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
+                disable={true}
                 />{errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "pattern" && (
                         <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     {errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "required" && (
                         <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
                 <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.amount`} inputRef={register({
-                    required: false,
-                    pattern: /^[0-9]*$/
+                    required: true,
+                    pattern: /^\d*\.?\d*$/
                 })}
+                disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
                 />{errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
                         <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
