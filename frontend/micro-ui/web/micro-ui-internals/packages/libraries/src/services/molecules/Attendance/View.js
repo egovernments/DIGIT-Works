@@ -54,7 +54,7 @@ const getAttendanceTableData = (data, skills) => {
     //Add row to show Total data
     let totalRow = {}
     totalRow.type = "total"
-    totalRow.sno = "ATM_TOTAL"
+    totalRow.sno = "ES_COMMON_TOTAL"
     totalRow.registerId = "DNR"
     totalRow.nameOfIndividual = "DNR"
     totalRow.guardianName = "DNR"
@@ -83,9 +83,9 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills)
     applicationData: musterRoll,
     asSectionHeader: true,
     values: [
-      { title: "WORKS_ORG_NAME", value: musterRoll?.additionalDetails?.orgName || t("NA") },
-      { title: "REGISTER_ID", value: musterRoll?.additionalDetails?.attendanceRegisterNo || t("NA")},
-      { title: "REGISTER_NAME", value: musterRoll?.additionalDetails?.attendanceRegisterName || t("NA") },
+      { title: "ES_COMMON_ORG_NAME", value: musterRoll?.additionalDetails?.orgName || t("NA") },
+      { title: "ATM_REGISTER_ID", value: musterRoll?.additionalDetails?.attendanceRegisterNo || t("NA")},
+      { title: "ATM_REGISTER_NAME", value: musterRoll?.additionalDetails?.attendanceRegisterName || t("NA") },
     ],
     additionalDetails: {
       table: {
