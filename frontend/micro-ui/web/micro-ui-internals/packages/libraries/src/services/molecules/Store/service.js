@@ -93,7 +93,6 @@ export const StoreService = {
       modules: [
         `rainmaker-common`,
         `rainmaker-${stateCode.toLowerCase()}`,
-        `rainmaker-common-masters`,
       ],
       locale: initData.selectedLanguage,
       tenantId: stateCode,
