@@ -866,6 +866,7 @@ mixin _$MusterAdditionalDetails {
   String? get attendanceRegisterName => throw _privateConstructorUsedError;
   String? get attendanceRegisterNo => throw _privateConstructorUsedError;
   String? get orgName => throw _privateConstructorUsedError;
+  String? get contractId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -882,7 +883,8 @@ abstract class $MusterAdditionalDetailsCopyWith<$Res> {
   $Res call(
       {String? attendanceRegisterName,
       String? attendanceRegisterNo,
-      String? orgName});
+      String? orgName,
+      String? contractId});
 }
 
 /// @nodoc
@@ -902,6 +904,7 @@ class _$MusterAdditionalDetailsCopyWithImpl<$Res,
     Object? attendanceRegisterName = freezed,
     Object? attendanceRegisterNo = freezed,
     Object? orgName = freezed,
+    Object? contractId = freezed,
   }) {
     return _then(_value.copyWith(
       attendanceRegisterName: freezed == attendanceRegisterName
@@ -915,6 +918,10 @@ class _$MusterAdditionalDetailsCopyWithImpl<$Res,
       orgName: freezed == orgName
           ? _value.orgName
           : orgName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      contractId: freezed == contractId
+          ? _value.contractId
+          : contractId // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -931,7 +938,8 @@ abstract class _$$_MusterAdditionalDetailsCopyWith<$Res>
   $Res call(
       {String? attendanceRegisterName,
       String? attendanceRegisterNo,
-      String? orgName});
+      String? orgName,
+      String? contractId});
 }
 
 /// @nodoc
@@ -949,6 +957,7 @@ class __$$_MusterAdditionalDetailsCopyWithImpl<$Res>
     Object? attendanceRegisterName = freezed,
     Object? attendanceRegisterNo = freezed,
     Object? orgName = freezed,
+    Object? contractId = freezed,
   }) {
     return _then(_$_MusterAdditionalDetails(
       attendanceRegisterName: freezed == attendanceRegisterName
@@ -963,6 +972,10 @@ class __$$_MusterAdditionalDetailsCopyWithImpl<$Res>
           ? _value.orgName
           : orgName // ignore: cast_nullable_to_non_nullable
               as String?,
+      contractId: freezed == contractId
+          ? _value.contractId
+          : contractId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -971,7 +984,10 @@ class __$$_MusterAdditionalDetailsCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
   const _$_MusterAdditionalDetails(
-      {this.attendanceRegisterName, this.attendanceRegisterNo, this.orgName});
+      {this.attendanceRegisterName,
+      this.attendanceRegisterNo,
+      this.orgName,
+      this.contractId});
 
   factory _$_MusterAdditionalDetails.fromJson(Map<String, dynamic> json) =>
       _$$_MusterAdditionalDetailsFromJson(json);
@@ -982,10 +998,12 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
   final String? attendanceRegisterNo;
   @override
   final String? orgName;
+  @override
+  final String? contractId;
 
   @override
   String toString() {
-    return 'MusterAdditionalDetails(attendanceRegisterName: $attendanceRegisterName, attendanceRegisterNo: $attendanceRegisterNo, orgName: $orgName)';
+    return 'MusterAdditionalDetails(attendanceRegisterName: $attendanceRegisterName, attendanceRegisterNo: $attendanceRegisterNo, orgName: $orgName, contractId: $contractId)';
   }
 
   @override
@@ -997,13 +1015,15 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
                 other.attendanceRegisterName == attendanceRegisterName) &&
             (identical(other.attendanceRegisterNo, attendanceRegisterNo) ||
                 other.attendanceRegisterNo == attendanceRegisterNo) &&
-            (identical(other.orgName, orgName) || other.orgName == orgName));
+            (identical(other.orgName, orgName) || other.orgName == orgName) &&
+            (identical(other.contractId, contractId) ||
+                other.contractId == contractId));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, attendanceRegisterName, attendanceRegisterNo, orgName);
+  int get hashCode => Object.hash(runtimeType, attendanceRegisterName,
+      attendanceRegisterNo, orgName, contractId);
 
   @JsonKey(ignore: true)
   @override
@@ -1025,7 +1045,8 @@ abstract class _MusterAdditionalDetails implements MusterAdditionalDetails {
   const factory _MusterAdditionalDetails(
       {final String? attendanceRegisterName,
       final String? attendanceRegisterNo,
-      final String? orgName}) = _$_MusterAdditionalDetails;
+      final String? orgName,
+      final String? contractId}) = _$_MusterAdditionalDetails;
 
   factory _MusterAdditionalDetails.fromJson(Map<String, dynamic> json) =
       _$_MusterAdditionalDetails.fromJson;
@@ -1036,6 +1057,8 @@ abstract class _MusterAdditionalDetails implements MusterAdditionalDetails {
   String? get attendanceRegisterNo;
   @override
   String? get orgName;
+  @override
+  String? get contractId;
   @override
   @JsonKey(ignore: true)
   _$$_MusterAdditionalDetailsCopyWith<_$_MusterAdditionalDetails>

@@ -8,13 +8,16 @@ import TextInput from "../atoms/TextInput";
 import TextArea from "../atoms/TextArea";
 import CustomDropdown from './CustomDropdown';
 import MobileNumber from '../atoms/MobileNumber';
+import DateRangeNew from './DateRangeNew';
 
 const RenderFormFields = (props) => {
     const { t } = useTranslation();
-    const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors} = props
+    const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors, apiDetails} = props
 
     const fieldSelector = (type, populators, isMandatory, disable = false, component, config) => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
+        let customValidations = config?.additionalValidation ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalValidations(config?.additionalValidation?.type, formData, config?.additionalValidation?.keys) : null
+        const customRules = customValidations ? { validate: customValidations} : {}
         switch (type) {
             case "date":
             case "text":
@@ -40,7 +43,7 @@ const RenderFormFields = (props) => {
                         />
                         )}
                         name={populators.name}
-                        rules={{required: isMandatory, ...populators.validation }}
+                        rules={{required: isMandatory, ...populators.validation, ...customRules }}
                         control={control}
                     />
                 );
@@ -154,12 +157,32 @@ const RenderFormFields = (props) => {
                         errorStyle={errors?.[populators.name]}
                     />
                     )}
-                    rules={{ required: isMandatory, ...populators.validation}}
+                    rules={{ required: isMandatory, ...populators.validation }}
                     defaultValue={formData?.[populators.name]}
                     name={populators?.name}
                     control={control}
-                />
+                  />
                 );
+
+            case "dateRange":
+              return (
+                <Controller
+                  render={(props) => (
+                    <DateRangeNew
+                      t={t}
+                      values={formData?.[populators.name]?.range}
+                      name={populators.name}
+                      onFilterChange={props.onChange}
+                      inputRef={props.ref}
+                      errorStyle={errors?.[populators.name]}
+                    />                  
+                  )}
+                  rules={{ required: isMandatory, ...populators.validation }}
+                  defaultValue={formData?.[populators.name]}
+                  name={populators?.name}
+                  control={control}
+                />
+              );
 
             case "component":
             return (

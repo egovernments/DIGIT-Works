@@ -13,6 +13,7 @@ import org.egov.web.models.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
@@ -63,7 +64,7 @@ public class DenormalizeAndEnrichEstimateService {
         if (processInstanceResponse != null
                 && processInstanceResponse.getProcessInstances() != null
                 && !processInstanceResponse.getProcessInstances().isEmpty()) {
-            estimateRequest.getEstimate().setProcessInstances(processInstanceResponse.getProcessInstances());
+            estimateRequest.getEstimate().setProcessInstances(processInstanceResponse.getProcessInstances().get(0));
         }
         return estimateRequest;
     }
@@ -78,8 +79,8 @@ public class DenormalizeAndEnrichEstimateService {
         log.info("DenormalizeAndEnrichEstimateService::denormalizeAndEnrichProject");
         Object projectRes = projectUtil.getProjectDetails(estimateRequest);
 
-        List<Project> projects = objectMapper.convertValue(projectRes, new TypeReference<List<Project>>() {
-        });
+        List<Project> projects = objectMapper.convertValue(((LinkedHashMap) projectRes).get("Projects"), new TypeReference<List<Project>>() {
+        })  ;
 
         if (projects != null && !projects.isEmpty()) {
             estimateRequest.getEstimate().setProject(projects.get(0));

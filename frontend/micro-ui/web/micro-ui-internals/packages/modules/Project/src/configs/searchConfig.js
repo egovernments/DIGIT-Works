@@ -68,7 +68,7 @@ const searchConfig = () => {
                           populators: { 
                               name: "name",
                               error: `PROJECT_PATTERN_ERR_MSG`,
-                              validation: { pattern: /^[a-z0-9\/-@#]*$/i, minlength : 2 }
+                              validation: { pattern: /^[a-z0-9\/-@# ]*$/i, minlength : 2 }
                           }
                         },
                         {
@@ -92,9 +92,8 @@ const searchConfig = () => {
                           isMandatory: false,
                           disable: false,
                           populators: { 
-                              name: "startDate",
-                          },
-                        
+                              name: "createdFrom",
+                          }
                         },
                         {
                             label: "CREATED_TO_DATE",
@@ -102,9 +101,13 @@ const searchConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "endDate",
-                                error: 'DATE_VALIDATION_MSG',
+                                name: "createdTo",
+                                error: 'DATE_VALIDATION_MSG'
                             },
+                            additionalValidation: {
+                                type: 'date',
+                                keys: {start: 'startDate', end: 'endDate'}
+                            }
                         }
                     ]
                 },
@@ -141,15 +144,16 @@ const searchConfig = () => {
                         },
                         {
                             label: "WORKS_WORK_NATURE",
-                            jsonPath: "endDate",
+                            jsonPath: "natureOfWork",
                         },
                         {
                             label: "WORKS_PARENT_PROJECT_ID",
-                            jsonPath: "parentId",
+                            jsonPath: "ancestors[0].projectNumber",
+                            additionalCustomization:true
                         },
                         {
                             label: "WORKS_CREATED_BY",
-                            jsonPath: "auditDetails.createdBy",
+                            jsonPath: "createdBy",
                         },
                         {
                             label: "WORKS_STATUS",
@@ -157,7 +161,7 @@ const searchConfig = () => {
                         },
                         {
                             label: "WORKS_TOTAL_AMOUNT",
-                            jsonPath: "totalAmount",
+                            jsonPath: "additionalDetails.estimatedCostInRs",
                         }
                     ],
                     enableGlobalSearch: false,

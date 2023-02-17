@@ -6,21 +6,22 @@
     padding: 1rem;
     .header {
         display: grid;
-        grid-template-columns: 30% 1fr;
+        grid-template-columns: 20% 1fr;
         .logo {
             display: flex;
             align-items: center;
             justify-content: flex-start;
             .inbox-search-icon--projects {
-                fill : red;
-                height: 3rem;
-                width: 3rem;
+                fill : #f47738;
+                height: 2rem;
+                width: 2rem;
             }
         }
         .text {
             font-size: 24px;
             line-height: 32px;
             font-weight: 700;
+            color : black;
             display: flex;
             align-items: center;
             justify-content: flex-start;
@@ -29,7 +30,6 @@
     .contents {
         margin-top: 1rem;
         box-sizing: border-box;
-        padding: 0 1rem;
         display: flex;
         flex-direction: column;
         .link {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Switch, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, AppContainer, BreadCrumb } from "@egovernments/digit-ui-react-components";
@@ -20,6 +20,12 @@ const ProjectBreadCrumb = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
+      path: `/${window.contextPath}/employee/project/search-project`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_SEARCH_PROJECTS")}` : t("WORKS_SEARCH_PROJECTS"),
+      show: location.pathname.includes("/project/search-project") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
       path: `/${window.contextPath}/employee/project/project-details`,
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_PROJECT_DETAILS")}` : t("WORKS_PROJECT_DETAILS"),
       show: location.pathname.includes("/project/project-details") ? true : false,
@@ -35,6 +41,18 @@ const App = ({ path }) => {
   const ProjectSearchComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearch");
   const ProjectSearchAndInboxComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearchAndInbox");
   const CreateProjectResponseComponent = Digit?.ComponentRegistryService?.getComponent("CreateProjectResponse");
+  const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
+  const [sessionFormData, clearSessionFormData] = projectSession;
+  const location = useLocation();
+
+  //remove session form data if user navigates away from the project create screen
+  useEffect(()=>{
+    return () => {
+      if (!window.location.href.includes("create-project") && sessionFormData && Object.keys(sessionFormData) != 0) {
+        clearSessionFormData();
+      }
+    };
+  },[location]);
 
   return (
     <Switch>

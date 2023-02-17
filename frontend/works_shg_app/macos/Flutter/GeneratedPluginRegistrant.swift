@@ -8,7 +8,7 @@ import Foundation
 import flutter_secure_storage_macos
 import isar_flutter_libs
 import location
-import path_provider_macos
+import path_provider_foundation
 import sqlite3_flutter_libs
 import url_launcher_macos
 

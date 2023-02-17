@@ -80,6 +80,8 @@ paths:
         - $ref: '#/parameters/tenantId'
         - $ref: '#/parameters/lastChangedSince'
         - $ref: '#/parameters/includeDeleted'
+        - $ref: '#/parameters/includeAncestors'
+        - $ref: '#/parameters/includeDescendants'
       tags:
         - Project
       responses:
@@ -1193,6 +1195,22 @@ parameters:
     default: false
     required: false
 
+  includeAncestors:
+    name: includeAncestors
+    description: Used in project search API to specify if response should include project elements that are in the preceding hierarchy of matched projects.
+    in: query
+    type: boolean
+    default: false
+    required: false
+
+  includeDescendants:
+    name: includeDescendants
+    description: Used in project search API to specify if response should include project elements that are in the following hierarchy of matched projects.
+    in: query
+    type: boolean
+    default: false
+    required: false
+
 definitions:
 
   eventTimestamp:
@@ -1611,6 +1629,10 @@ definitions:
         type: "string"
         description: "Materialized Path of the hierarchy that this project element belongs to"
         readOnly: true
+      ancestors:
+        $ref: '#/definitions/Project'
+        description: "Materialized Path of the hierarchy that this project element belongs to"
+
       address:
         $ref: '#/definitions/Address'
       startDate:

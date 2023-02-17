@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.IndividualEntry;
 import org.egov.web.models.StaffPermission;
@@ -21,10 +22,17 @@ public class AttendanceRegisterBuilderTest {
         AttendanceRegister attendanceRegister=AttendanceRegister.builder().id("97ed7da3-753e-426a-b0b0-95dd61029785")
                 .registerNumber("RGN-67124").name("self help3").startDate(new BigDecimal("1673740800000"))
                 .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).attendees(getAttendees())
-                        .staff(getStaff()).build();
+                .tenantId("pb.amritsar").staff(getStaff()).build();
         return attendanceRegister;
     }
 
+    public static AttendanceRegister getAttendanceRegisterWithoutEndDate(){
+        AttendanceRegister attendanceRegister=AttendanceRegister.builder().id("97ed7da3-753e-426a-b0b0-95dd61029785")
+                .registerNumber("RGN-67124").name("self help3").startDate(new BigDecimal("1673740800000"))
+                .auditDetails(getAuditDetails()).attendees(getAttendees())
+                .tenantId("pb.amritsar").staff(getStaff()).build();
+        return attendanceRegister;
+    }
     public static List<IndividualEntry> getAttendees() {
         IndividualEntry attendeeOne = IndividualEntry.builder().tenantId("pb.amritsar").id("047dc725-3088-45b4-877a-6bfbaf377df9")
                 .individualId("8ybdd-3rdh3").registerId("97ed7da3-753e-426a-b0b0-95dd61029785").enrollmentDate(new BigDecimal("1672129633890"))
@@ -64,15 +72,15 @@ public class AttendanceRegisterBuilderTest {
 
         AttendanceRegister attendanceRegisterOne=AttendanceRegister.builder().id("54215cb7-c7f7-4521-8965-09647454a1f0")
                 .registerNumber("RGN-67124").name("self help3").startDate(new BigDecimal("1673740800000"))
-                .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).build();
+                .endDate(new BigDecimal("1692057600000")).tenantId("pb.amritsar").auditDetails(getAuditDetails()).build();
 
         AttendanceRegister attendanceRegisterTwo=AttendanceRegister.builder().id("54215cb7-c7f7-4521-8965-09647454a1f1")
                 .registerNumber("RGN-67124").name("self help3").startDate(new BigDecimal("1673740800000"))
-                .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).build();
+                .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).tenantId("pb.amritsar").build();
 
         AttendanceRegister attendanceRegisterThree=AttendanceRegister.builder().id("54215cb7-c7f7-4521-8965-09647454a1f2")
                 .registerNumber("RGN-67124").name("self help3").startDate(new BigDecimal("1673740800000"))
-                .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).build();
+                .endDate(new BigDecimal("1692057600000")).auditDetails(getAuditDetails()).tenantId("pb.amritsar").build();
 
         List<AttendanceRegister> attendanceRegisterList=new ArrayList<>(Arrays.asList(attendanceRegisterOne,attendanceRegisterTwo,attendanceRegisterThree));
 
@@ -89,5 +97,11 @@ public class AttendanceRegisterBuilderTest {
                 .emailId("xyz@egovernments.org").type("EMPLOYEE").roles(roles).build();
         RequestInfo requestInfo = RequestInfo.builder().apiId("attendance-services").msgId("search with from and to values").userInfo(userInfo).build();
         return requestInfo;
+    }
+
+    public static ResponseInfo getResponseInfo_Success() {
+        ResponseInfo responseInfo = ResponseInfo.builder().apiId("attendance-services").ver(null).ts(null).resMsgId(null).msgId("search with from and to values")
+                .status("successful").build();
+        return responseInfo;
     }
 }

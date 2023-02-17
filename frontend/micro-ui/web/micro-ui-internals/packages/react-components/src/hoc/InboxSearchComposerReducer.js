@@ -14,15 +14,18 @@ export const initialInboxState = {
 const reducer = (state, action) => {
     switch (action.type) {
         case "searchForm":
-            const {state:updatedSearchState} = action 
-            return {...state, searchForm: {...state.searchForm,...updatedSearchState}};
+            const {state:updatedSearchStateSearchForm} = action 
+            return {...state, searchForm: {...state.searchForm,...updatedSearchStateSearchForm}};
         case "filterForm":
-            return state;
+            const { state: updatedSearchStateFilterForm } = action
+            return { ...state, filterForm: { ...state.filterForm, ...updatedSearchStateFilterForm } };
         case "tableForm":
             const updatedTableState = action.state
             return { ...state, tableForm: {...state.tableForm,...updatedTableState} };
         case "clearSearchForm":
             return {...state,searchForm:action.state}
+        case "clearFilterForm":
+            return {...state,filterForm:action.state}
         default:
             return state;
     }

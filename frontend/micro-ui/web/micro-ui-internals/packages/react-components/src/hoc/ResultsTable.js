@@ -8,18 +8,31 @@ import _ from "lodash";
 import { InboxContext } from './InboxSearchComposerContext';
 import { Link } from "react-router-dom";
 import { Loader } from '../atoms/Loader';
-import Card from '../atoms/Card'
+import NoResultsFound from '../atoms/NoResultsFound';
 
 
-const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig }) => {
+const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate }) => {
+    
     const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
-    const searchResult = data?.[resultsKey]?.length>0 ? data?.[resultsKey] : []
+    let searchResult = data?.[resultsKey]?.length>0 ? data?.[resultsKey] : []
+    searchResult = searchResult.reverse()
+    //reversing reason -> for some reason if we enable sorting on columns results from the api are reversed and shown, for now -> reversing the results(max size 50 so not a performance issue)
+    
+    // if (fullConfig?.postProcessResult){
+    //     var { isPostProcessFetching,
+    //         isPostProcessLoading,
+    //         combinedResponse }  =  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(searchResult) 
+
+    //     if(combinedResponse?.length > 0){
+    //         searchResult = combinedResponse
+    //     } 
+    // }
+    
+ 
+
    
-    // const searchResultNew = data?.[resultsKey].length > 0 ? data?.[resultsKey] : []
-    // const searchResult = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(searchResultNew) : searchResultNew 
-    //
 
     const {state,dispatch} = useContext(InboxContext)
     
@@ -96,8 +109,6 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     useEffect(() => {
         register("offset", 0);
         register("limit", 10);
-        // register("sortBy", "department");
-        
     }, [register]);
 
     function onPageSizeChange(e) {
@@ -128,16 +139,8 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     }
 
     
-    if (isLoading || isFetching) return <Loader />
-    if (searchResult?.length === 0) return <Card style={{ marginTop: 20 }}>
-        {t("ES_COMMON_NO_DATA")
-            .split("\\n")
-            .map((text, index) => (
-                <p key={index} style={{ textAlign: "center" }}>
-                    {text}
-                </p>
-            ))}
-    </Card>
+    if (isLoading || isFetching ) return <Loader />
+    if (searchResult?.length === 0) return <NoResultsFound/>
     return (
         <div >
             {config?.enableGlobalSearch && <div className='card' style={{ "padding": "0px", marginTop: "1rem" }}>

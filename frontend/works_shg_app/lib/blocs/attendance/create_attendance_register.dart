@@ -28,6 +28,7 @@ class AttendanceRegisterCreateBloc
       AttendanceRegisterCreateEmitter emit) async {
     Client client = Client();
     try {
+      emit(const AttendanceRegisterCreateState.initial());
       emit(const AttendanceRegisterCreateState.loading());
       AttendanceRegistersModel attendanceRegistersModel =
           await AttendanceRegisterRepository(client.init())
@@ -58,7 +59,7 @@ class AttendanceRegisterCreateBloc
             ]
           });
       if (attendanceRegistersModel != null) {
-        emit(AttendanceRegisterCreateState.loaded());
+        emit(const AttendanceRegisterCreateState.loaded());
       } else {
         emit(const AttendanceRegisterCreateState.error());
       }

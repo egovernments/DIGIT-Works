@@ -17,7 +17,6 @@ const convertEpochToDate = (dateEpoch) => {
     return `${day}/${month}/${year}`;
 };
 
-
 export const WorksSearch = {
     searchEstimate: async (tenantId="pb.jalandhar", filters = {} ) => {
         
@@ -35,75 +34,106 @@ export const WorksSearch = {
         const response = await WorksService?.loiSearch({tenantId,filters})
         return response?.letterOfIndents
     },
-    viewProjectDetailsScreenInCreateEstimate: async(t, tenantId, estimateNumber)=> {
-        const DepartmentDetails = {
-            title: " ",
-            asSectionHeader: false,
-            values: [
-                { title: "PROJECT_OWNING_DEPT", value: "Housing and Urban Development Department" },
-                { title: "WORKS_EXECUTING_DEPT", value: "Housing and Urban Development Department" },
-                { title: "WORKS_BENEFICIERY", value: "Local Slums" },
-                { title: "WORKS_LOR", value: "201/A  - 19 December 2021" },
-                { title: "PROJECT_ESTIMATED_COST", value: "5,00,000" },
-            ],
-        };
-        const WorkTypeDetails = {
-            title: "PROJECT_WORK_TYPE_DETAILS",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_WORK_TYPE", value: "Rain Water Harvesting" },
-                { title: "WORKS_PROJECT_SUB_TYPE_WORK", value: "NA" },
-                { title: "WORKS_WORK_NATURE", value: "Capital Works" },
-                { title: "WORKS_MODE_OF_INS", value: "Direct Assignment" },
-            ],
-        };
-        const LocationDetails = {
-            title: "WORKS_LOCATION_DETAILS",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_LOCALITY", value: "Vivekananda Nagar" },
-                { title: "WORKS_WARD", value: "1" },
-                { title: "PDF_STATIC_LABEL_ESTIMATE_ULB", value: "Jatni Municipality" },
-                { title: "WORKS_GEO_LOCATION", value: "82.1837913, 19.138134" },
-            ],
-        };
-        const Documents = {
-            title: "CS_COMMON_DOCUMENTS",
-            asSectionHeader: true,
-            additionalDetails: {
-                documentsWithUrl: [
-                    {
-                        title: "",
-                        values: [
-                            {
-                                url: "",
-                                title: "Document 1",
-                                documentType: "pdf",
-                            },
-                            {
-                                url: "",
-                                title: "Document 2",
-                                documentType: "pdf",
-                            },
-                            {
-                                url: "",
-                                title: "Document 3",
-                                documentType: "pdf",
-                            },
-                            {
-                                url: "",
-                                title: "Document 3",
-                                documentType: "pdf",
-                            }
+    viewProjectDetailsScreen: async(t,tenantId, searchParams, filters = {limit : 10, offset : 0, includeAncestors : true}, headerLocale)=> {
+        const response = await WorksService?.searchProject(tenantId, searchParams, filters);
+        //Categoring the response into an object of searched project and its sub-projects ( if any )
+        //searched projects will have basic details, project details and financial details
+        //subprojects will be shown in a table similar to what create project has
+        let totalProjects = response?.Projects?.length;
+        let projectDetails = {
+            searchedProject : {
+                basicDetails : {},
+                details : {
+                    projectDetails : [],
+                    financialDetails : []
+                }
+            },
+            subProjects : []
+        }
+        for(let projectIndex = 0; projectIndex < totalProjects; projectIndex++) {
+            let currentProject = response?.Projects[projectIndex];
+            const FinancialDetails = {
+                title: " ",
+                asSectionHeader: false,
+                values: [
+                  { title: "WORKS_FUND", value: currentProject?.additionalDetails?.fund ? t(`ES_COMMON_FIN_${currentProject?.additionalDetails?.fund}`) : "NA" },
+                  { title: "WORKS_FUNCTION", value: currentProject?.additionalDetails?.function ? t(`ES_COMMON_${currentProject?.additionalDetails?.function}`) : "NA" },
+                  { title: "WORKS_BUDGET_HEAD", value: currentProject?.additionalDetails?.budgetHead ? t(`ES_COMMON_FIN_${currentProject?.additionalDetails?.budgetHead}`)  : "NA"},
+                  { title: "WORKS_SCHEME", value: currentProject?.additionalDetails?.scheme ? t(`ES_COMMON_${currentProject?.additionalDetails?.scheme}`) : "NA"},
+                  { title: "WORKS_SUB_SCHEME", value: currentProject?.additionalDetails?.subScheme ? t(`ES_COMMON_${currentProject?.additionalDetails?.subScheme}`) : "NA"}
+                ],
+              };
+              const DepartmentDetails = {
+                title: " ",
+                asSectionHeader: false,
+                values: [
+                        { title: "PROJECT_OWNING_DEPT", value: currentProject?.department ? t(`COMMON_MASTERS_DEPARTMENT_${currentProject?.department}`) : "NA" },
+                        { title: "PROJECT_TARGET_DEMOGRAPHY", value: "NA" }, //backend to update this
+                        { title: "WORKS_LOR", value: currentProject?.referenceID || "NA" },
+                        { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs || "NA" },
+                    ]
+                };
+                const WorkTypeDetails = {
+                    title: "PROJECT_WORK_TYPE_DETAILS",
+                    asSectionHeader: true,
+                    values: [
+                        { title: "WORKS_PROJECT_TYPE", value: currentProject?.projectType ? t(`WORKS_PROJECT_TYPE_${currentProject?.projectType}`) : "NA" }, //backend to update this
+                        { title: "WORKS_SUB_PROJECT_TYPE", value: currentProject?.projectSubType ? t(`ES_COMMON_${currentProject?.projectSubType}`) : "NA" }, //backend to update this
+                        { title: "WORKS_WORK_NATURE", value: "NA" }, //backend to update this
+                        { title: "WORKS_MODE_OF_INS", value: "NA" }, //backend to update this
+                    ],
+                };
+                const LocationDetails = {
+                    title: "WORKS_LOCATION_DETAILS",
+                    asSectionHeader: true,
+                    values: [
+                        { title: "WORKS_LOCALITY",value: currentProject?.address?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.address?.locality}`) : "NA" },
+                        { title: "WORKS_WARD", value: "NA" }, ///backend to update this
+                        { title: "PDF_STATIC_LABEL_ESTIMATE_ULB", value: currentProject?.address?.city ? t(currentProject?.address?.city) : "NA" }, //will check with Backend
+                        { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" }, //will check with Backend
+                    ],
+                };
+
+                const documentDetails = {
+                    title: "",
+                    asSectionHeader: true,
+                    additionalDetails: {
+                        documents: [{
+                            title: "CS_COMMON_DOCUMENTS",
+                            BS : 'Works',
+                            values: currentProject?.documents?.map((document) => {
+                                return {
+                                    title: document?.additionalDetails?.fileName,
+                                    documentType: document?.documentType,
+                                    documentUid: document?.fileStore,
+                                    fileStoreId: document?.fileStore,
+                                };
+                            }),
+                        },
                         ]
                     }
-                ],
+                }
+    
+            if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
+                //all details of searched project will come here
+                const basicDetails = {
+                    projectID : currentProject?.projectNumber,
+                    projectProposalDate : convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA", //need to check this with Chetan
+                    projectName : currentProject?.name || "NA",
+                    projectDesc : currentProject?.description || "NA",
+                    projectHasSubProject : (totalProjects > 1 ? "COMMON_YES" : "COMMON_NO"),
+                    projectParentProjectID : currentProject?.ancestors?.[0]?.projectNumber || "NA"
+                }
+                projectDetails.searchedProject['basicDetails'] = basicDetails;
+                projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [DepartmentDetails, WorkTypeDetails, LocationDetails, documentDetails]}; //rest categories will come here
+                projectDetails.searchedProject['details']['financialDetails'] = {applicationDetails :  [FinancialDetails]}; //rest categories will come here
+            }else {
+                 //all details of searched project will come here
+                 projectDetails?.subProjects?.push(DepartmentDetails, WorkTypeDetails, LocationDetails, Documents); //rest categories will come here //TODO:
             }
-        };
-        const details = [DepartmentDetails, WorkTypeDetails, LocationDetails, Documents]
-
+        }
          return {
-            applicationDetails: details,
+            projectDetails : projectDetails,
             processInstancesDetails: [],
             applicationData: {},
             workflowDetails: [],
