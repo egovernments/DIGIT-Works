@@ -27,7 +27,7 @@ public class MusterRollQueryBuilder {
             "ON (attn.attendance_summary_id=ind.id) ";
 
 
-    public String getMusterSearchQuery(MusterRollSearchCriteria searchCriteria, List<Object> preparedStmtList) {
+    public String getMusterSearchQuery(MusterRollSearchCriteria searchCriteria, List<Object> preparedStmtList, List<String> registerIds) {
         StringBuilder queryBuilder = new StringBuilder(FETCH_MUSTER_ROLL_QUERY);
 
         List<String> ids = searchCriteria.getIds();
@@ -53,6 +53,10 @@ public class MusterRollQueryBuilder {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" muster.attendance_register_id=? ");
             preparedStmtList.add(searchCriteria.getRegisterId());
+        } else if (registerIds != null && !registerIds.isEmpty()) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" muster.attendance_register_id IN (").append(createQuery(registerIds)).append(")");
+            addToPreparedStatement(preparedStmtList, registerIds);
         }
 
         if (searchCriteria.getFromDate() != null) {
@@ -79,8 +83,9 @@ public class MusterRollQueryBuilder {
             preparedStmtList.add(searchCriteria.getMusterRollStatus());
         }
 
-        //if the search is only based on tenantId, add limit and offset at query level
-        if (musterRollServiceUtil.isTenantBasedSearch(searchCriteria)) {
+        //if the search is only based on tenantId and also registerIds is not part of search, add limit and offset at query level
+        //tenant id based search by JE or ME
+        if ((registerIds == null || registerIds.isEmpty()) && musterRollServiceUtil.isTenantBasedSearch(searchCriteria)) {
             addLimitAndOffset(queryBuilder, searchCriteria, preparedStmtList);
         }
 
