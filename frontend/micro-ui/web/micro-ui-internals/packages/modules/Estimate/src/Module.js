@@ -10,7 +10,7 @@ import EstimateTemplate from "./pageComponents/EstimateTemplate";
 import OverheadsTable from "./pageComponents/OverheadsTable";
 
 const EstimateModule = ({ stateCode, userType, tenants }) => {
-    const moduleCode = ["Estimate","Works"];
+    const moduleCode = ["Estimate","common-masters"];
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
     const { isLoading, data: store } = Digit.Services.useStore({
