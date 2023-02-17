@@ -36,6 +36,11 @@ public class ContractServiceConfiguration {
     private String idgenContractNumberName;
 
     //Workflow Config
+    @Value("${contract.workflow.module.name}")
+    private String contractWFModuleName;
+    @Value("${contract.workflow.business.service}")
+    private String contractWFBusinessService;
+
     @Value("${egov.workflow.host}")
     private String wfHost;
 
@@ -82,6 +87,13 @@ public class ContractServiceConfiguration {
 
     @Value("${works.estimate.search.endpoint}")
     private String estimateEndpoint;
+
+    //Contract service
+    @Value("${works.contract.host}")
+    private String contractHost;
+
+    @Value("${works.contract.search.endpoint}")
+    private String contractEndpoint;
 
     @Value("${contract.document.id.verification.required}")
     private String documentIdVerificationRequired;

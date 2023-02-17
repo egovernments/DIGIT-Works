@@ -1,0 +1,71 @@
+package org.egov.works.web.controllers;
+
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiParam;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
+import org.egov.works.service.ContractService;
+import org.egov.works.util.ContractServiceUtil;
+import org.egov.works.util.ResponseInfoFactory;
+import org.egov.works.util.WorkflowUtil;
+import org.egov.works.web.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
+
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
+
+@Controller
+@RequestMapping("/wms/contract/v1")
+public class ContractBusinessApiController {
+
+    @Autowired
+    private final ObjectMapper objectMapper;
+
+    @Autowired
+    private final HttpServletRequest request;
+    @Autowired
+    private ContractService contractService;
+
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
+
+    @Autowired
+    private ContractServiceUtil contractServiceUtil;
+
+    @Autowired
+    private WorkflowUtil workflowUtil;
+
+    @Autowired
+    public ContractBusinessApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+    }
+
+    @RequestMapping(value = "/_create", method = RequestMethod.POST)
+    public ResponseEntity<ContractResponse> createContractV1(@ApiParam(value = "Details for the new contract.", required = true) @Valid @RequestBody ContractRequest contractRequest) {
+        ContractResponse contractResponse = contractServiceUtil.fetchContractResponse(contractRequest);
+        if(contractResponse.getResponseInfo().getStatus().equals("successful"))
+        workflowUtil.updateWorkflowStatus(contractRequest);
+        return new ResponseEntity<ContractResponse>(contractResponse, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/_update", method = RequestMethod.POST)
+    public ResponseEntity<ContractResponse> contractV1UpdatePost(@ApiParam(value = "Details for update contract", required = true) @Valid @RequestBody ContractRequest contractRequest) {
+        ContractResponse contractResponse = contractServiceUtil.fetchContractResponse(contractRequest);
+        if(contractResponse.getResponseInfo().getStatus().equals("successful"))
+        workflowUtil.updateWorkflowStatus(contractRequest);
+        return new ResponseEntity<ContractResponse>(contractResponse, HttpStatus.OK);
+    }
+
+}

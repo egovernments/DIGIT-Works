@@ -1,18 +1,22 @@
 package org.egov.works.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.works.config.ContractServiceConfiguration;
 import digit.models.coremodels.*;
-import org.egov.works.repository.ServiceRequestRepository;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.config.ContractServiceConfiguration;
+import org.egov.works.repository.ServiceRequestRepository;
+import org.egov.works.web.models.Contract;
+import org.egov.works.web.models.ContractRequest;
+import org.egov.works.web.models.Workflow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class WorkflowUtil {
@@ -24,23 +28,21 @@ public class WorkflowUtil {
     private ObjectMapper mapper;
 
     @Autowired
-    private ContractServiceConfiguration configs;
+    private ContractServiceConfiguration contractServiceConfiguration;
 
 
     /**
      * Searches the BussinessService corresponding to the businessServiceCode
      * Returns applicable BussinessService for the given parameters
      *
-     * @param requestInfo
-     * @param tenantId
-     * @param businessServiceCode
-     * @return
      */
-    public BusinessService getBusinessService(RequestInfo requestInfo, String tenantId, String businessServiceCode) {
+    public BusinessService getBusinessService(ContractRequest contractRequest) {
 
-        StringBuilder url = getSearchURLWithParams(tenantId, businessServiceCode);
-        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-        Object result = repository.fetchResult(url, requestInfoWrapper);
+        String tenantId = contractRequest.getContract().getTenantId();
+        StringBuilder url = getSearchURLWithParams(tenantId, contractServiceConfiguration.getContractWFBusinessService());
+
+        RequestInfo requestInfo = contractRequest.getRequestInfo();
+        Object result = repository.fetchResult(url, requestInfo);
         BusinessServiceResponse response = null;
         try {
             response = mapper.convertValue(result, BusinessServiceResponse.class);
@@ -49,43 +51,26 @@ public class WorkflowUtil {
         }
 
         if (CollectionUtils.isEmpty(response.getBusinessServices()))
-            throw new CustomException("BUSINESSSERVICE_NOT_FOUND", "The businessService " + businessServiceCode + " is not found");
+            throw new CustomException("BUSINESSSERVICE_NOT_FOUND", "The businessService " +
+                    contractServiceConfiguration.getContractWFBusinessService() + " is not found");
 
         return response.getBusinessServices().get(0);
     }
 
-    /**
-     * Calls the workflow service with the given action and updates the status
-     * Returns the updated status of the application
-     *
-     * @param requestInfo
-     * @param tenantId
-     * @param businessId
-     * @param businessServiceCode
-     * @param workflow
-     * @param wfModuleName
-     * @return
-     */
-    public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId,
-                                       String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
-        ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId,
-                businessServiceCode, workflow, wfModuleName);
-        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
+
+    public String updateWorkflowStatus(ContractRequest contractRequest) {
+        ProcessInstance processInstance = getProcessInstanceForContract(contractRequest);
+        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(contractRequest.getRequestInfo(), Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
 
+        //set workflow status
+        contractRequest.getContract().setWfStatus(state.getApplicationStatus());
         return state.getApplicationStatus();
     }
 
-    /**
-     * Creates url for search based on given tenantId and businessServices
-     *
-     * @param tenantId
-     * @param businessService
-     * @return
-     */
     private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
-        StringBuilder url = new StringBuilder(configs.getWfHost());
-        url.append(configs.getWfBusinessServiceSearchPath());
+        StringBuilder url = new StringBuilder(contractServiceConfiguration.getWfHost());
+        url.append(contractServiceConfiguration.getWfBusinessServiceSearchPath());
         url.append("?tenantId=");
         url.append(tenantId);
         url.append("&businessServices=");
@@ -93,33 +78,26 @@ public class WorkflowUtil {
         return url;
     }
 
-    /**
-     * Enriches ProcessInstance Object for Workflow
-     *
-     * @param requestInfo
-     * @param tenantId
-     * @param businessId
-     * @param businessServiceCode
-     * @param workflow
-     * @param wfModuleName
-     * @return
-     */
-    private ProcessInstance getProcessInstanceForWorkflow(RequestInfo requestInfo, String tenantId,
-                                                          String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
+
+    private ProcessInstance getProcessInstanceForContract(ContractRequest contractRequest) {
+
+        RequestInfo requestInfo = contractRequest.getRequestInfo();
+        Workflow workflow = contractRequest.getWorkflow();
+        Contract contract = contractRequest.getContract();
 
         ProcessInstance processInstance = new ProcessInstance();
-        processInstance.setBusinessId(businessId);
+        processInstance.setBusinessId(contract.getContractNumber());
         processInstance.setAction(workflow.getAction());
-        processInstance.setModuleName(wfModuleName);
-        processInstance.setTenantId(tenantId);
-        processInstance.setBusinessService(getBusinessService(requestInfo, tenantId, businessServiceCode).getBusinessService());
-        processInstance.setDocuments(workflow.getVerificationDocuments());
-        processInstance.setComment(workflow.getComments());
+        processInstance.setModuleName(contractServiceConfiguration.getContractWFModuleName());
+        processInstance.setTenantId(contract.getTenantId());
+        processInstance.setBusinessService(getBusinessService(contractRequest).getBusinessService());
+//        processInstance.setDocuments(workflow.getVerificationDocuments());
+        processInstance.setComment(workflow.getComment());
 
-        if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
+        if (!CollectionUtils.isEmpty(workflow.getAssignees())) {
             List<User> users = new ArrayList<>();
 
-            workflow.getAssignes().forEach(uuid -> {
+            workflow.getAssignees().forEach(uuid -> {
                 User user = new User();
                 user.setUuid(uuid);
                 users.add(user);
@@ -132,44 +110,12 @@ public class WorkflowUtil {
     }
 
     /**
-     * Gets the workflow corresponding to the processInstance
-     *
-     * @param processInstances
-     * @return
-     */
-    public Map<String, Workflow> getWorkflow(List<ProcessInstance> processInstances) {
-
-        Map<String, Workflow> businessIdToWorkflow = new HashMap<>();
-
-        processInstances.forEach(processInstance -> {
-            List<String> userIds = null;
-
-            if (!CollectionUtils.isEmpty(processInstance.getAssignes())) {
-                userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
-            }
-
-            Workflow workflow = Workflow.builder()
-                    .action(processInstance.getAction())
-                    .assignes(userIds)
-                    .comments(processInstance.getComment())
-                    .verificationDocuments(processInstance.getDocuments())
-                    .build();
-
-            businessIdToWorkflow.put(processInstance.getBusinessId(), workflow);
-        });
-
-        return businessIdToWorkflow;
-    }
-
-    /**
      * Method to take the ProcessInstanceRequest as parameter and set resultant status
      *
-     * @param workflowReq
-     * @return
      */
     private State callWorkFlow(ProcessInstanceRequest workflowReq) {
         ProcessInstanceResponse response = null;
-        StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
+        StringBuilder url = new StringBuilder(contractServiceConfiguration.getWfHost().concat(contractServiceConfiguration.getWfTransitionPath()));
         Object optional = repository.fetchResult(url, workflowReq);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0).getState();
