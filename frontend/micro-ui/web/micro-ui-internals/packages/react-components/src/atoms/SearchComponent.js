@@ -19,7 +19,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   if(uiConfig?.type === 'filter') {
     let fieldConfig = uiConfig?.fields?.filter(item => item.type === 'dropdown' && item.populators.name === 'musterRollStatus')
     if(fieldConfig.length) { 
-      fieldConfig[0].populators.options = data?.statusMap?.map(item => ({ code: item.applicationstatus, i18nKey: `ES_COMMON_${item.applicationstatus}`}))
+      fieldConfig[0].populators.options = data?.statusMap?.map(item => ({ code: item.applicationstatus, i18nKey: `COMMON_MASTERS_${item.applicationstatus}`}))
     }
   }
 
@@ -62,7 +62,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
         }
       })
     } else {
-      setShowToast({ warning: true, label: t("MIN_SEARCH_CRITERIA_MSG") })
+      setShowToast({ warning: true, label: t("ES_COMMON_MIN_SEARCH_CRITERIA_MSG") })
       setTimeout(closeToast, 3000);
     }
   }
