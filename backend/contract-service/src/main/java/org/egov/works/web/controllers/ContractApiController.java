@@ -56,7 +56,7 @@ public class ContractApiController {
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<ContractResponse> contractV1SearchPost(@ApiParam(value = "") @Valid @RequestBody ContractCriteria contractCriteria) {
         RequestInfo requestInfo=contractCriteria.getRequestInfo();
-        List<Contract> contracts = contractService.searchContracts(requestInfo, contractCriteria);
+        List<Contract> contracts = contractService.searchContracts(contractCriteria);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
         ContractResponse contractResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(contracts).pagination(contractCriteria.getPagination()).build();
         return new ResponseEntity<ContractResponse>(contractResponse, HttpStatus.OK);

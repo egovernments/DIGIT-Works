@@ -107,7 +107,7 @@ public class ContractServiceValidator {
         contracts.add(contractId);
 
         ContractCriteria contractCriteria = ContractCriteria.builder().ids(contracts).tenantId(tenantId).build();
-        List<Contract> fetchedContracts = contractService.searchContracts(contractRequest.getRequestInfo(),contractCriteria);
+        List<Contract> fetchedContracts = contractService.searchContracts(contractCriteria);
 
         if(fetchedContracts.isEmpty()){
             log.error("Provided contract for update ["+contractId+"] not exists");
@@ -484,12 +484,14 @@ public class ContractServiceValidator {
         log.info("Multiple tenantId validation done");
     }
 
-    public void validateSearchContractRequest(RequestInfo requestInfo, ContractCriteria contractCriteria) {
+    public void validateSearchContractRequest(ContractCriteria contractCriteria) {
 
-        if (contractCriteria == null || requestInfo == null) {
+        if (contractCriteria == null || contractCriteria.getRequestInfo() == null) {
             log.error("Contract search criteria request is mandatory");
             throw new CustomException("CONTRACT_SEARCH_CRITERIA_REQUEST", "Contract search criteria request is mandatory");
         }
+
+        RequestInfo requestInfo=contractCriteria.getRequestInfo();
 
         //validate request info
         log.info("validate request info");

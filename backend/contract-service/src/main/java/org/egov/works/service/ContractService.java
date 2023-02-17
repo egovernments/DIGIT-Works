@@ -5,31 +5,18 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.enrichment.ContractEnrichment;
 import org.egov.works.kafka.Producer;
-import org.egov.works.util.ResponseInfoFactory;
-import org.egov.works.validator.ContractServiceValidator;
-import org.egov.works.web.models.ContractRequest;
-import org.egov.works.web.models.ContractResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import digit.models.coremodels.RequestInfoWrapper;
-import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.enrichment.ContractEnrichment;
-import org.egov.works.kafka.Producer;
 import org.egov.works.repository.ContractRepository;
 import org.egov.works.repository.LineItemsRepository;
 import org.egov.works.util.ResponseInfoFactory;
 import org.egov.works.validator.ContractServiceValidator;
-import org.egov.works.web.models.Contract;
-import org.egov.works.web.models.ContractCriteria;
-import org.egov.works.web.models.LineItems;
+import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,22 +44,22 @@ public class ContractService {
     @Autowired
     private LineItemsRepository lineItemsRepository;
 
-    public ContractResponse createContract(ContractRequest contractRequest){
+    public ContractResponse createContract(ContractRequest contractRequest) {
         // Validate contract request
         contractServiceValidator.validateCreateContractRequest(contractRequest);
         contractEnrichment.enrichContractOnCreate(contractRequest);
-        producer.push(contractServiceConfiguration.getCreateContractTopic(),contractRequest);
+        producer.push(contractServiceConfiguration.getCreateContractTopic(), contractRequest);
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractRequest.getRequestInfo(), true);
         ContractResponse attendanceLogResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(Collections.singletonList(contractRequest.getContract())).build();
         return attendanceLogResponse;
     }
 
-    public ContractResponse updateContract(ContractRequest contractRequest){
+    public ContractResponse updateContract(ContractRequest contractRequest) {
         // Validate contract request
         contractServiceValidator.validateUpdateContractRequest(contractRequest);
         contractEnrichment.enrichContractOnUpdate(contractRequest);
-        producer.push(contractServiceConfiguration.getUpdateContractTopic(),contractRequest);
+        producer.push(contractServiceConfiguration.getUpdateContractTopic(), contractRequest);
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractRequest.getRequestInfo(), true);
         ContractResponse attendanceLogResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(Collections.singletonList(contractRequest.getContract())).build();
@@ -80,15 +67,15 @@ public class ContractService {
     }
 
 
-    public List<Contract> searchContracts(RequestInfo requestInfo, ContractCriteria contractCriteria) {
+    public List<Contract> searchContracts(ContractCriteria contractCriteria) {
 
         //Validate the requested parameters
         log.info("Validate the search request parameters");
-        contractServiceValidator.validateSearchContractRequest(requestInfo, contractCriteria);
+        contractServiceValidator.validateSearchContractRequest(contractCriteria);
 
         //Enrich requested search criteria
         log.info("Enrich requested search criteria");
-        contractEnrichment.enrichSearchContractRequest(requestInfo, contractCriteria);
+        contractEnrichment.enrichSearchContractRequest(contractCriteria);
 
         //get contracts from db
         log.info("get enriched contracts list");
@@ -104,22 +91,31 @@ public class ContractService {
         List<LineItems> lineItems = lineItemsRepository.getLineItems(contractCriteria);
 
         //collect lineItems for each contract
-        Map<String, List<LineItems>> lineItemsMap= lineItems.stream().collect(Collectors.groupingBy(LineItems::getContractId));
+        Map<String, List<LineItems>> lineItemsMap = lineItems.stream().collect(Collectors.groupingBy(LineItems::getContractId));
 
-        contractCriteria.setIds(new ArrayList<>(lineItemsMap.keySet()));
+        //get contract ids from lineItems
+        if (contractCriteria.getIds() == null || contractCriteria.getIds().isEmpty()) {
+            contractCriteria.setIds(new ArrayList<>(lineItemsMap.keySet()));
+        } else contractCriteria.getIds().addAll(lineItemsMap.keySet());
 
         //get contracts from db
         log.info("get contracts from db");
         List<Contract> contracts = contractRepository.getContracts(contractCriteria);
 
-        //set total contracts and  sorting order count in pagination object
-        contractCriteria.getPagination().setTotalCount(contracts.size());
-
         log.info("enrich contract with lineItems");
+        //filtering : contracts which have a lineItem from db
+        List<Contract> filteredContracts = new ArrayList<>();
         for (Contract contract : contracts) {
+            if (lineItemsMap.containsKey(contract.getId())) {
                 contract.setLineItems(lineItemsMap.get(contract.getId()));
+                filteredContracts.add(contract);
+            }
         }
-        return contracts;
+
+        //set total contracts and  sorting order count in pagination object
+        contractCriteria.getPagination().setTotalCount(filteredContracts.size());
+
+        return filteredContracts;
     }
 
 }

@@ -152,7 +152,7 @@ public class ContractEnrichment {
         List<String> idList = idgenUtil.getIdList(requestInfo, rootTenantId, config.getIdgenContractNumberName(), "", 1);
         contract.setContractNumber(idList.get(0));
     }
-    public void enrichSearchContractRequest(RequestInfo requestInfo, ContractCriteria contractCriteria) {
+    public void enrichSearchContractRequest(ContractCriteria contractCriteria) {
 
         Pagination pagination= getPagination(contractCriteria);
 
