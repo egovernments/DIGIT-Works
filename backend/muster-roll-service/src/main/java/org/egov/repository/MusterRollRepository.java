@@ -29,9 +29,9 @@ public class MusterRollRepository {
      * @param searchCriteria
      * @return
      */
-    public List<MusterRoll> getMusterRoll(MusterRollSearchCriteria searchCriteria) {
+    public List<MusterRoll> getMusterRoll(MusterRollSearchCriteria searchCriteria,List<String> registerIds) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getMusterSearchQuery(searchCriteria, preparedStmtList);
+        String query = queryBuilder.getMusterSearchQuery(searchCriteria, preparedStmtList, registerIds);
         List<MusterRoll> musterRollList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return musterRollList;
     }
