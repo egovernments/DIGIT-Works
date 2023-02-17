@@ -470,7 +470,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
             if(cellInfo?.row?.original?.type === "total") {
               tableProp["data-last-row-cell"] = "last-row";
             }
-            if(cellInfo.value === "ATM_TOTAL") {
+            if (cellInfo.value === "ES_COMMON_TOTAL") {
               tableProp["colSpan"] = 4;
             }
             if(cellInfo.value === "DNR") {
