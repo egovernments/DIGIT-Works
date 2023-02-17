@@ -11,7 +11,7 @@ import SearchOrganisationApplication from "./components/SearchOrganisation";
 import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
-  const moduleCode = ["Masters"];
+  const moduleCode = ["Masters","common-masters"];
   const { path, url } = useRouteMatch();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const language = Digit.StoreData.getCurrentLanguage();
