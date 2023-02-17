@@ -24,7 +24,7 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
               {row.original?.billId ? (
                 <span className={"link"}>
                   <Link
-                    to={`view-bill?tenantId=${row.original?.tenantId}&billId=${row.original?.billId}`}>
+                    to={`view-bills/bills?tenantId=${row.original?.tenantId}&billId=${row.original?.billId}`}>
                     {row.original?.billId || "NA"}
                   </Link>
                 </span> 
