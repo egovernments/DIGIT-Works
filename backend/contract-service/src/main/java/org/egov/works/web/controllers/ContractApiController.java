@@ -6,10 +6,8 @@ import org.egov.works.service.ContractService;
 import org.egov.works.web.models.ContractCriteria;
 import org.egov.works.web.models.ContractRequest;
 import org.egov.works.web.models.ContractResponse;
-import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.works.service.ContractService;
 import org.egov.works.util.ResponseInfoFactory;
 import org.egov.works.web.models.*;
 import io.swagger.annotations.ApiParam;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
@@ -58,7 +55,6 @@ public class ContractApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<ContractResponse> contractV1SearchPost(@ApiParam(value = "") @Valid @RequestBody ContractCriteria contractCriteria) {
-
         RequestInfo requestInfo=contractCriteria.getRequestInfo();
         List<Contract> contracts = contractService.searchContracts(requestInfo, contractCriteria);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
@@ -68,7 +64,7 @@ public class ContractApiController {
 
     @RequestMapping(value = "/_update", method = RequestMethod.POST)
     public ResponseEntity<ContractResponse> contractV1UpdatePost(@ApiParam(value = "", required = true) @Valid @RequestBody ContractRequest contractRequest) {
-        ContractResponse contractResponse = contractService.createContract(contractRequest);
+        ContractResponse contractResponse = contractService.updateContract(contractRequest);
         return new ResponseEntity<ContractResponse>(contractResponse, HttpStatus.OK);
     }
 

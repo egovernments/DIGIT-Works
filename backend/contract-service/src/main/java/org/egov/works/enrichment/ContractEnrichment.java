@@ -140,6 +140,7 @@ public class ContractEnrichment {
             List<Document> documents = contract.getDocuments();
             for (Document document : documents) {
                 document.setId(String.valueOf(UUID.randomUUID()));
+                document.setContractId(contract.getId());
             }
         }
     }
@@ -153,7 +154,7 @@ public class ContractEnrichment {
     }
     public void enrichSearchContractRequest(RequestInfo requestInfo, ContractCriteria contractCriteria) {
 
-        Pagination pagination=contractCriteria.getPagination();
+        Pagination pagination= getPagination(contractCriteria);
 
         if (pagination.getLimit() == null)
             pagination.setLimit(config.getContractDefaultLimit());
@@ -163,5 +164,14 @@ public class ContractEnrichment {
 
         if (pagination.getLimit() != null && pagination.getLimit().compareTo(config.getContractMaxLimit())>0)
             pagination.setLimit(config.getContractMaxLimit());
+    }
+
+    private Pagination getPagination(ContractCriteria contractCriteria) {
+        Pagination pagination = contractCriteria.getPagination();
+        if(pagination == null){
+            pagination = Pagination.builder().build();
+            contractCriteria.setPagination(pagination);
+        }
+        return pagination;
     }
 }

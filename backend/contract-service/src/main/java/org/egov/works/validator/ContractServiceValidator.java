@@ -6,8 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.repository.ContractRepository;
 import org.egov.works.repository.LineItemsRepository;
+import org.egov.works.service.ContractService;
 import org.egov.works.util.EstimateServiceUtil;
 import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.*;
@@ -39,7 +39,7 @@ public class ContractServiceValidator {
     private LineItemsRepository lineItemsRepository;
 
     @Autowired
-    private ContractRepository contractRepository;
+    private ContractService contractService;
 
     public void validateCreateContractRequest(ContractRequest contractRequest) {
         log.info("Validate contract create request");
@@ -99,12 +99,16 @@ public class ContractServiceValidator {
     }
 
     private void validateContractAgainstDB(ContractRequest contractRequest) {
-        String contractId = contractRequest.getContract().getId();
+        Contract contract = contractRequest.getContract();
+        String contractId = contract.getId();
+        String tenantId = contract.getTenantId();
+
         List<String> contracts = new ArrayList<>();
         contracts.add(contractId);
 
-        ContractCriteria contractCriteria = ContractCriteria.builder().ids(contracts).build();
-        List<Contract> fetchedContracts = contractRepository.getContracts(contractCriteria);
+        ContractCriteria contractCriteria = ContractCriteria.builder().ids(contracts).tenantId(tenantId).build();
+        List<Contract> fetchedContracts = contractService.searchContracts(contractRequest.getRequestInfo(),contractCriteria);
+
         if(fetchedContracts.isEmpty()){
             log.error("Provided contract for update ["+contractId+"] not exists");
             throw new CustomException("CONTRACT_NOT_FOUND","Provided contract for update ["+contractId+"] not exists");
@@ -182,7 +186,6 @@ public class ContractServiceValidator {
 
     private void validateContractTypeAgainstMDMS(Object mdmsData, String contractType) {
         List<Object> contractTypeAuthorityRes = parseMDMSData(mdmsData,JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION);
-        log.info("contractTypeAuthorityRes =====>"+contractTypeAuthorityRes);
         if (CollectionUtils.isEmpty(contractTypeAuthorityRes) || !contractTypeAuthorityRes.contains(contractType)){
             log.error("The Contract Type [" + contractType + "] is not present in MDMS");
             throw new CustomException("INVALID_CONTRACT_TYPE","The Contract Type [" + contractType + "] is not present in MDMS");
@@ -193,7 +196,6 @@ public class ContractServiceValidator {
 
     private void validateExecutingAuthorityAgainstMDMS(Object mdmsData, String executingAuthority) {
         List<Object> executingAuthorityRes = parseMDMSData(mdmsData,JSON_PATH_FOR_EXECUTING_AUTHORITY_VERIFICATION);
-        log.info("executingAuthorityRes =====>"+executingAuthorityRes);
         if (CollectionUtils.isEmpty(executingAuthorityRes) || !executingAuthorityRes.contains(executingAuthority)){
             log.error("The Executing Authority [" + executingAuthority + "] is not present in MDMS");
             throw new CustomException("INVALID_EXECUTING_AUTHORITY","The Executing Authority [" + executingAuthority + "] is not present in MDMS");
@@ -211,6 +213,7 @@ public class ContractServiceValidator {
         Contract contract = contractRequest.getContract();
         List<String> estimatedLineItemIdsList = new ArrayList<>();
         List<LineItems> lineItems = contract.getLineItems();
+
         for(LineItems lineItem : lineItems){
             String estimateId = lineItem.getEstimateId();
             String estimateLineItemId = lineItem.getEstimateLineItemId();
@@ -350,7 +353,7 @@ public class ContractServiceValidator {
         }
 
         log.info("EstimateIds validated against Estimate Service");
-        return fetchedEstimateDetailIdWithAccountDetailIds;
+        return fetchedEstimateIdWithEstimateDetailIds;
     }
 
     private Map<String, Set<String>> getFetchedEstimateDetailIdWithAccountDetailIds(Map<String, List<Estimate>> fetchedEstimatesMap) {

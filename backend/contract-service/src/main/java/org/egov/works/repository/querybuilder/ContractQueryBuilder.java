@@ -71,7 +71,7 @@ public class ContractQueryBuilder {
             addToPreparedStatement(preparedStmtList, orgIds);
         }
 
-        if (StringUtils.isNotBlank(criteria.getContractType()) && Contract.ContractTypeEnum.fromValue(criteria.getContractType())!=null) {
+        if (StringUtils.isNotBlank(criteria.getContractType()) && criteria.getContractType()!=null) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" contract.contract_type=? ");
             preparedStmtList.add(criteria.getContractType());
