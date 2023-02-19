@@ -24,7 +24,7 @@ const ProjectBreadCrumb = ({ location }) => {
 };
 
 const App = ({ path }) => {
-  const ViewProjectComponent = Digit?.ComponentRegistryService?.getComponent("ViewProject");
+  const ViewProjectsComponent = Digit?.ComponentRegistryService?.getComponent("ViewProjects");
 
   return (
     <Switch>
@@ -32,7 +32,7 @@ const App = ({ path }) => {
       <ProjectBreadCrumb location={location} />
         <div>
           <PrivateRoute path={`${path}/sample`} component={() => <div>Sample Screen loaded</div>} />
-          <PrivateRoute path={`${path}/view-projects`} component={ViewProjectComponent}/>
+          <PrivateRoute path={`${path}/project-details`} component={ViewProjectsComponent}/>
         </div>
       </React.Fragment>
     </Switch>

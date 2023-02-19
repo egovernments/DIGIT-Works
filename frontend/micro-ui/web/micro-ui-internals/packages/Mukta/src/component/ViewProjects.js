@@ -1,16 +1,18 @@
 
 import { ActionBar, Header, SubmitBar } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import ApplicationDetails from "../../../modules/templates/ApplicationDetails";
 
-const ViewProject = () => {
+const ProjectDetails = () => {
     const { t } = useTranslation();
     const tenantId =  Digit.ULBService.getCurrentTenantId();
     const queryStrings = Digit.Hooks.useQueryParams();
     const history = useHistory();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+    const [projectData, setProjectData] = useState("");
+
     const searchParams = {
         Projects : [
             {
@@ -29,16 +31,31 @@ const ViewProject = () => {
         // history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
     }
 
-    const preProcessApplicationData = (data) => {
-        console.log(data);
+    const preProcessApplicationData = (project) => {
+        const basicDetails = {
+            title: "",
+            asSectionHeader: true,
+            values: [
+                { title: "WORKS_PROJECT_ID", value: project?.basicDetails?.projectID || "NA"},
+            ]
+        };
+
+        const projectDetails = {applicationDetails : [basicDetails]}
+
+        return {
+            projectDetails : projectDetails,
+            processInstancesDetails: [],
+            applicationData: {},
+            workflowDetails: [],
+            applicationData:{}
+        }
     }
 
     const { data, isLoading } = Digit.Hooks.project.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
 
-    if(!isLoading) {
-        //process data 
-        preProcessApplicationData(data);
-    }
+    useEffect(()=>{
+        setProjectData(preProcessApplicationData(data?.projectDetails?.searchedProject));
+    },[data]);
 
     return  (
         <div className={"employee-main-application-details"}>
@@ -46,7 +63,7 @@ const ViewProject = () => {
                 <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_PROJECT_VIEW_PROJECT")}</Header>
             </div>
             <ApplicationDetails
-                applicationDetails={data?.projectDetails?.searchedProject?.details?.projectDetails}
+                applicationDetails={projectData?.projectDetails}
                 isLoading={isLoading} 
                 applicationData={{}}
                 moduleCode="Mukta"
@@ -65,4 +82,4 @@ const ViewProject = () => {
     )
 }
 
-export default ViewProject;
+export default ProjectDetails;
