@@ -11,9 +11,11 @@ import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 import 'package:works_shg_app/services/urls.dart';
-import 'package:works_shg_app/utils/constants.dart';
+import 'package:works_shg_app/utils/global_variables.dart';
 
+import '../../data/repositories/remote/getGlobalConfig_repo.dart';
 import '../../data/repositories/remote/mdms.dart';
+import '../../models/init_mdms/global_config_model.dart';
 import '../../services/local_storage.dart';
 
 part 'app_initilization.freezed.dart';
@@ -34,11 +36,12 @@ class AppInitializationBloc
     AppInitializationSetupEvent event,
     AppInitializationEmitter emit,
   ) async {
-    // var global = client.get(Constants.devAssets);
-    // global['globalConfigs'].getConfig("STATE_LEVEL_TENANT_ID");
+    GlobalConfigModel globalConfigModel =
+        await GetGlobalConfig().getGlobalConfig();
+
     InitMdmsModel result = await mdmsRepository.initMdmsRegistry(
         apiEndPoint: Urls.initServices.mdms,
-        tenantId: Constants.mdms_tenant_id,
+        tenantId: globalConfigModel.globalConfigs!.stateTenantId.toString(),
         moduleDetails: [
           {
             "moduleName": "common-masters",
@@ -60,7 +63,7 @@ class AppInitializationBloc
             ],
           },
         ]);
-
+    GlobalVariables.globalConfigObject = globalConfigModel;
     StateInfoListModel ss =
         result.commonMastersModel!.stateInfoListModel!.first.copyWith(
             languages: [
@@ -77,6 +80,7 @@ class AppInitializationBloc
       html.window.localStorage['initData'] = jsonEncode(result.toJson());
       html.window.localStorage['StateInfo'] = jsonEncode(ss);
       html.window.localStorage['languages'] = jsonEncode(ss.languages);
+      html.window.localStorage['tenantId' ?? ''] = jsonEncode(ss.code);
     } else {
       await storage.write(
           key: 'initData' ?? '', value: jsonEncode(result.toJson()));
@@ -84,6 +88,7 @@ class AppInitializationBloc
           key: 'StateInfo' ?? '', value: jsonEncode(ss.toJson()));
       await storage.write(
           key: 'languages' ?? '', value: jsonEncode(ss.languages));
+      await storage.write(key: 'tenantId' ?? '', value: jsonEncode(ss.code));
     }
 
     dynamic localInitData;

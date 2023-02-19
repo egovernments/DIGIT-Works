@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:works_shg_app/services/urls.dart';
 
 import '../../data/repositories/remote/mdms.dart';
 import '../../models/mdms/attendance_hours.dart';
-import '../../utils/constants.dart';
+import '../../utils/global_variables.dart';
 
 part 'attendance_hours_mdms.freezed.dart';
 
@@ -23,22 +24,27 @@ class AttendanceHoursBloc
     AttendanceHoursEvent event,
     AttendanceHoursEmitter emit,
   ) async {
-    emit(state.copyWith(isAttendanceMDMSLoaded: false));
-    AttendanceHoursList result = await mdmsRepository.attendanceHoursMDMS(
-        apiEndPoint: Urls.initServices.mdms,
-        tenantId: Constants.mdms_tenant_id,
-        moduleDetails: [
-          {
-            "moduleName": "common-masters",
-            "masterDetails": [
-              {"name": "AttendanceHours", "filter": "[?(@.active==true)]"},
-            ],
-          }
-        ]);
+    try {
+      emit(const AttendanceHoursState.loading());
+      AttendanceHoursList result = await mdmsRepository.attendanceHoursMDMS(
+          apiEndPoint: Urls.initServices.mdms,
+          tenantId: GlobalVariables
+              .globalConfigObject!.globalConfigs!.stateTenantId
+              .toString(),
+          moduleDetails: [
+            {
+              "moduleName": "common-masters",
+              "masterDetails": [
+                {"name": "AttendanceHours", "filter": "[?(@.active==true)]"},
+              ],
+            }
+          ]);
 
-    if (result != null) {
-      emit(state.copyWith(
-          isAttendanceMDMSLoaded: true, attendanceHoursList: result));
+      if (result != null) {
+        emit(AttendanceHoursState.loaded(result));
+      }
+    } on DioError catch (e) {
+      emit(AttendanceHoursState.error(e.response?.data['Errors'][0]['code']));
     }
   }
 }
@@ -52,8 +58,9 @@ class AttendanceHoursMDMSEvent with _$AttendanceHoursMDMSEvent {
 @freezed
 class AttendanceHoursState with _$AttendanceHoursState {
   const AttendanceHoursState._();
-
-  const factory AttendanceHoursState(
-      {@Default(false) bool isAttendanceMDMSLoaded,
-      AttendanceHoursList? attendanceHoursList}) = _AttendanceHoursState;
+  const factory AttendanceHoursState.initial() = _Initial;
+  const factory AttendanceHoursState.loading() = _Loading;
+  const factory AttendanceHoursState.loaded(
+      AttendanceHoursList? attendanceHoursList) = _Loaded;
+  const factory AttendanceHoursState.error(String? error) = _Error;
 }

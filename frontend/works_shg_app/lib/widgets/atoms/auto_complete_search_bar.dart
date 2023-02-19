@@ -40,22 +40,19 @@ class AutoCompleteSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       if (constraints.maxWidth > 760) {
-        return Container(
-            margin:
-                const EdgeInsets.only(top: 5.0, bottom: 5, right: 20, left: 20),
-            child: Row(
-              children: [
-                Container(
-                    width: MediaQuery.of(context).size.width / 3,
-                    padding: const EdgeInsets.only(top: 18, bottom: 3),
-                    child: _text(context)),
-                Container(
-                  width: MediaQuery.of(context).size.width / 2.5,
-                  padding: const EdgeInsets.only(top: 18, bottom: 3),
-                  child: _autoComplete(context),
-                ),
-              ],
-            ));
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.only(top: 5.0, bottom: 5, right: 16),
+              child: Container(
+                width: MediaQuery.of(context).size.width / 2,
+                padding: const EdgeInsets.only(top: 18, bottom: 3),
+                child: _autoComplete(context),
+              )),
+        );
       } else {
         return Container(
             margin:
@@ -64,8 +61,7 @@ class AutoCompleteSearchBar extends StatelessWidget {
               children: [
                 Container(
                     padding: const EdgeInsets.only(top: 18, bottom: 3),
-                    child: _text(context)),
-                _autoComplete(context),
+                    child: _autoComplete(context)),
               ],
             ));
       }
@@ -126,7 +122,6 @@ class AutoCompleteSearchBar extends StatelessWidget {
             prefixIcon: const Padding(
                 padding: EdgeInsets.all(8.0), child: Icon(Icons.search_sharp)),
           )),
-      hideOnEmpty: true,
       loadingBuilder: (BuildContext context) {
         return const SizedBox(
             height: 100, child: Center(child: CircularProgressIndicator()));

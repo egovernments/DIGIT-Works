@@ -9,7 +9,6 @@ import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/remote_client.dart';
 import '../../data/repositories/user_search_repository/user_search.dart';
-import '../../utils/constants.dart';
 
 part 'user_search.freezed.dart';
 
@@ -26,7 +25,9 @@ class UserSearchBloc extends Bloc<UserSearchEvent, UserSearchState> {
     emit(state.copyWith(loading: true));
     UserSearchModel userSearchModel = await UserSearchRepository(client.init())
         .searchUser(url: Urls.userServices.userSearchProfile, body: {
-      "tenantId": Constants.app_tenant_id,
+      "tenantId": GlobalVariables
+          .globalConfigObject!.globalConfigs!.stateTenantId
+          .toString(),
       "uuid": [GlobalVariables.getUUID()]
     });
     await Future.delayed(const Duration(seconds: 1));

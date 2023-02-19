@@ -19,14 +19,12 @@ class MdmsRepository {
     required List<Map> moduleDetails,
   }) async {
     try {
-      var response = await _client
-          .post('${EnvironmentVariables.baseUrl}$apiEndPoint', data: {
+      var response = await _client.post(apiEndPoint, data: {
         "MdmsCriteria": {
           "tenantId": tenantId,
           "moduleDetails": moduleDetails,
         },
       });
-
       return InitMdmsModel.fromJson(
         json.decode(response.toString())['MdmsRes'],
       );
@@ -55,7 +53,7 @@ class MdmsRepository {
       );
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
-      throw Exception(ex);
+      rethrow;
     }
   }
 }

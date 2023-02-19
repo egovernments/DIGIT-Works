@@ -9,7 +9,7 @@ import 'package:works_shg_app/services/urls.dart';
 
 import '../../data/remote_client.dart';
 import '../../data/repositories/user_search_repository/user_search.dart';
-import '../../utils/constants.dart';
+import '../../utils/global_variables.dart';
 
 part 'attendance_user_search.freezed.dart';
 
@@ -20,25 +20,25 @@ class AttendanceUserSearchBloc
   AttendanceUserSearchBloc(super.initialState) {
     on<SearchAttendanceUserEvent>(_onSearch);
     on<SearchAttendanceUserUuidEvent>(_onUUIDSearch);
+    on<DisposeSearchAttendanceUserEvent>(_onDispose);
   }
 
   FutureOr<void> _onSearch(
       SearchAttendanceUserEvent event, AttendanceUserSearchEmitter emit) async {
     Client client = Client();
     try {
-      emit(const AttendanceUserSearchState.initial());
       emit(const AttendanceUserSearchState.loading());
       UserSearchModel userSearchModel =
-          await UserSearchRepository(client.init()).searchUser(
-              url: Urls.userServices.userSearchProfile,
-              body: {
-            "tenantId": Constants.app_tenant_id,
-            "mobileNumber": event.mobileNumber
-          });
-      await Future.delayed(const Duration(seconds: 1));
+          await UserSearchRepository(client.init())
+              .searchUser(url: Urls.userServices.userSearchProfile, body: {
+        "tenantId":
+            GlobalVariables.globalConfigObject?.globalConfigs?.stateTenantId,
+        "mobileNumber": event.mobileNumber
+      });
       emit(AttendanceUserSearchState.loaded(userSearchModel));
     } on DioError catch (e) {
-      emit(const AttendanceUserSearchState.error());
+      emit(AttendanceUserSearchState.error(
+          e.response?.data['Errors'][0]['code']));
     }
   }
 
@@ -46,17 +46,24 @@ class AttendanceUserSearchBloc
       AttendanceUserSearchEmitter emit) async {
     Client client = Client();
     try {
-      emit(const AttendanceUserSearchState.initial());
       emit(const AttendanceUserSearchState.loading());
       UserSearchModel userSearchModel =
-          await UserSearchRepository(client.init()).searchUser(
-              url: Urls.userServices.userSearchProfile,
-              body: {"tenantId": Constants.app_tenant_id, "uuid": event.uuids});
-      await Future.delayed(const Duration(seconds: 1));
+          await UserSearchRepository(client.init())
+              .searchUser(url: Urls.userServices.userSearchProfile, body: {
+        "tenantId":
+            GlobalVariables.globalConfigObject?.globalConfigs?.stateTenantId,
+        "uuid": event.uuids
+      });
       emit(AttendanceUserSearchState.loaded(userSearchModel));
     } on DioError catch (e) {
-      emit(const AttendanceUserSearchState.error());
+      emit(AttendanceUserSearchState.error(
+          e.response?.data['Errors'][0]['code']));
     }
+  }
+
+  FutureOr<void> _onDispose(DisposeSearchAttendanceUserEvent event,
+      AttendanceUserSearchEmitter emit) async {
+    emit(const AttendanceUserSearchState.initial());
   }
 }
 
@@ -66,6 +73,8 @@ class AttendanceUserSearchEvent with _$AttendanceUserSearchEvent {
       SearchAttendanceUserEvent;
   const factory AttendanceUserSearchEvent.uuidSearch({List<String>? uuids}) =
       SearchAttendanceUserUuidEvent;
+  const factory AttendanceUserSearchEvent.dispose() =
+      DisposeSearchAttendanceUserEvent;
 }
 
 @freezed
@@ -75,9 +84,5 @@ class AttendanceUserSearchState with _$AttendanceUserSearchState {
   const factory AttendanceUserSearchState.loading() = _Loading;
   const factory AttendanceUserSearchState.loaded(
       UserSearchModel? userSearchModel) = _Loaded;
-  const factory AttendanceUserSearchState.error() = _Error;
-  // const factory AttendanceUserSearchState({
-  //   @Default(false) bool loading,
-  //   UserSearchModel? userSearchModel,
-  // }) = _UserSearchState;
+  const factory AttendanceUserSearchState.error(String? error) = _Error;
 }

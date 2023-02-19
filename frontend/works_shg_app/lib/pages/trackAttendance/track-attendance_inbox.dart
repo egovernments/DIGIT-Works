@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
-import 'package:works_shg_app/utils/notifiers.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 
-import '../blocs/attendance/search_projects/search_projects.dart';
-import '../blocs/localization/app_localization.dart';
-import '../models/attendance/attendance_registry_model.dart';
-import '../utils/date_formats.dart';
-import '../widgets/Back.dart';
-import '../widgets/SideBar.dart';
-import '../widgets/drawer_wrapper.dart';
-import '../widgets/loaders.dart';
+import '../../blocs/attendance/search_projects/search_projects.dart';
+import '../../blocs/localization/app_localization.dart';
+import '../../models/attendance/attendance_registry_model.dart';
+import '../../utils/date_formats.dart';
+import '../../utils/notifiers.dart';
+import '../../widgets/Back.dart';
+import '../../widgets/SideBar.dart';
+import '../../widgets/drawer_wrapper.dart';
+import '../../widgets/loaders.dart';
 
-class ManageAttendanceRegisterPage extends StatelessWidget {
-  const ManageAttendanceRegisterPage({Key? key}) : super(key: key);
+class TrackAttendanceInboxPage extends StatelessWidget {
+  const TrackAttendanceInboxPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,6 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
         body: SingleChildScrollView(child: BlocBuilder<
             AttendanceProjectsSearchBloc,
             AttendanceProjectsSearchState>(builder: (context, state) {
-          var localization = AppLocalizations.of(context);
           return state.maybeWhen(
               loading: () => Loaders.circularLoader(context),
               loaded: (AttendanceRegistersModel? attendanceRegistersModel) {
@@ -37,17 +36,33 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
                 attendanceRegisters.sort((a, b) => b
                     .registerAuditDetails!.createdTime!
                     .compareTo(a.registerAuditDetails!.createdTime!.toInt()));
-
-                final projectList = attendanceRegisters
-                    .map((e) => {
-                          i18.attendanceMgmt.nameOfWork: e.name,
-                          i18.attendanceMgmt.winCode: e.registerNumber,
-                          i18.attendanceMgmt.engineerInCharge: e.id,
-                          i18.common.dates:
-                              '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                          i18.common.status: e.status
-                        })
-                    .toList();
+                final List<Map<String, dynamic>> projectList =
+                    attendanceRegisters
+                        .map((e) => {
+                              i18.attendanceMgmt.nameOfWork: e.name,
+                              i18.attendanceMgmt.winCode: e
+                                      .attendanceRegisterAdditionalDetails
+                                      ?.contractId ??
+                                  'NA',
+                              i18.attendanceMgmt.registerId: e.registerNumber,
+                              i18.common.startDate: DateFormats.timeStampToDate(
+                                  e.startDate,
+                                  format: "dd/MM/yyyy"),
+                              i18.attendanceMgmt.individualsCount: e
+                                      .attendeesEntries
+                                      ?.where((att) =>
+                                          att.denrollmentDate == null ||
+                                          !(att.denrollmentDate! <=
+                                              e.endDate!.toInt()))
+                                      .toList()
+                                      .length ??
+                                  0,
+                              i18.common.endDate: DateFormats.timeStampToDate(
+                                  e.endDate,
+                                  format: "dd/MM/yyyy"),
+                              i18.common.status: e.status
+                            })
+                        .toList();
 
                 return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,14 +80,14 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
                         ),
                       ),
                       projectList.isEmpty
-                          ? Text(localization
+                          ? Text(AppLocalizations.of(context)
                               .translate(i18.attendanceMgmt.noProjectsFound))
                           : WorkDetailsCard(
                               projectList,
-                              isManageAttendance: true,
+                              isTrackAttendance: true,
                               elevatedButtonLabel: AppLocalizations.of(context)
                                   .translate(
-                                      i18.attendanceMgmt.enrollWageSeeker),
+                                      i18.attendanceMgmt.updateAttendance),
                               attendanceRegistersModel:
                                   attendanceRegistersModel,
                             )

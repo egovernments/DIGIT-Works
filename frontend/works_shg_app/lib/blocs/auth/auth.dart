@@ -8,7 +8,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/models/UserDetails/user_details_model.dart';
 import 'package:works_shg_app/services/urls.dart';
-import 'package:works_shg_app/utils/constants.dart';
+import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/remote_client.dart';
 import '../../data/repositories/auth_repository/auth.dart';
@@ -34,7 +34,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         "username": event.userId.toString(),
         "password": event.password.toString(),
         "userType": 'CITIZEN',
-        "tenantId": 'pg',
+        "tenantId":
+            GlobalVariables.globalConfigObject?.globalConfigs?.stateTenantId,
         "scope": "read",
         "grant_type": "password"
       });
@@ -46,8 +47,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             jsonEncode(userDetailsModel.userRequestModel);
         html.window.localStorage['uuid' ?? ''] =
             jsonEncode(userDetailsModel.userRequestModel?.uuid);
-        html.window.localStorage['tenantId' ?? ''] =
-            jsonEncode(Constants.app_tenant_id);
         html.window.localStorage['mobileNumber' ?? ''] =
             jsonEncode(userDetailsModel.userRequestModel?.mobileNumber);
       } else {
@@ -60,8 +59,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await storage.write(
             key: 'uuid' ?? '',
             value: jsonEncode(userDetailsModel.userRequestModel?.uuid));
-        await storage.write(
-            key: 'tenantId' ?? '', value: jsonEncode(Constants.app_tenant_id));
         await storage.write(
             key: 'mobileNumber' ?? '',
             value: jsonEncode(userDetailsModel.userRequestModel?.mobileNumber));

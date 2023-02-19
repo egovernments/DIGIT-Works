@@ -22,6 +22,7 @@ TableDataModel _$TableDataModelFromJson(Map<String, dynamic> json) {
 mixin _$TableDataModel {
   String? get name => throw _privateConstructorUsedError;
   String? get aadhaar => throw _privateConstructorUsedError;
+  String? get uuid => throw _privateConstructorUsedError;
   String? get bankNumber => throw _privateConstructorUsedError;
   double? get monIndex => throw _privateConstructorUsedError;
   double? get tueIndex => throw _privateConstructorUsedError;
@@ -45,6 +46,7 @@ abstract class $TableDataModelCopyWith<$Res> {
   $Res call(
       {String? name,
       String? aadhaar,
+      String? uuid,
       String? bankNumber,
       double? monIndex,
       double? tueIndex,
@@ -69,6 +71,7 @@ class _$TableDataModelCopyWithImpl<$Res, $Val extends TableDataModel>
   $Res call({
     Object? name = freezed,
     Object? aadhaar = freezed,
+    Object? uuid = freezed,
     Object? bankNumber = freezed,
     Object? monIndex = freezed,
     Object? tueIndex = freezed,
@@ -85,6 +88,10 @@ class _$TableDataModelCopyWithImpl<$Res, $Val extends TableDataModel>
       aadhaar: freezed == aadhaar
           ? _value.aadhaar
           : aadhaar // ignore: cast_nullable_to_non_nullable
+              as String?,
+      uuid: freezed == uuid
+          ? _value.uuid
+          : uuid // ignore: cast_nullable_to_non_nullable
               as String?,
       bankNumber: freezed == bankNumber
           ? _value.bankNumber
@@ -129,6 +136,7 @@ abstract class _$$_TableDataModelCopyWith<$Res>
   $Res call(
       {String? name,
       String? aadhaar,
+      String? uuid,
       String? bankNumber,
       double? monIndex,
       double? tueIndex,
@@ -151,6 +159,7 @@ class __$$_TableDataModelCopyWithImpl<$Res>
   $Res call({
     Object? name = freezed,
     Object? aadhaar = freezed,
+    Object? uuid = freezed,
     Object? bankNumber = freezed,
     Object? monIndex = freezed,
     Object? tueIndex = freezed,
@@ -167,6 +176,10 @@ class __$$_TableDataModelCopyWithImpl<$Res>
       aadhaar: freezed == aadhaar
           ? _value.aadhaar
           : aadhaar // ignore: cast_nullable_to_non_nullable
+              as String?,
+      uuid: freezed == uuid
+          ? _value.uuid
+          : uuid // ignore: cast_nullable_to_non_nullable
               as String?,
       bankNumber: freezed == bankNumber
           ? _value.bankNumber
@@ -207,6 +220,7 @@ class _$_TableDataModel implements _TableDataModel {
   const _$_TableDataModel(
       {required this.name,
       required this.aadhaar,
+      this.uuid,
       this.bankNumber,
       this.monIndex,
       this.tueIndex,
@@ -222,6 +236,8 @@ class _$_TableDataModel implements _TableDataModel {
   final String? name;
   @override
   final String? aadhaar;
+  @override
+  final String? uuid;
   @override
   final String? bankNumber;
   @override
@@ -239,7 +255,7 @@ class _$_TableDataModel implements _TableDataModel {
 
   @override
   String toString() {
-    return 'TableDataModel(name: $name, aadhaar: $aadhaar, bankNumber: $bankNumber, monIndex: $monIndex, tueIndex: $tueIndex, wedIndex: $wedIndex, thursIndex: $thursIndex, friIndex: $friIndex, satIndex: $satIndex)';
+    return 'TableDataModel(name: $name, aadhaar: $aadhaar, uuid: $uuid, bankNumber: $bankNumber, monIndex: $monIndex, tueIndex: $tueIndex, wedIndex: $wedIndex, thursIndex: $thursIndex, friIndex: $friIndex, satIndex: $satIndex)';
   }
 
   @override
@@ -249,6 +265,7 @@ class _$_TableDataModel implements _TableDataModel {
             other is _$_TableDataModel &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.aadhaar, aadhaar) || other.aadhaar == aadhaar) &&
+            (identical(other.uuid, uuid) || other.uuid == uuid) &&
             (identical(other.bankNumber, bankNumber) ||
                 other.bankNumber == bankNumber) &&
             (identical(other.monIndex, monIndex) ||
@@ -267,7 +284,7 @@ class _$_TableDataModel implements _TableDataModel {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, name, aadhaar, bankNumber,
+  int get hashCode => Object.hash(runtimeType, name, aadhaar, uuid, bankNumber,
       monIndex, tueIndex, wedIndex, thursIndex, friIndex, satIndex);
 
   @JsonKey(ignore: true)
@@ -288,6 +305,7 @@ abstract class _TableDataModel implements TableDataModel {
   const factory _TableDataModel(
       {required final String? name,
       required final String? aadhaar,
+      final String? uuid,
       final String? bankNumber,
       final double? monIndex,
       final double? tueIndex,
@@ -303,6 +321,8 @@ abstract class _TableDataModel implements TableDataModel {
   String? get name;
   @override
   String? get aadhaar;
+  @override
+  String? get uuid;
   @override
   String? get bankNumber;
   @override

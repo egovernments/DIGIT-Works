@@ -18,10 +18,11 @@ class AttendeeCreateBloc
     extends Bloc<AttendeeCreateEvent, AttendeeCreateState> {
   AttendeeCreateBloc() : super(const AttendeeCreateState.initial()) {
     on<CreateAttendeeEvent>(_onCreate);
+    on<CreateAttendeeDisposeEvent>(_onDispose);
   }
 
   FutureOr<void> _onCreate(
-      AttendeeCreateEvent event, AttendeeCreateEmitter emit) async {
+      CreateAttendeeEvent event, AttendeeCreateEmitter emit) async {
     Client client = Client();
     try {
       emit(const AttendeeCreateState.loading());
@@ -35,14 +36,15 @@ class AttendeeCreateBloc
               }),
               body: {"attendees": event.attendeeList});
       await Future.delayed(const Duration(seconds: 1));
-      if (attendeeModel != null) {
-        emit(const AttendeeCreateState.loaded());
-      } else {
-        emit(const AttendeeCreateState.error());
-      }
+      emit(const AttendeeCreateState.loaded());
     } on DioError catch (e) {
-      emit(const AttendeeCreateState.error());
+      emit(AttendeeCreateState.error(e.response?.data['Errors'][0]['code']));
     }
+  }
+
+  FutureOr<void> _onDispose(
+      CreateAttendeeDisposeEvent event, AttendeeCreateEmitter emit) async {
+    emit(const AttendeeCreateState.initial());
   }
 }
 
@@ -50,6 +52,7 @@ class AttendeeCreateBloc
 class AttendeeCreateEvent with _$AttendeeCreateEvent {
   const factory AttendeeCreateEvent.create(
       {required List<Map<String, dynamic>> attendeeList}) = CreateAttendeeEvent;
+  const factory AttendeeCreateEvent.dispose() = CreateAttendeeDisposeEvent;
 }
 
 @freezed
@@ -59,5 +62,5 @@ class AttendeeCreateState with _$AttendeeCreateState {
   const factory AttendeeCreateState.initial() = _Initial;
   const factory AttendeeCreateState.loading() = _Loading;
   const factory AttendeeCreateState.loaded() = _Loaded;
-  const factory AttendeeCreateState.error() = _Error;
+  const factory AttendeeCreateState.error(String? error) = _Error;
 }

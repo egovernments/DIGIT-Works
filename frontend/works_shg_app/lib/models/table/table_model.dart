@@ -9,6 +9,7 @@ class TableDataModel with _$TableDataModel {
   const factory TableDataModel({
     required String? name,
     required String? aadhaar,
+    String? uuid,
     String? bankNumber,
     double? monIndex,
     double? tueIndex,

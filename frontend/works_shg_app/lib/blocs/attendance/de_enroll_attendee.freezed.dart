@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
-part of 'attendance_hours_mdms.dart';
+part of 'de_enroll_attendee.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,53 +15,59 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$AttendanceHoursMDMSEvent {
+mixin _$AttendeeDeEnrollEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() onAttendanceHoursMDMS,
+    required TResult Function(List<Map<String, dynamic>> attendeeList) deEnroll,
+    required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? onAttendanceHoursMDMS,
+    TResult? Function(List<Map<String, dynamic>> attendeeList)? deEnroll,
+    TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? onAttendanceHoursMDMS,
+    TResult Function(List<Map<String, dynamic>> attendeeList)? deEnroll,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(AttendanceHoursEvent value) onAttendanceHoursMDMS,
+    required TResult Function(DeEnrollAttendeeEvent value) deEnroll,
+    required TResult Function(DeEnrollAttendeeDisposeEvent value) dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(AttendanceHoursEvent value)? onAttendanceHoursMDMS,
+    TResult? Function(DeEnrollAttendeeEvent value)? deEnroll,
+    TResult? Function(DeEnrollAttendeeDisposeEvent value)? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(AttendanceHoursEvent value)? onAttendanceHoursMDMS,
+    TResult Function(DeEnrollAttendeeEvent value)? deEnroll,
+    TResult Function(DeEnrollAttendeeDisposeEvent value)? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AttendanceHoursMDMSEventCopyWith<$Res> {
-  factory $AttendanceHoursMDMSEventCopyWith(AttendanceHoursMDMSEvent value,
-          $Res Function(AttendanceHoursMDMSEvent) then) =
-      _$AttendanceHoursMDMSEventCopyWithImpl<$Res, AttendanceHoursMDMSEvent>;
+abstract class $AttendeeDeEnrollEventCopyWith<$Res> {
+  factory $AttendeeDeEnrollEventCopyWith(AttendeeDeEnrollEvent value,
+          $Res Function(AttendeeDeEnrollEvent) then) =
+      _$AttendeeDeEnrollEventCopyWithImpl<$Res, AttendeeDeEnrollEvent>;
 }
 
 /// @nodoc
-class _$AttendanceHoursMDMSEventCopyWithImpl<$Res,
-        $Val extends AttendanceHoursMDMSEvent>
-    implements $AttendanceHoursMDMSEventCopyWith<$Res> {
-  _$AttendanceHoursMDMSEventCopyWithImpl(this._value, this._then);
+class _$AttendeeDeEnrollEventCopyWithImpl<$Res,
+        $Val extends AttendeeDeEnrollEvent>
+    implements $AttendeeDeEnrollEventCopyWith<$Res> {
+  _$AttendeeDeEnrollEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -70,35 +76,183 @@ class _$AttendanceHoursMDMSEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$AttendanceHoursEventCopyWith<$Res> {
-  factory _$$AttendanceHoursEventCopyWith(_$AttendanceHoursEvent value,
-          $Res Function(_$AttendanceHoursEvent) then) =
-      __$$AttendanceHoursEventCopyWithImpl<$Res>;
+abstract class _$$DeEnrollAttendeeEventCopyWith<$Res> {
+  factory _$$DeEnrollAttendeeEventCopyWith(_$DeEnrollAttendeeEvent value,
+          $Res Function(_$DeEnrollAttendeeEvent) then) =
+      __$$DeEnrollAttendeeEventCopyWithImpl<$Res>;
+  @useResult
+  $Res call({List<Map<String, dynamic>> attendeeList});
 }
 
 /// @nodoc
-class __$$AttendanceHoursEventCopyWithImpl<$Res>
-    extends _$AttendanceHoursMDMSEventCopyWithImpl<$Res, _$AttendanceHoursEvent>
-    implements _$$AttendanceHoursEventCopyWith<$Res> {
-  __$$AttendanceHoursEventCopyWithImpl(_$AttendanceHoursEvent _value,
-      $Res Function(_$AttendanceHoursEvent) _then)
+class __$$DeEnrollAttendeeEventCopyWithImpl<$Res>
+    extends _$AttendeeDeEnrollEventCopyWithImpl<$Res, _$DeEnrollAttendeeEvent>
+    implements _$$DeEnrollAttendeeEventCopyWith<$Res> {
+  __$$DeEnrollAttendeeEventCopyWithImpl(_$DeEnrollAttendeeEvent _value,
+      $Res Function(_$DeEnrollAttendeeEvent) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? attendeeList = null,
+  }) {
+    return _then(_$DeEnrollAttendeeEvent(
+      attendeeList: null == attendeeList
+          ? _value._attendeeList
+          : attendeeList // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
+    ));
+  }
 }
 
 /// @nodoc
 
-class _$AttendanceHoursEvent implements AttendanceHoursEvent {
-  const _$AttendanceHoursEvent();
+class _$DeEnrollAttendeeEvent implements DeEnrollAttendeeEvent {
+  const _$DeEnrollAttendeeEvent(
+      {required final List<Map<String, dynamic>> attendeeList})
+      : _attendeeList = attendeeList;
+
+  final List<Map<String, dynamic>> _attendeeList;
+  @override
+  List<Map<String, dynamic>> get attendeeList {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_attendeeList);
+  }
 
   @override
   String toString() {
-    return 'AttendanceHoursMDMSEvent.onAttendanceHoursMDMS()';
+    return 'AttendeeDeEnrollEvent.deEnroll(attendeeList: $attendeeList)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$AttendanceHoursEvent);
+        (other.runtimeType == runtimeType &&
+            other is _$DeEnrollAttendeeEvent &&
+            const DeepCollectionEquality()
+                .equals(other._attendeeList, _attendeeList));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_attendeeList));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeEnrollAttendeeEventCopyWith<_$DeEnrollAttendeeEvent> get copyWith =>
+      __$$DeEnrollAttendeeEventCopyWithImpl<_$DeEnrollAttendeeEvent>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(List<Map<String, dynamic>> attendeeList) deEnroll,
+    required TResult Function() dispose,
+  }) {
+    return deEnroll(attendeeList);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(List<Map<String, dynamic>> attendeeList)? deEnroll,
+    TResult? Function()? dispose,
+  }) {
+    return deEnroll?.call(attendeeList);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(List<Map<String, dynamic>> attendeeList)? deEnroll,
+    TResult Function()? dispose,
+    required TResult orElse(),
+  }) {
+    if (deEnroll != null) {
+      return deEnroll(attendeeList);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(DeEnrollAttendeeEvent value) deEnroll,
+    required TResult Function(DeEnrollAttendeeDisposeEvent value) dispose,
+  }) {
+    return deEnroll(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(DeEnrollAttendeeEvent value)? deEnroll,
+    TResult? Function(DeEnrollAttendeeDisposeEvent value)? dispose,
+  }) {
+    return deEnroll?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(DeEnrollAttendeeEvent value)? deEnroll,
+    TResult Function(DeEnrollAttendeeDisposeEvent value)? dispose,
+    required TResult orElse(),
+  }) {
+    if (deEnroll != null) {
+      return deEnroll(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DeEnrollAttendeeEvent implements AttendeeDeEnrollEvent {
+  const factory DeEnrollAttendeeEvent(
+          {required final List<Map<String, dynamic>> attendeeList}) =
+      _$DeEnrollAttendeeEvent;
+
+  List<Map<String, dynamic>> get attendeeList;
+  @JsonKey(ignore: true)
+  _$$DeEnrollAttendeeEventCopyWith<_$DeEnrollAttendeeEvent> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DeEnrollAttendeeDisposeEventCopyWith<$Res> {
+  factory _$$DeEnrollAttendeeDisposeEventCopyWith(
+          _$DeEnrollAttendeeDisposeEvent value,
+          $Res Function(_$DeEnrollAttendeeDisposeEvent) then) =
+      __$$DeEnrollAttendeeDisposeEventCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$DeEnrollAttendeeDisposeEventCopyWithImpl<$Res>
+    extends _$AttendeeDeEnrollEventCopyWithImpl<$Res,
+        _$DeEnrollAttendeeDisposeEvent>
+    implements _$$DeEnrollAttendeeDisposeEventCopyWith<$Res> {
+  __$$DeEnrollAttendeeDisposeEventCopyWithImpl(
+      _$DeEnrollAttendeeDisposeEvent _value,
+      $Res Function(_$DeEnrollAttendeeDisposeEvent) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$DeEnrollAttendeeDisposeEvent implements DeEnrollAttendeeDisposeEvent {
+  const _$DeEnrollAttendeeDisposeEvent();
+
+  @override
+  String toString() {
+    return 'AttendeeDeEnrollEvent.dispose()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeEnrollAttendeeDisposeEvent);
   }
 
   @override
@@ -107,27 +261,30 @@ class _$AttendanceHoursEvent implements AttendanceHoursEvent {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() onAttendanceHoursMDMS,
+    required TResult Function(List<Map<String, dynamic>> attendeeList) deEnroll,
+    required TResult Function() dispose,
   }) {
-    return onAttendanceHoursMDMS();
+    return dispose();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? onAttendanceHoursMDMS,
+    TResult? Function(List<Map<String, dynamic>> attendeeList)? deEnroll,
+    TResult? Function()? dispose,
   }) {
-    return onAttendanceHoursMDMS?.call();
+    return dispose?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? onAttendanceHoursMDMS,
+    TResult Function(List<Map<String, dynamic>> attendeeList)? deEnroll,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) {
-    if (onAttendanceHoursMDMS != null) {
-      return onAttendanceHoursMDMS();
+    if (dispose != null) {
+      return dispose();
     }
     return orElse();
   }
@@ -135,43 +292,46 @@ class _$AttendanceHoursEvent implements AttendanceHoursEvent {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(AttendanceHoursEvent value) onAttendanceHoursMDMS,
+    required TResult Function(DeEnrollAttendeeEvent value) deEnroll,
+    required TResult Function(DeEnrollAttendeeDisposeEvent value) dispose,
   }) {
-    return onAttendanceHoursMDMS(this);
+    return dispose(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(AttendanceHoursEvent value)? onAttendanceHoursMDMS,
+    TResult? Function(DeEnrollAttendeeEvent value)? deEnroll,
+    TResult? Function(DeEnrollAttendeeDisposeEvent value)? dispose,
   }) {
-    return onAttendanceHoursMDMS?.call(this);
+    return dispose?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(AttendanceHoursEvent value)? onAttendanceHoursMDMS,
+    TResult Function(DeEnrollAttendeeEvent value)? deEnroll,
+    TResult Function(DeEnrollAttendeeDisposeEvent value)? dispose,
     required TResult orElse(),
   }) {
-    if (onAttendanceHoursMDMS != null) {
-      return onAttendanceHoursMDMS(this);
+    if (dispose != null) {
+      return dispose(this);
     }
     return orElse();
   }
 }
 
-abstract class AttendanceHoursEvent implements AttendanceHoursMDMSEvent {
-  const factory AttendanceHoursEvent() = _$AttendanceHoursEvent;
+abstract class DeEnrollAttendeeDisposeEvent implements AttendeeDeEnrollEvent {
+  const factory DeEnrollAttendeeDisposeEvent() = _$DeEnrollAttendeeDisposeEvent;
 }
 
 /// @nodoc
-mixin _$AttendanceHoursState {
+mixin _$AttendeeDeEnrollState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function() loaded,
     required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -179,7 +339,7 @@ mixin _$AttendanceHoursState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function()? loaded,
     TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -187,7 +347,7 @@ mixin _$AttendanceHoursState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function()? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
@@ -220,17 +380,17 @@ mixin _$AttendanceHoursState {
 }
 
 /// @nodoc
-abstract class $AttendanceHoursStateCopyWith<$Res> {
-  factory $AttendanceHoursStateCopyWith(AttendanceHoursState value,
-          $Res Function(AttendanceHoursState) then) =
-      _$AttendanceHoursStateCopyWithImpl<$Res, AttendanceHoursState>;
+abstract class $AttendeeDeEnrollStateCopyWith<$Res> {
+  factory $AttendeeDeEnrollStateCopyWith(AttendeeDeEnrollState value,
+          $Res Function(AttendeeDeEnrollState) then) =
+      _$AttendeeDeEnrollStateCopyWithImpl<$Res, AttendeeDeEnrollState>;
 }
 
 /// @nodoc
-class _$AttendanceHoursStateCopyWithImpl<$Res,
-        $Val extends AttendanceHoursState>
-    implements $AttendanceHoursStateCopyWith<$Res> {
-  _$AttendanceHoursStateCopyWithImpl(this._value, this._then);
+class _$AttendeeDeEnrollStateCopyWithImpl<$Res,
+        $Val extends AttendeeDeEnrollState>
+    implements $AttendeeDeEnrollStateCopyWith<$Res> {
+  _$AttendeeDeEnrollStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -247,7 +407,7 @@ abstract class _$$_InitialCopyWith<$Res> {
 
 /// @nodoc
 class __$$_InitialCopyWithImpl<$Res>
-    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Initial>
+    extends _$AttendeeDeEnrollStateCopyWithImpl<$Res, _$_Initial>
     implements _$$_InitialCopyWith<$Res> {
   __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
       : super(_value, _then);
@@ -260,7 +420,7 @@ class _$_Initial extends _Initial {
 
   @override
   String toString() {
-    return 'AttendanceHoursState.initial()';
+    return 'AttendeeDeEnrollState.initial()';
   }
 
   @override
@@ -277,7 +437,7 @@ class _$_Initial extends _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function() loaded,
     required TResult Function(String? error) error,
   }) {
     return initial();
@@ -288,7 +448,7 @@ class _$_Initial extends _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function()? loaded,
     TResult? Function(String? error)? error,
   }) {
     return initial?.call();
@@ -299,7 +459,7 @@ class _$_Initial extends _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function()? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -347,7 +507,7 @@ class _$_Initial extends _Initial {
   }
 }
 
-abstract class _Initial extends AttendanceHoursState {
+abstract class _Initial extends AttendeeDeEnrollState {
   const factory _Initial() = _$_Initial;
   const _Initial._() : super._();
 }
@@ -361,7 +521,7 @@ abstract class _$$_LoadingCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadingCopyWithImpl<$Res>
-    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Loading>
+    extends _$AttendeeDeEnrollStateCopyWithImpl<$Res, _$_Loading>
     implements _$$_LoadingCopyWith<$Res> {
   __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
       : super(_value, _then);
@@ -374,7 +534,7 @@ class _$_Loading extends _Loading {
 
   @override
   String toString() {
-    return 'AttendanceHoursState.loading()';
+    return 'AttendeeDeEnrollState.loading()';
   }
 
   @override
@@ -391,7 +551,7 @@ class _$_Loading extends _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function() loaded,
     required TResult Function(String? error) error,
   }) {
     return loading();
@@ -402,7 +562,7 @@ class _$_Loading extends _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function()? loaded,
     TResult? Function(String? error)? error,
   }) {
     return loading?.call();
@@ -413,7 +573,7 @@ class _$_Loading extends _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function()? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -461,7 +621,7 @@ class _$_Loading extends _Loading {
   }
 }
 
-abstract class _Loading extends AttendanceHoursState {
+abstract class _Loading extends AttendeeDeEnrollState {
   const factory _Loading() = _$_Loading;
   const _Loading._() : super._();
 }
@@ -470,86 +630,44 @@ abstract class _Loading extends AttendanceHoursState {
 abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
-  @useResult
-  $Res call({AttendanceHoursList? attendanceHoursList});
-
-  $AttendanceHoursListCopyWith<$Res>? get attendanceHoursList;
 }
 
 /// @nodoc
 class __$$_LoadedCopyWithImpl<$Res>
-    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Loaded>
+    extends _$AttendeeDeEnrollStateCopyWithImpl<$Res, _$_Loaded>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? attendanceHoursList = freezed,
-  }) {
-    return _then(_$_Loaded(
-      freezed == attendanceHoursList
-          ? _value.attendanceHoursList
-          : attendanceHoursList // ignore: cast_nullable_to_non_nullable
-              as AttendanceHoursList?,
-    ));
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $AttendanceHoursListCopyWith<$Res>? get attendanceHoursList {
-    if (_value.attendanceHoursList == null) {
-      return null;
-    }
-
-    return $AttendanceHoursListCopyWith<$Res>(_value.attendanceHoursList!,
-        (value) {
-      return _then(_value.copyWith(attendanceHoursList: value));
-    });
-  }
 }
 
 /// @nodoc
 
 class _$_Loaded extends _Loaded {
-  const _$_Loaded(this.attendanceHoursList) : super._();
-
-  @override
-  final AttendanceHoursList? attendanceHoursList;
+  const _$_Loaded() : super._();
 
   @override
   String toString() {
-    return 'AttendanceHoursState.loaded(attendanceHoursList: $attendanceHoursList)';
+    return 'AttendeeDeEnrollState.loaded()';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_Loaded &&
-            (identical(other.attendanceHoursList, attendanceHoursList) ||
-                other.attendanceHoursList == attendanceHoursList));
+        (other.runtimeType == runtimeType && other is _$_Loaded);
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, attendanceHoursList);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function() loaded,
     required TResult Function(String? error) error,
   }) {
-    return loaded(attendanceHoursList);
+    return loaded();
   }
 
   @override
@@ -557,10 +675,10 @@ class _$_Loaded extends _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function()? loaded,
     TResult? Function(String? error)? error,
   }) {
-    return loaded?.call(attendanceHoursList);
+    return loaded?.call();
   }
 
   @override
@@ -568,12 +686,12 @@ class _$_Loaded extends _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function()? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(attendanceHoursList);
+      return loaded();
     }
     return orElse();
   }
@@ -616,15 +734,9 @@ class _$_Loaded extends _Loaded {
   }
 }
 
-abstract class _Loaded extends AttendanceHoursState {
-  const factory _Loaded(final AttendanceHoursList? attendanceHoursList) =
-      _$_Loaded;
+abstract class _Loaded extends AttendeeDeEnrollState {
+  const factory _Loaded() = _$_Loaded;
   const _Loaded._() : super._();
-
-  AttendanceHoursList? get attendanceHoursList;
-  @JsonKey(ignore: true)
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -637,7 +749,7 @@ abstract class _$$_ErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$_ErrorCopyWithImpl<$Res>
-    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Error>
+    extends _$AttendeeDeEnrollStateCopyWithImpl<$Res, _$_Error>
     implements _$$_ErrorCopyWith<$Res> {
   __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
       : super(_value, _then);
@@ -666,7 +778,7 @@ class _$_Error extends _Error {
 
   @override
   String toString() {
-    return 'AttendanceHoursState.error(error: $error)';
+    return 'AttendeeDeEnrollState.error(error: $error)';
   }
 
   @override
@@ -691,7 +803,7 @@ class _$_Error extends _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function() loaded,
     required TResult Function(String? error) error,
   }) {
     return error(this.error);
@@ -702,7 +814,7 @@ class _$_Error extends _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function()? loaded,
     TResult? Function(String? error)? error,
   }) {
     return error?.call(this.error);
@@ -713,7 +825,7 @@ class _$_Error extends _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function()? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -761,7 +873,7 @@ class _$_Error extends _Error {
   }
 }
 
-abstract class _Error extends AttendanceHoursState {
+abstract class _Error extends AttendeeDeEnrollState {
   const factory _Error(final String? error) = _$_Error;
   const _Error._() : super._();
 

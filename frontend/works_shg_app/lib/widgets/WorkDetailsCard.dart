@@ -1,6 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:works_shg_app/blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/atoms/button_group.dart';
@@ -8,7 +9,6 @@ import 'package:works_shg_app/widgets/atoms/button_group.dart';
 import '../blocs/attendance/create_attendance_register.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/muster_roll_estimate.dart';
-import '../blocs/muster_rolls/search_muster_roll.dart';
 import '../models/attendance/attendance_registry_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
 import '../utils/constants.dart';
@@ -68,21 +68,21 @@ class WorkDetailsCard extends StatelessWidget {
         list.add(GestureDetector(
           onTap: isSHGInbox
               ? () {
-                  context.read<MusterRollSearchBloc>().add(
+                  context.read<IndividualMusterRollSearchBloc>().add(
                         SearchIndividualMusterRollEvent(
                             id: musterRollsModel!.musterRoll![i].id ?? '',
                             tenantId: musterRollsModel!.musterRoll![i].tenantId
                                 .toString()),
                       );
-                  context.router.push(SHGInboxRoute(
-                      projectDetails: [
-                        detailsList[i],
-                      ],
-                      tenantId:
-                          musterRollsModel!.musterRoll![i].tenantId.toString(),
-                      musterRollNo: musterRollsModel!
-                          .musterRoll![i].musterRollNumber
-                          .toString()));
+                  // context.router.push(SHGInboxRoute(
+                  //     projectDetails: [
+                  //       detailsList[i],
+                  //     ],
+                  //     tenantId:
+                  //         musterRollsModel!.musterRoll![i].tenantId.toString(),
+                  //     musterRollNo: musterRollsModel!
+                  //         .musterRoll![i].musterRollNumber
+                  //         .toString()));
                   context.read<MusterRollEstimateBloc>().add(
                         ViewEstimateMusterRollEvent(
                           tenantId: musterRollsModel!.musterRoll![i].tenantId

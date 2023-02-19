@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
-part of 'attendance_user_search.dart';
+part of 'search_individual_project.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,65 +15,65 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$AttendanceUserSearchEvent {
+mixin _$AttendanceIndividualProjectSearchEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? mobileNumber) search,
-    required TResult Function(List<String>? uuids) uuidSearch,
+    required TResult Function(String id, String tenantId) individualSearch,
     required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? mobileNumber)? search,
-    TResult? Function(List<String>? uuids)? uuidSearch,
+    TResult? Function(String id, String tenantId)? individualSearch,
     TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? mobileNumber)? search,
-    TResult Function(List<String>? uuids)? uuidSearch,
+    TResult Function(String id, String tenantId)? individualSearch,
     TResult Function()? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(SearchAttendanceUserEvent value) search,
-    required TResult Function(SearchAttendanceUserUuidEvent value) uuidSearch,
-    required TResult Function(DisposeSearchAttendanceUserEvent value) dispose,
+    required TResult Function(SearchIndividualAttendanceProjectEvent value)
+        individualSearch,
+    required TResult Function(DisposeIndividualAttendanceRegisterEvent value)
+        dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(SearchAttendanceUserEvent value)? search,
-    TResult? Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
-    TResult? Function(DisposeSearchAttendanceUserEvent value)? dispose,
+    TResult? Function(SearchIndividualAttendanceProjectEvent value)?
+        individualSearch,
+    TResult? Function(DisposeIndividualAttendanceRegisterEvent value)? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(SearchAttendanceUserEvent value)? search,
-    TResult Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
-    TResult Function(DisposeSearchAttendanceUserEvent value)? dispose,
+    TResult Function(SearchIndividualAttendanceProjectEvent value)?
+        individualSearch,
+    TResult Function(DisposeIndividualAttendanceRegisterEvent value)? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AttendanceUserSearchEventCopyWith<$Res> {
-  factory $AttendanceUserSearchEventCopyWith(AttendanceUserSearchEvent value,
-          $Res Function(AttendanceUserSearchEvent) then) =
-      _$AttendanceUserSearchEventCopyWithImpl<$Res, AttendanceUserSearchEvent>;
+abstract class $AttendanceIndividualProjectSearchEventCopyWith<$Res> {
+  factory $AttendanceIndividualProjectSearchEventCopyWith(
+          AttendanceIndividualProjectSearchEvent value,
+          $Res Function(AttendanceIndividualProjectSearchEvent) then) =
+      _$AttendanceIndividualProjectSearchEventCopyWithImpl<$Res,
+          AttendanceIndividualProjectSearchEvent>;
 }
 
 /// @nodoc
-class _$AttendanceUserSearchEventCopyWithImpl<$Res,
-        $Val extends AttendanceUserSearchEvent>
-    implements $AttendanceUserSearchEventCopyWith<$Res> {
-  _$AttendanceUserSearchEventCopyWithImpl(this._value, this._then);
+class _$AttendanceIndividualProjectSearchEventCopyWithImpl<$Res,
+        $Val extends AttendanceIndividualProjectSearchEvent>
+    implements $AttendanceIndividualProjectSearchEventCopyWith<$Res> {
+  _$AttendanceIndividualProjectSearchEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -82,110 +82,122 @@ class _$AttendanceUserSearchEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$SearchAttendanceUserEventCopyWith<$Res> {
-  factory _$$SearchAttendanceUserEventCopyWith(
-          _$SearchAttendanceUserEvent value,
-          $Res Function(_$SearchAttendanceUserEvent) then) =
-      __$$SearchAttendanceUserEventCopyWithImpl<$Res>;
+abstract class _$$SearchIndividualAttendanceProjectEventCopyWith<$Res> {
+  factory _$$SearchIndividualAttendanceProjectEventCopyWith(
+          _$SearchIndividualAttendanceProjectEvent value,
+          $Res Function(_$SearchIndividualAttendanceProjectEvent) then) =
+      __$$SearchIndividualAttendanceProjectEventCopyWithImpl<$Res>;
   @useResult
-  $Res call({String? mobileNumber});
+  $Res call({String id, String tenantId});
 }
 
 /// @nodoc
-class __$$SearchAttendanceUserEventCopyWithImpl<$Res>
-    extends _$AttendanceUserSearchEventCopyWithImpl<$Res,
-        _$SearchAttendanceUserEvent>
-    implements _$$SearchAttendanceUserEventCopyWith<$Res> {
-  __$$SearchAttendanceUserEventCopyWithImpl(_$SearchAttendanceUserEvent _value,
-      $Res Function(_$SearchAttendanceUserEvent) _then)
+class __$$SearchIndividualAttendanceProjectEventCopyWithImpl<$Res>
+    extends _$AttendanceIndividualProjectSearchEventCopyWithImpl<$Res,
+        _$SearchIndividualAttendanceProjectEvent>
+    implements _$$SearchIndividualAttendanceProjectEventCopyWith<$Res> {
+  __$$SearchIndividualAttendanceProjectEventCopyWithImpl(
+      _$SearchIndividualAttendanceProjectEvent _value,
+      $Res Function(_$SearchIndividualAttendanceProjectEvent) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? mobileNumber = freezed,
+    Object? id = null,
+    Object? tenantId = null,
   }) {
-    return _then(_$SearchAttendanceUserEvent(
-      mobileNumber: freezed == mobileNumber
-          ? _value.mobileNumber
-          : mobileNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
+    return _then(_$SearchIndividualAttendanceProjectEvent(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      tenantId: null == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
 /// @nodoc
 
-class _$SearchAttendanceUserEvent
+class _$SearchIndividualAttendanceProjectEvent
     with DiagnosticableTreeMixin
-    implements SearchAttendanceUserEvent {
-  const _$SearchAttendanceUserEvent({this.mobileNumber});
+    implements SearchIndividualAttendanceProjectEvent {
+  const _$SearchIndividualAttendanceProjectEvent(
+      {this.id = '', this.tenantId = ''});
 
   @override
-  final String? mobileNumber;
+  @JsonKey()
+  final String id;
+  @override
+  @JsonKey()
+  final String tenantId;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendanceUserSearchEvent.search(mobileNumber: $mobileNumber)';
+    return 'AttendanceIndividualProjectSearchEvent.individualSearch(id: $id, tenantId: $tenantId)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'AttendanceUserSearchEvent.search'))
-      ..add(DiagnosticsProperty('mobileNumber', mobileNumber));
+      ..add(DiagnosticsProperty(
+          'type', 'AttendanceIndividualProjectSearchEvent.individualSearch'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('tenantId', tenantId));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SearchAttendanceUserEvent &&
-            (identical(other.mobileNumber, mobileNumber) ||
-                other.mobileNumber == mobileNumber));
+            other is _$SearchIndividualAttendanceProjectEvent &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.tenantId, tenantId) ||
+                other.tenantId == tenantId));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, mobileNumber);
+  int get hashCode => Object.hash(runtimeType, id, tenantId);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$SearchAttendanceUserEventCopyWith<_$SearchAttendanceUserEvent>
-      get copyWith => __$$SearchAttendanceUserEventCopyWithImpl<
-          _$SearchAttendanceUserEvent>(this, _$identity);
+  _$$SearchIndividualAttendanceProjectEventCopyWith<
+          _$SearchIndividualAttendanceProjectEvent>
+      get copyWith => __$$SearchIndividualAttendanceProjectEventCopyWithImpl<
+          _$SearchIndividualAttendanceProjectEvent>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? mobileNumber) search,
-    required TResult Function(List<String>? uuids) uuidSearch,
+    required TResult Function(String id, String tenantId) individualSearch,
     required TResult Function() dispose,
   }) {
-    return search(mobileNumber);
+    return individualSearch(id, tenantId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? mobileNumber)? search,
-    TResult? Function(List<String>? uuids)? uuidSearch,
+    TResult? Function(String id, String tenantId)? individualSearch,
     TResult? Function()? dispose,
   }) {
-    return search?.call(mobileNumber);
+    return individualSearch?.call(id, tenantId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? mobileNumber)? search,
-    TResult Function(List<String>? uuids)? uuidSearch,
+    TResult Function(String id, String tenantId)? individualSearch,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
-    if (search != null) {
-      return search(mobileNumber);
+    if (individualSearch != null) {
+      return individualSearch(id, tenantId);
     }
     return orElse();
   }
@@ -193,254 +205,96 @@ class _$SearchAttendanceUserEvent
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(SearchAttendanceUserEvent value) search,
-    required TResult Function(SearchAttendanceUserUuidEvent value) uuidSearch,
-    required TResult Function(DisposeSearchAttendanceUserEvent value) dispose,
+    required TResult Function(SearchIndividualAttendanceProjectEvent value)
+        individualSearch,
+    required TResult Function(DisposeIndividualAttendanceRegisterEvent value)
+        dispose,
   }) {
-    return search(this);
+    return individualSearch(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(SearchAttendanceUserEvent value)? search,
-    TResult? Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
-    TResult? Function(DisposeSearchAttendanceUserEvent value)? dispose,
+    TResult? Function(SearchIndividualAttendanceProjectEvent value)?
+        individualSearch,
+    TResult? Function(DisposeIndividualAttendanceRegisterEvent value)? dispose,
   }) {
-    return search?.call(this);
+    return individualSearch?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(SearchAttendanceUserEvent value)? search,
-    TResult Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
-    TResult Function(DisposeSearchAttendanceUserEvent value)? dispose,
+    TResult Function(SearchIndividualAttendanceProjectEvent value)?
+        individualSearch,
+    TResult Function(DisposeIndividualAttendanceRegisterEvent value)? dispose,
     required TResult orElse(),
   }) {
-    if (search != null) {
-      return search(this);
+    if (individualSearch != null) {
+      return individualSearch(this);
     }
     return orElse();
   }
 }
 
-abstract class SearchAttendanceUserEvent implements AttendanceUserSearchEvent {
-  const factory SearchAttendanceUserEvent({final String? mobileNumber}) =
-      _$SearchAttendanceUserEvent;
+abstract class SearchIndividualAttendanceProjectEvent
+    implements AttendanceIndividualProjectSearchEvent {
+  const factory SearchIndividualAttendanceProjectEvent(
+      {final String id,
+      final String tenantId}) = _$SearchIndividualAttendanceProjectEvent;
 
-  String? get mobileNumber;
+  String get id;
+  String get tenantId;
   @JsonKey(ignore: true)
-  _$$SearchAttendanceUserEventCopyWith<_$SearchAttendanceUserEvent>
+  _$$SearchIndividualAttendanceProjectEventCopyWith<
+          _$SearchIndividualAttendanceProjectEvent>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$SearchAttendanceUserUuidEventCopyWith<$Res> {
-  factory _$$SearchAttendanceUserUuidEventCopyWith(
-          _$SearchAttendanceUserUuidEvent value,
-          $Res Function(_$SearchAttendanceUserUuidEvent) then) =
-      __$$SearchAttendanceUserUuidEventCopyWithImpl<$Res>;
-  @useResult
-  $Res call({List<String>? uuids});
+abstract class _$$DisposeIndividualAttendanceRegisterEventCopyWith<$Res> {
+  factory _$$DisposeIndividualAttendanceRegisterEventCopyWith(
+          _$DisposeIndividualAttendanceRegisterEvent value,
+          $Res Function(_$DisposeIndividualAttendanceRegisterEvent) then) =
+      __$$DisposeIndividualAttendanceRegisterEventCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$SearchAttendanceUserUuidEventCopyWithImpl<$Res>
-    extends _$AttendanceUserSearchEventCopyWithImpl<$Res,
-        _$SearchAttendanceUserUuidEvent>
-    implements _$$SearchAttendanceUserUuidEventCopyWith<$Res> {
-  __$$SearchAttendanceUserUuidEventCopyWithImpl(
-      _$SearchAttendanceUserUuidEvent _value,
-      $Res Function(_$SearchAttendanceUserUuidEvent) _then)
+class __$$DisposeIndividualAttendanceRegisterEventCopyWithImpl<$Res>
+    extends _$AttendanceIndividualProjectSearchEventCopyWithImpl<$Res,
+        _$DisposeIndividualAttendanceRegisterEvent>
+    implements _$$DisposeIndividualAttendanceRegisterEventCopyWith<$Res> {
+  __$$DisposeIndividualAttendanceRegisterEventCopyWithImpl(
+      _$DisposeIndividualAttendanceRegisterEvent _value,
+      $Res Function(_$DisposeIndividualAttendanceRegisterEvent) _then)
       : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? uuids = freezed,
-  }) {
-    return _then(_$SearchAttendanceUserUuidEvent(
-      uuids: freezed == uuids
-          ? _value._uuids
-          : uuids // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-    ));
-  }
 }
 
 /// @nodoc
 
-class _$SearchAttendanceUserUuidEvent
+class _$DisposeIndividualAttendanceRegisterEvent
     with DiagnosticableTreeMixin
-    implements SearchAttendanceUserUuidEvent {
-  const _$SearchAttendanceUserUuidEvent({final List<String>? uuids})
-      : _uuids = uuids;
-
-  final List<String>? _uuids;
-  @override
-  List<String>? get uuids {
-    final value = _uuids;
-    if (value == null) return null;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
+    implements DisposeIndividualAttendanceRegisterEvent {
+  const _$DisposeIndividualAttendanceRegisterEvent();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendanceUserSearchEvent.uuidSearch(uuids: $uuids)';
+    return 'AttendanceIndividualProjectSearchEvent.dispose()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AttendanceUserSearchEvent.uuidSearch'))
-      ..add(DiagnosticsProperty('uuids', uuids));
+    properties.add(DiagnosticsProperty(
+        'type', 'AttendanceIndividualProjectSearchEvent.dispose'));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SearchAttendanceUserUuidEvent &&
-            const DeepCollectionEquality().equals(other._uuids, _uuids));
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_uuids));
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$SearchAttendanceUserUuidEventCopyWith<_$SearchAttendanceUserUuidEvent>
-      get copyWith => __$$SearchAttendanceUserUuidEventCopyWithImpl<
-          _$SearchAttendanceUserUuidEvent>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String? mobileNumber) search,
-    required TResult Function(List<String>? uuids) uuidSearch,
-    required TResult Function() dispose,
-  }) {
-    return uuidSearch(uuids);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? mobileNumber)? search,
-    TResult? Function(List<String>? uuids)? uuidSearch,
-    TResult? Function()? dispose,
-  }) {
-    return uuidSearch?.call(uuids);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? mobileNumber)? search,
-    TResult Function(List<String>? uuids)? uuidSearch,
-    TResult Function()? dispose,
-    required TResult orElse(),
-  }) {
-    if (uuidSearch != null) {
-      return uuidSearch(uuids);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(SearchAttendanceUserEvent value) search,
-    required TResult Function(SearchAttendanceUserUuidEvent value) uuidSearch,
-    required TResult Function(DisposeSearchAttendanceUserEvent value) dispose,
-  }) {
-    return uuidSearch(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(SearchAttendanceUserEvent value)? search,
-    TResult? Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
-    TResult? Function(DisposeSearchAttendanceUserEvent value)? dispose,
-  }) {
-    return uuidSearch?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(SearchAttendanceUserEvent value)? search,
-    TResult Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
-    TResult Function(DisposeSearchAttendanceUserEvent value)? dispose,
-    required TResult orElse(),
-  }) {
-    if (uuidSearch != null) {
-      return uuidSearch(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class SearchAttendanceUserUuidEvent
-    implements AttendanceUserSearchEvent {
-  const factory SearchAttendanceUserUuidEvent({final List<String>? uuids}) =
-      _$SearchAttendanceUserUuidEvent;
-
-  List<String>? get uuids;
-  @JsonKey(ignore: true)
-  _$$SearchAttendanceUserUuidEventCopyWith<_$SearchAttendanceUserUuidEvent>
-      get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$DisposeSearchAttendanceUserEventCopyWith<$Res> {
-  factory _$$DisposeSearchAttendanceUserEventCopyWith(
-          _$DisposeSearchAttendanceUserEvent value,
-          $Res Function(_$DisposeSearchAttendanceUserEvent) then) =
-      __$$DisposeSearchAttendanceUserEventCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$DisposeSearchAttendanceUserEventCopyWithImpl<$Res>
-    extends _$AttendanceUserSearchEventCopyWithImpl<$Res,
-        _$DisposeSearchAttendanceUserEvent>
-    implements _$$DisposeSearchAttendanceUserEventCopyWith<$Res> {
-  __$$DisposeSearchAttendanceUserEventCopyWithImpl(
-      _$DisposeSearchAttendanceUserEvent _value,
-      $Res Function(_$DisposeSearchAttendanceUserEvent) _then)
-      : super(_value, _then);
-}
-
-/// @nodoc
-
-class _$DisposeSearchAttendanceUserEvent
-    with DiagnosticableTreeMixin
-    implements DisposeSearchAttendanceUserEvent {
-  const _$DisposeSearchAttendanceUserEvent();
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendanceUserSearchEvent.dispose()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-        .add(DiagnosticsProperty('type', 'AttendanceUserSearchEvent.dispose'));
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$DisposeSearchAttendanceUserEvent);
+            other is _$DisposeIndividualAttendanceRegisterEvent);
   }
 
   @override
@@ -449,8 +303,7 @@ class _$DisposeSearchAttendanceUserEvent
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? mobileNumber) search,
-    required TResult Function(List<String>? uuids) uuidSearch,
+    required TResult Function(String id, String tenantId) individualSearch,
     required TResult Function() dispose,
   }) {
     return dispose();
@@ -459,8 +312,7 @@ class _$DisposeSearchAttendanceUserEvent
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? mobileNumber)? search,
-    TResult? Function(List<String>? uuids)? uuidSearch,
+    TResult? Function(String id, String tenantId)? individualSearch,
     TResult? Function()? dispose,
   }) {
     return dispose?.call();
@@ -469,8 +321,7 @@ class _$DisposeSearchAttendanceUserEvent
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? mobileNumber)? search,
-    TResult Function(List<String>? uuids)? uuidSearch,
+    TResult Function(String id, String tenantId)? individualSearch,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
@@ -483,9 +334,10 @@ class _$DisposeSearchAttendanceUserEvent
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(SearchAttendanceUserEvent value) search,
-    required TResult Function(SearchAttendanceUserUuidEvent value) uuidSearch,
-    required TResult Function(DisposeSearchAttendanceUserEvent value) dispose,
+    required TResult Function(SearchIndividualAttendanceProjectEvent value)
+        individualSearch,
+    required TResult Function(DisposeIndividualAttendanceRegisterEvent value)
+        dispose,
   }) {
     return dispose(this);
   }
@@ -493,9 +345,9 @@ class _$DisposeSearchAttendanceUserEvent
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(SearchAttendanceUserEvent value)? search,
-    TResult? Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
-    TResult? Function(DisposeSearchAttendanceUserEvent value)? dispose,
+    TResult? Function(SearchIndividualAttendanceProjectEvent value)?
+        individualSearch,
+    TResult? Function(DisposeIndividualAttendanceRegisterEvent value)? dispose,
   }) {
     return dispose?.call(this);
   }
@@ -503,9 +355,9 @@ class _$DisposeSearchAttendanceUserEvent
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(SearchAttendanceUserEvent value)? search,
-    TResult Function(SearchAttendanceUserUuidEvent value)? uuidSearch,
-    TResult Function(DisposeSearchAttendanceUserEvent value)? dispose,
+    TResult Function(SearchIndividualAttendanceProjectEvent value)?
+        individualSearch,
+    TResult Function(DisposeIndividualAttendanceRegisterEvent value)? dispose,
     required TResult orElse(),
   }) {
     if (dispose != null) {
@@ -515,19 +367,21 @@ class _$DisposeSearchAttendanceUserEvent
   }
 }
 
-abstract class DisposeSearchAttendanceUserEvent
-    implements AttendanceUserSearchEvent {
-  const factory DisposeSearchAttendanceUserEvent() =
-      _$DisposeSearchAttendanceUserEvent;
+abstract class DisposeIndividualAttendanceRegisterEvent
+    implements AttendanceIndividualProjectSearchEvent {
+  const factory DisposeIndividualAttendanceRegisterEvent() =
+      _$DisposeIndividualAttendanceRegisterEvent;
 }
 
 /// @nodoc
-mixin _$AttendanceUserSearchState {
+mixin _$AttendanceIndividualProjectSearchState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(UserSearchModel? userSearchModel) loaded,
+    required TResult Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)
+        loaded,
     required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -535,7 +389,9 @@ mixin _$AttendanceUserSearchState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(UserSearchModel? userSearchModel)? loaded,
+    TResult? Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)?
+        loaded,
     TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -543,7 +399,9 @@ mixin _$AttendanceUserSearchState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(UserSearchModel? userSearchModel)? loaded,
+    TResult Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
@@ -552,7 +410,7 @@ mixin _$AttendanceUserSearchState {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_IndividualLoaded value) loaded,
     required TResult Function(_Error value) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -560,7 +418,7 @@ mixin _$AttendanceUserSearchState {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_IndividualLoaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -568,7 +426,7 @@ mixin _$AttendanceUserSearchState {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
+    TResult Function(_IndividualLoaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) =>
@@ -576,17 +434,19 @@ mixin _$AttendanceUserSearchState {
 }
 
 /// @nodoc
-abstract class $AttendanceUserSearchStateCopyWith<$Res> {
-  factory $AttendanceUserSearchStateCopyWith(AttendanceUserSearchState value,
-          $Res Function(AttendanceUserSearchState) then) =
-      _$AttendanceUserSearchStateCopyWithImpl<$Res, AttendanceUserSearchState>;
+abstract class $AttendanceIndividualProjectSearchStateCopyWith<$Res> {
+  factory $AttendanceIndividualProjectSearchStateCopyWith(
+          AttendanceIndividualProjectSearchState value,
+          $Res Function(AttendanceIndividualProjectSearchState) then) =
+      _$AttendanceIndividualProjectSearchStateCopyWithImpl<$Res,
+          AttendanceIndividualProjectSearchState>;
 }
 
 /// @nodoc
-class _$AttendanceUserSearchStateCopyWithImpl<$Res,
-        $Val extends AttendanceUserSearchState>
-    implements $AttendanceUserSearchStateCopyWith<$Res> {
-  _$AttendanceUserSearchStateCopyWithImpl(this._value, this._then);
+class _$AttendanceIndividualProjectSearchStateCopyWithImpl<$Res,
+        $Val extends AttendanceIndividualProjectSearchState>
+    implements $AttendanceIndividualProjectSearchStateCopyWith<$Res> {
+  _$AttendanceIndividualProjectSearchStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -603,8 +463,8 @@ abstract class _$$_InitialCopyWith<$Res> {
 
 /// @nodoc
 class __$$_InitialCopyWithImpl<$Res>
-    extends _$AttendanceUserSearchStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
+    extends _$AttendanceIndividualProjectSearchStateCopyWithImpl<$Res,
+        _$_Initial> implements _$$_InitialCopyWith<$Res> {
   __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
       : super(_value, _then);
 }
@@ -616,14 +476,14 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendanceUserSearchState.initial()';
+    return 'AttendanceIndividualProjectSearchState.initial()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties
-        .add(DiagnosticsProperty('type', 'AttendanceUserSearchState.initial'));
+    properties.add(DiagnosticsProperty(
+        'type', 'AttendanceIndividualProjectSearchState.initial'));
   }
 
   @override
@@ -640,7 +500,9 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(UserSearchModel? userSearchModel) loaded,
+    required TResult Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return initial();
@@ -651,7 +513,9 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(UserSearchModel? userSearchModel)? loaded,
+    TResult? Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
     return initial?.call();
@@ -662,7 +526,9 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(UserSearchModel? userSearchModel)? loaded,
+    TResult Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -677,7 +543,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_IndividualLoaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
     return initial(this);
@@ -688,7 +554,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_IndividualLoaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
@@ -699,7 +565,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
+    TResult Function(_IndividualLoaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -710,7 +576,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Initial extends AttendanceUserSearchState {
+abstract class _Initial extends AttendanceIndividualProjectSearchState {
   const factory _Initial() = _$_Initial;
   const _Initial._() : super._();
 }
@@ -724,8 +590,8 @@ abstract class _$$_LoadingCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadingCopyWithImpl<$Res>
-    extends _$AttendanceUserSearchStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
+    extends _$AttendanceIndividualProjectSearchStateCopyWithImpl<$Res,
+        _$_Loading> implements _$$_LoadingCopyWith<$Res> {
   __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
       : super(_value, _then);
 }
@@ -737,14 +603,14 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendanceUserSearchState.loading()';
+    return 'AttendanceIndividualProjectSearchState.loading()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties
-        .add(DiagnosticsProperty('type', 'AttendanceUserSearchState.loading'));
+    properties.add(DiagnosticsProperty(
+        'type', 'AttendanceIndividualProjectSearchState.loading'));
   }
 
   @override
@@ -761,7 +627,9 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(UserSearchModel? userSearchModel) loaded,
+    required TResult Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return loading();
@@ -772,7 +640,9 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(UserSearchModel? userSearchModel)? loaded,
+    TResult? Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
     return loading?.call();
@@ -783,7 +653,9 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(UserSearchModel? userSearchModel)? loaded,
+    TResult Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -798,7 +670,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_IndividualLoaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
     return loading(this);
@@ -809,7 +681,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_IndividualLoaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
     return loading?.call(this);
@@ -820,7 +692,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
+    TResult Function(_IndividualLoaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -831,102 +703,115 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Loading extends AttendanceUserSearchState {
+abstract class _Loading extends AttendanceIndividualProjectSearchState {
   const factory _Loading() = _$_Loading;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$_IndividualLoadedCopyWith<$Res> {
+  factory _$$_IndividualLoadedCopyWith(
+          _$_IndividualLoaded value, $Res Function(_$_IndividualLoaded) then) =
+      __$$_IndividualLoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({UserSearchModel? userSearchModel});
+  $Res call({AttendanceRegistersModel? individualAttendanceRegisterModel});
 
-  $UserSearchModelCopyWith<$Res>? get userSearchModel;
+  $AttendanceRegistersModelCopyWith<$Res>?
+      get individualAttendanceRegisterModel;
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$AttendanceUserSearchStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$_IndividualLoadedCopyWithImpl<$Res>
+    extends _$AttendanceIndividualProjectSearchStateCopyWithImpl<$Res,
+        _$_IndividualLoaded> implements _$$_IndividualLoadedCopyWith<$Res> {
+  __$$_IndividualLoadedCopyWithImpl(
+      _$_IndividualLoaded _value, $Res Function(_$_IndividualLoaded) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userSearchModel = freezed,
+    Object? individualAttendanceRegisterModel = freezed,
   }) {
-    return _then(_$_Loaded(
-      freezed == userSearchModel
-          ? _value.userSearchModel
-          : userSearchModel // ignore: cast_nullable_to_non_nullable
-              as UserSearchModel?,
+    return _then(_$_IndividualLoaded(
+      freezed == individualAttendanceRegisterModel
+          ? _value.individualAttendanceRegisterModel
+          : individualAttendanceRegisterModel // ignore: cast_nullable_to_non_nullable
+              as AttendanceRegistersModel?,
     ));
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $UserSearchModelCopyWith<$Res>? get userSearchModel {
-    if (_value.userSearchModel == null) {
+  $AttendanceRegistersModelCopyWith<$Res>?
+      get individualAttendanceRegisterModel {
+    if (_value.individualAttendanceRegisterModel == null) {
       return null;
     }
 
-    return $UserSearchModelCopyWith<$Res>(_value.userSearchModel!, (value) {
-      return _then(_value.copyWith(userSearchModel: value));
+    return $AttendanceRegistersModelCopyWith<$Res>(
+        _value.individualAttendanceRegisterModel!, (value) {
+      return _then(_value.copyWith(individualAttendanceRegisterModel: value));
     });
   }
 }
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
-  const _$_Loaded(this.userSearchModel) : super._();
+class _$_IndividualLoaded extends _IndividualLoaded
+    with DiagnosticableTreeMixin {
+  const _$_IndividualLoaded(this.individualAttendanceRegisterModel) : super._();
 
   @override
-  final UserSearchModel? userSearchModel;
+  final AttendanceRegistersModel? individualAttendanceRegisterModel;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendanceUserSearchState.loaded(userSearchModel: $userSearchModel)';
+    return 'AttendanceIndividualProjectSearchState.loaded(individualAttendanceRegisterModel: $individualAttendanceRegisterModel)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'AttendanceUserSearchState.loaded'))
-      ..add(DiagnosticsProperty('userSearchModel', userSearchModel));
+      ..add(DiagnosticsProperty(
+          'type', 'AttendanceIndividualProjectSearchState.loaded'))
+      ..add(DiagnosticsProperty('individualAttendanceRegisterModel',
+          individualAttendanceRegisterModel));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Loaded &&
-            (identical(other.userSearchModel, userSearchModel) ||
-                other.userSearchModel == userSearchModel));
+            other is _$_IndividualLoaded &&
+            (identical(other.individualAttendanceRegisterModel,
+                    individualAttendanceRegisterModel) ||
+                other.individualAttendanceRegisterModel ==
+                    individualAttendanceRegisterModel));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, userSearchModel);
+  int get hashCode =>
+      Object.hash(runtimeType, individualAttendanceRegisterModel);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+  _$$_IndividualLoadedCopyWith<_$_IndividualLoaded> get copyWith =>
+      __$$_IndividualLoadedCopyWithImpl<_$_IndividualLoaded>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(UserSearchModel? userSearchModel) loaded,
+    required TResult Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)
+        loaded,
     required TResult Function(String? error) error,
   }) {
-    return loaded(userSearchModel);
+    return loaded(individualAttendanceRegisterModel);
   }
 
   @override
@@ -934,10 +819,12 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(UserSearchModel? userSearchModel)? loaded,
+    TResult? Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
-    return loaded?.call(userSearchModel);
+    return loaded?.call(individualAttendanceRegisterModel);
   }
 
   @override
@@ -945,12 +832,14 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(UserSearchModel? userSearchModel)? loaded,
+    TResult Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(userSearchModel);
+      return loaded(individualAttendanceRegisterModel);
     }
     return orElse();
   }
@@ -960,7 +849,7 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_IndividualLoaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
     return loaded(this);
@@ -971,7 +860,7 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_IndividualLoaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
     return loaded?.call(this);
@@ -982,7 +871,7 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
+    TResult Function(_IndividualLoaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -993,13 +882,16 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Loaded extends AttendanceUserSearchState {
-  const factory _Loaded(final UserSearchModel? userSearchModel) = _$_Loaded;
-  const _Loaded._() : super._();
+abstract class _IndividualLoaded
+    extends AttendanceIndividualProjectSearchState {
+  const factory _IndividualLoaded(
+          final AttendanceRegistersModel? individualAttendanceRegisterModel) =
+      _$_IndividualLoaded;
+  const _IndividualLoaded._() : super._();
 
-  UserSearchModel? get userSearchModel;
+  AttendanceRegistersModel? get individualAttendanceRegisterModel;
   @JsonKey(ignore: true)
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+  _$$_IndividualLoadedCopyWith<_$_IndividualLoaded> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1013,7 +905,7 @@ abstract class _$$_ErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$_ErrorCopyWithImpl<$Res>
-    extends _$AttendanceUserSearchStateCopyWithImpl<$Res, _$_Error>
+    extends _$AttendanceIndividualProjectSearchStateCopyWithImpl<$Res, _$_Error>
     implements _$$_ErrorCopyWith<$Res> {
   __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
       : super(_value, _then);
@@ -1042,14 +934,15 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AttendanceUserSearchState.error(error: $error)';
+    return 'AttendanceIndividualProjectSearchState.error(error: $error)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'AttendanceUserSearchState.error'))
+      ..add(DiagnosticsProperty(
+          'type', 'AttendanceIndividualProjectSearchState.error'))
       ..add(DiagnosticsProperty('error', error));
   }
 
@@ -1075,7 +968,9 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(UserSearchModel? userSearchModel) loaded,
+    required TResult Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return error(this.error);
@@ -1086,7 +981,9 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(UserSearchModel? userSearchModel)? loaded,
+    TResult? Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
     return error?.call(this.error);
@@ -1097,7 +994,9 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(UserSearchModel? userSearchModel)? loaded,
+    TResult Function(
+            AttendanceRegistersModel? individualAttendanceRegisterModel)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -1112,7 +1011,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_IndividualLoaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
     return error(this);
@@ -1123,7 +1022,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_IndividualLoaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
     return error?.call(this);
@@ -1134,7 +1033,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
+    TResult Function(_IndividualLoaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -1145,7 +1044,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Error extends AttendanceUserSearchState {
+abstract class _Error extends AttendanceIndividualProjectSearchState {
   const factory _Error(final String? error) = _$_Error;
   const _Error._() : super._();
 

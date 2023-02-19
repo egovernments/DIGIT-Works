@@ -1,6 +1,5 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -16,7 +15,8 @@ import 'package:works_shg_app/widgets/molecules/digit_table.dart' as shg_app;
 
 import '../blocs/attendance/attendance_user_search.dart';
 import '../blocs/attendance/create_attendee.dart';
-import '../blocs/attendance/search_projects.dart';
+import '../blocs/attendance/de_enroll_attendee.dart';
+import '../blocs/attendance/search_projects/search_individual_project.dart';
 import '../blocs/localization/app_localization.dart';
 import '../models/user_search/user_search_model.dart';
 import '../router/app_router.dart';
@@ -52,8 +52,13 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   List<Map<String, dynamic>> userList = [];
   List<Map<String, dynamic>> filteredUserList = [];
   List<Map<String, dynamic>> addToTableList = [];
+  List<Map<String, dynamic>> attendeeTableList = [];
   List<TableDataModel> userTableList = [];
-  List<Map<String, dynamic>> attendeePayLoadList = [];
+  List<Map<String, dynamic>> createAttendeePayLoadList = [];
+  List<Map<String, dynamic>> deleteAttendeePayLoadList = [];
+  bool searchUser = false;
+  List<Map<String, dynamic>> existingAttendeeList = [];
+  var tableData;
 
   @override
   void initState() {
@@ -61,12 +66,22 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
     super.initState();
   }
 
-  afterViewBuild() {
-    context.read<AttendanceProjectsSearchBloc>().add(
+  afterViewBuild() async {
+    context.read<AttendanceIndividualProjectSearchBloc>().add(
           SearchIndividualAttendanceProjectEvent(
               id: widget.registerId ?? '',
               tenantId: widget.tenantId.toString()),
         );
+    context.read<AttendanceUserSearchBloc>().add(
+          const DisposeSearchAttendanceUserEvent(),
+        );
+    context.read<AttendeeCreateBloc>().add(
+          const CreateAttendeeDisposeEvent(),
+        );
+    context.read<AttendeeDeEnrollBloc>().add(
+          const DeEnrollAttendeeDisposeEvent(),
+        );
+    await Future.delayed(const Duration(seconds: 2));
   }
 
   @override
@@ -102,6 +117,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       height: 20,
                     ),
                     Container(
+                        alignment: Alignment.centerLeft,
                         margin: const EdgeInsets.all(8.0),
                         child: AutoCompleteSearchBar(
                           hintText: AppLocalizations.of(context)
@@ -122,169 +138,317 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                     const SizedBox(
                       height: 20,
                     ),
-                    BlocBuilder<AttendanceProjectsSearchBloc,
-                            AttendanceProjectsSearchState>(
+                    BlocBuilder<AttendanceIndividualProjectSearchBloc,
+                            AttendanceIndividualProjectSearchState>(
                         builder: (context, registerState) {
-                      if (registerState.individualAttendanceRegisterModel
-                                  ?.attendanceRegister !=
-                              null &&
-                          registerState.individualAttendanceRegisterModel!
-                              .attendanceRegister!.isNotEmpty) {
-                        if (registerState
-                                    .individualAttendanceRegisterModel
-                                    ?.attendanceRegister!
-                                    .first
-                                    .attendeesEntries !=
-                                null &&
-                            registerState
-                                .individualAttendanceRegisterModel!
-                                .attendanceRegister!
-                                .first
-                                .attendeesEntries!
-                                .isNotEmpty) {
-                          context.read<AttendanceUserSearchBloc>().add(
-                                SearchAttendanceUserUuidEvent(
-                                    uuids: registerState
-                                        .individualAttendanceRegisterModel!
+                      return registerState.maybeWhen(
+                          loading: () => Loaders.circularLoader(context),
+                          loaded: (AttendanceRegistersModel?
+                              individualAttendanceRegisterModel) {
+                            if (individualAttendanceRegisterModel!
+                                .attendanceRegister!.isNotEmpty) {
+                              if (individualAttendanceRegisterModel
+                                          .attendanceRegister!
+                                          .first
+                                          .attendeesEntries !=
+                                      null &&
+                                  individualAttendanceRegisterModel
+                                      .attendanceRegister!
+                                      .first
+                                      .attendeesEntries!
+                                      .where((e) =>
+                                          e.denrollmentDate == null ||
+                                          !(e.denrollmentDate! <=
+                                              DateTime.now()
+                                                  .millisecondsSinceEpoch))
+                                      .toList()
+                                      .isNotEmpty) {
+                                existingAttendeeList =
+                                    individualAttendanceRegisterModel!
                                         .attendanceRegister!
                                         .first
-                                        .attendeesEntries
-                                        ?.map((e) => e.individualId.toString())
-                                        .toList()),
-                              );
-                        }
-                        return BlocBuilder<AttendanceUserSearchBloc,
-                                AttendanceUserSearchState>(
-                            builder: (context, state) {
-                          return state.maybeWhen(
-                              loading: () => Loaders.circularLoader(context),
-                              loaded: (UserSearchModel? userSearchModel) {
-                                userList = userSearchModel!.user!.isNotEmpty
-                                    ? userSearchModel!.user!
-                                        .map((e) => {
-                                              "name": e.name,
-                                              "aadhaar": e.uuid,
-                                              "bankNumber": e.mobileNumber,
-                                              "uuid": e.uuid,
-                                              "mobileNumber": e.mobileNumber,
-                                              "tenantId": e.tenantId
-                                            })
-                                        .toList()
-                                    : [];
+                                        .attendeesEntries!
+                                        .where((att) =>
+                                            att.denrollmentDate == null ||
+                                            !(att.denrollmentDate! <=
+                                                DateTime.now()
+                                                    .millisecondsSinceEpoch))
+                                        .map((e) =>
+                                            {"uuid": e.individualId.toString()})
+                                        .toList();
+                                context.read<AttendanceUserSearchBloc>().add(
+                                      SearchAttendanceUserUuidEvent(
+                                          uuids: individualAttendanceRegisterModel!
+                                              .attendanceRegister!
+                                              .first
+                                              .attendeesEntries
+                                              ?.where((att) =>
+                                                  att.denrollmentDate == null ||
+                                                  !(att.denrollmentDate! <=
+                                                      DateTime.now()
+                                                          .millisecondsSinceEpoch))
+                                              .map((e) =>
+                                                  e.individualId.toString())
+                                              .toList()),
+                                    );
+                              }
 
-                                attendeePayLoadList = addToTableList.isNotEmpty
-                                    ? addToTableList
-                                        .map((e) => {
-                                              "registerId": widget
-                                                  .attendanceRegister?.id
-                                                  .toString(),
-                                              "individualId": e["uuid"],
-                                              "tenantId": e["tenantId"]
-                                            })
-                                        .toList()
-                                    : [];
-                                userTableList = addToTableList.isNotEmpty
-                                    ? addToTableList
-                                        .map((e) => TableDataModel.fromJson(e))
-                                        .toList()
-                                    : [];
-                                var tableData =
-                                    getAttendanceData(userTableList);
-                                return addToTableList.isNotEmpty
-                                    ? Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                            LayoutBuilder(builder:
-                                                (context, constraints) {
-                                              var width = constraints.maxWidth <
-                                                      760
-                                                  ? 120.0
-                                                  : (constraints.maxWidth / 5);
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: shg_app.DigitTable(
-                                                  headerList: headerList,
-                                                  tableData: tableData,
-                                                  leftColumnWidth: width,
-                                                  rightColumnWidth: width * 3,
-                                                  height: 58 +
-                                                      (52.0 * tableData.length),
-                                                ),
-                                              );
-                                            }),
-                                          ])
-                                    : const EmptyImage();
-                              },
-                              orElse: () => Container());
-                        });
-                      } else {
-                        return const EmptyImage();
-                      }
+                              return BlocBuilder<AttendanceUserSearchBloc,
+                                      AttendanceUserSearchState>(
+                                  builder: (context, userState) {
+                                return userState.maybeWhen(
+                                    loading: () =>
+                                        Loaders.circularLoader(context),
+                                    loaded: (UserSearchModel? userSearchModel) {
+                                      userList =
+                                          userSearchModel!.user!.isNotEmpty
+                                              ? userSearchModel!.user!
+                                                  .map((e) => {
+                                                        "name": e.name,
+                                                        "aadhaar": e.uuid,
+                                                        "bankNumber":
+                                                            e.mobileNumber,
+                                                        "uuid": e.uuid,
+                                                        "mobileNumber":
+                                                            e.mobileNumber,
+                                                        "tenantId": e.tenantId
+                                                      })
+                                                  .toList()
+                                              : [];
+                                      if (userList.isNotEmpty) {
+                                        for (var user in userList) {
+                                          var userToAdd = {
+                                            "name": user["name"],
+                                            "aadhaar": user["aadhaar"],
+                                            "bankNumber": user["bankNumber"],
+                                            "uuid": user["uuid"],
+                                            "mobileNumber":
+                                                user["mobileNumber"],
+                                            "tenantId": user["tenantId"]
+                                          };
+                                          bool hasDuplicate = attendeeTableList
+                                              .where((e) =>
+                                                  e["uuid"] == user["uuid"])
+                                              .isNotEmpty;
+
+                                          if (!hasDuplicate && !searchUser) {
+                                            print(
+                                                '!hasDuplicate && !searchUser');
+                                            attendeeTableList.add(userToAdd);
+                                          }
+                                        }
+                                        userTableList = attendeeTableList
+                                                .isNotEmpty
+                                            ? attendeeTableList
+                                                .map((e) =>
+                                                    TableDataModel.fromJson(e))
+                                                .toList()
+                                            : [];
+                                        tableData =
+                                            getAttendanceData(userTableList);
+                                      }
+                                      return userTableList.isNotEmpty ||
+                                              deleteAttendeePayLoadList
+                                                  .isNotEmpty
+                                          ? Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                  LayoutBuilder(builder:
+                                                      (context, constraints) {
+                                                    var width =
+                                                        constraints.maxWidth <
+                                                                760
+                                                            ? 120.0
+                                                            : (constraints
+                                                                    .maxWidth /
+                                                                5);
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: shg_app.DigitTable(
+                                                        headerList: headerList,
+                                                        tableData: tableData,
+                                                        leftColumnWidth: width,
+                                                        rightColumnWidth:
+                                                            width * 2.5,
+                                                        height: 58 +
+                                                            (52.0 *
+                                                                (tableData
+                                                                    .length + 1)),
+                                                      ),
+                                                    );
+                                                  }),
+                                                  BlocListener<
+                                                      AttendeeCreateBloc,
+                                                      AttendeeCreateState>(
+                                                    listener:
+                                                        (context, createState) {
+                                                      createState.maybeWhen(
+                                                          loaded: () {
+                                                            Notifiers.getToastMessage(
+                                                                context,
+                                                                AppLocalizations.of(
+                                                                        context)
+                                                                    .translate(i18
+                                                                        .attendanceMgmt
+                                                                        .attendeeCreateSuccess),
+                                                                'SUCCESS');
+                                                          },
+                                                          error:
+                                                              (String? error) {
+                                                            Notifiers.getToastMessage(
+                                                                context,
+                                                                AppLocalizations.of(
+                                                                        context)
+                                                                    .translate(error
+                                                                        .toString()),
+                                                                'ERROR');
+                                                          },
+                                                          orElse: () {});
+                                                    },
+                                                    child: BlocListener<
+                                                        AttendeeDeEnrollBloc,
+                                                        AttendeeDeEnrollState>(
+                                                      listener: (context,
+                                                          deEnrollState) {
+                                                        deEnrollState.maybeWhen(
+                                                            loaded: () {
+                                                              Notifiers.getToastMessage(
+                                                                  context,
+                                                                  AppLocalizations.of(
+                                                                          context)
+                                                                      .translate(i18
+                                                                          .attendanceMgmt
+                                                                          .attendeeDeEnrollSuccess),
+                                                                  'SUCCESS');
+                                                            },
+                                                            error: (String?
+                                                                error) {
+                                                              Notifiers.getToastMessage(
+                                                                  context,
+                                                                  AppLocalizations.of(
+                                                                          context)
+                                                                      .translate(
+                                                                          error
+                                                                              .toString()),
+                                                                  'ERROR');
+                                                            },
+                                                            orElse: () =>
+                                                                Container());
+                                                      },
+                                                      child: Container(),
+                                                    ),
+                                                  ),
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.bottomCenter,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        left: 8.0,
+                                                        right: 8.0,
+                                                      ),
+                                                      child: SizedBox(
+                                                        height: 50,
+                                                        child:
+                                                            DigitElevatedButton(
+                                                          onPressed: createAttendeePayLoadList
+                                                                      .isEmpty &&
+                                                                  deleteAttendeePayLoadList
+                                                                      .isEmpty
+                                                              ? null
+                                                              : () {
+                                                                  if (createAttendeePayLoadList
+                                                                          .isNotEmpty &&
+                                                                      deleteAttendeePayLoadList
+                                                                          .isNotEmpty) {
+                                                                    context
+                                                                        .read<
+                                                                            AttendeeCreateBloc>()
+                                                                        .add(
+                                                                          CreateAttendeeEvent(
+                                                                              attendeeList: createAttendeePayLoadList),
+                                                                        );
+                                                                    context
+                                                                        .read<
+                                                                            AttendeeDeEnrollBloc>()
+                                                                        .add(
+                                                                          DeEnrollAttendeeEvent(
+                                                                              attendeeList: deleteAttendeePayLoadList),
+                                                                        );
+                                                                  } else if (createAttendeePayLoadList
+                                                                          .isNotEmpty &&
+                                                                      deleteAttendeePayLoadList
+                                                                          .isEmpty) {
+                                                                    context
+                                                                        .read<
+                                                                            AttendeeCreateBloc>()
+                                                                        .add(
+                                                                          CreateAttendeeEvent(
+                                                                              attendeeList: createAttendeePayLoadList),
+                                                                        );
+                                                                  } else if (deleteAttendeePayLoadList
+                                                                          .isNotEmpty &&
+                                                                      createAttendeePayLoadList
+                                                                          .isEmpty) {
+                                                                    context
+                                                                        .read<
+                                                                            AttendeeDeEnrollBloc>()
+                                                                        .add(
+                                                                          DeEnrollAttendeeEvent(
+                                                                              attendeeList: deleteAttendeePayLoadList),
+                                                                        );
+                                                                  } else {}
+                                                                  context.router
+                                                                      .push(
+                                                                          const HomeRoute());
+                                                                },
+                                                          child: Text(
+                                                              AppLocalizations.of(
+                                                                      context)
+                                                                  .translate(i18
+                                                                      .common
+                                                                      .submit),
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .titleMedium!
+                                                                  .apply(
+                                                                      color: Colors
+                                                                          .white)),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ])
+                                          : const EmptyImage(
+                                              align: Alignment.center);
+                                    },
+                                    error: (String? error) =>
+                                        Notifiers.getToastMessage(
+                                            context,
+                                            AppLocalizations.of(context)
+                                                .translate(error.toString()),
+                                            'ERROR'),
+                                    initial: () => const EmptyImage(
+                                          align: Alignment.center,
+                                        ),
+                                    orElse: () => Container());
+                              });
+                            } else {
+                              return const EmptyImage(align: Alignment.center);
+                            }
+                          },
+                          error: (String? error) => Notifiers.getToastMessage(
+                              context, error.toString(), 'ERROR'),
+                          orElse: () => Container());
                     })
                   ]))
             ]),
           ),
-          BlocBuilder<AttendeeCreateBloc, AttendeeCreateState>(
-              builder: (context, state) {
-            SchedulerBinding.instance.addPostFrameCallback((_) {
-              state.maybeWhen(
-                  error: () {
-                    Notifiers.getToastMessage(
-                        context,
-                        AppLocalizations.of(context).translate(
-                            i18.attendanceMgmt.attendanceCreateFailed),
-                        'ERROR');
-                  },
-                  loaded: () {
-                    Notifiers.getToastMessage(
-                        context,
-                        AppLocalizations.of(context).translate(
-                            i18.attendanceMgmt.attendanceCreateSuccess),
-                        'SUCCESS');
-                  },
-                  orElse: () => Container());
-            });
-            return Container();
-          }),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 8.0,
-                right: 8.0,
-              ),
-              child: SizedBox(
-                height: 50,
-                child: DigitElevatedButton(
-                  onPressed: () {
-                    context.read<AttendeeCreateBloc>().add(
-                          CreateAttendeeEvent(
-                              attendeeList: attendeePayLoadList),
-                        );
-
-                    context.router.push(const HomeRoute());
-                    // if (!state.loading) {
-
-                    // }
-                  },
-                  child: Text(
-                      AppLocalizations.of(context).translate(i18.common.submit),
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .apply(color: Colors.white)),
-                ),
-              ),
-            ),
-          )
-        ])
-        //   } else {
-        //     return Loaders.circularLoader(context);
-        //   }
-        // }),
-        );
+        ]));
   }
 
   void onSuggestionSelected(user) {
@@ -301,11 +465,38 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           "mobileNumber": user["mobileNumber"],
           "tenantId": user["tenantId"]
         });
+        for (final obj in addToTableList) {
+          bool existingObj = attendeeTableList
+              .where((obj1) => obj1['uuid'] == obj['uuid'])
+              .isNotEmpty;
+          if (!existingObj) {
+            attendeeTableList.add(obj);
+            deleteAttendeePayLoadList
+                .removeWhere((e) => e["individualId"] == user["uuid"]);
+          }
+        }
+        createAttendeePayLoadList = addToTableList.isNotEmpty &&
+                existingAttendeeList
+                    .where((e) => e["uuid"] == user["uuid"])
+                    .isEmpty
+            ? addToTableList
+                .map((e) => {
+                      "registerId": widget.attendanceRegister?.id.toString(),
+                      "individualId": e["uuid"],
+                      "tenantId": e["tenantId"],
+                      "additionalDetails": {"name": e["name"]}
+                    })
+                .toList()
+            : [];
+        deleteAttendeePayLoadList
+            .removeWhere((e) => e["individualId"] == user["uuid"]);
       }
+      searchUser = true;
     });
   }
 
   Widget buildTile(context, user) {
+    print('buildTile');
     var style = const TextStyle(fontSize: 16);
     return Container(
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 5),
@@ -320,6 +511,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   }
 
   Future<List<dynamic>> onSearchVendorList(pattern) async {
+    searchUser = true;
     context.read<AttendanceUserSearchBloc>().add(
           SearchAttendanceUserEvent(mobileNumber: pattern),
         );
@@ -364,7 +556,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
       TableData(label: tableDataModel.aadhaar, apiKey: tableDataModel.aadhaar),
       TableData(
           label: tableDataModel.bankNumber, apiKey: tableDataModel.bankNumber),
-      TableData(widget: const DeleteButton(onTap: null))
+      TableData(
+          widget: DeleteButton(
+              onTap: () => onDelete(tableDataModel.uuid.toString())))
     ]);
   }
 
@@ -372,5 +566,50 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
     return list.map((e) => getAttendanceRow(e)).toList();
   }
 
-  void onDelete() {}
+  void onDelete(String uuid) {
+    switch (createAttendeePayLoadList.length > 1 &&
+        existingAttendeeList.where((e) => e["uuid"] == uuid).isNotEmpty) {
+      case true:
+        print('!st cASE');
+        setState(() {
+          searchUser = true;
+          createAttendeePayLoadList
+              .removeWhere((e) => e['individualId'] == uuid);
+          attendeeTableList.removeWhere((e) => e['uuid'] == uuid);
+          userList.removeWhere((e) => e['uuid'] == uuid);
+          addToTableList.removeWhere((e) => e['uuid'] == uuid);
+          userTableList.removeWhere((e) => e.uuid == uuid);
+          deleteAttendeePayLoadList.add({
+            "registerId": widget.registerId.toString(),
+            "individualId": uuid.toString(),
+            "enrollmentDate": null,
+            "denrollmentDate": DateTime.now().millisecondsSinceEpoch,
+            "tenantId": widget.tenantId.toString()
+          });
+        });
+        break;
+      case false:
+        setState(() {
+          searchUser = true;
+          createAttendeePayLoadList
+              .removeWhere((e) => e['individualId'] == uuid);
+          attendeeTableList.removeWhere((e) => e['uuid'] == uuid);
+          userList.removeWhere((e) => e['uuid'] == uuid);
+          addToTableList.removeWhere((e) => e['uuid'] == uuid);
+          userTableList.removeWhere((e) => e.uuid == uuid);
+          if (existingAttendeeList.where((e) => e["uuid"] == uuid).isNotEmpty) {
+            deleteAttendeePayLoadList.add({
+              "registerId": widget.registerId.toString(),
+              "individualId": uuid.toString(),
+              "enrollmentDate": null,
+              "denrollmentDate": DateTime.now().millisecondsSinceEpoch,
+              "tenantId": widget.tenantId.toString()
+            });
+          }
+        });
+        break;
+      default:
+        break;
+    }
+  }
 }

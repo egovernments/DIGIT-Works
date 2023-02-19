@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
-part of 'attendance_hours_mdms.dart';
+part of 'search_individual_muster_roll.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,119 +15,203 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$AttendanceHoursMDMSEvent {
+mixin _$IndividualMusterRollSearchEvent {
+  String get id => throw _privateConstructorUsedError;
+  String get tenantId => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() onAttendanceHoursMDMS,
+    required TResult Function(String id, String tenantId) individualSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? onAttendanceHoursMDMS,
+    TResult? Function(String id, String tenantId)? individualSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? onAttendanceHoursMDMS,
+    TResult Function(String id, String tenantId)? individualSearch,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(AttendanceHoursEvent value) onAttendanceHoursMDMS,
+    required TResult Function(SearchIndividualMusterRollEvent value)
+        individualSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(AttendanceHoursEvent value)? onAttendanceHoursMDMS,
+    TResult? Function(SearchIndividualMusterRollEvent value)? individualSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(AttendanceHoursEvent value)? onAttendanceHoursMDMS,
+    TResult Function(SearchIndividualMusterRollEvent value)? individualSearch,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $IndividualMusterRollSearchEventCopyWith<IndividualMusterRollSearchEvent>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AttendanceHoursMDMSEventCopyWith<$Res> {
-  factory $AttendanceHoursMDMSEventCopyWith(AttendanceHoursMDMSEvent value,
-          $Res Function(AttendanceHoursMDMSEvent) then) =
-      _$AttendanceHoursMDMSEventCopyWithImpl<$Res, AttendanceHoursMDMSEvent>;
+abstract class $IndividualMusterRollSearchEventCopyWith<$Res> {
+  factory $IndividualMusterRollSearchEventCopyWith(
+          IndividualMusterRollSearchEvent value,
+          $Res Function(IndividualMusterRollSearchEvent) then) =
+      _$IndividualMusterRollSearchEventCopyWithImpl<$Res,
+          IndividualMusterRollSearchEvent>;
+  @useResult
+  $Res call({String id, String tenantId});
 }
 
 /// @nodoc
-class _$AttendanceHoursMDMSEventCopyWithImpl<$Res,
-        $Val extends AttendanceHoursMDMSEvent>
-    implements $AttendanceHoursMDMSEventCopyWith<$Res> {
-  _$AttendanceHoursMDMSEventCopyWithImpl(this._value, this._then);
+class _$IndividualMusterRollSearchEventCopyWithImpl<$Res,
+        $Val extends IndividualMusterRollSearchEvent>
+    implements $IndividualMusterRollSearchEventCopyWith<$Res> {
+  _$IndividualMusterRollSearchEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? tenantId = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      tenantId: null == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
 }
 
 /// @nodoc
-abstract class _$$AttendanceHoursEventCopyWith<$Res> {
-  factory _$$AttendanceHoursEventCopyWith(_$AttendanceHoursEvent value,
-          $Res Function(_$AttendanceHoursEvent) then) =
-      __$$AttendanceHoursEventCopyWithImpl<$Res>;
+abstract class _$$SearchIndividualMusterRollEventCopyWith<$Res>
+    implements $IndividualMusterRollSearchEventCopyWith<$Res> {
+  factory _$$SearchIndividualMusterRollEventCopyWith(
+          _$SearchIndividualMusterRollEvent value,
+          $Res Function(_$SearchIndividualMusterRollEvent) then) =
+      __$$SearchIndividualMusterRollEventCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String id, String tenantId});
 }
 
 /// @nodoc
-class __$$AttendanceHoursEventCopyWithImpl<$Res>
-    extends _$AttendanceHoursMDMSEventCopyWithImpl<$Res, _$AttendanceHoursEvent>
-    implements _$$AttendanceHoursEventCopyWith<$Res> {
-  __$$AttendanceHoursEventCopyWithImpl(_$AttendanceHoursEvent _value,
-      $Res Function(_$AttendanceHoursEvent) _then)
+class __$$SearchIndividualMusterRollEventCopyWithImpl<$Res>
+    extends _$IndividualMusterRollSearchEventCopyWithImpl<$Res,
+        _$SearchIndividualMusterRollEvent>
+    implements _$$SearchIndividualMusterRollEventCopyWith<$Res> {
+  __$$SearchIndividualMusterRollEventCopyWithImpl(
+      _$SearchIndividualMusterRollEvent _value,
+      $Res Function(_$SearchIndividualMusterRollEvent) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? tenantId = null,
+  }) {
+    return _then(_$SearchIndividualMusterRollEvent(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      tenantId: null == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
 }
 
 /// @nodoc
 
-class _$AttendanceHoursEvent implements AttendanceHoursEvent {
-  const _$AttendanceHoursEvent();
+class _$SearchIndividualMusterRollEvent
+    with DiagnosticableTreeMixin
+    implements SearchIndividualMusterRollEvent {
+  const _$SearchIndividualMusterRollEvent({this.id = '', this.tenantId = ''});
 
   @override
-  String toString() {
-    return 'AttendanceHoursMDMSEvent.onAttendanceHoursMDMS()';
+  @JsonKey()
+  final String id;
+  @override
+  @JsonKey()
+  final String tenantId;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualMusterRollSearchEvent.individualSearch(id: $id, tenantId: $tenantId)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty(
+          'type', 'IndividualMusterRollSearchEvent.individualSearch'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('tenantId', tenantId));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$AttendanceHoursEvent);
+        (other.runtimeType == runtimeType &&
+            other is _$SearchIndividualMusterRollEvent &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.tenantId, tenantId) ||
+                other.tenantId == tenantId));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, id, tenantId);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SearchIndividualMusterRollEventCopyWith<_$SearchIndividualMusterRollEvent>
+      get copyWith => __$$SearchIndividualMusterRollEventCopyWithImpl<
+          _$SearchIndividualMusterRollEvent>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() onAttendanceHoursMDMS,
+    required TResult Function(String id, String tenantId) individualSearch,
   }) {
-    return onAttendanceHoursMDMS();
+    return individualSearch(id, tenantId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? onAttendanceHoursMDMS,
+    TResult? Function(String id, String tenantId)? individualSearch,
   }) {
-    return onAttendanceHoursMDMS?.call();
+    return individualSearch?.call(id, tenantId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? onAttendanceHoursMDMS,
+    TResult Function(String id, String tenantId)? individualSearch,
     required TResult orElse(),
   }) {
-    if (onAttendanceHoursMDMS != null) {
-      return onAttendanceHoursMDMS();
+    if (individualSearch != null) {
+      return individualSearch(id, tenantId);
     }
     return orElse();
   }
@@ -135,43 +219,56 @@ class _$AttendanceHoursEvent implements AttendanceHoursEvent {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(AttendanceHoursEvent value) onAttendanceHoursMDMS,
+    required TResult Function(SearchIndividualMusterRollEvent value)
+        individualSearch,
   }) {
-    return onAttendanceHoursMDMS(this);
+    return individualSearch(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(AttendanceHoursEvent value)? onAttendanceHoursMDMS,
+    TResult? Function(SearchIndividualMusterRollEvent value)? individualSearch,
   }) {
-    return onAttendanceHoursMDMS?.call(this);
+    return individualSearch?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(AttendanceHoursEvent value)? onAttendanceHoursMDMS,
+    TResult Function(SearchIndividualMusterRollEvent value)? individualSearch,
     required TResult orElse(),
   }) {
-    if (onAttendanceHoursMDMS != null) {
-      return onAttendanceHoursMDMS(this);
+    if (individualSearch != null) {
+      return individualSearch(this);
     }
     return orElse();
   }
 }
 
-abstract class AttendanceHoursEvent implements AttendanceHoursMDMSEvent {
-  const factory AttendanceHoursEvent() = _$AttendanceHoursEvent;
+abstract class SearchIndividualMusterRollEvent
+    implements IndividualMusterRollSearchEvent {
+  const factory SearchIndividualMusterRollEvent(
+      {final String id,
+      final String tenantId}) = _$SearchIndividualMusterRollEvent;
+
+  @override
+  String get id;
+  @override
+  String get tenantId;
+  @override
+  @JsonKey(ignore: true)
+  _$$SearchIndividualMusterRollEventCopyWith<_$SearchIndividualMusterRollEvent>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-mixin _$AttendanceHoursState {
+mixin _$IndividualMusterRollSearchState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
     required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -179,7 +276,7 @@ mixin _$AttendanceHoursState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -187,7 +284,7 @@ mixin _$AttendanceHoursState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
@@ -220,17 +317,19 @@ mixin _$AttendanceHoursState {
 }
 
 /// @nodoc
-abstract class $AttendanceHoursStateCopyWith<$Res> {
-  factory $AttendanceHoursStateCopyWith(AttendanceHoursState value,
-          $Res Function(AttendanceHoursState) then) =
-      _$AttendanceHoursStateCopyWithImpl<$Res, AttendanceHoursState>;
+abstract class $IndividualMusterRollSearchStateCopyWith<$Res> {
+  factory $IndividualMusterRollSearchStateCopyWith(
+          IndividualMusterRollSearchState value,
+          $Res Function(IndividualMusterRollSearchState) then) =
+      _$IndividualMusterRollSearchStateCopyWithImpl<$Res,
+          IndividualMusterRollSearchState>;
 }
 
 /// @nodoc
-class _$AttendanceHoursStateCopyWithImpl<$Res,
-        $Val extends AttendanceHoursState>
-    implements $AttendanceHoursStateCopyWith<$Res> {
-  _$AttendanceHoursStateCopyWithImpl(this._value, this._then);
+class _$IndividualMusterRollSearchStateCopyWithImpl<$Res,
+        $Val extends IndividualMusterRollSearchState>
+    implements $IndividualMusterRollSearchStateCopyWith<$Res> {
+  _$IndividualMusterRollSearchStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -247,7 +346,7 @@ abstract class _$$_InitialCopyWith<$Res> {
 
 /// @nodoc
 class __$$_InitialCopyWithImpl<$Res>
-    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Initial>
+    extends _$IndividualMusterRollSearchStateCopyWithImpl<$Res, _$_Initial>
     implements _$$_InitialCopyWith<$Res> {
   __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
       : super(_value, _then);
@@ -255,12 +354,19 @@ class __$$_InitialCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
+class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   const _$_Initial() : super._();
 
   @override
-  String toString() {
-    return 'AttendanceHoursState.initial()';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualMusterRollSearchState.initial()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(
+        DiagnosticsProperty('type', 'IndividualMusterRollSearchState.initial'));
   }
 
   @override
@@ -277,7 +383,7 @@ class _$_Initial extends _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
     required TResult Function(String? error) error,
   }) {
     return initial();
@@ -288,7 +394,7 @@ class _$_Initial extends _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return initial?.call();
@@ -299,7 +405,7 @@ class _$_Initial extends _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -347,7 +453,7 @@ class _$_Initial extends _Initial {
   }
 }
 
-abstract class _Initial extends AttendanceHoursState {
+abstract class _Initial extends IndividualMusterRollSearchState {
   const factory _Initial() = _$_Initial;
   const _Initial._() : super._();
 }
@@ -361,7 +467,7 @@ abstract class _$$_LoadingCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadingCopyWithImpl<$Res>
-    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Loading>
+    extends _$IndividualMusterRollSearchStateCopyWithImpl<$Res, _$_Loading>
     implements _$$_LoadingCopyWith<$Res> {
   __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
       : super(_value, _then);
@@ -369,12 +475,19 @@ class __$$_LoadingCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loading extends _Loading {
+class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   const _$_Loading() : super._();
 
   @override
-  String toString() {
-    return 'AttendanceHoursState.loading()';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualMusterRollSearchState.loading()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(
+        DiagnosticsProperty('type', 'IndividualMusterRollSearchState.loading'));
   }
 
   @override
@@ -391,7 +504,7 @@ class _$_Loading extends _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
     required TResult Function(String? error) error,
   }) {
     return loading();
@@ -402,7 +515,7 @@ class _$_Loading extends _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return loading?.call();
@@ -413,7 +526,7 @@ class _$_Loading extends _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -461,7 +574,7 @@ class _$_Loading extends _Loading {
   }
 }
 
-abstract class _Loading extends AttendanceHoursState {
+abstract class _Loading extends IndividualMusterRollSearchState {
   const factory _Loading() = _$_Loading;
   const _Loading._() : super._();
 }
@@ -471,14 +584,14 @@ abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({AttendanceHoursList? attendanceHoursList});
+  $Res call({MusterRollsModel? musterRollsModel});
 
-  $AttendanceHoursListCopyWith<$Res>? get attendanceHoursList;
+  $MusterRollsModelCopyWith<$Res>? get musterRollsModel;
 }
 
 /// @nodoc
 class __$$_LoadedCopyWithImpl<$Res>
-    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Loaded>
+    extends _$IndividualMusterRollSearchStateCopyWithImpl<$Res, _$_Loaded>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
@@ -486,41 +599,49 @@ class __$$_LoadedCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? attendanceHoursList = freezed,
+    Object? musterRollsModel = freezed,
   }) {
     return _then(_$_Loaded(
-      freezed == attendanceHoursList
-          ? _value.attendanceHoursList
-          : attendanceHoursList // ignore: cast_nullable_to_non_nullable
-              as AttendanceHoursList?,
+      freezed == musterRollsModel
+          ? _value.musterRollsModel
+          : musterRollsModel // ignore: cast_nullable_to_non_nullable
+              as MusterRollsModel?,
     ));
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $AttendanceHoursListCopyWith<$Res>? get attendanceHoursList {
-    if (_value.attendanceHoursList == null) {
+  $MusterRollsModelCopyWith<$Res>? get musterRollsModel {
+    if (_value.musterRollsModel == null) {
       return null;
     }
 
-    return $AttendanceHoursListCopyWith<$Res>(_value.attendanceHoursList!,
-        (value) {
-      return _then(_value.copyWith(attendanceHoursList: value));
+    return $MusterRollsModelCopyWith<$Res>(_value.musterRollsModel!, (value) {
+      return _then(_value.copyWith(musterRollsModel: value));
     });
   }
 }
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded {
-  const _$_Loaded(this.attendanceHoursList) : super._();
+class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
+  const _$_Loaded(this.musterRollsModel) : super._();
 
   @override
-  final AttendanceHoursList? attendanceHoursList;
+  final MusterRollsModel? musterRollsModel;
 
   @override
-  String toString() {
-    return 'AttendanceHoursState.loaded(attendanceHoursList: $attendanceHoursList)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualMusterRollSearchState.loaded(musterRollsModel: $musterRollsModel)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(
+          DiagnosticsProperty('type', 'IndividualMusterRollSearchState.loaded'))
+      ..add(DiagnosticsProperty('musterRollsModel', musterRollsModel));
   }
 
   @override
@@ -528,12 +649,12 @@ class _$_Loaded extends _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Loaded &&
-            (identical(other.attendanceHoursList, attendanceHoursList) ||
-                other.attendanceHoursList == attendanceHoursList));
+            (identical(other.musterRollsModel, musterRollsModel) ||
+                other.musterRollsModel == musterRollsModel));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, attendanceHoursList);
+  int get hashCode => Object.hash(runtimeType, musterRollsModel);
 
   @JsonKey(ignore: true)
   @override
@@ -546,10 +667,10 @@ class _$_Loaded extends _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
     required TResult Function(String? error) error,
   }) {
-    return loaded(attendanceHoursList);
+    return loaded(musterRollsModel);
   }
 
   @override
@@ -557,10 +678,10 @@ class _$_Loaded extends _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
-    return loaded?.call(attendanceHoursList);
+    return loaded?.call(musterRollsModel);
   }
 
   @override
@@ -568,12 +689,12 @@ class _$_Loaded extends _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(attendanceHoursList);
+      return loaded(musterRollsModel);
     }
     return orElse();
   }
@@ -616,12 +737,11 @@ class _$_Loaded extends _Loaded {
   }
 }
 
-abstract class _Loaded extends AttendanceHoursState {
-  const factory _Loaded(final AttendanceHoursList? attendanceHoursList) =
-      _$_Loaded;
+abstract class _Loaded extends IndividualMusterRollSearchState {
+  const factory _Loaded(final MusterRollsModel? musterRollsModel) = _$_Loaded;
   const _Loaded._() : super._();
 
-  AttendanceHoursList? get attendanceHoursList;
+  MusterRollsModel? get musterRollsModel;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -637,7 +757,7 @@ abstract class _$$_ErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$_ErrorCopyWithImpl<$Res>
-    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Error>
+    extends _$IndividualMusterRollSearchStateCopyWithImpl<$Res, _$_Error>
     implements _$$_ErrorCopyWith<$Res> {
   __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
       : super(_value, _then);
@@ -658,15 +778,24 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error {
+class _$_Error extends _Error with DiagnosticableTreeMixin {
   const _$_Error(this.error) : super._();
 
   @override
   final String? error;
 
   @override
-  String toString() {
-    return 'AttendanceHoursState.error(error: $error)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualMusterRollSearchState.error(error: $error)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(
+          DiagnosticsProperty('type', 'IndividualMusterRollSearchState.error'))
+      ..add(DiagnosticsProperty('error', error));
   }
 
   @override
@@ -691,7 +820,7 @@ class _$_Error extends _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
     required TResult Function(String? error) error,
   }) {
     return error(this.error);
@@ -702,7 +831,7 @@ class _$_Error extends _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return error?.call(this.error);
@@ -713,7 +842,7 @@ class _$_Error extends _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -761,7 +890,7 @@ class _$_Error extends _Error {
   }
 }
 
-abstract class _Error extends AttendanceHoursState {
+abstract class _Error extends IndividualMusterRollSearchState {
   const factory _Error(final String? error) = _$_Error;
   const _Error._() : super._();
 
