@@ -1,4 +1,5 @@
 import {logout} from "./logout";
+import useViewProjectDetailsInEstimate from "./useViewProjectDetailsInEstimate";
 
 const UserService={
     logout
@@ -7,7 +8,11 @@ const UserService={
 const Hooks ={
     attendance:{
         update:()=>console.log("Hi")
+    },
+    project : {
+        useViewProjectDetailsInEstimate
     }
+
 }
 
 

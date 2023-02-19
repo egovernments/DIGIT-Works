@@ -4,6 +4,7 @@ import { useRouteMatch } from "react-router-dom";
 import EmployeeApp from "./pages/employee";
 import { CustomisedHooks } from "./hooks";
 import { UICustomizations } from "./configs/UICustomizations";
+import ViewProject from "./component/ViewProject";
 
 const MuktaModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["Mukta"];
@@ -24,6 +25,7 @@ const MuktaModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
   MuktaModule,
+  ViewProject
 };
 
 const overrideHooks = () => {
