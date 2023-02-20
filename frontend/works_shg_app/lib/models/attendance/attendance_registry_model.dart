@@ -32,6 +32,7 @@ class AttendanceRegister with _$AttendanceRegister {
         AttendanceRegisterAdditionalDetails?
             attendanceRegisterAdditionalDetails,
     @JsonKey(name: 'staff') List<StaffEntries>? staffEntries,
+    @JsonKey(name: 'auditDetails') RegisterAuditDetails? registerAuditDetails,
     @JsonKey(name: 'attendees') List<AttendeesEntries>? attendeesEntries,
   }) = _AttendanceRegister;
 
@@ -55,6 +56,20 @@ class AttendanceRegisterAdditionalDetails
 }
 
 @freezed
+class RegisterAuditDetails with _$RegisterAuditDetails {
+  const factory RegisterAuditDetails(
+      {String? createdBy,
+      String? lastModifiedBy,
+      int? createdTime,
+      int? lastModifiedTime}) = _RegisterAuditDetails;
+
+  factory RegisterAuditDetails.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$RegisterAuditDetailsFromJson(json);
+}
+
+@freezed
 class StaffEntries with _$StaffEntries {
   const factory StaffEntries(
       {String? id,
@@ -75,7 +90,8 @@ class AttendeesEntries with _$AttendeesEntries {
       String? tenantId,
       String? registerId,
       String? individualId,
-      int? enrollmentDate}) = _AttendeesEntries;
+      int? enrollmentDate,
+      int? denrollmentDate}) = _AttendeesEntries;
 
   factory AttendeesEntries.fromJson(
     Map<String, dynamic> json,

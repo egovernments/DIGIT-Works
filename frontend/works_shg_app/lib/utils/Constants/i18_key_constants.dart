@@ -85,9 +85,11 @@ class WorkOrder {
 
 class AttendanceMgmt {
   const AttendanceMgmt();
+  String get registerId => 'REGISTER_ID';
   String get enrollWageSeeker => 'WORKS_ENROLL_WAGE_SEEKER';
   String get updateAttendance => 'UPDATE_ATTENDANCE';
   String get nameOfWork => 'WORKS_NAME_OF_WORK';
+  String get noProjectsFound => 'NO_PROJECTS_FOUND';
   String get winCode => 'ATM_WIN_CODE';
   String get engineerInCharge => 'WORKS_INCHARGE_ENGG';
   String get musterRollId => 'ATM_MUSTER_ROLL_ID';
@@ -106,4 +108,9 @@ class AttendanceMgmt {
   String get applicationInWorkFlow => 'MUSTER_ROLL_IN_WORKFLOW_STATE';
   String get unableToCheckWorkflowStatus => 'MUSTER_ROLL_WORKFLOW_CHECK_FAIL';
   String get resubmitMusterRoll => 'RESUBMIT_MUSTER_ROLL';
+  String get attendeeCreateFailed => 'ATTENDEE_CREATE_FAILED';
+  String get attendeeCreateSuccess => 'ATTENDEE_CREATE_SUCCESS';
+  String get attendeeDeEnrollFailed => 'ATTENDEE_DE_ENROLL_FAILED';
+  String get attendeeDeEnrollSuccess => 'ATTENDEE_DE_ENROLL_SUCCESS';
+  String get attendanceSearchFailed => 'ATTENDANCE_SEARCH_FAILED';
 }

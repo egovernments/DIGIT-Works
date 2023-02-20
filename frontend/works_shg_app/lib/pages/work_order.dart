@@ -86,12 +86,11 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                     hasLoaded = true;
                   }
                 },
-                loaded: () {
+                loaded: (String? registerNumber) {
                   if (!hasLoaded) {
                     Notifiers.getToastMessage(
                         context,
-                        AppLocalizations.of(context).translate(
-                            i18.attendanceMgmt.attendanceCreateSuccess),
+                        '$registerNumber ${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceCreateSuccess)}',
                         'SUCCESS');
                     hasLoaded = true;
                   }

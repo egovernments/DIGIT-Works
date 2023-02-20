@@ -167,12 +167,55 @@ abstract class AttendanceHoursEvent implements AttendanceHoursMDMSEvent {
 
 /// @nodoc
 mixin _$AttendanceHoursState {
-  bool get isAttendanceMDMSLoaded => throw _privateConstructorUsedError;
-  AttendanceHoursList? get attendanceHoursList =>
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function(String? error) error,
+  }) =>
       throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $AttendanceHoursStateCopyWith<AttendanceHoursState> get copyWith =>
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function(String? error)? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) =>
       throw _privateConstructorUsedError;
 }
 
@@ -181,11 +224,6 @@ abstract class $AttendanceHoursStateCopyWith<$Res> {
   factory $AttendanceHoursStateCopyWith(AttendanceHoursState value,
           $Res Function(AttendanceHoursState) then) =
       _$AttendanceHoursStateCopyWithImpl<$Res, AttendanceHoursState>;
-  @useResult
-  $Res call(
-      {bool isAttendanceMDMSLoaded, AttendanceHoursList? attendanceHoursList});
-
-  $AttendanceHoursListCopyWith<$Res>? get attendanceHoursList;
 }
 
 /// @nodoc
@@ -198,23 +236,264 @@ class _$AttendanceHoursStateCopyWithImpl<$Res,
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+}
+
+/// @nodoc
+abstract class _$$_InitialCopyWith<$Res> {
+  factory _$$_InitialCopyWith(
+          _$_Initial value, $Res Function(_$_Initial) then) =
+      __$$_InitialCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_InitialCopyWithImpl<$Res>
+    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Initial>
+    implements _$$_InitialCopyWith<$Res> {
+  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Initial extends _Initial {
+  const _$_Initial() : super._();
+
+  @override
+  String toString() {
+    return 'AttendanceHoursState.initial()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Initial);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function(String? error) error,
+  }) {
+    return initial();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return initial?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return initial(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return initial?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Initial extends AttendanceHoursState {
+  const factory _Initial() = _$_Initial;
+  const _Initial._() : super._();
+}
+
+/// @nodoc
+abstract class _$$_LoadingCopyWith<$Res> {
+  factory _$$_LoadingCopyWith(
+          _$_Loading value, $Res Function(_$_Loading) then) =
+      __$$_LoadingCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_LoadingCopyWithImpl<$Res>
+    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Loading>
+    implements _$$_LoadingCopyWith<$Res> {
+  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Loading extends _Loading {
+  const _$_Loading() : super._();
+
+  @override
+  String toString() {
+    return 'AttendanceHoursState.loading()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Loading);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function(String? error) error,
+  }) {
+    return loading();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return loading?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loading(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loading?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Loading extends AttendanceHoursState {
+  const factory _Loading() = _$_Loading;
+  const _Loading._() : super._();
+}
+
+/// @nodoc
+abstract class _$$_LoadedCopyWith<$Res> {
+  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
+      __$$_LoadedCopyWithImpl<$Res>;
+  @useResult
+  $Res call({AttendanceHoursList? attendanceHoursList});
+
+  $AttendanceHoursListCopyWith<$Res>? get attendanceHoursList;
+}
+
+/// @nodoc
+class __$$_LoadedCopyWithImpl<$Res>
+    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Loaded>
+    implements _$$_LoadedCopyWith<$Res> {
+  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+      : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? isAttendanceMDMSLoaded = null,
     Object? attendanceHoursList = freezed,
   }) {
-    return _then(_value.copyWith(
-      isAttendanceMDMSLoaded: null == isAttendanceMDMSLoaded
-          ? _value.isAttendanceMDMSLoaded
-          : isAttendanceMDMSLoaded // ignore: cast_nullable_to_non_nullable
-              as bool,
-      attendanceHoursList: freezed == attendanceHoursList
+    return _then(_$_Loaded(
+      freezed == attendanceHoursList
           ? _value.attendanceHoursList
           : attendanceHoursList // ignore: cast_nullable_to_non_nullable
               as AttendanceHoursList?,
-    ) as $Val);
+    ));
   }
 
   @override
@@ -226,107 +505,268 @@ class _$AttendanceHoursStateCopyWithImpl<$Res,
 
     return $AttendanceHoursListCopyWith<$Res>(_value.attendanceHoursList!,
         (value) {
-      return _then(_value.copyWith(attendanceHoursList: value) as $Val);
+      return _then(_value.copyWith(attendanceHoursList: value));
     });
   }
 }
 
 /// @nodoc
-abstract class _$$_AttendanceHoursStateCopyWith<$Res>
-    implements $AttendanceHoursStateCopyWith<$Res> {
-  factory _$$_AttendanceHoursStateCopyWith(_$_AttendanceHoursState value,
-          $Res Function(_$_AttendanceHoursState) then) =
-      __$$_AttendanceHoursStateCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {bool isAttendanceMDMSLoaded, AttendanceHoursList? attendanceHoursList});
 
-  @override
-  $AttendanceHoursListCopyWith<$Res>? get attendanceHoursList;
-}
+class _$_Loaded extends _Loaded {
+  const _$_Loaded(this.attendanceHoursList) : super._();
 
-/// @nodoc
-class __$$_AttendanceHoursStateCopyWithImpl<$Res>
-    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_AttendanceHoursState>
-    implements _$$_AttendanceHoursStateCopyWith<$Res> {
-  __$$_AttendanceHoursStateCopyWithImpl(_$_AttendanceHoursState _value,
-      $Res Function(_$_AttendanceHoursState) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? isAttendanceMDMSLoaded = null,
-    Object? attendanceHoursList = freezed,
-  }) {
-    return _then(_$_AttendanceHoursState(
-      isAttendanceMDMSLoaded: null == isAttendanceMDMSLoaded
-          ? _value.isAttendanceMDMSLoaded
-          : isAttendanceMDMSLoaded // ignore: cast_nullable_to_non_nullable
-              as bool,
-      attendanceHoursList: freezed == attendanceHoursList
-          ? _value.attendanceHoursList
-          : attendanceHoursList // ignore: cast_nullable_to_non_nullable
-              as AttendanceHoursList?,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$_AttendanceHoursState extends _AttendanceHoursState {
-  const _$_AttendanceHoursState(
-      {this.isAttendanceMDMSLoaded = false, this.attendanceHoursList})
-      : super._();
-
-  @override
-  @JsonKey()
-  final bool isAttendanceMDMSLoaded;
   @override
   final AttendanceHoursList? attendanceHoursList;
 
   @override
   String toString() {
-    return 'AttendanceHoursState(isAttendanceMDMSLoaded: $isAttendanceMDMSLoaded, attendanceHoursList: $attendanceHoursList)';
+    return 'AttendanceHoursState.loaded(attendanceHoursList: $attendanceHoursList)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AttendanceHoursState &&
-            (identical(other.isAttendanceMDMSLoaded, isAttendanceMDMSLoaded) ||
-                other.isAttendanceMDMSLoaded == isAttendanceMDMSLoaded) &&
+            other is _$_Loaded &&
             (identical(other.attendanceHoursList, attendanceHoursList) ||
                 other.attendanceHoursList == attendanceHoursList));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, isAttendanceMDMSLoaded, attendanceHoursList);
+  int get hashCode => Object.hash(runtimeType, attendanceHoursList);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AttendanceHoursStateCopyWith<_$_AttendanceHoursState> get copyWith =>
-      __$$_AttendanceHoursStateCopyWithImpl<_$_AttendanceHoursState>(
-          this, _$identity);
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function(String? error) error,
+  }) {
+    return loaded(attendanceHoursList);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return loaded?.call(attendanceHoursList);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(attendanceHoursList);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(this);
+    }
+    return orElse();
+  }
 }
 
-abstract class _AttendanceHoursState extends AttendanceHoursState {
-  const factory _AttendanceHoursState(
-          {final bool isAttendanceMDMSLoaded,
-          final AttendanceHoursList? attendanceHoursList}) =
-      _$_AttendanceHoursState;
-  const _AttendanceHoursState._() : super._();
+abstract class _Loaded extends AttendanceHoursState {
+  const factory _Loaded(final AttendanceHoursList? attendanceHoursList) =
+      _$_Loaded;
+  const _Loaded._() : super._();
+
+  AttendanceHoursList? get attendanceHoursList;
+  @JsonKey(ignore: true)
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$_ErrorCopyWith<$Res> {
+  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
+      __$$_ErrorCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String? error});
+}
+
+/// @nodoc
+class __$$_ErrorCopyWithImpl<$Res>
+    extends _$AttendanceHoursStateCopyWithImpl<$Res, _$_Error>
+    implements _$$_ErrorCopyWith<$Res> {
+  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? error = freezed,
+  }) {
+    return _then(_$_Error(
+      freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$_Error extends _Error {
+  const _$_Error(this.error) : super._();
 
   @override
-  bool get isAttendanceMDMSLoaded;
+  final String? error;
+
   @override
-  AttendanceHoursList? get attendanceHoursList;
+  String toString() {
+    return 'AttendanceHoursState.error(error: $error)';
+  }
+
   @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_Error &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, error);
+
   @JsonKey(ignore: true)
-  _$$_AttendanceHoursStateCopyWith<_$_AttendanceHoursState> get copyWith =>
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(AttendanceHoursList? attendanceHoursList) loaded,
+    required TResult Function(String? error) error,
+  }) {
+    return error(this.error);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return error?.call(this.error);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(AttendanceHoursList? attendanceHoursList)? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(this.error);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return error(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return error?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Error extends AttendanceHoursState {
+  const factory _Error(final String? error) = _$_Error;
+  const _Error._() : super._();
+
+  String? get error;
+  @JsonKey(ignore: true)
+  _$$_ErrorCopyWith<_$_Error> get copyWith =>
       throw _privateConstructorUsedError;
 }

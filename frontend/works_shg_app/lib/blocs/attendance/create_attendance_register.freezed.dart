@@ -440,7 +440,7 @@ mixin _$AttendanceRegisterCreateState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(String? registerNumber) loaded,
     required TResult Function() error,
   }) =>
       throw _privateConstructorUsedError;
@@ -448,7 +448,7 @@ mixin _$AttendanceRegisterCreateState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(String? registerNumber)? loaded,
     TResult? Function()? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -456,7 +456,7 @@ mixin _$AttendanceRegisterCreateState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(String? registerNumber)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) =>
@@ -548,7 +548,7 @@ class _$_Initial extends _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(String? registerNumber) loaded,
     required TResult Function() error,
   }) {
     return initial();
@@ -559,7 +559,7 @@ class _$_Initial extends _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(String? registerNumber)? loaded,
     TResult? Function()? error,
   }) {
     return initial?.call();
@@ -570,7 +570,7 @@ class _$_Initial extends _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(String? registerNumber)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {
@@ -662,7 +662,7 @@ class _$_Loading extends _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(String? registerNumber) loaded,
     required TResult Function() error,
   }) {
     return loading();
@@ -673,7 +673,7 @@ class _$_Loading extends _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(String? registerNumber)? loaded,
     TResult? Function()? error,
   }) {
     return loading?.call();
@@ -684,7 +684,7 @@ class _$_Loading extends _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(String? registerNumber)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {
@@ -741,6 +741,8 @@ abstract class _Loading extends AttendanceRegisterCreateState {
 abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String? registerNumber});
 }
 
 /// @nodoc
@@ -749,36 +751,61 @@ class __$$_LoadedCopyWithImpl<$Res>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? registerNumber = freezed,
+  }) {
+    return _then(_$_Loaded(
+      freezed == registerNumber
+          ? _value.registerNumber
+          : registerNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$_Loaded extends _Loaded {
-  const _$_Loaded() : super._();
+  const _$_Loaded(this.registerNumber) : super._();
+
+  @override
+  final String? registerNumber;
 
   @override
   String toString() {
-    return 'AttendanceRegisterCreateState.loaded()';
+    return 'AttendanceRegisterCreateState.loaded(registerNumber: $registerNumber)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loaded);
+        (other.runtimeType == runtimeType &&
+            other is _$_Loaded &&
+            (identical(other.registerNumber, registerNumber) ||
+                other.registerNumber == registerNumber));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, registerNumber);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(String? registerNumber) loaded,
     required TResult Function() error,
   }) {
-    return loaded();
+    return loaded(registerNumber);
   }
 
   @override
@@ -786,10 +813,10 @@ class _$_Loaded extends _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(String? registerNumber)? loaded,
     TResult? Function()? error,
   }) {
-    return loaded?.call();
+    return loaded?.call(registerNumber);
   }
 
   @override
@@ -797,12 +824,12 @@ class _$_Loaded extends _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(String? registerNumber)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded();
+      return loaded(registerNumber);
     }
     return orElse();
   }
@@ -846,8 +873,13 @@ class _$_Loaded extends _Loaded {
 }
 
 abstract class _Loaded extends AttendanceRegisterCreateState {
-  const factory _Loaded() = _$_Loaded;
+  const factory _Loaded(final String? registerNumber) = _$_Loaded;
   const _Loaded._() : super._();
+
+  String? get registerNumber;
+  @JsonKey(ignore: true)
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -888,7 +920,7 @@ class _$_Error extends _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(String? registerNumber) loaded,
     required TResult Function() error,
   }) {
     return error();
@@ -899,7 +931,7 @@ class _$_Error extends _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(String? registerNumber)? loaded,
     TResult? Function()? error,
   }) {
     return error?.call();
@@ -910,7 +942,7 @@ class _$_Error extends _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(String? registerNumber)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {

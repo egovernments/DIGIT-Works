@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/blocs/localization/selected_localization_model.dart';
 import 'package:works_shg_app/models/app_config/app_config_model.dart';
+import 'package:works_shg_app/models/init_mdms/global_config_model.dart';
 
 import '../models/init_mdms/init_mdms_model.dart';
 import '../services/local_storage.dart';
@@ -143,4 +144,6 @@ class GlobalVariables {
       return languagesList!.where((elem) => elem.isSelected).first.value;
     }
   }
+
+  static GlobalConfigModel? globalConfigObject;
 }
