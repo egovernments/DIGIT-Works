@@ -15,9 +15,9 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             asSectionHeader: true,
             values: [
                 { title: "WORKS_PROJECT_ID", value: currentProject?.projectNumber || "NA"},
-                { title: "WORKS_PROJECT_DATE_OF_PROPOSAL", value: Digit.Utils.pt.convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA"},
-                { title: "WORKS_PROJECT_PROJECT_NAME", value: currentProject?.name || "NA"},
-                { title: "WORKS_PROJECT_PROJECT_DESC", value: currentProject?.description || "NA"}
+                { title: "WORKS_DATE_PROPOSAL", value: Digit.Utils.pt.convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA"},
+                { title: "WORKS_PROJECT_NAME", value: currentProject?.name || "NA"},
+                { title: "PROJECT_PROJECT_DESC", value: currentProject?.description || "NA"}
             ]
         };
 
@@ -25,9 +25,9 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             title: "WORKS_PROJECT_DETAILS",
             asSectionHeader: true,
             values: [
-                { title: "WORKS_PROJECT_LOR", value: currentProject?.referenceID || "NA" },
+                { title: "PROJECT_LOR", value: currentProject?.referenceID || "NA" },
                 { title: "WORKS_PROJECT_TYPE", value: currentProject?.projectType ? t(`WORKS_PROJECT_TYPE_${currentProject?.projectType}`) : "NA" },
-                { title: "WORKS_PROJECT_TARGET_DEMOGRAPHY", value: "NA" },
+                { title: "PROJECT_TARGET_DEMOGRAPHY", value: "NA" },
                 { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs || "NA" },
             ]
         };
@@ -36,8 +36,8 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             title: "WORKS_LOCATION_DETAILS",
             asSectionHeader: true,
             values: [
-                { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" },
-                { title: "WORKS_PROJECT_CITY",value: currentProject?.address?.city ? t(currentProject?.address?.city) : "NA" }, //will check with Backend
+                { title: "PROJECT_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" },
+                { title: "WORKS_CITY",value: currentProject?.address?.city ? t(currentProject?.address?.city) : "NA" }, //will check with Backend
                 { title: "WORKS_WARD", value: "NA" }, ///backend to update this
                 { title: "WORKS_LOCALITY",value: currentProject?.address?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.address?.locality}`) : "NA" },
             ]
@@ -48,7 +48,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             asSectionHeader: true,
             additionalDetails: {
                 documents: [{
-                    title: "CS_COMMON_DOCUMENTS",
+                    title: "WORKS_RELEVANT_DOCUMENTS",
                     BS : 'Works',
                     values: currentProject?.documents?.map((document) => {
                         return {
