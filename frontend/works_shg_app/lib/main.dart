@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:works_shg_app/blocs/attendance/attendance_user_search.dart';
-import 'package:works_shg_app/blocs/attendance/search_projects.dart';
+import 'package:works_shg_app/blocs/attendance/search_projects/search_projects.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
 import 'package:works_shg_app/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
@@ -24,10 +24,14 @@ import 'blocs/attendance/attendance_create_log.dart';
 import 'blocs/attendance/attendance_hours_mdms.dart';
 import 'blocs/attendance/create_attendance_register.dart';
 import 'blocs/attendance/create_attendee.dart';
+import 'blocs/attendance/de_enroll_attendee.dart';
+import 'blocs/attendance/search_projects/search_individual_project.dart';
 import 'blocs/auth/auth.dart';
 import 'blocs/localization/app_localization.dart';
 import 'blocs/localization/localization.dart';
+import 'blocs/muster_rolls/from_to_date_search_muster_roll.dart';
 import 'blocs/muster_rolls/get_muster_workflow.dart';
+import 'blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'blocs/user/user_search.dart';
 import 'data/remote_client.dart';
 import 'data/repositories/remote/localization.dart';
@@ -98,16 +102,24 @@ class MainApplication extends StatelessWidget {
             ..add(const SearchAttendanceProjectsEvent()),
         ),
         BlocProvider(
-            create: (context) =>
-                AttendanceUserSearchBloc(const AttendanceUserSearchState())),
+          create: (_) => AttendanceIndividualProjectSearchBloc()
+            ..add(const SearchIndividualAttendanceProjectEvent()),
+        ),
+        BlocProvider(
+            create: (context) => AttendanceUserSearchBloc(
+                const AttendanceUserSearchState.initial())),
         BlocProvider(create: (context) => AttendeeCreateBloc()),
+        BlocProvider(create: (context) => MusterRollFromToDateSearchBloc()),
+        BlocProvider(create: (context) => IndividualMusterRollSearchBloc()),
+        BlocProvider(create: (context) => AttendeeDeEnrollBloc()),
         BlocProvider(create: (context) => MusterRollEstimateBloc()),
         BlocProvider(create: (context) => AttendanceLogCreateBloc()),
         BlocProvider(create: (context) => MusterCreateBloc()),
         BlocProvider(create: (context) => MusterGetWorkflowBloc()),
         BlocProvider(
             create: (context) => AttendanceHoursBloc(
-                const AttendanceHoursState(), MdmsRepository(client.init()))),
+                const AttendanceHoursState.initial(),
+                MdmsRepository(client.init()))),
       ],
       child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
           builder: (context, appInitState) {

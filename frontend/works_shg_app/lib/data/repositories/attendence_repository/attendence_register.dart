@@ -38,7 +38,22 @@ class AttendanceRegisterRepository {
       );
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
-      throw Exception(ex);
+      rethrow;
+    }
+  }
+
+  Future<AttendeeModel> deEnrollAttendee(
+      {dynamic body, required String url, required Options options}) async {
+    try {
+      // var formData = FormData.fromMap(body);
+      final response = await _client.post(url, data: body, options: options);
+
+      return AttendeeModel.fromJson(
+        json.decode(response.toString()),
+      );
+    } on DioError catch (ex) {
+      // Assuming there will be an errorMessage property in the JSON object
+      rethrow;
     }
   }
 

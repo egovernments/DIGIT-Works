@@ -25,7 +25,9 @@ class UserSearchBloc extends Bloc<UserSearchEvent, UserSearchState> {
     emit(state.copyWith(loading: true));
     UserSearchModel userSearchModel = await UserSearchRepository(client.init())
         .searchUser(url: Urls.userServices.userSearchProfile, body: {
-      "tenantId": GlobalVariables.getTenantId(),
+      "tenantId": GlobalVariables
+          .globalConfigObject!.globalConfigs!.stateTenantId
+          .toString(),
       "uuid": [GlobalVariables.getUUID()]
     });
     await Future.delayed(const Duration(seconds: 1));

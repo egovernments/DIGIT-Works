@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 
+
 const ProjectDetailsNavDetails = ({activeLink, subProjects}) => {
     const ViewProjectComponent = Digit?.ComponentRegistryService?.getComponent("ViewProject"); 
     const ViewFinancialDetailsComponent = Digit?.ComponentRegistryService?.getComponent("ViewFinancialDetails"); 

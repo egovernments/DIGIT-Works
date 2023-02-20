@@ -1,11 +1,11 @@
 import React, { Fragment, useState ,useEffect} from 'react'
-import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError } from '@egovernments/digit-ui-react-components'
+import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError,Dropdown,Loader } from '@egovernments/digit-ui-react-components'
+import { Controller } from 'react-hook-form';
+import _ from "lodash"
 
-
-const NonSORTable = (props) => {
+const NonSORTable = ({control,watch,...props}) => {
   const [totalAmount, setTotalAmount] = useState(100)
   const formFieldName = "nonSORTablev1" // this will be the key under which the data for this table will be present on onFormSubmit
-
   const initialState = [
     {
       key: 1,
@@ -14,8 +14,8 @@ const NonSORTable = (props) => {
   ];
   const [rows, setRows] = useState(initialState);
 
-  const { t, register, errors , setValues, getValues, formData} = props
-
+  const { t, register, errors , setValue, getValues, formData} = props
+  
   const setTotal = (formData) => {
     const tableData = formData?.[formFieldName]
    
@@ -23,9 +23,10 @@ const NonSORTable = (props) => {
       return tableData?.filter((row, index) => row)?.filter((row,index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseInt(curr?.estimatedAmount) || 0
         ,0)
     })
-    
-  }
 
+  }
+  
+  
   useEffect(() => {
     setTotal(formData)
   }, [formData,rows]);
@@ -101,6 +102,48 @@ const NonSORTable = (props) => {
     obj.key = rows[rows.length - 1].key + 1
     setRows(prev => [...prev, obj])
   }
+
+  const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey = "name", options = []) => {
+    const { isLoading, data } = Digit.Hooks.useCustomMDMS(
+      Digit.ULBService.getStateId(),
+      options?.mdmsConfig?.moduleName,
+      [{ name: options?.mdmsConfig?.masterName }],
+      {
+        select: (data) => {
+          const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
+          return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
+        },
+        enabled: options?.mdmsConfig ? true : false,
+      }
+    );
+   
+    if (isLoading) {
+      return <Loader />;
+      //show MDMS data if options are not provided. Options are in use here for pre defined options from config. 
+      //Usage example : dependent dropdown
+    } else return <Dropdown
+      inputRef={register()}
+      option={options?.mdmsConfig ? data : options}
+      selected={props?.value}
+      optionKey={optionKey}
+      t={t}
+      select={(e) => {
+        props.onChange(e);
+      }}
+      onBlur={props?.onBlur}
+      optionCardStyles={{ maxHeight: '15rem' }}
+      style={{marginBottom:"0px"}}
+    />
+  }
+
+  const setAmountField = (e,row) => {
+    const quantity = parseInt(watch(`${formFieldName}.${row.key}.estimatedQuantity`))
+    const ratePerUnit = parseFloat(watch(`${formFieldName}.${row.key}.rate`))
+    if(!ratePerUnit || !quantity) return 
+    const amountToSet = parseFloat(quantity * ratePerUnit).toFixed(1)
+    setValue(`${formFieldName}.${row.key}.estimatedAmount`,amountToSet)
+  }
+
   const renderBody = () => {
     let i = 0
     return rows.map((row, index) => {
@@ -109,7 +152,7 @@ const NonSORTable = (props) => {
         <td style={getStyles(1)}>{i}</td>
 
         <td style={getStyles(2)} ><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.description`} inputRef={register({
-          required: false,
+          required: true,
           //@Burhan-j Don't remove this whitespace in pattern, it is used for validation
           pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
         })
@@ -119,50 +162,61 @@ const NonSORTable = (props) => {
           {errors && errors?.[formFieldName]?.[row.key]?.description?.type === "required" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
-        <td style={getStyles(3)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.uom`} inputRef={register({
-          required: false,
-          pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
-        })}
-        />{errors && errors?.[formFieldName]?.[row.key]?.uom?.type === "pattern" && (
+        <td style={getStyles(3)}>
+          <div >
+            <Controller
+              control={control}
+              name={`${formFieldName}.${row.key}.uom`}
+              rules={{
+                required: true,
+                pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
+              }}
+              render={(props) => (
+                getDropDownDataFromMDMS(t, row, "uom", props, register, "name", {
+                  mdmsConfig: {
+                    masterName: "uom",
+                    moduleName: "common-masters",
+                    localePrefix: "ES_COMMON_UOM",
+                  }
+                })
+              )}
+            />
+        {errors && errors?.[formFieldName]?.[row.key]?.uom?.type === "pattern" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
           {errors && errors?.[formFieldName]?.[row.key]?.uom?.type === "required" && (
-            <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+          </div>
+        </td>
 
         <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.rate`} inputRef={register({
-          required: false,
+          required: true,
           pattern: /^[0-9]*$/
         })}
+        onChange={(e) => setAmountField(e, row)}
         />{errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "pattern" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
           {errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "required" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
         <td style={getStyles(5)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.estimatedQuantity`} inputRef={register({
-          required: false,
+          required: true,
           pattern: /^[0-9]*$/
         })}
+        onChange={(e)=>setAmountField(e,row)}
         />{errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "pattern" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
           {errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "required" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
         <td style={getStyles(6)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.estimatedAmount`} inputRef={register({
-          required: false,
-          pattern: /^[0-9]*$/
+          required: true,
+          pattern: /^\d*\.?\d*$/
         })}
+        disable={true}
         />{errors && errors?.[formFieldName]?.[row.key]?.estimatedAmount?.type === "pattern" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
           {errors && errors?.[formFieldName]?.[row.key]?.estimatedAmount?.type === "required" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
-
-        {/* <td style={getStyles(7)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.total`} inputRef={register({
-          required: false,
-          pattern: /^[0-9]*$/
-        })}
-        />{errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
-          <CardLabelError>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-          {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-            <CardLabelError>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td> */}
 
         <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
       </tr>

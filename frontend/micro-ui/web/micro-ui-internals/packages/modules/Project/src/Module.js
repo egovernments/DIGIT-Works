@@ -14,9 +14,9 @@ import ProjectSearch from "./pages/employee/ProjectSearch";
 import ProjectSearchAndInbox from "./pages/employee/ProjectSearchAndInbox";
 
 export const ProjectModule = ({ stateCode, userType, tenants }) => {
-  const moduleCode = ["Project"];
   const { path, url } = useRouteMatch();
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const moduleCode = ["Project","common-masters",tenantId];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({
     stateCode,
@@ -24,13 +24,7 @@ export const ProjectModule = ({ stateCode, userType, tenants }) => {
     language,
   });
 
-  useEffect(() => {
-    Digit.LocalizationService.getLocale({
-      modules: [`rainmaker-${tenantId}`],
-      locale: language,
-      tenantId: stateCode,
-    })
-  }, [])
+
 
   if (isLoading) {
     return <Loader />;
