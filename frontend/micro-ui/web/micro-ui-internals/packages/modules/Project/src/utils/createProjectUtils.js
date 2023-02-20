@@ -68,7 +68,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
           "parent": parentProjectID || "", // In case of Single project, Parent ID is empty.
           "targets": [ //this is target demograph, captured on UI //For Health Team Project
             {
-              "beneficiaryType": "Slum", //project_details?.targetDemocracy?.code,
+              "beneficiaryType": "Slum", //project_details?.targetDemocracy?.code, //will update once backend updates
               "totalNo": 0,
               "targetNo": 0
             }

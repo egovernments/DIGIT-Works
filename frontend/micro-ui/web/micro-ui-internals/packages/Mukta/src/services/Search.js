@@ -27,8 +27,8 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             values: [
                 { title: "PROJECT_LOR", value: currentProject?.referenceID || "NA" },
                 { title: "WORKS_PROJECT_TYPE", value: currentProject?.projectType ? t(`COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(currentProject?.projectType)}`) : "NA" },
-                { title: "PROJECT_TARGET_DEMOGRAPHY", value: "NA" },
-                { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs || "NA" },
+                { title: "PROJECT_TARGET_DEMOGRAPHY", value: "NA" }, //will update once backend makes changes for MDMS
+                { title: "PROJECT_ESTIMATED_COST", value: `₹ ${currentProject?.additionalDetails?.estimatedCostInRs}` || "NA" },
             ]
         };
 
