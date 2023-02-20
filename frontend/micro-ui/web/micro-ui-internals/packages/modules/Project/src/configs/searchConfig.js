@@ -153,7 +153,7 @@ const searchConfig = () => {
                         },
                         {
                             label: "WORKS_CREATED_BY",
-                            jsonPath: "createdBy",
+                            jsonPath: "additionalDetails.creator",
                         },
                         {
                             label: "WORKS_STATUS",
