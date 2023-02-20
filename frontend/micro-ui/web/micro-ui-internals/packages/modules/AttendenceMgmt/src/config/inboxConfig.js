@@ -1,6 +1,7 @@
 const inboxConfig = () => {
     return {
         label : "ES_COMMON_INBOX",
+        postProcessResult:true,
         type : "inbox", 
         apiDetails: {
             serviceName: "/inbox/v2/_search",
@@ -53,6 +54,9 @@ const inboxConfig = () => {
                             populators: {
                               name: "iaip",
                               optionsKey: "name",
+                              optionsCustomStyle : {
+                                top : "2.3rem"
+                              },
                               mdmsConfig: {
                                 masterName: "Department",
                                 moduleName: "common-masters",
@@ -114,7 +118,10 @@ const inboxConfig = () => {
                             populators: {
                                 name: "musterRollStatus",
                                 optionsKey: "i18nKey",
-                                options: []
+                                options: [],
+                                optionsCustomStyle : {
+                                    top : "2.3rem"
+                                }
                             },
                         },
                     ]
