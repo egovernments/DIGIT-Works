@@ -1,5 +1,5 @@
-import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav } from '@egovernments/digit-ui-react-components'
-import React, { Fragment,useEffect,useState } from 'react'
+import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav, Menu } from '@egovernments/digit-ui-react-components'
+import React, { Fragment,useEffect,useRef,useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 import ProjectDetailsNavDetails from './ProjectDetailsNavDetails'
@@ -13,6 +13,12 @@ const ProjectDetails = () => {
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const [configNavItems, setNavTypeConfig] = useState([]);
     const [subProjects, setSubProjects] = useState([]);
+    const menuRef = useRef();
+    const [displayMenu, setDisplayMenu] = useState(false);
+    const closeMenu = () => {
+        setDisplayMenu(false);
+    }
+  Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu );
 
     const navConfigs = [
         {
@@ -29,6 +35,18 @@ const ProjectDetails = () => {
             "name":"Sub_Projects_Details",
             "code":"PROJECTS_SUB_PROJECT_DETAILS",
             "active" : false 
+        }
+    ]
+
+    const actionsMenu = [
+        {
+            name : "CREATE_ESTIMATE"
+        },
+        {
+            name : "VIEW_ESTIMATE"
+        },
+        {
+            name : "MODIFY_PROJECT"
         }
     ]
 
@@ -51,8 +69,10 @@ const ProjectDetails = () => {
         history.push(`/${window.contextPath}/employee/project/project-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${parentProjectNumber}`);
     }
 
-    const handleNavigateToEstimatesScreen = () => {
-        history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
+    const handleActionBar = (option) => {
+        if(option?.name === "CREATE_ESTIMATE"){
+            history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
+        }
     }
 
     const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
@@ -93,8 +113,16 @@ const ProjectDetails = () => {
               />
             </HorizontalNav>
             <ActionBar>
-                <SubmitBar onSubmit={handleNavigateToEstimatesScreen} label={t("ACTION_TEST_CREATE_ESTIMATE")} />
-            </ActionBar>
+                    {displayMenu ? 
+                        <Menu
+                            localeKeyPrefix={`COMMON`}
+                            options={actionsMenu}
+                            optionKey={"name"}
+                            t={t}
+                            onSelect={handleActionBar}
+                        /> : null}
+                <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)}/>
+        </ActionBar>
         </div>
     )
 }
