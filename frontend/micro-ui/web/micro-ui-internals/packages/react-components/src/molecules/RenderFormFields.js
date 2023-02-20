@@ -9,6 +9,8 @@ import TextArea from "../atoms/TextArea";
 import CustomDropdown from './CustomDropdown';
 import MobileNumber from '../atoms/MobileNumber';
 import DateRangeNew from './DateRangeNew';
+import MultiUploadWrapper from "./MultiUploadWrapper";
+
 
 const RenderFormFields = (props) => {
     const { t } = useTranslation();
@@ -201,7 +203,6 @@ const RenderFormFields = (props) => {
                     props={props}
                     setError={setError}
                     clearErrors={clearErrors}
-                    formState={formState}
                     onBlur={props.onBlur}
                     control={control}
                     getValues={getValues}
