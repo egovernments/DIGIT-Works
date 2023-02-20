@@ -164,7 +164,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
               mdmsConfig: {
                 masterName: "ProjectType",
                 moduleName: "works",
-                localePrefix: "ES_COMMON",
+                localePrefix: "COMMON_MASTERS",
               },
             },
           },
