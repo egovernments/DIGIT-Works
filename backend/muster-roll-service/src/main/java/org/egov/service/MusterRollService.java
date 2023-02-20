@@ -8,12 +8,14 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.kafka.Producer;
 import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
+import org.egov.util.ResponseInfoCreator;
 import org.egov.validator.MusterRollValidator;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +72,9 @@ public class MusterRollService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private ResponseInfoCreator responseInfoCreator;
+
 
     /**
      * Calculates the per day attendance , attendance aggregate from startDate to endDate
@@ -118,7 +123,7 @@ public class MusterRollService {
      * @param searchCriteria
      * @return
      */
-    public List<MusterRoll> searchMusterRolls(RequestInfoWrapper requestInfoWrapper, MusterRollSearchCriteria searchCriteria) {
+    public MusterRollResponse searchMusterRolls(RequestInfoWrapper requestInfoWrapper, MusterRollSearchCriteria searchCriteria) {
         log.info("MusterRollService::searchMusterRolls");
 
         musterRollValidator.validateSearchMuster(requestInfoWrapper,searchCriteria);
@@ -139,13 +144,20 @@ public class MusterRollService {
         }
 
         List<MusterRoll> musterRollList = musterRollRepository.getMusterRoll(searchCriteria,registerIds);
+        int count = !CollectionUtils.isEmpty(musterRollList) ? musterRollList.size() : 0;
         List<MusterRoll> filteredMusterRollList = musterRollList;
 
         //apply the limit and offset
         if (filteredMusterRollList != null && !musterRollServiceUtil.isTenantBasedSearch(searchCriteria)) {
             filteredMusterRollList = applyLimitAndOffset(searchCriteria,filteredMusterRollList);
         }
-        return filteredMusterRollList;
+
+        //populate response
+        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(filteredMusterRollList)
+                .count(count).build();
+
+        return musterRollResponse;
     }
 
     /**
