@@ -95,7 +95,7 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useSearchWORKS from "./works/useSearchWORKS";
 import useSearchApprovedEstimates from "./works/useSearchApprovedEstimates";
 import useViewEstimateDetails from "./works/useViewEstimateDetails";
-import useViewProjectDetailsInEstimate from './works/useViewProjectDetailsInEstimate'
+import useViewProjectDetails from './works/useViewProjectDetails'
 import useViewProjectClosureDetails from "./works/useViewProjectClosureDetails";
 import useViewProjectClosureDetailsBills from "./works/useViewProjectClosureBills";
 import useViewProjectClosureDetailsClosureChecklist from "./works/useViewProjectClosureDetailsClosureChecklist";
@@ -123,7 +123,7 @@ import useCreateProject from "./works/useCreateProject";
 
 const works = {
   useViewEstimateDetails,
-  useViewProjectDetailsInEstimate,
+  useViewProjectDetails,
   useViewProjectClosureDetails,
   useViewProjectClosureDetailsBills,
   useViewProjectClosureDetailsKickoffChecklist,

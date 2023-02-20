@@ -13,6 +13,7 @@ const ProjectDetails = () => {
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const [configNavItems, setNavTypeConfig] = useState([]);
     const [subProjects, setSubProjects] = useState([]);
+
     const navConfigs = [
         {
             "name":"Project_Details",
@@ -54,11 +55,11 @@ const ProjectDetails = () => {
         history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
     }
 
-    const { data } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
+    const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
 
     //update config for Nav once we get the data
     useEffect(()=>{
-        if(data?.projectDetails?.subProjects.length > 0) {
+        if(data?.projectDetails?.subProjects?.length > 0) {
             navConfigs[2].active = true;
             setSubProjects(data?.projectDetails?.subProjects);
         }else{
@@ -73,7 +74,7 @@ const ProjectDetails = () => {
                 <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_PROJECT_DETAILS")}</Header>
             </div>
 
-            <Card className={"employeeCard-override"} >
+            {/* <Card className={"employeeCard-override"} >
                 <StatusTable>
                     <Row className="border-none" label={`${t("WORKS_PROJECT_ID")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectID} textStyle={{ whiteSpace: "pre" }} />
                     <Row className="border-none" label={`${t("PDF_STATIC_LABEL_ESTIMATE_PROPOSAL_DATE")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate} textStyle={{ whiteSpace: "pre" }} />
@@ -82,8 +83,8 @@ const ProjectDetails = () => {
                     <Row className="border-none" label={`${t("WORKS_THE_PROJECT_HAS_SUB_PROJECT_LABEL")}:`} text={t(data?.projectDetails?.searchedProject?.basicDetails?.projectHasSubProject)} textStyle={{ whiteSpace: "pre" }} />
                     <Row className="border-none" label={`${t("WORKS_PARENT_PROJECT_ID")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID} textStyle={{ whiteSpace: "pre" }} isValueLink={data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID === "NA" ? "" : data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID} navigateLinkHandler={()=>handleParentProjectSearch(data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID)}/>
                 </StatusTable>
-            </Card>
-            <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>  
+            </Card> */}
+            <HorizontalNav showNav={false} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>  
               <ProjectDetailsNavDetails 
                 activeLink={activeLink}
                 subProjects={subProjects}
