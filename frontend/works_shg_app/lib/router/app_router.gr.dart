@@ -52,6 +52,8 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: AttendanceRegisterTablePage(
+          args.registerId,
+          args.tenantId,
           args.projectDetails,
           args.attendanceRegister,
           key: args.key,
@@ -64,34 +66,16 @@ class _$AppRouter extends RootStackRouter {
         child: const WorkOrderPage(),
       );
     },
-    ViewMusterRollsRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-        routeData: routeData,
-        child: const ViewMusterRollsPage(),
-      );
-    },
-    SHGInboxRoute.name: (routeData) {
-      final args = routeData.argsAs<SHGInboxRouteArgs>();
-      return MaterialPageX<dynamic>(
-        routeData: routeData,
-        child: SHGInboxPage(
-          args.tenantId,
-          args.musterRollNo,
-          args.projectDetails,
-          key: args.key,
-        ),
-      );
-    },
     ManageAttendanceRegisterRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: const ManageAttendanceRegisterPage(),
       );
     },
-    AttendanceInboxRoute.name: (routeData) {
+    TrackAttendanceInboxRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
-        child: const AttendanceInboxPage(),
+        child: const TrackAttendanceInboxPage(),
       );
     },
     TrackAttendanceRoute.name: (routeData) {
@@ -151,7 +135,7 @@ class _$AppRouter extends RootStackRouter {
             ),
             RouteConfig(
               AttendanceRegisterTableRoute.name,
-              path: 'manageAttendance',
+              path: 'manageAttendanceTable/:registerId/:tenantId',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -160,23 +144,13 @@ class _$AppRouter extends RootStackRouter {
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
-              ViewMusterRollsRoute.name,
-              path: 'muster-rolls',
-              parent: AuthenticatedRouteWrapper.name,
-            ),
-            RouteConfig(
-              SHGInboxRoute.name,
-              path: 'shg-inbox/:tenantId/:musterRollNo',
-              parent: AuthenticatedRouteWrapper.name,
-            ),
-            RouteConfig(
               ManageAttendanceRegisterRoute.name,
               path: 'manage-attendance',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
-              AttendanceInboxRoute.name,
-              path: 'attendance-inbox',
+              TrackAttendanceInboxRoute.name,
+              path: 'track-attendance-inbox',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -261,17 +235,25 @@ class HomeRoute extends PageRouteInfo<void> {
 class AttendanceRegisterTableRoute
     extends PageRouteInfo<AttendanceRegisterTableRouteArgs> {
   AttendanceRegisterTableRoute({
+    required String registerId,
+    required String tenantId,
     required List<Map<String, dynamic>> projectDetails,
     required AttendanceRegister? attendanceRegister,
     Key? key,
   }) : super(
           AttendanceRegisterTableRoute.name,
-          path: 'manageAttendance',
+          path: 'manageAttendanceTable/:registerId/:tenantId',
           args: AttendanceRegisterTableRouteArgs(
+            registerId: registerId,
+            tenantId: tenantId,
             projectDetails: projectDetails,
             attendanceRegister: attendanceRegister,
             key: key,
           ),
+          rawPathParams: {
+            'registerId': registerId,
+            'tenantId': tenantId,
+          },
         );
 
   static const String name = 'AttendanceRegisterTableRoute';
@@ -279,10 +261,16 @@ class AttendanceRegisterTableRoute
 
 class AttendanceRegisterTableRouteArgs {
   const AttendanceRegisterTableRouteArgs({
+    required this.registerId,
+    required this.tenantId,
     required this.projectDetails,
     required this.attendanceRegister,
     this.key,
   });
+
+  final String registerId;
+
+  final String tenantId;
 
   final List<Map<String, dynamic>> projectDetails;
 
@@ -292,7 +280,7 @@ class AttendanceRegisterTableRouteArgs {
 
   @override
   String toString() {
-    return 'AttendanceRegisterTableRouteArgs{projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
+    return 'AttendanceRegisterTableRouteArgs{registerId: $registerId, tenantId: $tenantId, projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
   }
 }
 
@@ -309,66 +297,6 @@ class WorkOrderRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [ViewMusterRollsPage]
-class ViewMusterRollsRoute extends PageRouteInfo<void> {
-  const ViewMusterRollsRoute()
-      : super(
-          ViewMusterRollsRoute.name,
-          path: 'muster-rolls',
-        );
-
-  static const String name = 'ViewMusterRollsRoute';
-}
-
-/// generated route for
-/// [SHGInboxPage]
-class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
-  SHGInboxRoute({
-    required String tenantId,
-    required String musterRollNo,
-    required List<Map<String, dynamic>> projectDetails,
-    Key? key,
-  }) : super(
-          SHGInboxRoute.name,
-          path: 'shg-inbox/:tenantId/:musterRollNo',
-          args: SHGInboxRouteArgs(
-            tenantId: tenantId,
-            musterRollNo: musterRollNo,
-            projectDetails: projectDetails,
-            key: key,
-          ),
-          rawPathParams: {
-            'tenantId': tenantId,
-            'musterRollNo': musterRollNo,
-          },
-        );
-
-  static const String name = 'SHGInboxRoute';
-}
-
-class SHGInboxRouteArgs {
-  const SHGInboxRouteArgs({
-    required this.tenantId,
-    required this.musterRollNo,
-    required this.projectDetails,
-    this.key,
-  });
-
-  final String tenantId;
-
-  final String musterRollNo;
-
-  final List<Map<String, dynamic>> projectDetails;
-
-  final Key? key;
-
-  @override
-  String toString() {
-    return 'SHGInboxRouteArgs{tenantId: $tenantId, musterRollNo: $musterRollNo, projectDetails: $projectDetails, key: $key}';
-  }
-}
-
-/// generated route for
 /// [ManageAttendanceRegisterPage]
 class ManageAttendanceRegisterRoute extends PageRouteInfo<void> {
   const ManageAttendanceRegisterRoute()
@@ -381,15 +309,15 @@ class ManageAttendanceRegisterRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [AttendanceInboxPage]
-class AttendanceInboxRoute extends PageRouteInfo<void> {
-  const AttendanceInboxRoute()
+/// [TrackAttendanceInboxPage]
+class TrackAttendanceInboxRoute extends PageRouteInfo<void> {
+  const TrackAttendanceInboxRoute()
       : super(
-          AttendanceInboxRoute.name,
-          path: 'attendance-inbox',
+          TrackAttendanceInboxRoute.name,
+          path: 'track-attendance-inbox',
         );
 
-  static const String name = 'AttendanceInboxRoute';
+  static const String name = 'TrackAttendanceInboxRoute';
 }
 
 /// generated route for

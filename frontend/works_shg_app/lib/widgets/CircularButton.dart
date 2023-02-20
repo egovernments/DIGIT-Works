@@ -24,49 +24,51 @@ class CircularButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerLeft,
-      child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-              height: 30,
-              width: 30,
-              margin: const EdgeInsets.all(2.0),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  width: 2,
-                  color: onTap != null
-                      ? color
-                      : const Color.fromRGBO(149, 148, 148, 1),
-                  style: BorderStyle.solid,
+        alignment: Alignment.centerLeft,
+        child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+                height: 30,
+                width: 30,
+                margin: const EdgeInsets.all(2.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    width: 2,
+                    color: onTap != null
+                        ? index.isNegative
+                            ? Colors.black
+                            : index == 0.0
+                                ? const Color.fromRGBO(212, 53, 28, 1)
+                                : index == 0.5
+                                    ? const Color.fromRGBO(244, 169, 56, 1)
+                                    : const Color.fromRGBO(0, 112, 60, 1)
+                        : const Color.fromRGBO(149, 148, 148, 1),
+                    style: BorderStyle.solid,
+                  ),
                 ),
-              ),
-              child: ShaderMask(
-                blendMode: BlendMode.srcATop,
-                shaderCallback: (Rect rect) {
-                  return LinearGradient(
-                    stops: const [0, 0.5, 0.5],
-                    colors: [
-                      index == 0.0 ? Colors.white : color,
-                      index == 0.0 ? Colors.white : color,
-                      index == 0.0 ? Colors.white : color.withOpacity(0)
-                    ],
-                  ).createShader(rect);
-                },
-                child: SizedBox(
-                  width: size,
-                  height: size,
-                  child: Icon(icon,
-                      size: size,
-                      color: index == 0.0
-                          ? Colors.transparent
-                          : index == 0.5
-                              ? isNotGreyed
-                                  ? Colors.white
-                                  : const Color.fromRGBO(238, 238, 238, 1)
-                              : color),
-                ),
-              ))),
-    );
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    index.isNegative || onTap == null
+                        ? ''
+                        : index == 0.0
+                            ? 'A'
+                            : index == 0.5
+                                ? 'H'
+                                : 'F',
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: index.isNegative || onTap == null
+                            ? null
+                            : index == 0.0
+                                ? const Color.fromRGBO(212, 53, 28, 1)
+                                : index == 0.5
+                                    ? const Color.fromRGBO(244, 169, 56, 1)
+                                    : const Color.fromRGBO(0, 112, 60, 1),
+                        fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ))));
   }
 }
