@@ -80,15 +80,12 @@ class AppInitializationBloc
       html.window.localStorage['initData'] = jsonEncode(result.toJson());
       html.window.localStorage['StateInfo'] = jsonEncode(ss);
       html.window.localStorage['languages'] = jsonEncode(ss.languages);
-      html.window.localStorage['tenantId' ?? ''] = jsonEncode(ss.code);
+      html.window.localStorage['tenantId'] = jsonEncode(ss.code);
     } else {
-      await storage.write(
-          key: 'initData' ?? '', value: jsonEncode(result.toJson()));
-      await storage.write(
-          key: 'StateInfo' ?? '', value: jsonEncode(ss.toJson()));
-      await storage.write(
-          key: 'languages' ?? '', value: jsonEncode(ss.languages));
-      await storage.write(key: 'tenantId' ?? '', value: jsonEncode(ss.code));
+      await storage.write(key: 'initData', value: jsonEncode(result.toJson()));
+      await storage.write(key: 'StateInfo', value: jsonEncode(ss.toJson()));
+      await storage.write(key: 'languages', value: jsonEncode(ss.languages));
+      await storage.write(key: 'tenantId', value: jsonEncode(ss.code));
     }
 
     dynamic localInitData;
