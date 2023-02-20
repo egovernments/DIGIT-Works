@@ -145,6 +145,15 @@ export const UICustomizations = {
             }
             return data
         },
+        postProcess: (responseArray, uiConfig) => {
+            const statusOptions = responseArray?.statusMap?.filter(item => item.applicationstatus)?.map(item => ({ code: item.applicationstatus, i18nKey: `COMMON_MASTERS_${item.applicationstatus}`}))
+            if(uiConfig?.type === 'filter') {
+             let fieldConfig = uiConfig?.fields?.filter(item => item.type === 'dropdown' && item.populators.name === 'musterRollStatus')
+             if(fieldConfig.length) { 
+               fieldConfig[0].populators.options = statusOptions
+             }
+           }
+        },
         additionalCustomizations: (row,column,columnConfig,value,t) => {
             if (column.label === "ATM_MUSTER_ROLL_ID") {
                 return <span className="link">
