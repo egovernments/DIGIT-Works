@@ -9,16 +9,16 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
   const allLinks = [
     {
       text: t("WORKS_CREATE_NEW_BILL"),
-      link: `/${window?.contextPath}/employee/contracts/create-bill`,
+      link: `/${window?.contextPath}/employee/contracts/search-contract`,
       businessService: "WORKS",
       roles: [],
     },
-    {
-      text: t("WORKS_SEARCH_BILLS"),
-      link: `/${window?.contextPath}/employee/contracts/search-bills`,
-      businessService: "WORKS",
-      roles: [],
-    },
+    // {
+    //   text: t("WORKS_SEARCH_BILLS"),
+    //   link: `/${window?.contextPath}/employee/contracts/search-bills`,
+    //   businessService: "WORKS",
+    //   roles: [],
+    // },
     {
       text: t("COMMON_VIEW_BILLS"),
       link: `/${window?.contextPath}/employee/expenditure/view-bills/menu`,

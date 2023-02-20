@@ -17,6 +17,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   const {apiDetails} = fullConfig
 
   if(uiConfig?.type === 'filter') {
+    //TODO @prachi-egov remove the module related and make this as geenric approach
     let fieldConfig = uiConfig?.fields?.filter(item => item.type === 'dropdown' && item.populators.name === 'musterRollStatus')
     if(fieldConfig.length) { 
       fieldConfig[0].populators.options = data?.statusMap?.map(item => ({ code: item.applicationstatus, i18nKey: `COMMON_MASTERS_${item.applicationstatus}`}))
