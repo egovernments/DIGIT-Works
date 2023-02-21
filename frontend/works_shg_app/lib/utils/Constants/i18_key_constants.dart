@@ -103,8 +103,8 @@ class AttendanceMgmt {
   String get attendanceCreateSuccess => 'ATM_CREATE_REGISTER_SUCCESS';
   String get musterUpdateFailed => 'MUSTER_UPDATE_FAILED';
   String get musterUpdateSuccess => 'MUSTER_UPDATE_SUCCESS';
-  String get musterCreateFailed => 'MUSTER_UPDATE_FAILED';
-  String get musterSentForApproval => 'MUSTER_SENt_FOR_APPROVAL_SUCCESS';
+  String get musterCreateFailed => 'MUSTER_CREATE_FAILED';
+  String get musterSentForApproval => 'MUSTER_SENT_FOR_APPROVAL_SUCCESS';
   String get applicationInWorkFlow => 'MUSTER_ROLL_IN_WORKFLOW_STATE';
   String get unableToCheckWorkflowStatus => 'MUSTER_ROLL_WORKFLOW_CHECK_FAIL';
   String get resubmitMusterRoll => 'RESUBMIT_MUSTER_ROLL';
@@ -112,5 +112,5 @@ class AttendanceMgmt {
   String get attendeeCreateSuccess => 'ATTENDEE_CREATE_SUCCESS';
   String get attendeeDeEnrollFailed => 'ATTENDEE_DE_ENROLL_FAILED';
   String get attendeeDeEnrollSuccess => 'ATTENDEE_DE_ENROLL_SUCCESS';
-  String get attendanceSearchFailed => 'ATTENDANCE_SEARCH_FAILED';
+  String get noMusterRollsFound => 'NO_MUSTER_ROLLS_FOUND';
 }

@@ -78,11 +78,11 @@ class HomePage extends StatelessWidget {
                                       .translate(i18.home.registerIndividual),
                                   () => context.router
                                       .push(RegisterIndividualRoute())),
-                              // ButtonLink(
-                              //     AppLocalizations.of(context)
-                              //         .translate(i18.home.musterRoll),
-                              //     () => context.router
-                              //         .push(const ViewMusterRollsRoute())),
+                              ButtonLink(
+                                  AppLocalizations.of(context)
+                                      .translate(i18.home.musterRoll),
+                                  () => context.router
+                                      .push(const ViewMusterRollsRoute())),
                               ButtonLink(
                                   AppLocalizations.of(context)
                                       .translate(i18.home.trackAttendance), () {

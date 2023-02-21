@@ -66,6 +66,12 @@ class _$AppRouter extends RootStackRouter {
         child: const WorkOrderPage(),
       );
     },
+    ViewMusterRollsRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const ViewMusterRollsPage(),
+      );
+    },
     ManageAttendanceRegisterRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
@@ -141,6 +147,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               WorkOrderRoute.name,
               path: 'work-orders',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              ViewMusterRollsRoute.name,
+              path: 'muster-rolls',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -294,6 +305,18 @@ class WorkOrderRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'WorkOrderRoute';
+}
+
+/// generated route for
+/// [ViewMusterRollsPage]
+class ViewMusterRollsRoute extends PageRouteInfo<void> {
+  const ViewMusterRollsRoute()
+      : super(
+          ViewMusterRollsRoute.name,
+          path: 'muster-rolls',
+        );
+
+  static const String name = 'ViewMusterRollsRoute';
 }
 
 /// generated route for
