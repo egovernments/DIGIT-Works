@@ -115,9 +115,6 @@ flutter:
     - family: Hindhi
       fonts:
         - asset: assets/fonts/Roboto/Hind-Regular.ttf
-    - family: Punjabi
-      fonts:
-        - asset: assets/fonts/Roboto/punjabi.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
