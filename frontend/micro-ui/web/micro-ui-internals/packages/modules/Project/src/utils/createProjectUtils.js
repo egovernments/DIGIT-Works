@@ -66,9 +66,9 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
           "endDate": convertDateToEpoch(project_details?.endDate), 
           "isTaskEnabled": false, //Not being captured on UI //For Health Team Project
           "parent": parentProjectID || "", // In case of Single project, Parent ID is empty.
-          "targets": [ //this is target demograph, captured on UI //For Health Team Project
+          "targets": [
             {
-              "beneficiaryType": "Slum", //project_details?.targetDemocracy?.code, //will update once backend updates
+              "beneficiaryType": project_details?.targetDemography?.code, //will update once backend updates
               "totalNo": 0,
               "targetNo": 0
             }
@@ -80,7 +80,9 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "fund" : project_details?.fund?.code,
             "scheme" :  project_details?.scheme?.code,
             "subScheme" :  project_details?.subScheme?.code,  
-            "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal)
+            "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal),
+            "recommendedModeOfEntrustment" : project_details?.recommendedModeOfEntrustment?.code,
+            "ward" : project_details?.ward?.code
           },
           "rowVersion": 0
       }
