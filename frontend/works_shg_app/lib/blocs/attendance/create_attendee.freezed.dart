@@ -16,43 +16,43 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AttendeeCreateEvent {
-  List<Map<String, dynamic>> get attendeeList =>
-      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(List<Map<String, dynamic>> attendeeList) create,
+    required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(List<Map<String, dynamic>> attendeeList)? create,
+    TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(List<Map<String, dynamic>> attendeeList)? create,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(CreateAttendeeEvent value) create,
+    required TResult Function(CreateAttendeeDisposeEvent value) dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(CreateAttendeeEvent value)? create,
+    TResult? Function(CreateAttendeeDisposeEvent value)? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(CreateAttendeeEvent value)? create,
+    TResult Function(CreateAttendeeDisposeEvent value)? dispose,
     required TResult orElse(),
   }) =>
-      throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $AttendeeCreateEventCopyWith<AttendeeCreateEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -61,8 +61,6 @@ abstract class $AttendeeCreateEventCopyWith<$Res> {
   factory $AttendeeCreateEventCopyWith(
           AttendeeCreateEvent value, $Res Function(AttendeeCreateEvent) then) =
       _$AttendeeCreateEventCopyWithImpl<$Res, AttendeeCreateEvent>;
-  @useResult
-  $Res call({List<Map<String, dynamic>> attendeeList});
 }
 
 /// @nodoc
@@ -74,28 +72,13 @@ class _$AttendeeCreateEventCopyWithImpl<$Res, $Val extends AttendeeCreateEvent>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? attendeeList = null,
-  }) {
-    return _then(_value.copyWith(
-      attendeeList: null == attendeeList
-          ? _value.attendeeList
-          : attendeeList // ignore: cast_nullable_to_non_nullable
-              as List<Map<String, dynamic>>,
-    ) as $Val);
-  }
 }
 
 /// @nodoc
-abstract class _$$CreateAttendeeEventCopyWith<$Res>
-    implements $AttendeeCreateEventCopyWith<$Res> {
+abstract class _$$CreateAttendeeEventCopyWith<$Res> {
   factory _$$CreateAttendeeEventCopyWith(_$CreateAttendeeEvent value,
           $Res Function(_$CreateAttendeeEvent) then) =
       __$$CreateAttendeeEventCopyWithImpl<$Res>;
-  @override
   @useResult
   $Res call({List<Map<String, dynamic>> attendeeList});
 }
@@ -165,6 +148,7 @@ class _$CreateAttendeeEvent implements CreateAttendeeEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(List<Map<String, dynamic>> attendeeList) create,
+    required TResult Function() dispose,
   }) {
     return create(attendeeList);
   }
@@ -173,6 +157,7 @@ class _$CreateAttendeeEvent implements CreateAttendeeEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(List<Map<String, dynamic>> attendeeList)? create,
+    TResult? Function()? dispose,
   }) {
     return create?.call(attendeeList);
   }
@@ -181,6 +166,7 @@ class _$CreateAttendeeEvent implements CreateAttendeeEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(List<Map<String, dynamic>> attendeeList)? create,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (create != null) {
@@ -193,6 +179,7 @@ class _$CreateAttendeeEvent implements CreateAttendeeEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(CreateAttendeeEvent value) create,
+    required TResult Function(CreateAttendeeDisposeEvent value) dispose,
   }) {
     return create(this);
   }
@@ -201,6 +188,7 @@ class _$CreateAttendeeEvent implements CreateAttendeeEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(CreateAttendeeEvent value)? create,
+    TResult? Function(CreateAttendeeDisposeEvent value)? dispose,
   }) {
     return create?.call(this);
   }
@@ -209,6 +197,7 @@ class _$CreateAttendeeEvent implements CreateAttendeeEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(CreateAttendeeEvent value)? create,
+    TResult Function(CreateAttendeeDisposeEvent value)? dispose,
     required TResult orElse(),
   }) {
     if (create != null) {
@@ -223,21 +212,169 @@ abstract class CreateAttendeeEvent implements AttendeeCreateEvent {
           {required final List<Map<String, dynamic>> attendeeList}) =
       _$CreateAttendeeEvent;
 
-  @override
   List<Map<String, dynamic>> get attendeeList;
-  @override
   @JsonKey(ignore: true)
   _$$CreateAttendeeEventCopyWith<_$CreateAttendeeEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-mixin _$AttendeeCreateState {
-  bool get loading => throw _privateConstructorUsedError;
-  AttendeeModel? get attendeeModel => throw _privateConstructorUsedError;
+abstract class _$$CreateAttendeeDisposeEventCopyWith<$Res> {
+  factory _$$CreateAttendeeDisposeEventCopyWith(
+          _$CreateAttendeeDisposeEvent value,
+          $Res Function(_$CreateAttendeeDisposeEvent) then) =
+      __$$CreateAttendeeDisposeEventCopyWithImpl<$Res>;
+}
 
-  @JsonKey(ignore: true)
-  $AttendeeCreateStateCopyWith<AttendeeCreateState> get copyWith =>
+/// @nodoc
+class __$$CreateAttendeeDisposeEventCopyWithImpl<$Res>
+    extends _$AttendeeCreateEventCopyWithImpl<$Res,
+        _$CreateAttendeeDisposeEvent>
+    implements _$$CreateAttendeeDisposeEventCopyWith<$Res> {
+  __$$CreateAttendeeDisposeEventCopyWithImpl(
+      _$CreateAttendeeDisposeEvent _value,
+      $Res Function(_$CreateAttendeeDisposeEvent) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$CreateAttendeeDisposeEvent implements CreateAttendeeDisposeEvent {
+  const _$CreateAttendeeDisposeEvent();
+
+  @override
+  String toString() {
+    return 'AttendeeCreateEvent.dispose()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CreateAttendeeDisposeEvent);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(List<Map<String, dynamic>> attendeeList) create,
+    required TResult Function() dispose,
+  }) {
+    return dispose();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(List<Map<String, dynamic>> attendeeList)? create,
+    TResult? Function()? dispose,
+  }) {
+    return dispose?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(List<Map<String, dynamic>> attendeeList)? create,
+    TResult Function()? dispose,
+    required TResult orElse(),
+  }) {
+    if (dispose != null) {
+      return dispose();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(CreateAttendeeEvent value) create,
+    required TResult Function(CreateAttendeeDisposeEvent value) dispose,
+  }) {
+    return dispose(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(CreateAttendeeEvent value)? create,
+    TResult? Function(CreateAttendeeDisposeEvent value)? dispose,
+  }) {
+    return dispose?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(CreateAttendeeEvent value)? create,
+    TResult Function(CreateAttendeeDisposeEvent value)? dispose,
+    required TResult orElse(),
+  }) {
+    if (dispose != null) {
+      return dispose(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class CreateAttendeeDisposeEvent implements AttendeeCreateEvent {
+  const factory CreateAttendeeDisposeEvent() = _$CreateAttendeeDisposeEvent;
+}
+
+/// @nodoc
+mixin _$AttendeeCreateState {
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function() loaded,
+    required TResult Function(String? error) error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function()? loaded,
+    TResult? Function(String? error)? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function()? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) =>
       throw _privateConstructorUsedError;
 }
 
@@ -246,10 +383,6 @@ abstract class $AttendeeCreateStateCopyWith<$Res> {
   factory $AttendeeCreateStateCopyWith(
           AttendeeCreateState value, $Res Function(AttendeeCreateState) then) =
       _$AttendeeCreateStateCopyWithImpl<$Res, AttendeeCreateState>;
-  @useResult
-  $Res call({bool loading, AttendeeModel? attendeeModel});
-
-  $AttendeeModelCopyWith<$Res>? get attendeeModel;
 }
 
 /// @nodoc
@@ -261,129 +394,489 @@ class _$AttendeeCreateStateCopyWithImpl<$Res, $Val extends AttendeeCreateState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+}
 
-  @pragma('vm:prefer-inline')
+/// @nodoc
+abstract class _$$_InitialCopyWith<$Res> {
+  factory _$$_InitialCopyWith(
+          _$_Initial value, $Res Function(_$_Initial) then) =
+      __$$_InitialCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_InitialCopyWithImpl<$Res>
+    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$_Initial>
+    implements _$$_InitialCopyWith<$Res> {
+  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Initial extends _Initial {
+  const _$_Initial() : super._();
+
   @override
-  $Res call({
-    Object? loading = null,
-    Object? attendeeModel = freezed,
+  String toString() {
+    return 'AttendeeCreateState.initial()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Initial);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function() loaded,
+    required TResult Function(String? error) error,
   }) {
-    return _then(_value.copyWith(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      attendeeModel: freezed == attendeeModel
-          ? _value.attendeeModel
-          : attendeeModel // ignore: cast_nullable_to_non_nullable
-              as AttendeeModel?,
-    ) as $Val);
+    return initial();
   }
 
   @override
-  @pragma('vm:prefer-inline')
-  $AttendeeModelCopyWith<$Res>? get attendeeModel {
-    if (_value.attendeeModel == null) {
-      return null;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function()? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return initial?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function()? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial();
     }
+    return orElse();
+  }
 
-    return $AttendeeModelCopyWith<$Res>(_value.attendeeModel!, (value) {
-      return _then(_value.copyWith(attendeeModel: value) as $Val);
-    });
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return initial(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return initial?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial(this);
+    }
+    return orElse();
   }
 }
 
-/// @nodoc
-abstract class _$$_AttendeeCreateStateCopyWith<$Res>
-    implements $AttendeeCreateStateCopyWith<$Res> {
-  factory _$$_AttendeeCreateStateCopyWith(_$_AttendeeCreateState value,
-          $Res Function(_$_AttendeeCreateState) then) =
-      __$$_AttendeeCreateStateCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({bool loading, AttendeeModel? attendeeModel});
-
-  @override
-  $AttendeeModelCopyWith<$Res>? get attendeeModel;
+abstract class _Initial extends AttendeeCreateState {
+  const factory _Initial() = _$_Initial;
+  const _Initial._() : super._();
 }
 
 /// @nodoc
-class __$$_AttendeeCreateStateCopyWithImpl<$Res>
-    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$_AttendeeCreateState>
-    implements _$$_AttendeeCreateStateCopyWith<$Res> {
-  __$$_AttendeeCreateStateCopyWithImpl(_$_AttendeeCreateState _value,
-      $Res Function(_$_AttendeeCreateState) _then)
+abstract class _$$_LoadingCopyWith<$Res> {
+  factory _$$_LoadingCopyWith(
+          _$_Loading value, $Res Function(_$_Loading) then) =
+      __$$_LoadingCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_LoadingCopyWithImpl<$Res>
+    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$_Loading>
+    implements _$$_LoadingCopyWith<$Res> {
+  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Loading extends _Loading {
+  const _$_Loading() : super._();
+
+  @override
+  String toString() {
+    return 'AttendeeCreateState.loading()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Loading);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function() loaded,
+    required TResult Function(String? error) error,
+  }) {
+    return loading();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function()? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return loading?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function()? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loading(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loading?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Loading extends AttendeeCreateState {
+  const factory _Loading() = _$_Loading;
+  const _Loading._() : super._();
+}
+
+/// @nodoc
+abstract class _$$_LoadedCopyWith<$Res> {
+  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
+      __$$_LoadedCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_LoadedCopyWithImpl<$Res>
+    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$_Loaded>
+    implements _$$_LoadedCopyWith<$Res> {
+  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Loaded extends _Loaded {
+  const _$_Loaded() : super._();
+
+  @override
+  String toString() {
+    return 'AttendeeCreateState.loaded()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Loaded);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function() loaded,
+    required TResult Function(String? error) error,
+  }) {
+    return loaded();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function()? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return loaded?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function()? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Loaded extends AttendeeCreateState {
+  const factory _Loaded() = _$_Loaded;
+  const _Loaded._() : super._();
+}
+
+/// @nodoc
+abstract class _$$_ErrorCopyWith<$Res> {
+  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
+      __$$_ErrorCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String? error});
+}
+
+/// @nodoc
+class __$$_ErrorCopyWithImpl<$Res>
+    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$_Error>
+    implements _$$_ErrorCopyWith<$Res> {
+  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = null,
-    Object? attendeeModel = freezed,
+    Object? error = freezed,
   }) {
-    return _then(_$_AttendeeCreateState(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      attendeeModel: freezed == attendeeModel
-          ? _value.attendeeModel
-          : attendeeModel // ignore: cast_nullable_to_non_nullable
-              as AttendeeModel?,
+    return _then(_$_Error(
+      freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$_AttendeeCreateState extends _AttendeeCreateState {
-  const _$_AttendeeCreateState({this.loading = false, this.attendeeModel})
-      : super._();
+class _$_Error extends _Error {
+  const _$_Error(this.error) : super._();
 
   @override
-  @JsonKey()
-  final bool loading;
-  @override
-  final AttendeeModel? attendeeModel;
+  final String? error;
 
   @override
   String toString() {
-    return 'AttendeeCreateState(loading: $loading, attendeeModel: $attendeeModel)';
+    return 'AttendeeCreateState.error(error: $error)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AttendeeCreateState &&
-            (identical(other.loading, loading) || other.loading == loading) &&
-            (identical(other.attendeeModel, attendeeModel) ||
-                other.attendeeModel == attendeeModel));
+            other is _$_Error &&
+            (identical(other.error, error) || other.error == error));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, loading, attendeeModel);
+  int get hashCode => Object.hash(runtimeType, error);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AttendeeCreateStateCopyWith<_$_AttendeeCreateState> get copyWith =>
-      __$$_AttendeeCreateStateCopyWithImpl<_$_AttendeeCreateState>(
-          this, _$identity);
+  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function() loaded,
+    required TResult Function(String? error) error,
+  }) {
+    return error(this.error);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function()? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return error?.call(this.error);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function()? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(this.error);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return error(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return error?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(this);
+    }
+    return orElse();
+  }
 }
 
-abstract class _AttendeeCreateState extends AttendeeCreateState {
-  const factory _AttendeeCreateState(
-      {final bool loading,
-      final AttendeeModel? attendeeModel}) = _$_AttendeeCreateState;
-  const _AttendeeCreateState._() : super._();
+abstract class _Error extends AttendeeCreateState {
+  const factory _Error(final String? error) = _$_Error;
+  const _Error._() : super._();
 
-  @override
-  bool get loading;
-  @override
-  AttendeeModel? get attendeeModel;
-  @override
+  String? get error;
   @JsonKey(ignore: true)
-  _$$_AttendeeCreateStateCopyWith<_$_AttendeeCreateState> get copyWith =>
+  _$$_ErrorCopyWith<_$_Error> get copyWith =>
       throw _privateConstructorUsedError;
 }

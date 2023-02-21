@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart';
 import 'package:flutter/material.dart';
@@ -86,8 +85,9 @@ class _SideBar extends State<SideBar> {
                           context.read<LocalizationBloc>().add(
                               OnLoadLocalizationEvent(
                                   module: widget.module,
-                                  tenantId:
-                                      GlobalVariables.getTenantId().toString(),
+                                  tenantId: GlobalVariables.globalConfigObject!
+                                      .globalConfigs!.stateTenantId
+                                      .toString(),
                                   locale: data.value));
                           context.read<AppInitializationBloc>().add(
                               AppInitializationSetupEvent(

@@ -65,6 +65,7 @@ const moduleReducers = (initData) => ({
   initData,
 });
 
+//keep this at last to compile all Mukta specific changes at last
 initMuktaCustomisations();
 
 function App() {
@@ -80,6 +81,7 @@ function App() {
       stateCode={stateCode}
       enabledModules={enabledModules}
       moduleReducers={moduleReducers}
+      defaultLanding="employee"
     />
   );
 }

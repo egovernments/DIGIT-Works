@@ -2,20 +2,132 @@ import cloneDeep from "lodash/cloneDeep";
 import _ from "lodash";
 import { WorksService } from "../../elements/Works";
 import HrmsService from "../../elements/HRMS";
+import { convertEpochToDate } from "../../../utils/pt";
 
+const createProjectsArray = (t, project, searchParams, headerLocale) => {
 
-const convertEpochToDate = (dateEpoch) => {
-    if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
-        return "NA";
+    let totalProjects = {
+        searchedProject : {},
+        subProjects : []
+    };
+    let basicDetails = {};
+    let totalProjectsLength = project.length;
+    for(let projectIndex = 0; projectIndex < totalProjectsLength; projectIndex++) {
+        let currentProject = project[projectIndex];
+       
+        const financialDetails = {
+            title: " ",
+            asSectionHeader: false,
+            values: [
+              { title: "WORKS_FUND", value: currentProject?.additionalDetails?.fund ? t(`ES_COMMON_FIN_${currentProject?.additionalDetails?.fund}`) : "NA" },
+              { title: "WORKS_FUNCTION", value: currentProject?.additionalDetails?.function ? t(`ES_COMMON_${currentProject?.additionalDetails?.function}`) : "NA" },
+              { title: "WORKS_BUDGET_HEAD", value: currentProject?.additionalDetails?.budgetHead ? t(`ES_COMMON_FIN_${currentProject?.additionalDetails?.budgetHead}`)  : "NA"},
+              { title: "WORKS_SCHEME", value: currentProject?.additionalDetails?.scheme ? t(`ES_COMMON_${currentProject?.additionalDetails?.scheme}`) : "NA"},
+              { title: "WORKS_SUB_SCHEME", value: currentProject?.additionalDetails?.subScheme ? t(`ES_COMMON_${currentProject?.additionalDetails?.subScheme}`) : "NA"}
+            ],
+          };
+          const departmentDetails = {
+            title: " ",
+            asSectionHeader: false,
+            values: [
+                    { title: "PROJECT_OWNING_DEPT", value: currentProject?.department ? t(`COMMON_MASTERS_DEPARTMENT_${currentProject?.department}`) : "NA" },
+                    { title: "PROJECT_TARGET_DEMOGRAPHY", value: "NA" }, //backend to update this
+                    { title: "WORKS_LOR", value: currentProject?.referenceID || "NA" },
+                    { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs || "NA" },
+                ]
+            };
+            const workTypeDetails = {
+                title: "PROJECT_WORK_TYPE_DETAILS",
+                asSectionHeader: true,
+                values: [
+                    { title: "WORKS_PROJECT_TYPE", value: currentProject?.projectType ? t(`WORKS_PROJECT_TYPE_${currentProject?.projectType}`) : "NA" }, //backend to update this
+                    { title: "WORKS_SUB_PROJECT_TYPE", value: currentProject?.projectSubType ? t(`ES_COMMON_${currentProject?.projectSubType}`) : "NA" }, //backend to update this
+                    { title: "WORKS_WORK_NATURE", value: "NA" }, //backend to update this
+                    { title: "WORKS_MODE_OF_INS", value: "NA" }, //backend to update this
+                ],
+            };
+            const locationDetails = {
+                title: "WORKS_LOCATION_DETAILS",
+                asSectionHeader: true,
+                values: [
+                    { title: "WORKS_LOCALITY",value: currentProject?.address?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.address?.locality}`) : "NA" },
+                    { title: "WORKS_WARD", value: "NA" }, ///backend to update this
+                    { title: "PDF_STATIC_LABEL_ESTIMATE_ULB", value: currentProject?.address?.city ? t(currentProject?.address?.city) : "NA" }, //will check with Backend
+                    { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" }, //will check with Backend
+                ],
+            };
+
+            const documentDetails = {
+                title: "",
+                asSectionHeader: true,
+                additionalDetails: {
+                    documents: [{
+                        title: "CS_COMMON_DOCUMENTS",
+                        BS : 'Works',
+                        values: currentProject?.documents?.map((document) => {
+                            return {
+                                title: document?.additionalDetails?.fileName,
+                                documentType: document?.documentType,
+                                documentUid: document?.fileStore,
+                                fileStoreId: document?.fileStore,
+                            };
+                        }),
+                    },
+                    ]
+                }
+            }
+            if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
+                basicDetails = {
+                    projectID : currentProject?.projectNumber,
+                    projectProposalDate : convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA", //need to check this with Chetan
+                    projectName : currentProject?.name || "NA",
+                    projectDesc : currentProject?.description || "NA",
+                    projectHasSubProject : (totalProjectsLength > 1 ? "COMMON_YES" : "COMMON_NO"),
+                    projectParentProjectID : currentProject?.ancestors?.[0]?.projectNumber || "NA",
+                    uuid:currentProject?.id,
+                    address:currentProject?.address,
+                }
+                totalProjects.searchedProject = {
+                    basicDetails : basicDetails,
+                    financialDetails : financialDetails,
+                    departmentDetails : departmentDetails,
+                    workTypeDetails : workTypeDetails,
+                    locationDetails : locationDetails,
+                    documentDetails : documentDetails
+                }
+            }else {
+                //sub projects dont have financial details
+                //these keys are mapped to the view table
+                totalProjects.subProjects.push({
+                    name :  currentProject?.name || "NA",
+                    estimatedAmount : currentProject?.additionalDetails?.estimatedCostInRs || "NA",
+                    type : currentProject?.projectType || "NA",
+                    subType : currentProject?.projectSubType || "NA",
+                    natureOfWork : currentProject?.natureOfWork || "NA", //not consumed by API
+                    startDate : currentProject?.startDate || "NA",
+                    endDate : currentProject?.endDate || "NA",
+                    modeOfEntrustment : currentProject?.modeOfEntrustment || "NA", //not consumed by API
+                    ward : currentProject?.ward || "NA", //not consumed by API
+                    locality : currentProject?.address?.locality || "NA",
+                    ulb : currentProject?.address?.city || "NA",
+                    geoLocation : currentProject?.address?.addressLine1 || "NA", // this will change to Latitude and Longitude
+                    uploadedDocuments : [{
+                        BS : 'Works',
+                        values: currentProject?.documents?.map((document) => {
+                                return {
+                                    title: document?.additionalDetails?.fileName,
+                                    documentType: document?.documentType,
+                                    documentUid: document?.fileStore,
+                                    fileStoreId: document?.fileStore,
+                                };
+                            }),
+                        },
+                    ]
+                });
+            }
     }
-    const dateFromApi = new Date(dateEpoch);
-    let month = dateFromApi.getMonth() + 1;
-    let day = dateFromApi.getDate();
-    let year = dateFromApi.getFullYear();
-    month = (month > 9 ? "" : "0") + month;
-    day = (day > 9 ? "" : "0") + day;
-    return `${day}/${month}/${year}`;
-};
+    return totalProjects;
+}
 
 export const WorksSearch = {
     searchEstimate: async (tenantId="pb.jalandhar", filters = {} ) => {
@@ -34,12 +146,12 @@ export const WorksSearch = {
         const response = await WorksService?.loiSearch({tenantId,filters})
         return response?.letterOfIndents
     },
-    viewProjectDetailsScreen: async(t,tenantId, searchParams, filters = {limit : 10, offset : 0, includeAncestors : true}, headerLocale)=> {
+    viewProjectDetailsScreen: async(t,tenantId, searchParams, filters = {limit : 10, offset : 0, includeAncestors : true, includeDescendants : true}, headerLocale)=> {
         const response = await WorksService?.searchProject(tenantId, searchParams, filters);
+
         //Categoring the response into an object of searched project and its sub-projects ( if any )
         //searched projects will have basic details, project details and financial details
         //subprojects will be shown in a table similar to what create project has
-        let totalProjects = response?.Projects?.length;
         let projectDetails = {
             searchedProject : {
                 basicDetails : {},
@@ -50,89 +162,22 @@ export const WorksSearch = {
             },
             subProjects : []
         }
-        for(let projectIndex = 0; projectIndex < totalProjects; projectIndex++) {
-            let currentProject = response?.Projects[projectIndex];
-            const FinancialDetails = {
-                title: " ",
-                asSectionHeader: false,
-                values: [
-                  { title: "WORKS_FUND", value: currentProject?.additionalDetails?.fund ? t(`ES_COMMON_FIN_${currentProject?.additionalDetails?.fund}`) : "NA" },
-                  { title: "WORKS_FUNCTION", value: currentProject?.additionalDetails?.function ? t(`ES_COMMON_${currentProject?.additionalDetails?.function}`) : "NA" },
-                  { title: "WORKS_BUDGET_HEAD", value: currentProject?.additionalDetails?.budgetHead ? t(`ES_COMMON_FIN_${currentProject?.additionalDetails?.budgetHead}`)  : "NA"},
-                  { title: "WORKS_SCHEME", value: currentProject?.additionalDetails?.scheme ? t(`ES_COMMON_${currentProject?.additionalDetails?.scheme}`) : "NA"},
-                  { title: "WORKS_SUB_SCHEME", value: currentProject?.additionalDetails?.subScheme ? t(`ES_COMMON_${currentProject?.additionalDetails?.subScheme}`) : "NA"}
-                ],
-              };
-              const DepartmentDetails = {
-                title: " ",
-                asSectionHeader: false,
-                values: [
-                        { title: "PROJECT_OWNING_DEPT", value: currentProject?.department ? t(`COMMON_MASTERS_DEPARTMENT_${currentProject?.department}`) : "NA" },
-                        { title: "PROJECT_TARGET_DEMOGRAPHY", value: "NA" }, //backend to update this
-                        { title: "WORKS_LOR", value: currentProject?.referenceID || "NA" },
-                        { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs || "NA" },
-                    ]
-                };
-                const WorkTypeDetails = {
-                    title: "PROJECT_WORK_TYPE_DETAILS",
-                    asSectionHeader: true,
-                    values: [
-                        { title: "WORKS_PROJECT_TYPE", value: currentProject?.projectType ? t(`WORKS_PROJECT_TYPE_${currentProject?.projectType}`) : "NA" }, //backend to update this
-                        { title: "WORKS_SUB_PROJECT_TYPE", value: currentProject?.projectSubType ? t(`ES_COMMON_${currentProject?.projectSubType}`) : "NA" }, //backend to update this
-                        { title: "WORKS_WORK_NATURE", value: "NA" }, //backend to update this
-                        { title: "WORKS_MODE_OF_INS", value: "NA" }, //backend to update this
-                    ],
-                };
-                const LocationDetails = {
-                    title: "WORKS_LOCATION_DETAILS",
-                    asSectionHeader: true,
-                    values: [
-                        { title: "WORKS_LOCALITY",value: currentProject?.address?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.address?.locality}`) : "NA" },
-                        { title: "WORKS_WARD", value: "NA" }, ///backend to update this
-                        { title: "PDF_STATIC_LABEL_ESTIMATE_ULB", value: currentProject?.address?.city ? t(currentProject?.address?.city) : "NA" }, //will check with Backend
-                        { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" }, //will check with Backend
-                    ],
-                };
 
-                const documentDetails = {
-                    title: "",
-                    asSectionHeader: true,
-                    additionalDetails: {
-                        documents: [{
-                            title: "CS_COMMON_DOCUMENTS",
-                            BS : 'Works',
-                            values: currentProject?.documents?.map((document) => {
-                                return {
-                                    title: document?.additionalDetails?.fileName,
-                                    documentType: document?.documentType,
-                                    documentUid: document?.fileStore,
-                                    fileStoreId: document?.fileStore,
-                                };
-                            }),
-                        },
-                        ]
-                    }
-                }
-    
-            if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
-                //all details of searched project will come here
-                const basicDetails = {
-                    projectID : currentProject?.projectNumber,
-                    projectProposalDate : convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA", //need to check this with Chetan
-                    projectName : currentProject?.name || "NA",
-                    projectDesc : currentProject?.description || "NA",
-                    projectHasSubProject : (totalProjects > 1 ? "COMMON_YES" : "COMMON_NO"),
-                    projectParentProjectID : currentProject?.ancestors?.[0]?.projectNumber || "NA"
-                }
-                projectDetails.searchedProject['basicDetails'] = basicDetails;
-                projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [DepartmentDetails, WorkTypeDetails, LocationDetails, documentDetails]}; //rest categories will come here
-                projectDetails.searchedProject['details']['financialDetails'] = {applicationDetails :  [FinancialDetails]}; //rest categories will come here
-            }else {
-                 //all details of searched project will come here
-                 projectDetails?.subProjects?.push(DepartmentDetails, WorkTypeDetails, LocationDetails, Documents); //rest categories will come here //TODO:
-            }
+        //Upon Search, we will get a response of one Project which will be our Searched Projects
+        //That project will have descendants, which will be the part of Sub-Projects.
+
+        let projects = createProjectsArray(t, response?.Projects, searchParams, headerLocale);
+        //searched Project details
+        projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
+        projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.departmentDetails, projects?.searchedProject?.workTypeDetails, projects?.searchedProject?.locationDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
+        projectDetails.searchedProject['details']['financialDetails'] = {applicationDetails :  [projects?.searchedProject?.financialDetails]}; //rest categories will come here
+
+        if(response?.Projects?.[0]?.descendants) {
+            projects = createProjectsArray(t, response?.Projects?.[0]?.descendants, searchParams, headerLocale);
+            //all details of searched project will come here
+            projectDetails.subProjects.push(projects?.subProjects);
         }
-         return {
+        return {
             projectDetails : projectDetails,
             processInstancesDetails: [],
             applicationData: {},

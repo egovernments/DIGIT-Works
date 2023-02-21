@@ -34,7 +34,9 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                   LocalizationRepository(client.init()),
                 )..add(LocalizationEvent.onLoadLocalization(
                     module: 'rainmaker-attendencemgmt',
-                    tenantId: GlobalVariables.getTenantId().toString(),
+                    tenantId: GlobalVariables
+                        .globalConfigObject!.globalConfigs!.stateTenantId
+                        .toString(),
                     locale: GlobalVariables.selectedLocale(),
                   )),
             child: BlocBuilder<UserSearchBloc, UserSearchState>(

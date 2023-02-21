@@ -37,7 +37,7 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
               "tenantId": event.tenantId,
               "registerId": event.registerId,
               "startDate": event.startDate,
-              "additonalDetails": {
+              "additionalDetails": {
                 "orgName": event.orgName,
                 "contractId": event.contractId,
                 "attendanceRegisterNo": event.registerNo,
@@ -72,7 +72,7 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
             "musterRoll": {
               "tenantId": event.tenantId,
               "id": event.id,
-              "additonalDetails": {
+              "additionalDetails": {
                 "orgName": event.orgName,
                 "contractId": event.contractId,
                 "attendanceRegisterNo": event.registerNo,

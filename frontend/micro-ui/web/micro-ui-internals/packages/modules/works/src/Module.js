@@ -12,9 +12,10 @@ import WORKS_INBOX_FILTER from './components/inbox/NewInboxFilter'
 import LOI_INBOX_FILTER from "./components/LOIInbox/LOIInboxFilter";
 import CHECKLIST_INBOX_FILTER from './components/ChecklistInbox/NewInboxFilter'
 const WorksModule = ({ stateCode, userType, tenants }) => {
-  const moduleCode = ["works"];
   const { path, url } = useRouteMatch();
   const language = Digit.StoreData.getCurrentLanguage();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const moduleCode = ["works","common-masters",tenantId];
   const { isLoading, data: store } = Digit.Services.useStore({
     stateCode,
     moduleCode,

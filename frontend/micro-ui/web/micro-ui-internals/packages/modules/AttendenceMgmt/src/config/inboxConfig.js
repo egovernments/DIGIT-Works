@@ -1,6 +1,7 @@
 const inboxConfig = () => {
     return {
         label : "ES_COMMON_INBOX",
+        postProcessResult:true,
         type : "inbox", 
         apiDetails: {
             serviceName: "/inbox/v2/_search",
@@ -36,7 +37,7 @@ const inboxConfig = () => {
                     },
                     fields : [
                         {
-                            label:"NAME_OF_WORK",
+                            label:"ATM_NAME_OF_WORK",
                             type: "text",
                             isMandatory: false,
                             disable: false,
@@ -53,6 +54,9 @@ const inboxConfig = () => {
                             populators: {
                               name: "iaip",
                               optionsKey: "name",
+                              optionsCustomStyle : {
+                                top : "2.3rem"
+                              },
                               mdmsConfig: {
                                 masterName: "Department",
                                 moduleName: "common-masters",
@@ -76,7 +80,7 @@ const inboxConfig = () => {
                             roles: [],
                         }
                     ],
-                    label : "ATM_ATTENDANCE_MANAGEMENT",
+                    label : "ES_COMMON_ATTENDENCEMGMT",
                     logoIcon : {
                         component : "BioMetricIcon",
                         customClass : "search-icon--projects"       
@@ -98,7 +102,7 @@ const inboxConfig = () => {
                     },
                     fields : [
                         {
-                            label:"ATM_MUSTER_ROLL_DATE_RANE",
+                            label:"ATM_MUSTER_ROLL_DATE_RANGE",
                             type: "dateRange",
                             isMandatory: false,
                             disable: false,
@@ -107,19 +111,22 @@ const inboxConfig = () => {
                             },
                         },
                         {
-                            label: "CORE_COMMON_STATUS",
+                            label: "ES_COMMON_STATUS",
                             type: "dropdown",
                             isMandatory: false,
                             disable: false,
                             populators: {
                                 name: "musterRollStatus",
                                 optionsKey: "i18nKey",
-                                options: []
+                                options: [],
+                                optionsCustomStyle : {
+                                    top : "2.3rem"
+                                }
                             },
                         },
                     ]
                 },
-                label : "FILTERS",
+                label : "ES_COMMON_FILTERS",
                 show : true
             },
             searchResult: {
@@ -132,7 +139,7 @@ const inboxConfig = () => {
                             additionalCustomization:true 
                         },
                         {
-                            label: "WORKS_NAME_OF_WORK",
+                            label: "ATM_NAME_OF_WORK",
                             jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
                         },
                         {

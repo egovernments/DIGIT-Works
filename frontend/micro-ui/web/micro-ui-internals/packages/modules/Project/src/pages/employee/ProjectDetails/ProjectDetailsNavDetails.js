@@ -1,20 +1,26 @@
 import React, { Fragment } from "react";
-import ApplicationDetails from "../../../../../templates/ApplicationDetails";
 
-const ProjectDetailsNavDetails = ({activeLink}) => {
+
+const ProjectDetailsNavDetails = ({activeLink, subProjects}) => {
     const ViewProjectComponent = Digit?.ComponentRegistryService?.getComponent("ViewProject"); 
     const ViewFinancialDetailsComponent = Digit?.ComponentRegistryService?.getComponent("ViewFinancialDetails"); 
+    const ViewSubProjectsDetailsComponent = Digit?.ComponentRegistryService?.getComponent("ViewSubProjectsDetails");
 
     return (
         <>
         {
             (activeLink === "Project_Details") && (
-                <ViewProjectComponent ></ViewProjectComponent>
+                <ViewProjectComponent></ViewProjectComponent>
             )
         }
         {
             (activeLink === "Financial_Details") && (
-                <ViewFinancialDetailsComponent ></ViewFinancialDetailsComponent>
+                <ViewFinancialDetailsComponent></ViewFinancialDetailsComponent>
+            )
+        }
+        {
+            (activeLink === "Sub_Projects_Details") && (
+                <ViewSubProjectsDetailsComponent subProjects={subProjects}></ViewSubProjectsDetailsComponent>
             )
         }
         </>

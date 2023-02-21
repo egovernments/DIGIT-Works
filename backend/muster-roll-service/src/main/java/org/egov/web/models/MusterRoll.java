@@ -2,6 +2,7 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.ProcessInstance;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -56,6 +57,9 @@ public class MusterRoll {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
+
+    @JsonProperty("processInstance")
+    private ProcessInstance processInstance = null;
 
 
     public MusterRoll addIndividualEntriesItem(IndividualEntry individualEntriesItem) {
