@@ -106,7 +106,7 @@ public class ContractServiceValidator {
         List<String> contracts = new ArrayList<>();
         contracts.add(contractId);
 
-        ContractCriteria contractCriteria = ContractCriteria.builder().ids(contracts).tenantId(tenantId).build();
+        ContractCriteria contractCriteria = ContractCriteria.builder().ids(contracts).tenantId(tenantId).requestInfo(contractRequest.getRequestInfo()).build();
         List<Contract> fetchedContracts = contractService.searchContracts(contractCriteria);
 
         if(fetchedContracts.isEmpty()){
