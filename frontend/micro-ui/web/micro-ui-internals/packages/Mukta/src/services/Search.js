@@ -36,7 +36,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             asSectionHeader: true,
             values: [
                 { title: "PROJECT_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" },
-                { title: "WORKS_CITY",value: currentProject?.address?.city ? t(currentProject?.address?.city) : "NA" }, //will check with Backend
+                { title: "WORKS_CITY",value: currentProject?.address?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`) : "NA" }, //will check with Backend
                 { title: "WORKS_WARD", value: currentProject?.additionalDetails?.ward ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.ward}`) : "NA"  }, ///backend to update this
                 { title: "WORKS_LOCALITY",value: currentProject?.address?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.address?.locality}`) : "NA" },
             ]
