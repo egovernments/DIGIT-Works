@@ -130,6 +130,8 @@ export const FormComposer = (props) => {
       disableFormValidation = sectionFormCategory !== selectedFormCategory ? true : false;
     }
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
+    const customProps = config?.customProps;
+    console.log("customProps", customProps);
     switch (type) {
       case "date":
       case "text":
@@ -299,7 +301,7 @@ export const FormComposer = (props) => {
                 formData={formData}
                 register={register}
                 errors={errors}
-                props={props}
+                props={{...props, ...customProps}}
                 setError={setError}
                 clearErrors={clearErrors}
                 formState={formState}

@@ -67,11 +67,23 @@
                     {
                         key: "noSubProject_estimatedCostInRs",
                         type: "component",
-                        component: "SubProjectDetailsTable",
+                        component: "CitizenInfoLabel",
                         withoutLabel: true,
+                        customProps : {
+                            showInfo : true,
+                            info : "WORKS_INFO",
+                            text : "WORKS_SUB_PROJECT_INFO_MSG",
+                            className : "project-banner",
+                            fill : "#CC7B2F"
+                        }
                       },
                 ]
                 },
             ]
         }
     }
+
+    /*
+        a. preProcess - nested object that can have multiple preProcessing objects
+        b. customProps - this should be the custom props for the input type as "component".
+    */

@@ -1,15 +1,15 @@
 import React from "react";
 import { InfoBannerIcon } from "./svgindex";
 
-const CitizenInfoLabel = ({ info, text, style, textStyle, showInfo = true, className,fill }) => {
+const CitizenInfoLabel = ({ props }) => {
   return (
-    <div className={`info-banner-wrap ${className ? className : ""}`} style={style}>
-      {showInfo && <div>
-        <InfoBannerIcon fill={fill} />
-        <h2 style={textStyle}>{info}</h2>
+    <div className={`info-banner-wrap ${props?.className ? props?.className : ""}`} style={props?.style}>
+      {(props?.showInfo && true ) && <div>
+        <InfoBannerIcon fill={props?.fill} />
+        <h2 style={props?.textStyle}>{props?.info}</h2>
       </div>
       }
-      <p style={textStyle}>{text}</p>
+      <p style={props?.textStyle}>{props?.text}</p>
     </div>
   );
 };
