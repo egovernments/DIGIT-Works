@@ -40,7 +40,6 @@ import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
 import AttendanceService from "./services/elements/Attendance";
 import { CustomService } from "./services/elements/CustomService";
-import { WorksSearch } from "./services/molecules/Works/Search";
 
 
 const setupLibraries = (Library, props) => {
@@ -90,7 +89,6 @@ const initLibraries = () => {
   setupLibraries("AttendanceService", AttendanceService);
   setupLibraries("CustomService", CustomService);
 
-  setupLibraries("Search",WorksSearch);
   return new Promise((resolve) => {
     initI18n(resolve);
   });
