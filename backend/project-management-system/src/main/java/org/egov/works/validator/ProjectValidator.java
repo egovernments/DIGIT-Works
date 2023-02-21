@@ -69,7 +69,7 @@ public class ProjectValidator {
         //Verify if search project request parameters are valid
         validateSearchProjectRequestParams(limit, offset, tenantId, createdFrom, createdTo);
         //Verify if search project request is valid
-        validateSearchProjectRequest(project.getProjects(), tenantId);
+        validateSearchProjectRequest(project.getProjects(), tenantId, createdFrom);
         //Verify if project request have multiple tenant Ids
         validateMultipleTenantIds(project);
         //Verify MDMS Data
@@ -173,7 +173,7 @@ public class ProjectValidator {
     }
 
     /* Validates Search Project Request body */
-    private void validateSearchProjectRequest(List<Project> projects, String tenantId) {
+    private void validateSearchProjectRequest(List<Project> projects, String tenantId, Long createdFrom) {
         if (projects == null || projects.size() == 0) {
             log.error("Project list is empty. Projects is mandatory");
             throw new CustomException("PROJECT", "Projects are mandatory");
@@ -191,7 +191,9 @@ public class ProjectValidator {
             if (StringUtils.isBlank(project.getId()) && StringUtils.isBlank(project.getProjectType())
                     && StringUtils.isBlank(project.getName()) && StringUtils.isBlank(project.getProjectNumber())
                     && StringUtils.isBlank(project.getProjectSubType())
-                    && project.getStartDate() == 0 && project.getEndDate() == 0) {
+                    && (project.getStartDate() == null || project.getStartDate() == 0)
+                    && (project.getEndDate() == null || project.getEndDate() == 0)
+                    && (createdFrom == null || createdFrom == 0)) {
                 log.error("Any one project search field is required for Project Search");
                 throw new CustomException("PROJECT_SEARCH_FIELDS", "Any one project search field is required");
             }
