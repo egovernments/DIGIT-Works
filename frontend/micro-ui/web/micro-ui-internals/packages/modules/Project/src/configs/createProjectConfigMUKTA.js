@@ -2,8 +2,7 @@
         "tenantId" : "pg",
         "moduleName" : "commonUiConfig",
         "CreateProjectConfig" : {
-            "form" : 
-                [
+            "form" : [
                 {
                 head: "",
                 subHead: "",
@@ -68,7 +67,8 @@
                         key: "noSubProject_estimatedCostInRs",
                         type: "component",
                         component: "CitizenInfoLabel",
-                        withoutLabel: true,
+                        label: "",
+                        disable: false,
                         customProps : {
                             showInfo : true,
                             info : "WORKS_INFO",
@@ -76,8 +76,36 @@
                             className : "project-banner",
                             fill : "#CC7B2F"
                         }
-                      },
-                ]
+                    },
+                        ]
+                },
+                {
+                    navLink:"Project_Details",
+                    sectionFormCategory : "noSubProject",
+                    head: "",
+                    body: [
+                        {
+                        isMandatory: true,
+                        key: "noSubProject_owningDepartment",
+                        type: "radioordropdown",
+                        label: "PROJECT_OWNING_DEPT",
+                        disable: false,
+                        populators: {
+                            name: "noSubProject_owningDepartment",    
+                            optionsKey: "name",
+                            error: "WORKS_REQUIRED_ERR",
+                            required: true,
+                            optionsCustomStyle : {
+                            top : "2.5rem"
+                            },
+                            mdmsConfig: {
+                                masterName: "Department",
+                                moduleName: "common-masters",
+                                localePrefix: "COMMON_MASTERS_DEPARTMENT",
+                            },
+                        },
+                        },
+                    ]
                 },
             ]
         }
