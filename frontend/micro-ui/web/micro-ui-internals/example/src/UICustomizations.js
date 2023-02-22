@@ -184,6 +184,9 @@ export const UICustomizations = {
             name = name?.trim()
             delete data.body.Projects[0]?.createdFrom
             delete data.body.Projects[0]?.createdTo
+            delete data.body.Projects[0]?.department
+            delete data.body.Projects[0]?.createdBy
+            delete data.body.Projects[0]?.status
             data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(), projectType,name}
 
             return data
