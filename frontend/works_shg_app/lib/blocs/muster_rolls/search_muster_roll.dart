@@ -36,8 +36,8 @@ class MusterRollSearchBloc
                     .toString()
               },
               options: Options(extra: {
-                "userInfo": GlobalVariables.getUserInfo(),
-                "accessToken": GlobalVariables.getAuthToken(),
+                "userInfo": GlobalVariables.userRequestModel,
+                "accessToken": GlobalVariables.authToken,
                 "apiId": "asset-services",
                 "msgId": "search with from and to values"
               }));

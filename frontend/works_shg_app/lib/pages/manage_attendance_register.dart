@@ -31,8 +31,8 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
           return state.maybeWhen(
               loading: () => Loaders.circularLoader(context),
               loaded: (AttendanceRegistersModel? attendanceRegistersModel) {
-                final attendanceRegisters =
-                    List.from(attendanceRegistersModel!.attendanceRegister!);
+                final attendanceRegisters = List<AttendanceRegister>.from(
+                    attendanceRegistersModel!.attendanceRegister!);
 
                 attendanceRegisters.sort((a, b) => b
                     .registerAuditDetails!.createdTime!
@@ -73,8 +73,7 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
                               elevatedButtonLabel: AppLocalizations.of(context)
                                   .translate(
                                       i18.attendanceMgmt.enrollWageSeeker),
-                              attendanceRegistersModel:
-                                  attendanceRegistersModel,
+                              attendanceRegistersModel: attendanceRegisters,
                             )
                     ]);
               },
