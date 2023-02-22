@@ -37,7 +37,8 @@ const useCustomAPIHook = ({ url, params, body, config = {}, plainAccessRequest }
     [url].filter((e) => e),
     () => CustomService.getResponse({ url, params, body, plainAccessRequest }),
     {
-      ...config
+      ...config,
+      cacheTime:0
     }
   );
 
