@@ -163,9 +163,9 @@ const inboxConfig = () => {
                                 top : "2.3rem"
                               },
                               mdmsConfig: {
-                                masterName: "TypeOfWork",
+                                masterName: "NatureOfWork",
                                 moduleName: "works",
-                                localePrefix: "WORKS",
+                                localePrefix: "COMMON_MASTERS"
                               }
                             }
                         },
@@ -181,9 +181,9 @@ const inboxConfig = () => {
                                 top : "2.3rem"
                               },
                               mdmsConfig: {
-                                masterName: "TypeOfWork",
+                                masterName: "NatureOfWork",
                                 moduleName: "works",
-                                localePrefix: "WORKS",
+                                localePrefix: "COMMON_MASTERS"
                               }
                             }
                         }
