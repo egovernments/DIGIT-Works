@@ -6,15 +6,12 @@ const inboxConfig = () => {
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
-                limit:10,
-                offset:0,
-                tenantId: Digit.ULBService.getCurrentTenantId(),
             },
             requestBody: {
                 apiOperation: "SEARCH",
                 Projects: [
-                    {
-                        tenantId: Digit.ULBService.getCurrentTenantId()
+                    {   
+                        
                     }
                 ]
             },
