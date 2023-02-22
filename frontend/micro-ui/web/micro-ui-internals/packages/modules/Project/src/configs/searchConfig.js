@@ -26,8 +26,8 @@ const searchConfig = () => {
             search : {
                 uiConfig : {
                     headerStyle : null,
-                    primaryLabel: 'ACTION_TEST_SEARCH',
-                    secondaryLabel: 'CLEAR_SEARCH_LINk',
+                    primaryLabel: 'ES_COMMON_SEARCH',
+                    secondaryLabel: 'ES_COMMON_CLEAR_SEARCH',
                     minReqFields: 1,
                     defaultValues : {
                         projectNumber: "",
@@ -106,7 +106,7 @@ const searchConfig = () => {
                             },
                             additionalValidation: {
                                 type: 'date',
-                                keys: {start: 'startDate', end: 'endDate'}
+                                keys: {start: 'createdFrom', end: 'createdTo'}
                             }
                         }
                     ]
