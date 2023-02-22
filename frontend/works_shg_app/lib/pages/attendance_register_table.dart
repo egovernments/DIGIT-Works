@@ -232,8 +232,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                               .isNotEmpty;
 
                                           if (!hasDuplicate && !searchUser) {
-                                            print(
-                                                '!hasDuplicate && !searchUser');
                                             attendeeTableList.add(userToAdd);
                                           }
                                         }
@@ -272,11 +270,12 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                         tableData: tableData,
                                                         leftColumnWidth: width,
                                                         rightColumnWidth:
-                                                            width * 2.5,
+                                                            width * 3,
                                                         height: 58 +
                                                             (52.0 *
                                                                 (tableData
-                                                                    .length + 1)),
+                                                                        .length +
+                                                                    1)),
                                                       ),
                                                     );
                                                   }),
@@ -496,7 +495,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   }
 
   Widget buildTile(context, user) {
-    print('buildTile');
     var style = const TextStyle(fontSize: 16);
     return Container(
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 5),
@@ -570,7 +568,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
     switch (createAttendeePayLoadList.length > 1 &&
         existingAttendeeList.where((e) => e["uuid"] == uuid).isNotEmpty) {
       case true:
-        print('!st cASE');
         setState(() {
           searchUser = true;
           createAttendeePayLoadList

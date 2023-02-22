@@ -14,6 +14,7 @@ class Login {
   String get loginPassword => 'CORE_LOGIN_PASSWORD';
   String get forgotPassword => 'CORE_COMMON_FORGOT_PASSWORD';
   String get invalidCredentials => 'INVALID_CREDENTIALS';
+  String get contactAdministrator => 'CONTACT_ADMINISTRATOR_FOR_PASSWORD';
 }
 
 class Common {

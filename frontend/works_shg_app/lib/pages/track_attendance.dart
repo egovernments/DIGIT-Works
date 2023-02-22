@@ -89,7 +89,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
     );
     context.read<AttendanceIndividualProjectSearchBloc>().add(
           SearchIndividualAttendanceProjectEvent(
-              id: widget.id ?? '', tenantId: widget.tenantId),
+              id: widget.id , tenantId: widget.tenantId),
         );
     context.read<AttendanceHoursBloc>().add(
           const AttendanceHoursEvent(),
@@ -132,16 +132,16 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                       loaded: (AttendanceRegistersModel? individualAttendanceRegisterModel) {
                 registerId = individualAttendanceRegisterModel!
                     .attendanceRegister!.first.id;
-                registerStartDate = individualAttendanceRegisterModel!
+                registerStartDate = individualAttendanceRegisterModel
                     .attendanceRegister!.first.startDate;
-                registerEndDate = individualAttendanceRegisterModel!
+                registerEndDate = individualAttendanceRegisterModel
                     .attendanceRegister!.first.endDate;
                 return Stack(children: [
                   Container(
                     color: const Color.fromRGBO(238, 238, 238, 1),
                     padding:
                         const EdgeInsets.only(left: 8, right: 8, bottom: 16),
-                    height: individualAttendanceRegisterModel!
+                    height: individualAttendanceRegisterModel
                                 .attendanceRegister!.first.attendeesEntries !=
                             null
                         ? MediaQuery.of(context).size.height - 150
@@ -201,7 +201,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                               rangePickerController: rangePickerController,
                               onViewChange: _onViewChangedDate,
                               selectionMode: DateRangePickerSelectionMode.range,
-                              onSubmit: () => onSubmit(individualAttendanceRegisterModel!
+                              onSubmit: () => onSubmit(individualAttendanceRegisterModel
                                   .attendanceRegister!
                                   .first
                                   .id
@@ -218,7 +218,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                             const SizedBox(
                               height: 20,
                             ),
-                            individualAttendanceRegisterModel!
+                            individualAttendanceRegisterModel
                                         .attendanceRegister!
                                         .first
                                         .attendeesEntries !=
@@ -234,13 +234,13 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                           .individualEntries !=
                                           null) {
                                         List<
-                                            AttendeesTrackList> attendeeList = individualAttendanceRegisterModel!
+                                            AttendeesTrackList> attendeeList = individualAttendanceRegisterModel
                                             .attendanceRegister!
                                             .first
                                             .attendeesEntries!.where((e) =>
                                         e.denrollmentDate == null ||
                                             !(e.denrollmentDate! <=
-                                                individualAttendanceRegisterModel!
+                                                individualAttendanceRegisterModel
                                                     .attendanceRegister!
                                                     .first.endDate!.toInt()))
                                             .toList()
@@ -251,12 +251,12 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                 individualId: e.individualId))
                                             .toList();
 
-                                        if (musterRollsModel!
+                                        if (musterRollsModel
                                             .musterRoll!
                                             .first
                                             .individualEntries!
                                             .isNotEmpty) {
-                                          attendeeList = musterRollsModel!
+                                          attendeeList = musterRollsModel
                                               .musterRoll!
                                               .first
                                               .individualEntries!
@@ -529,7 +529,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                  individualAttendanceRegisterModel.attendanceRegister
                                   ?.first.attendeesEntries !=
                               null &&
-                          individualAttendanceRegisterModel!
+                          individualAttendanceRegisterModel
                               .attendanceRegister!
                               .first
                               .attendeesEntries!
@@ -565,7 +565,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                       context.read<MusterGetWorkflowBloc>().add(
                                             GetMusterWorkflowEvent(
                                                 tenantId: widget.tenantId,
-                                                musterRollNumber: musterRollsSearch!
+                                                musterRollNumber: musterRollsSearch
                                                         .musterRoll!
                                                         .first
                                                         .musterRollNumber
@@ -624,7 +624,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                               }
                                             },
                                             orElse: () {
-                                              print('workFlow Else');
                                               return Container();});
                                       });
                                       return Column(
@@ -675,7 +674,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                             .instance
                                                             .colorScheme
                                                             .secondary)),
-                                                onPressed: musterRollsSearch != null && musterRollsSearch!
+                                                onPressed: musterRollsSearch != null && musterRollsSearch
                                                     .musterRoll!
                                                     .isNotEmpty && isInWorkFlow
                                                     ? null
@@ -732,7 +731,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                   AppLocalizations.of(context)
                                                       .translate(i18
                                                           .common.saveAsDraft),
-                                                  style: musterRollsSearch!= null && musterRollsSearch!
+                                                  style: musterRollsSearch!= null && musterRollsSearch
                                                       .musterRoll!
                                                       .isNotEmpty && isInWorkFlow
                                                       ? Theme.of(context)
@@ -795,14 +794,14 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                             return Container();
                                           }),
                                           DigitElevatedButton(
-                                            onPressed: musterRollsModel !=
+                                            onPressed: selectedDateRange!.endDate > DateTime.now().millisecondsSinceEpoch ? null : musterRollsModel !=
                                                         null &&
-                                                    musterRollsModel!
+                                                    musterRollsModel
                                                             .musterRoll!
                                                             .first
                                                             .individualEntries !=
                                                         null &&
-                                                musterRollsModel!
+                                                musterRollsModel
                                                     .musterRoll!
                                                     .first
                                                     .individualEntries!.isNotEmpty
@@ -830,30 +829,29 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                               context.read<MusterCreateBloc>().add(UpdateMusterEvent(
                                                                   tenantId: widget
                                                                       .tenantId,
-                                                                  id: musterRollsSearch!
+                                                                  id: musterRollsSearch
                                                                       .musterRoll!
                                                                       .first
                                                                       .id
                                                                       .toString(),
-                                                                  orgName:individualAttendanceRegisterModel
-                                                                          ?.attendanceRegister
+                                                                  orgName:individualAttendanceRegisterModel.attendanceRegister
                                                                           ?.first
                                                                           .attendanceRegisterAdditionalDetails
                                                                           ?.orgName ??
                                                                       'NA',
                                                                   contractId: individualAttendanceRegisterModel
-                                                                          ?.attendanceRegister
+                                                                          .attendanceRegister
                                                                           ?.first
                                                                           .attendanceRegisterAdditionalDetails
                                                                           ?.contractId ??
                                                                       'NA',
                                                                   registerNo: individualAttendanceRegisterModel
-                                                                          ?.attendanceRegister
+                                                                          .attendanceRegister
                                                                           ?.first
                                                                           .registerNumber ??
                                                                       'NA',
                                                                   registerName: individualAttendanceRegisterModel
-                                                                          ?.attendanceRegister
+                                                                          .attendanceRegister
                                                                           ?.first
                                                                           .name ??
                                                                       'NA'));
@@ -861,7 +859,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                   const Duration(
                                                                       seconds:
                                                                           2));
-                                                              onSubmit(individualAttendanceRegisterModel!
+                                                              onSubmit(individualAttendanceRegisterModel
                                                                   .attendanceRegister!
                                                                   .first
                                                                   .id
@@ -892,31 +890,31 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                   selectedDateRange!
                                                                       .startDate,
                                                               orgName: individualAttendanceRegisterModel
-                                                                      ?.attendanceRegister
+                                                                      .attendanceRegister
                                                                       ?.first
                                                                       .attendanceRegisterAdditionalDetails
                                                                       ?.orgName ??
                                                                   'NA',
                                                               contractId: individualAttendanceRegisterModel
-                                                                      ?.attendanceRegister
+                                                                      .attendanceRegister
                                                                       ?.first
                                                                       .attendanceRegisterAdditionalDetails
                                                                       ?.contractId ??
                                                                   'NA',
                                                               registerNo: individualAttendanceRegisterModel
-                                                                      ?.attendanceRegister
+                                                                      .attendanceRegister
                                                                       ?.first
                                                                       .registerNumber ??
                                                                   'NA',
                                                               registerName: individualAttendanceRegisterModel
-                                                                      ?.attendanceRegister
+                                                                      .attendanceRegister
                                                                       ?.first
                                                                       .name ??
                                                                   'NA'));
                                                           Future.delayed(
                                                               const Duration(
                                                                   seconds: 2));
-                                                          onSubmit(individualAttendanceRegisterModel!
+                                                          onSubmit(individualAttendanceRegisterModel
                                                               .attendanceRegister!
                                                               .first
                                                               .id
@@ -1397,8 +1395,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
       individualId, day, entryID, exitId, auditDetails) {
     int morning =
         entryExitList?.firstWhere((e) => e.code == 'MORNING').hours ?? 0;
-    int afternoon =
-        entryExitList?.firstWhere((e) => e.code == 'AFTERNOON').hours ?? 0;
     int evening =
         entryExitList?.firstWhere((e) => e.code == 'EVENING').hours ?? 0;
     int index = newList.indexWhere((item) => item.individualId == individualId);

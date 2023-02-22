@@ -34,8 +34,8 @@ class IndividualMusterRollSearchBloc extends Bloc<
               url: Urls.musterRollServices.searchMusterRolls,
               queryParameters: {"tenantId": event.tenantId, "ids": event.id},
               options: Options(extra: {
-                "userInfo": GlobalVariables.getUserInfo(),
-                "accessToken": GlobalVariables.getAuthToken(),
+                "userInfo": GlobalVariables.userRequestModel,
+                "accessToken": GlobalVariables.authToken,
                 "apiId": "asset-services",
                 "msgId": "search with from and to values"
               }));

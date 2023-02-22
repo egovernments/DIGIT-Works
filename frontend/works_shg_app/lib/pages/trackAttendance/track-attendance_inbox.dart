@@ -30,8 +30,8 @@ class TrackAttendanceInboxPage extends StatelessWidget {
           return state.maybeWhen(
               loading: () => Loaders.circularLoader(context),
               loaded: (AttendanceRegistersModel? attendanceRegistersModel) {
-                final attendanceRegisters =
-                    List.from(attendanceRegistersModel!.attendanceRegister!);
+                final attendanceRegisters = List<AttendanceRegister>.from(
+                    attendanceRegistersModel!.attendanceRegister!);
 
                 attendanceRegisters.sort((a, b) => b
                     .registerAuditDetails!.createdTime!
@@ -48,15 +48,16 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                               i18.common.startDate: DateFormats.timeStampToDate(
                                   e.startDate,
                                   format: "dd/MM/yyyy"),
-                              i18.attendanceMgmt.individualsCount: e
-                                      .attendeesEntries
-                                      ?.where((att) =>
-                                          att.denrollmentDate == null ||
-                                          !(att.denrollmentDate! <=
-                                              e.endDate!.toInt()))
-                                      .toList()
-                                      .length ??
-                                  0,
+                              i18.attendanceMgmt.individualsCount:
+                                  e.attendeesEntries != null
+                                      ? e.attendeesEntries
+                                          ?.where((att) =>
+                                              att.denrollmentDate == null ||
+                                              !(att.denrollmentDate! <=
+                                                  e.endDate!.toInt()))
+                                          .toList()
+                                          .length
+                                      : 0,
                               i18.common.endDate: DateFormats.timeStampToDate(
                                   e.endDate,
                                   format: "dd/MM/yyyy"),
@@ -88,8 +89,7 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                               elevatedButtonLabel: AppLocalizations.of(context)
                                   .translate(
                                       i18.attendanceMgmt.updateAttendance),
-                              attendanceRegistersModel:
-                                  attendanceRegistersModel,
+                              attendanceRegistersModel: attendanceRegisters,
                             )
                     ]);
               },
