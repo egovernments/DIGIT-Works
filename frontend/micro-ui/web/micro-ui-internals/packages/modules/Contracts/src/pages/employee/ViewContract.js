@@ -3,10 +3,12 @@ import { Header, Loader, MultiLink, ActionBar, SubmitBar, Menu} from "@egovernme
 import { useForm } from 'react-hook-form'
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate  from "../../../../templates/ApplicationDetails"
-import ProcessingModal from "@egovernments/digit-ui-module-works/src/components/Modal/ProcessingModal";
-import RejectLOIModal from "@egovernments/digit-ui-module-works/src/components/Modal/RejectLOIModal";
 import getPDFData from "../../../utils/getWorksAcknowledgementData"
 import { useHistory } from "react-router-dom";
+
+const ProcessingModal =()=><span></span>
+const RejectLOIModal =()=><span></span>
+
 const ViewContract = (props) => {
     const { t } = useTranslation()
     const history = useHistory()

@@ -15,7 +15,6 @@ class AttendanceRegisterRepository {
   Future<AttendanceRegistersModel> createAttendanceRegisters(
       {dynamic body, required String url, required Options options}) async {
     try {
-      // var formData = FormData.fromMap(body);
       final response = await _client.post(url, data: body, options: options);
 
       return AttendanceRegistersModel.fromJson(
@@ -38,7 +37,22 @@ class AttendanceRegisterRepository {
       );
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
-      throw Exception(ex);
+      rethrow;
+    }
+  }
+
+  Future<AttendeeModel> deEnrollAttendee(
+      {dynamic body, required String url, required Options options}) async {
+    try {
+      // var formData = FormData.fromMap(body);
+      final response = await _client.post(url, data: body, options: options);
+
+      return AttendeeModel.fromJson(
+        json.decode(response.toString()),
+      );
+    } on DioError catch (ex) {
+      // Assuming there will be an errorMessage property in the JSON object
+      rethrow;
     }
   }
 
@@ -53,7 +67,7 @@ class AttendanceRegisterRepository {
           data: body ?? {},
           queryParameters: queryParameters,
           options: Options(extra: {
-            "accessToken": GlobalVariables.getAuthToken(),
+            "accessToken": GlobalVariables.authToken,
             "apiId": "mukta-services",
           }));
 
@@ -61,6 +75,7 @@ class AttendanceRegisterRepository {
         json.decode(response.toString()),
       );
     } on DioError catch (ex) {
+      print(ex);
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -76,6 +91,7 @@ class AttendanceRegisterRepository {
         json.decode(response.toString()),
       );
     } on DioError catch (ex) {
+      print(ex);
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }

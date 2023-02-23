@@ -1,105 +1,50 @@
 import 'dart:convert';
 
+import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/blocs/localization/selected_localization_model.dart';
 import 'package:works_shg_app/models/app_config/app_config_model.dart';
+import 'package:works_shg_app/models/init_mdms/global_config_model.dart';
 
 import '../models/init_mdms/init_mdms_model.dart';
 import '../services/local_storage.dart';
 
 class GlobalVariables {
-  static dynamic getUserInfo() {
+  static dynamic getUserInfo() async {
     if (kIsWeb) {
       return jsonDecode(html.window.localStorage['userRequest'].toString());
     } else {
-      return jsonDecode(storage.read(key: 'userRequest').toString());
+      var userReq = await storage.read(key: 'userRequest');
+      return jsonDecode(userReq.toString());
     }
   }
 
-  static String? getAuthToken() {
+  static Future<String?> getAuthToken() async {
     dynamic accessToken;
     if (kIsWeb) {
       accessToken = html.window.localStorage['accessToken'];
       return jsonDecode(accessToken.toString());
     } else {
-      accessToken = storage.read(key: 'accessToken');
+      accessToken = await storage.read(key: 'accessToken');
       return jsonDecode(accessToken.toString());
     }
   }
 
-  static String? getTenantId() {
-    dynamic tenantId;
+  static dynamic getLanguages() async {
     if (kIsWeb) {
-      tenantId = html.window.localStorage['tenantId'];
-      return jsonDecode(tenantId.toString());
+      return jsonDecode(html.window.localStorage['languages'].toString())
+          .map<DigitRowCardModel>((e) => DigitRowCardModel.fromJson(e))
+          .toList();
     } else {
-      tenantId = storage.read(key: 'tenantId');
-      return jsonDecode(tenantId.toString());
+      var localLanguage = await storage.read(key: 'languages');
+      return jsonDecode(localLanguage ?? '')
+          .map<DigitRowCardModel>((e) => DigitRowCardModel.fromJson(e))
+          .toList();
     }
   }
 
-  static String? getUUID() {
-    dynamic uuid;
-    if (kIsWeb) {
-      uuid = html.window.localStorage['uuid'];
-      return jsonDecode(uuid.toString());
-    } else {
-      uuid = storage.read(key: 'uuid');
-      return jsonDecode(uuid.toString());
-    }
-  }
-
-  static String? getMobileNumber() {
-    dynamic mobileNumber;
-    if (kIsWeb) {
-      mobileNumber = html.window.localStorage['mobileNumber'];
-      return jsonDecode(mobileNumber.toString());
-    } else {
-      mobileNumber = storage.read(key: 'mobileNumber');
-      return jsonDecode(mobileNumber.toString());
-    }
-  }
-
-  static dynamic getInitData() {
-    if (kIsWeb) {
-      return jsonDecode(html.window.localStorage['initData'].toString());
-    } else {
-      return jsonDecode(storage.read(key: 'initData').toString());
-    }
-  }
-
-  static dynamic getStateInfo() {
-    if (kIsWeb) {
-      return jsonDecode(html.window.localStorage['StateInfo'].toString());
-    } else {
-      return jsonDecode(storage.read(key: 'StateInfo').toString());
-    }
-  }
-
-  static String bannerURL() {
-    if (kIsWeb) {
-      return StateInfoListModel.fromJson(
-                  jsonDecode(html.window.localStorage['StateInfo'].toString()))
-              .bannerUrl ??
-          '';
-    } else {
-      return StateInfoListModel.fromJson(
-                  jsonDecode(storage.read(key: 'StateInfo').toString()))
-              .bannerUrl ??
-          '';
-    }
-  }
-
-  static dynamic getLanguages() {
-    if (kIsWeb) {
-      return jsonDecode(html.window.localStorage['languages'].toString());
-    } else {
-      return jsonDecode(storage.read(key: 'languages').toString());
-    }
-  }
-
-  static bool isLocaleSelect(String locale, String module) {
+  static Future<bool> isLocaleSelect(String locale, String module) async {
     List<LocalizationLabel>? messages;
     List<String> modules = module.contains(',')
         ? module.split(',').map((m) => m.trim()).toList()
@@ -116,9 +61,14 @@ class GlobalVariables {
         });
       });
     } else {
-      messages = jsonDecode(storage.read(key: locale).toString())
-          .map<LocalizationLabel>((e) => LocalizationLabel.fromJson(e))
-          .toList();
+      if (await storage.containsKey(key: locale)) {
+        var localMessages = await storage.read(key: locale);
+        messages = jsonDecode(localMessages.toString())
+            .map<LocalizationLabel>((e) => LocalizationLabel.fromJson(e))
+            .toList();
+      } else {
+        messages = [];
+      }
       return modules.every((module) {
         return messages!.any((message) {
           return message.module == module;
@@ -127,7 +77,7 @@ class GlobalVariables {
     }
   }
 
-  static String selectedLocale() {
+  static Future<String> selectedLocale() async {
     List<Languages>? languagesList;
     if (kIsWeb) {
       languagesList =
@@ -136,11 +86,18 @@ class GlobalVariables {
               .toList();
       return languagesList!.where((elem) => elem.isSelected).first.value;
     } else {
-      languagesList = jsonDecode(storage.read(key: 'languages').toString())
+      var langStorage = await storage.read(key: 'languages');
+      languagesList = jsonDecode(langStorage.toString())
           .map<Languages>((e) => Languages.fromJson(e))
           .toList();
 
       return languagesList!.where((elem) => elem.isSelected).first.value;
     }
   }
+
+  static GlobalConfigModel? globalConfigObject;
+  static StateInfoListModel? stateInfoListModel;
+  static String? uuid;
+  static String? authToken;
+  static Map<String, dynamic>? userRequestModel;
 }

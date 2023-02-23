@@ -1,16 +1,14 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:works_shg_app/blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/atoms/button_group.dart';
 
-import '../blocs/attendance/attendance_user_search.dart';
 import '../blocs/attendance/create_attendance_register.dart';
-import '../blocs/attendance/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/muster_roll_estimate.dart';
-import '../blocs/muster_rolls/search_muster_roll.dart';
 import '../models/attendance/attendance_registry_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
 import '../utils/constants.dart';
@@ -24,7 +22,7 @@ class WorkDetailsCard extends StatelessWidget {
   final bool isWorkOrderInbox;
   final bool isSHGInbox;
   final bool isTrackAttendance;
-  final AttendanceRegistersModel? attendanceRegistersModel;
+  final List<AttendanceRegister>? attendanceRegistersModel;
   final MusterRollsModel? musterRollsModel;
 
   const WorkDetailsCard(this.detailsList,
@@ -47,14 +45,8 @@ class WorkDetailsCard extends StatelessWidget {
         list.add(GestureDetector(
           child: DigitCard(
               child: getCardDetails(context, detailsList[i],
-                  userList: attendanceRegistersModel!
-                      .attendanceRegister![i].staffEntries!
-                      .map((e) => e.userId.toString())
-                      .toList(),
-                  attendanceRegisterId:
-                      attendanceRegistersModel!.attendanceRegister![i].id,
-                  attendanceRegister:
-                      attendanceRegistersModel!.attendanceRegister![i])),
+                  attendanceRegisterId: attendanceRegistersModel![i].id,
+                  attendanceRegister: attendanceRegistersModel![i])),
         ));
       }
     } else if (isWorkOrderInbox) {
@@ -70,7 +62,7 @@ class WorkDetailsCard extends StatelessWidget {
         list.add(GestureDetector(
           onTap: isSHGInbox
               ? () {
-                  context.read<MusterRollSearchBloc>().add(
+                  context.read<IndividualMusterRollSearchBloc>().add(
                         SearchIndividualMusterRollEvent(
                             id: musterRollsModel!.musterRoll![i].id ?? '',
                             tenantId: musterRollsModel!.musterRoll![i].tenantId
@@ -179,17 +171,11 @@ class WorkDetailsCard extends StatelessWidget {
         child: DigitElevatedButton(
           onPressed: () {
             if (isManageAttendance) {
-              context.read<AttendanceProjectsSearchBloc>().add(
-                    SearchIndividualAttendanceProjectEvent(
-                      id: attendanceRegisterId ?? '',
-                    ),
-                  );
-              context.read<AttendanceUserSearchBloc>().add(
-                    const SearchAttendanceUserEvent(),
-                  );
               context.router.push(AttendanceRegisterTableRoute(
                   projectDetails: [cardDetails],
-                  attendanceRegister: attendanceRegister));
+                  attendanceRegister: attendanceRegister,
+                  registerId: attendanceRegisterId.toString(),
+                  tenantId: attendanceRegister!.tenantId.toString()));
             } else {
               context.router.push(TrackAttendanceRoute(
                   id: attendanceRegisterId.toString(),
@@ -228,7 +214,7 @@ class WorkDetailsCard extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 16),
                 width: MediaQuery.of(context).size.width > 720
                     ? MediaQuery.of(context).size.width / 3.5
-                    : MediaQuery.of(context).size.width / 3,
+                    : MediaQuery.of(context).size.width / 3.5,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,

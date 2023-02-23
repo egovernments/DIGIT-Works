@@ -29,8 +29,8 @@ const inboxConfig = () => {
             search : {
                 uiConfig : {
                     headerStyle : null,
-                    primaryLabel: 'ACTION_TEST_SEARCH',
-                    secondaryLabel: 'CLEAR_SEARCH_LINk',
+                    primaryLabel: 'ES_COMMON_SEARCH',
+                    secondaryLabel: 'ES_COMMON_CLEAR_SEARCH',
                     minReqFields: 1,
                     defaultValues : {
                         projectNumber: "",
@@ -99,7 +99,7 @@ const inboxConfig = () => {
                             roles: [],
                         }
                     ],
-                    label : "ACTION_TEST_PROJECT_INBOX",
+                    label : "PROJECT_INBOX",
                     logoIcon : { //Pass the name of the Icon Component as String here and map it in the InboxSearchLinks Component   
                         component : "PropertyHouse",
                         customClass : "inbox-search-icon--projects"         
@@ -112,7 +112,7 @@ const inboxConfig = () => {
                 uiConfig : {
                     type : 'filter',
                     headerStyle : null,
-                    primaryLabel: 'ACTION_TEST_APPLY',
+                    primaryLabel: 'ES_COMMON_APPLY',
                     minReqFields: 0,
                     secondaryLabel: '',
                     defaultValues : {
@@ -141,7 +141,7 @@ const inboxConfig = () => {
                             },
                         },
                         {
-                            label: "WORKS_CREATED_BY",
+                            label: "ES_COMMON_CREATED_BY",
                             type: "dropdown",
                             isMandatory: false,
                             disable: false,
@@ -156,7 +156,7 @@ const inboxConfig = () => {
                             }
                         },
                         {
-                            label: "WORKS_STATUS",
+                            label: "ES_COMMON_STATUS",
                             type: "dropdown",
                             isMandatory: false,
                             disable: false,
@@ -172,7 +172,7 @@ const inboxConfig = () => {
                         }
                     ]
                 },
-                label : "FILTERS",
+                label : "ES_COMMON_FILTERS",
                 show : true
             },
             searchResult: {
@@ -203,7 +203,7 @@ const inboxConfig = () => {
                             jsonPath: "projectSubType",
                         },
                         {
-                            label: "WORKS_WORK_NATURE",
+                            label: "ES_COMMON_WORK_NATURE",
                             jsonPath: "endDate",
                         },
                         {
@@ -211,15 +211,15 @@ const inboxConfig = () => {
                             jsonPath: "parentId",
                         },
                         {
-                            label: "WORKS_CREATED_BY",
+                            label: "ES_COMMON_CREATED_BY",
                             jsonPath: "auditDetails.createdBy",
                         },
                         {
-                            label: "WORKS_STATUS",
+                            label: "ES_COMMON_STATUS",
                             jsonPath: "status",
                         },
                         {
-                            label: "WORKS_TOTAL_AMOUNT",
+                            label: "ES_COMMON_TOTAL_AMOUNT",
                             jsonPath: "totalAmount",
                         }
                     ],

@@ -29,15 +29,15 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
           await MusterRollRepository(client.init()).createMuster(
               url: Urls.musterRollServices.createMuster,
               options: Options(extra: {
-                "userInfo": GlobalVariables.getUserInfo(),
-                "accessToken": GlobalVariables.getAuthToken()
+                "userInfo": GlobalVariables.userRequestModel,
+                "accessToken": GlobalVariables.authToken
               }),
               body: {
             "musterRoll": {
               "tenantId": event.tenantId,
               "registerId": event.registerId,
               "startDate": event.startDate,
-              "additonalDetails": {
+              "additionalDetails": {
                 "orgName": event.orgName,
                 "contractId": event.contractId,
                 "attendanceRegisterNo": event.registerNo,
@@ -65,14 +65,14 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
           await MusterRollRepository(client.init()).createMuster(
               url: Urls.musterRollServices.updateMuster,
               options: Options(extra: {
-                "userInfo": GlobalVariables.getUserInfo(),
-                "accessToken": GlobalVariables.getAuthToken()
+                "userInfo": GlobalVariables.userRequestModel,
+                "accessToken": GlobalVariables.authToken
               }),
               body: {
             "musterRoll": {
               "tenantId": event.tenantId,
               "id": event.id,
-              "additonalDetails": {
+              "additionalDetails": {
                 "orgName": event.orgName,
                 "contractId": event.contractId,
                 "attendanceRegisterNo": event.registerNo,
@@ -82,7 +82,7 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
             "workflow": {
               "action": "RESUBMIT",
               "comments": "Resubmit muster roll",
-              "assignees": [GlobalVariables.getUUID()]
+              "assignees": [GlobalVariables.uuid]
             }
           });
       if (musterRollsModel != null) {

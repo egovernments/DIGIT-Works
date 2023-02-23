@@ -26,7 +26,7 @@ const WorksCard = () => {
         //Pass Count Value from Inbox API here
         count: 33,
         label: t("INBOX"),
-        link: `/${window?.contextPath}/employee/works/inbox`,
+        link: `/${window?.contextPath}/employee/estimate/inbox`,
       },
     ],
     links: [
@@ -37,8 +37,8 @@ const WorksCard = () => {
         count: 1,
       },
       {
-        label: t("WORKS_ESTIMATES"),
-        link: `/${window?.contextPath}/employee/works/inbox`,
+        label: t("WORKS_ESTIMATES"),  
+        link: `/${window?.contextPath}/employee/estimate/inbox`,
         roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE"],
         count: 1,
       },

@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:works_shg_app/models/attendance/attendee_model.dart';
@@ -18,28 +16,35 @@ typedef AttendeeCreateEmitter = Emitter<AttendeeCreateState>;
 
 class AttendeeCreateBloc
     extends Bloc<AttendeeCreateEvent, AttendeeCreateState> {
-  AttendeeCreateBloc() : super(const AttendeeCreateState()) {
+  AttendeeCreateBloc() : super(const AttendeeCreateState.initial()) {
     on<CreateAttendeeEvent>(_onCreate);
+    on<CreateAttendeeDisposeEvent>(_onDispose);
   }
 
   FutureOr<void> _onCreate(
-      AttendeeCreateEvent event, AttendeeCreateEmitter emit) async {
+      CreateAttendeeEvent event, AttendeeCreateEmitter emit) async {
     Client client = Client();
-    emit(state.copyWith(loading: true));
-    print(event);
-    AttendeeModel attendeeModel =
-        await AttendanceRegisterRepository(client.init()).createAttendee(
-            url: Urls.attendanceRegisterServices.createAttendee,
-            options: Options(extra: {
-              "accessToken": GlobalVariables.getAuthToken(),
-              "apiId": "mukta-services",
-              "msgId": "Enroll attendee to register",
-            }),
-            body: {"attendees": event.attendeeList});
-    await Future.delayed(const Duration(seconds: 1));
-    emit(state.copyWith(attendeeModel: attendeeModel, loading: false));
-    // Notifiers.getToastMessage(scaffoldMessengerKey.currentContext!,
-    //     'Created Successfully', 'SUCCESS');
+    try {
+      emit(const AttendeeCreateState.loading());
+      AttendeeModel attendeeModel =
+          await AttendanceRegisterRepository(client.init()).createAttendee(
+              url: Urls.attendanceRegisterServices.createAttendee,
+              options: Options(extra: {
+                "accessToken": GlobalVariables.authToken,
+                "apiId": "mukta-services",
+                "msgId": "Enroll attendee to register",
+              }),
+              body: {"attendees": event.attendeeList});
+      await Future.delayed(const Duration(seconds: 1));
+      emit(const AttendeeCreateState.loaded());
+    } on DioError catch (e) {
+      emit(AttendeeCreateState.error(e.response?.data['Errors'][0]['code']));
+    }
+  }
+
+  FutureOr<void> _onDispose(
+      CreateAttendeeDisposeEvent event, AttendeeCreateEmitter emit) async {
+    emit(const AttendeeCreateState.initial());
   }
 }
 
@@ -47,14 +52,15 @@ class AttendeeCreateBloc
 class AttendeeCreateEvent with _$AttendeeCreateEvent {
   const factory AttendeeCreateEvent.create(
       {required List<Map<String, dynamic>> attendeeList}) = CreateAttendeeEvent;
+  const factory AttendeeCreateEvent.dispose() = CreateAttendeeDisposeEvent;
 }
 
 @freezed
 class AttendeeCreateState with _$AttendeeCreateState {
   const AttendeeCreateState._();
 
-  const factory AttendeeCreateState({
-    @Default(false) bool loading,
-    AttendeeModel? attendeeModel,
-  }) = _AttendeeCreateState;
+  const factory AttendeeCreateState.initial() = _Initial;
+  const factory AttendeeCreateState.loading() = _Loading;
+  const factory AttendeeCreateState.loaded() = _Loaded;
+  const factory AttendeeCreateState.error(String? error) = _Error;
 }

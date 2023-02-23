@@ -116,9 +116,9 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "SocialCategory",
-                moduleName: "common-masters",
-                localePrefix: "ES_COMMON",
+                masterName: "TargetDemography",
+                moduleName: "works",
+                localePrefix: "COMMON_MASTERS",
               },
             },
           },
@@ -498,9 +498,9 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
                 top : "2.5rem"
               },
               mdmsConfig: {
-                masterName: "SocialCategory",
-                moduleName: "common-masters",
-                localePrefix: "ES_COMMON",
+                masterName: "TargetDemography",
+                moduleName: "works",
+                localePrefix: "COMMON_MASTERS",
               },
             },
           },

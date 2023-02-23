@@ -4,25 +4,26 @@ import { useTranslation } from 'react-i18next';
 import ApplicationDetails from '../../../templates/ApplicationDetails';
 
 const ViewFinancialDetails = (props) => {
-  const tenantId =  Digit.ULBService.getCurrentTenantId();
-  const queryStrings = Digit.Hooks.useQueryParams();
-  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
-
+  const { tenantId, projectNumber } = Digit.Hooks.useQueryParams();
   const searchParams = {
-    Projects : [
-        {
-            tenantId : queryStrings?.tenantId,
-            projectNumber : queryStrings?.projectNumber
-        }
+    Projects: [
+      {
+        tenantId,
+        projectNumber: projectNumber
+      }
     ]
-  } 
-  const filters = {
-      limit : 10,
-      offset : 0
   }
-    
+  const filters = {
+    limit: 11,
+    offset: 0,
+    includeAncestors: true,
+    includeDescendants: true
+  }
+
+  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
   const { t } = useTranslation()
   const { data, isLoading } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
+  
   return (
     <>
         <ApplicationDetails

@@ -22,8 +22,8 @@ class UserSearchRepository {
           queryParameters: queryParameters,
           data: body,
           options: Options(extra: {
-            "userInfo": GlobalVariables.getUserInfo(),
-            "accessToken": GlobalVariables.getAuthToken(),
+            "userInfo": GlobalVariables.userRequestModel,
+            "accessToken": GlobalVariables.authToken,
           }));
 
       return UserSearchModel.fromJson(
@@ -31,7 +31,7 @@ class UserSearchRepository {
       );
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
-      throw Exception(ex);
+      rethrow;
     }
   }
 }

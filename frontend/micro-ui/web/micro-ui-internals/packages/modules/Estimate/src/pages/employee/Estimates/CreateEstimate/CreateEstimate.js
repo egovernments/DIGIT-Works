@@ -1,32 +1,11 @@
-import { Card,StatusTable,Row,Header,HorizontalNav,ActionBar,SubmitBar,WorkflowModal,FormComposer } from '@egovernments/digit-ui-react-components'
+import { Card,StatusTable,Row,Header,HorizontalNav,ActionBar,SubmitBar,WorkflowModal,FormComposer,Loader } from '@egovernments/digit-ui-react-components'
 import React,{Fragment,useEffect,useState} from 'react'
 import { useTranslation } from 'react-i18next'
 import getModalConfig from './config'
 import { createEstimateConfig } from './createEstimateConfig'
 import { createEstimatePayload } from './createEstimatePayload'
 import { useHistory } from "react-router-dom";
-const cardState = {
-    "title": " ",
-    "asSectionHeader": true,
-    values:[
-        {
-            "title": "WORKS_DATE_PROPOSAL",
-            "value": "06/05/2022"
-        },
-        {
-            "title": "WORKS_PROJECT_NAME_AST",
-            "value": "RWHS Ward 1"
-        },
-        {
-            "title": "EVENTS_DESCRIPTION",
-            "value": "Rain Water Harvesting Scheme in Ward 1"
-        },
-        {
-            "title": "WORKS_HAS_SUB_PROJECT_LABEL",
-            "value": "No"
-        },
-    ]
-}
+
 const configNavItems = [
     {
         name: "Project Details",
@@ -38,6 +17,49 @@ const configNavItems = [
     },
 ]
 const CreateEstimate = ({ EstimateSession }) => {
+    const { t } = useTranslation()
+
+    const { tenantId, projectNumber } = Digit.Hooks.useQueryParams();
+    const searchParams = {
+        Projects: [
+            {
+                tenantId,
+                projectNumber: projectNumber
+            }
+        ]
+    }
+    const filters = {
+        limit: 11,
+        offset: 0,
+        includeAncestors: true,
+        includeDescendants: true
+    }
+
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+    const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
+    const cardState = {
+        "title": " ",
+        "asSectionHeader": true,
+        values: [
+            {
+                "title": "WORKS_DATE_PROPOSAL",
+                "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate
+            },
+            {
+                "title": "WORKS_PROJECT_NAME_AST",
+                "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName
+            },
+            {
+                "title": "EVENTS_DESCRIPTION",
+                "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc
+            },
+            {
+                "title": "WORKS_HAS_SUB_PROJECT_LABEL",
+                "value": t(projectData?.projectDetails?.searchedProject?.basicDetails?.projectHasSubProject)
+            },
+        ]
+    }
+    
     const history = useHistory()
 
     const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
@@ -47,7 +69,6 @@ const CreateEstimate = ({ EstimateSession }) => {
 
     const [showModal, setShowModal] = useState(false);
 
-    const { t } = useTranslation()
     const rolesForThisAction = "EST_CHECKER" //hardcoded for now
     const [config, setConfig] = useState({});
     const [approvers, setApprovers] = useState([]);
@@ -104,10 +125,10 @@ const CreateEstimate = ({ EstimateSession }) => {
         //         }
         //     })
     };
-    const onModalSubmit = async (data) => {
+    const onModalSubmit = async (_data) => {
         
         const completeFormData = {
-            ...data,
+            ..._data,
             ...inputFormData,
             selectedApprover,
             selectedDept,
@@ -116,7 +137,7 @@ const CreateEstimate = ({ EstimateSession }) => {
         // setSessionFormData(completeFormData)
         
 
-        const payload = createEstimatePayload(completeFormData)
+        const payload = createEstimatePayload(completeFormData, projectData)
         setShowModal(false);
         
         
@@ -230,16 +251,15 @@ const CreateEstimate = ({ EstimateSession }) => {
           }
         <Header styles={{ marginLeft: "14px" }}>{t("ACTION_TEST_CREATE_ESTIMATE")}</Header>
         {/* Will fetch projectId from url params and do a search for project to show the below data in card while integrating with the API  */}
-          <Card styles={{ marginLeft: "14px" }}>
+        {isLoading ?<Loader />:<Card styles={{ marginLeft: "14px" }}>
             <StatusTable>
                 {cardState.values.map((value)=>{
                     return (
                         <Row key={t(value.title)} label={t(value.title)} text={value.value} />
                     )
                 })}
-                  
             </StatusTable>
-        </Card>
+        </Card>}
         <FormComposer
             label={"ACTION_TEST_CREATE_ESTIMATE"}
             config={estimateFormConfig?.form.map((config) => {

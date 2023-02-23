@@ -4,6 +4,7 @@ import { useRouteMatch } from "react-router-dom";
 import ProjectCard from "./components/ProjectCard";
 import SubProjectDetailsTable from "./components/SubProjectDetailsTable";
 import ViewFinancialDetails from "./pageComponents/ViewFinancialDetails";
+import ViewSubProjectsDetails from "./pageComponents/ViewSubProjectsDetails";
 import { default as EmployeeApp } from "./pages/employee";
 import CreateProjectForm from "./pages/employee/CreateProject/CreateProjectForm";
 import CreateProjectResponse from "./pages/employee/CreateProject/CreateProjectResponse";
@@ -13,9 +14,9 @@ import ProjectSearch from "./pages/employee/ProjectSearch";
 import ProjectSearchAndInbox from "./pages/employee/ProjectSearchAndInbox";
 
 export const ProjectModule = ({ stateCode, userType, tenants }) => {
-  const moduleCode = ["Project"];
   const { path, url } = useRouteMatch();
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const moduleCode = ["Project","common-masters",tenantId];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({
     stateCode,
@@ -23,13 +24,7 @@ export const ProjectModule = ({ stateCode, userType, tenants }) => {
     language,
   });
 
-  useEffect(() => {
-    Digit.LocalizationService.getLocale({
-      modules: [`rainmaker-${tenantId}`],
-      locale: language,
-      tenantId: stateCode,
-    })
-  }, [])
+
 
   if (isLoading) {
     return <Loader />;
@@ -47,7 +42,8 @@ const componentsToRegister = {
     ProjectSearchAndInbox,
     SubProjectDetailsTable,
     CreateProjectResponse,
-    CreateProjectForm
+    CreateProjectForm,
+    ViewSubProjectsDetails
 };
 
 export const initProjectComponents = () => {

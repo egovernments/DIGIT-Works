@@ -5,7 +5,6 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 // import { PGRReducers } from "@egovernments/digit-ui-module-pgr";
 
 // import { initPGRComponents } from "@egovernments/digit-ui-module-pgr";
-import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
@@ -75,7 +74,6 @@ const initDigitUI = () => {
   });
 
   // initPGRComponents();
-  initDSSComponents();
   initEstimateComponents();
   initEngagementComponents();
   initWorksComponents();
@@ -102,7 +100,7 @@ const initDigitUI = () => {
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
   initMuktaCustomisations();
-  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
+  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} defaultLanding="employee" />, document.getElementById("root"));
 };
 
 initLibraries().then(() => {

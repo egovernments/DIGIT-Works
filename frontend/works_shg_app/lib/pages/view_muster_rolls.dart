@@ -5,7 +5,10 @@ import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 
 import '../blocs/localization/app_localization.dart';
+import '../models/muster_rolls/muster_roll_model.dart';
+import '../router/app_router.dart';
 import '../utils/date_formats.dart';
+import '../utils/notifiers.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/drawer_wrapper.dart';
@@ -16,6 +19,7 @@ class ViewMusterRollsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return Scaffold(
         appBar: AppBar(),
         drawer: DrawerWrapper(const Drawer(
@@ -25,9 +29,16 @@ class ViewMusterRollsPage extends StatelessWidget {
         body: SingleChildScrollView(child:
             BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
                 builder: (context, state) {
-          if (!state.loading && state.musterRollsModel != null) {
-            final List<Map<String, dynamic>> musterList =
-                state.musterRollsModel!.musterRoll!
+          return state.maybeWhen(
+              loading: () => Loaders.circularLoader(context),
+              error: (String? error) {
+                context.router.push(const HomeRoute());
+                return Notifiers.getToastMessage(
+                    context, t.translate(error.toString()), 'ERROR');
+              },
+              loaded: (MusterRollsModel? musterRollsModel) {
+                final List<Map<String, dynamic>> musterList = musterRollsModel!
+                    .musterRoll!
                     .map((e) => {
                           i18.attendanceMgmt.nameOfWork: e
                                   .musterAdditionalDetails
@@ -42,33 +53,32 @@ class ViewMusterRollsPage extends StatelessWidget {
                           i18.common.status: e.status
                         })
                     .toList();
-            return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Back(
-                    backLabel:
-                        AppLocalizations.of(context).translate(i18.common.back),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      '${AppLocalizations.of(context).translate(i18.home.musterRoll)}(${state.musterRollsModel!.musterRoll!.length})',
-                      style: Theme.of(context).textTheme.displayMedium,
-                      textAlign: TextAlign.left,
-                    ),
-                  ),
-                  musterList.isEmpty
-                      ? const Text('No Muster Rolls Found')
-                      : WorkDetailsCard(
-                          musterList,
-                          isSHGInbox: true,
-                          musterRollsModel: state.musterRollsModel,
-                        )
-                ]);
-          } else {
-            return Loaders.circularLoader(context);
-            ;
-          }
+                return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Back(
+                        backLabel: AppLocalizations.of(context)
+                            .translate(i18.common.back),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          '${t.translate(i18.home.musterRoll)}(${musterRollsModel!.musterRoll!.length})',
+                          style: Theme.of(context).textTheme.displayMedium,
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      musterList.isEmpty
+                          ? Text(t
+                              .translate(i18.attendanceMgmt.noMusterRollsFound))
+                          : WorkDetailsCard(
+                              musterList,
+                              isSHGInbox: true,
+                              musterRollsModel: musterRollsModel,
+                            )
+                    ]);
+              },
+              orElse: () => Container());
         })));
   }
 }

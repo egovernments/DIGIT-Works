@@ -59,7 +59,7 @@ public class MusterRollServiceTest {
     void checkMusterRollRequestCreate_IfValid() {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         List<MusterRoll> musterRolls = null;
-        lenient().when(musterRollRepository.getMusterRoll(any(MusterRollSearchCriteria.class))).thenReturn(musterRolls);
+        lenient().when(musterRollRepository.getMusterRoll(any(MusterRollSearchCriteria.class),any(ArrayList.class))).thenReturn(musterRolls);
         musterRollService.createMusterRoll(musterRollRequest);
         assertNotNull(musterRollRequest.getMusterRoll());
     }
@@ -68,7 +68,7 @@ public class MusterRollServiceTest {
     void checkMusterRollRequestEstimate_IfValid() {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         List<MusterRoll> musterRolls = null;
-        lenient().when(musterRollRepository.getMusterRoll(any(MusterRollSearchCriteria.class))).thenReturn(musterRolls);
+        lenient().when(musterRollRepository.getMusterRoll(any(MusterRollSearchCriteria.class),any(ArrayList.class))).thenReturn(musterRolls);
         musterRollService.estimateMusterRoll(musterRollRequest);
         assertNotNull(musterRollRequest.getMusterRoll());
     }
@@ -78,7 +78,8 @@ public class MusterRollServiceTest {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         List<MusterRoll> musterRolls = new ArrayList<>();
         musterRolls.add(musterRollRequest.getMusterRoll());
-        lenient().when(musterRollRepository.getMusterRoll(any(MusterRollSearchCriteria.class))).thenReturn(musterRolls);
+        List<String> registerIds = null;
+        lenient().when(musterRollRepository.getMusterRoll(any(MusterRollSearchCriteria.class),eq(registerIds))).thenReturn(musterRolls);
         CustomException exception = assertThrows(CustomException.class, ()-> musterRollService.createMusterRoll(musterRollRequest));
         assertTrue(exception.getCode().contentEquals("DUPLICATE_MUSTER_ROLL"));
     }
@@ -87,7 +88,7 @@ public class MusterRollServiceTest {
     void shouldThrowException_IfWorkflowServiceFails() {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         List<MusterRoll> musterRolls = null;
-        lenient().when(musterRollRepository.getMusterRoll(any(MusterRollSearchCriteria.class))).thenReturn(musterRolls);
+        lenient().when(musterRollRepository.getMusterRoll(any(MusterRollSearchCriteria.class),any(ArrayList.class))).thenReturn(musterRolls);
         lenient().when(workflowService.updateWorkflowStatus(any(MusterRollRequest.class))).thenThrow(new CustomException("BUSINESSSERVICE_DOESN'T_EXIST",""));
 
         assertThrows(CustomException.class, () -> {

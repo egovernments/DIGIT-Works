@@ -821,6 +821,9 @@ input[type="number"] {
 .sub-project-table-wrapper {
   overflow-x: scroll;
   padding-bottom: 9rem;
+  &.no-padding {
+    padding: 0;
+  }
   .project-details-table {
     position: relative;
     .sub-projects-details-field-mt {

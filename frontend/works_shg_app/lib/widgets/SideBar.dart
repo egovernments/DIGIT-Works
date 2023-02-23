@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +23,18 @@ class SideBar extends StatefulWidget {
 }
 
 class _SideBar extends State<SideBar> {
+  List<DigitRowCardModel>? digitRowCardItems;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
+    super.initState();
+  }
+
+  afterViewBuild() async {
+    digitRowCardItems = await GlobalVariables.getLanguages();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -65,11 +76,6 @@ class _SideBar extends State<SideBar> {
             padding: const EdgeInsets.all(16),
             child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
               builder: (context, state) {
-                List<DigitRowCardModel>? digitRowCardItems =
-                    GlobalVariables.getLanguages()
-                        .map<DigitRowCardModel>(
-                            (e) => DigitRowCardModel.fromJson(e))
-                        .toList();
                 return state.digitRowCardItems != null &&
                         state.isInitializationCompleted
                     ? DigitRowCard(
@@ -86,8 +92,9 @@ class _SideBar extends State<SideBar> {
                           context.read<LocalizationBloc>().add(
                               OnLoadLocalizationEvent(
                                   module: widget.module,
-                                  tenantId:
-                                      GlobalVariables.getTenantId().toString(),
+                                  tenantId: GlobalVariables.globalConfigObject!
+                                      .globalConfigs!.stateTenantId
+                                      .toString(),
                                   locale: data.value));
                           context.read<AppInitializationBloc>().add(
                               AppInitializationSetupEvent(
@@ -99,7 +106,7 @@ class _SideBar extends State<SideBar> {
                           ).load();
                         },
                         rowItems: digitRowCardItems != null
-                            ? digitRowCardItems
+                            ? digitRowCardItems!
                                 .map((e) =>
                                     DigitRowCardModel.fromJson(e.toJson()))
                                 .toList()

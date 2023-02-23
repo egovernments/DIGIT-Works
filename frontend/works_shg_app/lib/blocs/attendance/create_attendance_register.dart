@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:works_shg_app/models/attendance/attendance_registry_model.dart';
@@ -35,8 +33,8 @@ class AttendanceRegisterCreateBloc
               .createAttendanceRegisters(
                   url: Urls.attendanceRegisterServices.createAttendanceRegister,
                   options: Options(extra: {
-                    "userInfo": GlobalVariables.getUserInfo(),
-                    "accessToken": GlobalVariables.getAuthToken()
+                    "userInfo": GlobalVariables.userRequestModel,
+                    "accessToken": GlobalVariables.authToken
                   }),
                   body: {
             "attendanceRegister": [
@@ -51,7 +49,7 @@ class AttendanceRegisterCreateBloc
                 "attendees": [],
                 "additionalDetails": {
                   "contractId": event.contractId,
-                  "contractCreatedByUUID": GlobalVariables.getUUID(),
+                  "contractCreatedByUUID": GlobalVariables.uuid,
                   "contractCreated": event.contractCreated,
                   "orgName": event.orgName
                 }
@@ -59,7 +57,9 @@ class AttendanceRegisterCreateBloc
             ]
           });
       if (attendanceRegistersModel != null) {
-        emit(const AttendanceRegisterCreateState.loaded());
+        emit(AttendanceRegisterCreateState.loaded(attendanceRegistersModel
+            .attendanceRegister!.first.registerNumber
+            .toString()));
       } else {
         emit(const AttendanceRegisterCreateState.error());
       }
@@ -88,6 +88,7 @@ class AttendanceRegisterCreateState with _$AttendanceRegisterCreateState {
   const AttendanceRegisterCreateState._();
   const factory AttendanceRegisterCreateState.initial() = _Initial;
   const factory AttendanceRegisterCreateState.loading() = _Loading;
-  const factory AttendanceRegisterCreateState.loaded() = _Loaded;
+  const factory AttendanceRegisterCreateState.loaded(String? registerNumber) =
+      _Loaded;
   const factory AttendanceRegisterCreateState.error() = _Error;
 }
