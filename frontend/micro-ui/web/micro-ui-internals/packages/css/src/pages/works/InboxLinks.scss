@@ -18,13 +18,24 @@
             }
         }
         .text {
-            font-size: 24px;
             line-height: 32px;
             font-weight: 700;
             color : black;
             display: flex;
             align-items: center;
             justify-content: flex-start;
+        }
+
+        @media (min-width: 1024px) {
+            .text {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .text {
+                font-size: 15px;
+            }
         }
     }
     .contents {

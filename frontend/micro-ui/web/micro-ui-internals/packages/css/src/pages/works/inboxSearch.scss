@@ -19,11 +19,23 @@
             }
         }
         .label {
-            font-size: 24px;
             display: flex;
             align-items: center;
             justify-content: flex-start;
         }
+
+        @media (min-width: 1024px) {
+            .label {
+                font-size:24px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .label {
+                font-size:16px;
+            }
+        }
+
         .icon-filter {
             display: flex;
             align-items: center;
