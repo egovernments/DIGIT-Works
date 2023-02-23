@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "bbf40536-c788-4345-aff6-4e7ed6bfb8ab",
+		"_postman_id": "35b0e8c1-5078-456c-99f1-dfa8f07ca7ab",
 		"name": "Project Management System - Postman Test Suite",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -595,6 +595,16 @@
 							"key": "includeDescendants",
 							"value": "false",
 							"disabled": true
+						},
+						{
+							"key": "createdFrom",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "createdTo",
+							"value": null,
+							"disabled": true
 						}
 					]
 				}
@@ -677,6 +687,16 @@
 							"key": "includeDescendants",
 							"value": "false",
 							"disabled": true
+						},
+						{
+							"key": "createdFrom",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "createdTo",
+							"value": null,
+							"disabled": true
 						}
 					]
 				}
@@ -758,6 +778,16 @@
 						{
 							"key": "includeDescendants",
 							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "createdFrom",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "createdTo",
+							"value": null,
 							"disabled": true
 						}
 					]
@@ -870,6 +900,16 @@
 							"key": "includeDescendants",
 							"value": "false",
 							"disabled": true
+						},
+						{
+							"key": "createdFrom",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "createdTo",
+							"value": null,
+							"disabled": true
 						}
 					]
 				}
@@ -981,6 +1021,16 @@
 						{
 							"key": "includeDescendants",
 							"value": "true"
+						},
+						{
+							"key": "createdFrom",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "createdTo",
+							"value": null,
+							"disabled": true
 						}
 					]
 				}
@@ -1059,6 +1109,16 @@
 						{
 							"key": "includeDescendants",
 							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "createdFrom",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "createdTo",
+							"value": null,
 							"disabled": true
 						}
 					]
@@ -1139,6 +1199,105 @@
 							"key": "includeDescendants",
 							"value": "false",
 							"disabled": true
+						},
+						{
+							"key": "createdFrom",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "createdTo",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Project - Success - Between createdFrom and createdTo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Register Search response is received for parameters createdFrom and createdTo\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.Projects.length).to.be.above(0);",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n     {\n      \"id\": \"\",\n      \"tenantId\": \"{{tenantId}}\",\n      \"projectType\": \"MP-CWS\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId={{tenantId}}&createdFrom={{lastChangedSince}}&createdTo={{lastChangedSinceIncreased}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pms",
+						"project",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						},
+						{
+							"key": "lastChangedSince",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "includeDeleted",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "includeAncestors",
+							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "includeDescendants",
+							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "createdFrom",
+							"value": "{{lastChangedSince}}"
+						},
+						{
+							"key": "createdTo",
+							"value": "{{lastChangedSinceIncreased}}"
 						}
 					]
 				}
@@ -1203,6 +1362,78 @@
 						{
 							"key": "tenantId",
 							"value": "{{tenantId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Project - Validation Error - createdFrom greater than createdTo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"INVALID_DATE\");",
+							"    pm.expect(message).to.eql(\"Created From should be less than Created To\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"\",\n      \"tenantId\": \"{{tenantId}}\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"startDate\": 0,\n      \"endDate\": 0\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId={{tenantId}}&createdFrom=5000&createdTo=2000",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pms",
+						"project",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						},
+						{
+							"key": "createdFrom",
+							"value": "5000"
+						},
+						{
+							"key": "createdTo",
+							"value": "2000"
 						}
 					]
 				}
@@ -1331,6 +1562,79 @@
 						{
 							"key": "tenantId",
 							"value": "{{tenantId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Project - Validation Error - createdTo without createdFrom param",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"INVALID_DATE_PARAM\");",
+							"    pm.expect(message).to.eql(\"Created From date is required if Created To date is given\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"mukta-services\",\n    \"ver\": \"null\",\n    \"ts\": 0,\n    \"action\": \"null\",\n    \"did\": \"null\",\n    \"key\": \"null\",\n    \"msgId\": \"null\",\n    \"requesterId\": \"null\",\n    \"authToken\": \"{{token}}\"\n  },\n  \"Projects\": [\n    {\n      \"id\": \"{{projectId}}\",\n      \"tenantId\": \"{{tenantId}}\",\n      \"projectType\": \"\",\n      \"name\": \"\",\n      \"projectNumber\": \"\",\n      \"projectSubType\": \"\",\n      \"endDate\": 10\n    }\n  ],\n  \"apiOperation\": \"SEARCH\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/pms/project/v1/_search?limit=5&offset=0&tenantId={{tenantId}}&createdTo=10000",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pms",
+						"project",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						},
+						{
+							"key": "createdFrom",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "createdTo",
+							"value": "10000"
 						}
 					]
 				}

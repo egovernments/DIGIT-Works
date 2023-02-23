@@ -60,16 +60,16 @@ public class ProjectValidator {
     }
 
     /* Validates search Project request body and parameters*/
-    public void validateSearchProjectRequest(ProjectRequest project, Integer limit, Integer offset, String tenantId) {
+    public void validateSearchProjectRequest(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long createdFrom, Long createdTo) {
         Map<String, String> errorMap = new HashMap<>();
         RequestInfo requestInfo = project.getRequestInfo();
 
         //Verify if RequestInfo and UserInfo is present
         validateRequestInfo(requestInfo);
         //Verify if search project request parameters are valid
-        validateSearchProjectRequestParams(limit, offset, tenantId);
+        validateSearchProjectRequestParams(limit, offset, tenantId, createdFrom, createdTo);
         //Verify if search project request is valid
-        validateSearchProjectRequest(project.getProjects(), tenantId);
+        validateSearchProjectRequest(project.getProjects(), tenantId, createdFrom);
         //Verify if project request have multiple tenant Ids
         validateMultipleTenantIds(project);
         //Verify MDMS Data
@@ -117,7 +117,7 @@ public class ProjectValidator {
     }
 
     /* Validates if search Project request parameters are valid */
-    private void validateSearchProjectRequestParams(Integer limit, Integer offset, String tenantId) {
+    private void validateSearchProjectRequestParams(Integer limit, Integer offset, String tenantId, Long createdFrom, Long createdTo) {
         if (limit == null) {
             log.error("limit is mandatory parameter in Project search");
             throw new CustomException("SEARCH_PROJECT.LIMIT", "limit is mandatory for Project Search");
@@ -131,6 +131,16 @@ public class ProjectValidator {
         if (StringUtils.isBlank(tenantId)) {
             log.error("tenantId is mandatory parameter in Project search");
             throw new CustomException("SEARCH_PROJECT.TENANT_ID", "tenantId is mandatory for Project Search");
+        }
+
+        if ((createdFrom == null || createdFrom == 0) && (createdTo != null && createdTo != 0)) {
+            log.error("Created From date is required if Created To date is given");
+            throw new CustomException("INVALID_DATE_PARAM", "Created From date is required if Created To date is given");
+        }
+
+        if ((createdFrom != null && createdTo != null  && createdTo != 0) && (createdFrom.compareTo(createdTo) > 0)) {
+            log.error("Created From in Project search parameters should be less than Created To");
+            throw new CustomException("INVALID_DATE", "Created From should be less than Created To");
         }
     }
 
@@ -163,7 +173,7 @@ public class ProjectValidator {
     }
 
     /* Validates Search Project Request body */
-    private void validateSearchProjectRequest(List<Project> projects, String tenantId) {
+    private void validateSearchProjectRequest(List<Project> projects, String tenantId, Long createdFrom) {
         if (projects == null || projects.size() == 0) {
             log.error("Project list is empty. Projects is mandatory");
             throw new CustomException("PROJECT", "Projects are mandatory");
@@ -181,7 +191,9 @@ public class ProjectValidator {
             if (StringUtils.isBlank(project.getId()) && StringUtils.isBlank(project.getProjectType())
                     && StringUtils.isBlank(project.getName()) && StringUtils.isBlank(project.getProjectNumber())
                     && StringUtils.isBlank(project.getProjectSubType())
-                    && project.getStartDate() == 0 && project.getEndDate() == 0) {
+                    && (project.getStartDate() == null || project.getStartDate() == 0)
+                    && (project.getEndDate() == null || project.getEndDate() == 0)
+                    && (createdFrom == null || createdFrom == 0)) {
                 log.error("Any one project search field is required for Project Search");
                 throw new CustomException("PROJECT_SEARCH_FIELDS", "Any one project search field is required");
             }
