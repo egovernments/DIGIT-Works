@@ -5,11 +5,11 @@ import 'package:works_shg_app/services/local_storage.dart';
 import 'global_variables.dart';
 
 class CommonMethods {
-  void deleteLocalStorageKey() {
+  Future<void> deleteLocalStorageKey() async {
     if (kIsWeb) {
       html.window.localStorage.remove(GlobalVariables.selectedLocale());
     } else {
-      storage.delete(key: GlobalVariables.selectedLocale());
+      await storage.delete(key: GlobalVariables.selectedLocale().toString());
     }
   }
 

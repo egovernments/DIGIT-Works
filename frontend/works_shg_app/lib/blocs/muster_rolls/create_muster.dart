@@ -29,8 +29,8 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
           await MusterRollRepository(client.init()).createMuster(
               url: Urls.musterRollServices.createMuster,
               options: Options(extra: {
-                "userInfo": GlobalVariables.getUserInfo(),
-                "accessToken": GlobalVariables.getAuthToken()
+                "userInfo": GlobalVariables.userRequestModel,
+                "accessToken": GlobalVariables.authToken
               }),
               body: {
             "musterRoll": {
@@ -65,8 +65,8 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
           await MusterRollRepository(client.init()).createMuster(
               url: Urls.musterRollServices.updateMuster,
               options: Options(extra: {
-                "userInfo": GlobalVariables.getUserInfo(),
-                "accessToken": GlobalVariables.getAuthToken()
+                "userInfo": GlobalVariables.userRequestModel,
+                "accessToken": GlobalVariables.authToken
               }),
               body: {
             "musterRoll": {
@@ -82,7 +82,7 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
             "workflow": {
               "action": "RESUBMIT",
               "comments": "Resubmit muster roll",
-              "assignees": [GlobalVariables.getUUID()]
+              "assignees": [GlobalVariables.uuid]
             }
           });
       if (musterRollsModel != null) {

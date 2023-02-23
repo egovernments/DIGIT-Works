@@ -30,7 +30,7 @@ class AttendeeCreateBloc
           await AttendanceRegisterRepository(client.init()).createAttendee(
               url: Urls.attendanceRegisterServices.createAttendee,
               options: Options(extra: {
-                "accessToken": GlobalVariables.getAuthToken(),
+                "accessToken": GlobalVariables.authToken,
                 "apiId": "mukta-services",
                 "msgId": "Enroll attendee to register",
               }),

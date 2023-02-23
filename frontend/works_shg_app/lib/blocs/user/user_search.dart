@@ -28,7 +28,7 @@ class UserSearchBloc extends Bloc<UserSearchEvent, UserSearchState> {
       "tenantId": GlobalVariables
           .globalConfigObject!.globalConfigs!.stateTenantId
           .toString(),
-      "uuid": [GlobalVariables.getUUID()]
+      "uuid": [GlobalVariables.uuid]
     });
     await Future.delayed(const Duration(seconds: 1));
     emit(state.copyWith(userSearchModel: userSearchModel, loading: false));

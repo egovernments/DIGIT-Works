@@ -22,7 +22,7 @@ class WorkDetailsCard extends StatelessWidget {
   final bool isWorkOrderInbox;
   final bool isSHGInbox;
   final bool isTrackAttendance;
-  final AttendanceRegistersModel? attendanceRegistersModel;
+  final List<AttendanceRegister>? attendanceRegistersModel;
   final MusterRollsModel? musterRollsModel;
 
   const WorkDetailsCard(this.detailsList,
@@ -45,14 +45,8 @@ class WorkDetailsCard extends StatelessWidget {
         list.add(GestureDetector(
           child: DigitCard(
               child: getCardDetails(context, detailsList[i],
-                  userList: attendanceRegistersModel!
-                      .attendanceRegister![i].staffEntries!
-                      .map((e) => e.userId.toString())
-                      .toList(),
-                  attendanceRegisterId:
-                      attendanceRegistersModel!.attendanceRegister![i].id,
-                  attendanceRegister:
-                      attendanceRegistersModel!.attendanceRegister![i])),
+                  attendanceRegisterId: attendanceRegistersModel![i].id,
+                  attendanceRegister: attendanceRegistersModel![i])),
         ));
       }
     } else if (isWorkOrderInbox) {
@@ -74,15 +68,15 @@ class WorkDetailsCard extends StatelessWidget {
                             tenantId: musterRollsModel!.musterRoll![i].tenantId
                                 .toString()),
                       );
-                  // context.router.push(SHGInboxRoute(
-                  //     projectDetails: [
-                  //       detailsList[i],
-                  //     ],
-                  //     tenantId:
-                  //         musterRollsModel!.musterRoll![i].tenantId.toString(),
-                  //     musterRollNo: musterRollsModel!
-                  //         .musterRoll![i].musterRollNumber
-                  //         .toString()));
+                  context.router.push(SHGInboxRoute(
+                      projectDetails: [
+                        detailsList[i],
+                      ],
+                      tenantId:
+                          musterRollsModel!.musterRoll![i].tenantId.toString(),
+                      musterRollNo: musterRollsModel!
+                          .musterRoll![i].musterRollNumber
+                          .toString()));
                   context.read<MusterRollEstimateBloc>().add(
                         ViewEstimateMusterRollEvent(
                           tenantId: musterRollsModel!.musterRoll![i].tenantId
@@ -220,7 +214,7 @@ class WorkDetailsCard extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 16),
                 width: MediaQuery.of(context).size.width > 720
                     ? MediaQuery.of(context).size.width / 3.5
-                    : MediaQuery.of(context).size.width / 3,
+                    : MediaQuery.of(context).size.width / 3.5,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,

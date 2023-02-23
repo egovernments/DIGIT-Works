@@ -10,8 +10,27 @@ import '../blocs/muster_rolls/search_muster_roll.dart';
 import '../data/remote_client.dart';
 import '../data/repositories/remote/localization.dart';
 
-class AuthenticatedPageWrapper extends StatelessWidget {
+class AuthenticatedPageWrapper extends StatefulWidget {
   const AuthenticatedPageWrapper({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _AuthenticatedPageWrapper();
+  }
+}
+
+class _AuthenticatedPageWrapper extends State<AuthenticatedPageWrapper> {
+  String? selectedLocale;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
+    super.initState();
+  }
+
+  afterViewBuild() async {
+    selectedLocale = await GlobalVariables.selectedLocale();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +56,7 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                     tenantId: GlobalVariables
                         .globalConfigObject!.globalConfigs!.stateTenantId
                         .toString(),
-                    locale: GlobalVariables.selectedLocale(),
+                    locale: selectedLocale.toString(),
                   )),
             child: BlocBuilder<UserSearchBloc, UserSearchState>(
                 builder: (context, userState) {

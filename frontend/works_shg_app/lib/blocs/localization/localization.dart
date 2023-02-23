@@ -29,13 +29,13 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
     OnLoadLocalizationEvent event,
     LocalizationEmitter emit,
   ) async {
-    if (GlobalVariables.isLocaleSelect(event.locale, event.module)) {
+    if (await GlobalVariables.isLocaleSelect(event.locale, event.module)) {
       emit(state.copyWith(isLocalizationLoadCompleted: false));
       dynamic localLabelResponse;
       if (kIsWeb) {
         localLabelResponse = html.window.localStorage[event.locale ?? ''];
       } else {
-        localLabelResponse = storage.read(key: event.locale ?? '');
+        localLabelResponse = await storage.read(key: event.locale ?? '');
       }
 
       if (localLabelResponse != null) {
@@ -96,7 +96,7 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
       if (kIsWeb) {
         localLabelResponse = html.window.localStorage[event.locale ?? ''];
       } else {
-        localLabelResponse = storage.read(key: event.locale ?? '');
+        localLabelResponse = await storage.read(key: event.locale ?? '');
       }
 
       if (localLabelResponse != null) {
