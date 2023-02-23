@@ -6,7 +6,6 @@ import _ from "lodash";
 import CreateProjectUtils from "../../../utils/createProjectUtils";
 import { useHistory } from "react-router-dom";
 import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMUKTA";
-import preProcessMDMSConfig from "../../../configs/refactor";
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
@@ -48,8 +47,11 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
+    const [config, setConfig] = useState();
 
-    const config = preProcessMDMSConfig(createProjectConfigMUKTA, t);
+    useEffect(()=>{
+      setConfig(Digit.Utils.preProcessMDMSConfig(createProjectConfigMUKTA, t));
+    },[createProjectConfigMUKTA]);
 
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
       tenantId, 'Ward',
@@ -131,6 +133,53 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
           setShowNavs(true);
         }
     },[selectedProjectType]);
+
+    const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+      if (!_.isEqual(sessionFormData, formData)) {
+        const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
+
+        //date validation for sub project table
+        handleErrorForEndDateInSubProjects(formData, setError, clearErrors, setValue);
+
+        //handle sum of estimated amounts
+        sumTotalEstimatedCost(sessionFormData, setValue, getValues);
+
+        if(formData?.basicDetails_hasSubProjects) {
+          setSelectedProjectType(formData?.basicDetails_hasSubProjects);
+        }
+        if(formData.noSubProject_ward) {
+            setSelectedWard(formData?.noSubProject_ward?.code)
+        }
+        if (difference?.noSubProject_ward) {
+            setValue("noSubProject_locality", '');
+        }
+        if(formData?.noSubProject_typeOfProject) {
+          let subTypeData = createSubTypesMDMSObject(formData?.noSubProject_typeOfProject);
+          setsubTypeOfProjectOptions(subTypeData); 
+        } 
+        if (difference?.noSubProject_typeOfProject) {
+          setValue("noSubProject_subTypeOfProject", '');
+        }
+        if(formData?.noSubProject_scheme) {
+          setSubSchemaOptions(formData?.noSubProject_scheme?.subSchemes);
+        } 
+        if (difference?.noSubProject_scheme) {
+          setValue("noSubProject_subScheme", '');
+        } 
+        if(formData?.withSubProject_project_scheme) {
+          setSubSchemaOptions(formData?.withSubProject_project_scheme?.subSchemes);
+        } 
+        if (difference?.withSubProject_project_scheme) {
+          setValue("withSubProject_project_subScheme", '');
+        }
+        setSessionFormData({ ...sessionFormData, ...formData });
+
+        //date validation for project table
+        if (difference?.noSubProject_startDate) {
+          trigger("noSubProject_endDate", {shouldFocus : true});
+        }
+      }
+    }
 
     const { mutate: CreateProjectMutation } = Digit.Hooks.works.useCreateProject();
 
@@ -234,6 +283,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
                 showMultipleCardsInNavs={false}
                 horizontalNavConfig={navTypeConfig}
                 currentFormCategory={currentFormCategory}
+                onFormValueChange={onFormValueChange}
             />
            )}
       </React.Fragment>

@@ -7,6 +7,7 @@ import * as pt from "./pt";
 import * as privacy from "./privacy";
 import PDFUtil, { downloadReceipt ,downloadPDFFromLink,downloadBill ,getFileUrl} from "./pdf";
 import getFileTypeFromFileStoreURL from "./fileType";
+import preProcessMDMSConfig from "./preProcessMDMSConfig";
 
 
 const GetParamFromUrl = (key, fallback, search) => {
@@ -296,6 +297,7 @@ export default {
   dss,
   obps,
   pt,
+  preProcessMDMSConfig,
   ptAccess,
   NOCAccess,
   mCollectAccess,
