@@ -103,9 +103,9 @@ definitions:
           Type of the contract. This will decide the other attributes of the
           contract and how it will be processed down the line.
         example: Work Order
-      totalContractedamount:
+      totalContractedAmount:
         type: number
-        description: applicable if contract amount is diffrent than estimate amount
+        description: applicable if contract amount is different than estimate amount
       securityDeposit:
         type: number
         description: Capture the security deposit amount
