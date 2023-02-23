@@ -156,7 +156,7 @@ const searchConfig = () => {
                         },
                         {
                             label: "ES_COMMON_CREATED_BY",
-                            jsonPath: "createdBy",
+                            jsonPath: "additionalDetails.creator",
                         },
                         {
                             label: "ES_COMMON_STATUS",

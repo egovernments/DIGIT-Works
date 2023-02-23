@@ -28,8 +28,8 @@ class MusterGetWorkflowBloc
       MusterWorkFlowModel musterWorkFlowModel =
           await WorkFlowRepository(client.init()).getWorkFlow(
               url: Urls.commonServices.workflow,
-              options: Options(
-                  extra: {"accessToken": GlobalVariables.getAuthToken()}),
+              options:
+                  Options(extra: {"accessToken": GlobalVariables.authToken}),
               queryParameters: {
             "tenantId": event.tenantId,
             "businessServices": "muster-roll-approval",

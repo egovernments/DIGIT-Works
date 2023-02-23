@@ -23,6 +23,18 @@ class SideBar extends StatefulWidget {
 }
 
 class _SideBar extends State<SideBar> {
+  List<DigitRowCardModel>? digitRowCardItems;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
+    super.initState();
+  }
+
+  afterViewBuild() async {
+    digitRowCardItems = await GlobalVariables.getLanguages();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -64,11 +76,6 @@ class _SideBar extends State<SideBar> {
             padding: const EdgeInsets.all(16),
             child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
               builder: (context, state) {
-                List<DigitRowCardModel>? digitRowCardItems =
-                    GlobalVariables.getLanguages()
-                        .map<DigitRowCardModel>(
-                            (e) => DigitRowCardModel.fromJson(e))
-                        .toList();
                 return state.digitRowCardItems != null &&
                         state.isInitializationCompleted
                     ? DigitRowCard(
@@ -99,7 +106,7 @@ class _SideBar extends State<SideBar> {
                           ).load();
                         },
                         rowItems: digitRowCardItems != null
-                            ? digitRowCardItems
+                            ? digitRowCardItems!
                                 .map((e) =>
                                     DigitRowCardModel.fromJson(e.toJson()))
                                 .toList()

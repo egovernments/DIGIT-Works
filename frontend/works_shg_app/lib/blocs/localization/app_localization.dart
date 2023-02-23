@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/blocs/localization/localization.dart';
-import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../models/localization/localization_model.dart';
 import '../../services/local_storage.dart';
@@ -25,16 +24,16 @@ class AppLocalizations {
   static const LocalizationsDelegate<AppLocalizations> delegate =
       AppLocalizationsDelegate();
 
-  List<LocalizationMessageModel>? getLocalizationLabels() {
+  Future<List<LocalizationMessageModel>?> getLocalizationLabels() async {
     dynamic localLabelResponse;
     if (kIsWeb) {
       localLabelResponse = html.window
           .localStorage['${locale?.languageCode}_${locale?.countryCode}' ?? ''];
     } else {
-      localLabelResponse =
-          storage.read(key: GlobalVariables.selectedLocale() ?? '');
+      localLabelResponse = await storage.read(
+          key: '${locale?.languageCode}_${locale?.countryCode}');
     }
-
+    await Future.delayed(const Duration(seconds: 2));
     if (localLabelResponse != null && localLabelResponse.trim().isNotEmpty) {
       return localizedStrings = jsonDecode(localLabelResponse)
           .map<LocalizationMessageModel>(

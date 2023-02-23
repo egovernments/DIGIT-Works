@@ -40,7 +40,7 @@ class MusterRollEstimateBloc
                 }
               },
               options: Options(extra: {
-                "accessToken": GlobalVariables.getAuthToken(),
+                "accessToken": GlobalVariables.authToken,
                 "apiId": "asset-services",
                 "msgId": "search with from and to values"
               }));
@@ -74,7 +74,7 @@ class MusterRollEstimateBloc
                 }
               },
               options: Options(extra: {
-                "accessToken": GlobalVariables.getAuthToken(),
+                "accessToken": GlobalVariables.authToken,
                 "apiId": "asset-services",
                 "msgId": "search with from and to values"
               }));
