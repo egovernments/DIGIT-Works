@@ -96,17 +96,13 @@ definitions:
       executingAuthority:
         type: string
         description: The executing authority of the given contract
-        enum:
-          - DEPARTMENT
-          - CONTRACTOR
+        example: Implementation Agency
       contractType:
         type: string
         description: >-
           Type of the contract. This will decide the other attributes of the
           contract and how it will be processed down the line.
-        enum:
-          - WORK_ORDER
-          - PURCHASE_ORDER
+        example: Work Order
       totalContractedamount:
         type: number
         description: applicable if contract amount is diffrent than estimate amount
@@ -118,7 +114,12 @@ definitions:
         format: timestamp
         description: >-
           The date of the agreement. Default to today's date. Cannot be a future
-          date.
+          date
+      issueDate:
+        type: number
+        format: timestamp
+        description: >-
+          It is contract approval date.
       defectLiabilityPeriod:
         type: number
         format: timestamp
@@ -138,6 +139,15 @@ definitions:
         type: number
         format: timestamp
         description: Work completion date
+      completionPeriod:
+        type: number
+        description: Project completion period (In days)
+      status:
+        type: string
+        enum:
+          - ACTIVE
+          - INACTIVE
+        description: Stores if the contract is active or not. Inactive contracts can be archieved later.
       lineItems:
         type: array
         description: Override estimate details line items
@@ -193,6 +203,12 @@ definitions:
       noOfunit:
         type: number
         description: total no of units for sor and non-sor item
+      status:
+        type: string
+        enum:
+          - ACTIVE
+          - INACTIVE
+        description: Stores if the lineitem is active or not.
       amountBreakups:
         type: array
         items:
@@ -216,6 +232,10 @@ definitions:
         example: pb.amritsar
         minLength: 2
         maxLength: 64
+      contractType:
+        type: string
+        description: Contract Type
+        example: Work Order
       ids:
         type: array
         description: Search by contract ids
@@ -234,6 +254,20 @@ definitions:
         format: uuid
         items:
           type: string
+      orgIds:
+        type: array
+        description: Search by orgnization ids
+        format: uuid
+        items:
+          type: string
+      fromDate:
+        type: number
+        format: timestamp
+        description: From date
+      toDate:
+        type: number
+        format: timestamp
+        description: To date
       pagination:
         $ref: '#/definitions/Pagination'
     required:
@@ -284,6 +318,12 @@ definitions:
       amount:
         type: number
         description: Override the amount of estimate line item
+      status:
+        type: string
+        enum:
+          - ACTIVE
+          - INACTIVE
+        description: Stores if the amountbreakup is active or not.
       additionalDetails:
         type: object
         description: >-
