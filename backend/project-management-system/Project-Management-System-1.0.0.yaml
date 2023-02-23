@@ -1645,6 +1645,11 @@ definitions:
         description: Reference to physical documents that have been attached via file upload
         items:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/Document'
+      natureOfWork:
+        type: string
+        description: Specifies nature of work for Project
+        minLength: 2
+        maxLength: 64
       projectHierarchy:
         type: "string"
         description: "Materialized Path of the hierarchy that this project element belongs to"
