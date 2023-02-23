@@ -66,6 +66,16 @@ export const UICustomizations = {
                     </span>
                     : t("ES_COMMON_NA")
             }
+            
+            if (column.label === "WORKS_PROJECT_NAME") {
+                return (
+                <div class="tooltip">
+                    <span class="textoverflow" style={{'--max-width': `${column.maxLength}ch`}}>{String(t(value))}</span>
+                    {/* check condtion - if length greater than 20 */}
+                    <span class="tooltiptext" style={{whiteSpace: "nowrap"}}>{String(t(value))}</span>
+                </div>
+                );
+            }
 
         },
         additionalValidations: (type, data, keys) => {
