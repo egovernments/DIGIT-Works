@@ -152,6 +152,8 @@ public class EnrichmentService {
 //            request.setEstimate(estimate);
 //        }
 
+        estimate.setAuditDetails(estimateList.get(0).getAuditDetails());
+
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, false);
 
         estimate.setAuditDetails(auditDetails);
