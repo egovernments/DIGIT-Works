@@ -29,8 +29,8 @@ class AttendanceLogCreateBloc
       AttendanceRegistersModel attendanceRegistersModel =
           await AttendanceRegisterRepository(client.init()).createAttendanceLog(
               url: Urls.attendanceRegisterServices.createAttendanceLog,
-              options: Options(
-                  extra: {"accessToken": GlobalVariables.getAuthToken()}),
+              options:
+                  Options(extra: {"accessToken": GlobalVariables.authToken}),
               body: {"attendance": event.attendanceList});
       await Future.delayed(const Duration(seconds: 2));
       if (attendanceRegistersModel != null) {
@@ -52,8 +52,8 @@ class AttendanceLogCreateBloc
           await AttendanceRegisterRepository(client.init()).createAttendanceLog(
               url: Urls.attendanceRegisterServices.updateAttendanceLog,
               options: Options(extra: {
-                "accessToken": GlobalVariables.getAuthToken(),
-                "userInfo": GlobalVariables.getUserInfo(),
+                "accessToken": GlobalVariables.authToken,
+                "userInfo": GlobalVariables.userRequestModel,
               }),
               body: {"attendance": event.attendanceList});
       await Future.delayed(const Duration(seconds: 2));

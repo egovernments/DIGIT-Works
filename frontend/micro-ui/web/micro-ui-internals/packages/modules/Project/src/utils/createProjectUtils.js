@@ -82,7 +82,8 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "subScheme" :  project_details?.subScheme?.code,  
             "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal),
             "recommendedModeOfEntrustment" : project_details?.recommendedModeOfEntrustment?.code,
-            "ward" : project_details?.ward?.code
+            "ward" : project_details?.ward?.code,
+            "creator": Digit.UserService.getUser()?.info?.name
           },
           "rowVersion": 0
       }
