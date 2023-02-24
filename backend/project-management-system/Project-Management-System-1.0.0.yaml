@@ -1498,9 +1498,9 @@ definitions:
         description: Street Name
         minLength: 2
         maxLength: 256
-      locality:
+      boundary:
         type: string
-        description: Locality code
+        description: Boundary code
         minLength: 2
         maxLength: 128
 
