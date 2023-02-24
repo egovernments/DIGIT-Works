@@ -1,4 +1,5 @@
 import {logout} from "./logout";
+import useSearchEstimate from "./useSearchEstimate";
 import useViewProjectDetails from "./useViewProjectDetails";
 
 const UserService={
@@ -6,7 +7,8 @@ const UserService={
 }
 
 const works = {
-    useViewProjectDetails
+    useViewProjectDetails,
+    useSearchEstimate
 }
 
 const Hooks ={

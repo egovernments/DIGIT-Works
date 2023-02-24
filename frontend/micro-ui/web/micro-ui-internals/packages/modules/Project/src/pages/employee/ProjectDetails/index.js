@@ -1,4 +1,4 @@
-import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav, Menu } from '@egovernments/digit-ui-react-components'
+import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav, Menu, Toast } from '@egovernments/digit-ui-react-components'
 import React, { Fragment,useEffect,useRef,useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
@@ -14,12 +14,13 @@ const ProjectDetails = () => {
     const [configNavItems, setNavTypeConfig] = useState([]);
     const [subProjects, setSubProjects] = useState([]);
     const menuRef = useRef();
-    const [displayMenu, setDisplayMenu] = useState(false);
-    const closeMenu = () => {
-        setDisplayMenu(false);
-    }
-  Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu );
-
+    const [showActions, setShowActions] = useState(false);
+    const [actionsMenu, setActionsMenu] = useState([ 
+        {
+            name : "MODIFY_PROJECT"
+        }
+    ]);
+    const [toast, setToast] = useState({show : false, label : "", error : false});
     const navConfigs = [
         {
             "name":"Project_Details",
@@ -36,20 +37,7 @@ const ProjectDetails = () => {
             "code":"PROJECTS_SUB_PROJECT_DETAILS",
             "active" : false 
         }
-    ]
-
-    const actionsMenu = [
-        {
-            name : "CREATE_ESTIMATE"
-        },
-        {
-            name : "VIEW_ESTIMATE"
-        },
-        {
-            name : "MODIFY_PROJECT"
-        }
-    ]
-
+    ];
     const searchParams = {
         Projects : [
             {
@@ -65,17 +53,74 @@ const ProjectDetails = () => {
         includeDescendants : true
     }
 
+    const closeMenu = () => {
+        setShowActions(false);
+    }
+
+    Digit.Hooks.useClickOutside(menuRef, closeMenu, showActions );
+
     const handleParentProjectSearch = (parentProjectNumber) => {
         history.push(`/${window.contextPath}/employee/project/project-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${parentProjectNumber}`);
     }
 
     const handleActionBar = (option) => {
+        //TODO: Add navigations for View Estimate and Modify Project
         if(option?.name === "CREATE_ESTIMATE"){
             history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
         }
+        if(option?.name === "VIEW_ESTIMATE"){
+            //navigate
+        }
+        if(option?.name === "MODIFY_PROJECT"){
+            //TODO: - Check what error to show if user cant modify a project
+            if(estimates?.length !==0 && estimates?.[0]?.wfStatus !== "" && estimates?.[0]?.wfStatus !== "REJECTED") {
+                setToast({show : true, label : "LABEL_ERROR", error : true});
+            }else {
+                //navigate
+            }
+        }
+    }
+
+    const handleToastClose = () => {
+      setToast({show : false, label : "", error : false});
     }
 
     const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
+
+    //fetch estimate details
+    const { data : estimates } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
+
+    useEffect(()=>{
+        //TODO: - add logged in user validation
+        if(estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED") {
+            setActionsMenu([
+                {
+                    name : "CREATE_ESTIMATE"
+                },
+                {
+                    name : "MODIFY_PROJECT"
+                }
+            ])
+        }else {
+            setActionsMenu([
+                {
+                    name : "VIEW_ESTIMATE"
+                },
+                {
+                    name : "MODIFY_PROJECT"
+                }
+            ])
+        }
+    },[estimates]);
+
+     //remove Toast after 3s
+     useEffect(()=>{
+        if(toast?.show) {
+          setTimeout(()=>{
+            handleToastClose();
+          },3000);
+        }
+      },[toast?.show])
 
     //update config for Nav once we get the data
     useEffect(()=>{
@@ -88,6 +133,7 @@ const ProjectDetails = () => {
         let filterdNavConfig = navConfigs.filter((config)=>config.active === true);
         setNavTypeConfig(filterdNavConfig);
     },[data]);
+
     return (
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
@@ -113,7 +159,7 @@ const ProjectDetails = () => {
               />
             </HorizontalNav>
             <ActionBar>
-                    {displayMenu ? 
+                    {showActions ? 
                         <Menu
                             localeKeyPrefix={`COMMON`}
                             options={actionsMenu}
@@ -121,8 +167,9 @@ const ProjectDetails = () => {
                             t={t}
                             onSelect={handleActionBar}
                         /> : null}
-                <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)}/>
+                <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)}/>
         </ActionBar>
+        {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
         </div>
     )
 }

@@ -140,7 +140,7 @@
                     links: [
                         {
                             text: "WORKS_CREATE_ESTIMATE",
-                            url: `/employee/project/search-project`,
+                            url: `/employee/estimate/create-estimate`,
                             roles: [],
                         },
                         {

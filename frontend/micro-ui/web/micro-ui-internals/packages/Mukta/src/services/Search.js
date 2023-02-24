@@ -110,5 +110,9 @@ export const Search = {
             workflowDetails: [],
             applicationData:{}
         }
+    },
+    searchEstimate : async(tenantId, filters) => {
+        const response = await Digit.WorksService?.estimateSearch({tenantId, filters});
+        return response?.estimates;
     }
 }
