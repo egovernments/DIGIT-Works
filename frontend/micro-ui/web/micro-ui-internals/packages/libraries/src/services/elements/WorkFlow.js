@@ -3,25 +3,8 @@ import { Request } from "../atoms/Utils/Request";
 import cloneDeep from "lodash/cloneDeep";
 
 const getThumbnails = async (ids, tenantId, documents = []) => {
-  tenantId = window.location.href.includes("/obps/") || window.location.href.includes("/pt/") ? Digit.ULBService.getStateId() : tenantId;
 
-  if (window.location.href.includes("/obps/")) {
-    if (documents?.length > 0) {
-      let workflowsDocs = [];
-      documents?.map(doc => {
-        if (doc?.url) {
-          const thumbs = doc?.url?.split(",")?.[3] || doc?.url?.split(",")?.[0]
-          workflowsDocs.push({
-            thumbs: [thumbs],
-            images: [Digit.Utils.getFileUrl(doc.url)]
-          })
-        }
-      })
-      return workflowsDocs?.[0];
-    } else {
-      return null;
-    }
-  } else {
+  
     const res = await Digit.UploadServices.Filefetch(ids, tenantId);
     if (res.data.fileStoreIds && res.data.fileStoreIds.length !== 0) {
       return {
@@ -31,30 +14,15 @@ const getThumbnails = async (ids, tenantId, documents = []) => {
     } else {
       return null;
     }
-  }
+  
 };
 
 const makeCommentsSubsidariesOfPreviousActions = async (wf) => {
   const TimelineMap = new Map();
-  const tenantId = window.location.href.includes("/obps/") ? Digit.ULBService.getStateId() : wf?.[0]?.tenantId;
+  const tenantId =  wf?.[0]?.tenantId;
   let fileStoreIdsList = [];
   let res = {};
 
-  if (window.location.href.includes("/obps/")) {
-    wf?.map(wfData => {
-      wfData?.documents?.map(wfDoc => {
-        if (wfDoc?.fileStoreId) fileStoreIdsList.push(wfDoc?.fileStoreId);
-      })
-    })
-    if (fileStoreIdsList?.length > 0) {
-      res = await Digit.UploadServices.Filefetch(fileStoreIdsList, tenantId);
-    }
-    wf?.forEach(wfData => {
-      wfData?.documents?.forEach(wfDoc => {
-        if (wfDoc?.fileStoreId) wfDoc.url = res.data[wfDoc?.fileStoreId];
-      })
-    });
-  }
   for (const eventHappened of wf) {
     if (eventHappened?.documents) {
       eventHappened.thumbnailsToShow = await getThumbnails(eventHappened?.documents?.map(e => e?.fileStoreId), eventHappened?.tenantId, eventHappened?.documents)
@@ -76,34 +44,6 @@ const makeCommentsSubsidariesOfPreviousActions = async (wf) => {
 }
 
 const getThumbnailsWorks = async (ids, tenantId, documents = []) => {
-  tenantId = window.location.href.includes("/obps/") || window.location.href.includes("/pt/") ? Digit.ULBService.getStateId() : tenantId;
-  
-  // if (window.location.href.includes("/obps/")) {
-  //   if (documents?.length > 0) {
-  //     let workflowsDocs = [];
-  //     documents?.map(doc => {
-  //       if (doc?.url) {
-  //         const thumbs = doc?.url?.split(",")?.[3] || doc?.url?.split(",")?.[0]
-  //         workflowsDocs.push({
-  //           thumbs: [thumbs],
-  //           images: [Digit.Utils.getFileUrl(doc.url)]
-  //         }) 
-  //       }
-  //     })
-  //     return workflowsDocs?.[0];
-  //   } else {
-  //     return null;
-  //   }
-  // } else {
-  //   const res = await Digit.UploadServices.Filefetch(ids, tenantId);
-  //   if (res.data.fileStoreIds && res.data.fileStoreIds.length !== 0) {
-  //     return { 
-  //       thumbs: res.data.fileStoreIds.map((o) => o.url.split(",")[3] || o.url.split(",")[0]), 
-  //       images: res.data.fileStoreIds.map((o) => Digit.Utils.getFileUrl(o.url)) };
-  //   } else {
-  //     return null;
-  //   }
-  // }
 
   const res = await Digit.UploadServices.Filefetch(ids, tenantId);
   if (res.data.fileStoreIds && res.data.fileStoreIds.length !== 0) {
@@ -126,30 +66,10 @@ const makeCommentsSubsidariesOfPreviousActionsWorks = async (wf) => {
     if (eventHappened?.documents) {
       eventHappened.thumbnailsToShow = await getThumbnailsWorks(eventHappened?.documents?.map(e => e?.fileStoreId), eventHappened?.tenantId, eventHappened?.documents)
     }
-    
-    // if (eventHappened.action === "COMMENT") {
-    //   const commentAccumulator = TimelineMap.get("tlCommentStack") || []
-    //   TimelineMap.set("tlCommentStack", [...commentAccumulator, eventHappened])
-    // }
-    // else {
-    //   const eventAccumulator = TimelineMap.get("tlActions") || []
-    //   const commentAccumulator = TimelineMap.get("tlCommentStack") || []
-    //   eventHappened.wfComments = [...commentAccumulator, ...eventHappened.comment ? [eventHappened] : []]
-    //   TimelineMap.set("tlActions", [...eventAccumulator, eventHappened])
-    //   TimelineMap.delete("tlCommentStack")
-    // }
-  
-    
-    // const eventAccumulator = TimelineMap.get("tlActions") || []
-    
-    // const commentAccumulator = TimelineMap.get("tlCommentStack") || []
-    // eventHappened.wfComments = [...commentAccumulator, ...eventHappened.comment ? [eventHappened] : []]
-    
-    // TimelineMap.set("tlActions", [...eventAccumulator, eventHappened])
+
       
   }
-  // const response = TimelineMap.get("tlActions")
-  // return response
+ 
 }
 
 const getAssignerDetails = (instance, nextStep, moduleCode) => {
