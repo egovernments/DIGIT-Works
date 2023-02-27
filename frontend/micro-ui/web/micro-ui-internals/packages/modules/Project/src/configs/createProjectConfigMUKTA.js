@@ -451,10 +451,14 @@
                       type: "radioordropdown",
                       label: "WORKS_SUB_SCHEME",
                       disable: false,
+                      preProcess : {
+                        translate : ["populators.error"],
+                        updateOptions : ["populators.options"]
+                      },
                       populators: {
                         name: "noSubProject_subScheme",
                         optionsKey: "name",
-                        error: ("WORKS_REQUIRED_ERR"),
+                        error: "WORKS_REQUIRED_ERR",
                         required: true,
                         optionsCustomStyle : {
                           top : "2.5rem"

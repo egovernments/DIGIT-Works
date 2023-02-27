@@ -39,7 +39,8 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
     const [showNavs, setShowNavs] = useState(false);
     const [subTypeOfProjectOptions, setsubTypeOfProjectOptions] = useState([]);
-    const [subSchemaOptions, setSubSchemaOptions] = useState([]);
+    const [withSubProjectSubSchemeOptions, setWithSubProjectSubSchemeOptions] = useState([]);
+    const [noSubProjectSubSchemeOptions, setNoSubProjectSubSchemeOptions] = useState([]);
     const [selectedWard, setSelectedWard] = useState('');
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
@@ -47,11 +48,15 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
-    let config =  Digit.Utils.preProcessMDMSConfig(t, createProjectConfigMUKTA, {
+    let config =  Digit.Utils.preProcessMDMSConfig(t, sessionFormData, createProjectConfigMUKTA, {
       updateOptions : [
         {
           key : 'withSubProject_project_subScheme',
-          value : subSchemaOptions
+          value : withSubProjectSubSchemeOptions
+        },
+        {
+          key : 'noSubProject_subScheme',
+          value : noSubProjectSubSchemeOptions
         },
         {
           key : 'noSubProject_subTypeOfProject',
@@ -168,13 +173,13 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
           setValue("noSubProject_subTypeOfProject", '');
         }
         if(formData?.noSubProject_scheme) {
-          setSubSchemaOptions(formData?.noSubProject_scheme?.subSchemes);
+          setNoSubProjectSubSchemeOptions(formData?.noSubProject_scheme?.subSchemes);
         } 
         if (difference?.noSubProject_scheme) {
           setValue("noSubProject_subScheme", '');
         } 
         if(formData?.withSubProject_project_scheme) {
-          setSubSchemaOptions(formData?.withSubProject_project_scheme?.subSchemes);
+          setWithSubProjectSubSchemeOptions(formData?.withSubProject_project_scheme?.subSchemes);
         } 
         if (difference?.withSubProject_project_scheme) {
           setValue("withSubProject_project_subScheme", '');
