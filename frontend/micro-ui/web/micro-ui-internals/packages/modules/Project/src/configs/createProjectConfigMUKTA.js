@@ -90,6 +90,9 @@
                       type: "radioordropdown",
                       label: "PROJECT_OWNING_DEPT",
                       disable: false,
+                      preProcess : {
+                        translate : ["populators.error"]
+                      },
                       populators: {
                         name: "noSubProject_owningDepartment",
                         optionsKey: "name",
@@ -178,10 +181,14 @@
                       type: "radioordropdown",
                       label: "WORKS_SUB_PROJECT_TYPE",
                       disable: false,
+                      preProcess : {
+                        translate : ["populators.error"],
+                        updateOptions : ["populators.options"]
+                      },
                       populators: {
                         name: "noSubProject_subTypeOfProject",
                         optionsKey: "name",
-                        error: ("WORKS_REQUIRED_ERR"),
+                        error: "WORKS_REQUIRED_ERR",
                         required: false,
                         optionsCustomStyle : {
                           top : "2.5rem"
@@ -233,14 +240,7 @@
                       populators: { 
                         name: "noSubProject_endDate", 
                         error : ("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), 
-                        validation : {
-                          validate : (value, formData) => 
-                          { 
-                            let startDate = (new Date(sessionFormData?.noSubProject_startDate)).getTime();
-                            let endDate = (new Date(value)).getTime();
-                            return startDate && endDate && startDate > endDate ? false : true;
-                          }
-                        }},
+                      }
                     },
                     {
                       isMandatory: false,
@@ -364,6 +364,9 @@
                       type: "radioordropdown",
                       label: "WORKS_FUND",
                       disable: false,
+                      preProcess : {
+                        translate : ["populators.error"]
+                      },
                       populators: {
                         name: "noSubProject_fund",
                         optionsKey: "name",
@@ -563,6 +566,9 @@
                       type: "radioordropdown",
                       label: "WORKS_FUNCTION",
                       disable: false,
+                      preProcess : {
+                        translate : ["populators.error"]
+                      },
                       populators: {
                         name: "withSubProject_project_function",
                         optionsKey: "name",
@@ -584,6 +590,9 @@
                       type: "radioordropdown",
                       label: "WORKS_BUDGET_HEAD",
                       disable: false,
+                      preProcess : {
+                        translate : ["populators.error"]
+                      },
                       populators: {
                         name: "withSubProject_project_budgetHead",
                         optionsKey: "name",
@@ -605,6 +614,9 @@
                       type: "radioordropdown",
                       label: "WORKS_SCHEME",
                       disable: false,
+                      preProcess : {
+                        translate : ["populators.error"]
+                      },
                       populators: {
                         name: "withSubProject_project_scheme",
                         optionsKey: "name",
@@ -626,6 +638,10 @@
                       type: "radioordropdown",
                       label: "WORKS_SUB_SCHEME",
                       disable: false,
+                      preProcess : {
+                        translate : ["populators.error"],
+                        updateOptions : ["populators.options"]
+                      },
                       populators: {
                         name: "withSubProject_project_subScheme",
                         optionsKey: "name",

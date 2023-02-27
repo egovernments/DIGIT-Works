@@ -81,7 +81,6 @@ export const FormComposer = (props) => {
   const selectedFormCategory = props?.currentFormCategory;
   const [showErrorToast, setShowErrorToast] = useState(false); 
 
-
   //clear all errors if user has changed the form category. 
   //This is done in case user first click on submit and have errors in cat 1, switches to cat 2 and hit submit with errors
   //So, he should not get error prompts from previous cat 1 on cat 2 submit.
@@ -131,7 +130,6 @@ export const FormComposer = (props) => {
     }
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
     const customProps = config?.customProps;
-    console.log("customProps", customProps);
     switch (type) {
       case "date":
       case "text":

@@ -47,11 +47,18 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
-    const [config, setConfig] = useState();
-
-    useEffect(()=>{
-      setConfig(Digit.Utils.preProcessMDMSConfig(createProjectConfigMUKTA, t));
-    },[createProjectConfigMUKTA]);
+    let config =  Digit.Utils.preProcessMDMSConfig(t, createProjectConfigMUKTA, {
+      updateOptions : [
+        {
+          key : 'withSubProject_project_subScheme',
+          value : subSchemaOptions
+        },
+        {
+          key : 'noSubProject_subTypeOfProject',
+          value : subTypeOfProjectOptions
+        }
+      ]
+    });
 
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
       tenantId, 'Ward',
