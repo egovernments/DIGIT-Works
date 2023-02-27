@@ -1,5 +1,6 @@
 import { useInitStore } from "./store";
 import useWorkflowDetails from "./workflow";
+import useWorkflowDetailsWorks from "./workflowWorks";
 import useSessionStorage from "./useSessionStorage";
 import useQueryParams from "./useQueryParams";
 import useDocumentSearch from "./useDocumentSearch";
@@ -237,6 +238,7 @@ const Hooks = {
   useFetchBillsForBuissnessService,
   useGetPaymentRulesForBusinessServices,
   useWorkflowDetails,
+  useWorkflowDetailsWorks,
   useInitStore,
   useClickOutside,
   useUserSearch,
