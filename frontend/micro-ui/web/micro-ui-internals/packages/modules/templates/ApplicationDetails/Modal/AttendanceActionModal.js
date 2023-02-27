@@ -78,7 +78,7 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
 
   const submitBasedOnAction = (action, comments) => {
     let musterRoll = { tenantId, id: applicationDetails?.applicationDetails?.[0]?.applicationData?.id}
-    let workflow = { action: action?.action, comments: (comments || `${action?.action} done`), assignees: [] }
+    let workflow = { action: action?.action, comment: (comments || `${action?.action} done`), assignees: [] }
 
     const selectedAction = action?.action
     switch(selectedAction) {

@@ -22,8 +22,8 @@ class UserSearchRepository {
           queryParameters: queryParameters,
           data: body,
           options: Options(extra: {
-            "userInfo": GlobalVariables.getUserInfo(),
-            "accessToken": GlobalVariables.getAuthToken(),
+            "userInfo": GlobalVariables.userRequestModel,
+            "accessToken": GlobalVariables.authToken,
           }));
 
       return UserSearchModel.fromJson(

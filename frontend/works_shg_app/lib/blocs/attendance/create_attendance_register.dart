@@ -33,8 +33,8 @@ class AttendanceRegisterCreateBloc
               .createAttendanceRegisters(
                   url: Urls.attendanceRegisterServices.createAttendanceRegister,
                   options: Options(extra: {
-                    "userInfo": GlobalVariables.getUserInfo(),
-                    "accessToken": GlobalVariables.getAuthToken()
+                    "userInfo": GlobalVariables.userRequestModel,
+                    "accessToken": GlobalVariables.authToken
                   }),
                   body: {
             "attendanceRegister": [
@@ -49,7 +49,7 @@ class AttendanceRegisterCreateBloc
                 "attendees": [],
                 "additionalDetails": {
                   "contractId": event.contractId,
-                  "contractCreatedByUUID": GlobalVariables.getUUID(),
+                  "contractCreatedByUUID": GlobalVariables.uuid,
                   "contractCreated": event.contractCreated,
                   "orgName": event.orgName
                 }

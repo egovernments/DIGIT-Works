@@ -81,8 +81,8 @@ class _LoginPage extends State<LoginPage> {
               context,
               title: AppLocalizations.of(context)
                   .translate(i18.login.forgotPassword),
-              content:
-                  'Please contact the administrator if you have forgotten your password',
+              content: AppLocalizations.of(context)
+                  .translate(i18.login.contactAdministrator),
               primaryActionLabel:
                   AppLocalizations.of(context).translate(i18.common.oK),
               primaryAction: () =>
@@ -117,11 +117,11 @@ class _LoginPage extends State<LoginPage> {
         appBar: AppBar(),
         body: LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth < 760) {
-            return MobileView(
-                getLoginCard(context), GlobalVariables.bannerURL());
+            return MobileView(getLoginCard(context),
+                GlobalVariables.stateInfoListModel!.bannerUrl.toString());
           } else {
-            return DesktopView(
-                getLoginCard(context), GlobalVariables.bannerURL());
+            return DesktopView(getLoginCard(context),
+                GlobalVariables.stateInfoListModel!.bannerUrl.toString());
           }
         }));
   }

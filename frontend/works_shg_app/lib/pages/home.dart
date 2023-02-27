@@ -8,6 +8,7 @@ import 'package:works_shg_app/widgets/ButtonLink.dart';
 
 import '../blocs/attendance/search_projects/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
+import '../blocs/muster_rolls/search_muster_roll.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
@@ -78,11 +79,15 @@ class HomePage extends StatelessWidget {
                                       .translate(i18.home.registerIndividual),
                                   () => context.router
                                       .push(RegisterIndividualRoute())),
-                              // ButtonLink(
-                              //     AppLocalizations.of(context)
-                              //         .translate(i18.home.musterRoll),
-                              //     () => context.router
-                              //         .push(const ViewMusterRollsRoute())),
+                              ButtonLink(
+                                  AppLocalizations.of(context)
+                                      .translate(i18.home.musterRoll), () {
+                                context.read<MusterRollSearchBloc>().add(
+                                      const SearchMusterRollEvent(),
+                                    );
+                                context.router
+                                    .push(const ViewMusterRollsRoute());
+                              }),
                               ButtonLink(
                                   AppLocalizations.of(context)
                                       .translate(i18.home.trackAttendance), () {

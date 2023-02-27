@@ -80,7 +80,8 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "fund" : project_details?.fund?.code,
             "scheme" :  project_details?.scheme?.code,
             "subScheme" :  project_details?.subScheme?.code,  
-            "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal)
+            "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal),
+            "creator": Digit.UserService.getUser()?.info?.name
           },
           "rowVersion": 0
       }
