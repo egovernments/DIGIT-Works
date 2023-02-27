@@ -48,22 +48,10 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
-    let config =  Digit.Utils.preProcessMDMSConfig(t, sessionFormData, createProjectConfigMUKTA, {
-      updateOptions : [
-        {
-          key : 'withSubProject_project_subScheme',
-          value : withSubProjectSubSchemeOptions
-        },
-        {
-          key : 'noSubProject_subScheme',
-          value : noSubProjectSubSchemeOptions
-        },
-        {
-          key : 'noSubProject_subTypeOfProject',
-          value : subTypeOfProjectOptions
-        }
-      ]
-    });
+
+    const ULB = Digit.Utils.locale.getCityLocale(tenantId);
+    let ULBOptions = []
+    ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
 
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
       tenantId, 'Ward',
@@ -79,7 +67,40 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
                   wards, localities
              }
           }
-      })
+      });
+    
+    const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
+
+    console.log(ULBOptions, wardsAndLocalities?.wards, filteredLocalities);
+    
+    let config =  Digit.Utils.preProcessMDMSConfig(t, sessionFormData, createProjectConfigMUKTA, {
+      updateOptions : [
+        {
+          key : 'withSubProject_project_subScheme',
+          value : withSubProjectSubSchemeOptions
+        },
+        {
+          key : 'noSubProject_subScheme',
+          value : noSubProjectSubSchemeOptions
+        },
+        {
+          key : 'noSubProject_subTypeOfProject',
+          value : subTypeOfProjectOptions
+        },
+        {
+          key : 'noSubProject_ulb',
+          value : ULBOptions
+        },
+        {
+          key : 'noSubProject_ward',
+          value : wardsAndLocalities?.wards
+        },
+        {
+          key : 'noSubProject_locality',
+          value : filteredLocalities
+        }
+      ]
+    });
 
       const createSubTypesMDMSObject = (subTypesData) => {
         let mdmsData = [];
@@ -98,8 +119,6 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
         }
       },[toast?.show])
   
-    const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
-
     // this validation is handled using useform's setError and custom validation type is added. 
     // passing a name which is not associalted to any input will persist the error on submit
     // later on while rendering error, this custom is removed from the name to target the target input element

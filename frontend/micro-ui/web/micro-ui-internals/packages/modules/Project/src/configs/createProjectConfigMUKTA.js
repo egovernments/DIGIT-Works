@@ -285,11 +285,15 @@
                       type: "radioordropdown",
                       label: ("ES_COMMON_ULB"),
                       disable: false,
+                      preProcess : {
+                        translate : ["populators.error"],
+                        updateOptions : ["populators.options"]
+                      },
                       populators: {
                         name: "noSubProject_ulb",
                         optionsKey: "i18nKey",
                         options: [],
-                        error: ("WORKS_REQUIRED_ERR"),
+                        error: "WORKS_REQUIRED_ERR",
                         required: true,
                         optionsCustomStyle : {
                           top : "2.5rem"
@@ -302,10 +306,14 @@
                       type: "radioordropdown",
                       label: "PDF_STATIC_LABEL_ESTIMATE_WARD",
                       disable: false,
+                      preProcess : {
+                        translate : ["populators.error"],
+                        updateOptions : ["populators.options"]
+                      },
                       populators: {
                         name: "noSubProject_ward",
                         optionsKey: "i18nKey",
-                        error: ("WORKS_REQUIRED_ERR"),
+                        error: "WORKS_REQUIRED_ERR",
                         required: false,
                         optionsCustomStyle : {
                           top : "2.5rem"
@@ -319,10 +327,14 @@
                       type: "radioordropdown",
                       label: "WORKS_LOCALITY",
                       disable: false,
+                      preProcess : {
+                        translate : ["populators.error"],
+                        updateOptions : ["populators.options"]
+                      },
                       populators: {
                         name: "noSubProject_locality",
                         optionsKey: "i18nKey",
-                        error: ("WORKS_REQUIRED_ERR"),
+                        error: "WORKS_REQUIRED_ERR",
                         required: false,
                         optionsCustomStyle : {
                           top : "2.5rem"
