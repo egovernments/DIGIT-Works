@@ -15,6 +15,7 @@ const ProjectDetails = () => {
     const [subProjects, setSubProjects] = useState([]);
     const menuRef = useRef();
     const [showActions, setShowActions] = useState(false);
+    const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
     const [actionsMenu, setActionsMenu] = useState([ 
         {
             name : "MODIFY_PROJECT"
@@ -64,19 +65,17 @@ const ProjectDetails = () => {
     }
 
     const handleActionBar = (option) => {
-        //TODO: Add navigations for View Estimate and Modify Project
         if(option?.name === "CREATE_ESTIMATE"){
             history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
         }
         if(option?.name === "VIEW_ESTIMATE"){
-            //navigate
+            history.push(`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&estimateNumber=${estimates?.[0]?.estimateNumber}`);
         }
         if(option?.name === "MODIFY_PROJECT"){
-            //TODO: - Check what error to show if user cant modify a project
             if(estimates?.length !==0 && estimates?.[0]?.wfStatus !== "" && estimates?.[0]?.wfStatus !== "REJECTED") {
-                setToast({show : true, label : "LABEL_ERROR", error : true});
+                setToast({show : true, label : t("COMMON_CANNOT_MODIFY_PROJECT_EST_CREATED"), error : true});
             }else {
-                //navigate
+                history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
             }
         }
     }
@@ -91,8 +90,8 @@ const ProjectDetails = () => {
     const { data : estimates } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
 
     useEffect(()=>{
-        //TODO: - add logged in user validation
-        if(estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED") {
+        let isUserEstimateCreator = loggedInUserRoles?.includes("EST_CREATOR");
+        if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED") && isUserEstimateCreator) {
             setActionsMenu([
                 {
                     name : "CREATE_ESTIMATE"
