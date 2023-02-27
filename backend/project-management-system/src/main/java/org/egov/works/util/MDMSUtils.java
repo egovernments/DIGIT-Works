@@ -44,12 +44,12 @@ public class MDMSUtils {
 
     public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId, ProjectRequest request) {
 
-        ModuleDetail projectWorksModuleDetail = getWorksModuleRequestData(request);
+        ModuleDetail projectMDMSModuleDetail = getMDMSModuleRequestData(request);
         ModuleDetail projectDepartmentModuleDetail = getDepartmentModuleRequestData(request);
         ModuleDetail projectTenantModuleDetail = getTenantModuleRequestData(request);
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
-        moduleDetails.add(projectWorksModuleDetail);
+        moduleDetails.add(projectMDMSModuleDetail);
         moduleDetails.add(projectDepartmentModuleDetail);
         moduleDetails.add(projectTenantModuleDetail);
 
@@ -61,19 +61,23 @@ public class MDMSUtils {
         return mdmsCriteriaReq;
     }
 
-    private ModuleDetail getWorksModuleRequestData(ProjectRequest request) {
-        List<MasterDetail> projectWorksMasterDetails = new ArrayList<>();
+    private ModuleDetail getMDMSModuleRequestData(ProjectRequest request) {
+        List<MasterDetail> projectMDMSMasterDetails = new ArrayList<>();
 
         MasterDetail projectTypeMasterDetails = MasterDetail.builder().name(MASTER_PROJECTTYPE)
                 .filter(filterActiveTrue)
                 .build();
-        projectWorksMasterDetails.add(projectTypeMasterDetails);
+        MasterDetail NatureOfWorkMasterDetails = MasterDetail.builder().name(MASTER_NATUREOFWORK)
+                .filter(filterActiveTrue)
+                .build();
+        projectMDMSMasterDetails.add(projectTypeMasterDetails);
+        projectMDMSMasterDetails.add(NatureOfWorkMasterDetails);
 
 
-        ModuleDetail projectWorksModuleDetail = ModuleDetail.builder().masterDetails(projectWorksMasterDetails)
-                .moduleName(MDMS_WORKS_MODULE_NAME).build();
+        ModuleDetail projectMDMSModuleDetail = ModuleDetail.builder().masterDetails(projectMDMSMasterDetails)
+                .moduleName(config.getMdmsModule()).build();
 
-        return projectWorksModuleDetail;
+        return projectMDMSModuleDetail;
     }
 
     private ModuleDetail getDepartmentModuleRequestData(ProjectRequest request) {

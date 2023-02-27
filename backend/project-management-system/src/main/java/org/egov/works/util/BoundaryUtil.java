@@ -44,7 +44,7 @@ public class BoundaryUtil {
         if (hierarchyTypeCode != null)
             uri.append("&").append("hierarchyTypeCode=").append(hierarchyTypeCode);
 
-        uri.append("&").append("boundaryType=").append("Locality").append("&").append("codes=")
+        uri.append("&").append("codes=")
                 .append(StringUtils.join(locations, ','));
 
         Optional<Object> response = Optional.ofNullable(serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
@@ -56,15 +56,13 @@ public class BoundaryUtil {
             String jsonString = new JSONObject(responseMap).toString();
 
             for (String location: locations) {
-                String jsonpath = "$..boundary[?(@.code==\"{}\")]";
-                jsonpath = jsonpath.replace("{}", location);
-                DocumentContext context = JsonPath.parse(jsonString);
-                Object boundaryObject = context.read(jsonpath);
 
-                if (!(boundaryObject instanceof ArrayList) || CollectionUtils.isEmpty((ArrayList) boundaryObject)) {
-                    throw new CustomException("INVALID_BOUNDARY_DATA", "The boundary data for the code "
-                            + location + " is not available");
+                int index = jsonString.indexOf(location);
+                if (index == -1 || index < 10 || !jsonString.substring(index - 7, index - 3).equals(CODE)) {
+                    log.error("The boundary data for the code " + location + " is not available");
+                    throw new CustomException("INVALID_BOUNDARY_DATA", "The boundary data for the code " + location + " is not available");
                 }
+
             }
         }
     }
