@@ -26,7 +26,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             values: [
                 { title: "PROJECT_LOR", value: currentProject?.referenceID || "NA" },
                 { title: "WORKS_PROJECT_TYPE", value: currentProject?.projectType ? t(`COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(currentProject?.projectType)}`) : "NA" },
-                { title: "PROJECT_TARGET_DEMOGRAPHY", value: currentProject?.targets?.beneficiaryType?.code ? t(`COMMON_MASTERS_${currentProject?.targets?.beneficiaryType?.code}`) : "NA" }, //will update once backend makes changes for MDMS
+                { title: "PROJECT_TARGET_DEMOGRAPHY", value: currentProject?.additionalDetails?.targetDemography ? t(`COMMON_MASTERS_${currentProject?.additionalDetails?.targetDemography }`) : "NA" },
                 { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs ? `₹ ${currentProject?.additionalDetails?.estimatedCostInRs}` : "NA" },
             ]
         };
@@ -38,7 +38,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 { title: "PROJECT_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" },
                 { title: "WORKS_CITY",value: currentProject?.address?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`) : "NA" }, //will check with Backend
                 { title: "WORKS_WARD", value: currentProject?.additionalDetails?.ward ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.ward}`) : "NA"  }, ///backend to update this
-                { title: "WORKS_LOCALITY",value: currentProject?.address?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.address?.locality}`) : "NA" },
+                { title: "WORKS_LOCALITY",value: currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "NA" },
             ]
         };
 

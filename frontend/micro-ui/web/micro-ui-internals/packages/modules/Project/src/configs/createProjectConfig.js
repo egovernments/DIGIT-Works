@@ -103,12 +103,12 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
           },
           {
             isMandatory: false,
-            key: "noSubProject_targetDemocracy",
+            key: "noSubProject_targetDemography",
             type: "radioordropdown",
             label: t("PROJECT_TARGET_DEMOGRAPHY"),
             disable: false,
             populators: {
-              name: "noSubProject_targetDemocracy",
+              name: "noSubProject_targetDemography",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: false,

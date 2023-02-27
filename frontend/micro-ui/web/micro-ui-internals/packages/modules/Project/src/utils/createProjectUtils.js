@@ -30,7 +30,6 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
         project_details = data?.withSubProject;
       }
     }
-  
     //iterate till all sub-projects. For noSubProject Case, this will iterate only once
     for(let index=1; index<=total_projects; index++) {
         // In case of Sub Projects having Parent ID, project_details will be each sub-project
@@ -46,6 +45,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
           "description":  parentProjectID ? project_details?.projectDesc : basic_details?.projectDesc,
           "referenceID": project_details?.letterRefNoOrReqNo,
           "documents": createDocumentsPayload(project_details?.uploadedFiles),
+          "natureOfWork" : project_details?.natureOfWork?.code,
           "address": {
             "tenantId": tenantId,
             "doorNo": "1", //Not being captured on UI
@@ -60,19 +60,12 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "pincode": "999999", //Not being captured on UI
             "buildingName": "Test_Building", //Not being captured on UI
             "street": "Test_Street", //Not being captured on UI
-            "locality": project_details?.locality?.code
+            "boundary": project_details?.locality?.code
           },
           "startDate": convertDateToEpoch(project_details?.startDate), 
           "endDate": convertDateToEpoch(project_details?.endDate), 
           "isTaskEnabled": false, //Not being captured on UI //For Health Team Project
           "parent": parentProjectID || "", // In case of Single project, Parent ID is empty.
-          "targets": [
-            {
-              "beneficiaryType": project_details?.targetDemography?.code, //will update once backend updates
-              "totalNo": 0,
-              "targetNo": 0
-            }
-          ],
           "additionalDetails": { //These are financial details. Adding them here as they will be integrated with a different service.
             "budgetHead" : project_details?.budgetHead?.code,
             "estimatedCostInRs" : project_details?.estimatedCostInRs,
@@ -83,7 +76,8 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal),
             "recommendedModeOfEntrustment" : project_details?.recommendedModeOfEntrustment?.code,
             "ward" : project_details?.ward?.code,
-            "creator": Digit.UserService.getUser()?.info?.name
+            "creator": Digit.UserService.getUser()?.info?.name,
+            "targetDemography" : project_details?.targetDemography?.code
           },
           "rowVersion": 0
       }
