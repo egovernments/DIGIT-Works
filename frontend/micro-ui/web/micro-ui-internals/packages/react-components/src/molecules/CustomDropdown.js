@@ -71,7 +71,7 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
     {
       select: (data) => {
         const optionsData = _.get(data, `${config?.mdmsConfig?.moduleName}.${config?.mdmsConfig?.masterName}`, []);
-        return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${config?.mdmsConfig?.localePrefix}_${opt.code}` }));
+        return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${config?.mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
       },
       enabled: config?.mdmsConfig ? true : false,
     }

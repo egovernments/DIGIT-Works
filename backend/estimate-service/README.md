@@ -40,5 +40,7 @@ estimate.kafka.enrich.topic=enrich-estimate
 
 ### Postman collection
 
-https://api.postman.com/collections/5823395-ff2189ac-05b3-4edd-a3c3-b75199319800?access_key=PMAT-01GP31DQPSFABA3M74HF5A24BS
+https://elements.getpostman.com/redirect?entityId=5823395-ff2189ac-05b3-4edd-a3c3-b75199319800&entityType=collection
+
+https://elements.getpostman.com/redirect?entityId=5823395-14d1ca52-b655-4009-92be-475c7172974c&entityType=collection 
 

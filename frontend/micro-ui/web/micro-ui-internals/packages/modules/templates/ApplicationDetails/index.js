@@ -62,6 +62,7 @@ const ApplicationDetails = (props) => {
   }, [showToast]);
 
   function onActionSelect(action) {
+    
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -70,7 +71,7 @@ const ApplicationDetails = (props) => {
       else if (action?.isWarningPopUp) {
         setWarningPopUp(true);
       } else if (action?.redirectionUrll) {
-        //here do the loi edit upon rejection
+      //here do the loi edit upon rejection
         if (action?.redirectionUrll?.action === "EDIT_LOI_APPLICATION") {
           history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
         }
@@ -306,7 +307,6 @@ const ApplicationDetails = (props) => {
             workflowDetails={workflowDetails}
             isDataLoading={isDataLoading}
             applicationData={applicationData}
-            businessService={businessService}
             timelineStatusPrefix={timelineStatusPrefix}
             statusAttribute={statusAttribute}
             paymentsList={paymentsList}
@@ -317,6 +317,9 @@ const ApplicationDetails = (props) => {
             sectionHeadStyle={sectionHeadStyle}
             modify={modify}
             setSaveAttendanceState={setSaveAttendanceState}
+            applicationNo={props.applicationNo}
+            tenantId={props.tenantId}
+            businessService={businessService}
           />
           {showModal ? (
             <ActionModal

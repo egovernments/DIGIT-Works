@@ -109,6 +109,8 @@ public class ProjectRequestTestBuilder {
         searchParamsMap.put("includeDeleted", false);
         searchParamsMap.put("includeAncestors", false);
         searchParamsMap.put("includeDescendants", false);
+        searchParamsMap.put("createdFrom", null);
+        searchParamsMap.put("createdTo", null);
 
         return searchParamsMap;
     }

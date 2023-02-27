@@ -241,7 +241,8 @@ import NoResultsFound from "./atoms/NoResultsFound";
 import { ViewImages } from "./atoms/ViewImages";
 import InboxSearchComposer from "./hoc/InboxSearchComposer";
 import InboxSearchLinks from "./atoms/InboxSearchLinks";
-
+import WorkflowTimeline from "./atoms/WorkflowTimeline";
+import WorkflowActions from "./atoms/WorkflowActions";
 export {
   ViewImages,
   Phone,
@@ -394,6 +395,8 @@ export {
   // hoc
   FormComposer,
   RenderFormFields,
+  WorkflowTimeline,
+  WorkflowActions,
   ResponseComposer,
   PitDimension,
   Modal,
