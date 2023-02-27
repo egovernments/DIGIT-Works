@@ -48,11 +48,9 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
-
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
-
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
       tenantId, 'Ward',
       {
@@ -68,13 +66,10 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
              }
           }
       });
-    
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
-
-    console.log(ULBOptions, wardsAndLocalities?.wards, filteredLocalities);
     
     let config =  Digit.Utils.preProcessMDMSConfig(t, sessionFormData, createProjectConfigMUKTA, {
-      updateOptions : [
+      updateDependent : [
         {
           key : 'withSubProject_project_subScheme',
           value : withSubProjectSubSchemeOptions
@@ -98,26 +93,21 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
         {
           key : 'noSubProject_locality',
           value : filteredLocalities
+        },
+        {
+          key : "citizenInfoLabel",
+          value : showInfoLabel ? 'project-banner' : 'project-banner display-none'
         }
       ]
     });
 
-      const createSubTypesMDMSObject = (subTypesData) => {
-        let mdmsData = [];
-        for(let subType of subTypesData?.projectSubType) {
-          mdmsData.push({code : subType, name : `ES_COMMON_${subType}`});
-        }
-        return mdmsData;
+    const createSubTypesMDMSObject = (subTypesData) => {
+      let mdmsData = [];
+      for(let subType of subTypesData?.projectSubType) {
+        mdmsData.push({code : subType, name : `ES_COMMON_${subType}`});
       }
-
-      //remove Toast after 3s
-      useEffect(()=>{
-        if(toast?.show) {
-          setTimeout(()=>{
-            handleToastClose();
-          },3000);
-        }
-      },[toast?.show])
+      return mdmsData;
+    }
   
     // this validation is handled using useform's setError and custom validation type is added. 
     // passing a name which is not associalted to any input will persist the error on submit
@@ -150,20 +140,6 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
       }
       setValue('withSubProject_project_estimatedCostInRs', totalEstimatedCost);
     }
-
-    useEffect(()=>{
-        if(selectedProjectType?.code === "COMMON_YES") {
-          setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
-          setCurrentFormCategory("withSubProject");
-          setShowInfoLabel(true);
-          setShowNavs(true);
-        }else if(selectedProjectType?.code === "COMMON_NO") {
-          setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
-          setCurrentFormCategory("noSubProject");
-          setShowInfoLabel(false);
-          setShowNavs(true);
-        }
-    },[selectedProjectType]);
 
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
       if (!_.isEqual(sessionFormData, formData)) {
@@ -285,6 +261,29 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const handleToastClose = () => {
       setToast({show : false, label : "", error : false});
     }
+
+    //remove Toast after 3s
+    useEffect(()=>{
+      if(toast?.show) {
+        setTimeout(()=>{
+          handleToastClose();
+        },3000);
+      }
+    },[toast?.show]);
+
+    useEffect(()=>{
+        if(selectedProjectType?.code === "COMMON_YES") {
+          setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
+          setCurrentFormCategory("withSubProject");
+          setShowInfoLabel(true);
+          setShowNavs(true);
+        }else if(selectedProjectType?.code === "COMMON_NO") {
+          setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
+          setCurrentFormCategory("noSubProject");
+          setShowInfoLabel(false);
+          setShowNavs(true);
+        }
+    },[selectedProjectType]);
 
 
     return (

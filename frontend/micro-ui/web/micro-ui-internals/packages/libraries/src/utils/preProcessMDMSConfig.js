@@ -13,39 +13,39 @@ const translate = (config, index, sectionIndex, t) => {
     return config;
 }
 
-const updateOptions = (config, index, sectionIndex, sectionKey, additionalOptions) => {
-    // console.log("UPDATING TO",additionalOptions?.updateOptions?.filter(options=>options?.key === sectionKey)?.[0]?.value);
+const updateDependent = (config, index, sectionIndex, sectionKey, dependencyConfig) => {
+    
     //iterate all update options keys and add options as params
-    for(let toUpdate = 0; toUpdate<config?.CreateProjectConfig?.form[index].body[sectionIndex]?.preProcess?.updateOptions?.length; toUpdate++) {
-        let keyToUpdate = config?.CreateProjectConfig?.form[index].body[sectionIndex]?.preProcess?.updateOptions[toUpdate];
+    for(let toUpdate = 0; toUpdate<config?.CreateProjectConfig?.form[index].body[sectionIndex]?.preProcess?.updateDependent?.length; toUpdate++) {
+        let keyToUpdate = config?.CreateProjectConfig?.form[index].body[sectionIndex]?.preProcess?.updateDependent[toUpdate];
         let section = config?.CreateProjectConfig?.form[index].body[sectionIndex];
-        _.set(section, keyToUpdate, (additionalOptions?.updateOptions?.filter(options=>options?.key === sectionKey)?.[0]?.value));    
+        _.set(section, keyToUpdate, (dependencyConfig?.updateDependent?.filter(dependent=>dependent?.key === sectionKey)?.[0]?.value));    
     }
 
     return config;
 }
 
-const transform = (preProcesses, config, index, sectionIndex, sectionKey, t, additionalOptions) => {
+const transform = (preProcesses, config, index, sectionIndex, sectionKey, t, dependencyConfig) => {
     Object.keys(preProcesses)?.map(preProcess=>{
         switch (preProcess) {
             case "translate" : {
                 config = translate(config, index, sectionIndex, t);
             }
-            case "updateDropdownOptions" : {
-                config = updateOptions(config, index, sectionIndex, sectionKey, additionalOptions);
+            case "updateDependent" : {
+                config = updateDependent(config, index, sectionIndex, sectionKey, dependencyConfig);
             }
         }
     })
     return config;  
 }
 
-const preProcessMDMSConfig = (t, sessionFormData, config, additionalOptions) => {
+const preProcessMDMSConfig = (t, sessionFormData, config, dependencyConfig) => {
     console.log(sessionFormData);
     config?.CreateProjectConfig?.form?.map((section, index)=>{
         section?.body?.map((input, inputIndex)=>{
         let preProcesses = input?.preProcess;
         if(preProcesses){
-            config = transform(preProcesses, config, index, inputIndex, input?.key, t, additionalOptions);
+            config = transform(preProcesses, config, index, inputIndex, input?.key, t, dependencyConfig);
         }
        })
     })

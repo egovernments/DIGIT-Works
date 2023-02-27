@@ -64,11 +64,14 @@
                         },
                     },
                     {
-                        key: "",
+                        key: "citizenInfoLabel",
                         type: "component",
                         component: "CitizenInfoLabel",
                         label: "",
                         disable: false,
+                        preProcess : {
+                          updateDependent : ["customProps.className"]
+                        },
                         customProps : {
                             showInfo : true,
                             info : "WORKS_INFO",
@@ -183,7 +186,7 @@
                       disable: false,
                       preProcess : {
                         translate : ["populators.error"],
-                        updateOptions : ["populators.options"]
+                        updateDependent : ["populators.options"]
                       },
                       populators: {
                         name: "noSubProject_subTypeOfProject",
@@ -287,7 +290,7 @@
                       disable: false,
                       preProcess : {
                         translate : ["populators.error"],
-                        updateOptions : ["populators.options"]
+                        updateDependent : ["populators.options"]
                       },
                       populators: {
                         name: "noSubProject_ulb",
@@ -308,7 +311,7 @@
                       disable: false,
                       preProcess : {
                         translate : ["populators.error"],
-                        updateOptions : ["populators.options"]
+                        updateDependent : ["populators.options"]
                       },
                       populators: {
                         name: "noSubProject_ward",
@@ -329,7 +332,7 @@
                       disable: false,
                       preProcess : {
                         translate : ["populators.error"],
-                        updateOptions : ["populators.options"]
+                        updateDependent : ["populators.options"]
                       },
                       populators: {
                         name: "noSubProject_locality",
@@ -465,7 +468,7 @@
                       disable: false,
                       preProcess : {
                         translate : ["populators.error"],
-                        updateOptions : ["populators.options"]
+                        updateDependent : ["populators.options"]
                       },
                       populators: {
                         name: "noSubProject_subScheme",
@@ -656,7 +659,7 @@
                       disable: false,
                       preProcess : {
                         translate : ["populators.error"],
-                        updateOptions : ["populators.options"]
+                        updateDependent : ["populators.options"]
                       },
                       populators: {
                         name: "withSubProject_project_subScheme",
