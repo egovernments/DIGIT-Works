@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Stores if the register is active or not. Inactive registers can be archieved later.
  */
 public enum Status {
+    DRAFT("DRAFT"),
 
     ACTIVE("ACTIVE"),
 

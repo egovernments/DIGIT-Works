@@ -35,6 +35,8 @@ public class ContractQueryBuilder {
             "contract.last_modified_by AS lastModifiedBy, " +
             "contract.created_time AS createdTime, " +
             "contract.last_modified_time AS lastModifiedTime, " +
+            "contract.issue_date AS issueDate, " +
+            "contract.completion_period AS completionPeriod, " +
 
             "document.id AS docId, " +
             "document.filestore_id AS docFileStoreId, " +

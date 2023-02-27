@@ -1,5 +1,7 @@
 package org.egov.works.validator;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -9,14 +11,15 @@ import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.LineItemsRepository;
 import org.egov.works.service.ContractService;
 import org.egov.works.util.EstimateServiceUtil;
+import org.egov.works.util.HRMSUtils;
+import org.egov.works.util.MDMSDataParser;
 import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.math.BigDecimal;
-import java.time.Instant;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +33,9 @@ public class ContractServiceValidator {
     private MDMSUtils mdmsUtils;
 
     @Autowired
+    private HRMSUtils hrmsUtils;
+
+    @Autowired
     private EstimateServiceUtil estimateServiceUtil;
 
     @Autowired
@@ -40,6 +46,12 @@ public class ContractServiceValidator {
 
     @Autowired
     private ContractService contractService;
+
+    @Autowired
+    private ObjectMapper mapper;
+    @Autowired
+    private MDMSDataParser mdmsDataParser;
+
 
     public void validateCreateContractRequest(ContractRequest contractRequest) {
         log.info("Validate contract create request");
@@ -52,9 +64,6 @@ public class ContractServiceValidator {
 
         // Validate contract and corresponding lineItems tenantId's
         validateMultipleTenantIds(contractRequest);
-
-        // Validate Contract dates
-        validateContractDates(contractRequest);
 
         // Validate request fields against MDMS data
         validateRequestFieldsAgainstMDMS(contractRequest);
@@ -79,9 +88,6 @@ public class ContractServiceValidator {
 
         // Validate contract and corresponding lineItems tenantId's
         validateMultipleTenantIds(contractRequest);
-
-        // Validate Contract dates
-        validateContractDates(contractRequest);
 
         // Validate provided contract for update should exist in DB
         validateContractAgainstDB(contractRequest);
@@ -154,38 +160,84 @@ public class ContractServiceValidator {
         validateContractTypeAgainstMDMS(mdmsData, contract.getContractType());
 
         // Validate document type against MDMS date
-        validateDocumentTypeAgainstMDMS(mdmsData, contract.getDocuments());
+        //validateDocumentTypeAgainstMDMS(mdmsData, contract.getDocuments());
+
+        // Validate Officer In Charge role against MDMS data
+        validateOfficerInChargeRoleAgainstMDMS(mdmsData, contractRequest);
 
         log.info("Request Fields validated against MDMS");
     }
 
+    private void validateOfficerInChargeRoleAgainstMDMS(Object mdmsData, ContractRequest contractRequest) {
+        List<String> roles = fetchRolesOfOfficerInCharge(contractRequest);
+        Set<String> distinctRoles = roles.stream().collect(Collectors.toSet());
+        List<Object> oicRolesRes = mdmsDataParser.parseMDMSData(mdmsData,JSON_PATH_FOR_OIC_ROLES_VERIFICATION);
+        for(Object allowedRole : oicRolesRes){
+            if(distinctRoles.contains(allowedRole.toString())){
+                return;
+            }
+        }
+        log.error("Officer Incharge is not associated with required role");
+        throw new CustomException("MISSING_REQUIRED_ROLE", "Officer Incharge is not associated with required role");
+
+    }
+
+    private List<String> fetchRolesOfOfficerInCharge(ContractRequest contractRequest) {
+        Contract contract = contractRequest.getContract();
+        String tenantId = contract.getTenantId();
+        RequestInfo requestInfo = contractRequest.getRequestInfo();
+        String officerInChargeId = getOfficerInChargeIdFromAdditionalDetails(contract.getAdditionalDetails());
+        return hrmsUtils.getRoleCodesByEmployeeId(requestInfo, tenantId, Collections.singletonList(officerInChargeId));
+    }
+
+    private String getOfficerInChargeIdFromAdditionalDetails( Object additionalDetails) {
+        String officerInChargeId = null;
+        if (additionalDetails != null) {
+            try {
+                JsonNode node = mapper.readTree(mapper.writeValueAsString(additionalDetails));
+                if (node.findValue(OFFICER_IN_CHARGE_ID_CONSTANT) != null  && StringUtils.isNotBlank(node.findValue(OFFICER_IN_CHARGE_ID_CONSTANT).textValue())) {
+                    officerInChargeId = node.findValue(OFFICER_IN_CHARGE_ID_CONSTANT).textValue();
+
+                }
+            } catch (IOException e) {
+                log.error("Failed to parse additionalDetail object from request "+e);
+                throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object from request");
+            }
+
+        } else {
+            log.error("AdditionalDetails object with ["+OFFICER_IN_CHARGE_ID_CONSTANT+"] field is mandatory");
+            throw new CustomException("OFFICER_INCHARGEID_NOT_FOUND", "AdditionalDetails object with ["+OFFICER_IN_CHARGE_ID_CONSTANT+"] field is mandatory");
+        }
+        return officerInChargeId;
+    }
+
     private Object fetchMDMSData(RequestInfo requestInfo, String tenantId){
         String rootTenantId = tenantId.split("\\.")[0];
-        return mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+        return mdmsUtils.fetchMDMSForValidation(requestInfo, rootTenantId);
 
     }
     private void validateTenantIdAgainstMDMS(Object mdmsData,String tenantId) {
-        List<Object> tenantRes = parseMDMSData(mdmsData,JSON_PATH_FOR_TENANTS_VERIFICATION);
+        List<Object> tenantRes = mdmsDataParser.parseMDMSData(mdmsData,JSON_PATH_FOR_TENANTS_VERIFICATION);
         if (CollectionUtils.isEmpty(tenantRes) || !tenantRes.contains(tenantId)){
             log.error("The tenant: " + tenantId + " is not present in MDMS");
             throw new CustomException("INVALID_TENANT","The tenant: " + tenantId + " is not present in MDMS");
         }
         log.info("TenantId data validated against MDMS");
     }
-    private void validateDocumentTypeAgainstMDMS(Object mdmsData, List<Document> documents) {
-        List<Object> documentTypeAuthorityRes = parseMDMSData(mdmsData,JSON_PATH_FOR_DOCUMENT_TYPE_VERIFICATION);
-        for(Document document: documents){
-            String documentType = document.getDocumentType();
-            if (CollectionUtils.isEmpty(documentTypeAuthorityRes) || !documentTypeAuthorityRes.contains(documentType)){
-                log.error("The Document Type [" + documentType + "] is not present in MDMS");
-                throw new CustomException("INVALID_DOCUMENT_TYPE","The Document Type [" + documentType + "] is not present in MDMS");
-            }
-        }
-        log.info("Document Type data validated against MDMS");
-    }
+//    private void validateDocumentTypeAgainstMDMS(Object mdmsData, List<Document> documents) {
+//        List<Object> documentTypeAuthorityRes = parseMDMSData(mdmsData,JSON_PATH_FOR_DOCUMENT_TYPE_VERIFICATION);
+//        for(Document document: documents){
+//            String documentType = document.getDocumentType();
+//            if (CollectionUtils.isEmpty(documentTypeAuthorityRes) || !documentTypeAuthorityRes.contains(documentType)){
+//                log.error("The Document Type [" + documentType + "] is not present in MDMS");
+//                throw new CustomException("INVALID_DOCUMENT_TYPE","The Document Type [" + documentType + "] is not present in MDMS");
+//            }
+//        }
+//        log.info("Document Type data validated against MDMS");
+//    }
 
     private void validateContractTypeAgainstMDMS(Object mdmsData, String contractType) {
-        List<Object> contractTypeAuthorityRes = parseMDMSData(mdmsData,JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION);
+        List<Object> contractTypeAuthorityRes = mdmsDataParser.parseMDMSData(mdmsData,JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION);
         if (CollectionUtils.isEmpty(contractTypeAuthorityRes) || !contractTypeAuthorityRes.contains(contractType)){
             log.error("The Contract Type [" + contractType + "] is not present in MDMS");
             throw new CustomException("INVALID_CONTRACT_TYPE","The Contract Type [" + contractType + "] is not present in MDMS");
@@ -195,7 +247,7 @@ public class ContractServiceValidator {
     }
 
     private void validateExecutingAuthorityAgainstMDMS(Object mdmsData, String executingAuthority) {
-        List<Object> executingAuthorityRes = parseMDMSData(mdmsData,JSON_PATH_FOR_EXECUTING_AUTHORITY_VERIFICATION);
+        List<Object> executingAuthorityRes = mdmsDataParser.parseMDMSData(mdmsData, JSON_PATH_FOR_CBO_ROLES_VERIFICATION);
         if (CollectionUtils.isEmpty(executingAuthorityRes) || !executingAuthorityRes.contains(executingAuthority)){
             log.error("The Executing Authority [" + executingAuthority + "] is not present in MDMS");
             throw new CustomException("INVALID_EXECUTING_AUTHORITY","The Executing Authority [" + executingAuthority + "] is not present in MDMS");
@@ -275,43 +327,6 @@ public class ContractServiceValidator {
             log.error("Org service not integrated yet");
             throw new CustomException("SERVICE_UNAVAILABLE", "Org service not integrated yet");
         }
-    }
-
-    /**
-     * StartDate should be greater than or equal to agreementDate.
-     * endDate should be greater than startDate
-     */
-    private void validateContractDates(ContractRequest contractRequest) {
-        Map<String, String> errorMap = new HashMap<>();
-
-        BigDecimal agreementDate = contractRequest.getContract().getAgreementDate();
-        BigDecimal startDate = contractRequest.getContract().getStartDate();
-        BigDecimal endDate = contractRequest.getContract().getEndDate();
-
-        log.info("agreementDate "+agreementDate + " startDate "+startDate+" endDate "+endDate);
-
-        if(agreementDate == null){
-            agreementDate =BigDecimal.valueOf(Instant.now().toEpochMilli());
-        }
-
-        if(startDate != null && startDate.compareTo(agreementDate)<0)
-        {
-            log.error("Contract start date should be greater than or equal to agreementDate");
-            errorMap.put("INVALID_STARTDATE","Invalid contract start date");
-        }
-
-        if(startDate != null && endDate != null && endDate.compareTo(startDate)<0){
-            log.error("Contract end date should be greater than to start date");
-            errorMap.put("INVALID_ENDDATE","Invalid contract end date");
-        }
-
-        if (!errorMap.isEmpty()){
-            log.error("Contract date validation failed");
-            throw new CustomException(errorMap);
-        }
-
-        log.info("Contract dates validation done");
-
     }
 
     private Map<String, Set<String>> validateRequestedEstimateIdsAgainstEstimateService(ContractRequest contractRequest) {
@@ -431,11 +446,17 @@ public class ContractServiceValidator {
             errorMap.put("CONTRACT.ORGNISATIONID", "OrgnisationId is mandatory");
         }
 
+        Integer completionPeriod = contract.getCompletionPeriod();
+        if (completionPeriod == null || completionPeriod <= 0) {
+            log.error("Completion Period is mandatory and its min value is one day");
+            errorMap.put("CONTRACT.COMPLETION_PERIOD", "Completion Period is mandatory and its min value is one day");
+        }
+
         List<LineItems> lineItems = contract.getLineItems();
 
         if(lineItems == null || lineItems.isEmpty()){
             log.error("LineItem is mandatory");
-            errorMap.put("CONTRACT.LINEITEM", "LineItem is mandatory");
+            errorMap.put("CONTRACT.LINE_ITEM", "LineItem is mandatory");
         }
 
         for(LineItems lineItem : lineItems) {
@@ -517,15 +538,6 @@ public class ContractServiceValidator {
         if (StringUtils.isBlank(contractCriteria.getTenantId())) {
             log.error("Tenant is mandatory");
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
-        }
-    }
-
-    private List<Object> parseMDMSData(Object mdmsData, String path){
-        try {
-            return JsonPath.read(mdmsData, path);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
         }
     }
 }

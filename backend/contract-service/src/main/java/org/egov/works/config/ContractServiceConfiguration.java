@@ -60,6 +60,13 @@ public class ContractServiceConfiguration {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
 
+    //HRMS
+    @Value("${egov.hrms.host}")
+    private String hrmsHost;
+
+    @Value("${egov.hrms.search.endpoint}")
+    private String hrmsEndPoint;
+
     // kafka topics
     @Value("${contract.kafka.create.topic}")
     private String createContractTopic;

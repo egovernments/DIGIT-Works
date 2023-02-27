@@ -1,8 +1,6 @@
 package org.egov.works.web.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -17,7 +15,6 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Contract details
@@ -55,9 +52,9 @@ public class Contract {
     @JsonProperty("contractType")
     private String contractType = null;
 
-    @JsonProperty("totalContractedamount")
+    @JsonProperty("totalContractedAmount")
     @Valid
-    private BigDecimal totalContractedamount = null;
+    private BigDecimal totalContractedAmount = null;
 
     @JsonProperty("securityDeposit")
     @Valid
@@ -66,6 +63,10 @@ public class Contract {
     @JsonProperty("agreementDate")
     @Valid
     private BigDecimal agreementDate = null;
+
+    @JsonProperty("issueDate")
+    @Valid
+    private BigDecimal issueDate = null;
 
     @JsonProperty("defectLiabilityPeriod")
     @Valid
@@ -81,6 +82,10 @@ public class Contract {
     @JsonProperty("endDate")
     @Valid
     private BigDecimal endDate = null;
+
+    @JsonProperty("completionPeriod")
+    @Valid
+    private Integer completionPeriod = null;
 
     @JsonProperty("status")
     @Valid
