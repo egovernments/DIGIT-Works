@@ -48,6 +48,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
+    const [isEndDateValid, setIsEndDateValid] = useState(true);
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
@@ -68,7 +69,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
       });
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
     
-    let config =  Digit.Utils.preProcessMDMSConfig(t, sessionFormData, createProjectConfigMUKTA, {
+    let config =  Digit.Utils.preProcessMDMSConfig(t, createProjectConfigMUKTA, {
       updateDependent : [
         {
           key : 'withSubProject_project_subScheme',
@@ -97,9 +98,15 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
         {
           key : "citizenInfoLabel",
           value : showInfoLabel ? 'project-banner' : 'project-banner display-none'
+        },
+        {
+          key : "noSubProject_endDate",
+          value : () => isEndDateValid
         }
       ]
     });
+    console.log(config);
+    console.log((new Date(sessionFormData?.noSubProject_startDate).getTime()) < (new Date(sessionFormData?.noSubProject_endDate).getTime()));
 
     const createSubTypesMDMSObject = (subTypesData) => {
       let mdmsData = [];
@@ -183,6 +190,12 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
 
         //date validation for project table
         if (difference?.noSubProject_startDate) {
+          trigger("noSubProject_endDate", {shouldFocus : true});
+        }
+        if (difference?.noSubProject_endDate){
+          setIsEndDateValid(
+            (new Date(sessionFormData?.noSubProject_startDate).getTime()) < (new Date(sessionFormData?.noSubProject_endDate).getTime())
+          )
           trigger("noSubProject_endDate", {shouldFocus : true});
         }
       }

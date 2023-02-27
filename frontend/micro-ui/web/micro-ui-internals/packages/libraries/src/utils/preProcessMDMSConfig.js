@@ -39,8 +39,7 @@ const transform = (preProcesses, config, index, sectionIndex, sectionKey, t, dep
     return config;  
 }
 
-const preProcessMDMSConfig = (t, sessionFormData, config, dependencyConfig) => {
-    console.log(sessionFormData);
+const preProcessMDMSConfig = (t, config, dependencyConfig) => {
     config?.CreateProjectConfig?.form?.map((section, index)=>{
         section?.body?.map((input, inputIndex)=>{
         let preProcesses = input?.preProcess;
