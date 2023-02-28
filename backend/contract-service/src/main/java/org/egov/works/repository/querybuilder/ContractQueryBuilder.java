@@ -22,7 +22,7 @@ public class ContractQueryBuilder {
             "contract.wf_status AS wfStatus, " +
             "contract.executing_authority AS executingAuthority, " +
             "contract.contract_type AS contractType, " +
-            "contract.total_contracted_amount AS totalContractedamount, " +
+            "contract.total_contracted_amount AS totalContractedAmount, " +
             "contract.security_deposit AS securityDeposit, " +
             "contract.agreement_date AS agreementDate, " +
             "contract.defect_liability_period AS defectLiabilityPeriod, " +

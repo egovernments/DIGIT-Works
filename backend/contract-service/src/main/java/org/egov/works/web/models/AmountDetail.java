@@ -23,7 +23,7 @@ public class AmountDetail {
     private String id = null;
 
     @JsonProperty("amount")
-    private BigDecimal amount = null;
+    private Double amount = null;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;

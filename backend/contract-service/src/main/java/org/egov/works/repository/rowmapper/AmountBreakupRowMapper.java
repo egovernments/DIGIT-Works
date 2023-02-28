@@ -38,7 +38,7 @@ public class AmountBreakupRowMapper implements ResultSetExtractor<List<AmountBre
             String id = rs.getString("id");
             String estimateAmountBreakupId = rs.getString("estimateAmountBreakupId");
             String lineItemId = rs.getString("lineItemId");
-            BigDecimal amount = rs.getBigDecimal("amount");
+            Double amount = rs.getDouble("amount");
             String status = rs.getString("status");
             String createdby = rs.getString("createdby");
             String lastmodifiedby = rs.getString("lastModifiedBy");

@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import org.egov.works.web.models.ContractCriteria;
 import org.egov.works.web.models.Pagination;
 
-import static org.egov.works.util.ContractServiceConstants.COMMON_ACTIVE_WITH_WORK_ORDER_VALUE;
 import static org.egov.works.util.ContractServiceConstants.JSON_PATH_FOR_OVER_HEADS_VERIFICATION;
 
 @Component
@@ -89,13 +88,13 @@ public class ContractEnrichment {
         Contract contract = contractRequest.getContract();
         String tenantId = contract.getTenantId();
         List<LineItems> providedLineItems = contract.getLineItems();
-
         Set<String> providedEstimateIds = providedLineItems.stream().map(e -> e.getEstimateId()).collect(Collectors.toSet());
-        List<Estimate> fetchedEstimates = fetchEstimates(requestInfo,tenantId,providedEstimateIds);
+
+        List<Estimate> fetchedActiveEstimates = fetchActiveEstimates(requestInfo,tenantId,providedEstimateIds);
         List<Object> objects = fetchAllowedOverheardsFromMDMS(requestInfo,tenantId);
 
         Map<String, List<LineItems>> providedLineItemsListMap = providedLineItems.stream().collect(Collectors.groupingBy(LineItems::getEstimateId));
-        Map<String, List<Estimate>> fetchedEstimateListMap = fetchedEstimates.stream().collect(Collectors.groupingBy(Estimate::getId));
+        Map<String, List<Estimate>> fetchedEstimateListMap = fetchedActiveEstimates.stream().collect(Collectors.groupingBy(Estimate::getId));
 
         List<LineItems> refinedLineItems = new ArrayList<>();
         for(String providedEstimateId : providedEstimateIds) {
@@ -143,8 +142,8 @@ public class ContractEnrichment {
         log.info("LintItem enrichment is done");
     }
 
-    private List<Estimate> fetchEstimates(RequestInfo requestInfo, String tenantId, Set<String> providedEstimateIds) {
-        return estimateServiceUtil.fetchEstimates(requestInfo,tenantId,providedEstimateIds);
+    private List<Estimate> fetchActiveEstimates(RequestInfo requestInfo, String tenantId, Set<String> providedEstimateIds) {
+        return estimateServiceUtil.fetchActiveEstimates(requestInfo,tenantId,providedEstimateIds);
     }
 
     private List<Object> fetchAllowedOverheardsFromMDMS(RequestInfo requestInfo, String tenantId) {
