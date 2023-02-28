@@ -2,7 +2,6 @@ package org.egov.works.validator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -116,8 +115,8 @@ public class ContractServiceValidator {
         List<Contract> fetchedContracts = contractService.searchContracts(contractCriteria);
 
         if(fetchedContracts.isEmpty()){
-            log.error("Provided contract for update ["+contractId+"] not exists");
-            throw new CustomException("CONTRACT_NOT_FOUND","Provided contract for update ["+contractId+"] not exists");
+            log.error("Update:: Provided contract  ["+contractId+"] not found");
+            throw new CustomException("CONTRACT_NOT_FOUND","Provided contract ["+contractId+"] not found");
         }
     }
 
@@ -220,7 +219,7 @@ public class ContractServiceValidator {
         List<Object> tenantRes = mdmsDataParser.parseMDMSData(mdmsData,JSON_PATH_FOR_TENANTS_VERIFICATION);
         if (CollectionUtils.isEmpty(tenantRes) || !tenantRes.contains(tenantId)){
             log.error("The tenant: " + tenantId + " is not present in MDMS");
-            throw new CustomException("INVALID_TENANT","The tenant: " + tenantId + " is not present in MDMS");
+            throw new CustomException("INVALID_TENANT","Invalid tenantId [" + tenantId + "]");
         }
         log.info("TenantId data validated against MDMS");
     }
@@ -240,7 +239,7 @@ public class ContractServiceValidator {
         List<Object> contractTypeAuthorityRes = mdmsDataParser.parseMDMSData(mdmsData,JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION);
         if (CollectionUtils.isEmpty(contractTypeAuthorityRes) || !contractTypeAuthorityRes.contains(contractType)){
             log.error("The Contract Type [" + contractType + "] is not present in MDMS");
-            throw new CustomException("INVALID_CONTRACT_TYPE","The Contract Type [" + contractType + "] is not present in MDMS");
+            throw new CustomException("INVALID_CONTRACT_TYPE","Invalid Contract Type [" + contractType + "]");
         }
 
         log.info("Contract Type data validated against MDMS");
@@ -250,7 +249,7 @@ public class ContractServiceValidator {
         List<Object> executingAuthorityRes = mdmsDataParser.parseMDMSData(mdmsData, JSON_PATH_FOR_CBO_ROLES_VERIFICATION);
         if (CollectionUtils.isEmpty(executingAuthorityRes) || !executingAuthorityRes.contains(executingAuthority)){
             log.error("The Executing Authority [" + executingAuthority + "] is not present in MDMS");
-            throw new CustomException("INVALID_EXECUTING_AUTHORITY","The Executing Authority [" + executingAuthority + "] is not present in MDMS");
+            throw new CustomException("INVALID_EXECUTING_AUTHORITY","Invalid Executing Authority [" + executingAuthority + "]");
         }
 
         log.info("Executing Authority data validated against MDMS");
@@ -335,40 +334,55 @@ public class ContractServiceValidator {
         String tenantId = contract.getTenantId();
         List<LineItems> lineItems = contract.getLineItems();
         Set<String> providedEstimateIds = lineItems.stream().map(e -> e.getEstimateId()).collect(Collectors.toSet());
-        List<Estimate> fetchedEstimates = estimateServiceUtil.fetchEstimates(requestInfo,tenantId,providedEstimateIds);
+        List<Estimate> fetchedActiveEstimates = fetchActiveEstimates(requestInfo,tenantId,providedEstimateIds);
+        validateProvidedEstimateStatusAgainstFetchedActiveEstimates(providedEstimateIds,fetchedActiveEstimates);
 
         Map<String, List<LineItems>> providedLineItemsMap = lineItems.stream().collect(Collectors.groupingBy(LineItems::getEstimateId));
-        Map<String, List<Estimate>> fetchedEstimatesMap = fetchedEstimates.stream().collect(Collectors.groupingBy(Estimate::getId));
-        Map<String, Set<String>> fetchedEstimateIdWithEstimateDetailIds = getFetchedEstimateIdWithEstimateDetailIds(fetchedEstimatesMap);
-        Map<String, Set<String>> fetchedEstimateDetailIdWithAccountDetailIds = getFetchedEstimateDetailIdWithAccountDetailIds(fetchedEstimatesMap);
+        Map<String, List<Estimate>> fetchedActiveEstimatesMap = fetchedActiveEstimates.stream().collect(Collectors.groupingBy(Estimate::getId));
+        Map<String, Set<String>> fetchedEstimateIdWithEstimateDetailIds = getFetchedEstimateIdWithEstimateDetailIds(fetchedActiveEstimatesMap);
+        Map<String, Set<String>> fetchedEstimateDetailIdWithAccountDetailIds = getFetchedEstimateDetailIdWithAccountDetailIds(fetchedActiveEstimatesMap);
 
         for(String estimateId : providedEstimateIds){
-            if(fetchedEstimatesMap.containsKey(estimateId)){
-                for(LineItems lineItem :providedLineItemsMap.get(estimateId)) {
-                    String estimateLineItemId = lineItem.getEstimateLineItemId();
-                    if (estimateLineItemId != null) {
-                        if (!fetchedEstimateIdWithEstimateDetailIds.get(estimateId).contains(estimateLineItemId)) {
-                            log.error("LineItemId [" + estimateLineItemId + "] is invalid for estimate ["+estimateId+"]");
-                            throw new CustomException("INVALID_ESTIMATELINEITEMID", "LineItemId [" + estimateLineItemId + "] is invalid for estimate ["+estimateId+"]");
-                        }
-                        List<AmountBreakup> amountBreakups = lineItem.getAmountBreakups();
-                        for(AmountBreakup amountBreakup: amountBreakups){
-                            String estimateAmountBreakupId = amountBreakup.getEstimateAmountBreakupId();
-                            if (!fetchedEstimateDetailIdWithAccountDetailIds.get(estimateLineItemId).contains(estimateAmountBreakupId)) {
-                                log.error("EstimateAmountBreakupId [" + estimateAmountBreakupId + "] is invalid for EstimateLineItemId ["+estimateLineItemId+"]");
-                                throw new CustomException("INVALID_ESTIMATEAMOUNTBREAKUPID", "EstimateAmountBreakupId [" + estimateAmountBreakupId + "] is invalid for EstimateLineItemId ["+estimateLineItemId+"]");
-                            }
+            for(LineItems lineItem :providedLineItemsMap.get(estimateId)) {
+                String estimateLineItemId = lineItem.getEstimateLineItemId();
+                if (estimateLineItemId != null) {
+                    if (fetchedEstimateIdWithEstimateDetailIds.get(estimateId)!=null && !fetchedEstimateIdWithEstimateDetailIds.get(estimateId).contains(estimateLineItemId)) {
+                        log.error("LineItemId [" + estimateLineItemId + "] is invalid for estimate ["+estimateId+"]");
+                        throw new CustomException("INVALID_ESTIMATELINEITEMID", "LineItemId [" + estimateLineItemId + "] is invalid for estimate ["+estimateId+"]");
+                    }
+                    List<AmountBreakup> amountBreakups = lineItem.getAmountBreakups();
+                    for(AmountBreakup amountBreakup: amountBreakups){
+                        String estimateAmountBreakupId = amountBreakup.getEstimateAmountBreakupId();
+                        if (fetchedEstimateDetailIdWithAccountDetailIds.get(estimateLineItemId)!=null && !fetchedEstimateDetailIdWithAccountDetailIds.get(estimateLineItemId).contains(estimateAmountBreakupId)) {
+                            log.error("EstimateAmountBreakupId [" + estimateAmountBreakupId + "] is invalid for EstimateLineItemId ["+estimateLineItemId+"]");
+                            throw new CustomException("INVALID_ESTIMATEAMOUNTBREAKUPID", "EstimateAmountBreakupId [" + estimateAmountBreakupId + "] is invalid for EstimateLineItemId ["+estimateLineItemId+"]");
                         }
                     }
                 }
-            } else {
-                log.error("EstimateId ["+estimateId + "] not found");
-                throw new CustomException("ESTIMATEID_NOT_FOUND","EstimateId ["+estimateId + "] not found");
             }
         }
 
         log.info("EstimateIds validated against Estimate Service");
         return fetchedEstimateIdWithEstimateDetailIds;
+    }
+
+    private void validateProvidedEstimateStatusAgainstFetchedActiveEstimates(Set<String> providedEstimateIds, List<Estimate> fetchedActiveEstimates) {
+        Set<String> fetchedEstimateIds = fetchedActiveEstimates.stream().map(e -> e.getId()).collect(Collectors.toSet());
+        for(String providedEstimateId : providedEstimateIds){
+            if(!fetchedEstimateIds.contains(providedEstimateId)){
+                log.error("Provided estimate ["+ providedEstimateId +"] is not active");
+                throw new CustomException("ESTIMATE_NOT_ACTIVE", "Provided estimate ["+ providedEstimateId +"] is not active");
+            }
+        }
+    }
+
+    private List<Estimate> fetchActiveEstimates(RequestInfo requestInfo, String tenantId, Set<String> providedEstimateIds) {
+        List<Estimate> fetchedEstimates = estimateServiceUtil.fetchActiveEstimates(requestInfo, tenantId, providedEstimateIds);
+        if(fetchedEstimates.isEmpty()){
+            log.error("Provided estimate are either inactive or not found");
+            throw new CustomException("ACTIVE_ESTIMATE_NOT_FOUND", "Provided estimate are either inactive or not found");
+        }
+        return fetchedEstimates;
     }
 
     private Map<String, Set<String>> getFetchedEstimateDetailIdWithAccountDetailIds(Map<String, List<Estimate>> fetchedEstimatesMap) {

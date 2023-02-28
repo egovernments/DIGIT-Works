@@ -5,19 +5,19 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.ServiceRequestRepository;
-import org.egov.works.web.models.ContractRequest;
 import org.egov.works.web.models.Estimate;
 import org.egov.works.web.models.EstimateResponse;
+import org.egov.works.web.models.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,10 +46,11 @@ public class EstimateServiceUtil {
         return url;
     }
 
-    public List<Estimate> fetchEstimates(RequestInfo requestInfo, String tenantId, Set<String> estimateIds){
+    public List<Estimate> fetchActiveEstimates(RequestInfo requestInfo, String tenantId, Set<String> estimateIds){
         StringBuilder url = getSearchURLWithParams(tenantId, estimateIds);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-        return fetchResult(url, requestInfoWrapper);
+        List<Estimate> fetchEstimates = fetchResult(url, requestInfoWrapper);
+        return fetchEstimates.stream().filter(e -> Status.ACTIVE.equals(e.getStatus())).collect(Collectors.toList());
     }
 
     public List<Estimate> fetchResult(StringBuilder uri, Object request) {

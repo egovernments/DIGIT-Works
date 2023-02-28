@@ -37,7 +37,7 @@ public class AmountBreakup {
     @JsonProperty("amount")
     @NotNull
     @Valid
-    private BigDecimal amount = null;
+    private Double amount = null;
 
     @JsonProperty("status")
     @Valid
@@ -51,7 +51,6 @@ public class AmountBreakup {
 
     @JsonIgnore
     private AuditDetails auditDetails;
-
 
 }
 

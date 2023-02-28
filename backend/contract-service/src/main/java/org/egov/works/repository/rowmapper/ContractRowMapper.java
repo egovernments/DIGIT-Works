@@ -40,7 +40,7 @@ public class ContractRowMapper implements ResultSetExtractor<List<Contract>> {
             String wfStatus = rs.getString("wfStatus");
             String executingAuthority = rs.getString("executingAuthority");
             String contractType = rs.getString("contractType");
-            BigDecimal totalContractedAmount = rs.getBigDecimal("totalContractedamount");
+            BigDecimal totalContractedAmount = rs.getBigDecimal("totalContractedAmount");
             BigDecimal securityDeposit = rs.getBigDecimal("securityDeposit");
             BigDecimal agreementDate = rs.getBigDecimal("agreementDate");
             BigDecimal defectLiabilityPeriod = rs.getBigDecimal("defectLiabilityPeriod");
@@ -53,7 +53,7 @@ public class ContractRowMapper implements ResultSetExtractor<List<Contract>> {
             Long createdtime = rs.getLong("createdTime");
             Long lastmodifiedtime = rs.getLong("lastModifiedTime");
             BigDecimal issueDate = rs.getBigDecimal("issueDate");
-            Integer completionPeriod = rs.getInt("completion_period");
+            Integer completionPeriod = rs.getInt("completionPeriod");
 
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)

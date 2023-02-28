@@ -83,7 +83,7 @@ public class LineItemsRowMapper implements ResultSetExtractor<List<LineItems>> {
                     .id(amountBreakUpId)
                     .estimateAmountBreakupId(rs.getString("amtEstimateAmountBreakupId"))
                     .lineItemId(rs.getString("amtLineItemId"))
-                    .amount(rs.getBigDecimal("amtAmount"))
+                    .amount(rs.getDouble("amtAmount"))
                     .status(Status.fromValue(rs.getString("amtStatus")))
                     .build();
 

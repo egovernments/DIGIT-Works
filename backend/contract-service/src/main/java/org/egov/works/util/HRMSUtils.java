@@ -42,7 +42,7 @@ public class HRMSUtils {
         }
 
         if(CollectionUtils.isEmpty(roles))
-            throw new CustomException("ROLE_CODE_NOT_FOUND","The role code of the user with employees: "+employeeIds.toString()+" is not found");
+            throw new CustomException("ROLE_CODE_NOT_FOUND","For employee: "+employeeIds.toString()+" role code not found");
 
         return roles;
     }
