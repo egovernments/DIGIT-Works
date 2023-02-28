@@ -5,13 +5,13 @@ const fetchEstimateDetails = (data) => {
         
         return {
             "sorId": 45,
-            "category": "SOR/Non SOR",
+            "category": "NON_SOR",
             "name": row?.description,
             "description": row?.description,
             "unitRate": row?.rate,
             "noOfunit": row?.estimatedQuantity,
             "uom": row?.uom?.code,
-            "uomValue": 10, //not sure what is this field
+            // "uomValue": 10, //not sure what is this field//try removing this field
             "amountDetail": [
                 {
                     "type": "EstimatedAmount",
@@ -23,15 +23,14 @@ const fetchEstimateDetails = (data) => {
         }
     })
     let overHeadsData = data?.overheadDetails?.filter(row => row)?.map(row => {
-        
         return {
-            "category": "Overheads",
-            "name": row?.name?.name,
+            "category": "OVERHEADS",
+            "name": row?.name?.code,
             "description": row?.name?.description,
             "amountDetail": [
                 {
                     "additionalDetails":{},
-                    "type": "GST",
+                    "type": row?.name?.code,
                     "amount": row?.amount
                 }
             ],
@@ -44,7 +43,20 @@ const fetchEstimateDetails = (data) => {
     return [...sornonSORData,...overHeadsData]
 }
 
+const fetchDocuments = (docs) => {
+    return docs.map(doc=>{
+        return {
+            fileName: doc?.[1]?.file?.name,
+            fileStoreId: doc?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: doc?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: doc?.[1]?.fileStoreId?.tenantId,
+            fileType: doc?.[1]?.file?.type
+        }
+    })
+}
+
 export const createEstimatePayload = (data,projectData) => {
+    
     let filteredFormData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
     const tenantId = Digit.ULBService.getCurrentTenantId()
     
@@ -64,7 +76,7 @@ export const createEstimatePayload = (data,projectData) => {
             },//get from project search
             "estimateDetails": fetchEstimateDetails(filteredFormData),
             "additionalDetails": {
-                "uploads":data?.uploads?.length > 0 ? data?.uploads : []
+                "documents": data?.uploads?.length > 0 ? fetchDocuments(data?.uploads) : []
             }
         },
         workflow:{
