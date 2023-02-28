@@ -246,8 +246,10 @@ public class ProjectValidator {
         try {
             deptRes = JsonPath.read(mdmsData, jsonPathForDepartment);
             typeOfProjectRes = JsonPath.read(mdmsData, jsonPathForMDMSTypeOfProjectList);
-            natureOfWorkRes = JsonPath.read(mdmsData, jsonPathForMDMSNatureOfWorkList);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
+            if (projects.stream().anyMatch(p -> StringUtils.isNotBlank(p.getNatureOfWork()))) {
+                natureOfWorkRes = JsonPath.read(mdmsData, jsonPathForMDMSNatureOfWorkList);
+            }
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
