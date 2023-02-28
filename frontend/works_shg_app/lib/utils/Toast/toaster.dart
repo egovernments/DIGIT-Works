@@ -48,14 +48,14 @@ class ToastUtils {
                   padding: const EdgeInsets.only(
                       left: 10, right: 10, top: 13, bottom: 10),
                   decoration: BoxDecoration(
-                      color: type == 'ERROR' ? Colors.red : Colors.green[900]),
+                      color: type == 'ERROR' ? Colors.red : type == 'INFO' ? Colors.orangeAccent :Colors.green[900]),
                   child: Align(
                     alignment: Alignment.center,
                     child: SlideInToastMessageAnimation(Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Icon(
-                          type == 'ERROR'
+                          type == 'ERROR' || type == 'INFO'
                               ? Icons.info_outline_rounded
                               : Icons.check_circle_outline_rounded,
                           color: Colors.white,

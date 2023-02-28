@@ -1,7 +1,3 @@
-import 'dart:html';
-
-import 'package:flutter/foundation.dart';
-
 const _baseUrl = "baseUrl";
 
 enum Environment { dev, stage, prod }
@@ -31,9 +27,7 @@ class EnvironmentVariables {
 }
 
 Map<String, dynamic> devConstants = {
-  _baseUrl: kIsWeb
-      ? '${window.location.origin}/'
-      : const String.fromEnvironment('BASE_URL'),
+  _baseUrl: "https://works-qa.digit.org/",
   // "https://works-qa.digit.org/works-shg-app/",
 };
 

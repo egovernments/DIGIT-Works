@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
-part of 'get_muster_workflow.dart';
+part of 'sub_skills_bloc.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,59 +15,52 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$MusterGetWorkflowEvent {
+mixin _$SubSkillsBlocEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String musterRollNumber) get,
-    required TResult Function() dispose,
+    required TResult Function() onSubSkillsMDMS,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String musterRollNumber)? get,
-    TResult? Function()? dispose,
+    TResult? Function()? onSubSkillsMDMS,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String musterRollNumber)? get,
-    TResult Function()? dispose,
+    TResult Function()? onSubSkillsMDMS,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(GetMusterWorkflowEvent value) get,
-    required TResult Function(DisposeMusterRollWorkflowEvent value) dispose,
+    required TResult Function(SubSkillsEvent value) onSubSkillsMDMS,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetMusterWorkflowEvent value)? get,
-    TResult? Function(DisposeMusterRollWorkflowEvent value)? dispose,
+    TResult? Function(SubSkillsEvent value)? onSubSkillsMDMS,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetMusterWorkflowEvent value)? get,
-    TResult Function(DisposeMusterRollWorkflowEvent value)? dispose,
+    TResult Function(SubSkillsEvent value)? onSubSkillsMDMS,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $MusterGetWorkflowEventCopyWith<$Res> {
-  factory $MusterGetWorkflowEventCopyWith(MusterGetWorkflowEvent value,
-          $Res Function(MusterGetWorkflowEvent) then) =
-      _$MusterGetWorkflowEventCopyWithImpl<$Res, MusterGetWorkflowEvent>;
+abstract class $SubSkillsBlocEventCopyWith<$Res> {
+  factory $SubSkillsBlocEventCopyWith(
+          SubSkillsBlocEvent value, $Res Function(SubSkillsBlocEvent) then) =
+      _$SubSkillsBlocEventCopyWithImpl<$Res, SubSkillsBlocEvent>;
 }
 
 /// @nodoc
-class _$MusterGetWorkflowEventCopyWithImpl<$Res,
-        $Val extends MusterGetWorkflowEvent>
-    implements $MusterGetWorkflowEventCopyWith<$Res> {
-  _$MusterGetWorkflowEventCopyWithImpl(this._value, this._then);
+class _$SubSkillsBlocEventCopyWithImpl<$Res, $Val extends SubSkillsBlocEvent>
+    implements $SubSkillsBlocEventCopyWith<$Res> {
+  _$SubSkillsBlocEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -76,188 +69,35 @@ class _$MusterGetWorkflowEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$GetMusterWorkflowEventCopyWith<$Res> {
-  factory _$$GetMusterWorkflowEventCopyWith(_$GetMusterWorkflowEvent value,
-          $Res Function(_$GetMusterWorkflowEvent) then) =
-      __$$GetMusterWorkflowEventCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String tenantId, String musterRollNumber});
+abstract class _$$SubSkillsEventCopyWith<$Res> {
+  factory _$$SubSkillsEventCopyWith(
+          _$SubSkillsEvent value, $Res Function(_$SubSkillsEvent) then) =
+      __$$SubSkillsEventCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$GetMusterWorkflowEventCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowEventCopyWithImpl<$Res, _$GetMusterWorkflowEvent>
-    implements _$$GetMusterWorkflowEventCopyWith<$Res> {
-  __$$GetMusterWorkflowEventCopyWithImpl(_$GetMusterWorkflowEvent _value,
-      $Res Function(_$GetMusterWorkflowEvent) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? tenantId = null,
-    Object? musterRollNumber = null,
-  }) {
-    return _then(_$GetMusterWorkflowEvent(
-      tenantId: null == tenantId
-          ? _value.tenantId
-          : tenantId // ignore: cast_nullable_to_non_nullable
-              as String,
-      musterRollNumber: null == musterRollNumber
-          ? _value.musterRollNumber
-          : musterRollNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
-  const _$GetMusterWorkflowEvent(
-      {required this.tenantId, required this.musterRollNumber});
-
-  @override
-  final String tenantId;
-  @override
-  final String musterRollNumber;
-
-  @override
-  String toString() {
-    return 'MusterGetWorkflowEvent.get(tenantId: $tenantId, musterRollNumber: $musterRollNumber)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$GetMusterWorkflowEvent &&
-            (identical(other.tenantId, tenantId) ||
-                other.tenantId == tenantId) &&
-            (identical(other.musterRollNumber, musterRollNumber) ||
-                other.musterRollNumber == musterRollNumber));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, tenantId, musterRollNumber);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$GetMusterWorkflowEventCopyWith<_$GetMusterWorkflowEvent> get copyWith =>
-      __$$GetMusterWorkflowEventCopyWithImpl<_$GetMusterWorkflowEvent>(
-          this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String musterRollNumber) get,
-    required TResult Function() dispose,
-  }) {
-    return get(tenantId, musterRollNumber);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String musterRollNumber)? get,
-    TResult? Function()? dispose,
-  }) {
-    return get?.call(tenantId, musterRollNumber);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String musterRollNumber)? get,
-    TResult Function()? dispose,
-    required TResult orElse(),
-  }) {
-    if (get != null) {
-      return get(tenantId, musterRollNumber);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(GetMusterWorkflowEvent value) get,
-    required TResult Function(DisposeMusterRollWorkflowEvent value) dispose,
-  }) {
-    return get(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetMusterWorkflowEvent value)? get,
-    TResult? Function(DisposeMusterRollWorkflowEvent value)? dispose,
-  }) {
-    return get?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetMusterWorkflowEvent value)? get,
-    TResult Function(DisposeMusterRollWorkflowEvent value)? dispose,
-    required TResult orElse(),
-  }) {
-    if (get != null) {
-      return get(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class GetMusterWorkflowEvent implements MusterGetWorkflowEvent {
-  const factory GetMusterWorkflowEvent(
-      {required final String tenantId,
-      required final String musterRollNumber}) = _$GetMusterWorkflowEvent;
-
-  String get tenantId;
-  String get musterRollNumber;
-  @JsonKey(ignore: true)
-  _$$GetMusterWorkflowEventCopyWith<_$GetMusterWorkflowEvent> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$DisposeMusterRollWorkflowEventCopyWith<$Res> {
-  factory _$$DisposeMusterRollWorkflowEventCopyWith(
-          _$DisposeMusterRollWorkflowEvent value,
-          $Res Function(_$DisposeMusterRollWorkflowEvent) then) =
-      __$$DisposeMusterRollWorkflowEventCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$DisposeMusterRollWorkflowEventCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowEventCopyWithImpl<$Res,
-        _$DisposeMusterRollWorkflowEvent>
-    implements _$$DisposeMusterRollWorkflowEventCopyWith<$Res> {
-  __$$DisposeMusterRollWorkflowEventCopyWithImpl(
-      _$DisposeMusterRollWorkflowEvent _value,
-      $Res Function(_$DisposeMusterRollWorkflowEvent) _then)
+class __$$SubSkillsEventCopyWithImpl<$Res>
+    extends _$SubSkillsBlocEventCopyWithImpl<$Res, _$SubSkillsEvent>
+    implements _$$SubSkillsEventCopyWith<$Res> {
+  __$$SubSkillsEventCopyWithImpl(
+      _$SubSkillsEvent _value, $Res Function(_$SubSkillsEvent) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$DisposeMusterRollWorkflowEvent
-    implements DisposeMusterRollWorkflowEvent {
-  const _$DisposeMusterRollWorkflowEvent();
+class _$SubSkillsEvent implements SubSkillsEvent {
+  const _$SubSkillsEvent();
 
   @override
   String toString() {
-    return 'MusterGetWorkflowEvent.dispose()';
+    return 'SubSkillsBlocEvent.onSubSkillsMDMS()';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$DisposeMusterRollWorkflowEvent);
+        (other.runtimeType == runtimeType && other is _$SubSkillsEvent);
   }
 
   @override
@@ -266,30 +106,27 @@ class _$DisposeMusterRollWorkflowEvent
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String musterRollNumber) get,
-    required TResult Function() dispose,
+    required TResult Function() onSubSkillsMDMS,
   }) {
-    return dispose();
+    return onSubSkillsMDMS();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String musterRollNumber)? get,
-    TResult? Function()? dispose,
+    TResult? Function()? onSubSkillsMDMS,
   }) {
-    return dispose?.call();
+    return onSubSkillsMDMS?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String musterRollNumber)? get,
-    TResult Function()? dispose,
+    TResult Function()? onSubSkillsMDMS,
     required TResult orElse(),
   }) {
-    if (dispose != null) {
-      return dispose();
+    if (onSubSkillsMDMS != null) {
+      return onSubSkillsMDMS();
     }
     return orElse();
   }
@@ -297,71 +134,60 @@ class _$DisposeMusterRollWorkflowEvent
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(GetMusterWorkflowEvent value) get,
-    required TResult Function(DisposeMusterRollWorkflowEvent value) dispose,
+    required TResult Function(SubSkillsEvent value) onSubSkillsMDMS,
   }) {
-    return dispose(this);
+    return onSubSkillsMDMS(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetMusterWorkflowEvent value)? get,
-    TResult? Function(DisposeMusterRollWorkflowEvent value)? dispose,
+    TResult? Function(SubSkillsEvent value)? onSubSkillsMDMS,
   }) {
-    return dispose?.call(this);
+    return onSubSkillsMDMS?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetMusterWorkflowEvent value)? get,
-    TResult Function(DisposeMusterRollWorkflowEvent value)? dispose,
+    TResult Function(SubSkillsEvent value)? onSubSkillsMDMS,
     required TResult orElse(),
   }) {
-    if (dispose != null) {
-      return dispose(this);
+    if (onSubSkillsMDMS != null) {
+      return onSubSkillsMDMS(this);
     }
     return orElse();
   }
 }
 
-abstract class DisposeMusterRollWorkflowEvent
-    implements MusterGetWorkflowEvent {
-  const factory DisposeMusterRollWorkflowEvent() =
-      _$DisposeMusterRollWorkflowEvent;
+abstract class SubSkillsEvent implements SubSkillsBlocEvent {
+  const factory SubSkillsEvent() = _$SubSkillsEvent;
 }
 
 /// @nodoc
-mixin _$MusterGetWorkflowState {
+mixin _$SubSkillsBlocState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)
-        loaded,
-    required TResult Function() error,
+    required TResult Function(SubSkillsList? subSkillsList) loaded,
+    required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)?
-        loaded,
-    TResult? Function()? error,
+    TResult? Function(SubSkillsList? subSkillsList)? loaded,
+    TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)?
-        loaded,
-    TResult Function()? error,
+    TResult Function(SubSkillsList? subSkillsList)? loaded,
+    TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -393,17 +219,16 @@ mixin _$MusterGetWorkflowState {
 }
 
 /// @nodoc
-abstract class $MusterGetWorkflowStateCopyWith<$Res> {
-  factory $MusterGetWorkflowStateCopyWith(MusterGetWorkflowState value,
-          $Res Function(MusterGetWorkflowState) then) =
-      _$MusterGetWorkflowStateCopyWithImpl<$Res, MusterGetWorkflowState>;
+abstract class $SubSkillsBlocStateCopyWith<$Res> {
+  factory $SubSkillsBlocStateCopyWith(
+          SubSkillsBlocState value, $Res Function(SubSkillsBlocState) then) =
+      _$SubSkillsBlocStateCopyWithImpl<$Res, SubSkillsBlocState>;
 }
 
 /// @nodoc
-class _$MusterGetWorkflowStateCopyWithImpl<$Res,
-        $Val extends MusterGetWorkflowState>
-    implements $MusterGetWorkflowStateCopyWith<$Res> {
-  _$MusterGetWorkflowStateCopyWithImpl(this._value, this._then);
+class _$SubSkillsBlocStateCopyWithImpl<$Res, $Val extends SubSkillsBlocState>
+    implements $SubSkillsBlocStateCopyWith<$Res> {
+  _$SubSkillsBlocStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -420,7 +245,7 @@ abstract class _$$_InitialCopyWith<$Res> {
 
 /// @nodoc
 class __$$_InitialCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Initial>
+    extends _$SubSkillsBlocStateCopyWithImpl<$Res, _$_Initial>
     implements _$$_InitialCopyWith<$Res> {
   __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
       : super(_value, _then);
@@ -433,7 +258,7 @@ class _$_Initial extends _Initial {
 
   @override
   String toString() {
-    return 'MusterGetWorkflowState.initial()';
+    return 'SubSkillsBlocState.initial()';
   }
 
   @override
@@ -450,10 +275,8 @@ class _$_Initial extends _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)
-        loaded,
-    required TResult Function() error,
+    required TResult Function(SubSkillsList? subSkillsList) loaded,
+    required TResult Function(String? error) error,
   }) {
     return initial();
   }
@@ -463,10 +286,8 @@ class _$_Initial extends _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)?
-        loaded,
-    TResult? Function()? error,
+    TResult? Function(SubSkillsList? subSkillsList)? loaded,
+    TResult? Function(String? error)? error,
   }) {
     return initial?.call();
   }
@@ -476,10 +297,8 @@ class _$_Initial extends _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)?
-        loaded,
-    TResult Function()? error,
+    TResult Function(SubSkillsList? subSkillsList)? loaded,
+    TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -526,7 +345,7 @@ class _$_Initial extends _Initial {
   }
 }
 
-abstract class _Initial extends MusterGetWorkflowState {
+abstract class _Initial extends SubSkillsBlocState {
   const factory _Initial() = _$_Initial;
   const _Initial._() : super._();
 }
@@ -540,7 +359,7 @@ abstract class _$$_LoadingCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadingCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Loading>
+    extends _$SubSkillsBlocStateCopyWithImpl<$Res, _$_Loading>
     implements _$$_LoadingCopyWith<$Res> {
   __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
       : super(_value, _then);
@@ -553,7 +372,7 @@ class _$_Loading extends _Loading {
 
   @override
   String toString() {
-    return 'MusterGetWorkflowState.loading()';
+    return 'SubSkillsBlocState.loading()';
   }
 
   @override
@@ -570,10 +389,8 @@ class _$_Loading extends _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)
-        loaded,
-    required TResult Function() error,
+    required TResult Function(SubSkillsList? subSkillsList) loaded,
+    required TResult Function(String? error) error,
   }) {
     return loading();
   }
@@ -583,10 +400,8 @@ class _$_Loading extends _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)?
-        loaded,
-    TResult? Function()? error,
+    TResult? Function(SubSkillsList? subSkillsList)? loaded,
+    TResult? Function(String? error)? error,
   }) {
     return loading?.call();
   }
@@ -596,10 +411,8 @@ class _$_Loading extends _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)?
-        loaded,
-    TResult Function()? error,
+    TResult Function(SubSkillsList? subSkillsList)? loaded,
+    TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -646,7 +459,7 @@ class _$_Loading extends _Loading {
   }
 }
 
-abstract class _Loading extends MusterGetWorkflowState {
+abstract class _Loading extends SubSkillsBlocState {
   const factory _Loading() = _$_Loading;
   const _Loading._() : super._();
 }
@@ -656,14 +469,14 @@ abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow});
+  $Res call({SubSkillsList? subSkillsList});
 
-  $MusterWorkFlowModelCopyWith<$Res>? get musterWorkFlowModel;
+  $SubSkillsListCopyWith<$Res>? get subSkillsList;
 }
 
 /// @nodoc
 class __$$_LoadedCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Loaded>
+    extends _$SubSkillsBlocStateCopyWithImpl<$Res, _$_Loaded>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
@@ -671,31 +484,25 @@ class __$$_LoadedCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? musterWorkFlowModel = freezed,
-    Object? isInWorkflow = null,
+    Object? subSkillsList = freezed,
   }) {
     return _then(_$_Loaded(
-      musterWorkFlowModel: freezed == musterWorkFlowModel
-          ? _value.musterWorkFlowModel
-          : musterWorkFlowModel // ignore: cast_nullable_to_non_nullable
-              as MusterWorkFlowModel?,
-      isInWorkflow: null == isInWorkflow
-          ? _value.isInWorkflow
-          : isInWorkflow // ignore: cast_nullable_to_non_nullable
-              as bool,
+      freezed == subSkillsList
+          ? _value.subSkillsList
+          : subSkillsList // ignore: cast_nullable_to_non_nullable
+              as SubSkillsList?,
     ));
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $MusterWorkFlowModelCopyWith<$Res>? get musterWorkFlowModel {
-    if (_value.musterWorkFlowModel == null) {
+  $SubSkillsListCopyWith<$Res>? get subSkillsList {
+    if (_value.subSkillsList == null) {
       return null;
     }
 
-    return $MusterWorkFlowModelCopyWith<$Res>(_value.musterWorkFlowModel!,
-        (value) {
-      return _then(_value.copyWith(musterWorkFlowModel: value));
+    return $SubSkillsListCopyWith<$Res>(_value.subSkillsList!, (value) {
+      return _then(_value.copyWith(subSkillsList: value));
     });
   }
 }
@@ -703,18 +510,14 @@ class __$$_LoadedCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Loaded extends _Loaded {
-  const _$_Loaded({this.musterWorkFlowModel, this.isInWorkflow = false})
-      : super._();
+  const _$_Loaded(this.subSkillsList) : super._();
 
   @override
-  final MusterWorkFlowModel? musterWorkFlowModel;
-  @override
-  @JsonKey()
-  final bool isInWorkflow;
+  final SubSkillsList? subSkillsList;
 
   @override
   String toString() {
-    return 'MusterGetWorkflowState.loaded(musterWorkFlowModel: $musterWorkFlowModel, isInWorkflow: $isInWorkflow)';
+    return 'SubSkillsBlocState.loaded(subSkillsList: $subSkillsList)';
   }
 
   @override
@@ -722,15 +525,12 @@ class _$_Loaded extends _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Loaded &&
-            (identical(other.musterWorkFlowModel, musterWorkFlowModel) ||
-                other.musterWorkFlowModel == musterWorkFlowModel) &&
-            (identical(other.isInWorkflow, isInWorkflow) ||
-                other.isInWorkflow == isInWorkflow));
+            (identical(other.subSkillsList, subSkillsList) ||
+                other.subSkillsList == subSkillsList));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, musterWorkFlowModel, isInWorkflow);
+  int get hashCode => Object.hash(runtimeType, subSkillsList);
 
   @JsonKey(ignore: true)
   @override
@@ -743,12 +543,10 @@ class _$_Loaded extends _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)
-        loaded,
-    required TResult Function() error,
+    required TResult Function(SubSkillsList? subSkillsList) loaded,
+    required TResult Function(String? error) error,
   }) {
-    return loaded(musterWorkFlowModel, isInWorkflow);
+    return loaded(subSkillsList);
   }
 
   @override
@@ -756,12 +554,10 @@ class _$_Loaded extends _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)?
-        loaded,
-    TResult? Function()? error,
+    TResult? Function(SubSkillsList? subSkillsList)? loaded,
+    TResult? Function(String? error)? error,
   }) {
-    return loaded?.call(musterWorkFlowModel, isInWorkflow);
+    return loaded?.call(subSkillsList);
   }
 
   @override
@@ -769,14 +565,12 @@ class _$_Loaded extends _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)?
-        loaded,
-    TResult Function()? error,
+    TResult Function(SubSkillsList? subSkillsList)? loaded,
+    TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(musterWorkFlowModel, isInWorkflow);
+      return loaded(subSkillsList);
     }
     return orElse();
   }
@@ -819,14 +613,11 @@ class _$_Loaded extends _Loaded {
   }
 }
 
-abstract class _Loaded extends MusterGetWorkflowState {
-  const factory _Loaded(
-      {final MusterWorkFlowModel? musterWorkFlowModel,
-      final bool isInWorkflow}) = _$_Loaded;
+abstract class _Loaded extends SubSkillsBlocState {
+  const factory _Loaded(final SubSkillsList? subSkillsList) = _$_Loaded;
   const _Loaded._() : super._();
 
-  MusterWorkFlowModel? get musterWorkFlowModel;
-  bool get isInWorkflow;
+  SubSkillsList? get subSkillsList;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -836,46 +627,70 @@ abstract class _Loaded extends MusterGetWorkflowState {
 abstract class _$$_ErrorCopyWith<$Res> {
   factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
       __$$_ErrorCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String? error});
 }
 
 /// @nodoc
 class __$$_ErrorCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Error>
+    extends _$SubSkillsBlocStateCopyWithImpl<$Res, _$_Error>
     implements _$$_ErrorCopyWith<$Res> {
   __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? error = freezed,
+  }) {
+    return _then(_$_Error(
+      freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$_Error extends _Error {
-  const _$_Error() : super._();
+  const _$_Error(this.error) : super._();
+
+  @override
+  final String? error;
 
   @override
   String toString() {
-    return 'MusterGetWorkflowState.error()';
+    return 'SubSkillsBlocState.error(error: $error)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Error);
+        (other.runtimeType == runtimeType &&
+            other is _$_Error &&
+            (identical(other.error, error) || other.error == error));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)
-        loaded,
-    required TResult Function() error,
+    required TResult Function(SubSkillsList? subSkillsList) loaded,
+    required TResult Function(String? error) error,
   }) {
-    return error();
+    return error(this.error);
   }
 
   @override
@@ -883,12 +698,10 @@ class _$_Error extends _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)?
-        loaded,
-    TResult? Function()? error,
+    TResult? Function(SubSkillsList? subSkillsList)? loaded,
+    TResult? Function(String? error)? error,
   }) {
-    return error?.call();
+    return error?.call(this.error);
   }
 
   @override
@@ -896,14 +709,12 @@ class _$_Error extends _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow)?
-        loaded,
-    TResult Function()? error,
+    TResult Function(SubSkillsList? subSkillsList)? loaded,
+    TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (error != null) {
-      return error();
+      return error(this.error);
     }
     return orElse();
   }
@@ -946,7 +757,12 @@ class _$_Error extends _Error {
   }
 }
 
-abstract class _Error extends MusterGetWorkflowState {
-  const factory _Error() = _$_Error;
+abstract class _Error extends SubSkillsBlocState {
+  const factory _Error(final String? error) = _$_Error;
   const _Error._() : super._();
+
+  String? get error;
+  @JsonKey(ignore: true)
+  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+      throw _privateConstructorUsedError;
 }

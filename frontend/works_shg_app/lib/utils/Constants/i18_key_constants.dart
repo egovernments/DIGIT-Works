@@ -62,6 +62,7 @@ class Common {
   String get startDate => 'EVENTS_START_DATE_LABEL';
   String get endDate => 'EVENTS_END_DATE_LABEL';
   String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
+  String get selectAnOption => 'ES_SELECT_AN_OPTION';
 }
 
 class Home {
@@ -114,4 +115,6 @@ class AttendanceMgmt {
   String get attendeeDeEnrollFailed => 'ATTENDEE_DE_ENROLL_FAILED';
   String get attendeeDeEnrollSuccess => 'ATTENDEE_DE_ENROLL_SUCCESS';
   String get noMusterRollsFound => 'NO_MUSTER_ROLLS_FOUND';
+  String get skill => 'ATM_SKILLS';
+  String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
 }

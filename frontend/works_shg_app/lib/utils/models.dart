@@ -66,3 +66,14 @@ class MenuItemModel {
 
   MenuItemModel({this.name = 'SKill 1', this.code = ' SKILL1'});
 }
+
+class Skill {
+  final String code;
+  Skill({required this.code});
+}
+
+class SkillCategory {
+  final String code;
+
+  SkillCategory({required this.code});
+}
