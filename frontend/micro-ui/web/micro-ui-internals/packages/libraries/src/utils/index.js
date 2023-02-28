@@ -7,7 +7,7 @@ import * as pt from "./pt";
 import * as privacy from "./privacy";
 import PDFUtil, { downloadReceipt ,downloadPDFFromLink,downloadBill ,getFileUrl} from "./pdf";
 import getFileTypeFromFileStoreURL from "./fileType";
-
+import { getLoggedInUserDetails } from "./user";
 
 const GetParamFromUrl = (key, fallback, search) => {
   if (typeof window !== "undefined") {
@@ -308,5 +308,6 @@ export default {
   tlAccess,
   wsAccess,
   swAccess,
+  getLoggedInUserDetails,
   ...privacy
 };
