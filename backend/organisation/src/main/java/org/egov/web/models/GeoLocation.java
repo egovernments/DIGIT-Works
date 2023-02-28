@@ -1,0 +1,29 @@
+package org.egov.web.models;
+
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+
+import javax.validation.Valid;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class GeoLocation {
+
+    @JsonProperty("id")
+    @Valid
+    private String id = null;
+
+    @JsonProperty("latitude")
+    private Double latitude = null;
+
+    @JsonProperty("longitude")
+    private Double longitude = null;
+
+    @JsonProperty("additionDetails")
+    private Object additionDetails = null;
+
+}

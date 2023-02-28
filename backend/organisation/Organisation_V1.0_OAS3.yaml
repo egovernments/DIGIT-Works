@@ -176,6 +176,10 @@ components:
           type: string
           minLength: 2
           maxLength: 64
+        wfStatus:
+          type: string
+          minLength: 2
+          maxLength: 64
         externalRefNumber:
           description: ID or code assigned to vendor by department
           type: string
@@ -910,5 +914,9 @@ components:
           type: array
           items:
             type: string
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
       required:
       - action
