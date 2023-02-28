@@ -129,6 +129,8 @@ export const FormComposer = (props) => {
       disableFormValidation = sectionFormCategory !== selectedFormCategory ? true : false;
     }
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
+    const customValidation = config?.populators?.validation?.customValidation;
+    const customRules = customValidation ? {validate : customValidation} : {};
     const customProps = config?.customProps;
     switch (type) {
       case "date":
@@ -160,7 +162,7 @@ export const FormComposer = (props) => {
                 />
               )}
               name={populators.name}
-              rules={!disableFormValidation ? { required: isMandatory, ...populators.validation } : {}}
+              rules={!disableFormValidation ? { required: isMandatory, ...populators.validation, ...customRules } : {}}
               control={control}
             />
           </div>

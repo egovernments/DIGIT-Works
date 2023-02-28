@@ -241,13 +241,13 @@
                       type: "date",
                       disable: false,
                       preProcess : {
-                        updateDependent : [""]
+                        updateDependent : ["populators.validation.customValidation"]
                       },
                       populators: { 
                         name: "noSubProject_endDate", 
                         error : ("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), 
                         validation : {
-                          validate : () => true
+                          customValidation : true
                         }
                       }
                     },
