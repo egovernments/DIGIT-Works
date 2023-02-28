@@ -102,7 +102,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
           },
           {
             key : "noSubProject_endDate",
-            value : !isEndDateValid ? () => isEndDateValid : false
+            value : !isEndDateValid ? (() => isEndDateValid) : (()=>{})
           }
         ]
       }),
@@ -193,8 +193,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
           trigger("noSubProject_endDate", {shouldFocus : true});
         }
         if (difference?.noSubProject_endDate){
-          setIsEndDateValid((new Date(sessionFormData?.noSubProject_startDate).getTime()) < (new Date(formData?.noSubProject_endDate).getTime()));
-          trigger("noSubProject_endDate", {shouldFocus : true});
+          setIsEndDateValid(()=>(new Date(sessionFormData?.noSubProject_startDate).getTime()) < (new Date(formData?.noSubProject_endDate).getTime()));
         }
       }
     }
