@@ -44,26 +44,31 @@ public class ContractService {
     @Autowired
     private LineItemsRepository lineItemsRepository;
 
+    @Autowired
+    private WorkflowService workflowService;
+
     public ContractResponse createContract(ContractRequest contractRequest) {
         // Validate contract request
         contractServiceValidator.validateCreateContractRequest(contractRequest);
         contractEnrichment.enrichContractOnCreate(contractRequest);
+        workflowService.updateWorkflowStatus(contractRequest);
         producer.push(contractServiceConfiguration.getCreateContractTopic(), contractRequest);
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractRequest.getRequestInfo(), true);
-        ContractResponse attendanceLogResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(Collections.singletonList(contractRequest.getContract())).build();
-        return attendanceLogResponse;
+        ContractResponse contractResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(Collections.singletonList(contractRequest.getContract())).build();
+        return contractResponse;
     }
 
     public ContractResponse updateContract(ContractRequest contractRequest) {
         // Validate contract request
         contractServiceValidator.validateUpdateContractRequest(contractRequest);
         contractEnrichment.enrichContractOnUpdate(contractRequest);
+        workflowService.updateWorkflowStatus(contractRequest);
         producer.push(contractServiceConfiguration.getUpdateContractTopic(), contractRequest);
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractRequest.getRequestInfo(), true);
-        ContractResponse attendanceLogResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(Collections.singletonList(contractRequest.getContract())).build();
-        return attendanceLogResponse;
+        ContractResponse contractResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(Collections.singletonList(contractRequest.getContract())).build();
+        return contractResponse;
     }
 
 

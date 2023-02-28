@@ -1,9 +1,11 @@
 package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.ProcessInstance;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -99,6 +101,10 @@ public class Contract {
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
+
+    @JsonIgnore
+//    @JsonProperty("processInstance")
+    private ProcessInstance processInstance = null;
 
     public Contract addLineItemsItem(LineItems lineItemsItem) {
         if (this.lineItems == null) {
