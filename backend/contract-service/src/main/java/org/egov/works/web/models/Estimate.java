@@ -29,6 +29,10 @@ public class Estimate {
 
     @JsonProperty("tenantId")
     private String tenantId = null;
+
+    @JsonProperty("status")
+    private Status status = null;
+
     @JsonProperty("estimateDetails")
     @Valid
     private List<EstimateDetail> estimateDetails = new ArrayList<>();

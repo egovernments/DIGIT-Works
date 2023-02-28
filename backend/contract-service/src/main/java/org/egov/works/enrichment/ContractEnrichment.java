@@ -4,18 +4,21 @@ import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.util.ContractServiceUtil;
-import org.egov.works.util.EstimateServiceUtil;
-import org.egov.works.util.IdgenUtil;
+import org.egov.works.util.*;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import org.egov.works.web.models.ContractCriteria;
 import org.egov.works.web.models.Pagination;
+
+import static org.egov.works.util.ContractServiceConstants.COMMON_ACTIVE_WITH_WORK_ORDER_VALUE;
+import static org.egov.works.util.ContractServiceConstants.JSON_PATH_FOR_OVER_HEADS_VERIFICATION;
 
 @Component
 @Slf4j
@@ -33,13 +36,20 @@ public class ContractEnrichment {
     @Autowired
     private EstimateServiceUtil estimateServiceUtil;
 
+    @Autowired
+    private MDMSUtils mdmsUtils;
+
+    @Autowired
+    private MDMSDataParser mdmsDataParser;
+
+
     public void enrichContractOnCreate(ContractRequest contractRequest){
         // Enrich LineItems
         enrichContractLineItems(contractRequest);
         // Enrich Contract Number
         enrichContractNumber(contractRequest);
         // Enrich UUID and AuditDetails
-        enrichIdsAndAuditDetailsOnCreate(contractRequest);
+        enrichIdsAgreementDateAndAuditDetailsOnCreate(contractRequest);
 
     }
 
@@ -81,7 +91,8 @@ public class ContractEnrichment {
         List<LineItems> providedLineItems = contract.getLineItems();
 
         Set<String> providedEstimateIds = providedLineItems.stream().map(e -> e.getEstimateId()).collect(Collectors.toSet());
-        List<Estimate> fetchedEstimates = estimateServiceUtil.fetchEstimates(requestInfo,tenantId,providedEstimateIds);
+        List<Estimate> fetchedEstimates = fetchEstimates(requestInfo,tenantId,providedEstimateIds);
+        List<Object> objects = fetchAllowedOverheardsFromMDMS(requestInfo,tenantId);
 
         Map<String, List<LineItems>> providedLineItemsListMap = providedLineItems.stream().collect(Collectors.groupingBy(LineItems::getEstimateId));
         Map<String, List<Estimate>> fetchedEstimateListMap = fetchedEstimates.stream().collect(Collectors.groupingBy(Estimate::getId));
@@ -98,8 +109,10 @@ public class ContractEnrichment {
                                 .estimateLineItemId(fetchedEstimateDetail.getId())
                                 .noOfunit(fetchedEstimateDetail.getNoOfunit())
                                 .unitRate(fetchedEstimateDetail.getUnitRate())
-                                .tenantId(providedLineItem.getTenantId())
-                                .status(Status.ACTIVE)
+                                .name(fetchedEstimateDetail.getName())
+                                .category(fetchedEstimateDetail.getCategory())
+                                .tenantId(fetchedEstimate.getTenantId())
+                                .status(fetchedEstimate.getStatus())
                                 .additionalDetails(fetchedEstimateDetail.getAdditionalDetails())
                                 .build();
 
@@ -114,21 +127,45 @@ public class ContractEnrichment {
                                     .build();
                             lineItem.addAmountBreakupsItem(amountBreakup);
                         }
-                        refinedLineItems.add(lineItem);
+
+                        //refinedLineItems.add(lineItem);
+                        addLineItem(refinedLineItems,lineItem,objects);
                     }
                 } else {
-                    refinedLineItems.add(providedLineItem);
+                    addLineItem(refinedLineItems,providedLineItem,objects);
+                    //refinedLineItems.add(providedLineItem);
                 }
             }
         }
 
         contract.getLineItems().clear();
         contract.setLineItems(refinedLineItems);
+        log.info("LintItem enrichment is done");
     }
 
-    private void enrichIdsAndAuditDetailsOnCreate(ContractRequest contractRequest) {
+    private List<Estimate> fetchEstimates(RequestInfo requestInfo, String tenantId, Set<String> providedEstimateIds) {
+        return estimateServiceUtil.fetchEstimates(requestInfo,tenantId,providedEstimateIds);
+    }
+
+    private List<Object> fetchAllowedOverheardsFromMDMS(RequestInfo requestInfo, String tenantId) {
+        Object mdmsForEnrichment = mdmsUtils.fetchMDMSForEnrichment(requestInfo, tenantId.split("\\.")[0]);
+        return mdmsDataParser.parseMDMSData(mdmsForEnrichment, JSON_PATH_FOR_OVER_HEADS_VERIFICATION);
+    }
+
+    private void addLineItem(List<LineItems> refinedLineItems,LineItems lineItem,List<Object> objects){
+        if(!"OVERHEAD".equalsIgnoreCase(lineItem.getCategory()) || ("OVERHEAD".equalsIgnoreCase(lineItem.getCategory()) && objects.contains(lineItem.getName()))){
+            refinedLineItems.add(lineItem);
+        }
+    }
+
+    private void enrichIdsAgreementDateAndAuditDetailsOnCreate(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
         contract.setId(String.valueOf(UUID.randomUUID()));
+        BigDecimal agreementDate = contract.getAgreementDate();
+        if(agreementDate == null){
+            agreementDate = BigDecimal.valueOf(Instant.now().toEpochMilli());
+            contract.setAgreementDate(agreementDate);
+        }
         AuditDetails auditDetails = contractServiceUtil.getAuditDetails(contractRequest.getRequestInfo().getUserInfo().getUuid(), null, true);
         contract.setAuditDetails(auditDetails);
         for(LineItems lineItem : contract.getLineItems()){
@@ -143,6 +180,8 @@ public class ContractEnrichment {
                 document.setContractId(contract.getId());
             }
         }
+
+        log.info("Contract id, agreementDate, audit details enrichment is done ["+contract.getId()+"]");
     }
 
     private void enrichContractNumber(ContractRequest contractRequest) {
@@ -150,7 +189,9 @@ public class ContractEnrichment {
         Contract contract = contractRequest.getContract();
         String rootTenantId = contract.getTenantId().split("\\.")[0];
         List<String> idList = idgenUtil.getIdList(requestInfo, rootTenantId, config.getIdgenContractNumberName(), "", 1);
-        contract.setContractNumber(idList.get(0));
+        String generatedContractNumber = idList.get(0);
+        contract.setContractNumber(generatedContractNumber);
+        log.info("Contract Number enrichment is done ["+generatedContractNumber+"]");
     }
     public void enrichSearchContractRequest(ContractCriteria contractCriteria) {
 

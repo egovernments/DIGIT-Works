@@ -39,8 +39,8 @@ public class LineItemsRowMapper implements ResultSetExtractor<List<LineItems>> {
             String estimateLineItemId = rs.getString("estimateLineItemId");
             String contractId = rs.getString("contractId");
             String tenantId = rs.getString("tenantId");
-            BigDecimal unitRate = rs.getBigDecimal("unitRate");
-            BigDecimal noOfUnit = rs.getBigDecimal("noOfUnit");
+            Double unitRate = rs.getDouble("unitRate");
+            Double noOfUnit = rs.getDouble("noOfUnit");
             String status = rs.getString("status");
             String createdby = rs.getString("createdby");
             String lastmodifiedby = rs.getString("lastModifiedBy");

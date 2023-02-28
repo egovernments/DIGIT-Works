@@ -26,10 +26,16 @@ public class EstimateDetail {
     private String id = null;
 
     @JsonProperty("unitRate")
-    private BigDecimal unitRate = null;
+    private Double unitRate = null;
 
     @JsonProperty("noOfunit")
-    private BigDecimal noOfunit = null;
+    private Double noOfunit = null;
+
+    @JsonProperty("category")
+    private String category = null;
+
+    @JsonProperty("name")
+    private String name = null;
 
     @JsonProperty("amountDetail")
     @Valid
