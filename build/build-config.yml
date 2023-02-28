@@ -65,6 +65,12 @@ config:
       - work-dir: "backend/project-management-system/src/main/resources/db"
         image-name: "project-management-system-db"
 
+  - name: "builds/digit-works/backend/works-management-service"
+    build:
+      - work-dir: "backend/works-management-service"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "works-management-service"
+
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
     build:
