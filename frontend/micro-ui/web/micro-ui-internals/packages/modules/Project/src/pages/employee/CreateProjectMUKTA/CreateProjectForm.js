@@ -1,5 +1,5 @@
 import { FormComposer, Header, Toast } from "@egovernments/digit-ui-react-components";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
 import _ from "lodash";
@@ -69,44 +69,44 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
       });
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
     
-    let config =  Digit.Utils.preProcessMDMSConfig(t, createProjectConfigMUKTA, {
-      updateDependent : [
-        {
-          key : 'withSubProject_project_subScheme',
-          value : withSubProjectSubSchemeOptions
-        },
-        {
-          key : 'noSubProject_subScheme',
-          value : noSubProjectSubSchemeOptions
-        },
-        {
-          key : 'noSubProject_subTypeOfProject',
-          value : subTypeOfProjectOptions
-        },
-        {
-          key : 'noSubProject_ulb',
-          value : ULBOptions
-        },
-        {
-          key : 'noSubProject_ward',
-          value : wardsAndLocalities?.wards
-        },
-        {
-          key : 'noSubProject_locality',
-          value : filteredLocalities
-        },
-        {
-          key : "citizenInfoLabel",
-          value : showInfoLabel ? 'project-banner' : 'project-banner display-none'
-        },
-        {
-          key : "noSubProject_endDate",
-          value : () => isEndDateValid
-        }
-      ]
-    });
-    console.log(config);
-    console.log((new Date(sessionFormData?.noSubProject_startDate).getTime()) < (new Date(sessionFormData?.noSubProject_endDate).getTime()));
+    const config =  useMemo(
+      () => Digit.Utils.preProcessMDMSConfig(t, createProjectConfigMUKTA, {
+        updateDependent : [
+          {
+            key : 'withSubProject_project_subScheme',
+            value : withSubProjectSubSchemeOptions
+          },
+          {
+            key : 'noSubProject_subScheme',
+            value : noSubProjectSubSchemeOptions
+          },
+          {
+            key : 'noSubProject_subTypeOfProject',
+            value : subTypeOfProjectOptions
+          },
+          {
+            key : 'noSubProject_ulb',
+            value : ULBOptions
+          },
+          {
+            key : 'noSubProject_ward',
+            value : wardsAndLocalities?.wards
+          },
+          {
+            key : 'noSubProject_locality',
+            value : filteredLocalities
+          },
+          {
+            key : "citizenInfoLabel",
+            value : showInfoLabel ? 'project-banner' : 'project-banner display-none'
+          },
+          {
+            key : "noSubProject_endDate",
+            value : () => isEndDateValid
+          }
+        ]
+      }),
+      [withSubProjectSubSchemeOptions, noSubProjectSubSchemeOptions, subTypeOfProjectOptions, ULBOptions, wardsAndLocalities, filteredLocalities, showInfoLabel, isEndDateValid]);
 
     const createSubTypesMDMSObject = (subTypesData) => {
       let mdmsData = [];
