@@ -58,6 +58,51 @@ public class ContractEnrichment {
         enrichContractLineItems(contractRequest);
         // Enrich UUID and AuditDetails
         enrichIdsAndAuditDetailsOnUpdate(contractRequest);
+        //Enrich contract issue date on workflow approve action
+        enrichIssueDate(contractRequest);
+        //mark contract and its components as INACTIVE when workflow has REJECT action
+        enrichContractComponents(contractRequest);
+    }
+
+    private void enrichContractComponents(ContractRequest contractRequest){
+        Workflow workflow=contractRequest.getWorkflow();
+
+        if(workflow.getAction().equalsIgnoreCase("REJECT")){
+            markContractAndDocumentsAsInactive(contractRequest);
+            markLineItemsAndAmountBreakupsAsInactive(contractRequest);
+        }
+    }
+
+    private void markContractAndDocumentsAsInactive(ContractRequest contractRequest){
+        Contract contract=contractRequest.getContract();
+        List<Document> documents=contractRequest.getContract().getDocuments();
+
+        contract.setStatus(Status.INACTIVE);
+        for(Document document:documents){
+            document.setStatus(Status.INACTIVE);
+        }
+    }
+
+    private void markLineItemsAndAmountBreakupsAsInactive(ContractRequest contractRequest){
+        List<LineItems> lineItems=contractRequest.getContract().getLineItems();
+
+        for(LineItems lineItem:lineItems){
+            lineItem.setStatus(Status.INACTIVE);
+            List<AmountBreakup> amountBreakups=lineItem.getAmountBreakups();
+            for(AmountBreakup amountBreakup:amountBreakups){
+                amountBreakup.setStatus(Status.INACTIVE);
+            }
+        }
+    }
+
+    private void enrichIssueDate(ContractRequest contractRequest){
+        Workflow workflow=contractRequest.getWorkflow();
+        Contract contract=contractRequest.getContract();
+
+        if(workflow.getAction().equalsIgnoreCase("APPROVE")){
+            long currentTime=System.currentTimeMillis();
+            contract.setIssueDate(new BigDecimal(currentTime));
+        }
     }
 
     private void enrichIdsAndAuditDetailsOnUpdate(ContractRequest contractRequest) {

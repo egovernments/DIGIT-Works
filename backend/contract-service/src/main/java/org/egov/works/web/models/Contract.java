@@ -1,7 +1,9 @@
 package org.egov.works.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.ProcessInstance;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -97,6 +99,10 @@ public class Contract {
     @JsonProperty("documents")
     @Valid
     private List<Document> documents = null;
+
+    @JsonIgnore
+//    @JsonProperty("processInstance")
+    private ProcessInstance processInstance = null;
 
     @JsonProperty("auditDetails")
     @Valid
