@@ -1498,6 +1498,11 @@ definitions:
         description: Street Name
         minLength: 2
         maxLength: 256
+      boundaryType:
+        type: string
+        description: Boundary Type
+        minLength: 2
+        maxLength: 64
       boundary:
         type: string
         description: Boundary code

@@ -62,6 +62,7 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
         String address_pinCode = rs.getString("address_pinCode");
         String address_buildingName = rs.getString("address_buildingName");
         String address_street = rs.getString("address_street");
+        String address_boundaryType = rs.getString("address_boundaryType");
         String address_boundary = rs.getString("address_boundary");
         String address_createdBy = rs.getString("address_createdBy");
         String address_lastModifiedBy = rs.getString("address_lastModifiedBy");
@@ -87,6 +88,7 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
                 .pincode(address_pinCode)
                 .buildingName(address_buildingName)
                 .street(address_street)
+                .boundaryType(address_boundaryType)
                 .boundary(address_boundary)
                 .auditDetails(addresstAuditDetails)
                 .build();

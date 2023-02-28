@@ -36,35 +36,45 @@ public class BoundaryUtil {
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-    public void validateBoundaryDetails(List<String> locations, String tenantId, RequestInfo requestInfo, String hierarchyTypeCode) {
-        StringBuilder uri = new StringBuilder(locationHost);
-        uri.append(locationContextPath).append(locationEndpoint);
-        uri.append("?").append("tenantId=").append(tenantId);
+    public void validateBoundaryDetails(Map<String, List<String>> locations, String tenantId, RequestInfo requestInfo, String hierarchyTypeCode) {
+        for (Map.Entry<String, List<String>> entry : locations.entrySet()) {
+            String boundaryType = entry.getKey();
+            List<String> boundaries = entry.getValue();
 
-        if (hierarchyTypeCode != null)
-            uri.append("&").append("hierarchyTypeCode=").append(hierarchyTypeCode);
+            StringBuilder uri = new StringBuilder(locationHost);
+            uri.append(locationContextPath).append(locationEndpoint);
+            uri.append("?").append("tenantId=").append(tenantId);
 
-        uri.append("&").append("codes=")
-                .append(StringUtils.join(locations, ','));
+            if (hierarchyTypeCode != null)
+                uri.append("&").append("hierarchyTypeCode=").append(hierarchyTypeCode);
 
-        Optional<Object> response = Optional.ofNullable(serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
+            uri.append("&").append("boundaryType=").append(boundaryType).append("&").append("codes=")
+                    .append(StringUtils.join(boundaries, ','));
 
-        if (response.isPresent()) {
-            LinkedHashMap responseMap = (LinkedHashMap) response.get();
-            if (CollectionUtils.isEmpty(responseMap))
-                throw new CustomException("BOUNDARY ERROR", "The response from location service is empty or null");
-            String jsonString = new JSONObject(responseMap).toString();
+            Optional<Object> response = Optional.ofNullable(serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
 
-            for (String location: locations) {
+            if (response.isPresent()) {
+                LinkedHashMap responseMap = (LinkedHashMap) response.get();
+                if (CollectionUtils.isEmpty(responseMap))
+                    throw new CustomException("BOUNDARY ERROR", "The response from location service is empty or null");
+                String jsonString = new JSONObject(responseMap).toString();
 
-                int index = jsonString.indexOf(location);
-                if (index == -1 || index < 10 || !jsonString.substring(index - 7, index - 3).equals(CODE)) {
-                    log.error("The boundary data for the code " + location + " is not available");
-                    throw new CustomException("INVALID_BOUNDARY_DATA", "The boundary data for the code " + location + " is not available");
+
+                for (String boundary: boundaries) {
+                    String jsonpath = "$..boundary[?(@.code==\"{}\")]";
+                    jsonpath = jsonpath.replace("{}", boundary);
+                    DocumentContext context = JsonPath.parse(jsonString);
+                    Object boundaryObject = context.read(jsonpath);
+
+                    if (!(boundaryObject instanceof ArrayList) || CollectionUtils.isEmpty((ArrayList) boundaryObject)) {
+                        throw new CustomException("INVALID_BOUNDARY_DATA", "The boundary data for the code "
+                                + boundary + " is not available");
+                    }
+
                 }
-
             }
         }
+
     }
 
 }
