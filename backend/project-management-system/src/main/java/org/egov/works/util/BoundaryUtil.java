@@ -33,6 +33,8 @@ public class BoundaryUtil {
     @Value("${egov.location.endpoint}")
     private String locationEndpoint;
 
+    private String BOUNDARY_CODE_PATH = "$..boundary[?(@.code==\"{}\")]";
+
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
@@ -63,8 +65,7 @@ public class BoundaryUtil {
                 String jsonString = new JSONObject(responseMap).toString();
 
                 for (String boundary: boundaries) {
-                    String jsonpath = "$..boundary[?(@.code==\"{}\")]";
-                    jsonpath = jsonpath.replace("{}", boundary);
+                    String jsonpath = BOUNDARY_CODE_PATH.replace("{}", boundary);
                     DocumentContext context = JsonPath.parse(jsonString);
                     Object boundaryObject = context.read(jsonpath);
 
@@ -74,6 +75,9 @@ public class BoundaryUtil {
                                 + boundary + " is not available");
                     }
                 }
+            } else {
+                log.error("Error in fetching data from egov-location for boundary validation");
+                throw new CustomException("EGOV_LOCATION_SERVICE_FAILED", "Error in fetching data from egov-location");
             }
             log.info("The boundaries " + StringUtils.join(boundaries, ',') + " validated for boundary type " + boundaryType + " with tenantId " + tenantId);
         }

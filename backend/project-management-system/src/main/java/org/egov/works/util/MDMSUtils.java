@@ -67,11 +67,11 @@ public class MDMSUtils {
         MasterDetail projectTypeMasterDetails = MasterDetail.builder().name(MASTER_PROJECTTYPE)
                 .filter(filterActiveTrue)
                 .build();
-        MasterDetail NatureOfWorkMasterDetails = MasterDetail.builder().name(MASTER_NATUREOFWORK)
+        MasterDetail natureOfWorkMasterDetails = MasterDetail.builder().name(MASTER_NATUREOFWORK)
                 .filter(filterActiveTrue)
                 .build();
         projectMDMSMasterDetails.add(projectTypeMasterDetails);
-        projectMDMSMasterDetails.add(NatureOfWorkMasterDetails);
+        projectMDMSMasterDetails.add(natureOfWorkMasterDetails);
 
 
         ModuleDetail projectMDMSModuleDetail = ModuleDetail.builder().masterDetails(projectMDMSMasterDetails)
