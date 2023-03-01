@@ -4,7 +4,7 @@ class TrackAttendanceTableData {
   String? name;
   String? aadhaar;
   String? individualId;
-  String? skillSet;
+  String? skill;
   void Function()? onTap;
   String? monEntryId;
   String? monExitId;

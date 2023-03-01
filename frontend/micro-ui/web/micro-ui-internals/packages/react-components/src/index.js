@@ -201,6 +201,7 @@ import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
 import { FormComposer } from "./hoc/FormComposer";
+
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
@@ -241,7 +242,8 @@ import { ViewImages } from "./atoms/ViewImages";
 import InboxSearchComposer from "./hoc/InboxSearchComposer";
 import InboxSearchLinks from "./atoms/InboxSearchLinks";
 import UploadFileComposer from "./hoc/UploadFileComposer";
-
+import WorkflowTimeline from "./atoms/WorkflowTimeline";
+import WorkflowActions from "./atoms/WorkflowActions";
 export {
   ViewImages,
   Phone,
@@ -393,6 +395,8 @@ export {
   CustomDropdown,
   // hoc
   FormComposer,
+  WorkflowTimeline,
+  WorkflowActions,
   ResponseComposer,
   PitDimension,
   Modal,

@@ -66,7 +66,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
       const createSubTypesMDMSObject = (subTypesData) => {
         let mdmsData = [];
         for(let subType of subTypesData?.projectSubType) {
-          mdmsData.push({code : subType, name : `ES_COMMON_${subType}`});
+          mdmsData.push({code : subType, name : `COMMON_MASTERS_${subType}`});
         }
         return mdmsData;
       }

@@ -11,6 +11,7 @@ public class EstimateServiceConstant {
     public static final String MASTER_DEPARTMENT = "Department";
     public static final String MASTER_TENANTS = "tenants";
     public static final String MASTER_SOR_ID = "SorId";
+    public static final String MASTER_CATEGORY = "Category";
 
 
     //work flow
