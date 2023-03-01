@@ -175,7 +175,7 @@
                         mdmsConfig: {
                           masterName: "ProjectType",
                           moduleName: "works",
-                          localePrefix: "ES_COMMON",
+                          localePrefix: "COMMON_MASTERS",
                         },
                       },
                     },
@@ -217,7 +217,7 @@
                         mdmsConfig: {
                           masterName: "NatureOfWork",
                           moduleName: "works",
-                          localePrefix: "ES_COMMON",
+                          localePrefix: "COMMON_MASTERS",
                         },
                       },
                     },
@@ -256,7 +256,7 @@
                       isMandatory: false,
                       key: "noSubProject_recommendedModeOfEntrustment",
                       type: "radioordropdown",
-                      label: "PDF_STATIC_LABEL_ESTIMATE_ENTRUSTMENT",
+                      label: "ES_COMMON_MODE_OF_ENTRUSTMENT",
                       disable: false,
                       populators: {
                         name: "noSubProject_recommendedModeOfEntrustment",
@@ -269,7 +269,7 @@
                         mdmsConfig: {
                           masterName: "EntrustmentMode",
                           moduleName: "works",
-                          localePrefix: "ES_COMMON",
+                          localePrefix: "COMMON_MASTERS",
                         },
                       },
                     },
@@ -278,7 +278,7 @@
                 {
                   navLink:"Project_Details",
                   sectionFormCategory : "noSubProject",
-                  head: ("PDF_STATIC_LABEL_ESTIMATE_LOC_DETAILS"),
+                  head: ("ES_COMMON_LOCATION_DETAILS"),
                   body: [
                     {
                       inline: true,

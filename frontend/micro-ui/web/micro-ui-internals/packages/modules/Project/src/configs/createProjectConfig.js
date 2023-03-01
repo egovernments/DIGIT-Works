@@ -242,7 +242,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
             isMandatory: false,
             key: "noSubProject_recommendedModeOfEntrustment",
             type: "radioordropdown",
-            label: "PDF_STATIC_LABEL_ESTIMATE_ENTRUSTMENT",
+            label: "ES_COMMON_MODE_OF_ENTRUSTMENT",
             disable: false,
             populators: {
               name: "noSubProject_recommendedModeOfEntrustment",
@@ -264,7 +264,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
       {
         navLink:"Project_Details",
         sectionFormCategory : "noSubProject",
-        head: t("PDF_STATIC_LABEL_ESTIMATE_LOC_DETAILS"),
+        head: t("ES_COMMON_LOCATION_DETAILS"),
         body: [
           {
             inline: true,

@@ -87,7 +87,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 {
                 select: (data) => {
                     const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
-                    return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
+                    return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
                 },
                 enabled: options?.mdmsConfig ? true : false,
                 }
@@ -233,7 +233,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                     mdmsConfig: {
                                         masterName: "ProjectType",
                                         moduleName: "works",
-                                        localePrefix: "ES_COMMON",
+                                        localePrefix: "COMMON_MASTERS",
                                 }})
                             )}
                       />
@@ -264,7 +264,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                 mdmsConfig: {
                                     masterName: "NatureOfWork",
                                     moduleName: "works",
-                                    localePrefix: "ES_COMMON",
+                                    localePrefix: "COMMON_MASTERS",
                             }})
                         )}
                       />
@@ -306,7 +306,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                 mdmsConfig: {
                                     masterName: "EntrustmentMode",
                                     moduleName: "works",
-                                    localePrefix: "ES_COMMON",
+                                    localePrefix: "COMMON_MASTERS",
                             }})
                         )}
                       />
