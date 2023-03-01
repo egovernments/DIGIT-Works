@@ -156,6 +156,13 @@
               "roles": [
                 "CBO_ADMIN"
               ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "CBO_ADMIN"
+              ]
             }
           ]
         },

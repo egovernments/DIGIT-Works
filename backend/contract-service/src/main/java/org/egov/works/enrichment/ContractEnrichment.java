@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.egov.works.web.models.ContractCriteria;
@@ -57,8 +58,8 @@ public class ContractEnrichment {
         enrichContractLineItems(contractRequest);
         // Enrich UUID and AuditDetails
         enrichIdsAndAuditDetailsOnUpdate(contractRequest);
-        //Enrich contract issue date on workflow approve action
-        enrichIssueDate(contractRequest);
+        //Enrich contract issue date on workflow approve action and start date and end date on workflow accept action
+        enrichContractDates(contractRequest);
         //mark contract and its components as INACTIVE when workflow has REJECT action
         enrichContractComponents(contractRequest);
     }
@@ -67,6 +68,7 @@ public class ContractEnrichment {
         Workflow workflow=contractRequest.getWorkflow();
 
         if(workflow.getAction().equalsIgnoreCase("REJECT")){
+            log.info("Enriching contract components as INACTIVE on workflow 'REJECT' action");
             markContractAndDocumentsAsInactive(contractRequest);
             markLineItemsAndAmountBreakupsAsInactive(contractRequest);
         }
@@ -94,13 +96,24 @@ public class ContractEnrichment {
         }
     }
 
-    private void enrichIssueDate(ContractRequest contractRequest){
+    private void enrichContractDates(ContractRequest contractRequest){
         Workflow workflow=contractRequest.getWorkflow();
         Contract contract=contractRequest.getContract();
 
         if(workflow.getAction().equalsIgnoreCase("APPROVE")){
+            log.info("Enriching contract issueDate on workflow 'APPROVE' action");
             long currentTime=System.currentTimeMillis();
             contract.setIssueDate(new BigDecimal(currentTime));
+        }
+
+        if(workflow.getAction().equalsIgnoreCase("ACCEPT")){
+            log.info("Enriching contract startDate endDate on workflow 'ACCEPT' action");
+            long currentTime=System.currentTimeMillis();
+            //covert days to millisec and add to start date for end date
+            long completionDays=TimeUnit.DAYS.toMillis(contract.getCompletionPeriod());
+            long endDate=currentTime+TimeUnit.DAYS.toMillis(contract.getCompletionPeriod());
+            contract.setStartDate(new BigDecimal(currentTime));
+            contract.setEndDate(new BigDecimal(endDate));
         }
     }
 
