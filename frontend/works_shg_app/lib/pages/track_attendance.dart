@@ -199,7 +199,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                   Container(margin: const EdgeInsets.all(8.0),
                                                       child: TextFormField(
                                                         controller: searchController,
-                                                        autofocus: true,
+                                                        autofocus: false,
                                                         decoration: InputDecoration(
                                                           hintText: AppLocalizations.of(context)
                                                               .translate(

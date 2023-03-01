@@ -235,7 +235,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                         child: TextFormField(
                                                           controller:
                                                               searchController,
-                                                          autofocus: true,
+                                                          autofocus: false,
                                                           decoration:
                                                               InputDecoration(
                                                             hintText: AppLocalizations
