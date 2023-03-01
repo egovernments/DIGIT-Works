@@ -36,7 +36,7 @@ const CreateEstimate = ({ EstimateSession }) => {
     }
 
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
-    const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
+    const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
     const cardState = {
         "title": " ",
         "asSectionHeader": true,

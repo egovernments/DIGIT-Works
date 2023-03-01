@@ -1,5 +1,6 @@
 import { useInitStore } from "./store";
 import useWorkflowDetails from "./workflow";
+import useWorkflowDetailsWorks from "./workflowWorks";
 import useSessionStorage from "./useSessionStorage";
 import useQueryParams from "./useQueryParams";
 import useDocumentSearch from "./useDocumentSearch";
@@ -95,7 +96,7 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useSearchWORKS from "./works/useSearchWORKS";
 import useSearchApprovedEstimates from "./works/useSearchApprovedEstimates";
 import useViewEstimateDetails from "./works/useViewEstimateDetails";
-import useViewProjectDetailsInEstimate from './works/useViewProjectDetailsInEstimate'
+import useViewProjectDetails from './works/useViewProjectDetails'
 import useViewProjectClosureDetails from "./works/useViewProjectClosureDetails";
 import useViewProjectClosureDetailsBills from "./works/useViewProjectClosureBills";
 import useViewProjectClosureDetailsClosureChecklist from "./works/useViewProjectClosureDetailsClosureChecklist";
@@ -105,7 +106,7 @@ import useCreateLOI from "./works/useCreateLOI";
 import useEstimateSearch from "./works/useSearch";
 import useCreateEstimate from "./works/useCreateEstimate";
 import useCreateEstimateNew from "./works/useCreateEstimateNew";
-import useSearchEstimate from "./works/userSearchEstimate";
+import useSearchEstimate from "./works/useSearchEstimate";
 import useApplicationActionsLOI from "./works/useApplicationActions";
 import useApplicationActionsEstimate from "./works/useUpdateEstimate";
 import useUpdateEstimate from "./works/useUpdateEstimate";
@@ -123,7 +124,7 @@ import useCreateProject from "./works/useCreateProject";
 
 const works = {
   useViewEstimateDetails,
-  useViewProjectDetailsInEstimate,
+  useViewProjectDetails,
   useViewProjectClosureDetails,
   useViewProjectClosureDetailsBills,
   useViewProjectClosureDetailsKickoffChecklist,
@@ -237,6 +238,7 @@ const Hooks = {
   useFetchBillsForBuissnessService,
   useGetPaymentRulesForBusinessServices,
   useWorkflowDetails,
+  useWorkflowDetailsWorks,
   useInitStore,
   useClickOutside,
   useUserSearch,

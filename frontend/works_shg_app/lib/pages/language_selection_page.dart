@@ -13,31 +13,45 @@ import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/localization/localization.dart';
 import '../router/app_router.dart';
 
-class LanguageSelectionPage extends StatelessWidget {
+class LanguageSelectionPage extends StatefulWidget {
   const LanguageSelectionPage({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _LanguageSelectionPage();
+  }
+}
+
+class _LanguageSelectionPage extends State<LanguageSelectionPage> {
+  List<DigitRowCardModel>? digitRowCardItems;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
+    super.initState();
+  }
+
+  afterViewBuild() async {
+    digitRowCardItems = await GlobalVariables.getLanguages();
+  }
 
   Widget getLanguageCard(BuildContext context) {
     final theme = Theme.of(context);
-
     return BlocBuilder<AppInitializationBloc, AppInitializationState>(
       builder: (context, state) {
-        List<DigitRowCardModel>? digitRowCardItems =
-            GlobalVariables.getLanguages()
-                .map<DigitRowCardModel>((e) => DigitRowCardModel.fromJson(e))
-                .toList();
         return state.isInitializationCompleted == false
             ? Loaders.circularLoader(context)
             : state.digitRowCardItems != null && state.isInitializationCompleted
                 ? DigitLanguageCard(
                     digitRowCardItems: digitRowCardItems != null
-                        ? digitRowCardItems
+                        ? digitRowCardItems!
                             .map((e) => DigitRowCardModel.fromJson(e.toJson()))
                             .toList()
                         : state.digitRowCardItems
                             ?.map((e) => DigitRowCardModel.fromJson(e.toJson()))
                             .toList() as List<DigitRowCardModel>,
                     onLanguageSubmit: () async {
-                      context.router.push(LoginRoute());
+                      context.router.push(const LoginRoute());
                     },
                     onLanguageChange: (data) async {
                       context.read<AppInitializationBloc>().add(
@@ -74,7 +88,9 @@ class LanguageSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MediaQuery.of(context).size.width > 760
-        ? DesktopView(getLanguageCard(context), GlobalVariables.bannerURL())
-        : MobileView(getLanguageCard(context), GlobalVariables.bannerURL());
+        ? DesktopView(getLanguageCard(context),
+            GlobalVariables.stateInfoListModel!.bannerUrl.toString())
+        : MobileView(getLanguageCard(context),
+            GlobalVariables.stateInfoListModel!.bannerUrl.toString());
   }
 }

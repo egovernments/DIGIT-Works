@@ -143,20 +143,22 @@ public class EnrichmentService {
         //Existing estimate
         List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
 
-        if (enrichEstimateBasedOnRole(requestInfo)) {
-            //set the audit details from DB
-            estimate.setAuditDetails(estimateList.get(0).getAuditDetails());
-        } /*Roles apart from UPDATE_ROLES, will not be able to edit/modify the existing
-            record apart from estimate status field */ else {
-            estimate = estimateList.get(0);
-            request.setEstimate(estimate);
-        }
+//        if (enrichEstimateBasedOnRole(requestInfo)) {
+//            //set the audit details from DB
+//            estimate.setAuditDetails(estimateList.get(0).getAuditDetails());
+//        } /*Roles apart from UPDATE_ROLES, will not be able to edit/modify the existing
+//            record apart from estimate status field */ else {
+//            estimate = estimateList.get(0);
+//            request.setEstimate(estimate);
+//        }
+
+        estimate.setAuditDetails(estimateList.get(0).getAuditDetails());
 
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, false);
 
         estimate.setAuditDetails(auditDetails);
 
-        enrichUpdateEstimateWorkFlowForActionReject(request);
+        //enrichUpdateEstimateWorkFlowForActionReject(request);
     }
 
     /**

@@ -1,0 +1,46 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2638
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11220\viewh8100\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 @startuml\
+title Contract Updation\
+group Happy Flow\
+  autonumber\
+  Client -> Contract : Update Contract\
+  Contract -> Contract : Validate user info\\n and request info\\n dates\
+  Contract -> MDMS : Fetch MDMS data\\n (Contract Type, \\nExecuting Authority)\
+  MDMS -> Contract: Validate request against\\n MDMS data ((Contract Type, \\nExecuting Authority, tenantID)\
+  Contract -> Estimate: Validate estimate ID\\n, lineItemIds, \\n estimateAmountBreakupIds \\n and make sure line Items don't exist in other contracts\
+  Contract -> Organisation: Validate organisation ID and check\\n validity of registration dates.\
+  Contract -> Contract : Enrich request with\\n audit details\
+  Contract -> Workflow : Trigger workflow for process instance\
+  Contract -> Queue: Push Contract\\n update payload\
+  Contract -> Client: Contract updated\\n (Return contract\\n payload)\
+  Persister -> Queue: Consume contract payload\
+  Persister -> RDBMS: Persist data \
+  Indexer -> Queue: Consume contract payload\
+  Indexer -> ES: Store contract payload\
+end\
+group Invalid MDMS data\
+  Client -> Contract : Update Contract\
+  Contract -> Contract : Validate user info\\n and request info\
+  Contract -> MDMS : Fetch MDMS data\\n (Contract Type, \\nExecuting Authority)\
+  MDMS -> Contract: Validate request against\\n MDMS data ((Contract Type, \\nExecuting Authority, tenantID, dates)\
+  Contract -> Client: Validation failed\\n (400 with\\n appropriate error message)\
+end\
+group Invalid Estimate details\
+  Contract -> Estimate: Validate estimate ID\\n, lineItemIds, \\n estimateAmountBreakupIds\
+  Contract -> Client: Validation failed\\n (400 with\\n appropriate error message)\
+end\
+group Invalid Line items\
+  Contract -> Estimate: Validate lineItemIds,\\n check for duplicates\
+  Contract -> Client: Validation failed\\n (400 with\\n appropriate error message)\
+end\
+group Invalid Org ID\
+ Contract -> Organisation: Validate organisation ID and check\\n validity of registration dates.\
+ Contract -> Client: Validation failed\\n (400 with\\n appropriate error message)\
+end\
+@enduml}

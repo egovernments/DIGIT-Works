@@ -189,7 +189,9 @@ public class WorkflowService {
 
             processInstance.setAssignes(users);
         }
-
+        if (!CollectionUtils.isEmpty(workflow.getDocuments())) {
+            processInstance.setDocuments(workflow.getDocuments());
+        }
         return processInstance;
     }
 

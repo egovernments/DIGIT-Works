@@ -11,6 +11,7 @@ import {
   Row,
   StatusTable,
   Table,
+  WorkflowTimeline,
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
 import React, { Fragment, useCallback, useReducer, useState } from "react";
@@ -49,7 +50,6 @@ function ApplicationDetailsContent({
   workflowDetails,
   isDataLoading,
   applicationData,
-  businessService,
   timelineStatusPrefix,
   showTimeLine = true,
   statusAttribute = "status",
@@ -59,7 +59,10 @@ function ApplicationDetailsContent({
   noBoxShadow = false,
   sectionHeadStyle = false,
   modify,
-  setSaveAttendanceState
+  setSaveAttendanceState,
+  applicationNo,
+  tenantId,
+  businessService
 }) {
   const { t } = useTranslation();
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
@@ -459,48 +462,14 @@ function ApplicationDetailsContent({
         </React.Fragment>
         </CollapseAndExpandGroups>
       ))}
-      {showTimeLine && workflowDetails?.data?.timeline?.length > 0 && (
-        <React.Fragment>
-          {workflowDetails?.breakLineRequired === undefined ? <BreakLine /> : workflowDetails?.breakLineRequired ? <BreakLine /> : null}
-          {(workflowDetails?.isLoading || isDataLoading) && <Loader />}
-          {!workflowDetails?.isLoading && !isDataLoading && (
-            <Fragment>
-              <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
-                {/* {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")} */}
-                {t("WORKS_WORKFLOW_HISTORY")}
-              </CardSectionHeader>
-              {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
-                <CheckPoint
-                  isCompleted={true}
-                  label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.state}`)}
-                  customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0])}
-                />
-              ) : (
-                <ConnectingCheckPoints>
-                  {workflowDetails?.data?.timeline &&
-                    workflowDetails?.data?.timeline.map((checkpoint, index, arr) => {
-                      return (
-                        <React.Fragment key={index}>
-                          <CheckPoint
-                            keyValue={index}
-                            isCompleted={index === 0}
-                            info={checkpoint.comment}
-                            label={t(
-                              `${timelineStatusPrefix}${
-                                checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}_ACTION` : checkpoint?.[statusAttribute]
-                              }`
-                            )}
-                            customChild={getTimelineCaptions(checkpoint)}
-                          />
-                        </React.Fragment>
-                      );
-                    })}
-                </ConnectingCheckPoints>
-              )}
-            </Fragment>
-          )}
-        </React.Fragment>
-      )}
+      {showTimeLine && <WorkflowTimeline 
+        businessService={businessService} 
+        applicationNo={applicationNo} 
+        tenantId={tenantId} 
+        timelineStatusPrefix={timelineStatusPrefix}
+        statusAttribute={statusAttribute} 
+          />
+        }
     </Card>
     </CollapseAndExpandGroups>
   );

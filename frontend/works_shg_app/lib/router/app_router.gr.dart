@@ -66,6 +66,24 @@ class _$AppRouter extends RootStackRouter {
         child: const WorkOrderPage(),
       );
     },
+    ViewMusterRollsRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const ViewMusterRollsPage(),
+      );
+    },
+    SHGInboxRoute.name: (routeData) {
+      final args = routeData.argsAs<SHGInboxRouteArgs>();
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: SHGInboxPage(
+          args.tenantId,
+          args.musterRollNo,
+          args.projectDetails,
+          key: args.key,
+        ),
+      );
+    },
     ManageAttendanceRegisterRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
@@ -141,6 +159,16 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               WorkOrderRoute.name,
               path: 'work-orders',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              ViewMusterRollsRoute.name,
+              path: 'muster-rolls',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              SHGInboxRoute.name,
+              path: 'shg-inbox/:tenantId/:musterRollNo',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -294,6 +322,66 @@ class WorkOrderRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'WorkOrderRoute';
+}
+
+/// generated route for
+/// [ViewMusterRollsPage]
+class ViewMusterRollsRoute extends PageRouteInfo<void> {
+  const ViewMusterRollsRoute()
+      : super(
+          ViewMusterRollsRoute.name,
+          path: 'muster-rolls',
+        );
+
+  static const String name = 'ViewMusterRollsRoute';
+}
+
+/// generated route for
+/// [SHGInboxPage]
+class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
+  SHGInboxRoute({
+    required String tenantId,
+    required String musterRollNo,
+    required List<Map<String, dynamic>> projectDetails,
+    Key? key,
+  }) : super(
+          SHGInboxRoute.name,
+          path: 'shg-inbox/:tenantId/:musterRollNo',
+          args: SHGInboxRouteArgs(
+            tenantId: tenantId,
+            musterRollNo: musterRollNo,
+            projectDetails: projectDetails,
+            key: key,
+          ),
+          rawPathParams: {
+            'tenantId': tenantId,
+            'musterRollNo': musterRollNo,
+          },
+        );
+
+  static const String name = 'SHGInboxRoute';
+}
+
+class SHGInboxRouteArgs {
+  const SHGInboxRouteArgs({
+    required this.tenantId,
+    required this.musterRollNo,
+    required this.projectDetails,
+    this.key,
+  });
+
+  final String tenantId;
+
+  final String musterRollNo;
+
+  final List<Map<String, dynamic>> projectDetails;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'SHGInboxRouteArgs{tenantId: $tenantId, musterRollNo: $musterRollNo, projectDetails: $projectDetails, key: $key}';
+  }
 }
 
 /// generated route for

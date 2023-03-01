@@ -30,7 +30,7 @@ class AttendeeDeEnrollBloc
           await AttendanceRegisterRepository(client.init()).deEnrollAttendee(
               url: Urls.attendanceRegisterServices.deEnrollAttendee,
               options: Options(extra: {
-                "accessToken": GlobalVariables.getAuthToken(),
+                "accessToken": GlobalVariables.authToken,
                 "apiId": "mukta-services",
               }),
               body: {"attendees": event.attendeeList});

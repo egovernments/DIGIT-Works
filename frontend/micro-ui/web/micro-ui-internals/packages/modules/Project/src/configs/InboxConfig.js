@@ -6,21 +6,18 @@ const inboxConfig = () => {
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
-                limit:10,
-                offset:0,
-                tenantId: Digit.ULBService.getCurrentTenantId(),
             },
             requestBody: {
                 apiOperation: "SEARCH",
                 Projects: [
-                    {
-                        tenantId: Digit.ULBService.getCurrentTenantId()
+                    {   
+                        
                     }
                 ]
             },
             minParametersForSearchForm:1,
             masterName:"commonUiConfig",
-            moduleName:"SearchProjectConfig",
+            moduleName:"ProjectInboxConfig",
             tableFormJsonPath:"requestParam",
             filterFormJsonPath:"requestBody.Projects[0]",
             searchFormJsonPath:"requestBody.Projects[0]"
@@ -29,8 +26,8 @@ const inboxConfig = () => {
             search : {
                 uiConfig : {
                     headerStyle : null,
-                    primaryLabel: 'ACTION_TEST_SEARCH',
-                    secondaryLabel: 'CLEAR_SEARCH_LINk',
+                    primaryLabel: 'ES_COMMON_SEARCH',
+                    secondaryLabel: 'ES_COMMON_CLEAR_SEARCH',
                     minReqFields: 1,
                     defaultValues : {
                         projectNumber: "",
@@ -57,6 +54,9 @@ const inboxConfig = () => {
                             populators: {
                               name: "department",
                               optionsKey: "name",
+                              optionsCustomStyle : {
+                                top : "2.3rem"
+                              },
                               mdmsConfig: {
                                 masterName: "Department",
                                 moduleName: "common-masters",
@@ -71,11 +71,14 @@ const inboxConfig = () => {
                           disable: false,
                           populators: {
                             name: "projectType",
-                            optionsKey: "code",
+                            optionsKey: "name",
+                            optionsCustomStyle : {
+                                top : "2.3rem"
+                            },
                             mdmsConfig: {
                               masterName: "ProjectType",
                               moduleName: "works",
-                              localePrefix: "ES_COMMON",
+                              localePrefix: "COMMON_MASTERS",
                             }
                           }
                         }
@@ -99,7 +102,7 @@ const inboxConfig = () => {
                             roles: [],
                         }
                     ],
-                    label : "ACTION_TEST_PROJECT_INBOX",
+                    label : "PROJECT_INBOX",
                     logoIcon : { //Pass the name of the Icon Component as String here and map it in the InboxSearchLinks Component   
                         component : "PropertyHouse",
                         customClass : "inbox-search-icon--projects"         
@@ -112,7 +115,7 @@ const inboxConfig = () => {
                 uiConfig : {
                     type : 'filter',
                     headerStyle : null,
-                    primaryLabel: 'ACTION_TEST_APPLY',
+                    primaryLabel: 'ES_COMMON_APPLY',
                     minReqFields: 0,
                     secondaryLabel: '',
                     defaultValues : {
@@ -128,7 +131,7 @@ const inboxConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "projectFromDate"
+                                name: "createdFrom"
                             },
                         },
                         {
@@ -137,42 +140,53 @@ const inboxConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "projectToDate"
+                                name: "createdTo",
+                                error: 'DATE_VALIDATION_MSG'
                             },
+                            additionalValidation: {
+                                type: 'date',
+                                keys: {start: 'createdFrom', end: 'createdTo'}
+                            }
                         },
                         {
-                            label: "WORKS_CREATED_BY",
+                            label: "ES_COMMON_CREATED_BY",
                             type: "dropdown",
                             isMandatory: false,
                             disable: false,
                             populators: {
                               name: "createdBy",
                               optionsKey: "name",
+                              optionsCustomStyle : {
+                                top : "2.3rem"
+                              },
                               mdmsConfig: {
-                                masterName: "TypeOfWork",
+                                masterName: "NatureOfWork",
                                 moduleName: "works",
-                                localePrefix: "WORKS",
+                                localePrefix: "COMMON_MASTERS"
                               }
                             }
                         },
                         {
-                            label: "WORKS_STATUS",
+                            label: "ES_COMMON_STATUS",
                             type: "dropdown",
                             isMandatory: false,
                             disable: false,
                             populators: {
                               name: "status",
                               optionsKey: "name",
+                              optionsCustomStyle : {
+                                top : "2.3rem"
+                              },
                               mdmsConfig: {
-                                masterName: "TypeOfWork",
+                                masterName: "NatureOfWork",
                                 moduleName: "works",
-                                localePrefix: "WORKS",
+                                localePrefix: "COMMON_MASTERS"
                               }
                             }
                         }
                     ]
                 },
-                label : "FILTERS",
+                label : "ES_COMMON_FILTERS",
                 show : true
             },
             searchResult: {
@@ -203,7 +217,7 @@ const inboxConfig = () => {
                             jsonPath: "projectSubType",
                         },
                         {
-                            label: "WORKS_WORK_NATURE",
+                            label: "ES_COMMON_WORK_NATURE",
                             jsonPath: "endDate",
                         },
                         {
@@ -211,15 +225,15 @@ const inboxConfig = () => {
                             jsonPath: "parentId",
                         },
                         {
-                            label: "WORKS_CREATED_BY",
+                            label: "ES_COMMON_CREATED_BY",
                             jsonPath: "auditDetails.createdBy",
                         },
                         {
-                            label: "WORKS_STATUS",
+                            label: "ES_COMMON_STATUS",
                             jsonPath: "status",
                         },
                         {
-                            label: "WORKS_TOTAL_AMOUNT",
+                            label: "ES_COMMON_TOTAL_AMOUNT",
                             jsonPath: "totalAmount",
                         }
                     ],

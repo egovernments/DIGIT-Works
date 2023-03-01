@@ -40,6 +40,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         "grant_type": "password"
       });
       await Future.delayed(const Duration(seconds: 1));
+      GlobalVariables.authToken = userDetailsModel.access_token;
+      GlobalVariables.uuid = userDetailsModel.userRequestModel?.uuid;
+      GlobalVariables.userRequestModel =
+          jsonDecode(jsonEncode(userDetailsModel.userRequestModel));
       if (kIsWeb) {
         html.window.localStorage['accessToken' ?? ''] =
             jsonEncode(userDetailsModel.access_token);
