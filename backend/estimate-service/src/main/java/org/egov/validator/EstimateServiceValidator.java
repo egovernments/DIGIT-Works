@@ -209,14 +209,14 @@ public class EstimateServiceValidator {
         //TODO - Configure sorids in MDMS
 //        if (!CollectionUtils.isEmpty(sorIdRes) && !CollectionUtils.isEmpty(reqSorIds)) {
 //            reqSorIds.removeAll(sorIdRes);
-//            if (CollectionUtils.isEmpty(reqSorIds)) {
+//            if (!CollectionUtils.isEmpty(reqSorIds)) {
 //                errorMap.put("SOR_IDS", "The sorIds: " + reqSorIds + " is not present in MDMS");
 //            }
 //        }
 
         if (!CollectionUtils.isEmpty(categoryRes) && !CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
             reqEstimateDetailCategories.removeAll(categoryRes);
-            if (CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
+            if (!CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
                 errorMap.put("ESTIMATE_DETAIL.CATEGORY", "The categories : " + reqEstimateDetailCategories + " is not present in MDMS");
             }
         }
