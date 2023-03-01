@@ -89,6 +89,7 @@ class WorkOrder {
 class AttendanceMgmt {
   const AttendanceMgmt();
   String get registerId => 'REGISTER_ID';
+  String get musterRolls => 'ATM_MUSTER_ROLLS';
   String get enrollWageSeeker => 'WORKS_ENROLL_WAGE_SEEKER';
   String get updateAttendance => 'UPDATE_ATTENDANCE';
   String get nameOfWork => 'WORKS_NAME_OF_WORK';
