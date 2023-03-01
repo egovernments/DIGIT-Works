@@ -320,7 +320,7 @@ public class ProjectValidator {
 
     /* Validates Boundary data with location service */
     private void validateBoundary(Map<String, List<String>> boundaries, String tenantId, RequestInfo requestInfo, Map<String, String> errorMap) {
-        if (boundaries.isEmpty()) {
+        if (!boundaries.isEmpty()) {
             boundaryUtil.validateBoundaryDetails(boundaries, tenantId, requestInfo, config.getLocationHierarchyType());
         }
     }
