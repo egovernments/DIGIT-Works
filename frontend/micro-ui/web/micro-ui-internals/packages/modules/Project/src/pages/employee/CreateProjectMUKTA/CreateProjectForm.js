@@ -108,7 +108,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
       }),
       [withSubProjectSubSchemeOptions, noSubProjectSubSchemeOptions, subTypeOfProjectOptions, ULBOptions, wardsAndLocalities, filteredLocalities, showInfoLabel, isEndDateValid]);
 
-    const createSubTypesMDMSObject = (subTypesData) => {
+      const createSubTypesMDMSObject = (subTypesData) => {
       let mdmsData = [];
       for(let subType of subTypesData?.projectSubType) {
         mdmsData.push({code : subType, name : `ES_COMMON_${subType}`});
@@ -175,13 +175,17 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
           setValue("noSubProject_subTypeOfProject", '');
         }
         if(formData?.noSubProject_scheme) {
-          setNoSubProjectSubSchemeOptions(formData?.noSubProject_scheme?.subSchemes);
+          let subSchemes = formData?.noSubProject_scheme?.subSchemes;
+          subSchemes = subSchemes ? subSchemes.map(subScheme => ({ code : `COMMON_MASTERS_${subScheme?.code}`, name : subScheme?.name})) : [];
+          setNoSubProjectSubSchemeOptions(subSchemes);
         } 
         if (difference?.noSubProject_scheme) {
           setValue("noSubProject_subScheme", '');
         } 
         if(formData?.withSubProject_project_scheme) {
-          setWithSubProjectSubSchemeOptions(formData?.withSubProject_project_scheme?.subSchemes);
+          let subSchemes = formData?.withSubProject_project_scheme?.subSchemes;
+          subSchemes = subSchemes ? subSchemes.map(subScheme => ({ code : `COMMON_MASTERS_${subScheme?.code}`, name : subScheme?.name})) : [];
+          setWithSubProjectSubSchemeOptions(subSchemes);
         } 
         if (difference?.withSubProject_project_scheme) {
           setValue("withSubProject_project_subScheme", '');

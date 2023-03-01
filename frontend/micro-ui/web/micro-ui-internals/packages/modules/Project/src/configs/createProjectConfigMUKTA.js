@@ -9,7 +9,7 @@
                 body: [
                     {
                         inline: true,
-                        label: "PDF_STATIC_LABEL_ESTIMATE_PROPOSAL_DATE",
+                        label: "ES_COMMON_PROPOSAL_DATE",
                         isMandatory: false,
                         key: "basicDetails_dateOfProposal",
                         type: "date",
@@ -18,7 +18,7 @@
                     },
                     {
                         inline: true,
-                        label: "PDF_STATIC_LABEL_ESTIMATE_PROJECT_NAME",
+                        label: "ES_COMMON_PROJECT_NAME",
                         isMandatory: true,
                         key: "basicDetails_projectName",
                         type: "text",
@@ -70,6 +70,7 @@
                         label: "",
                         disable: false,
                         preProcess : {
+                          translate : ["customProps.info", "customProps.text"],
                           updateDependent : ["customProps.className"]
                         },
                         customProps : {
@@ -399,7 +400,7 @@
                         mdmsConfig: {
                           masterName: "Fund",
                           moduleName: "finance",
-                          localePrefix: "ES_COMMON_FIN",
+                          localePrefix: "COMMON_MASTERS_FUND",
                         },
                       },
                     },
@@ -420,7 +421,7 @@
                         mdmsConfig: {
                           masterName: "Functions",
                           moduleName: "finance",
-                          localePrefix: "ES_COMMON",
+                          localePrefix: "COMMON_MASTERS_FUN",
                         },
                       },
                     },
@@ -441,7 +442,7 @@
                         mdmsConfig: {
                           masterName: "BudgetHead",
                           moduleName: "finance",
-                          localePrefix: "ES_COMMON",
+                          localePrefix: "COMMON_MASTERS_BUDGET_HEAD",
                         },
                       },
                     },
@@ -462,7 +463,7 @@
                         mdmsConfig: {
                           masterName: "Scheme",
                           moduleName: "finance",
-                          localePrefix: "ES_COMMON",
+                          localePrefix: "COMMON_MASTERS_SCHEME",
                         },
                       },
                     },
@@ -478,7 +479,7 @@
                       },
                       populators: {
                         name: "noSubProject_subScheme",
-                        optionsKey: "name",
+                        optionsKey: "code",
                         error: "WORKS_REQUIRED_ERR",
                         required: true,
                         optionsCustomStyle : {
@@ -581,7 +582,7 @@
                         mdmsConfig: {
                           masterName: "Fund",
                           moduleName: "finance",
-                          localePrefix: "ES_COMMON_FIN",
+                          localePrefix: "COMMON_MASTERS_FUND",
                         },
                       },
                     },
@@ -605,7 +606,7 @@
                         mdmsConfig: {
                           masterName: "Functions",
                           moduleName: "finance",
-                          localePrefix: "ES_COMMON",
+                          localePrefix: "COMMON_MASTERS_FUN",
                         },
                       },
                     },
@@ -629,7 +630,7 @@
                         mdmsConfig: {
                           masterName: "BudgetHead",
                           moduleName: "finance",
-                          localePrefix: "ES_COMMON",
+                          localePrefix: "COMMON_MASTERS_BUDGET_HEAD",
                         },
                       },
                     },
@@ -653,7 +654,7 @@
                         mdmsConfig: {
                           masterName: "Scheme",
                           moduleName: "finance",
-                          localePrefix: "ES_COMMON",
+                          localePrefix: "COMMON_MASTERS_SCHEME",
                         },
                       },
                     },
@@ -669,7 +670,7 @@
                       },
                       populators: {
                         name: "withSubProject_project_subScheme",
-                        optionsKey: "name",
+                        optionsKey: "code",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: true,
                         optionsCustomStyle : {

@@ -3,10 +3,10 @@ import _ from "lodash";
 
 const translate = (config, index, sectionIndex, t) => {
 
+    let section = config?.CreateProjectConfig?.form[index].body[sectionIndex];
     //iterate all translate keys and handle translation
     for(let toTranslate = 0; toTranslate<config?.CreateProjectConfig?.form[index].body[sectionIndex]?.preProcess?.translate?.length; toTranslate++) {
         let keyToTranslate = config?.CreateProjectConfig?.form[index].body[sectionIndex]?.preProcess?.translate[toTranslate];
-        let section = config?.CreateProjectConfig?.form[index].body[sectionIndex];
         _.set(section, keyToTranslate, t(_.get(section, keyToTranslate)));    
     }
 
@@ -48,6 +48,7 @@ const preProcessMDMSConfig = (t, config, dependencyConfig) => {
         }
        })
     })
+    console.log(config);
     return config;
 }
 

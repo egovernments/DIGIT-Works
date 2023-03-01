@@ -71,7 +71,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         
     useEffect(()=>{
         let filteredSubTypeOfProject = ( subProjectTypeOfProjectOptions && subProjectTypeOfProjectOptions?.projectSubType ) ? (
-        subProjectTypeOfProjectOptions?.projectSubType.map(projectSubType=>({code : projectSubType, name : `ES_COMMON_${projectSubType}`}))) : [];
+        subProjectTypeOfProjectOptions?.projectSubType.map(projectSubType=>({code : projectSubType, name : `COMMON_MASTERS_${projectSubType}`}))) : [];
         setSubProjectSubTypeOfProjectOptions(filteredSubTypeOfProject);
     },[subProjectTypeOfProjectOptions]);
 

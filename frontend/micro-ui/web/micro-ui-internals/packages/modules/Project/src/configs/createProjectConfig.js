@@ -17,8 +17,8 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
         body: [
           {
             inline: true,
-            label: "PDF_STATIC_LABEL_ESTIMATE_PROPOSAL_DATE",
-            isMandatory: false,
+            label: "ES_COMMON_PROPOSAL_DATE",
+            isMandatory: true,
             key: "basicDetails_dateOfProposal",
             type: "date",
             disable: false,
@@ -26,7 +26,7 @@ export const createProjectSectionConfig = (subTypeOfProjectOptions, subSchemaOpt
           },
           {
             inline: true,
-            label: "PDF_STATIC_LABEL_ESTIMATE_PROJECT_NAME",
+            label: "ES_COMMON_PROJECT_NAME",
             isMandatory: true,
             key: "basicDetails_projectName",
             type: "text",
