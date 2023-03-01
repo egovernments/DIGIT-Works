@@ -323,6 +323,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                       leftColumnWidth: width,
                                                                       rightColumnWidth: width * 9,
                                                                       height: 58 + (52.0 * (tableData.length + 1)),
+                                                                      scrollPhysics: const NeverScrollableScrollPhysics(),
                                                                     ),),
                                                                 ]);
                                                           } else {

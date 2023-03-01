@@ -459,6 +459,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 leftColumnWidth: width,
                                                                                 rightColumnWidth: width * 9,
                                                                                 height: 58 + (52.0 * (tableData.length + 1)),
+                                                                                scrollPhysics: const NeverScrollableScrollPhysics(),
                                                                               ),
                                                                             ),
                                                                           ]);
