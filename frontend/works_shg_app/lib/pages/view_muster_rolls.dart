@@ -7,6 +7,7 @@ import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import '../blocs/localization/app_localization.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
 import '../router/app_router.dart';
+import '../utils/constants.dart';
 import '../utils/date_formats.dart';
 import '../utils/notifiers.dart';
 import '../widgets/Back.dart';
@@ -50,7 +51,10 @@ class ViewMusterRollsPage extends StatelessWidget {
                           i18.attendanceMgmt.musterRollId: e.musterRollNumber,
                           i18.common.dates:
                               '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                          i18.common.status: e.status
+                          i18.common.status:
+                              e.musterRollStatus == Constants.rejected
+                                  ? e.musterRollStatus
+                                  : Constants.active
                         })
                     .toList();
                 return Column(
