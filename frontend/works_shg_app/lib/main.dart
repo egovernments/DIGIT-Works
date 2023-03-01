@@ -10,7 +10,6 @@ import 'package:url_strategy/url_strategy.dart';
 import 'package:works_shg_app/blocs/attendance/attendance_user_search.dart';
 import 'package:works_shg_app/blocs/attendance/search_projects/search_projects.dart';
 import 'package:works_shg_app/blocs/attendance/skills/skills_bloc.dart';
-import 'package:works_shg_app/blocs/attendance/skills/sub_skills_bloc.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
 import 'package:works_shg_app/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
@@ -116,10 +115,6 @@ class MainApplication extends StatelessWidget {
         BlocProvider(create: (context) => MusterGetWorkflowBloc()),
         BlocProvider(
             create: (context) => SkillsBloc(const SkillsBlocState.initial(),
-                AttendanceMDMSRepository(client.init()))),
-        BlocProvider(
-            create: (context) => SubSkillsBloc(
-                const SubSkillsBlocState.initial(),
                 AttendanceMDMSRepository(client.init()))),
         BlocProvider(
             create: (context) => AttendanceHoursBloc(

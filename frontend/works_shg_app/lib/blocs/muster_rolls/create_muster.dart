@@ -43,13 +43,12 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
                 "attendanceRegisterNo": event.registerNo,
                 "attendanceRegisterName": event.registerName
               },
-              "individualEntries":
-                  event.skillsList ?? []
+              "individualEntries": event.skillsList ?? []
             },
             "workflow": {"action": "SUBMIT", "comments": "Submit muster roll"}
           });
       if (musterRollsModel != null) {
-        emit(const MusterCreateState.loaded());
+        emit(MusterCreateState.loaded(musterRollsModel));
       } else {
         emit(const MusterCreateState.error());
       }
@@ -75,8 +74,7 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
               "tenantId": event.tenantId,
               "id": event.id,
               "additionalDetails": {"computeAttendance": "true"},
-              "individualEntries":
-              event.skillsList ?? []
+              "individualEntries": event.skillsList ?? []
             },
             "workflow": {
               "action": "RESUBMIT",
@@ -85,7 +83,7 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
             }
           });
       if (musterRollsModel != null) {
-        emit(const MusterCreateState.loaded());
+        emit(MusterCreateState.loaded(musterRollsModel));
       } else {
         emit(const MusterCreateState.error());
       }
@@ -121,6 +119,7 @@ class MusterCreateState with _$MusterCreateState {
   const MusterCreateState._();
   const factory MusterCreateState.initial() = _Initial;
   const factory MusterCreateState.loading() = _Loading;
-  const factory MusterCreateState.loaded() = _Loaded;
+  const factory MusterCreateState.loaded(MusterRollsModel? musterRollsModel) =
+      _Loaded;
   const factory MusterCreateState.error() = _Error;
 }

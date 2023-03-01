@@ -74,6 +74,7 @@ class Home {
   String get attendanceMgmt => 'ACTION_TEST_ATTENDENCEMGMT';
   String get musterRoll => 'ACTION_TEST_MUSTER_ROLL';
   String get trackAttendance => 'TRACK_ATTENDENCE';
+  String get inbox => 'ES_COMMON_INBOX';
 }
 
 class WorkOrder {

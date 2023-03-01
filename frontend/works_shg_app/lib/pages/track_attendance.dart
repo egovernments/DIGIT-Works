@@ -16,7 +16,6 @@ import '../blocs/attendance/attendance_create_log.dart';
 import '../blocs/attendance/attendance_hours_mdms.dart';
 import '../blocs/attendance/search_projects/search_individual_project.dart';
 import '../blocs/attendance/skills/skills_bloc.dart';
-import '../blocs/attendance/skills/sub_skills_bloc.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/from_to_date_search_muster_roll.dart';
 import '../blocs/muster_rolls/get_muster_workflow.dart';
@@ -27,7 +26,6 @@ import '../models/mdms/attendance_hours.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
 import '../models/muster_rolls/muster_workflow_model.dart';
 import '../models/skills/skills.dart';
-import '../models/skills/sub_skills.dart';
 import '../router/app_router.dart';
 import '../utils/constants.dart';
 import '../utils/date_formats.dart';
@@ -81,7 +79,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
   bool createMusterLoaded = true;
   List<EntryExitModel>? entryExitList;
   List<Skill> skillList = [];
-  List<SkillCategory> skillCategories = [];
   List<String> skillDropDown = [];
   DaysInRange? daysInRange;
   bool isInWorkFlow = true;
@@ -109,9 +106,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
     context.read<SkillsBloc>().add(
       const SkillsEvent(),
     );
-    context.read<SubSkillsBloc>().add(
-      const SubSkillsEvent(),
-    );
   }
 
   @override
@@ -133,14 +127,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
         ))),
-        body: BlocBuilder<SubSkillsBloc, SubSkillsBlocState>(
-          builder: (context, subSkillState) {
-            return subSkillState.maybeWhen(orElse: () => Container(),
-            loading: () => Loaders.circularLoader(context),
-            error: (String? error) => Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(error.toString()), 'ERROR'),
-            loaded: (SubSkillsList? subSkillsList) {
-              skillCategories = subSkillsList!.wageSeekerSubSkills?.where((obj) => obj.active == true).map((e) => SkillCategory(code: e.code,)).toList() ?? [];
-            return BlocBuilder<SkillsBloc, SkillsBlocState>(
+        body:BlocBuilder<SkillsBloc, SkillsBlocState>(
               builder: (context, skillsState) {
                 return skillsState.maybeWhen(orElse: () => Container(),
                     loading: () => Loaders.circularLoader(context),
@@ -148,9 +135,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                     loaded: (SkillsList? skillsList) {
                   skillList = skillsList!.wageSeekerSkills?.where((obj) => obj.active == true).map((e) => Skill(code: e.code,)).toList() ?? [];
                   for (Skill skill in skillList) {
-                    for (SkillCategory category in skillCategories) {
-                      skillDropDown.add('${skill.code}.${category.code}');
-                    }
+                      skillDropDown.add(skill.code);
                   }
                   return BlocBuilder<AttendanceHoursBloc, AttendanceHoursState>(builder: (context, mdmsState) {
                     return mdmsState.maybeWhen(orElse: () => Container(),
@@ -496,11 +481,11 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                         onSubmit(registerId.toString());
                                                                                         createMusterLoaded = true;
                                                                                       }},
-                                                                                    loaded: () {
+                                                                                    loaded: (MusterRollsModel? createdMuster) {
                                                                                       if (!createMusterLoaded && selectedDateRange != null) {
                                                                                         Notifiers.getToastMessage(context,
-                                                                                            AppLocalizations.of(context)
-                                                                                                .translate(i18.attendanceMgmt.musterSentForApproval),
+                                                                                            ' ${createdMuster?.musterRoll?.first.musterRollNumber} ${AppLocalizations.of(context)
+                                                                                            .translate(i18.attendanceMgmt.musterSentForApproval)}',
                                                                                             'SUCCESS');
                                                                                         onSubmit(registerId.toString());
                                                                                         createMusterLoaded = true;
@@ -590,9 +575,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                         loading: () => Loaders.circularLoader(context) );
                   });
                 });
-              });
-            });
-          }));
+              }));
   }
 
   void _onDateChange(DateRangePickerSelectionChangedArgs args) {
