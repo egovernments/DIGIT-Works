@@ -33,40 +33,55 @@ public class BoundaryUtil {
     @Value("${egov.location.endpoint}")
     private String locationEndpoint;
 
+    private String BOUNDARY_CODE_PATH = "$..boundary[?(@.code==\"{}\")]";
+
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-    public void validateBoundaryDetails(List<String> locations, String tenantId, RequestInfo requestInfo, String hierarchyTypeCode) {
-        StringBuilder uri = new StringBuilder(locationHost);
-        uri.append(locationContextPath).append(locationEndpoint);
-        uri.append("?").append("tenantId=").append(tenantId);
+    /* Takes map of locations with boundaryType as key and list of boundaries as its values, tenantId, requestInfo and hierarchyType.
+    * For each boundaryType, egov-location service is called with hierarchyType, tenantId and codes as parameters. The boundaries in request are validated against the egov-location response*/
+    public void validateBoundaryDetails(Map<String, List<String>> locations, String tenantId, RequestInfo requestInfo, String hierarchyTypeCode) {
+        for (Map.Entry<String, List<String>> entry : locations.entrySet()) {
+            String boundaryType = entry.getKey();
+            List<String> boundaries = entry.getValue();
 
-        if (hierarchyTypeCode != null)
-            uri.append("&").append("hierarchyTypeCode=").append(hierarchyTypeCode);
+            log.info("Validating boundary for boundary type " + boundaryType + " with hierarchyType " + hierarchyTypeCode);
+            StringBuilder uri = new StringBuilder(locationHost);
+            uri.append(locationContextPath).append(locationEndpoint);
+            uri.append("?").append("tenantId=").append(tenantId);
 
-        uri.append("&").append("boundaryType=").append("Locality").append("&").append("codes=")
-                .append(StringUtils.join(locations, ','));
+            if (hierarchyTypeCode != null)
+                uri.append("&").append("hierarchyTypeCode=").append(hierarchyTypeCode);
 
-        Optional<Object> response = Optional.ofNullable(serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
+            uri.append("&").append("boundaryType=").append(boundaryType).append("&").append("codes=")
+                    .append(StringUtils.join(boundaries, ','));
 
-        if (response.isPresent()) {
-            LinkedHashMap responseMap = (LinkedHashMap) response.get();
-            if (CollectionUtils.isEmpty(responseMap))
-                throw new CustomException("BOUNDARY ERROR", "The response from location service is empty or null");
-            String jsonString = new JSONObject(responseMap).toString();
+            Optional<Object> response = Optional.ofNullable(serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
 
-            for (String location: locations) {
-                String jsonpath = "$..boundary[?(@.code==\"{}\")]";
-                jsonpath = jsonpath.replace("{}", location);
-                DocumentContext context = JsonPath.parse(jsonString);
-                Object boundaryObject = context.read(jsonpath);
+            if (response.isPresent()) {
+                LinkedHashMap responseMap = (LinkedHashMap) response.get();
+                if (CollectionUtils.isEmpty(responseMap))
+                    throw new CustomException("BOUNDARY ERROR", "The response from location service is empty or null");
+                String jsonString = new JSONObject(responseMap).toString();
 
-                if (!(boundaryObject instanceof ArrayList) || CollectionUtils.isEmpty((ArrayList) boundaryObject)) {
-                    throw new CustomException("INVALID_BOUNDARY_DATA", "The boundary data for the code "
-                            + location + " is not available");
+                for (String boundary: boundaries) {
+                    String jsonpath = BOUNDARY_CODE_PATH.replace("{}", boundary);
+                    DocumentContext context = JsonPath.parse(jsonString);
+                    Object boundaryObject = context.read(jsonpath);
+
+                    if (!(boundaryObject instanceof ArrayList) || CollectionUtils.isEmpty((ArrayList) boundaryObject)) {
+                        log.error("The boundary data for the code "+ boundary + " is not available");
+                        throw new CustomException("INVALID_BOUNDARY_DATA", "The boundary data for the code "
+                                + boundary + " is not available");
+                    }
                 }
+            } else {
+                log.error("Error in fetching data from egov-location for boundary validation");
+                throw new CustomException("EGOV_LOCATION_SERVICE_FAILED", "Error in fetching data from egov-location");
             }
+            log.info("The boundaries " + StringUtils.join(boundaries, ',') + " validated for boundary type " + boundaryType + " with tenantId " + tenantId);
         }
+
     }
 
 }

@@ -170,23 +170,31 @@ public class EstimateServiceValidator {
     private void validateMDMSData(Estimate estimate, Object mdmsData, Map<String, String> errorMap) {
         log.info("EstimateServiceValidator::validateMDMSData");
         List<String> reqSorIds = new ArrayList<>();
+        List<String> reqEstimateDetailCategories = new ArrayList<>();
         if (estimate.getEstimateDetails() != null && !estimate.getEstimateDetails().isEmpty()) {
             reqSorIds = estimate.getEstimateDetails().stream()
                     .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getSorId()))
                     .map(EstimateDetail::getSorId)
                     .collect(Collectors.toList());
+            reqEstimateDetailCategories = estimate.getEstimateDetails().stream()
+                    .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getCategory()))
+                    .map(EstimateDetail::getCategory)
+                    .collect(Collectors.toList());
         }
         final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
         final String jsonPathForSorIds = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_SOR_ID + ".*";
+        final String jsonPathForCategories = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_CATEGORY + ".*";
 
         List<Object> deptRes = null;
         List<Object> tenantRes = null;
         List<Object> sorIdRes = null;
+        List<Object> categoryRes = null;
         try {
             deptRes = JsonPath.read(mdmsData, jsonPathForWorksDepartment);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
             // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
+            categoryRes = JsonPath.read(mdmsData, jsonPathForCategories);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
@@ -201,10 +209,17 @@ public class EstimateServiceValidator {
         //TODO - Configure sorids in MDMS
 //        if (!CollectionUtils.isEmpty(sorIdRes) && !CollectionUtils.isEmpty(reqSorIds)) {
 //            reqSorIds.removeAll(sorIdRes);
-//            if (CollectionUtils.isEmpty(reqSorIds)) {
+//            if (!CollectionUtils.isEmpty(reqSorIds)) {
 //                errorMap.put("SOR_IDS", "The sorIds: " + reqSorIds + " is not present in MDMS");
 //            }
 //        }
+
+        if (!CollectionUtils.isEmpty(categoryRes) && !CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
+            reqEstimateDetailCategories.removeAll(categoryRes);
+            if (!CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
+                errorMap.put("ESTIMATE_DETAIL.CATEGORY", "The categories : " + reqEstimateDetailCategories + " is not present in MDMS");
+            }
+        }
 
     }
 

@@ -76,20 +76,6 @@ class HomePage extends StatelessWidget {
                               }),
                               ButtonLink(
                                   AppLocalizations.of(context)
-                                      .translate(i18.home.registerIndividual),
-                                  () => context.router
-                                      .push(RegisterIndividualRoute())),
-                              ButtonLink(
-                                  AppLocalizations.of(context)
-                                      .translate(i18.home.musterRoll), () {
-                                context.read<MusterRollSearchBloc>().add(
-                                      const SearchMusterRollEvent(),
-                                    );
-                                context.router
-                                    .push(const ViewMusterRollsRoute());
-                              }),
-                              ButtonLink(
-                                  AppLocalizations.of(context)
                                       .translate(i18.home.trackAttendance), () {
                                 context
                                     .read<AttendanceProjectsSearchBloc>()
@@ -98,7 +84,21 @@ class HomePage extends StatelessWidget {
                                     );
                                 context.router
                                     .push(const TrackAttendanceInboxRoute());
-                              })
+                              }),
+                              ButtonLink(
+                                  AppLocalizations.of(context)
+                                      .translate(i18.home.registerIndividual),
+                                  () => context.router
+                                      .push(const RegisterIndividualRoute())),
+                              ButtonLink(
+                                  AppLocalizations.of(context)
+                                      .translate(i18.home.inbox), () {
+                                context.read<MusterRollSearchBloc>().add(
+                                      const SearchMusterRollEvent(),
+                                    );
+                                context.router
+                                    .push(const ViewMusterRollsRoute());
+                              }),
                             ],
                           )),
                     ),
