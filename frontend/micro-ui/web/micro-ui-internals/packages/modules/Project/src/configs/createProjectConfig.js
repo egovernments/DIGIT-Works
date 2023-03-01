@@ -23,9 +23,6 @@
                         key: "basicDetails_projectName",
                         type: "text",
                         disable: false,
-                        preProcess : {
-                            translate : ["populators.error"]
-                        },
                         populators: { name: "basicDetails_projectName", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_NAME", validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2 }}
                     },
                     {
@@ -35,9 +32,6 @@
                         key: "basicDetails_projectDesc",
                         type: "text",
                         disable: false,
-                        preProcess : {
-                            translate : ["populators.error"]
-                        },
                         populators: { name: "basicDetails_projectDesc", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_DESC", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
                     },
                     {
@@ -94,9 +88,6 @@
                       type: "radioordropdown",
                       label: "PROJECT_OWNING_DEPT",
                       disable: false,
-                      preProcess : {
-                        translate : ["populators.error"]
-                      },
                       populators: {
                         name: "noSubProject_owningDepartment",
                         optionsKey: "name",
@@ -186,7 +177,6 @@
                       label: "WORKS_SUB_PROJECT_TYPE",
                       disable: false,
                       preProcess : {
-                        translate : ["populators.error"],
                         updateDependent : ["populators.options"]
                       },
                       populators: {
@@ -296,7 +286,6 @@
                       label: ("ES_COMMON_ULB"),
                       disable: false,
                       preProcess : {
-                        translate : ["populators.error"],
                         updateDependent : ["populators.options"]
                       },
                       populators: {
@@ -317,7 +306,6 @@
                       label: "PDF_STATIC_LABEL_ESTIMATE_WARD",
                       disable: false,
                       preProcess : {
-                        translate : ["populators.error"],
                         updateDependent : ["populators.options"]
                       },
                       populators: {
@@ -338,7 +326,6 @@
                       label: "WORKS_LOCALITY",
                       disable: false,
                       preProcess : {
-                        translate : ["populators.error"],
                         updateDependent : ["populators.options"]
                       },
                       populators: {
@@ -386,9 +373,6 @@
                       type: "radioordropdown",
                       label: "WORKS_FUND",
                       disable: false,
-                      preProcess : {
-                        translate : ["populators.error"]
-                      },
                       populators: {
                         name: "noSubProject_fund",
                         optionsKey: "name",
@@ -474,7 +458,6 @@
                       label: "WORKS_SUB_SCHEME",
                       disable: false,
                       preProcess : {
-                        translate : ["populators.error"],
                         updateDependent : ["populators.options"]
                       },
                       populators: {
@@ -568,9 +551,6 @@
                       type: "radioordropdown",
                       label: "WORKS_FUND",
                       disable: false,
-                      preProcess : {
-                        translate : ["populators.error"]
-                      },
                       populators: {
                         name: "withSubProject_project_fund",
                         optionsKey: "name",
@@ -592,9 +572,6 @@
                       type: "radioordropdown",
                       label: "WORKS_FUNCTION",
                       disable: false,
-                      preProcess : {
-                        translate : ["populators.error"]
-                      },
                       populators: {
                         name: "withSubProject_project_function",
                         optionsKey: "name",
@@ -616,9 +593,6 @@
                       type: "radioordropdown",
                       label: "WORKS_BUDGET_HEAD",
                       disable: false,
-                      preProcess : {
-                        translate : ["populators.error"]
-                      },
                       populators: {
                         name: "withSubProject_project_budgetHead",
                         optionsKey: "name",
@@ -640,9 +614,6 @@
                       type: "radioordropdown",
                       label: "WORKS_SCHEME",
                       disable: false,
-                      preProcess : {
-                        translate : ["populators.error"]
-                      },
                       populators: {
                         name: "withSubProject_project_scheme",
                         optionsKey: "name",
@@ -665,7 +636,6 @@
                       label: "WORKS_SUB_SCHEME",
                       disable: false,
                       preProcess : {
-                        translate : ["populators.error"],
                         updateDependent : ["populators.options"]
                       },
                       populators: {
@@ -697,8 +667,3 @@
               ]
             }
       }
-
-    /*
-        a. preProcess - nested object that can have multiple preProcessing objects
-        b. customProps - this should be the custom props for the input type as "component".
-    */
