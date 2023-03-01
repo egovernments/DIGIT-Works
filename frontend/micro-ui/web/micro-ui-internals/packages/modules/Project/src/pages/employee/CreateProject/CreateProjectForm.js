@@ -72,35 +72,35 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
         updateDependent : [
           {
             key : 'withSubProject_project_subScheme',
-            value : withSubProjectSubSchemeOptions
+            value : [withSubProjectSubSchemeOptions]
           },
           {
             key : 'noSubProject_subScheme',
-            value : noSubProjectSubSchemeOptions
+            value : [noSubProjectSubSchemeOptions]
           },
           {
             key : 'noSubProject_subTypeOfProject',
-            value : subTypeOfProjectOptions
+            value : [subTypeOfProjectOptions]
           },
           {
             key : 'noSubProject_ulb',
-            value : ULBOptions
+            value : [ULBOptions]
           },
           {
             key : 'noSubProject_ward',
-            value : wardsAndLocalities?.wards
+            value : [wardsAndLocalities?.wards]
           },
           {
             key : 'noSubProject_locality',
-            value : filteredLocalities
+            value : [filteredLocalities]
           },
           {
             key : "citizenInfoLabel",
-            value : showInfoLabel ? 'project-banner' : 'project-banner display-none'
+            value : [showInfoLabel ? 'project-banner' : 'project-banner display-none']
           },
           {
             key : "noSubProject_endDate",
-            value : !isEndDateValid ? (() => isEndDateValid) : (()=>{})
+            value : [!isEndDateValid ? (() => isEndDateValid) : (()=>{})]
           }
         ]
       }),
