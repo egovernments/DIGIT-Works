@@ -1,13 +1,9 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 
-import '../blocs/localization/app_localization.dart';
-import '../utils/constants.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/atoms/back_navigation_help_header.dart';
-import '../widgets/atoms/radio_button_list.dart';
 import '../widgets/drawer_wrapper.dart';
 
 class RegisterIndividualPage extends StatelessWidget {
@@ -60,34 +56,24 @@ class RegisterIndividualPage extends StatelessWidget {
                       'Individual Details',
                       style: theme.textTheme.displayMedium,
                     ),
-                    Column(children: [
-                      const DigitTextFormField(
+                    Column(children: const [
+                      DigitTextFormField(
                         formControlName: 'administrationArea',
                         label: 'Administration Area',
                       ),
-                      DigitRadioButtonList(
-                          context,
-                          AppLocalizations.of(context)
-                              .translate(i18.common.gender),
-                          genderController,
-                          '',
-                          '',
-                          false,
-                          Constants.gender,
-                          (val) {}),
-                      const DigitTextFormField(
-                        formControlName: 'HouseholdNo',
+                      DigitTextFormField(
+                        formControlName: 'housholdNo',
                         label: 'Household Location',
                       ),
-                      const DigitTextFormField(
+                      DigitTextFormField(
                         formControlName: 'locality',
                         label: 'LOCALITY',
                       ),
-                      const DigitTextFormField(
+                      DigitTextFormField(
                         formControlName: 'state',
                         label: 'State',
                       ),
-                      const DigitTextFormField(
+                      DigitTextFormField(
                         formControlName: 'postalCode',
                         label: 'PIN',
                       ),
