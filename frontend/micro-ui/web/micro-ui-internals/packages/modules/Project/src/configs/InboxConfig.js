@@ -11,7 +11,7 @@ const inboxConfig = () => {
                 apiOperation: "SEARCH",
                 Projects: [
                     {   
-                        
+                        projectType:"MP-CWS"
                     }
                 ]
             },

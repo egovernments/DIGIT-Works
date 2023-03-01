@@ -54,6 +54,7 @@ const DetailsCard = ({ data, serviceRequestIdKey, linkPrefix, handleSelect, sele
   return (
     <div>
       {data.map((object, itemIndex) => {
+        console.log("OBJECT : ",object,selectedItems);
         return (
           <div
             key={itemIndex}

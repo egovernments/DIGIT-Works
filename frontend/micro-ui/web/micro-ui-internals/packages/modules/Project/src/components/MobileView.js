@@ -1,28 +1,27 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { Link } from "react-router-dom"; 
-//import ResultsTable from "./ResultsTable"
-
-import { Card, DetailsCard, Loader, PopUp, SearchAction, InboxSearchLinks, ResultsTable } from "@egovernments/digit-ui-react-components";
+import { PopUp, SearchAction, InboxSearchLinks, ResultsTable } from "@egovernments/digit-ui-react-components";
 import { FilterAction } from "@egovernments/digit-ui-react-components";
 import reducer, { initialInboxState } from "./MobileInboxReducer";
 import { MobileInboxContext } from "./MobileInboxContext";
-import { MobileFilterComponent } from "./MobileFilterComponent";
 import { MobileSearchComponent } from "./MobileSearchComponent";
-//import SearchComponent from "../atoms/SearchComponent";
+import { MobileSearchResults } from "./MobileSearchResults";
 import _ from "lodash";
 
 const MobileView = (props) => {
   const { configs } = props;
   const [enable, setEnable] = useState(false);
+  //const [_sortparams, setSortParams] = useState(sortParams);
   const [state, dispatch] = useReducer(reducer, initialInboxState);
   const [type, setType] = useState("");
   const [popup, setPopup] = useState(false);
-
   const apiDetails = configs?.apiDetails;
 
   useEffect(() => {
-    //here if jsonpaths for search & table are same then searchform gets overridden
+    if (type) setPopup(true);
+  }, [type]);
 
+  useEffect(() => {
+    //here if jsonpaths for search & table are same then searchform gets overridden
     if (Object.keys(state.searchForm)?.length >= 0) {
       const result = { ..._.get(apiDetails, apiDetails.searchFormJsonPath, {}), ...state.searchForm };
       Object.keys(result).forEach((key) => {
@@ -69,23 +68,21 @@ const MobileView = (props) => {
 
   const { isLoading, data, revalidate, isFetching } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
 
-  useEffect(() => {
-    return () => {
-      revalidate();
-      setEnable(false);
-    };
-  });
-
-  useEffect(() => {
-    if (type) setPopup(true);
-  }, [type]);
+  // useEffect(() => {
+  //   return () => {
+  //     revalidate();
+  //     setEnable(false);
+  //   };
+  // });
 
   const handlePopupClose = () => {
     setPopup(false);
     setType("");
-    setSortParams(sortParams);
+    //setSortParams(sortParams);
   };
-
+if(isLoading || !data){
+  return null;
+}
   return (
     <MobileInboxContext.Provider value={{ state, dispatch }}>
       <div className="inbox-search-component-wrapper">
@@ -128,25 +125,24 @@ const MobileView = (props) => {
               className=""
               style={
                 data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length > 0
-                  ? !(isLoading || isFetching)
+                  ? (!(isLoading || isFetching)
                     ? { overflowX: "scroll" }
-                    : {}
+                    : {})
                   : {}
-              }
-            >
-              {/* <ResultsTable 
-                                config={configs?.sections?.searchResult?.uiConfig} 
-                                data={data} 
-                                isLoading={isLoading} 
-                                isFetching={isFetching} 
-                                fullConfig={configs}/> */}
+              }>
+              <MobileSearchResults
+                config={configs?.sections?.searchResult?.uiConfig} 
+                data={data} 
+                isLoading={isLoading} 
+                isFetching={isFetching} 
+                fullConfig={configs}/>
             </div>
           )}
           {popup && (
             <PopUp>
               {type === "FILTER" && (
                 <div className="popup-module">
-                    <MobileFilterComponent
+                    <MobileSearchComponent
                     uiConfig={ configs?.sections?.filter?.uiConfig} 
                     header={configs?.sections?.filter?.label} 
                     screenType={configs.type}
@@ -154,9 +150,13 @@ const MobileView = (props) => {
                     data={data}
                     onClose={handlePopupClose}
                     />
-                  {/* {<FilterComp onFilterChange={onSearchFilter} Close={handlePopupClose} type="mobile" searchParams={searchParams} />} */}
                 </div>
               )}
+              {/* {type === "SORT" && (
+            <div className="popup-module">
+              {<SortBy type="mobile" sortParams={sortParams} onClose={handlePopupClose} onSort={onSort} />}
+            </div>
+              )} */}
               {type === "SEARCH" && (
                 <div className="popup-module">
                     <MobileSearchComponent

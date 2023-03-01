@@ -9,7 +9,7 @@ const ProjectSearchAndInboxComponent = () => {
     let isMobile = window.Digit.Utils.browser.isMobile();
     console.log("Mobile : ", isMobile);
 
-    //const configs = inboxConfig();
+    const configs = inboxConfig();
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
         tenant,
@@ -21,7 +21,7 @@ const ProjectSearchAndInboxComponent = () => {
         ]
     );
    
-    const configs = data?.commonUiConfig?.projectInboxConfig?.[0]
+    // const configs = data?.commonUiConfig?.projectInboxConfig?.[0]
 
     if(isLoading) return <Loader />
     if (isMobile) {

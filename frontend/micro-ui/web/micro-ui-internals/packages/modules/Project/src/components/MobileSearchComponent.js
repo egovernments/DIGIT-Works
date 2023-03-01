@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { MobileInboxContext } from "./MobileInboxContext";
-import { CloseSvg, SubmitBar, SearchIcon, ActionBar, RefreshIcon, RenderFormFields, Toast,LinkLabel } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, SubmitBar, SearchIcon, FilterIcon, ActionBar, RefreshIcon, RenderFormFields, Toast,LinkLabel } from "@egovernments/digit-ui-react-components";
 
 export const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data, onClose}) => {
   const { t } = useTranslation();
@@ -82,12 +82,62 @@ export const MobileSearchComponent = ({ uiConfig, header = "", screenType = "sea
 //     })
 //   }
 
+const renderHeader = () => {
+  switch(uiConfig?.type) {
+    case "filter" : {
+      return (
+        <span style={{ marginLeft: "8px", fontWeight: "normal",  display : "flex" }}><FilterIcon/>{t("ES_COMMON_FILTER_BY")}:</span>
+      )
+      }
+    case "search" : {
+      return (
+        <span style={{ marginLeft: "8px", fontWeight: "normal",  display : "flex" }}><SearchIcon/>{t("ES_COMMON_SEARCH_BY")}</span>
+      )
+    }
+    default : {
+      return <span style={{ marginLeft: "8px", fontWeight: "normal",  display : "flex" }}><SearchIcon/>{t("ES_COMMON_SEARCH_BY")}</span>
+    }
+  }
+}
+
+const renderSubmit = () => {
+  switch(uiConfig?.type) {
+    case "filter" : {
+      return (
+        <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
+              { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
+              { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
+        </div>
+      )
+      }
+    case "search" : {
+      return (
+        <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
+             <ActionBar className="clear-search-container">
+              { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
+              { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
+            </ActionBar>
+        </div>
+      )
+    }
+    default : {
+      return (
+        <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
+             <ActionBar className="clear-search-container">
+              { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
+              { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
+            </ActionBar>
+        </div>
+      )
+    }
+  }
+}
+
   return (
     <React.Fragment>
       <div className="search-wrapper">
         <div className="popup-label" style={{ display: "flex", paddingBottom: "20px" }}>
-                
-                <span style={{ marginLeft: "8px", fontWeight: "normal",  display : "flex" }}><SearchIcon/>{t("ES_COMMON_SEARCH_BY")}</span>
+                {renderHeader()}
                 <span onClick={onClose}>
                   <CloseSvg />
                 </span>        
@@ -107,12 +157,7 @@ export const MobileSearchComponent = ({ uiConfig, header = "", screenType = "sea
               labelStyle={{fontSize: "16px"}}
               apiDetails={apiDetails}
             />  
-            <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
-            <ActionBar className="clear-search-container">
-              <span className="clear-search">{ uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }</span>
-              { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
-            </ActionBar>
-            </div>
+            {renderSubmit()}
           </div> 
         </form>
         { showToast && <Toast 

@@ -240,6 +240,7 @@ import HorizontalNav from "./atoms/HorizontalNav";
 import NoResultsFound from "./atoms/NoResultsFound";
 import { ViewImages } from "./atoms/ViewImages";
 import InboxSearchComposer from "./hoc/InboxSearchComposer";
+import ResultsTable from "./hoc/ResultsTable";
 import InboxSearchLinks from "./atoms/InboxSearchLinks";
 import WorkflowTimeline from "./atoms/WorkflowTimeline";
 import WorkflowActions from "./atoms/WorkflowActions";
@@ -414,6 +415,7 @@ export {
   Details,
   InboxComposer,
   InboxSearchComposer,
+  ResultsTable,
   InboxSearchLinks,
   // Icons
   FilterIcon,
