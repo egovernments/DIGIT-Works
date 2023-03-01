@@ -35,7 +35,8 @@ public class AddressTestBuilder {
                 .pincode("Pincode-1")
                 .buildingName("BuildingName-1")
                 .street("Street-1")
-                .locality("Locality-2")
+                .boundaryType("Locality")
+                .boundary("Locality-2")
                 .auditDetails(AuditDetailsTestBuilder.builder().withAuditDetails().build());
         return this;
     }
@@ -55,7 +56,8 @@ public class AddressTestBuilder {
                 .pincode("Pincode-1")
                 .buildingName("BuildingName-1")
                 .street("Street-1")
-                .locality("Locality-1");
+                .boundaryType("Locality")
+                .boundary("Locality-1");
         return this;
     }
 }
