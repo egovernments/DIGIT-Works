@@ -240,6 +240,7 @@ import NoResultsFound from "./atoms/NoResultsFound";
 import { ViewImages } from "./atoms/ViewImages";
 import InboxSearchComposer from "./hoc/InboxSearchComposer";
 import InboxSearchLinks from "./atoms/InboxSearchLinks";
+import UploadFileComposer from "./hoc/UploadFileComposer";
 
 export {
   ViewImages,
@@ -410,6 +411,7 @@ export {
   InboxComposer,
   InboxSearchComposer,
   InboxSearchLinks,
+  UploadFileComposer,
   // Icons
   FilterIcon,
   FilterSvg,

@@ -85,7 +85,7 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
     }
 
     const [state, dispatch] = useReducer(uploadReducer, [...setuploadedstate])
-    
+      
     const onUploadMultipleFiles = async (e) => {
         setFileErrors([])
         const files = Array.from(e.target.files);
