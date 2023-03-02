@@ -523,7 +523,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
             apiKey: 'bankNumber'),
         TableHeader(
             AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-                .translate('Del'),
+                .translate(i18.common.action),
             apiKey: '')
       ];
 
@@ -559,7 +559,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
             "registerId": widget.registerId.toString(),
             "individualId": uuid.toString(),
             "enrollmentDate": null,
-            "denrollmentDate": DateTime.now().millisecondsSinceEpoch,
+            "denrollmentDate": DateTime.now()
+                .subtract(const Duration(minutes: 1, seconds: 30))
+                .millisecondsSinceEpoch,
             "tenantId": widget.tenantId.toString()
           });
         });
@@ -578,7 +580,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
               "registerId": widget.registerId.toString(),
               "individualId": uuid.toString(),
               "enrollmentDate": null,
-              "denrollmentDate": DateTime.now().millisecondsSinceEpoch,
+              "denrollmentDate": DateTime.now()
+                  .subtract(const Duration(minutes: 1, seconds: 30))
+                  .millisecondsSinceEpoch,
               "tenantId": widget.tenantId.toString()
             });
           }
