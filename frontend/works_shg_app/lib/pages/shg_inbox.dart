@@ -315,7 +315,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 name: e.musterIndividualAdditionalDetails?.userName ?? e.individualId,
                                                                                 aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId,
                                                                                 individualId: e.individualId,
-                                                                                skill: e.musterIndividualAdditionalDetails?.skillCode.toString() ?? '',
+                                                                                skill: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode,
                                                                                 monEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
                                                                                 monExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
                                                                                 monIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendance ?? -1,
