@@ -323,15 +323,23 @@ export const FormComposer = (props) => {
             render={({value = [], onChange}) => (
               <UploadFileComposer
                 module={config?.module}
-                customClass={populators?.customClass}
                 config={config}
                 register={register}
                 setuploadedstate={value}
                 onChange={onChange}
                 formData={formData}
+                errors={errors}
+                customClass={populators?.customClass}
+                localePrefix={populators?.localePrefix}
               />
             )}
-            rules={!disableFormValidation ? { required: true, ...populators.validation } : {}}
+            rules={{validate:(value) => {
+              let isValidate = true
+              if(value?.length > 0) {
+                isValidate = !value?.some(item => item?.isMandatory && item?.uploadedFiles?.length === 0)
+              }
+              return isValidate
+            }}}
             defaultValue={formData?.[populators.name]}
             name={populators.name}
             control={control}

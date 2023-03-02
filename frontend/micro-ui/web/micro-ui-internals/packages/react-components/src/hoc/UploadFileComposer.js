@@ -189,19 +189,10 @@ const test = {
   ]
 }
 
-  /*
-
-  get config as per module
-  in UI show below things:
-  - blue info box with message - pass as object with message to show or not?
-  - one obj - one upload component
-  - create/edit mode
-  - upload/delete
-  - validations on number of files and size
-  - UI
-  */
-const UploadFileComposer = ({module, customClass, config, register, setuploadedstate, onChange, formData}) => {
+const UploadFileComposer = ({module, customClass, config, register, setuploadedstate, onChange, formData, errors, localePrefix}) => {
   const { t } = useTranslation()
+  let finalDocumentData = []
+  
   //fetch mdms config based on module name
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(
@@ -213,22 +204,31 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
           }
       ]
   );
-  const docConfig = test?.DocumentConfig[0] //data?.works?.DocumentConfig?.filter(item => item.module === module)?.[0]
-  
+  const docConfig = data?.works?.DocumentConfig?.filter(item => item.module === module)?.[0]
+
+  useEffect(() => {
+    docConfig?.documents?.filter(item => item.active)?.forEach((item) => {
+      finalDocumentData.push({
+        code: item?.code,
+        isMandatory: item?.isMandatory,
+        module,
+        uploadedFiles: []
+      })
+    })
+  }, [docConfig])
+
   //check if this banner text is dynamic or can be fixed
   const getBannerText = () => {
     return `Only ${docConfig?.allowedFileTypes?.join(', ')} files can be uploaded. File size should not exceed ${docConfig?.maxSizeInMB} MB.`
   }
 
-  //Check by sending whole item obj and do stringify
   const getRegex = (allowedFormats) => {
     if(allowedFormats?.length) {
-      const exp = `/(.*?)(${allowedFormats?.join('|')})$/`
-      const obj = { "expression" : exp}
+      const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
       const stringified = JSON.stringify(obj);
       return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
     } else if(docConfig?.allowedFileTypes?.length) {
-      const obj = { "expression" : `/(.*?)(${docConfig?.allowedFormats?.join('|')})$/`}
+      const obj = { "expression" : `/(.*?)(${docConfig?.allowedFileTypes?.join('|')})$/`}
       const stringified = JSON.stringify(obj);
       return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
     } 
@@ -236,33 +236,38 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
   }
 
   function getFileStoreData(filesData, item, formData) {
-    console.log('&&&', formData);
     const numberOfFiles = filesData.length;
-    let finalDocumentData = []
+    
+    //get existing data from form
     if(formData[config?.populators?.name]?.length) {
       finalDocumentData = formData[config?.populators?.name]
     } 
+
+    finalDocumentData.map(doc => {
+      if(doc?.code === item?.code) {
+        doc.uploadedFiles = []
+      } 
+      return doc
+    })
+
     if (numberOfFiles > 0) {
+      const files = finalDocumentData?.filter(doc => doc?.code === item?.code)?.[0].uploadedFiles
       filesData.forEach((value) => {
-        const index = finalDocumentData.findIndex(item => item?.fileStoreId === value?.[1]?.fileStoreId?.fileStoreId)
-        if(index !== -1) finalDocumentData.splice(index, 1)
-        finalDocumentData.push({
+        files?.push({
           fileName: value?.[0],
           fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
           documentType: value?.[1]?.file?.type,
-          otherFileName: formData['other_name'],
-          code: item?.code,
-          module
-        });
+          otherFileName: formData['other_name'] 
+        })
       });
     }
-    onChange(numberOfFiles>0?finalDocumentData:[]);
+    onChange(finalDocumentData);
   }
 
   if(isLoading) return <Loader />
   return (
     <React.Fragment>
-      <Header styles={{fontSize: "24px"}}>{"Create Project"}</Header>
+      <Header styles={{fontSize: "24px"}}>{t('WORKS_RELEVANT_DOCUMENTS')}</Header>
       <CitizenInfoLabel info={t("ES_COMMON_INFO")} text={getBannerText()} className="doc-banner"></CitizenInfoLabel>
       {
         docConfig?.documents?.map((item, index) => {
@@ -271,7 +276,7 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
             <LabelFieldPair key={index}>
               { item.code && (
                 <CardLabel>
-                  {t(item.code)}{ item?.isMandatory ? " * " : null }
+                  { t(`${localePrefix}_${item?.code}`)} { item?.isMandatory ? " * " : null }
                 </CardLabel>) 
               }
             
@@ -281,7 +286,7 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
                     <TextInput 
                       style={{ "marginBottom": "16px" }} 
                       name={'other_name'} 
-                      placeholder={'Enter the file name'}
+                      placeholder={t('ES_COMMON_ENTER_NAME')}
                       inputRef={register({required : true, minLength: 2})}/> : 
                     null  
                 }
@@ -289,14 +294,14 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
                   <MultiUploadWrapper
                     t={t}
                     module="works"
-                    getFormState={(filesData) => getFileStoreData(filesData, item, formData)}
+                    getFormState={(filesData) => getFileStoreData(filesData, item, formData, docConfig)}
                     setuploadedstate={setuploadedstate}
                     showHintBelow={item?.hintText ? true : false}
                     hintText={item?.hintText}
                     allowedFileTypesRegex={getRegex(item?.allowedFileTypes)}
                     allowedMaxSizeInMB={item?.maxSizeInMB || docConfig?.maxSizeInMB || 5}
                     maxFilesAllowed={item?.isMultiple ? (item?.maxFilesAllowed || 2) : 1}
-                    customClass={item?.customClass}
+                    customClass={customClass}
                     customErrorMsg={item?.customErrorMsg}
                   />   
                 </div>
@@ -315,6 +320,3 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
 }
 
 export default UploadFileComposer
-
-
-//update allowedFormats to allowedFileTypes

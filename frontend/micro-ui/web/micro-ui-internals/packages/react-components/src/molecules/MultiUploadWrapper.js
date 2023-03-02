@@ -9,7 +9,7 @@ const displayError = ({ t, error, name }, customErrorMsg) => (
 )
 
 const fileValidationStatus = (file, regex, maxSize, t) => {
-    
+
     const status = { valid: true, name: file?.name?.substring(0, 15), error: '' };
     if (!file) return;
 
