@@ -121,7 +121,6 @@ const preProcessMDMSConfig = (t, config, dependencyConfig) => {
         }
        })
     })
-    console.log(config);
     return config;
 }
 
