@@ -3,6 +3,7 @@ import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import EmployeeApp from "./pages/employee";
 import { CustomisedHooks } from "./hooks";
+import WorksCard from "./components/WorksCard";
 import { UICustomizations } from "./configs/UICustomizations";
 
 const MuktaModule = ({ stateCode, userType, tenants }) => {
@@ -24,6 +25,7 @@ const MuktaModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
   MuktaModule,
+  WorksCard
 };
 
 const overrideHooks = () => {
