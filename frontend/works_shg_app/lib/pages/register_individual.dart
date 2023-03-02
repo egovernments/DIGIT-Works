@@ -12,7 +12,7 @@ class RegisterIndividualPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    var genderController = TextEditingController();
     return Scaffold(
       appBar: AppBar(),
       drawer: DrawerWrapper(const Drawer(
@@ -63,11 +63,11 @@ class RegisterIndividualPage extends StatelessWidget {
                       ),
                       DigitTextFormField(
                         formControlName: 'housholdNo',
-                        label: 'Household LocATION',
+                        label: 'Household Location',
                       ),
                       DigitTextFormField(
                         formControlName: 'locality',
-                        label: 'lOCALITY',
+                        label: 'LOCALITY',
                       ),
                       DigitTextFormField(
                         formControlName: 'state',

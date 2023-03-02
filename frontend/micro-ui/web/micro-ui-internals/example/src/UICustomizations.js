@@ -5,7 +5,51 @@ import { Link } from "react-router-dom";
 // these functions will act as middlewares 
 var Digit = window.Digit || {};
 
+const businessServiceMap = {
+    estimate:"estimate-approval-2"
+}
+
 export const UICustomizations = {
+    updatePayload: (applicationDetails, data, action, businessService) => {
+        if(businessService===businessServiceMap.estimate){
+            const workflow = {
+                comment: data.comments,
+                documents: data?.documents?.map(document => {
+                    return {
+                        documentType: action?.action + " DOC",
+                        fileName: document?.[1]?.file?.name,
+                        fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+                        documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+                        tenantId: document?.[1]?.fileStoreId?.tenantId
+                    }
+                }),
+                assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+                action: action.action
+            }
+            //filtering out the data
+            Object.keys(workflow).forEach((key, index) => {
+                if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key]
+            })
+
+            return {
+                estimate: applicationDetails,
+                workflow
+            }
+        }
+    },
+    enableHrmsSearch: (businessService,action)=> {
+        if (businessService === businessServiceMap.estimate){
+            return action.action.includes("CHECK") || action.action.includes("ADMIN") || action.action.includes("APPROVE") || action.action.includes("VERIFYANDFORWARD")
+        }
+        return false
+    },
+    getBusinessService:(moduleCode)=>{
+        if(moduleCode.includes("estimate")){
+            return businessServiceMap?.estimate
+        }
+
+        return null
+    },
     SearchProjectConfig: {
         preProcess: (data) => {
             
