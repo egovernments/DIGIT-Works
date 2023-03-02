@@ -89,7 +89,6 @@ const convertStringToRegEx = (config, index, inputIndex) => {
         let keyToValidate = config?.form[index].body[inputIndex]?.preProcess?.convertStringToRegEx[toValidate];
         let regex = _.get(input, keyToValidate);
         if(typeof(regex) === "string") {
-            debugger;
             regex =  new RegExp(regex);
         }
         _.set(input, keyToValidate, regex);    
