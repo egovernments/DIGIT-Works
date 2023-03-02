@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import CreateProjectUtils from "../../../utils/createProjectUtils";
 import { useHistory } from "react-router-dom";
-import { createProjectConfig } from "../../../configs/createProjectConfig";
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
@@ -32,7 +31,7 @@ const whenHasSubProjectsHorizontalNavConfig =  [
   }
 ];
 
-const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFormData}) => {
+const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig}) => {
     const {t} = useTranslation();
     const [selectedProjectType, setSelectedProjectType] = useState({name : "COMMON_YES", code : "COMMON_YES"});
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
@@ -305,7 +304,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
             createProjectConfig && (
               <FormComposer
                 label={"WORKS_CREATE_PROJECT"}
-                config={config?.CreateProjectConfig?.form.map((config) => {
+                config={config?.form.map((config) => {
                   return {
                     ...config,
                     body: config?.body.filter((a) => !a.hideInEmployee),

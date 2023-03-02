@@ -59,10 +59,10 @@ How to use this Pre-Process Utility -
 
 const translate = (config, index, inputIndex, t) => {
 
-    let input = config?.CreateProjectConfig?.form[index].body[inputIndex];
+    let input = config?.form[index].body[inputIndex];
     //iterate all translate keys and handle translation
-    for(let toTranslate = 0; toTranslate<config?.CreateProjectConfig?.form[index].body[inputIndex]?.preProcess?.translate?.length; toTranslate++) {
-        let keyToTranslate = config?.CreateProjectConfig?.form[index].body[inputIndex]?.preProcess?.translate[toTranslate];
+    for(let toTranslate = 0; toTranslate<config?.form[index].body[inputIndex]?.preProcess?.translate?.length; toTranslate++) {
+        let keyToTranslate = config?.form[index].body[inputIndex]?.preProcess?.translate[toTranslate];
         _.set(input, keyToTranslate, t(_.get(input, keyToTranslate)));    
     }
 
@@ -70,10 +70,10 @@ const translate = (config, index, inputIndex, t) => {
 }
 
 const updateDependent = (config, index, inputIndex, inputKey, dependencyConfig) => {
-    let input = config?.CreateProjectConfig?.form[index].body[inputIndex];
+    let input = config?.form[index].body[inputIndex];
     //iterate all update options keys and add options as params
-    for(let toUpdate = 0; toUpdate<config?.CreateProjectConfig?.form[index].body[inputIndex]?.preProcess?.updateDependent?.length; toUpdate++) {
-        let keyToUpdate = config?.CreateProjectConfig?.form[index].body[inputIndex]?.preProcess?.updateDependent[toUpdate];
+    for(let toUpdate = 0; toUpdate<config?.form[index].body[inputIndex]?.preProcess?.updateDependent?.length; toUpdate++) {
+        let keyToUpdate = config?.form[index].body[inputIndex]?.preProcess?.updateDependent[toUpdate];
         _.set(input, keyToUpdate, (dependencyConfig?.updateDependent?.filter(dependent=>dependent?.key === inputKey)?.[0]?.value?.[toUpdate]));    
     }
 
@@ -93,7 +93,7 @@ const transform = (preProcesses, config, index, inputIndex, inputKey, t, depende
 }
 
 const preProcessMDMSConfig = (t, config, dependencyConfig) => {
-    config?.CreateProjectConfig?.form?.map((section, index)=>{
+    config?.form?.map((section, index)=>{
         section?.body?.map((input, inputIndex)=>{
         let preProcesses = input?.preProcess;
         if(preProcesses){
@@ -101,6 +101,7 @@ const preProcessMDMSConfig = (t, config, dependencyConfig) => {
         }
        })
     })
+    console.log(config);
     return config;
 }
 
