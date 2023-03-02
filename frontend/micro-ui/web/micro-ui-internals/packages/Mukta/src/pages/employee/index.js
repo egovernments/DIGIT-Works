@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import React from "react";
 import { PrivateRoute } from "@egovernments/digit-ui-react-components";
 import { Switch } from "react-router-dom";
 
 const App = ({ path }) => {
+
   return (
     <Switch>
       <React.Fragment>

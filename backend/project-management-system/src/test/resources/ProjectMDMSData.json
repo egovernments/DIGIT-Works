@@ -12,6 +12,13 @@
           "active": true,
           "projectSubType": ["MP001","MP002"]
         }
+      ],
+      "NatureOfWork": [
+        {
+          "name": "Capital",
+          "code": "Capital",
+          "active": true
+        }
       ]
     },
     "common-masters": {

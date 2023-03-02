@@ -31,7 +31,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             asSectionHeader: false,
             values: [
                     { title: "PROJECT_OWNING_DEPT", value: currentProject?.department ? t(`COMMON_MASTERS_DEPARTMENT_${currentProject?.department}`) : "NA" },
-                    { title: "PROJECT_TARGET_DEMOGRAPHY", value: "NA" }, //backend to update this
+                    { title: "PROJECT_TARGET_DEMOGRAPHY",value: currentProject?.additionalDetails?.targetDemography?.code ? t(`COMMON_MASTERS_${currentProject?.additionalDetails?.targetDemography?.code }`) : "NA" },
                     { title: "WORKS_LOR", value: currentProject?.referenceID || "NA" },
                     { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs || "NA" },
                 ]
@@ -42,7 +42,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 values: [
                     { title: "WORKS_PROJECT_TYPE", value: currentProject?.projectType ? t(`WORKS_PROJECT_TYPE_${currentProject?.projectType}`) : "NA" }, //backend to update this
                     { title: "WORKS_SUB_PROJECT_TYPE", value: currentProject?.projectSubType ? t(`ES_COMMON_${currentProject?.projectSubType}`) : "NA" }, //backend to update this
-                    { title: "WORKS_WORK_NATURE", value: "NA" }, //backend to update this
+                    { title: "WORKS_WORK_NATURE", value: currentProject?.natureOfWork?.code ? t(`ES_COMMON_${currentProject?.natureOfWork?.code}`) : "NA" },
                     { title: "WORKS_MODE_OF_INS", value: "NA" }, //backend to update this
                 ],
             };
@@ -50,7 +50,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 title: "WORKS_LOCATION_DETAILS",
                 asSectionHeader: true,
                 values: [
-                    { title: "WORKS_LOCALITY",value: currentProject?.address?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.address?.locality}`) : "NA" },
+                    { title: "WORKS_LOCALITY",value: currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "NA" },
                     { title: "WORKS_WARD", value: "NA" }, ///backend to update this
                     { title: "PDF_STATIC_LABEL_ESTIMATE_ULB", value: currentProject?.address?.city ? t(currentProject?.address?.city) : "NA" }, //will check with Backend
                     { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" }, //will check with Backend

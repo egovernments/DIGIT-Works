@@ -35,7 +35,7 @@ const ViewProject = ({fromUrl=true,...props}) => {
   
   const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);    
   const { t } = useTranslation()
-  const { data, isLoading } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
+  const { data, isLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
 
   return (
     <>
