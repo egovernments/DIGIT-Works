@@ -52,7 +52,7 @@ const App = ({ path }) => {
         <PrivateRoute
           path={`${path}/inbox`}
           component={() => (
-            <Inbox isInbox parentRoute={path} filterComponent="AttendenceInboxFilter" searchComponent="AttendenceInboxSearch" initialStates={{}} />
+            <Inbox parentRoute={path} initialStates={{}}/>
           )}
         />
         <PrivateRoute path={`${path}/response`} component={Response} />
