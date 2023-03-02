@@ -234,7 +234,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                             loaded: (MusterRollsModel? musterRollsSearch) {
                                                               if(musterRollsSearch!.musterRoll!.isNotEmpty){
                                                                 existingSkills = musterRollsSearch.musterRoll!.first.individualEntries!.map((e) =>
-                                                              IndividualSkills(individualId: e.individualId, skillCode: e.musterIndividualAdditionalDetails?.skillCode ?? '')).toList();
+                                                              IndividualSkills(individualId: e.individualId, skillCode: e.musterIndividualAdditionalDetails?.skillCode ?? '',
+                                                              name: e.musterIndividualAdditionalDetails?.userName ?? e.individualId ?? '',
+                                                              aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId ?? '')).toList();
                                                               }
                                                               else{
                                                                 existingSkills.clear();
@@ -250,7 +252,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                 if (musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty) {
                                                                   attendeeList = musterRollsModel.musterRoll!.first.individualEntries!.map((e) =>
                                                                       AttendeesTrackList(
-                                                                          name: e.musterIndividualAdditionalDetails?.userName ?? e.individualId,
+                                                                          name: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).name : e.individualId,
                                                                           aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId,
                                                                           individualId: e.individualId,
                                                                           skill: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
