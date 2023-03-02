@@ -1,17 +1,18 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
-import searchWageSeekerConfig from "../../configs/searchWageSeekerConfig";
+import searchOrganisationConfig from "../../configs/searchOrganisationConfig";
 import { useHistory } from "react-router-dom";
 
-const SearchWageSeeker = () => {
+const SearchOrganisation = () => {
   const { t } = useTranslation();
   const history = useHistory()
-  const configs = searchWageSeekerConfig();
+
+  const configs = searchOrganisationConfig();
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, "commonUiConfig", [
     {
-      name: "SearchProjectConfig",
+      name: "SearchOrganisationConfig",
     },
   ]);
 
@@ -41,4 +42,4 @@ const SearchWageSeeker = () => {
   );
 };
 
-export default SearchWageSeeker;
+export default SearchOrganisation;
