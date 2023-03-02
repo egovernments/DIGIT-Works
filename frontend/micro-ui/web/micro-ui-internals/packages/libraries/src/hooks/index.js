@@ -128,6 +128,7 @@ import useEstimateDetailsScreen from "./estimates/useEstimateDetailsScreen";
 import useProjectSearch from "./project/useProjectSearch";
 import useViewFinancialDetails from "./project/useViewFinancialDetails";
 
+import useUpdateCustom from "./useUpdateCustom";
 const works = {
   useViewEstimateDetails,
   useViewProjectDetailsInEstimate,
@@ -148,7 +149,8 @@ const works = {
   useSearchApprovedEstimates,
   useInbox: useWorksInbox,
   useKickoffInbox,
-  useCreateProject
+  useCreateProject,
+  useUpdateCustom
 };
 
 const contracts = {

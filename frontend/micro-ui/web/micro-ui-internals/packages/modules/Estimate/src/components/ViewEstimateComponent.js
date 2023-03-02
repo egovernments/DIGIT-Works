@@ -13,9 +13,6 @@ const ViewEstimateComponent = (props) => {
 
     const { isLoading, data: applicationDetails } = Digit.Hooks.estimates.useEstimateDetailsScreen(t, tenantId, estimateNumber)
 
-    //to call update estimate api
-    const { mutate } = Digit.Hooks.estimates.useUpdateEstimate()
-
     if (isLoading) return <Loader />
 
     return (
@@ -38,7 +35,7 @@ const ViewEstimateComponent = (props) => {
                 applicationNo={estimateNumber}
                 tenantId={tenantId}
                 applicationDetails={applicationDetails?.applicationData}
-                mutate={mutate}
+                url={Digit.Utils.Urls.works.updateEstimate}
             />
         </>
     )

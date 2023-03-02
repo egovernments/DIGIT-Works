@@ -7,12 +7,14 @@ import ActionModal from "./Modals";
 import { Loader } from "./Loader";
 import Toast from "./Toast";
 
-const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails,mutate }) => {
+const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails,url }) => {
+  
    //for testing from url these 2 lines of code are kept here
   const { estimateNumber } = Digit.Hooks.useQueryParams();
   applicationNo = applicationNo ? applicationNo : estimateNumber 
 
-  
+  const { mutate } = Digit.Hooks.works.useUpdateCustom(url)
+
   const [displayMenu,setDisplayMenu] = useState(false)
   const [showModal,setShowModal] = useState(false)
   const [selectedAction,setSelectedAction] = useState(null)
@@ -77,7 +79,6 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
     
     mutate(mutateObj,{
       onError:(error,variables)=>{
-        
         setIsEnableLoader(false)
         //show error toast acc to selectAction
         setShowToast({ error: true, label: `WF_UPDATE_ERROR_${selectAction.action}`, isDleteBtn:true })
@@ -85,7 +86,6 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         
       },
       onSuccess:(data,variables) => {
-        
         setIsEnableLoader(false)
         //show success toast acc to selectAction
         setShowToast({ label: `WF_UPDATE_SUCCESS_${selectAction.action}` })

@@ -60,29 +60,12 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
     }, [assigneeOptions])
     
     const _submit = (data) => {
-        //here update the workflow object and call submitAction
         
-        const workflow = {
-            comment:data.comments,
-            documents:data?.documents?.map(document => {
-                return {
-                    documentType: action?.action + " DOC",
-                    fileName: document?.[1]?.file?.name,
-                    fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
-                    documentUid: document?.[1]?.fileStoreId?.fileStoreId,
-                    tenantId: document?.[1]?.fileStoreId?.tenantId
-                }
-            }),
-            assignees: data?.assignees?.uuid? [data?.assignees?.uuid]:null,
-            action:action.action
-        }    
-        //filtering out the data
-        Object.keys(workflow).forEach((key,index) => {
-            if(!workflow[key] || workflow[key]?.length===0) delete workflow[key]
-        })
-        
-        //calling submitAction
-        submitAction({ estimate:applicationDetails,workflow},action)
+        //here call an UICustomizaton fn to update the payload for update call(businessService based)
+        const updatePayload = Digit?.Customizations?.["commonUiConfig"]?.updatePayload(applicationDetails, data, action, businessService)
+        //calling submitAction 
+        submitAction(updatePayload, action)
+
     }
 
     if(isLoadingHrmsSearch) return <Loader />
