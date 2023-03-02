@@ -145,7 +145,7 @@ class DigitTable extends StatelessWidget {
             child: Text(
               tableData[index].tableRow.first.label ?? '',
               style: tableData[index].tableRow.first.style ??
-                  TextStyle(color: DigitTheme.instance.colorScheme.secondary),
+                  TextStyle(color: DigitTheme.instance.colorScheme.onSurface),
             ),
           ),
         ));

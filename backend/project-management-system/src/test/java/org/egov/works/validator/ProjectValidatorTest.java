@@ -50,6 +50,7 @@ public class ProjectValidatorTest {
         lenient().when(mdmsUtils.mDMSCall(any(ProjectRequest.class),
                 any(String.class))).thenReturn(mdmsResponse);
         lenient().when(config.getDocumentIdVerificationRequired()).thenReturn("false");
+        lenient().when(config.getMdmsModule()).thenReturn("works");
 
     }
 
@@ -127,11 +128,11 @@ public class ProjectValidatorTest {
     }
 
     @Test
-    void shouldThrowException_IfProjectSubTypeInValidForCreateProject() {
+    void shouldThrowException_IfNatureOfWorkInValidForCreateProject() {
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withProjectForCreateValidationSuccess().build();
-        projectRequest.getProjects().get(0).setProjectSubType("Type-2");
+        projectRequest.getProjects().get(0).setNatureOfWork("Work2");
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateCreateProjectRequest(projectRequest));
-        assertTrue(exception.toString().contains("INVALID_PROJECT_SUB_TYPE"));
+        assertTrue(exception.toString().contains("INVALID_NATURE_OF_WORK"));
     }
 
     @Test
@@ -148,14 +149,6 @@ public class ProjectValidatorTest {
         projectRequest.getProjects().get(0).setDepartment("D1");
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateCreateProjectRequest(projectRequest));
         assertTrue(exception.toString().contains("INVALID_DEPARTMENT_CODE"));
-    }
-
-    @Test
-    void shouldThrowException_IfBeneficiaryInValidForCreateProject() {
-        ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withProjectForCreateValidationSuccess().build();
-        projectRequest.getProjects().get(0).getTargets().get(0).setBeneficiaryType("B1");
-        CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateCreateProjectRequest(projectRequest));
-        assertTrue(exception.toString().contains("INVALID_BENEFICIARY_TYPE"));
     }
 
     @Test

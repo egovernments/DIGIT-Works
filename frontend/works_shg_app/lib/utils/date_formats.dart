@@ -86,31 +86,38 @@ class DateFormats {
       switch (start.weekday) {
         case 1:
           daysInRange.monday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndDate &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 2:
           daysInRange.tuesday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndDate &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 3:
           daysInRange.wednesday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndDate &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 4:
           daysInRange.thursday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndDate &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 5:
           daysInRange.friday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndDate &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 6:
           daysInRange.saturday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndDate &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 7:
           daysInRange.sunday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndDate &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
       }
       start = start.add(const Duration(days: 1));
