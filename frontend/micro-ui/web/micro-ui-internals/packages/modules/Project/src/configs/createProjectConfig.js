@@ -117,7 +117,7 @@
                       label: ("PROJECT_TARGET_DEMOGRAPHY"),
                       disable: false,
                       populators: {
-                        name: "noSubProject_targetDemocracy",
+                        name: "noSubProject_targetDemography",
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: false,
