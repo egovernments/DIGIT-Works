@@ -6,7 +6,8 @@ import { useLocation } from 'react-router-dom';
 
 const Inbox = () => {
     const { t } = useTranslation();
-    
+    const { state } = useLocation()
+
     //const configs = inboxConfig();
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
