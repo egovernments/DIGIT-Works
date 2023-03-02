@@ -35,7 +35,7 @@ const ViewEstimateComponent = (props) => {
             <WorkflowActions
                 forcedActionPrefix={"ACTIONS"}
                 businessService={businessService}
-                applicationNo={undefined}
+                applicationNo={estimateNumber}
                 tenantId={tenantId}
                 applicationDetails={applicationDetails?.applicationData}
                 mutate={mutate}
