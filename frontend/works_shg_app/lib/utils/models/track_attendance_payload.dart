@@ -77,6 +77,15 @@ class TrackAttendanceTableData {
   }
 }
 
+class IndividualSkills {
+  String? individualId;
+  String? skillCode;
+  String? name;
+  String? aadhaar;
+  IndividualSkills(
+      {this.individualId, this.skillCode, this.name, this.aadhaar});
+}
+
 class EntryExitModel {
   int? hours;
   String? code;
