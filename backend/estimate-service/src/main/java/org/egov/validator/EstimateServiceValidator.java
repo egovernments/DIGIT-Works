@@ -272,6 +272,11 @@ public class EstimateServiceValidator {
             if (CollectionUtils.isEmpty(estimateList)) {
                 throw new CustomException("INVALID_ESTIMATE_MODIFY", "The record that you are trying to update does not exists in the system");
             }
+            //check projectId is same or not, if project Id is not same throw validation error
+            Estimate estimateFromDB = estimateList.get(0);
+            if (!estimateFromDB.getProjectId().equals(estimate.getProjectId())) {
+                throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
+            }
         }
         String rootTenantId = estimate.getTenantId();
         //split the tenantId
