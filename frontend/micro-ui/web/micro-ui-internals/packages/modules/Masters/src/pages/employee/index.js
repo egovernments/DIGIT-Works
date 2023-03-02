@@ -26,9 +26,9 @@ const MastersBreadCrumb = ({ location }) => {
         isBack: fromScreen && true,
     },
     {
-      path: `/${window.contextPath}/employee/masters/wage-seeker-registration`,
+      path: `/${window.contextPath}/employee/masters/create-wageseeker`,
       content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_REGISTER_WAGESEEKER")}` : `${t("MASTERS_REGISTER_WAGESEEKER")}`,
-      show: location.pathname.includes("/masters/wage-seeker-registration") ? true : false,
+      show: location.pathname.includes("/masters/create-wageseeker") ? true : false,
       isBack: fromScreen && true,
     },
     {
@@ -48,6 +48,7 @@ const App = ({ path }) => {
 
   const SearchOrganization = Digit?.ComponentRegistryService?.getComponent("SearchOrganization");
   const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganization");
+  const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWageSeeker");
   const RegisterWageSeekerComponent = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
   const ViewOrganisationComponent = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
 
@@ -65,10 +66,17 @@ const App = ({ path }) => {
         <React.Fragment>
           <MastersBreadCrumb location={location} />
         </React.Fragment>
-        <PrivateRoute path={`${path}/search-organization`} component={() => <SearchOrganization parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/search-masters`} component={() => <SearchOrganization parentRoute={path}/>} />
+        
+         {/* Organisation Masters  */}
         <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganization parentRoute={path}/>} />
-        <PrivateRoute path={`${path}/wage-seeker-registration`} component={RegisterWageSeekerComponent} />
+        <PrivateRoute path={`${path}/search-organization`} component={() => <SearchOrganization parentRoute={path}/>} />
         <PrivateRoute path={`${path}/view-organization`} component={ViewOrganisationComponent} />
+       
+        {/* WageSeekers Masters*/}
+        <PrivateRoute path={`${path}/search-wageseeker`} component={() => <SearchWageSeeker parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/create-wageseeker`} component={RegisterWageSeekerComponent} />
+        <PrivateRoute path={`${path}/view-wageseeker`} component={()=><div>View WageSeekers</div>} />
       </AppContainer>
     </Switch>
   );
