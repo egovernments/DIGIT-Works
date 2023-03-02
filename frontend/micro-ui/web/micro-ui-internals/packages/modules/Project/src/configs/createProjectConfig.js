@@ -1,7 +1,8 @@
     export const createProjectConfig = {
         "tenantId" : "pg",
         "moduleName" : "commonUiConfig",
-        "CreateProjectConfig" : {
+        "CreateProjectConfig" : [
+          {
             "form" : [
                 {
                 head: "",
@@ -23,6 +24,9 @@
                         key: "basicDetails_projectName",
                         type: "text",
                         disable: false,
+                        preProcess : {
+                          convertStringToRegEx : ["populators.validation.pattern"]
+                        },
                         populators: { name: "basicDetails_projectName", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_NAME", validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2 }}
                     },
                     {
@@ -32,6 +36,9 @@
                         key: "basicDetails_projectDesc",
                         type: "text",
                         disable: false,
+                        preProcess : {
+                          convertStringToRegEx : ["populators.validation.pattern"]
+                        },
                         populators: { name: "basicDetails_projectDesc", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_DESC", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2 }}
                     },
                     {
@@ -131,6 +138,9 @@
                       key: "noSubProject_letterRefNoOrReqNo",
                       type: "text",
                       disable: false,
+                      preProcess : {
+                        convertStringToRegEx : ["populators.validation.pattern"]
+                      },
                       populators: { name: "noSubProject_letterRefNoOrReqNo", error: ("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2 }}
                     },
                     {
@@ -349,6 +359,9 @@
                     {
                       type:"multiupload",
                       label: ("WORKS_UPLOAD_FILES"),
+                      preProcess : {
+                        convertStringToRegEx : ["populators.allowedFileTypes"]
+                      },
                       populators:{
                           name: "noSubProject_uploadedFiles",
                           allowedMaxSizeInMB:5,
@@ -527,6 +540,9 @@
                         key: "withSubProject_project_LetterRefNoOrReqNo",
                         type: "text",
                         disable: false,
+                        preProcess : {
+                          convertStringToRegEx : ["populators.validation.pattern"]
+                        },
                         populators: { name: "withSubProject_project_letterRefNoOrReqNo", error: ("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2 }}
                       },
                       {
@@ -666,4 +682,5 @@
                 },
               ]
             }
+        ]
       }

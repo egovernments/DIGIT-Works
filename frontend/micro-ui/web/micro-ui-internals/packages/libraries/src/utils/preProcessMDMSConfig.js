@@ -11,6 +11,7 @@ So, this component is developed to help convert any MDMS config to a FormCompose
 As of now, two params are introduced - 
     a. translate
     b. updateDependent
+    c. convertStringToRegEx
     Based on the newer requirement, this utility can be enhanced to support extra types of params.
 
 How to use this Pre-Process Utility - 
@@ -53,7 +54,7 @@ How to use this Pre-Process Utility -
         ]
       }),
       [withSubProjectSubSchemeOptions]);
-5. Translation will be handled by the Pre-Preprocess on its own. No params are required for this.
+5. Translation and convertStringToRegEx will be handled by the Pre-Preprocess on its own. No params are required for this.
 */
 
 
@@ -80,6 +81,23 @@ const updateDependent = (config, index, inputIndex, inputKey, dependencyConfig) 
     return config;
 }
 
+const convertStringToRegEx = (config, index, inputIndex) => {
+
+    let input = config?.form[index].body[inputIndex];
+    //iterate all translate keys and handle translation
+    for(let toValidate = 0; toValidate<config?.form[index].body[inputIndex]?.preProcess?.convertStringToRegEx?.length; toValidate++) {
+        let keyToValidate = config?.form[index].body[inputIndex]?.preProcess?.convertStringToRegEx[toValidate];
+        let regex = _.get(input, keyToValidate);
+        if(typeof(regex) === "string") {
+            debugger;
+            regex =  new RegExp(regex);
+        }
+        _.set(input, keyToValidate, regex);    
+    }
+
+    return config;
+}
+
 const transform = (preProcesses, config, index, inputIndex, inputKey, t, dependencyConfig) => {
     //Do not loop preProcess object, to avoid unnecessary 'translate' and 'updateDependent' calls
     //To add any new transform object, simply add a new if statement
@@ -88,6 +106,9 @@ const transform = (preProcesses, config, index, inputIndex, inputKey, t, depende
     }
     if(preProcesses?.updateDependent) {
         config = updateDependent(config, index, inputIndex, inputKey, dependencyConfig);
+    }
+    if(preProcesses?.convertStringToRegEx) {
+        config = convertStringToRegEx(config, index, inputIndex, inputKey);
     }
     return config;  
 }
