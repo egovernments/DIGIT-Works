@@ -419,4 +419,39 @@ export const UICustomizations = {
       }
     },
   },
+  SearchOrganisationConfig: {
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      //here we can add multiple conditions
+      //like if a cell is link then we return link
+      //first we can identify which column it belongs to then we can return relevant result
+
+      if (column.label === "MASTERS_ORGANISATION_ID") {
+        return (
+          <span className="link">
+            <Link to={`/${window.contextPath}/employee/masters/view-organisation?tenantId=${row.tenantId}&orgId=${value?.[0]}`}>
+              {value?.[0] && t("ES_COMMON_NA")}
+            </Link>
+          </span>
+        );
+      }
+      if (column.label === "MASTERS_STATUS") {
+        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+      }
+      if (column.label === "MASTERS_ORGANISATION_TYPE") {
+        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+      }
+      if (column.label === "MASTERS_ORGANISATION_SUB_TYPE") {
+        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+      }
+      if (column.label === "MASTERS_LOCATION") {
+        return value ? (
+          <span style={{ whiteSpace: "nowrap" }}>
+            {String(`${t(Digit.Utils.locale.getCityLocale(value))} ${t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId))}`)}
+          </span>
+        ) : (
+          t("ES_COMMON_NA")
+        );
+      }
+    },
+  },
 };

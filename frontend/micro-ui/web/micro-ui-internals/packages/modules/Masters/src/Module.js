@@ -7,6 +7,7 @@ import { default as EmployeeApp } from "./pages/employee";
 import SearchMasters from "./pages/employee/Master/SearchMasters";
 import CreateOrganization from "./pages/employee/Master/CreateOrganization";
 import RegisterWageSeeker from "./pages/employee/registerWageSeeker/index";
+import SearchOrganisation from "./pages/employee/SearchOrganisation";
 import SearchWageSeeker from "./pages/employee/SearchWageSeeker";
 import SearchMastersApplication from "./components/SearchMasters";
 import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
@@ -40,7 +41,8 @@ const componentsToRegister = {
   RegisterWageSeeker,
   SearchMastersApplication,
   SearchWageSeeker,
-  ViewOrganisation
+  ViewOrganisation,
+  SearchOrganisation
 };
 
 export const initMastersComponents = () => {
