@@ -6,6 +6,7 @@ import { Switch, useLocation } from "react-router-dom";
 import CreateEstimate from "./Estimates/CreateEstimate/CreateEstimate";
 import EstimateSearch from "./EstimateSearch";
 import EstimateInbox from "./EstimateInbox";
+import ViewEstimate from "./ViewEstimate";
 
 const EstimateBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
@@ -82,6 +83,7 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{ path }} EstimateSession={EstimateSession} />} />
                     <PrivateRoute path={`${path}/search-estimate`} component={() => <EstimateSearch {...{ path }} />} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <EstimateInbox {...{ path }} />} />
+                    <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewEstimate {...{ path }} />} />
                 </div>
             </React.Fragment>
         </Switch>
