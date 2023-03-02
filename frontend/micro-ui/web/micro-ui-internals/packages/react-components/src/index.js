@@ -66,6 +66,7 @@ import { LastRow, MediaRow, Row, StatusTable } from "./atoms/StatusTable";
 import SubmitBar from "./atoms/SubmitBar";
 import StandaloneSearchBar from "./atoms/StandaloneSearchBar";
 import ULBHomeCard from "./atoms/ULBHomeCard";
+import ViewDetailsCard from "./atoms/ViewDetailsCard";
 import {
   AnnouncementIcon,
   ArrowDown,
@@ -331,6 +332,7 @@ export {
   PopupHeadingLabel,
   ToggleSwitch,
   ULBHomeCard,
+  ViewDetailsCard,
   CollapseAndExpandGroups,
   HorizontalNav,
   NoResultsFound,

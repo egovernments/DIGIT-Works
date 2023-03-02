@@ -8,6 +8,7 @@ import SOR from "./pageComponents/SOR";
 import NonSORTable from "./pageComponents/NonSORTable";
 import EstimateTemplate from "./pageComponents/EstimateTemplate";
 import OverheadsTable from "./pageComponents/OverheadsTable";
+import ViewEstimateComponent from "./components/ViewEstimateComponent";
 
 const EstimateModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
@@ -34,7 +35,8 @@ const componentsToRegister = {
     EstimateTemplate,
     SOR,
     NonSORTable,
-    OverheadsTable
+    OverheadsTable,
+    ViewEstimatePage: ViewEstimateComponent
 };
 
 export const initEstimateComponents = () => {

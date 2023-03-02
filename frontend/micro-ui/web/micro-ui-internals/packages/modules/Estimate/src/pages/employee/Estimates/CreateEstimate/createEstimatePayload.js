@@ -5,7 +5,7 @@ const fetchEstimateDetails = (data) => {
         
         return {
             "sorId": 45,
-            "category": "NON_SOR",
+            "category": "NON-SOR",
             "name": row?.description,
             "description": row?.description,
             "unitRate": row?.rate,
@@ -24,16 +24,18 @@ const fetchEstimateDetails = (data) => {
     })
     let overHeadsData = data?.overheadDetails?.filter(row => row)?.map(row => {
         return {
-            "category": "OVERHEADS",
+            "category": "OVERHEAD",
             "name": row?.name?.code,
             "description": row?.name?.description,
             "amountDetail": [
                 {
-                    "additionalDetails":{},
                     "type": row?.name?.code,
                     "amount": row?.amount
                 }
             ],
+            "additionalDetails": {
+                row
+            },
 
         }
     })
@@ -67,12 +69,11 @@ export const createEstimatePayload = (data,projectData) => {
             "status": "ACTIVE",
             "wfStatus": "CREATED",
             "name": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
-            // "referenceNumber": "File-18430283",
             "description": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc,
             "executingDepartment": filteredFormData?.selectedDept?.code,
             // "projectId":"7c941228-6149-4adc-bdb9-8b77f6c3757d",//static for now
             "address": {
-                ...projectData?.projectDetails?.searchedProject?.basicDetails?.address
+                ...projectData?.projectDetails?.searchedProject?.basicDetails?.address,
             },//get from project search
             "estimateDetails": fetchEstimateDetails(filteredFormData),
             "additionalDetails": {
