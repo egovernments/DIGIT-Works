@@ -38,11 +38,6 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
     })
   }, [docConfig])
 
-  //check if this banner text is dynamic or can be fixed
-  const getBannerText = () => {
-    return `Only ${docConfig?.allowedFileTypes?.join(', ')} files can be uploaded. File size should not exceed ${docConfig?.maxSizeInMB} MB.`
-  }
-
   const getRegex = (allowedFormats) => {
     if(allowedFormats?.length) {
       const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
@@ -89,7 +84,7 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
   return (
     <React.Fragment>
       <Header styles={{fontSize: "24px"}}>{t('WORKS_RELEVANT_DOCUMENTS')}</Header>
-      <CitizenInfoLabel info={t("ES_COMMON_INFO")} text={getBannerText()} className="doc-banner"></CitizenInfoLabel>
+      <CitizenInfoLabel info={t("ES_COMMON_INFO")} text={t(docConfig?.bannerLabel)} className="doc-banner"></CitizenInfoLabel>
       {
         docConfig?.documents?.map((item, index) => {
           if(!item?.active) return
