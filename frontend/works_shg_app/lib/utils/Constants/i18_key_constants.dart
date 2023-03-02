@@ -63,6 +63,7 @@ class Common {
   String get endDate => 'EVENTS_END_DATE_LABEL';
   String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
   String get selectAnOption => 'ES_SELECT_AN_OPTION';
+  String get action => 'CS_COMMON_ACTION';
 }
 
 class Home {
