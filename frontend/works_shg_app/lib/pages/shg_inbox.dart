@@ -235,7 +235,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                         child: TextFormField(
                                                           controller:
                                                               searchController,
-                                                          autofocus: true,
+                                                          autofocus: false,
                                                           decoration:
                                                               InputDecoration(
                                                             hintText: AppLocalizations
@@ -312,10 +312,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                             .first
                                                                             .individualEntries!
                                                                             .map((e) => AttendeesTrackList(
-                                                                                name: e.musterIndividualAdditionalDetails?.userName,
-                                                                                aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber,
+                                                                                name: e.musterIndividualAdditionalDetails?.userName ?? e.individualId,
+                                                                                aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId,
                                                                                 individualId: e.individualId,
-                                                                                skill: e.musterIndividualAdditionalDetails?.skillCode.toString(),
+                                                                                skill: e.musterIndividualAdditionalDetails?.skillCode.toString() ?? '',
                                                                                 monEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
                                                                                 monExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
                                                                                 monIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendance ?? -1,
@@ -459,6 +459,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 leftColumnWidth: width,
                                                                                 rightColumnWidth: width * 9,
                                                                                 height: 58 + (52.0 * (tableData.length + 1)),
+                                                                                scrollPhysics: const NeverScrollableScrollPhysics(),
                                                                               ),
                                                                             ),
                                                                           ]);
@@ -655,8 +656,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 loaded: (MusterRollsModel? createdMuster) {
                                                                                   if (!updateLoaded) {
                                                                                     Notifiers.getToastMessage(context, '${createdMuster?.musterRoll?.first.musterRollNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.musterSentForApproval)}', 'SUCCESS');
-                                                                                    onSubmit(registerId.toString());
                                                                                     updateLoaded = true;
+                                                                                    context.router.push(const HomeRoute());
                                                                                   }
                                                                                 },
                                                                                 orElse: () =>
@@ -677,15 +678,16 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                             null) {
                                                                           Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
                                                                         }
-                                                                        else if(skillsDisable ){
-                                                                          skillsDisable = false;
+                                                                        else if(skillsDisable || newList.any((e) => e.skill == null && e.skill.toString().isEmpty)){
+                                                                          setState(() {
+                                                                            skillsDisable = false;
+                                                                          });
                                                                           Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
                                                                         }
                                                                         else {
                                                                           updateLoaded = false;
                                                                           context.read<MusterCreateBloc>().add(UpdateMusterEvent(tenantId: widget.tenantId, id: musterId.toString(), contractId: individualMusterRollModel.musterRoll!.first.musterAdditionalDetails!.contractId ?? 'NA', registerNo: individualMusterRollModel.musterRoll!.first.musterAdditionalDetails!.attendanceRegisterNo ?? 'NA', registerName: individualMusterRollModel.musterRoll!.first.musterAdditionalDetails!.attendanceRegisterName ?? 'NA', orgName: individualMusterRollModel.musterRoll!.first.musterAdditionalDetails!.contractId ?? 'NA', skillsList: skillsPayLoad));
                                                                           Future.delayed(const Duration(seconds: 2));
-                                                                          onSubmit(individualMusterRollModel.musterRoll!.first.registerId.toString());
                                                                         }
                                                                       }
                                                                           : null,

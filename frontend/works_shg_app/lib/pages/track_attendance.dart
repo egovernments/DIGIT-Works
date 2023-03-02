@@ -173,32 +173,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                             child: Column(crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [const SizedBox(height: 20,),
                   // DigitSearchBar(borderRadious: 0,),
-                                            Container(margin: const EdgeInsets.all(8.0),
-                                                child: TextFormField(
-                                                  controller: searchController,
-                                                  autofocus: true,
-                                                  decoration: InputDecoration(
-                                                  hintText: AppLocalizations.of(context)
-                                                      .translate(
-                                                  i18.common.searchByNameAadhaar),
-                                                  border: const OutlineInputBorder(
-                                                  borderRadius: BorderRadius.zero,
-                                                  ),
-                                                  filled: true,
-                                                  fillColor: Colors.white,
-                                                  prefixIconConstraints: const BoxConstraints(
-                                                  minWidth: 0, minHeight: 0),
-                                                  prefixStyle: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                  color:
-                                                  Theme.of(context).primaryColorDark),
-                                                  prefixIcon: const Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Icon(Icons.search_sharp)),
-                                                  ),
-                                                  onChanged: (val) => onTextSearch(),
-                                                  )),
                   // DateRangePicker(label: 'Mark attendance for the week'),
                                               DateRangePicker(
                                               label: AppLocalizations.of(context).translate(
@@ -222,6 +196,32 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                               cancelLabel: AppLocalizations.of(context)
                                                   .translate(i18.common.cancel),
                                               ),
+                                                  Container(margin: const EdgeInsets.all(8.0),
+                                                      child: TextFormField(
+                                                        controller: searchController,
+                                                        autofocus: false,
+                                                        decoration: InputDecoration(
+                                                          hintText: AppLocalizations.of(context)
+                                                              .translate(
+                                                              i18.common.searchByNameAadhaar),
+                                                          border: const OutlineInputBorder(
+                                                            borderRadius: BorderRadius.zero,
+                                                          ),
+                                                          filled: true,
+                                                          fillColor: Colors.white,
+                                                          prefixIconConstraints: const BoxConstraints(
+                                                              minWidth: 0, minHeight: 0),
+                                                          prefixStyle: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight: FontWeight.w400,
+                                                              color:
+                                                              Theme.of(context).primaryColorDark),
+                                                          prefixIcon: const Padding(
+                                                              padding: EdgeInsets.all(8.0),
+                                                              child: Icon(Icons.search_sharp)),
+                                                        ),
+                                                        onChanged: (val) => onTextSearch(),
+                                                      )),
                                               const SizedBox(
                                               height: 20,
                                               ),
@@ -236,8 +236,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                             if (musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty) {
                                                               attendeeList = musterRollsModel.musterRoll!.first.individualEntries!.map((e) =>
                                                                   AttendeesTrackList(
-                                                                      name: e.musterIndividualAdditionalDetails?.userName,
-                                                                      aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber,
+                                                                      name: e.musterIndividualAdditionalDetails?.userName ?? e.individualId,
+                                                                      aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId,
                                                                       individualId: e.individualId,
                                                                       skill: e.musterIndividualAdditionalDetails?.skillCode ?? '',
                                                                       monEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
@@ -323,6 +323,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                       leftColumnWidth: width,
                                                                       rightColumnWidth: width * 9,
                                                                       height: 58 + (52.0 * (tableData.length + 1)),
+                                                                      scrollPhysics: const NeverScrollableScrollPhysics(),
                                                                     ),),
                                                                 ]);
                                                           } else {
@@ -487,8 +488,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                             ' ${createdMuster?.musterRoll?.first.musterRollNumber} ${AppLocalizations.of(context)
                                                                                             .translate(i18.attendanceMgmt.musterSentForApproval)}',
                                                                                             'SUCCESS');
-                                                                                        onSubmit(registerId.toString());
                                                                                         createMusterLoaded = true;
+                                                                                       context.router.push(const HomeRoute());
                                                                                       }},
                                                                                     orElse: () => Container());
                                                                               });
@@ -508,8 +509,10 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                           .attendanceMgmt.selectDateRangeFirst),
                                                                                       'ERROR');
                                                                                 }
-                                                                                else if(skillsDisable ){
-                                                                                  skillsDisable = false;
+                                                                                else if(skillsDisable || newList.any((e) => e.skill == null && e.skill.toString().isEmpty)){
+                                                                                  setState(() {
+                                                                                    skillsDisable = false;
+                                                                                  });
                                                                                   Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
                                                                                 }
                                                                                 else {
@@ -527,15 +530,20 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                           ?.first.registerNumber ?? 'NA',
                                                                                       registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
                                                                                       skillsList: skillsPayLoad));
-                                                                                  Future.delayed(const Duration(seconds: 2));
-                                                                                  onSubmit(individualAttendanceRegisterModel.attendanceRegister!
-                                                                                      .first.id.toString());}}
+                                                                                }}
                                                                                   : null : () {
                                                                                 if (selectedDateRange == null) {
                                                                                   Notifiers.getToastMessage(context, AppLocalizations.of(
                                                                                       context).translate(i18.attendanceMgmt.selectDateRangeFirst),
                                                                                       'ERROR');
-                                                                                } else {
+                                                                                }
+                                                                                else if(skillsDisable || newList.any((e) => e.skill == null || e.skill.toString().isEmpty)){
+                                                                                  setState(() {
+                                                                                    skillsDisable = false;
+                                                                                  });
+                                                                                  Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
+                                                                                }
+                                                                                else {
                                                                                   createMusterLoaded = false;
                                                                                   context.read<MusterCreateBloc>().add(CreateMusterEvent(
                                                                                       tenantId: widget.tenantId,
@@ -548,9 +556,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                       registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA',
                                                                                       registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
                                                                                       skillsList: skillsPayLoad));
-                                                                                  Future.delayed(const Duration(seconds: 2));
-                                                                                  onSubmit(individualAttendanceRegisterModel.attendanceRegister!
-                                                                                      .first.id.toString());
                                                                                 }} : null,
                                                                               child: Center(
                                                                                 child: Text(
@@ -638,6 +643,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
               endDate: selectedDateRange!.endDate,
             ),
           );
+      Future.delayed(const Duration(seconds: 2));
       context.read<MusterRollFromToDateSearchBloc>().add(
             SearchMusterRollFromToDateEvent(
                 registerId: registerId ?? '',
