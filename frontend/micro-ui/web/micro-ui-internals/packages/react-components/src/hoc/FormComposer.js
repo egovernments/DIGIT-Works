@@ -81,7 +81,6 @@ export const FormComposer = (props) => {
   const selectedFormCategory = props?.currentFormCategory;
   const [showErrorToast, setShowErrorToast] = useState(false); 
 
-
   //clear all errors if user has changed the form category. 
   //This is done in case user first click on submit and have errors in cat 1, switches to cat 2 and hit submit with errors
   //So, he should not get error prompts from previous cat 1 on cat 2 submit.
@@ -130,6 +129,9 @@ export const FormComposer = (props) => {
       disableFormValidation = sectionFormCategory !== selectedFormCategory ? true : false;
     }
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
+    const customValidation = config?.populators?.validation?.customValidation;
+    const customRules = customValidation ? {validate : customValidation} : {};
+    const customProps = config?.customProps;
     switch (type) {
       case "date":
       case "text":
@@ -160,7 +162,7 @@ export const FormComposer = (props) => {
                 />
               )}
               name={populators.name}
-              rules={!disableFormValidation ? { required: isMandatory, ...populators.validation } : {}}
+              rules={!disableFormValidation ? { required: isMandatory, ...populators.validation, ...customRules } : {}}
               control={control}
             />
           </div>
@@ -299,7 +301,7 @@ export const FormComposer = (props) => {
                 formData={formData}
                 register={register}
                 errors={errors}
-                props={props}
+                props={{...props, ...customProps}}
                 setError={setError}
                 clearErrors={clearErrors}
                 formState={formState}
