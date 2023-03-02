@@ -560,7 +560,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
             "individualId": uuid.toString(),
             "enrollmentDate": null,
             "denrollmentDate": DateTime.now()
-                .subtract(const Duration(minutes: 1))
+                .subtract(const Duration(minutes: 1, seconds: 30))
                 .millisecondsSinceEpoch,
             "tenantId": widget.tenantId.toString()
           });
@@ -580,7 +580,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
               "registerId": widget.registerId.toString(),
               "individualId": uuid.toString(),
               "enrollmentDate": null,
-              "denrollmentDate": DateTime.now().millisecondsSinceEpoch,
+              "denrollmentDate": DateTime.now()
+                  .subtract(const Duration(minutes: 1, seconds: 30))
+                  .millisecondsSinceEpoch,
               "tenantId": widget.tenantId.toString()
             });
           }
