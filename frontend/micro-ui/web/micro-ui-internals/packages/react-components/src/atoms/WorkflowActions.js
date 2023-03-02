@@ -1,13 +1,24 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef,useState } from "react";
 import { useTranslation } from "react-i18next";
 import SubmitBar from "./SubmitBar";
 import ActionBar from "./ActionBar";
 import Menu from "./Menu";
+import ActionModal from "./Modals";
+import { Loader } from "./Loader";
+import Toast from "./Toast";
 
+const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails,mutate }) => {
+   //for testing from url these 2 lines of code are kept here
+  const { estimateNumber } = Digit.Hooks.useQueryParams();
+  applicationNo = applicationNo ? applicationNo : estimateNumber 
 
+  
+  const [displayMenu,setDisplayMenu] = useState(false)
+  const [showModal,setShowModal] = useState(false)
+  const [selectedAction,setSelectedAction] = useState(null)
+  const [isEnableLoader, setIsEnableLoader] = useState(false);
+  const [showToast,setShowToast] = useState(null)
 
-const WorkflowActions = ({ businessService, tenantId, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, saveAttendanceState,displayMenu,setDisplayMenu,onActionSelect }) => {
-  const { applicationNo } = Digit.Hooks.useQueryParams();
   const { t } = useTranslation();
   let user = Digit.UserService.getUser();
 
@@ -44,17 +55,54 @@ const WorkflowActions = ({ businessService, tenantId, forcedActionPrefix, Action
     isSingleButton = false;
   }
 
-  if (saveAttendanceState?.displaySave) {
-    isMenuBotton = false;
-    isSingleButton = true;
-    actions = [
-      {
-        action: "SAVE",
-        state: "UPDATED"
-      }
-    ]
+  const closeModal = () => {
+    setSelectedAction(null);
+    setShowModal(false);
+  };
+
+  const onActionSelect = (action) => {
+    setDisplayMenu(false)
+    setSelectedAction(action)
+    
+    //here we can add cases of toast messages,edit application and more...
+    // the default result is setting the modal to show
+    setShowModal(true)
+    
   }
 
+  const submitAction = (data,selectAction) => {
+    setShowModal(false)
+    setIsEnableLoader(true)
+    const mutateObj = {...data}
+    
+    mutate(mutateObj,{
+      onError:(error,variables)=>{
+        
+        setIsEnableLoader(false)
+        //show error toast acc to selectAction
+        setShowToast({ error: true, label: `WF_UPDATE_ERROR_${selectAction.action}`, isDleteBtn:true })
+        //console.log(selectAction);
+        
+      },
+      onSuccess:(data,variables) => {
+        
+        setIsEnableLoader(false)
+        //show success toast acc to selectAction
+        setShowToast({ label: `WF_UPDATE_SUCCESS_${selectAction.action}` })
+
+        // to refetch updated workflowData and re-render timeline and actions
+        workflowDetails.revalidate()
+
+        //console.log(selectAction);
+        
+      }
+    })
+  }
+
+  //if workflowDetails are loading then a loader is displayed in workflowTimeline comp anyway
+  if(isEnableLoader){
+    return <Loader />
+  }
 
   return (
     <React.Fragment>
@@ -85,6 +133,26 @@ const WorkflowActions = ({ businessService, tenantId, forcedActionPrefix, Action
           </button>
         </ActionBar>
       )}
+
+      {showModal && <ActionModal
+        t={t}
+        action={selectedAction}
+        tenantId={tenantId}
+        id={applicationNo}
+        closeModal={closeModal}
+        submitAction={submitAction}
+        businessService={businessService}
+        applicationDetails={applicationDetails}
+      />}
+      {showToast && <Toast
+        error={showToast?.error}
+        warning={t(showToast?.warning)}
+        label={t(showToast?.label)}
+        onClose={() => {
+          setShowToast(null);
+        }}
+        isDleteBtn={showToast?.isDleteBtn}
+      />}
     </React.Fragment>
   );
 }

@@ -6,6 +6,19 @@ import { Link } from "react-router-dom";
 var Digit = window.Digit || {};
 
 export const UICustomizations = {
+    enableHrmsSearch: (businessService,action)=> {
+        if(businessService==="estimate-approval-2"){
+            return action.action.includes("CHECK") || action.action.includes("ADMIN") || action.action.includes("APPROVE") || action.action.includes("VERIFYANDFORWARD")
+        }
+        return false
+    },
+    getBusinessService:(moduleCode)=>{
+        if(moduleCode.includes("estimate")){
+            return "estimate-approval-2"
+        }
+
+        return null
+    },
     SearchProjectConfig: {
         preProcess: (data) => {
             

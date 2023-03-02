@@ -63,8 +63,9 @@ const makeCommentsSubsidariesOfPreviousActionsWorks = async (wf) => {
   
   for (const eventHappened of wf) {
     
+    //currenlty in workflow documentUid is getting populated so while update we are sending fileStoreId in documentUid field
     if (eventHappened?.documents) {
-      eventHappened.thumbnailsToShow = await getThumbnailsWorks(eventHappened?.documents?.map(e => e?.fileStoreId), eventHappened?.tenantId, eventHappened?.documents)
+      eventHappened.thumbnailsToShow = await getThumbnailsWorks(eventHappened?.documents?.map(e => e?.documentUid), eventHappened?.tenantId, eventHappened?.documents)
     }
 
       
