@@ -46,7 +46,7 @@ const App = ({ path }) => {
   const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
   const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
 
-  const SearchOrganization = Digit?.ComponentRegistryService?.getComponent("SearchOrganization");
+  const SearchMasters = Digit?.ComponentRegistryService?.getComponent("SearchMasters");
   const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganization");
   const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWageSeeker");
   const RegisterWageSeekerComponent = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
@@ -66,11 +66,11 @@ const App = ({ path }) => {
         <React.Fragment>
           <MastersBreadCrumb location={location} />
         </React.Fragment>
-        <PrivateRoute path={`${path}/search-masters`} component={() => <SearchOrganization parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/search-masters`} component={() => <SearchMasters parentRoute={path}/>} />
         
          {/* Organisation Masters  */}
         <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganization parentRoute={path}/>} />
-        <PrivateRoute path={`${path}/search-organization`} component={() => <SearchOrganization parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/search-organization`} component={() => <SearchMasters parentRoute={path}/>} />
         <PrivateRoute path={`${path}/view-organization`} component={ViewOrganisationComponent} />
        
         {/* WageSeekers Masters*/}
