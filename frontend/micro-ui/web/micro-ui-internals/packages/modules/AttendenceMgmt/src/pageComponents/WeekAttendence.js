@@ -37,20 +37,18 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
     const classSelector = (state) => {
       switch (state) {
         case "half":
-          return ["radio-outer-circle selected", "radio-half-inner-circle"];
+          return ["radio-half-circle"];
         case "full":
-          return ["radio-outer-circle selected", "radio-full-inner-circle"];
+          return ["radio-full-circle"];
 
         default:
-          return ["radio-outer-circle unselected", ""];
+          return ["radio-no-circle"];
       }
     };
 
     return (
       <div className="modern-radio-container week-table">
-        <div className={`${classSelector(state)?.[0]}`}>
-          <div className={`${classSelector(state)?.[1]}`}></div>
-        </div>
+        <div className={`${classSelector(state)?.[0]}`}></div>
       </div>
     );
   };
@@ -470,7 +468,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
             if(cellInfo?.row?.original?.type === "total") {
               tableProp["data-last-row-cell"] = "last-row";
             }
-            if (cellInfo.value === "ES_COMMON_TOTAL") {
+            if (cellInfo.value === "ES_COMMON_TOTAL_AMOUNT") {
               tableProp["colSpan"] = 4;
             }
             if(cellInfo.value === "DNR") {
