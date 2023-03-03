@@ -2,6 +2,9 @@ const searchConfig = () => {
     return {
         label : "WORKS_SEARCH_PROJECTS",
         type: 'search',
+        "actionLabel": "WORKS_CREATE_PROJECT",
+        "actionRole": "EMPLOYEE",
+        "actionLink": "project/create-project",
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
