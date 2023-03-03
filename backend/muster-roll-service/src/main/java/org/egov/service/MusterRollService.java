@@ -170,6 +170,8 @@ public class MusterRollService {
         log.info("MusterRollService::updateMusterRoll");
 
         musterRollValidator.validateUpdateMusterRoll(musterRollRequest);
+        //If 'computeAttendance' flag is true, re-calculate the attendance from attendanceLogs and update
+        boolean isComputeAttendance = isComputeAttendance(musterRollRequest.getMusterRoll());
 
         //check if the user is enrolled in the attendance register for resubmit
         MusterRoll existingMusterRoll = fetchExistingMusterRoll(musterRollRequest.getMusterRoll());
@@ -180,8 +182,6 @@ public class MusterRollService {
         Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
 
         enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll,mdmsData);
-        //If 'computeAttendance' flag is true, re-calculate the attendance from attendanceLogs and update
-        boolean isComputeAttendance = isComputeAttendance(musterRollRequest.getMusterRoll());
         if (isComputeAttendance) {
             RequestInfo requestInfo = musterRollRequest.getRequestInfo();
             musterRollValidator.isValidUser(existingMusterRoll, requestInfo);
