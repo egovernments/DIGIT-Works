@@ -1,7 +1,6 @@
 import { FormComposer, Header, Toast } from "@egovernments/digit-ui-react-components";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { createProjectSectionConfig } from "../../../configs/createProjectConfig";
 import _ from "lodash";
 import CreateProjectUtils from "../../../utils/createProjectUtils";
 import { useHistory } from "react-router-dom";
@@ -32,13 +31,14 @@ const whenHasSubProjectsHorizontalNavConfig =  [
   }
 ];
 
-const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFormData}) => {
+const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig}) => {
     const {t} = useTranslation();
     const [selectedProjectType, setSelectedProjectType] = useState({name : "COMMON_YES", code : "COMMON_YES"});
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
     const [showNavs, setShowNavs] = useState(false);
     const [subTypeOfProjectOptions, setsubTypeOfProjectOptions] = useState([]);
-    const [subSchemaOptions, setSubSchemaOptions] = useState([]);
+    const [withSubProjectSubSchemeOptions, setWithSubProjectSubSchemeOptions] = useState([]);
+    const [noSubProjectSubSchemeOptions, setNoSubProjectSubSchemeOptions] = useState([]);
     const [selectedWard, setSelectedWard] = useState('');
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
@@ -46,7 +46,10 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
-
+    const [isEndDateValid, setIsEndDateValid] = useState(true);
+    const ULB = Digit.Utils.locale.getCityLocale(tenantId);
+    let ULBOptions = []
+    ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
     const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
       tenantId, 'Ward',
       {
@@ -54,34 +57,62 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
               const wards = []
               const localities = {}
               data?.TenantBoundary[0]?.boundary.forEach((item) => {
-                  localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }))
+                  localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}`, label : item?.label }))
                   wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
               });
              return {
                   wards, localities
              }
           }
-      })
+      });
+    const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
+    const config =  useMemo(
+      () => Digit.Utils.preProcessMDMSConfig(t, createProjectConfig, {
+        updateDependent : [
+          {
+            key : 'withSubProject_project_subScheme',
+            value : [withSubProjectSubSchemeOptions]
+          },
+          {
+            key : 'noSubProject_subScheme',
+            value : [noSubProjectSubSchemeOptions]
+          },
+          {
+            key : 'noSubProject_subTypeOfProject',
+            value : [subTypeOfProjectOptions]
+          },
+          {
+            key : 'noSubProject_ulb',
+            value : [ULBOptions]
+          },
+          {
+            key : 'noSubProject_ward',
+            value : [wardsAndLocalities?.wards]
+          },
+          {
+            key : 'noSubProject_locality',
+            value : [filteredLocalities]
+          },
+          {
+            key : "citizenInfoLabel",
+            value : [showInfoLabel ? 'project-banner' : 'project-banner display-none']
+          },
+          {
+            key : "noSubProject_endDate",
+            value : [!isEndDateValid ? (() => isEndDateValid) : (()=>{})]
+          }
+        ]
+      }),
+      [withSubProjectSubSchemeOptions, noSubProjectSubSchemeOptions, subTypeOfProjectOptions, ULBOptions, wardsAndLocalities, filteredLocalities, showInfoLabel, isEndDateValid]);
 
       const createSubTypesMDMSObject = (subTypesData) => {
-        let mdmsData = [];
-        for(let subType of subTypesData?.projectSubType) {
-          mdmsData.push({code : subType, name : `COMMON_MASTERS_${subType}`});
-        }
-        return mdmsData;
+      let mdmsData = [];
+      for(let subType of subTypesData?.projectSubType) {
+        mdmsData.push({code : subType, name : `COMMON_MASTERS_${subType}`});
       }
-
-      //remove Toast after 3s
-      useEffect(()=>{
-        if(toast?.show) {
-          setTimeout(()=>{
-            handleToastClose();
-          },3000);
-        }
-      },[toast?.show])
+      return mdmsData;
+    }
   
-    const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
-
     // this validation is handled using useform's setError and custom validation type is added. 
     // passing a name which is not associalted to any input will persist the error on submit
     // later on while rendering error, this custom is removed from the name to target the target input element
@@ -115,66 +146,58 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     }
 
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-        if (!_.isEqual(sessionFormData, formData)) {
-          const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
+      if (!_.isEqual(sessionFormData, formData)) {
+        const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
-          //date validation for sub project table
-          handleErrorForEndDateInSubProjects(formData, setError, clearErrors, setValue);
+        //date validation for sub project table
+        handleErrorForEndDateInSubProjects(formData, setError, clearErrors, setValue);
 
-          //handle sum of estimated amounts
-          sumTotalEstimatedCost(sessionFormData, setValue, getValues);
+        //handle sum of estimated amounts
+        sumTotalEstimatedCost(sessionFormData, setValue, getValues);
 
-          if(formData?.basicDetails_hasSubProjects) {
-            setSelectedProjectType(formData?.basicDetails_hasSubProjects);
-          }
-          if(formData.noSubProject_ward) {
-              setSelectedWard(formData?.noSubProject_ward?.code)
-          }
-          if (difference?.noSubProject_ward) {
-              setValue("noSubProject_locality", '');
-          }
-          if(formData?.noSubProject_typeOfProject) {
-            let subTypeData = createSubTypesMDMSObject(formData?.noSubProject_typeOfProject);
-            setsubTypeOfProjectOptions(subTypeData); 
-          } 
-          if (difference?.noSubProject_typeOfProject) {
-            setValue("noSubProject_subTypeOfProject", '');
-          }
-          if(formData?.noSubProject_scheme) {
-            setSubSchemaOptions(formData?.noSubProject_scheme?.subSchemes);
-          } 
-          if (difference?.noSubProject_scheme) {
-            setValue("noSubProject_subScheme", '');
-          } 
-          if(formData?.withSubProject_project_scheme) {
-            setSubSchemaOptions(formData?.withSubProject_project_scheme?.subSchemes);
-          } 
-          if (difference?.withSubProject_project_scheme) {
-            setValue("withSubProject_project_subScheme", '');
-          }
-          setSessionFormData({ ...sessionFormData, ...formData });
-
-          //date validation for project table
-          if (difference?.noSubProject_startDate) {
-            trigger("noSubProject_endDate", {shouldFocus : true});
-          }
+        if(formData?.basicDetails_hasSubProjects) {
+          setSelectedProjectType(formData?.basicDetails_hasSubProjects);
         }
+        if(formData.noSubProject_ward) {
+            setSelectedWard(formData?.noSubProject_ward?.code)
+        }
+        if (difference?.noSubProject_ward) {
+            setValue("noSubProject_locality", '');
+        }
+        if(formData?.noSubProject_typeOfProject) {
+          let subTypeData = createSubTypesMDMSObject(formData?.noSubProject_typeOfProject);
+          setsubTypeOfProjectOptions(subTypeData); 
+        } 
+        if (difference?.noSubProject_typeOfProject) {
+          setValue("noSubProject_subTypeOfProject", '');
+        }
+        if(formData?.noSubProject_scheme) {
+          let subSchemes = formData?.noSubProject_scheme?.subSchemes;
+          subSchemes = subSchemes ? subSchemes.map(subScheme => ({ code : `COMMON_MASTERS_${subScheme?.code}`, name : subScheme?.name})) : [];
+          setNoSubProjectSubSchemeOptions(subSchemes);
+        } 
+        if (difference?.noSubProject_scheme) {
+          setValue("noSubProject_subScheme", '');
+        } 
+        if(formData?.withSubProject_project_scheme) {
+          let subSchemes = formData?.withSubProject_project_scheme?.subSchemes;
+          subSchemes = subSchemes ? subSchemes.map(subScheme => ({ code : `COMMON_MASTERS_${subScheme?.code}`, name : subScheme?.name})) : [];
+          setWithSubProjectSubSchemeOptions(subSchemes);
+        } 
+        if (difference?.withSubProject_project_scheme) {
+          setValue("withSubProject_project_subScheme", '');
+        }
+        setSessionFormData({ ...sessionFormData, ...formData });
+
+        //date validation for project table
+        if (difference?.noSubProject_startDate) {
+          trigger("noSubProject_endDate", {shouldFocus : true});
+        }
+        if (difference?.noSubProject_endDate){
+          setIsEndDateValid(()=>(new Date(sessionFormData?.noSubProject_startDate).getTime()) < (new Date(formData?.noSubProject_endDate).getTime()));
+        }
+      }
     }
-    const createProjectSectionFormConfig = createProjectSectionConfig(subTypeOfProjectOptions, subSchemaOptions, wardsAndLocalities, filteredLocalities, showInfoLabel, sessionFormData);
-
-    useEffect(()=>{
-        if(selectedProjectType?.code === "COMMON_YES") {
-          setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
-          setCurrentFormCategory("withSubProject");
-          setShowInfoLabel(true);
-          setShowNavs(true);
-        }else if(selectedProjectType?.code === "COMMON_NO") {
-          setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
-          setCurrentFormCategory("noSubProject");
-          setShowInfoLabel(false);
-          setShowNavs(true);
-        }
-    },[selectedProjectType]);
 
     const { mutate: CreateProjectMutation } = Digit.Hooks.works.useCreateProject();
 
@@ -250,14 +273,38 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
       setToast({show : false, label : "", error : false});
     }
 
+    //remove Toast after 3s
+    useEffect(()=>{
+      if(toast?.show) {
+        setTimeout(()=>{
+          handleToastClose();
+        },3000);
+      }
+    },[toast?.show]);
+
+    useEffect(()=>{
+        if(selectedProjectType?.code === "COMMON_YES") {
+          setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
+          setCurrentFormCategory("withSubProject");
+          setShowInfoLabel(true);
+          setShowNavs(true);
+        }else if(selectedProjectType?.code === "COMMON_NO") {
+          setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
+          setCurrentFormCategory("noSubProject");
+          setShowInfoLabel(false);
+          setShowNavs(true);
+        }
+    },[selectedProjectType]);
+
+
     return (
         <React.Fragment>
             <Header styles={{fontSize: "32px"}}>{t("WORKS_CREATE_PROJECT")}</Header>
           {
-            createProjectSectionFormConfig?.form && (
+            createProjectConfig && (
               <FormComposer
                 label={"WORKS_CREATE_PROJECT"}
-                config={createProjectSectionFormConfig?.form.map((config) => {
+                config={config?.form.map((config) => {
                   return {
                     ...config,
                     body: config?.body.filter((a) => !a.hideInEmployee),
@@ -276,11 +323,10 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
                 showMultipleCardsWithoutNavs={false}
                 showMultipleCardsInNavs={false}
                 horizontalNavConfig={navTypeConfig}
-                onFormValueChange={onFormValueChange}
                 currentFormCategory={currentFormCategory}
+                onFormValueChange={onFormValueChange}
             />
            )}
-           {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
       </React.Fragment>
     )
 }
