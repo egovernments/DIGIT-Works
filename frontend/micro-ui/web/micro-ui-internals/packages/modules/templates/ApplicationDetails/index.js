@@ -80,7 +80,10 @@ const ApplicationDetails = (props) => {
         }
         
       } else if (!action?.redirectionUrl) {
-        if(action?.action === 'EDIT') setModify(true)
+        if(action?.action === 'EDIT') {
+          setModify(true)
+          props.setshowEditTitle(true)
+        }
         else setShowModal(true);
       } else {
         history.push({

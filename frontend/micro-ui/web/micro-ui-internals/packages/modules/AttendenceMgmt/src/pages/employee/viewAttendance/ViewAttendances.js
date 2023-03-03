@@ -7,6 +7,7 @@ const ViewAttendance = () => {
   const { t } = useTranslation();
   const { tenantId, musterRollNumber } = Digit.Hooks.useQueryParams();
   const [showToast, setShowToast] = useState(null);
+  const [showEditTitle, setshowEditTitle] = useState(false);
 
   const closeToast = () => {
       setShowToast(null);
@@ -30,7 +31,7 @@ const ViewAttendance = () => {
 
   return (
     <React.Fragment>
-      <Header>{t("ATM_VIEW_ATTENDENCE")}</Header>
+      <Header>{showEditTitle ? t('ATM_EDIT_ATTENDENCE') : t("ATM_VIEW_ATTENDENCE")}</Header>
       <ApplicationDetails
         applicationDetails={data?.applicationDetails}
         isLoading={isLoading}
@@ -48,6 +49,7 @@ const ViewAttendance = () => {
         closeToast={closeToast}
         tenantId={data?.applicationData?.tenantId}
         applicationNo={data?.applicationData?.musterRollNumber}
+        setshowEditTitle={setshowEditTitle}
       />
     </React.Fragment>
     );

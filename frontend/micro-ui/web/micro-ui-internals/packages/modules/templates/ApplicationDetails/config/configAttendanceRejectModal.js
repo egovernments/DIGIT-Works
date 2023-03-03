@@ -17,7 +17,7 @@ const configAttendanceRejectModal = ({
         label: {
             heading: t("ATM_PROCESSINGMODAL_HEADER"),
             submit: t("ATM_CONFIRM_REJECT"),
-            cancel: t("CS_COMMON_CANCEL"),
+            cancel: t("ES_COMMON_CANCEL"),
         },
         form: [
             {
@@ -44,7 +44,7 @@ const configAttendanceRejectModal = ({
                         </LabelFieldPair>,
                     },
                     {
-                        label: t("WF_COMMON_COMMENTS"),
+                        label: t("ATM_REJECTION_REASON"),
                         type: "textarea",
                         key: "org_name",
                         populators: {
