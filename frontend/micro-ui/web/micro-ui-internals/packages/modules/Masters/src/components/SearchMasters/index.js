@@ -13,7 +13,7 @@ const options  = [
   }
 ];
 
-const SearchOrganisationApplication = ({tenantId, onSubmit, data, resultOk, isLoading, onClearSearch,showTable}) => {
+const SearchMastersApplication = ({tenantId, onSubmit, data, resultOk, isLoading, onClearSearch,showTable}) => {
     const { t } = useTranslation(); 
     const history = useHistory();
     const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
@@ -200,4 +200,4 @@ const SearchOrganisationApplication = ({tenantId, onSubmit, data, resultOk, isLo
   )
 }
 
-export default SearchOrganisationApplication
+export default SearchMastersApplication

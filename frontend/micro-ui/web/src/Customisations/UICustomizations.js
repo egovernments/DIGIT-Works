@@ -165,7 +165,7 @@ export const UICustomizations = {
                 </span>
             }
             if( column.label === "ATM_ATTENDANCE_WEEK") {
-                const week = `${Digit.DateUtils.ConvertTimestampToDate(value?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(value?.endDate, 'dd/MM/yyyy')}`
+                const week = `${Digit.DateUtils.ConvertTimestampToDate(value?.startDate, 'dd/MM/yyyy')}-${Digit.DateUtils.ConvertTimestampToDate(value?.endDate, 'dd/MM/yyyy')}`
                 return <div>{week}</div>
             }
             if (column.label === "ATM_NO_OF_INDIVIDUALS") {

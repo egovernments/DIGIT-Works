@@ -47,8 +47,8 @@ const ViewAttendance = () => {
         showToast={showToast}
         setShowToast={setShowToast}
         closeToast={closeToast}
-        tenantId={data?.applicationData?.tenantId}
-        applicationNo={data?.applicationData?.musterRollNumber}
+        tenantId={tenantId}
+        applicationNo={musterRollNumber}
         setshowEditTitle={setshowEditTitle}
       />
     </React.Fragment>

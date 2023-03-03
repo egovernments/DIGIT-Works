@@ -39,6 +39,7 @@ class AttendeesTrackList with _$AttendeesTrackList {
     String? name,
     String? aadhaar,
     String? individualId,
+    String? id,
     String? skill,
     String? monEntryId,
     String? monExitId,

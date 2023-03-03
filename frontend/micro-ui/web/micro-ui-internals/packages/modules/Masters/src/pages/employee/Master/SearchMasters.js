@@ -2,9 +2,9 @@ import React, { Fragment, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import { Toast } from "@egovernments/digit-ui-react-components";
 
-const SearchOrganization = () => {
+const SearchMasters = () => {
     const { t } = useTranslation();
-    const SearchOrganisationApplication = Digit.ComponentRegistryService.getComponent("SearchOrganisationApplication");
+    const SearchMastersApplication = Digit.ComponentRegistryService.getComponent("SearchMastersApplication");
     const [showToast, setShowToast] = useState(null);
     const [showTable, setShowTable] = useState(false);
     const [selectedOrg, setSelectedOrg] = useState(null);
@@ -80,7 +80,7 @@ const SearchOrganization = () => {
   
   return (
     <Fragment>
-      <SearchOrganisationApplication
+      <SearchMastersApplication
         onSubmit={onSubmit}
         data={getData()}
         // count={result?.count}
@@ -103,4 +103,4 @@ const SearchOrganization = () => {
   )
 }
 
-export default SearchOrganization
+export default SearchMasters
