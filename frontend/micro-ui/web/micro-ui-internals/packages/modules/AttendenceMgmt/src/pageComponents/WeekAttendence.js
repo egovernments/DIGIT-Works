@@ -258,15 +258,15 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
     }]
     const colsOthers = [
       {
-        Header: () => <p>{t("ATM_ACTUAL_WORKING_DAYS")}</p>,
-        accessor: "actualWorkingDays",
+        Header: () => <p>{t("ATM_SKILL")}</p>,
+        accessor: "skill",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
-        Header: () => <p>{t("ATM_SKILL")}</p>,
-        accessor: "skill",
+        Header: () => <p>{t("ATM_ACTUAL_WORKING_DAYS")}</p>,
+        accessor: "actualWorkingDays",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
@@ -275,7 +275,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
         Header: () => <p>{t("ATM_AMOUNT_IN_RS")}</p>,
         accessor: "amount",
         Cell: ({ value, column, row }) => {
-          return String(t(value));
+          return Digit.Utils.dss.formatterWithoutRound(value, 'number');
         },
       },
       {
@@ -292,7 +292,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
         Header: () => <p>{t("ATM_MODIFIED_AMOUNT_IN_RS")}</p>,
         accessor: "modifiedAmount",
         Cell: ({ value, column, row }) => {
-          return String(t(value));
+          return Digit.Utils.dss.formatterWithoutRound(value, 'number');
         },
       },
       {
