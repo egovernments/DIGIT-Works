@@ -8,21 +8,18 @@ import { WorkflowTimeline,WorkflowActions } from '@egovernments/digit-ui-react-c
 //comments
 //attachments
 const WorkflowCompTest = (props) => {
-    const [displayMenu,setDisplayMenu] = useState(false)
+    
   return (
       <>
-          <WorkflowTimeline businessService={"muster-roll-approval"} applicationNo={"MR/2022-23/02/20/000464"} tenantId={"pg.citya"} />
+          <WorkflowTimeline businessService={"estimate-approval-2"} applicationNo={undefined} tenantId={"pg.citya"} />
           <WorkflowActions 
-              displayMenu={displayMenu}
-              setDisplayMenu={setDisplayMenu}
               forcedActionPrefix={"ACTIONS"}
               ActionBarStyle={{}}
               MenuStyle={{}}
-              businessService={"muster-roll-approval"} 
-              applicationNo={"MR/2022-23/02/20/000464"} 
+              businessService={"estimate-approval-2"} 
+              applicationNo={undefined} 
               tenantId={"pg.citya"}
               saveAttendanceState={{ displaySave: false, updatePayload: [] }}
-              onActionSelect={(action)=>console.log(action)}
           />
       </>
   )

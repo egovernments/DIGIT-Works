@@ -10,9 +10,11 @@ function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
 }
 
-const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineStatusPrefix ,statusAttribute, ...props}) => {
+const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineStatusPrefix="ESTIMATE_" ,statusAttribute="status", ...props}) => {
     
-    // const { musterRollNumber:applicationNo } = Digit.Hooks.useQueryParams();
+    //for testing from url these 2 lines of code are kept here
+    // const { estimateNumber } = Digit.Hooks.useQueryParams();
+    // applicationNo = applicationNo? applicationNo : estimateNumber 
     const { t } = useTranslation();
     const getTimelineCaptions = (checkpoint) => {
         
@@ -68,7 +70,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                                                     <CheckPoint
                                                         keyValue={index}
                                                         isCompleted={index === 0}
-                                                        info={checkpoint.comment}
+                                                        //info={checkpoint.comment}
                                                         label={t(
                                                             `${timelineStatusPrefix}${checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}_ACTION` : checkpoint?.[statusAttribute]
                                                             }`

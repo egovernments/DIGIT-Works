@@ -54,7 +54,7 @@ const getAttendanceTableData = (data, skills) => {
     //Add row to show Total data
     let totalRow = {}
     totalRow.type = "total"
-    totalRow.sno = "ES_COMMON_TOTAL"
+    totalRow.sno = "ES_COMMON_TOTAL_AMOUNT"
     totalRow.registerId = "DNR"
     totalRow.nameOfIndividual = "DNR"
     totalRow.guardianName = "DNR"
@@ -64,7 +64,7 @@ const getAttendanceTableData = (data, skills) => {
     totalRow.actualWorkingDays = 0
     totalRow.modifiedWorkingDays = 0
     totalRow.bankAccountDetails = ""
-    totalRow.aadharNumber = "DNR"
+    totalRow.aadharNumber = ""
     totalRow.attendence = { Sun: 0, Sat: 0, Fri: 0, Thu: 0, Wed: 0, Tue: 0, Mon: 0 }
             
     tableData['total'] = totalRow

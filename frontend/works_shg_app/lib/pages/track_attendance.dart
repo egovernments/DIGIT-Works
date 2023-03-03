@@ -78,6 +78,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
   bool hasLoaded = true;
   bool createMusterLoaded = true;
   List<EntryExitModel>? entryExitList;
+  List<IndividualSkills> existingSkills = [];
   List<Skill> skillList = [];
   List<String> skillDropDown = [];
   DaysInRange? daysInRange;
@@ -173,32 +174,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                             child: Column(crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [const SizedBox(height: 20,),
                   // DigitSearchBar(borderRadious: 0,),
-                                            Container(margin: const EdgeInsets.all(8.0),
-                                                child: TextFormField(
-                                                  controller: searchController,
-                                                  autofocus: true,
-                                                  decoration: InputDecoration(
-                                                  hintText: AppLocalizations.of(context)
-                                                      .translate(
-                                                  i18.common.searchByNameAadhaar),
-                                                  border: const OutlineInputBorder(
-                                                  borderRadius: BorderRadius.zero,
-                                                  ),
-                                                  filled: true,
-                                                  fillColor: Colors.white,
-                                                  prefixIconConstraints: const BoxConstraints(
-                                                  minWidth: 0, minHeight: 0),
-                                                  prefixStyle: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                  color:
-                                                  Theme.of(context).primaryColorDark),
-                                                  prefixIcon: const Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Icon(Icons.search_sharp)),
-                                                  ),
-                                                  onChanged: (val) => onTextSearch(),
-                                                  )),
                   // DateRangePicker(label: 'Mark attendance for the week'),
                                               DateRangePicker(
                                               label: AppLocalizations.of(context).translate(
@@ -222,114 +197,160 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                               cancelLabel: AppLocalizations.of(context)
                                                   .translate(i18.common.cancel),
                                               ),
+                                                  Container(margin: const EdgeInsets.all(8.0),
+                                                      child: TextFormField(
+                                                        controller: searchController,
+                                                        autofocus: false,
+                                                        decoration: InputDecoration(
+                                                          hintText: AppLocalizations.of(context)
+                                                              .translate(
+                                                              i18.common.searchByNameAadhaar),
+                                                          border: const OutlineInputBorder(
+                                                            borderRadius: BorderRadius.zero,
+                                                          ),
+                                                          filled: true,
+                                                          fillColor: Colors.white,
+                                                          prefixIconConstraints: const BoxConstraints(
+                                                              minWidth: 0, minHeight: 0),
+                                                          prefixStyle: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight: FontWeight.w400,
+                                                              color:
+                                                              Theme.of(context).primaryColorDark),
+                                                          prefixIcon: const Padding(
+                                                              padding: EdgeInsets.all(8.0),
+                                                              child: Icon(Icons.search_sharp)),
+                                                        ),
+                                                        onChanged: (val) => onTextSearch(),
+                                                      )),
                                               const SizedBox(
                                               height: 20,
                                               ),
                                                   individualAttendanceRegisterModel.attendanceRegister!.first.attendeesEntries != null
-                                                      ? BlocBuilder<MusterRollEstimateBloc, MusterRollEstimateState>(
-                                                      builder: (context, musterState) {
-                                                        return musterState.maybeWhen(orElse: () => Container(),
-                                                          loaded: (MusterRollsModel? musterRollsModel) {
-                                                          if (musterRollsModel!.musterRoll!.first.individualEntries != null) {
-                                                            List<AttendeesTrackList> attendeeList = individualAttendanceRegisterModel.attendanceRegister!.first.attendeesEntries!.where((e) => e.denrollmentDate == null || !(e.denrollmentDate! <= individualAttendanceRegisterModel.attendanceRegister!.first.endDate!.toInt())).toList().map((e) =>
-                                                                AttendeesTrackList(name: e.id, aadhaar: e.individualId, individualId: e.individualId)).toList();
-                                                            if (musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty) {
-                                                              attendeeList = musterRollsModel.musterRoll!.first.individualEntries!.map((e) =>
-                                                                  AttendeesTrackList(
-                                                                      name: e.musterIndividualAdditionalDetails?.userName,
-                                                                      aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber,
-                                                                      individualId: e.individualId,
-                                                                      skill: e.musterIndividualAdditionalDetails?.skillCode ?? '',
-                                                                      monEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                      monExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                      monIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendance ?? -1,
-                                                                      tueEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                      tueExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                      tueIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendance ?? -1,
-                                                                      wedEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                      wedExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                      wedIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendance ?? -1,
-                                                                      thuEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                      thuExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                      thursIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendance ?? -1,
-                                                                      friEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                      friExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                      friIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendance ?? -1,
-                                                                      satEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                      satExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                      satIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendance ?? -1,
-                                                                      sunEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                      sunExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                      sunIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? -1,
-                                                                      auditDetails: e.attendanceEntries!.first.auditDetails)).toList();
-                                                              if (newList.isEmpty) {
-                                                                for (var i = 0; i < attendeeList.length; i++) {
-                                                                  var item1 = attendeeList[i];
-                                                                  TrackAttendanceTableData data = TrackAttendanceTableData();
-                                                                  data.name = item1.name;
-                                                                  data.aadhaar = item1.aadhaar;
-                                                                  data.individualId = item1.individualId ?? '';
-                                                                  data.skill = item1.skill ?? '';
-                                                                  data.monIndex = item1.monIndex;
-                                                                  data.monEntryId = item1.monEntryId;
-                                                                  data.monExitId = item1.monExitId;
-                                                                  data.tueIndex = item1.tueIndex;
-                                                                  data.tueEntryId = item1.tueEntryId;
-                                                                  data.tueExitId = item1.tueExitId;
-                                                                  data.wedIndex = item1.wedIndex;
-                                                                  data.wedEntryId = item1.wedEntryId;
-                                                                  data.wedExitId = item1.wedExitId;
-                                                                  data.thuIndex = item1.thursIndex;
-                                                                  data.thuEntryId = item1.thuEntryId;
-                                                                  data.thuExitId = item1.thuExitId;
-                                                                  data.friIndex = item1.friIndex;
-                                                                  data.friEntryId = item1.friEntryId;
-                                                                  data.friExitId = item1.friExitId;
-                                                                  data.satIndex = item1.satIndex;
-                                                                  data.satEntryId = item1.satEntryId;
-                                                                  data.satExitId = item1.satExitId;
-                                                                  data.sunIndex = item1.sunIndex;
-                                                                  data.sunEntryId = item1.sunEntryId;
-                                                                  data.sunExitId = item1.sunExitId;
-                                                                  data.auditDetails = item1.auditDetails;
-                                                                  newList.add(data);
-                                                                }}}
-                                                            else {
-                                                              if (newList.isEmpty) {
-                                                                for (var i = 0; i < attendeeList.length; i++) {
-                                                                  var item1 = attendeeList[i];
-                                                                  TrackAttendanceTableData data = TrackAttendanceTableData();
-                                                                  data.name = item1.name;
-                                                                  data.aadhaar = item1.aadhaar;
-                                                                  data.individualId = item1.individualId ?? '';
-                                                                  data.skill = item1.skill ?? '';
-                                                                  data.monIndex = item1.monIndex;
-                                                                  data.tueIndex = item1.tueIndex;
-                                                                  data.wedIndex = item1.wedIndex;
-                                                                  data.thuIndex = item1.thursIndex;
-                                                                  data.friIndex = item1.friIndex;
-                                                                  data.satIndex = item1.satIndex;
-                                                                  data.sunIndex = item1.sunIndex;
-                                                                  data.auditDetails = item1.auditDetails;
-                                                                  newList.add(data);
-                                                                }}}
-                                                            tableData = getAttendanceData(newList);
-                                                            return Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: [
-                                                                  Padding(padding: const EdgeInsets.all(8.0),
-                                                                    child: shg_app.DigitTable(
-                                                                      headerList: headerList,
-                                                                      tableData: tableData,
-                                                                      leftColumnWidth: width,
-                                                                      rightColumnWidth: width * 9,
-                                                                      height: 58 + (52.0 * (tableData.length + 1)),
-                                                                    ),),
-                                                                ]);
-                                                          } else {
-                                                            return Container();
-                                                          }
-                                                          },);
-                                                      }) : Column(children: [
+                                                      ? BlocListener<MusterRollFromToDateSearchBloc, MusterRollFromToDateSearchState>(
+                                                          listener: (context, musterSearch) {
+                                                            musterSearch.maybeWhen(orElse: () => Container(),
+                                                            loading: () => Loaders.circularLoader(context),
+                                                            loaded: (MusterRollsModel? musterRollsSearch) {
+                                                              if(musterRollsSearch!.musterRoll!.isNotEmpty){
+                                                                existingSkills = musterRollsSearch.musterRoll!.first.individualEntries!.map((e) =>
+                                                              IndividualSkills(individualId: e.individualId, skillCode: e.musterIndividualAdditionalDetails?.skillCode ?? '',
+                                                              name: e.musterIndividualAdditionalDetails?.userName ?? e.individualId ?? '',
+                                                              aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId ?? '')).toList();
+                                                              }
+                                                              else{
+                                                                existingSkills.clear();
+                                                              }});
+                                                            },
+                                                          child:  BlocBuilder<MusterRollEstimateBloc, MusterRollEstimateState>(
+                                                          builder: (context, musterState) {
+                                                             return musterState.maybeWhen(orElse: () => Container(),
+                                                              loaded: (MusterRollsModel? musterRollsModel) {
+                                                              if (musterRollsModel!.musterRoll!.first.individualEntries != null) {
+                                                                List<AttendeesTrackList> attendeeList = individualAttendanceRegisterModel.attendanceRegister!.first.attendeesEntries!.where((e) => e.denrollmentDate == null || !(e.denrollmentDate! <= individualAttendanceRegisterModel.attendanceRegister!.first.endDate!.toInt())).toList().map((e) =>
+                                                                    AttendeesTrackList(name: e.id, aadhaar: e.individualId, individualId: e.individualId)).toList();
+                                                                if (musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty) {
+                                                                  attendeeList = musterRollsModel.musterRoll!.first.individualEntries!.map((e) =>
+                                                                      AttendeesTrackList(
+                                                                          name: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).name : e.individualId,
+                                                                          aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId,
+                                                                          individualId: e.individualId,
+                                                                          skill: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
+                                                                          monEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                          monExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                          monIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendance ?? -1,
+                                                                          tueEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                          tueExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                          tueIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendance ?? -1,
+                                                                          wedEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                          wedExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                          wedIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendance ?? -1,
+                                                                          thuEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                          thuExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                          thursIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendance ?? -1,
+                                                                          friEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                          friExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                          friIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendance ?? -1,
+                                                                          satEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                          satExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                          satIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendance ?? -1,
+                                                                          sunEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                          sunExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                          sunIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? -1,
+                                                                          auditDetails: e.attendanceEntries!.first.auditDetails)).toList();
+                                                                  if (newList.isEmpty) {
+                                                                    for (var i = 0; i < attendeeList.length; i++) {
+                                                                      var item1 = attendeeList[i];
+                                                                      TrackAttendanceTableData data = TrackAttendanceTableData();
+                                                                      data.name = item1.name;
+                                                                      data.aadhaar = item1.aadhaar;
+                                                                      data.individualId = item1.individualId ?? '';
+                                                                      data.skill = item1.skill ?? '';
+                                                                      data.monIndex = item1.monIndex;
+                                                                      data.monEntryId = item1.monEntryId;
+                                                                      data.monExitId = item1.monExitId;
+                                                                      data.tueIndex = item1.tueIndex;
+                                                                      data.tueEntryId = item1.tueEntryId;
+                                                                      data.tueExitId = item1.tueExitId;
+                                                                      data.wedIndex = item1.wedIndex;
+                                                                      data.wedEntryId = item1.wedEntryId;
+                                                                      data.wedExitId = item1.wedExitId;
+                                                                      data.thuIndex = item1.thursIndex;
+                                                                      data.thuEntryId = item1.thuEntryId;
+                                                                      data.thuExitId = item1.thuExitId;
+                                                                      data.friIndex = item1.friIndex;
+                                                                      data.friEntryId = item1.friEntryId;
+                                                                      data.friExitId = item1.friExitId;
+                                                                      data.satIndex = item1.satIndex;
+                                                                      data.satEntryId = item1.satEntryId;
+                                                                      data.satExitId = item1.satExitId;
+                                                                      data.sunIndex = item1.sunIndex;
+                                                                      data.sunEntryId = item1.sunEntryId;
+                                                                      data.sunExitId = item1.sunExitId;
+                                                                      data.auditDetails = item1.auditDetails;
+                                                                      newList.add(data);
+                                                                    }}}
+                                                                else {
+                                                                  if (newList.isEmpty) {
+                                                                    for (var i = 0; i < attendeeList.length; i++) {
+                                                                      var item1 = attendeeList[i];
+                                                                      TrackAttendanceTableData data = TrackAttendanceTableData();
+                                                                      data.name = item1.name;
+                                                                      data.aadhaar = item1.aadhaar;
+                                                                      data.individualId = item1.individualId ?? '';
+                                                                      data.skill = item1.skill ?? '';
+                                                                      data.monIndex = item1.monIndex;
+                                                                      data.tueIndex = item1.tueIndex;
+                                                                      data.wedIndex = item1.wedIndex;
+                                                                      data.thuIndex = item1.thursIndex;
+                                                                      data.friIndex = item1.friIndex;
+                                                                      data.satIndex = item1.satIndex;
+                                                                      data.sunIndex = item1.sunIndex;
+                                                                      data.auditDetails = item1.auditDetails;
+                                                                      newList.add(data);
+                                                                    }}}
+                                                                tableData = getAttendanceData(newList);
+                                                                return Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    children: [
+                                                                      Padding(padding: const EdgeInsets.all(8.0),
+                                                                        child: shg_app.DigitTable(
+                                                                          headerList: headerList,
+                                                                          tableData: tableData,
+                                                                          leftColumnWidth: width,
+                                                                          rightColumnWidth: width * 9,
+                                                                          height: 58 + (52.0 * (tableData.length + 1)),
+                                                                          scrollPhysics: const NeverScrollableScrollPhysics(),
+                                                                        ),),
+                                                                    ]);
+                                                              }
+                                                              else {
+                                                                return const EmptyImage(
+                                                                  align: Alignment.center,
+                                                                );
+                                                              }
+                                                              },);
+                                                          },)
+                                                      ) : Column(children: [
                                                         const EmptyImage(
                                                           align: Alignment.center,
                                                         ),
@@ -487,8 +508,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                             ' ${createdMuster?.musterRoll?.first.musterRollNumber} ${AppLocalizations.of(context)
                                                                                             .translate(i18.attendanceMgmt.musterSentForApproval)}',
                                                                                             'SUCCESS');
-                                                                                        onSubmit(registerId.toString());
                                                                                         createMusterLoaded = true;
+                                                                                       context.router.push(const HomeRoute());
                                                                                       }},
                                                                                     orElse: () => Container());
                                                                               });
@@ -508,8 +529,10 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                           .attendanceMgmt.selectDateRangeFirst),
                                                                                       'ERROR');
                                                                                 }
-                                                                                else if(skillsDisable ){
-                                                                                  skillsDisable = false;
+                                                                                else if(skillsDisable || newList.any((e) => e.skill == null && e.skill.toString().isEmpty)){
+                                                                                  setState(() {
+                                                                                    skillsDisable = false;
+                                                                                  });
                                                                                   Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
                                                                                 }
                                                                                 else {
@@ -527,15 +550,20 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                           ?.first.registerNumber ?? 'NA',
                                                                                       registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
                                                                                       skillsList: skillsPayLoad));
-                                                                                  Future.delayed(const Duration(seconds: 2));
-                                                                                  onSubmit(individualAttendanceRegisterModel.attendanceRegister!
-                                                                                      .first.id.toString());}}
+                                                                                }}
                                                                                   : null : () {
                                                                                 if (selectedDateRange == null) {
                                                                                   Notifiers.getToastMessage(context, AppLocalizations.of(
                                                                                       context).translate(i18.attendanceMgmt.selectDateRangeFirst),
                                                                                       'ERROR');
-                                                                                } else {
+                                                                                }
+                                                                                else if(skillsDisable || newList.any((e) => e.skill == null || e.skill.toString().isEmpty)){
+                                                                                  setState(() {
+                                                                                    skillsDisable = false;
+                                                                                  });
+                                                                                  Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
+                                                                                }
+                                                                                else {
                                                                                   createMusterLoaded = false;
                                                                                   context.read<MusterCreateBloc>().add(CreateMusterEvent(
                                                                                       tenantId: widget.tenantId,
@@ -548,9 +576,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                       registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA',
                                                                                       registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
                                                                                       skillsList: skillsPayLoad));
-                                                                                  Future.delayed(const Duration(seconds: 2));
-                                                                                  onSubmit(individualAttendanceRegisterModel.attendanceRegister!
-                                                                                      .first.id.toString());
                                                                                 }} : null,
                                                                               child: Center(
                                                                                 child: Text(
@@ -627,9 +652,16 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
 
   void onSubmit(String id) {
     if (selectedDateRange != null) {
-      newList.clear();
-      updateAttendeePayload.clear();
-      createAttendeePayload.clear();
+        newList.clear();
+        updateAttendeePayload.clear();
+        createAttendeePayload.clear();
+        context.read<MusterRollFromToDateSearchBloc>().add(
+          SearchMusterRollFromToDateEvent(
+              registerId: registerId ?? '',
+              tenantId: widget.tenantId.toString(),
+              fromDate: selectedDateRange!.startDate,
+              toDate: selectedDateRange!.endDate),
+        );
       context.read<MusterRollEstimateBloc>().add(
             EstimateMusterRollEvent(
               tenantId: widget.tenantId,
@@ -637,13 +669,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
               startDate: selectedDateRange!.startDate,
               endDate: selectedDateRange!.endDate,
             ),
-          );
-      context.read<MusterRollFromToDateSearchBloc>().add(
-            SearchMusterRollFromToDateEvent(
-                registerId: registerId ?? '',
-                tenantId: widget.tenantId.toString(),
-                fromDate: selectedDateRange!.startDate,
-                toDate: selectedDateRange!.endDate),
           );
       daysInRange = DateFormats.checkDaysInRange(selectedDateRange!.startDate,
           selectedDateRange!.endDate, registerStartDate!, registerEndDate!);

@@ -148,7 +148,7 @@ const inboxConfig = () => {
                             additionalCustomization:true
                         },
                         {
-                            label: "ATM_IA_AP",
+                            label: "ATM_IMPLEMENTING_AGENCY",
                             jsonPath: "businessObject.additionalDetails.orgName",
                         },
                         {

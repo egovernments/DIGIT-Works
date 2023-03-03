@@ -28,6 +28,7 @@ class HomePage extends StatelessWidget {
                 module: 'rainmaker-common,rainmaker-attendencemgmt',
               ))),
               body: ScrollableContent(
+                footer: const PoweredByDigit(),
                 children: [
                   DigitCard(
                     onPressed: null,

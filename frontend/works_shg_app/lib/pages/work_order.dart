@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/data/fake_work_orders.dart';
+import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 
@@ -93,6 +94,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                         '$registerNumber ${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceCreateSuccess)}',
                         'SUCCESS');
                     hasLoaded = true;
+                    context.router.push(const HomeRoute());
                   }
                 },
                 orElse: () => Container());

@@ -209,14 +209,14 @@ public class EstimateServiceValidator {
         //TODO - Configure sorids in MDMS
 //        if (!CollectionUtils.isEmpty(sorIdRes) && !CollectionUtils.isEmpty(reqSorIds)) {
 //            reqSorIds.removeAll(sorIdRes);
-//            if (CollectionUtils.isEmpty(reqSorIds)) {
+//            if (!CollectionUtils.isEmpty(reqSorIds)) {
 //                errorMap.put("SOR_IDS", "The sorIds: " + reqSorIds + " is not present in MDMS");
 //            }
 //        }
 
         if (!CollectionUtils.isEmpty(categoryRes) && !CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
             reqEstimateDetailCategories.removeAll(categoryRes);
-            if (CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
+            if (!CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
                 errorMap.put("ESTIMATE_DETAIL.CATEGORY", "The categories : " + reqEstimateDetailCategories + " is not present in MDMS");
             }
         }
@@ -271,6 +271,11 @@ public class EstimateServiceValidator {
             List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
             if (CollectionUtils.isEmpty(estimateList)) {
                 throw new CustomException("INVALID_ESTIMATE_MODIFY", "The record that you are trying to update does not exists in the system");
+            }
+            //check projectId is same or not, if project Id is not same throw validation error
+            Estimate estimateFromDB = estimateList.get(0);
+            if (!estimateFromDB.getProjectId().equals(estimate.getProjectId())) {
+                throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
             }
         }
         String rootTenantId = estimate.getTenantId();
