@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -24,14 +25,14 @@ import java.util.List;
 public class OrgResponse {
 
     @JsonProperty("ResponseInfo")
-    private Object responseInfo = null;
+    private ResponseInfo responseInfo = null;
 
     @JsonProperty("organisations")
     @Valid
     private List<Organisation> organisations = null;
 
     @JsonProperty("pagination")
-    private Object pagination = null;
+    private Pagination pagination = null;
 
     public OrgResponse addOrganisationsItem(Organisation organisationsItem) {
         if (this.organisations == null) {

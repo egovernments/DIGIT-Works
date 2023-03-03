@@ -8,11 +8,8 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import java.util.List;
-
 /**
- * OrgServiceRequest
+ * OrgSearchRequest
  */
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-15T14:49:42.141+05:30")
@@ -21,16 +18,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrgServiceRequest {
+public class OrgSearchRequest {
 
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("organisations")
-    private List<Organisation> organisations = null;
-
-    @JsonProperty("workflow")
-    @Valid
-    private Workflow workflow = null;
-
+    @JsonProperty("searchCriteria")
+    private OrgSearchCriteria searchCriteria = null;
 }

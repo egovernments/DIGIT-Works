@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,18 +28,21 @@ import lombok.NoArgsConstructor;
 public class OrgServiceResponse {
 
 	@JsonProperty("ResponseInfo")
-	private Object responseInfo = null;
+	private ResponseInfo responseInfo = null;
 
 	@JsonProperty("organisations")
 	@Valid
 	private List<Organisation> organisations = null;
 
 	@JsonProperty("pagination")
-	private Object pagination = null;
+	private Pagination pagination = null;
 
 	@JsonProperty("workflow")
 	@Valid
 	private Workflow workflow = null;
+
+	@JsonProperty("TotalCount")
+	private Integer totalCount = 0;
 
 	public OrgServiceResponse addOrganisationsItem(Organisation organisationsItem) {
 		if (this.organisations == null) {
