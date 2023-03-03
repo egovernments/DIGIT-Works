@@ -109,8 +109,8 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
   const renderBankAccountDetails = (value) => {
     return (
       <div className="column-bank-details">
-        <p className="detail">{value.accountNo}</p>
-        <p className="detail">{value.ifscCode}</p>
+        <p className="detail">{value?.accountNo}</p>
+        <p className="detail">{value?.ifscCode}</p>
       </div>
     );
   };

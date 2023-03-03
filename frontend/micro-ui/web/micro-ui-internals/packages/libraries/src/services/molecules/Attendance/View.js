@@ -8,7 +8,7 @@ const attendanceTypes = {
 
 const getWeekDates = (data) => {
   let weekDates = {}
-  if(data?.individualEntries.length > 0) {
+  if(data?.individualEntries?.length > 0) {
     const attendanceEntry = data?.individualEntries[0]?.attendanceEntries
     attendanceEntry.forEach(item => {
       weekDates[`${Digit.DateUtils.getDayfromTimeStamp(item?.time)}`] = Digit.DateUtils.ConvertTimestampToDate(item?.time, 'MMM d')
@@ -27,26 +27,26 @@ const getWeekAttendance = (data) => {
   return weekAttendance
 }
 
-const getAttendanceTableData = (data, skills) => {
+const getAttendanceTableData = (data, skills, t) => {
   let tableData = {}
-  if(data?.individualEntries.length > 0) {
+  if(data?.individualEntries?.length > 0) {
     data?.individualEntries.forEach((item, index) => {
       let tableRow = {}
       tableRow.id = item.id
       tableRow.sno = index + 1
-      tableRow.registerId = data?.registerId
+      tableRow.registerId = data?.registerId || t("NA")
       tableRow.actualWorkingDays = item?.actualTotalAttendance
-      tableRow.nameOfIndividual = item?.additionalDetails?.userName || 'Piyush HarjitPal'
-      tableRow.guardianName = item?.additionalDetails?.fatherName  || 'HarjitPal'
-      tableRow.skill = skills[item?.additionalDetails?.skillCode]?.name || skills['SKILL_1'].name
-      tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount * item?.actualTotalAttendance || skills['SKILL_1'].amount * item?.actualTotalAttendance 
-      tableRow.modifiedAmount = tableRow.amount 
+      tableRow.nameOfIndividual = item?.additionalDetails?.userName || t("NA")
+      tableRow.guardianName = item?.additionalDetails?.fatherName  || t("NA")
+      tableRow.skill = skills[item?.additionalDetails?.skillCode]?.name || t("NA")
+      tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount * item?.actualTotalAttendance || t("NA")
+      tableRow.modifiedAmount = tableRow?.amount || t("NA")
       tableRow.modifiedWorkingDays = item?.modifiedTotalAttendance ? item?.modifiedTotalAttendance : item?.actualTotalAttendance
       tableRow.bankAccountDetails = {
-        accountNo : item?.additionalDetails?.bankDetails || '880182873839-SBIN0001237',
+        accountNo : item?.additionalDetails?.bankDetails || t("NA"),
         ifscCode : null
       }
-      tableRow.aadharNumber = item?.additionalDetails?.aadharNumber || '9099-1234-1234' 
+      tableRow.aadharNumber = item?.additionalDetails?.aadharNumber || t("NA")
       tableRow.attendence = getWeekAttendance(item?.attendanceEntries)
       tableData[item.id] = tableRow
     });
@@ -76,7 +76,7 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills)
   if(data.musterRolls.length === 0) return;
   
   const musterRoll = data.musterRolls[0]
-  const attendanceTableData = getAttendanceTableData(musterRoll, skills)
+  const attendanceTableData = getAttendanceTableData(musterRoll, skills, t)
   const weekDates = getWeekDates(musterRoll)
   const registrationDetails = {
     title: "ATM_REGISTRATION_DETAILS",
