@@ -32,6 +32,13 @@ public class ContractServiceConfiguration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
+    //Attendance Config
+    @Value("${egov.attendance.host}")
+    private String attendanceHost;
+
+    @Value("${egov.attendance.register.path}")
+    private String attendanceRegisterPath;
+
     @Value("${egov.idgen.contract.number.name}")
     private String idgenContractNumberName;
 

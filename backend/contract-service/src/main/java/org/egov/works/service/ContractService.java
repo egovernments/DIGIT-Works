@@ -48,7 +48,7 @@ public class ContractService {
     private WorkflowService workflowService;
 
     public ContractResponse createContract(ContractRequest contractRequest) {
-        // Validate contract request
+        log.info("Create contract");
         contractServiceValidator.validateCreateContractRequest(contractRequest);
         contractEnrichment.enrichContractOnCreate(contractRequest);
         workflowService.updateWorkflowStatus(contractRequest);
@@ -56,10 +56,12 @@ public class ContractService {
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractRequest.getRequestInfo(), true);
         ContractResponse contractResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(Collections.singletonList(contractRequest.getContract())).build();
+        log.info("Contract created");
         return contractResponse;
     }
 
     public ContractResponse updateContract(ContractRequest contractRequest) {
+        log.info("Update contract ["+contractRequest.getContract().getId()+"]");
         // Validate contract request
         contractServiceValidator.validateUpdateContractRequest(contractRequest);
         contractEnrichment.enrichContractOnUpdate(contractRequest);
@@ -68,11 +70,13 @@ public class ContractService {
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractRequest.getRequestInfo(), true);
         ContractResponse contractResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(Collections.singletonList(contractRequest.getContract())).build();
+        log.info("Contract updated ["+contractRequest.getContract().getId()+"]");
         return contractResponse;
     }
 
 
     public List<Contract> searchContracts(ContractCriteria contractCriteria) {
+        log.info("Search contracts");
 
         //Validate the requested parameters
         log.info("Validate the search request parameters");
@@ -86,6 +90,7 @@ public class ContractService {
         log.info("get enriched contracts list");
         List<Contract> contracts = getContracts(contractCriteria);
 
+        log.info("Contracts searched");
         return contracts;
     }
 

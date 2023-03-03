@@ -115,9 +115,11 @@ public class ContractServiceValidator {
         List<Contract> fetchedContracts = contractService.searchContracts(contractCriteria);
 
         if(fetchedContracts.isEmpty()){
-            log.error("Update:: Provided contract  ["+contractId+"] not found");
+            log.error("Update:: Provided contract ["+contractId+"] not found");
             throw new CustomException("CONTRACT_NOT_FOUND","Provided contract ["+contractId+"] not found");
         }
+        log.info("Update:: Provided contract ["+contractId+"] found in DB");
+
     }
 
     /**
@@ -168,24 +170,30 @@ public class ContractServiceValidator {
     }
 
     private void validateOfficerInChargeRoleAgainstMDMS(Object mdmsData, ContractRequest contractRequest) {
-        List<String> roles = fetchRolesOfOfficerInCharge(contractRequest);
+
+        String officerInChargeId = getOfficerInChargeIdFromAdditionalDetails(contractRequest.getContract().getAdditionalDetails());
+        if(StringUtils.isEmpty(officerInChargeId)){
+            log.error("Officer In-charge is not present, skipping further validation");
+            return;
+        }
+        RequestInfo requestInfo = contractRequest.getRequestInfo();
+        Contract contract = contractRequest.getContract();
+        String tenantId = contract.getTenantId();
+        List<String> roles = fetchRolesOfOfficerInCharge(requestInfo,tenantId,officerInChargeId);
         Set<String> distinctRoles = roles.stream().collect(Collectors.toSet());
         List<Object> oicRolesRes = mdmsDataParser.parseMDMSData(mdmsData,JSON_PATH_FOR_OIC_ROLES_VERIFICATION);
         for(Object allowedRole : oicRolesRes){
             if(distinctRoles.contains(allowedRole.toString())){
+                log.error("Officer In-charge is associated with required role");
                 return;
             }
         }
-        log.error("Officer Incharge is not associated with required role");
-        throw new CustomException("MISSING_REQUIRED_ROLE", "Officer Incharge is not associated with required role");
+        log.error("Officer In-charge is not associated with required role");
+        throw new CustomException("MISSING_REQUIRED_ROLE", "Officer In-charge is not associated with required role");
 
     }
 
-    private List<String> fetchRolesOfOfficerInCharge(ContractRequest contractRequest) {
-        Contract contract = contractRequest.getContract();
-        String tenantId = contract.getTenantId();
-        RequestInfo requestInfo = contractRequest.getRequestInfo();
-        String officerInChargeId = getOfficerInChargeIdFromAdditionalDetails(contract.getAdditionalDetails());
+    private List<String> fetchRolesOfOfficerInCharge(RequestInfo requestInfo,String tenantId,String officerInChargeId) {
         return hrmsUtils.getRoleCodesByEmployeeId(requestInfo, tenantId, Collections.singletonList(officerInChargeId));
     }
 
@@ -279,11 +287,11 @@ public class ContractServiceValidator {
         List<LineItems> filteredLineItems = fetchedLineItems.stream().filter(e -> e.getStatus().equals(Status.ACTIVE)).collect(Collectors.toList());
         if(!filteredLineItems.isEmpty()){
             Set<String> collect = filteredLineItems.stream().map(e -> e.getEstimateLineItemId()).collect(Collectors.toSet());
-            log.info("Estimate Line Items "+collect+" are already associated with other contract");
+            log.error("Estimate Line Items "+collect+" are already associated with other contract");
             throw new CustomException("INVALID_ESTIMATELINEITEMID","Estimate Line Items "+collect+" are already associated with other contract");
         }
 
-        log.info("Estimate LineItem association with other contracts done");
+        log.info("Create :: Estimate LineItem validation against other contracts done");
     }
 
     /**
@@ -313,10 +321,12 @@ public class ContractServiceValidator {
         if (!fetchedLineItems.isEmpty()) {
             Set<String> setOfContractIds = fetchedLineItems.stream().filter(e -> e.getStatus().equals(Status.ACTIVE)).map(e -> e.getContractId()).collect(Collectors.toSet());
             if (!(setOfContractIds.size() == 1 && setOfContractIds.contains(contract.getId()))) {
-                log.info("Estimate Line Items are already associated with other contract");
-                throw new CustomException("INVALID_ESTIMATELINEITEMID", "Estimate Line Items are already associated with other contract");
+                log.error("Update :: Estimate Line Items are already associated with other contract");
+                throw new CustomException("INVALID_ESTIMATE_LINE_ITEM_ID", "Estimate Line Items are already associated with other contract");
             }
         }
+
+        log.error("Update :: Estimate Line Items are validated against other contract");
     }
 
     private void validateOrganizationIdAgainstOrgService(ContractRequest contractRequest) {
@@ -529,17 +539,18 @@ public class ContractServiceValidator {
         RequestInfo requestInfo=contractCriteria.getRequestInfo();
 
         //validate request info
-        log.info("validate request info");
+        log.info("Search :: validate request info");
         validateRequestInfo(requestInfo);
 
         //validate request parameters
-        log.info("validate request parameters");
+        log.info("Search :: validate request parameters");
         validateSearchContractRequestParameters(contractCriteria);
 
         //validate tenantId with MDMS
-        log.info("validate tenantId with MDMS");
+        log.info("Search :: validate tenantId with MDMS");
         validateSearchTenantIdAgainstMDMS(requestInfo,contractCriteria.getTenantId());
 
+        log.info("Search :: validation done");
     }
 
     private void validateSearchTenantIdAgainstMDMS(RequestInfo requestInfo, String tenantId) {

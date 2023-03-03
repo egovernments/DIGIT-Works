@@ -63,6 +63,7 @@ public class EstimateServiceUtil {
             throw new ServiceCallException(e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("Exception while fetching from searcher: ", e);
+            throw new ServiceCallException(e.getMessage());
         }
 
         return response.getEstimates();
