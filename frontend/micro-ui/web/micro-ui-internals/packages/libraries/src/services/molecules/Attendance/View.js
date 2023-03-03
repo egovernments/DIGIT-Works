@@ -64,7 +64,7 @@ const getAttendanceTableData = (data, skills) => {
     totalRow.actualWorkingDays = 0
     totalRow.modifiedWorkingDays = 0
     totalRow.bankAccountDetails = ""
-    totalRow.aadharNumber = "DNR"
+    totalRow.aadharNumber = ""
     totalRow.attendence = { Sun: 0, Sat: 0, Fri: 0, Thu: 0, Wed: 0, Tue: 0, Mon: 0 }
             
     tableData['total'] = totalRow
