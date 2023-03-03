@@ -4,6 +4,7 @@
   "main": "index.js",
   "workspaces": [
     "packages/libraries",
+    "example",
     "packages/react-components",
     "packages/modules/Project",
     "packages/modules/Estimate"
@@ -30,7 +31,6 @@
     "dev:masters": "cd packages/modules/Masters && yarn start",
     "dev:project": "cd packages/modules/Project && yarn start",
     "dev:estimate": "cd packages/modules/Estimate && yarn start",
-    "dev:mukta": "cd packages/Mukta && yarn start",
     "dev:example": "cd example && yarn start",
     "build": "run-p build:**",
     "buildD": "run-p buildD:**",
@@ -42,7 +42,6 @@
     "buildD:contracts":"cd packages/modules/Contracts && yarn build",
     "buildD:masters": "cd packages/modules/Masters && yarn build",
     "build:estimate": "cd packages/modules/Estimate && yarn build",
-    "buildD:mukta": "cd packages/Mukta && yarn build",
     "build:project": "cd packages/modules/Project && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh",
     "clean": "rm -rf node_modules"
