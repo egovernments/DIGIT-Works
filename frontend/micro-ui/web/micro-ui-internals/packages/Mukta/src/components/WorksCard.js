@@ -77,12 +77,12 @@ const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
     Icon: <WorksMgmtIcon />,
     moduleName: t("WORKS"),
     kpis: [
-      {
-        //Pass Count Value from Inbox API here
-        count: 33,
-        label: t("INBOX"),
-        link: `/${window?.contextPath}/employee/estimate/inbox`,
-      },
+      // {
+      //   //Pass Count Value from Inbox API here
+      //   count: 33,
+      //   label: t("INBOX"),
+      //   link: `/${window?.contextPath}/employee/estimate/inbox`,
+      // },
     ],
     links: links,
   };
