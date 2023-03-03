@@ -255,6 +255,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                           name: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).name : e.individualId,
                                                                           aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId,
                                                                           individualId: e.individualId,
+                                                                          id: e.id ?? '',
                                                                           skill: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
                                                                           monEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
                                                                           monExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
@@ -285,6 +286,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                       data.name = item1.name;
                                                                       data.aadhaar = item1.aadhaar;
                                                                       data.individualId = item1.individualId ?? '';
+                                                                      data.id = item1.id ?? '';
                                                                       data.skill = item1.skill ?? '';
                                                                       data.monIndex = item1.monIndex;
                                                                       data.monEntryId = item1.monEntryId;
@@ -318,6 +320,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                       data.name = item1.name;
                                                                       data.aadhaar = item1.aadhaar;
                                                                       data.individualId = item1.individualId ?? '';
+                                                                      data.id = item1.id;
                                                                       data.skill = item1.skill ?? '';
                                                                       data.monIndex = item1.monIndex;
                                                                       data.tueIndex = item1.tueIndex;
@@ -740,20 +743,40 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
         tableDataModel.skill = val;
         if(skillsPayLoad.where((e) => e["individualId"] == tableDataModel.individualId).isNotEmpty){
           skillsPayLoad.removeWhere((elem) => elem["individualId"] == tableDataModel.individualId);
-          skillsPayLoad.add({
-            "individualId": tableDataModel.individualId,
-            "additionalDetails": {
-              "code": val
-            }
-          });
+          if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
+            skillsPayLoad.add({
+              "id": tableDataModel.id,
+              "additionalDetails": {
+                "code": val
+              }
+            });
+          }
+          else {
+            skillsPayLoad.add({
+              "individualId": tableDataModel.individualId,
+              "additionalDetails": {
+                "code": val
+              }
+            });
+          }
         }
         else {
-          skillsPayLoad.add({
-            "individualId": tableDataModel.individualId,
-            "additionalDetails": {
-              "code": val
-            }
-          });
+          if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
+            skillsPayLoad.add({
+              "id": tableDataModel.id,
+              "additionalDetails": {
+                "code": val
+              }
+            });
+          }
+          else {
+            skillsPayLoad.add({
+              "individualId": tableDataModel.individualId,
+              "additionalDetails": {
+                "code": val
+              }
+            });
+          }
         }
       },)),
       TableData(

@@ -339,6 +339,7 @@ mixin _$AttendeesTrackList {
   String? get name => throw _privateConstructorUsedError;
   String? get aadhaar => throw _privateConstructorUsedError;
   String? get individualId => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
   String? get skill => throw _privateConstructorUsedError;
   String? get monEntryId => throw _privateConstructorUsedError;
   String? get monExitId => throw _privateConstructorUsedError;
@@ -380,6 +381,7 @@ abstract class $AttendeesTrackListCopyWith<$Res> {
       {String? name,
       String? aadhaar,
       String? individualId,
+      String? id,
       String? skill,
       String? monEntryId,
       String? monExitId,
@@ -423,6 +425,7 @@ class _$AttendeesTrackListCopyWithImpl<$Res, $Val extends AttendeesTrackList>
     Object? name = freezed,
     Object? aadhaar = freezed,
     Object? individualId = freezed,
+    Object? id = freezed,
     Object? skill = freezed,
     Object? monEntryId = freezed,
     Object? monExitId = freezed,
@@ -459,6 +462,10 @@ class _$AttendeesTrackListCopyWithImpl<$Res, $Val extends AttendeesTrackList>
       individualId: freezed == individualId
           ? _value.individualId
           : individualId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
               as String?,
       skill: freezed == skill
           ? _value.skill
@@ -580,6 +587,7 @@ abstract class _$$_AttendeesTrackListCopyWith<$Res>
       {String? name,
       String? aadhaar,
       String? individualId,
+      String? id,
       String? skill,
       String? monEntryId,
       String? monExitId,
@@ -622,6 +630,7 @@ class __$$_AttendeesTrackListCopyWithImpl<$Res>
     Object? name = freezed,
     Object? aadhaar = freezed,
     Object? individualId = freezed,
+    Object? id = freezed,
     Object? skill = freezed,
     Object? monEntryId = freezed,
     Object? monExitId = freezed,
@@ -658,6 +667,10 @@ class __$$_AttendeesTrackListCopyWithImpl<$Res>
       individualId: freezed == individualId
           ? _value.individualId
           : individualId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
               as String?,
       skill: freezed == skill
           ? _value.skill
@@ -762,6 +775,7 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
       {this.name,
       this.aadhaar,
       this.individualId,
+      this.id,
       this.skill,
       this.monEntryId,
       this.monExitId,
@@ -795,6 +809,8 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
   final String? aadhaar;
   @override
   final String? individualId;
+  @override
+  final String? id;
   @override
   final String? skill;
   @override
@@ -852,7 +868,7 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
 
   @override
   String toString() {
-    return 'AttendeesTrackList(name: $name, aadhaar: $aadhaar, individualId: $individualId, skill: $skill, monEntryId: $monEntryId, monExitId: $monExitId, monIndex: $monIndex, tueEntryId: $tueEntryId, tueExitId: $tueExitId, tueIndex: $tueIndex, wedEntryId: $wedEntryId, wedExitId: $wedExitId, wedIndex: $wedIndex, thuEntryId: $thuEntryId, thuExitId: $thuExitId, thursIndex: $thursIndex, friEntryId: $friEntryId, friExitId: $friExitId, friIndex: $friIndex, satEntryId: $satEntryId, satExitId: $satExitId, satIndex: $satIndex, sunEntryId: $sunEntryId, sunExitId: $sunExitId, sunIndex: $sunIndex, auditDetails: $auditDetails)';
+    return 'AttendeesTrackList(name: $name, aadhaar: $aadhaar, individualId: $individualId, id: $id, skill: $skill, monEntryId: $monEntryId, monExitId: $monExitId, monIndex: $monIndex, tueEntryId: $tueEntryId, tueExitId: $tueExitId, tueIndex: $tueIndex, wedEntryId: $wedEntryId, wedExitId: $wedExitId, wedIndex: $wedIndex, thuEntryId: $thuEntryId, thuExitId: $thuExitId, thursIndex: $thursIndex, friEntryId: $friEntryId, friExitId: $friExitId, friIndex: $friIndex, satEntryId: $satEntryId, satExitId: $satExitId, satIndex: $satIndex, sunEntryId: $sunEntryId, sunExitId: $sunExitId, sunIndex: $sunIndex, auditDetails: $auditDetails)';
   }
 
   @override
@@ -864,6 +880,7 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
             (identical(other.aadhaar, aadhaar) || other.aadhaar == aadhaar) &&
             (identical(other.individualId, individualId) ||
                 other.individualId == individualId) &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.skill, skill) || other.skill == skill) &&
             (identical(other.monEntryId, monEntryId) ||
                 other.monEntryId == monEntryId) &&
@@ -918,6 +935,7 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
         name,
         aadhaar,
         individualId,
+        id,
         skill,
         monEntryId,
         monExitId,
@@ -963,6 +981,7 @@ abstract class _AttendeesTrackList implements AttendeesTrackList {
           {final String? name,
           final String? aadhaar,
           final String? individualId,
+          final String? id,
           final String? skill,
           final String? monEntryId,
           final String? monExitId,
@@ -997,6 +1016,8 @@ abstract class _AttendeesTrackList implements AttendeesTrackList {
   String? get aadhaar;
   @override
   String? get individualId;
+  @override
+  String? get id;
   @override
   String? get skill;
   @override
