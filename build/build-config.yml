@@ -65,6 +65,20 @@ config:
       - work-dir: "backend/project-management-system/src/main/resources/db"
         image-name: "project-management-system-db"
 
+  - name: "builds/digit-works/backend/works-management-service"
+    build:
+      - work-dir: "backend/works-management-service"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "works-management-service"
+
+  - name: "builds/digit-works/backend/organisation"
+    build:
+      - work-dir: "backend/organisation"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "organisation"
+      - work-dir: "backend/organisation/src/main/resources/db"
+        image-name: "organisation-db"
+
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
     build:
@@ -77,3 +91,9 @@ config:
       - work-dir: frontend/works_shg_app/
         dockerfile: frontend/works_shg_app/docker/Dockerfile
         image-name: works-shg-app
+
+  - name: builds/digit-works/frontend/micro-ui/core-ui
+    build:
+      - work-dir: frontend/micro-ui/
+        dockerfile: frontend/micro-ui/web/docker/Dockerfile
+        image-name: core-ui
