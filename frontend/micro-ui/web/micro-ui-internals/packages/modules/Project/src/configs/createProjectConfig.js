@@ -3,6 +3,15 @@
         "moduleName" : "commonUiConfig",
         "CreateProjectConfig" : [
           {
+            "defaultValues" : {
+              basicDetails_dateOfProposal : "",
+              basicDetails_hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"},
+              withSubProject_project_estimatedCostInRs : 0
+            },
+            "metaData" : {
+              showNavs : true,
+              currentFormCategory : "project",
+            },
             "form" : [
                 {
                 head: "",

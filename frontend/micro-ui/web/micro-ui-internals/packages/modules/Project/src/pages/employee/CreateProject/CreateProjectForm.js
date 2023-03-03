@@ -33,16 +33,15 @@ const whenHasSubProjectsHorizontalNavConfig =  [
 
 const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig}) => {
     const {t} = useTranslation();
-    const [selectedProjectType, setSelectedProjectType] = useState({name : "COMMON_YES", code : "COMMON_YES"});
+    const [selectedProjectType, setSelectedProjectType] = useState(createProjectConfig?.defaultValues?.basicDetails_hasSubProjects);
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
-    const [showNavs, setShowNavs] = useState(false);
     const [subTypeOfProjectOptions, setsubTypeOfProjectOptions] = useState([]);
     const [withSubProjectSubSchemeOptions, setWithSubProjectSubSchemeOptions] = useState([]);
     const [noSubProjectSubSchemeOptions, setNoSubProjectSubSchemeOptions] = useState([]);
     const [selectedWard, setSelectedWard] = useState('');
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
-    const [currentFormCategory, setCurrentFormCategory] = useState("project");
+    const [currentFormCategory, setCurrentFormCategory] = useState(createProjectConfig?.metaData?.currentFormCategory ? createProjectConfig?.metaData?.currentFormCategory : "project");
     const [showInfoLabel, setShowInfoLabel] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
@@ -66,7 +65,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
           }
       });
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
-    const config =  useMemo(
+    const config = useMemo(
       () => Digit.Utils.preProcessMDMSConfig(t, createProjectConfig, {
         updateDependent : [
           {
@@ -104,7 +103,6 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
         ]
       }),
       [withSubProjectSubSchemeOptions, noSubProjectSubSchemeOptions, subTypeOfProjectOptions, ULBOptions, wardsAndLocalities, filteredLocalities, showInfoLabel, isEndDateValid]);
-
       const createSubTypesMDMSObject = (subTypesData) => {
       let mdmsData = [];
       for(let subType of subTypesData?.projectSubType) {
@@ -112,7 +110,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
       }
       return mdmsData;
     }
-  
+
     // this validation is handled using useform's setError and custom validation type is added. 
     // passing a name which is not associalted to any input will persist the error on submit
     // later on while rendering error, this custom is removed from the name to target the target input element
@@ -287,12 +285,10 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
           setNavTypeConfig(whenHasSubProjectsHorizontalNavConfig);
           setCurrentFormCategory("withSubProject");
           setShowInfoLabel(true);
-          setShowNavs(true);
         }else if(selectedProjectType?.code === "COMMON_NO") {
           setNavTypeConfig(whenHasProjectsHorizontalNavConfig);
           setCurrentFormCategory("noSubProject");
           setShowInfoLabel(false);
-          setShowNavs(true);
         }
     },[selectedProjectType]);
 
@@ -304,7 +300,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
             createProjectConfig && (
               <FormComposer
                 label={"WORKS_CREATE_PROJECT"}
-                config={config?.form.map((config) => {
+                config={config?.form?.map((config) => {
                   return {
                     ...config,
                     body: config?.body.filter((a) => !a.hideInEmployee),
@@ -319,7 +315,8 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
                 showWrapperContainers={false}
                 isDescriptionBold={false}
                 noBreakLine={true}
-                showNavs={showNavs}
+                showNavs={config?.metaData?.showNavs}
+                showFormInNav={true}
                 showMultipleCardsWithoutNavs={false}
                 showMultipleCardsInNavs={false}
                 horizontalNavConfig={navTypeConfig}
