@@ -12,7 +12,6 @@ RUN ls -lah
 #RUN node web/envs.js
 RUN cd web/ \
     && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))' \
-    && cd works/ \
     &&  ./install-deps.sh \
     && yarn install \
     && yarn build 
