@@ -1,4 +1,4 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { CitizenInfoLabel, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useRouteMatch } from "react-router-dom";
 import ProjectCard from "./components/ProjectCard";
@@ -43,7 +43,8 @@ const componentsToRegister = {
     SubProjectDetailsTable,
     CreateProjectResponse,
     CreateProjectForm,
-    ViewSubProjectsDetails
+    ViewSubProjectsDetails,
+    CitizenInfoLabel
 };
 
 export const initProjectComponents = () => {

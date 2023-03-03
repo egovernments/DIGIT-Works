@@ -62,6 +62,8 @@ class Common {
   String get startDate => 'EVENTS_START_DATE_LABEL';
   String get endDate => 'EVENTS_END_DATE_LABEL';
   String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
+  String get selectAnOption => 'ES_SELECT_AN_OPTION';
+  String get action => 'CS_COMMON_ACTION';
 }
 
 class Home {
@@ -73,6 +75,7 @@ class Home {
   String get attendanceMgmt => 'ACTION_TEST_ATTENDENCEMGMT';
   String get musterRoll => 'ACTION_TEST_MUSTER_ROLL';
   String get trackAttendance => 'TRACK_ATTENDENCE';
+  String get inbox => 'ES_COMMON_INBOX';
 }
 
 class WorkOrder {
@@ -87,6 +90,7 @@ class WorkOrder {
 class AttendanceMgmt {
   const AttendanceMgmt();
   String get registerId => 'REGISTER_ID';
+  String get musterRolls => 'ATM_MUSTER_ROLLS';
   String get enrollWageSeeker => 'WORKS_ENROLL_WAGE_SEEKER';
   String get updateAttendance => 'UPDATE_ATTENDANCE';
   String get nameOfWork => 'WORKS_NAME_OF_WORK';
@@ -114,4 +118,6 @@ class AttendanceMgmt {
   String get attendeeDeEnrollFailed => 'ATTENDEE_DE_ENROLL_FAILED';
   String get attendeeDeEnrollSuccess => 'ATTENDEE_DE_ENROLL_SUCCESS';
   String get noMusterRollsFound => 'NO_MUSTER_ROLLS_FOUND';
+  String get skill => 'ATM_SKILLS';
+  String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
 }
