@@ -8,7 +8,7 @@ INTERNALS="micro-ui-internals"
 cd ..
 
 cp works/App.js src
-cp works/package.json .
+cp works/package.json package.json 
 cp works/inter-package.json $INTERNALS/package.json
 
 cp $INTERNALS/example/src/UICustomizations.js src/Customisations
