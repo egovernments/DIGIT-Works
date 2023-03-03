@@ -37,6 +37,9 @@ _$_MusterRoll _$$_MusterRollFromJson(Map<String, dynamic> json) =>
           ? null
           : MusterAdditionalDetails.fromJson(
               json['additionalDetails'] as Map<String, dynamic>),
+      musterAuditDetails: json['auditDetails'] == null
+          ? null
+          : AuditDetails.fromJson(json['auditDetails'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_MusterRollToJson(_$_MusterRoll instance) =>
@@ -51,6 +54,7 @@ Map<String, dynamic> _$$_MusterRollToJson(_$_MusterRoll instance) =>
       'endDate': instance.endDate,
       'individualEntries': instance.individualEntries,
       'additionalDetails': instance.musterAdditionalDetails,
+      'auditDetails': instance.musterAuditDetails,
     };
 
 _$_IndividualEntries _$$_IndividualEntriesFromJson(Map<String, dynamic> json) =>
