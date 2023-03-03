@@ -25,7 +25,8 @@ const MuktaModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
   MuktaModule,
-  WorksCard
+  WorksCard,
+  DSSCard:null  // TO HIDE THE DSS CARD IN HOME SCREEN
 };
 
 const overrideHooks = () => {
