@@ -85,6 +85,11 @@ config:
       - work-dir: frontend/micro-ui/
         dockerfile: frontend/micro-ui/web/docker/Dockerfile
         image-name: works-ui
+  - name: builds/digit-works/frontend/works
+    build:
+      - work-dir: frontend/micro-ui/
+        dockerfile: frontend/micro-ui/web/works/Dockerfile
+        image-name: works-ui
 
   - name: builds/digit-works/frontend/works-shg-app
     build:
