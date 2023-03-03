@@ -236,7 +236,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                 existingSkills = musterRollsSearch.musterRoll!.first.individualEntries!.map((e) =>
                                                               IndividualSkills(individualId: e.individualId, skillCode: e.musterIndividualAdditionalDetails?.skillCode ?? '',
                                                               name: e.musterIndividualAdditionalDetails?.userName ?? e.individualId ?? '',
-                                                              aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId ?? '')).toList();
+                                                              aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId ?? '',
+                                                              id: e.id)).toList();
                                                               }
                                                               else{
                                                                 existingSkills.clear();
@@ -255,7 +256,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                           name: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).name : e.individualId,
                                                                           aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId,
                                                                           individualId: e.individualId,
-                                                                          id: e.id ?? '',
+                                                                          id: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).id : e.id ?? '',
                                                                           skill: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
                                                                           monEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
                                                                           monExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
@@ -406,9 +407,13 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                     isInWorkFlow = false;
                                                                                   } else {
                                                                                     if (musterRollsSearch!.musterRoll!.isNotEmpty && selectedDateRange != null) {
-                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context)
-                                                                                          .translate(i18.attendanceMgmt.applicationInWorkFlow),
-                                                                                          'ERROR');
+                                                                                      if(musterRollsSearch.musterRoll!.first.musterRollStatus == 'APPROVED'){
+                                                                                        Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.notModifyApprovedApplication), 'ERROR');
+                                                                                      }
+                                                                                      else{
+                                                                                        Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(
+                                                                                                i18.attendanceMgmt.applicationInWorkFlow), 'ERROR');
+                                                                                      }
                                                                                       isInWorkFlow = true;
                                                                                     }
                                                                                     isInWorkFlow = true;

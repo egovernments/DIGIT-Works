@@ -34,9 +34,9 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
                 final attendanceRegisters = List<AttendanceRegister>.from(
                     attendanceRegistersModel!.attendanceRegister!);
 
-                attendanceRegisters.sort((a, b) => b
-                    .registerAuditDetails!.createdTime!
-                    .compareTo(a.registerAuditDetails!.createdTime!.toInt()));
+                attendanceRegisters.sort((a, b) =>
+                    b.registerAuditDetails!.lastModifiedTime!.compareTo(
+                        a.registerAuditDetails!.lastModifiedTime!.toInt()));
 
                 final projectList = attendanceRegisters
                     .map((e) => {
