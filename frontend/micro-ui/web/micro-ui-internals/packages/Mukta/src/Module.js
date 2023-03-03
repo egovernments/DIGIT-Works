@@ -5,7 +5,7 @@ import EmployeeApp from "./pages/employee";
 import { CustomisedHooks } from "./hooks";
 import WorksCard from "./components/WorksCard";
 import { UICustomizations } from "./configs/UICustomizations";
-import HRMSCard from "./components/hrmscard";
+import HRMSCard from "./components/HRMSCard";
 
 const MuktaModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["Mukta"];
