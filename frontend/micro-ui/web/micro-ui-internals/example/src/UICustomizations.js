@@ -181,33 +181,25 @@ export const UICustomizations = {
   },
   SearchAttendanceConfig: {
     preProcess: (data) => {
-      const fromDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromDate);
-      const toDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toDate);
-      const musterRollStatus = data?.params?.musterRollStatus?.code;
-      const status = data?.params?.status?.code;
-      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus, status };
-      return data;
+        const fromDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromDate)
+        const toDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toDate)
+        const musterRollStatus = data?.params?.musterRollStatus?.code
+        const status = data?.params?.status?.code
+        data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus, status }
+        return data
     },
-    additionalCustomizations: (row, column, columnConfig, value, t) => {
-      if (column.label === "ATM_MUSTER_ROLL_NUMBER") {
-        return (
-          <span className="link">
-            <Link
-              to={`/${
-                window.contextPath
-              }/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
-            >
-              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-            </Link>
-          </span>
-        );
-      }
-      if (column.label === "ATM_NO_OF_INDIVIDUALS") {
-        return <div>{value?.length}</div>;
-      }
-    },
-  },
-  AttendanceInboxConfig: {
+    additionalCustomizations: (row,column,columnConfig,value,t) => {
+        if (column.label === "ATM_MUSTER_ROLL_NUMBER") {
+            return <span className="link">
+                <Link to={`/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId() }&musterRollNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
+            </span>
+        }
+        if (column.label === "ATM_NO_OF_INDIVIDUALS") {
+            return <div>{value?.length}</div>
+        }
+    }
+},
+AttendanceInboxConfig: {
     preProcess: (data) => {
         const convertedStartDate = Digit.DateUtils.ConvertTimestampToDate(data.body.inbox?.moduleSearchCriteria?.musterRolldateRange?.range?.startDate, 'yyyy-MM-dd')
         const convertedEndDate = Digit.DateUtils.ConvertTimestampToDate(data.body.inbox?.moduleSearchCriteria?.musterRolldateRange?.range?.endDate, 'yyyy-MM-dd')
