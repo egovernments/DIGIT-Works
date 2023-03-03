@@ -47,27 +47,30 @@ class ViewMusterRollsPage extends StatelessWidget {
             return state.maybeWhen(
                 loading: () => Loaders.circularLoader(context),
                 loaded: (MusterRollsModel? musterRollsModel) {
-                  final List<Map<String, dynamic>> musterList =
-                      musterRollsModel!.musterRoll!
-                          .map((e) => {
-                                i18.attendanceMgmt.nameOfWork: e
-                                        .musterAdditionalDetails
-                                        ?.attendanceRegisterName ??
-                                    'NA',
-                                i18.attendanceMgmt.winCode: e
-                                        .musterAdditionalDetails
-                                        ?.attendanceRegisterNo ??
-                                    'NA',
-                                i18.attendanceMgmt.musterRollId:
-                                    e.musterRollNumber,
-                                i18.common.dates:
-                                    '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                                i18.common.status:
-                                    e.musterRollStatus == Constants.rejected
-                                        ? e.musterRollStatus
-                                        : Constants.active
-                              })
-                          .toList();
+                  final musters =
+                      List<MusterRoll>.from(musterRollsModel!.musterRoll!);
+                  musters.sort((a, b) => b.musterAuditDetails!.lastModifiedTime!
+                      .compareTo(
+                          a.musterAuditDetails!.lastModifiedTime!.toInt()));
+                  final List<Map<String, dynamic>> musterList = musters
+                      .map((e) => {
+                            i18.attendanceMgmt.nameOfWork: e
+                                    .musterAdditionalDetails
+                                    ?.attendanceRegisterName ??
+                                'NA',
+                            i18.attendanceMgmt.winCode: e
+                                    .musterAdditionalDetails
+                                    ?.attendanceRegisterNo ??
+                                'NA',
+                            i18.attendanceMgmt.musterRollId: e.musterRollNumber,
+                            i18.common.dates:
+                                '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
+                            i18.common.status:
+                                e.musterRollStatus == Constants.rejected
+                                    ? e.musterRollStatus
+                                    : Constants.active
+                          })
+                      .toList();
                   return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
