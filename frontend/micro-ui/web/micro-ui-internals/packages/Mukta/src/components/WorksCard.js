@@ -14,30 +14,35 @@ const WorksCard = () => {
     {
       label: t("ACTION_TEST_PROJECT"),
       link: `/${window?.contextPath}/employee/project/search-project`,
-      roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE","SUPERUSER"],
+      roles: ["PC","PV","EMPLOYEE","SUPERUSER"],
     },
     {
       label: t("WORKS_ESTIMATES"),  
       link: `/${window?.contextPath}/employee/estimate/inbox`,
-      roles: ["EST_CREATOR", "EST_CHECKER", "EST_TECH_SANC", "EST_FIN_SANC", "EMPLOYEE","SUPERUSER"],
+      roles: ["ESTIMATE_CREATOR","ESTIMATE_VERIFIER","TECHNICAL_SANCTIONER","ESTIMATE_APPROVER","EMPLOYEE","SUPERUSER"],
       count: 1,
     },
     {
       label: t("WORKS_CONTRACTS"),
       link: `/${window?.contextPath}/employee/contracts/inbox`,
-      roles: ["LOI CHECKER", "LOI APPROVER", "LOI CREATOR", "EMPLOYEE","SUPERUSER"],
+      roles: ["WC","WV","WA","EMPLOYEE","SUPERUSER"],
       count: 1,
     },
-  
+    {
+      label: t("WORKS_MUSTERROLLS"),
+      link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
+      roles: ["MV","MA","EMPLOYEE","SUPERUSER"],
+      count: 20,
+    },
     {
       label: t("WORKS_WAGESEEKERS"),
       link: `/${window?.contextPath}/employee/masters/search-wageseeker`,
-      roles: ["MUKTA_ADMIN"],
+      roles: ["MUKTA_ADMIN","EMPLOYEE","SUPERUSER"],
     },
     {
       label: t("WORKS_MASTERS"),
       link: `/${window?.contextPath}/employee/masters/search-organization`,
-      roles: ["MUKTA_ADMIN"],
+      roles: ["MUKTA_ADMIN","EMPLOYEE","SUPERUSER"],
     },
     {
       label: t("WORKS_DASHBOARD"),
