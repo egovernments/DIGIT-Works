@@ -333,6 +333,11 @@ export const UICustomizations = {
         );
       }
     },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
+      }
+    },
   },
   SearchOrganisationConfig: {
     additionalCustomizations: (row, column, columnConfig, value, t) => {
@@ -366,6 +371,11 @@ export const UICustomizations = {
         ) : (
           t("ES_COMMON_NA")
         );
+      }
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
       }
     },
   },
