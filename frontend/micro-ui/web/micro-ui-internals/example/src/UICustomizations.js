@@ -6,62 +6,66 @@ import { Link } from "react-router-dom";
 var Digit = window.Digit || {};
 
 const businessServiceMap = {
-    estimate:"estimate-approval-2"
-}
+  estimate: "estimate-approval-2",
+};
 
 export const UICustomizations = {
-    updatePayload: (applicationDetails, data, action, businessService) => {
-        if(businessService===businessServiceMap.estimate){
-            const workflow = {
-                comment: data.comments,
-                documents: data?.documents?.map(document => {
-                    return {
-                        documentType: action?.action + " DOC",
-                        fileName: document?.[1]?.file?.name,
-                        fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
-                        documentUid: document?.[1]?.fileStoreId?.fileStoreId,
-                        tenantId: document?.[1]?.fileStoreId?.tenantId
-                    }
-                }),
-                assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-                action: action.action
-            }
-            //filtering out the data
-            Object.keys(workflow).forEach((key, index) => {
-                if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key]
-            })
+  updatePayload: (applicationDetails, data, action, businessService) => {
+    if (businessService === businessServiceMap.estimate) {
+      const workflow = {
+        comment: data.comments,
+        documents: data?.documents?.map((document) => {
+          return {
+            documentType: action?.action + " DOC",
+            fileName: document?.[1]?.file?.name,
+            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: document?.[1]?.fileStoreId?.tenantId,
+          };
+        }),
+        assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+        action: action.action,
+      };
+      //filtering out the data
+      Object.keys(workflow).forEach((key, index) => {
+        if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
+      });
 
-            return {
-                estimate: applicationDetails,
-                workflow
-            }
-        }
-    },
-    enableHrmsSearch: (businessService,action)=> {
-        if (businessService === businessServiceMap.estimate){
-            return action.action.includes("CHECK") || action.action.includes("ADMIN") || action.action.includes("APPROVE") || action.action.includes("VERIFYANDFORWARD")
-        }
-        return false
-    },
-    getBusinessService:(moduleCode)=>{
-        if(moduleCode.includes("estimate")){
-            return businessServiceMap?.estimate
-        }
+      return {
+        estimate: applicationDetails,
+        workflow,
+      };
+    }
+  },
+  enableHrmsSearch: (businessService, action) => {
+    if (businessService === businessServiceMap.estimate) {
+      return (
+        action.action.includes("CHECK") ||
+        action.action.includes("ADMIN") ||
+        action.action.includes("APPROVE") ||
+        action.action.includes("VERIFYANDFORWARD")
+      );
+    }
+    return false;
+  },
+  getBusinessService: (moduleCode) => {
+    if (moduleCode.includes("estimate")) {
+      return businessServiceMap?.estimate;
+    }
 
-        return null
-    },
-    SearchProjectConfig: {
-        preProcess: (data) => {
-            
-            const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom)
-            const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo)
-            const projectType = data.body.Projects[0]?.projectType?.code
-            data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors:true,createdFrom,createdTo }
-            let name = data.body.Projects[0]?.name
-            name = name?.trim()
-            delete data.body.Projects[0]?.createdFrom
-            delete data.body.Projects[0]?.createdTo
-            data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(), projectType,name}
+    return null;
+  },
+  SearchProjectConfig: {
+    preProcess: (data) => {
+      const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
+      const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
+      const projectType = data.body.Projects[0]?.projectType?.code;
+      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors: true, createdFrom, createdTo };
+      let name = data.body.Projects[0]?.name;
+      name = name?.trim();
+      delete data.body.Projects[0]?.createdFrom;
+      delete data.body.Projects[0]?.createdTo;
+      data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(), projectType, name };
 
       return data;
     },
@@ -139,50 +143,74 @@ export const UICustomizations = {
         );
       }
     },
-    AttendanceInboxConfig: {
-        preProcess: (data) => {
-            const convertedStartDate = Digit.DateUtils.ConvertTimestampToDate(data.body.inbox?.moduleSearchCriteria?.musterRolldateRange?.range?.startDate, 'yyyy-MM-dd')
-            const convertedEndDate = Digit.DateUtils.ConvertTimestampToDate(data.body.inbox?.moduleSearchCriteria?.musterRolldateRange?.range?.endDate, 'yyyy-MM-dd')
-            const startDate = Digit.Utils.pt.convertDateToEpoch(convertedStartDate, 'dayStart')
-            const endDate = Digit.Utils.pt.convertDateToEpoch(convertedEndDate, 'dayStart')
-            const attendanceRegisterName = data.body.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim()
-            const musterRollStatus = data.body.inbox?.moduleSearchCriteria?.musterRollStatus?.code
-            data.body.inbox = { 
-                ...data.body.inbox, 
-                tenantId: Digit.ULBService.getCurrentTenantId(), 
-                processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-                moduleSearchCriteria: {tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName}
-            }
-            return data
-        },
-        postProcess: (responseArray, uiConfig) => {
-            const statusOptions = responseArray?.statusMap?.filter(item => item.applicationstatus)?.map(item => ({ code: item.applicationstatus, i18nKey: `COMMON_MASTERS_${item.applicationstatus}`}))
-            if(uiConfig?.type === 'filter') {
-             let fieldConfig = uiConfig?.fields?.filter(item => item.type === 'dropdown' && item.populators.name === 'musterRollStatus')
-             if(fieldConfig.length) { 
-               fieldConfig[0].populators.options = statusOptions
-             }
-           }
-        },
-        additionalCustomizations: (row,column,columnConfig,value,t) => {
-            if (column.label === "ATM_MUSTER_ROLL_ID") {
-                return <span className="link">
-                    <Link to={`/works-ui/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId() }&musterRollNumber=${value}`}>{String(value ? column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value : t("ES_COMMON_NA"))}</Link>
-                </span>
-            }
-            if( column.label === "ATM_ATTENDANCE_WEEK") {
-                const week = `${Digit.DateUtils.ConvertTimestampToDate(value?.startDate, 'dd/MM/yyyy')}-${Digit.DateUtils.ConvertTimestampToDate(value?.endDate, 'dd/MM/yyyy')}`
-                return <div>{week}</div>
-            }
-            if (column.label === "ATM_NO_OF_INDIVIDUALS") {
-                return <div>{value?.length}</div>
-            }
-            if (column.label === "ATM_SLA") {
-                return (
-                    parseInt(value) > 0 ? <span className="sla-cell-success">{ t(value) || ""}</span> : <span className="sla-cell-error">{ t(value )|| ""}</span>
-                );
-            }
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
+      }
+    },
+  },
+  AttendanceInboxConfig: {
+    preProcess: (data) => {
+      const convertedStartDate = Digit.DateUtils.ConvertTimestampToDate(
+        data.body.inbox?.moduleSearchCriteria?.musterRolldateRange?.range?.startDate,
+        "yyyy-MM-dd"
+      );
+      const convertedEndDate = Digit.DateUtils.ConvertTimestampToDate(
+        data.body.inbox?.moduleSearchCriteria?.musterRolldateRange?.range?.endDate,
+        "yyyy-MM-dd"
+      );
+      const startDate = Digit.Utils.pt.convertDateToEpoch(convertedStartDate, "dayStart");
+      const endDate = Digit.Utils.pt.convertDateToEpoch(convertedEndDate, "dayStart");
+      const attendanceRegisterName = data.body.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim();
+      const musterRollStatus = data.body.inbox?.moduleSearchCriteria?.musterRollStatus?.code;
+      data.body.inbox = {
+        ...data.body.inbox,
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+        processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName },
+      };
+      return data;
+    },
+    postProcess: (responseArray, uiConfig) => {
+      const statusOptions = responseArray?.statusMap
+        ?.filter((item) => item.applicationstatus)
+        ?.map((item) => ({ code: item.applicationstatus, i18nKey: `COMMON_MASTERS_${item.applicationstatus}` }));
+      if (uiConfig?.type === "filter") {
+        let fieldConfig = uiConfig?.fields?.filter((item) => item.type === "dropdown" && item.populators.name === "musterRollStatus");
+        if (fieldConfig.length) {
+          fieldConfig[0].populators.options = statusOptions;
         }
+      }
+    },
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      if (column.label === "ATM_MUSTER_ROLL_ID") {
+        return (
+          <span className="link">
+            <Link
+              to={`/works-ui/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
+            >
+              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if (column.label === "ATM_ATTENDANCE_WEEK") {
+        const week = `${Digit.DateUtils.ConvertTimestampToDate(value?.startDate, "dd/MM/yyyy")}-${Digit.DateUtils.ConvertTimestampToDate(
+          value?.endDate,
+          "dd/MM/yyyy"
+        )}`;
+        return <div>{week}</div>;
+      }
+      if (column.label === "ATM_NO_OF_INDIVIDUALS") {
+        return <div>{value?.length}</div>;
+      }
+      if (column.label === "ATM_SLA") {
+        return parseInt(value) > 0 ? (
+          <span className="sla-cell-success">{t(value) || ""}</span>
+        ) : (
+          <span className="sla-cell-error">{t(value) || ""}</span>
+        );
+      }
     },
   },
   SearchEstimateConfig: {
