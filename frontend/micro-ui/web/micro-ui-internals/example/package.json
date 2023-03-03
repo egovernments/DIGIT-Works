@@ -19,7 +19,7 @@
     "@egovernments/digit-ui-module-contracts": "0.0.5",
     "@egovernments/digit-ui-module-estimate": "0.0.4",
     "@egovernments/digit-ui-module-expenditure": "0.0.6",
-    "@egovernments/digit-ui-module-masters": "0.0.4",
+    "@egovernments/digit-ui-module-masters": "0.0.5",
     "@egovernments/digit-ui-module-project": "0.0.5",
     "@egovernments/digit-ui-customisation-mukta": "0.0.1",
     "http-proxy-middleware": "^1.0.5",

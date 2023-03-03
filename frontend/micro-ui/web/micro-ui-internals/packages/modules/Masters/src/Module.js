@@ -4,10 +4,12 @@ import { useRouteMatch } from "react-router-dom";
 import MastersCard from "./components/MastersCard";
 import ProjectCard from "./components/ProjectCard";
 import { default as EmployeeApp } from "./pages/employee";
-import SearchOrganization from "./pages/employee/Master/SearchOrganization";
+import SearchMasters from "./pages/employee/Master/SearchMasters";
 import CreateOrganization from "./pages/employee/Master/CreateOrganization";
 import RegisterWageSeeker from "./pages/employee/registerWageSeeker/index";
-import SearchOrganisationApplication from "./components/SearchOrganisation";
+import SearchOrganisation from "./pages/employee/SearchOrganisation";
+import SearchWageSeeker from "./pages/employee/SearchWageSeeker";
+import SearchMastersApplication from "./components/SearchMasters";
 import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
@@ -34,11 +36,13 @@ const componentsToRegister = {
   MastersModule,
   MasterCard:MastersCard ,
   ProjectsCard:ProjectCard,
-  SearchOrganization,
+  SearchMasters,
   CreateOrganization,
   RegisterWageSeeker,
-  SearchOrganisationApplication,
-  ViewOrganisation
+  SearchMastersApplication,
+  SearchWageSeeker,
+  ViewOrganisation,
+  SearchOrganisation
 };
 
 export const initMastersComponents = () => {

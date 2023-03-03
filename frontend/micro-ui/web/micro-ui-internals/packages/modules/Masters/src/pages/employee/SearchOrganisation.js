@@ -1,23 +1,22 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
+import searchOrganisationConfig from "../../configs/searchOrganisationConfig";
 import { useHistory } from "react-router-dom";
 
-import searchConfig from "../../../configs/searchConfig";
-
-const ProjectSearch = () => {
+const SearchOrganisation = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const history = useHistory()
 
-  // const configs = searchConfig();
+  const configs = searchOrganisationConfig();
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, "commonUiConfig", [
     {
-      name: "SearchProjectConfig",
+      name: "SearchOrganisationConfig",
     },
   ]);
 
-  const configs = data?.commonUiConfig?.SearchProjectConfig?.[0];
+  // const configs = data?.commonUiConfig?.SearchProjectConfig?.[0]
 
   if (isLoading) return <Loader />;
   return (
@@ -30,7 +29,7 @@ const ProjectSearch = () => {
             variation="secondary"
             icon={<AddFilled />}
             onButtonClick={() => {
-              history.push(`/${window?.contextPath}/employee/${configs?.actionLink}`);
+              history.push(`/${window?.contextPath}/employee/${configs?.actionLink}`)
             }}
             type="button"
           />
@@ -43,4 +42,4 @@ const ProjectSearch = () => {
   );
 };
 
-export default ProjectSearch;
+export default SearchOrganisation;
