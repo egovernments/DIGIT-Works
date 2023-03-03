@@ -119,7 +119,7 @@ const routeSubscription = (pathname) => {
 };
 
 /* to check the employee (loggedin user ) has given role  */
-const didEmployeeHasRole = (role) => {
+const didEmployeeHasRole = (role="") => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const userInfo = Digit.UserService.getUser();
   const rolearray = userInfo?.info?.roles.filter((item) => {
@@ -128,6 +128,10 @@ const didEmployeeHasRole = (role) => {
   return rolearray?.length>0;
 };
 
+/* to check the employee (loggedin user ) has given roles  */
+const didEmployeeHasAtleastOneRole = (roles=[])=>{
+  return roles.some(role=>didEmployeeHasRole(role));
+}
 const pgrAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
@@ -305,6 +309,7 @@ export default {
   mCollectAccess,
   receiptsAccess,
   didEmployeeHasRole,
+  didEmployeeHasAtleastOneRole,
   hrmsAccess,
   getPattern,
   hrmsRoles,
