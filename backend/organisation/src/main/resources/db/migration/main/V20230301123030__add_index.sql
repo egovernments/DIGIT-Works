@@ -16,9 +16,6 @@ CREATE INDEX IF NOT EXISTS index_eg_org_address_state ON eg_org_address (state);
 CREATE INDEX IF NOT EXISTS index_eg_org_address_street ON eg_org_address (street);
 CREATE INDEX IF NOT EXISTS index_eg_org_address_country ON eg_org_address (country);
 
-CREATE INDEX IF NOT EXISTS index_eg_org_address_boundary_address_id ON eg_org_address_boundary (address_id);
-CREATE INDEX IF NOT EXISTS index_eg_org_address_boundary_code ON eg_org_address_boundary (code);
-
 CREATE INDEX IF NOT EXISTS index_eg_org_address_geo_location_address_id ON eg_org_address_geo_location (address_id);
 CREATE INDEX IF NOT EXISTS index_eg_org_address_geo_location_latitude ON eg_org_address_geo_location (latitude);
 CREATE INDEX IF NOT EXISTS index_eg_org_address_geo_location_latitude ON eg_org_address_geo_location (latitude);

@@ -1,5 +1,4 @@
 DROP TABLE IF EXISTS eg_org_address_geo_location;
-DROP TABLE IF EXISTS eg_org_address_boundary;
 
 DROP TABLE IF EXISTS eg_org_address;
 DROP TABLE IF EXISTS eg_org_contact_detail;
