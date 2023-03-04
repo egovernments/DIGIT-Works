@@ -13,12 +13,12 @@ const ProjectSearchAndInboxComponent = () => {
         Digit.Utils.getConfigModuleName(),
         [
             {
-                "name": "projectInboxConfig"
+                "name": "InboxProjectConfig"
             }
         ]
     );
    
-    const configs = data?.commonUiConfig?.projectInboxConfig?.[0]
+    const configs = data?.commonUiConfig?.InboxProjectConfig?.[0]
 
     if(isLoading) return <Loader />
     return (
