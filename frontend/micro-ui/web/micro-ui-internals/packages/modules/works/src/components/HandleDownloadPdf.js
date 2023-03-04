@@ -15,7 +15,7 @@ const HandleDownloadPdf = () => {
   let result = applicationDetails;
   const PDFdata = getPDFData({...result },tenantInfo, t);
   PDFdata.then((ress) => Digit.Utils.pdf.generatev1(ress));
-  // history.push("/works-ui/employee/works")
+  // history.push(`/${window?.contextPath}/employee/works`)
 
       return null;
 }

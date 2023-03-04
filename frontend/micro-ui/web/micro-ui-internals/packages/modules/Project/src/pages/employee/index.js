@@ -10,7 +10,7 @@ const ProjectBreadCrumb = ({ location }) => {
   const fromScreen = new URLSearchParams(search).get("from") || null;
   const crumbs = [
     {
-        path: "/works-ui/employee",
+        path: `/${window?.contextPath}/employee`,
         content: t("WORKS_WMS"),
         show: true,
     },
