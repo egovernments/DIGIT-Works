@@ -132,6 +132,7 @@ const didEmployeeHasRole = (role="") => {
 const didEmployeeHasAtleastOneRole = (roles=[])=>{
   return roles.some(role=>didEmployeeHasRole(role));
 }
+
 const pgrAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
@@ -280,6 +281,11 @@ const swAccess = () => {
   return SW_ACCESS?.length > 0;
 };
 
+/* to get the MDMS config module name */
+const getConfigModuleName = ()=>{
+  return  window?.globalConfigs?.getConfig("UICONFIG_MODULENAME") || "commonUiConfig";
+}
+
 
 export default {
   pdf: PDFUtil,
@@ -319,5 +325,6 @@ export default {
   swAccess,
   Urls,
   getLoggedInUserDetails,
-  ...privacy
+  ...privacy,
+  getConfigModuleName
 };

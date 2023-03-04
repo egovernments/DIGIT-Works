@@ -12,7 +12,7 @@ const Inbox = () => {
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
         tenant,
-        "commonUiConfig",
+        Digit.Utils.getConfigModuleName(),
         [
             {
                 "name": "musterInboxConfig"
