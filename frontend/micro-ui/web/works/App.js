@@ -15,7 +15,7 @@ import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 // import {initMuktaCustomisations} from "@egovernments/digit-ui-customisation-mukta";
 
 
-window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
+window.contextPath = "core-ui";
 
 initLibraries();
 
@@ -69,7 +69,7 @@ const moduleReducers = (initData) => ({
 // initMuktaCustomisations();
 
 function App() {
-  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
+  window.contextPath = "core-ui";
   const stateCode =
     window.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") ||
     process.env.REACT_APP_STATE_LEVEL_TENANT_ID;
