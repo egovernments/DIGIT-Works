@@ -2,9 +2,9 @@ import React from "react";
 
 // import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 // import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
-// import { initWorksComponents } from "@egovernments/digit-ui-module-works";
+import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
-// import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
+import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
@@ -12,10 +12,10 @@ import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { initProjectComponents } from "@egovernments/digit-ui-module-project";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
-import {initMuktaCustomisations} from "@egovernments/digit-ui-customisation-mukta";
+// import {initMuktaCustomisations} from "@egovernments/digit-ui-customisation-mukta";
 
 
-window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
+window.contextPath = "core-ui";
 
 initLibraries();
 
@@ -46,18 +46,18 @@ const enabledModules = [
   "Masters",
   "Estimate",
   "Project",
-  "Mukta"
+  // "Mukta"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({});
 
 // initDSSComponents();
 // initEngagementComponents();
-// initWorksComponents();
+initWorksComponents();
 initHRMSComponents();
 initEstimateComponents();
 initAttendenceMgmtComponents();
 initContractsComponents();
-// initExpenditureComponents();
+initExpenditureComponents();
 initMastersComponents();
 initProjectComponents();
 
@@ -66,10 +66,10 @@ const moduleReducers = (initData) => ({
 });
 
 //keep this at last to compile all Mukta specific changes at last
-initMuktaCustomisations();
+// initMuktaCustomisations();
 
 function App() {
-  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
+  window.contextPath = "core-ui";
   const stateCode =
     window.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") ||
     process.env.REACT_APP_STATE_LEVEL_TENANT_ID;

@@ -5,6 +5,7 @@ import EmployeeApp from "./pages/employee";
 import { CustomisedHooks } from "./hooks";
 import WorksCard from "./components/WorksCard";
 import { UICustomizations } from "./configs/UICustomizations";
+import HRMSCard from "./components/HRMSCard";
 
 const MuktaModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["Mukta"];
@@ -26,8 +27,9 @@ const MuktaModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
   MuktaModule,
   WorksCard,
-  DSSCard:null,  // TO HIDE THE DSS CARD IN HOME SCREEN,
-  AttendenceMgmtCard:null  // TO HIDE THE Attendance Mgmt CARD IN HOME SCREEN,
+  DSSCard:null,  // TO HIDE THE DSS CARD IN HOME SCREEN as per MUKTA
+  AttendenceMgmtCard:null , // TO HIDE THE Attendance Mgmt CARD IN HOME SCREEN as per MUKTA
+  HRMSCard // Overridden the HRMS card as per MUKTA
 };
 
 const overrideHooks = () => {
