@@ -83,8 +83,9 @@ class IndividualSkills {
   String? skillCode;
   String? name;
   String? aadhaar;
+  String? id;
   IndividualSkills(
-      {this.individualId, this.skillCode, this.name, this.aadhaar});
+      {this.individualId, this.skillCode, this.name, this.aadhaar, this.id});
 }
 
 class EntryExitModel {

@@ -33,6 +33,7 @@ class MusterRoll with _$MusterRoll {
         List<IndividualEntries>? individualEntries,
     @JsonKey(name: 'additionalDetails')
         MusterAdditionalDetails? musterAdditionalDetails,
+    @JsonKey(name: 'auditDetails') AuditDetails? musterAuditDetails,
   }) = _MusterRoll;
 
   factory MusterRoll.fromJson(

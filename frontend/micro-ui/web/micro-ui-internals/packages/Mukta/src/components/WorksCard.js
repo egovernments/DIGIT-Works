@@ -9,7 +9,27 @@ const WorksCard = () => {
   //   return null;
   // }
   const { t } = useTranslation();
-
+  const tenantId = Digit.ULBService.getCurrentTenantId()
+  const requestCriteria = {
+    url:'/inbox/v2/_search',
+    body: {
+        inbox: {
+            tenantId,
+            processSearchCriteria: {
+                businessService: [
+                    "muster-roll-approval"
+                ],
+                moduleName: "muster-roll-service"
+            },
+            moduleSearchCriteria: {
+                tenantId
+            },
+            limit: 10,
+            offset: 0
+        }
+    }
+};
+const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
   let links = [
     {
       label: t("ACTION_TEST_PROJECT"),
@@ -32,7 +52,7 @@ const WorksCard = () => {
       label: t("WORKS_MUSTERROLLS"),
       link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
       roles: ["MV","MA","EMPLOYEE","SUPERUSER"],
-      count: 20,
+      count: isLoading ? "-" : data?.totalCount,
     },
     {
       label: t("WORKS_WAGESEEKERS"),
@@ -57,12 +77,12 @@ const WorksCard = () => {
     Icon: <WorksMgmtIcon />,
     moduleName: t("WORKS"),
     kpis: [
-      {
-        //Pass Count Value from Inbox API here
-        count: 33,
-        label: t("INBOX"),
-        link: `/${window?.contextPath}/employee/estimate/inbox`,
-      },
+      // {
+      //   //Pass Count Value from Inbox API here
+      //   count: 33,
+      //   label: t("INBOX"),
+      //   link: `/${window?.contextPath}/employee/estimate/inbox`,
+      // },
     ],
     links: links,
   };

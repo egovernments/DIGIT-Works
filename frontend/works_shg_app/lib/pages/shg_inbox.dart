@@ -286,7 +286,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 .individualId,
                                                                         individualId: e
                                                                             .individualId,
-                                                                        id: e.id ?? '',
+                                                                        id: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? e.id ?? '',
                                                                         skill: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
                                                                             '',
                                                                         monEntryId: e
@@ -570,14 +570,22 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                           if (individualMusterRollModel
                                                               .musterRoll!
                                                               .isNotEmpty) {
-                                                            Notifiers.getToastMessage(
-                                                                context,
-                                                                AppLocalizations.of(
-                                                                        context)
-                                                                    .translate(i18
-                                                                        .attendanceMgmt
-                                                                        .applicationInWorkFlow),
-                                                                'ERROR');
+                                                            if(individualMusterRollModel.musterRoll!.first.musterRollStatus == 'APPROVED'){
+                                                              Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.notModifyApprovedApplication), 'ERROR');
+                                                            }
+                                                            else{
+                                                              Notifiers
+                                                                  .getToastMessage(
+                                                                  context,
+                                                                  AppLocalizations
+                                                                      .of(
+                                                                      context)
+                                                                      .translate(
+                                                                      i18
+                                                                          .attendanceMgmt
+                                                                          .applicationInWorkFlow),
+                                                                  'ERROR');
+                                                            }
 
                                                             inWorkFlow = true;
                                                           }
@@ -649,7 +657,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                         .instance
                                                                         .colorScheme
                                                                         .secondary)),
-                                                            onPressed: () {
+                                                            onPressed: inWorkFlow ? null : () {
                                                               if (selectedDateRange ==
                                                                   null) {
                                                                 Notifiers.getToastMessage(

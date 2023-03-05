@@ -11,7 +11,9 @@ const ProjectSearch = () => {
 
   // const configs = searchConfig();
   const tenant = Digit.ULBService.getStateId();
-  const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, "commonUiConfig", [
+  const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, 
+    Digit.Utils.getConfigModuleName(),
+    [
     {
       name: "SearchProjectConfig",
     },
