@@ -12,16 +12,18 @@ RUN ls -lah
 #RUN node web/envs.js
 RUN cd web/ \
     && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))' \
-    && node -e 'console.log("Works with MUKTA")' \
+    && node -e 'console.log("Works only")' \
+    && cd works/ \
     &&  ./install-deps.sh \
+    && cd ../ \
     && yarn install \
     && yarn build 
 
 FROM nginx:mainline-alpine
 #FROM ghcr.io/egovernments/nginx:mainline-alpine
-ENV WORK_DIR=/var/web/works-ui
+ENV WORK_DIR=/var/web/core-ui
 
 RUN mkdir -p ${WORK_DIR}
 
 COPY --from=build /app/web/build ${WORK_DIR}/
-COPY --from=build /app/web/docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/web/works/nginx.conf /etc/nginx/conf.d/default.conf
