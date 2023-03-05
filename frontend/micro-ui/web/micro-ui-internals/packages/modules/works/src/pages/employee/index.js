@@ -26,18 +26,18 @@ const BILLSBreadCrumbs = ({ location }) => {
   const fromScreen = new URLSearchParams(search).get("from") || null;
   const crumbs = [
     {
-      path: "/works-ui/employee",
+      path: `/${window?.contextPath}/employee`,
       content: t("WORKS_WMS"),
       show: true,
     },
     {
-      path: "/works-ui/employee/works/create-contractor",
+      path: `/${window?.contextPath}/employee/works/create-contractor`,
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_CONTRACTOR")}` : t("WORKS_CREATE_CONTRACTOR"),
       show: location.pathname.includes("/works/create-contractor") ? true : false,
       isBack: fromScreen && true,
     },
     {
-      path: "/works-ui/employee/works/search-Estimate-approved",
+      path: `/${window?.contextPath}/employee/works/search-Estimate-approved`,
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_SEARCH_ESTIMATES")}` : t("WORKS_SEARCH_ESTIMATES"),
       show: location.pathname.includes("/works/search-Estimate") ? true : false,
       isBack: fromScreen && true,

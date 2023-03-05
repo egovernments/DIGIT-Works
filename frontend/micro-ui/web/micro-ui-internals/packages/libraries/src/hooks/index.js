@@ -299,7 +299,6 @@ const Hooks = {
   useDynamicData,
   useBulkPdfDetails,
   useBillAmendmentInbox,
-  works,
   contracts,
   estimates,
   attendance,
