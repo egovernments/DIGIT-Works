@@ -92,7 +92,7 @@ class ViewMusterRollsPage extends StatelessWidget {
                             : WorkDetailsCard(
                                 musterList,
                                 isSHGInbox: true,
-                                musterRollsModel: musterRollsModel,
+                                musterRollsModel: musters,
                               )
                       ]);
                 },

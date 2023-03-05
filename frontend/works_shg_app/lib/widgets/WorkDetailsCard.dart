@@ -23,7 +23,7 @@ class WorkDetailsCard extends StatelessWidget {
   final bool isSHGInbox;
   final bool isTrackAttendance;
   final List<AttendanceRegister>? attendanceRegistersModel;
-  final MusterRollsModel? musterRollsModel;
+  final List<MusterRoll>? musterRollsModel;
 
   const WorkDetailsCard(this.detailsList,
       {this.isAttendanceInbox = false,
@@ -64,30 +64,23 @@ class WorkDetailsCard extends StatelessWidget {
               ? () {
                   context.read<IndividualMusterRollSearchBloc>().add(
                         SearchIndividualMusterRollEvent(
-                            id: musterRollsModel!.musterRoll![i].id ?? '',
-                            tenantId: musterRollsModel!.musterRoll![i].tenantId
-                                .toString()),
+                            id: musterRollsModel![i].id ?? '',
+                            tenantId: musterRollsModel![i].tenantId.toString()),
                       );
                   context.router.push(SHGInboxRoute(
                       projectDetails: [
                         detailsList[i],
                       ],
-                      tenantId:
-                          musterRollsModel!.musterRoll![i].tenantId.toString(),
-                      musterRollNo: musterRollsModel!
-                          .musterRoll![i].musterRollNumber
-                          .toString()));
+                      tenantId: musterRollsModel![i].tenantId.toString(),
+                      musterRollNo:
+                          musterRollsModel![i].musterRollNumber.toString()));
                   context.read<MusterRollEstimateBloc>().add(
                         ViewEstimateMusterRollEvent(
-                          tenantId: musterRollsModel!.musterRoll![i].tenantId
-                              .toString(),
-                          registerId: musterRollsModel!
-                              .musterRoll![i].registerId
-                              .toString(),
-                          startDate:
-                              musterRollsModel!.musterRoll![i].startDate ?? 0,
-                          endDate:
-                              musterRollsModel!.musterRoll![i].endDate ?? 0,
+                          tenantId: musterRollsModel![i].tenantId.toString(),
+                          registerId:
+                              musterRollsModel![i].registerId.toString(),
+                          startDate: musterRollsModel![i].startDate ?? 0,
+                          endDate: musterRollsModel![i].endDate ?? 0,
                         ),
                       );
                 }
