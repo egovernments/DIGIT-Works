@@ -23,19 +23,19 @@ const AttendanceBreadCrumbs = ({ location }) => {
     },
     {
       path: `/${window.contextPath}/employee/attendencemgmt/view-attendance`,
-      content: fromScreen ? `${t(fromScreen)} / / ${t("ATM_VIEW_ATTENDENCE")}` : t("ATM_VIEW_ATTENDENCE"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("ATM_VIEW_ATTENDENCE")}` : t("ATM_VIEW_ATTENDENCE"),
       show: location.pathname.includes("/attendencemgmt/view-attendance") ? true : false,
       isBack: fromScreen && true,
     },
     {
       path: `/${window.contextPath}/employee/attendencemgmt/response`,
-      content: fromScreen ? `${t(fromScreen)} / / ${t("ATM_VIEW_ATTENDENCE")}` : t("ATM_VIEW_ATTENDENCE"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("ATM_VIEW_ATTENDENCE")}` : t("ATM_VIEW_ATTENDENCE"),
       show: location.pathname.includes("/attendencemgmt/response") ? true : false,
       isBack: fromScreen && true,
     },
     {
       path: `/${window.contextPath}/employee/attendencemgmt/search-attendance`,
-      content: fromScreen ? `${t(fromScreen)} / / ${t("ATM_SEARCH_ATTENDANCE")}` : t("ATM_SEARCH_ATTENDANCE"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("ATM_SEARCH_ATTENDANCE")}` : t("ATM_SEARCH_ATTENDANCE"),
       show: location.pathname.includes("/attendencemgmt/search-attendance") ? true : false,
       isBack: fromScreen && true,
     }
