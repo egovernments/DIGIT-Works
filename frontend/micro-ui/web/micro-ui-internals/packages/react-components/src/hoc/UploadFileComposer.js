@@ -21,12 +21,14 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
       "works",
       [
           {
-              "name": "DocumentConfig"
+              "name": "DocumentConfig",
+              "filter": `[?(@.module=='${module}')]`
           }
       ]
   );
-  const docConfig = data?.works?.DocumentConfig?.filter(item => item.module === module)?.[0]
 
+  const docConfig = data?.works?.DocumentConfig?.[0]
+  
   useEffect(() => {
     docConfig?.documents?.filter(item => item.active)?.forEach((item) => {
       finalDocumentData.push({
@@ -67,13 +69,13 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
     })
 
     if (numberOfFiles > 0) {
-      const files = finalDocumentData?.filter(doc => doc?.code === item?.code)?.[0].uploadedFiles
+      const files = finalDocumentData?.filter(doc => doc?.code === item?.code)?.[0]?.uploadedFiles
       filesData.forEach((value) => {
         files?.push({
           fileName: value?.[0],
           fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
           documentType: value?.[1]?.file?.type,
-          otherFileName: formData['other_name'] 
+          otherFileName: formData[`${item?.code}_name`] || ""
         })
       });
     }
@@ -98,12 +100,12 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
             
               <div className="field">
                 {
-                  item.code === 'OTHERS' ? 
+                  item?.showTextInput ? 
                     <TextInput 
                       style={{ "marginBottom": "16px" }} 
-                      name={'other_name'} 
+                      name={`${item?.code}_name`} 
                       placeholder={t('ES_COMMON_ENTER_NAME')}
-                      inputRef={register({required : true, minLength: 2})}/> : 
+                      inputRef={register({minLength: 2})}/> : 
                     null  
                 }
                 <div  style={{marginBottom: '24px'}}>
@@ -116,7 +118,7 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
                     hintText={item?.hintText}
                     allowedFileTypesRegex={getRegex(item?.allowedFileTypes)}
                     allowedMaxSizeInMB={item?.maxSizeInMB || docConfig?.maxSizeInMB || 5}
-                    maxFilesAllowed={item?.isMultiple ? (item?.maxFilesAllowed || 2) : 1}
+                    maxFilesAllowed={item?.maxFilesAllowed || 1}
                     customClass={customClass}
                     customErrorMsg={item?.customErrorMsg}
                   />   
