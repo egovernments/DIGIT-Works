@@ -98,7 +98,7 @@ const CreateEstimate = ({ EstimateSession }) => {
         //             }, 5000);
         //         },
         //         onSuccess: async (responseData, variables) => {
-        //             history.push("/works-ui/employee/works/response",{
+        //             history.push(`/${window?.contextPath}/employee/works/response",{
         //                 header:"Work Order Created Successfully and sent for Approval",
         //                 id:"WO/ENG/0001/07/2021-22",
         //                 info:t("WORKS_ORDER_ID"),
@@ -106,7 +106,7 @@ const CreateEstimate = ({ EstimateSession }) => {
         //                 links:[
         //                     {
         //                         name:t("WORKS_CREATE_CONTRACT"),
-        //                         redirectUrl:"/works-ui/employee/works/create-contract",
+        //                         redirectUrl:`/${window?.contextPath}/employee/works/create-contract",
         //                         code:"",
         //                         svg:"CreateEstimateIcon",
         //                         isVisible:true,
@@ -114,7 +114,7 @@ const CreateEstimate = ({ EstimateSession }) => {
         //                     },
         //                     {
         //                         name:t("WORKS_GOTO_CONTRACT_INBOX"),
-        //                         redirectUrl:"/works-ui/employee/works/create-contract",
+        //                         redirectUrl:`/${window?.contextPath}/employee/works/create-contract",
         //                         code:"",
         //                         svg:"RefreshIcon",
         //                         isVisible:true,

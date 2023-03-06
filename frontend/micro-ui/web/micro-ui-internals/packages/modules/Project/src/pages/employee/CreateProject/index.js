@@ -20,7 +20,7 @@ const CreateProject = () => {
 
     const { isLoading, data} = Digit.Hooks.useCustomMDMS(
       tenant,
-      "commonUiConfig",
+      Digit.Utils.getConfigModuleName(),
       [
           {
               "name": "CreateProjectConfig"

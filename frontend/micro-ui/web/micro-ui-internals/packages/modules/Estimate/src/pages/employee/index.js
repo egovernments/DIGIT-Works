@@ -15,7 +15,7 @@ const EstimateBreadCrumbs = ({ location }) => {
     const fromScreen = new URLSearchParams(search).get("from") || null;
     const crumbs = [
         {
-            path: "/works-ui/employee",
+            path: `/${window?.contextPath}/employee`,
             content: t("WORKS_WMS"),
             show: true,
         },
@@ -47,7 +47,7 @@ const App = ({ path }) => {
     const getBreadCrumbStyles = (screenType) => {
         // Defining 4 types for now -> create,view,inbox,search
         switch (true) {
-            // case (screenType?.includes("/works-ui/employee/estimate/create-estimate")):
+            // case (screenType?.includes(`/${window?.contextPath}/employee/estimate/create-estimate`)):
             //     return { marginLeft: "0px" }
             case (screenType?.includes("/create")):
                 return { marginLeft: "10px" }

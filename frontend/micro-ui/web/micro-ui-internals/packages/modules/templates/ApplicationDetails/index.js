@@ -52,7 +52,8 @@ const ApplicationDetails = (props) => {
     clearDataDetails,
     noBoxShadow,
     sectionHeadStyle,
-    showActionBar = true
+    showActionBar = true,
+    setshowEditTitle = () => {}
   } = props;
   
   useEffect(() => {
@@ -82,7 +83,7 @@ const ApplicationDetails = (props) => {
       } else if (!action?.redirectionUrl) {
         if(action?.action === 'EDIT') {
           setModify(true)
-          props.setshowEditTitle(true)
+          setshowEditTitle(true)
         }
         else setShowModal(true);
       } else {

@@ -92,7 +92,7 @@ const getPattern = (type) => {
       return /^[a-zA-z0-9\s\\/\-]$/i;
   }
 };
-
+/*  get unique elements from an array */
 const getUnique = (arr) => {
   return arr.filter((value, index, self) => self.indexOf(value) === index);
 };
@@ -118,14 +118,20 @@ const routeSubscription = (pathname) => {
   }
 };
 
-const didEmployeeHasRole = (role) => {
+/* to check the employee (loggedin user ) has given role  */
+const didEmployeeHasRole = (role="") => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const userInfo = Digit.UserService.getUser();
   const rolearray = userInfo?.info?.roles.filter((item) => {
-    if (item.code == role && item.tenantId === tenantId) return true;
+    if (item.code === role && item.tenantId === tenantId) return true;
   });
-  return rolearray?.length;
+  return rolearray?.length>0;
 };
+
+/* to check the employee (loggedin user ) has given roles  */
+const didEmployeeHasAtleastOneRole = (roles=[])=>{
+  return roles.some(role=>didEmployeeHasRole(role));
+}
 
 const pgrAccess = () => {
   const userInfo = Digit.UserService.getUser();
@@ -275,6 +281,11 @@ const swAccess = () => {
   return SW_ACCESS?.length > 0;
 };
 
+/* to get the MDMS config module name */
+const getConfigModuleName = ()=>{
+  return  window?.globalConfigs?.getConfig("UICONFIG_MODULENAME") || "commonUiConfig";
+}
+
 
 export default {
   pdf: PDFUtil,
@@ -304,6 +315,7 @@ export default {
   mCollectAccess,
   receiptsAccess,
   didEmployeeHasRole,
+  didEmployeeHasAtleastOneRole,
   hrmsAccess,
   getPattern,
   hrmsRoles,
@@ -313,5 +325,6 @@ export default {
   swAccess,
   Urls,
   getLoggedInUserDetails,
-  ...privacy
+  ...privacy,
+  getConfigModuleName
 };

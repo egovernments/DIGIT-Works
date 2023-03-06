@@ -33,9 +33,9 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                 final attendanceRegisters = List<AttendanceRegister>.from(
                     attendanceRegistersModel!.attendanceRegister!);
 
-                attendanceRegisters.sort((a, b) => b
-                    .registerAuditDetails!.createdTime!
-                    .compareTo(a.registerAuditDetails!.createdTime!.toInt()));
+                attendanceRegisters.sort((a, b) =>
+                    b.registerAuditDetails!.lastModifiedTime!.compareTo(
+                        a.registerAuditDetails!.lastModifiedTime!.toInt()));
                 final List<Map<String, dynamic>> projectList =
                     attendanceRegisters
                         .map((e) => {

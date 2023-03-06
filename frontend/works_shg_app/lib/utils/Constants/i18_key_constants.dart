@@ -15,6 +15,8 @@ class Login {
   String get forgotPassword => 'CORE_COMMON_FORGOT_PASSWORD';
   String get invalidCredentials => 'INVALID_CREDENTIALS';
   String get contactAdministrator => 'CONTACT_ADMINISTRATOR_FOR_PASSWORD';
+  String get otpVerification => 'OTP_VERIFICATION';
+  String get enterOTPSent => 'ENTER_OTP_SENT_TO';
 }
 
 class Common {
@@ -111,6 +113,7 @@ class AttendanceMgmt {
   String get musterCreateFailed => 'MUSTER_CREATE_FAILED';
   String get musterSentForApproval => 'MUSTER_SENT_FOR_APPROVAL_SUCCESS';
   String get applicationInWorkFlow => 'MUSTER_ROLL_IN_WORKFLOW_STATE';
+  String get notModifyApprovedApplication => 'CANNOT_MODIFY_APPROVED_MUSTER';
   String get unableToCheckWorkflowStatus => 'MUSTER_ROLL_WORKFLOW_CHECK_FAIL';
   String get resubmitMusterRoll => 'RESUBMIT_MUSTER_ROLL';
   String get attendeeCreateFailed => 'ATTENDEE_CREATE_FAILED';

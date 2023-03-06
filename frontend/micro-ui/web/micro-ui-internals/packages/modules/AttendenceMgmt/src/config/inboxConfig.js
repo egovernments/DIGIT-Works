@@ -75,8 +75,8 @@ const inboxConfig = () => {
                 uiConfig : {
                     links : [
                         {
-                            text: "WORKS_ENROLL_WAGE_SEEKER",
-                            url: `/employee/contracts/create-contract`,
+                            text: "ATM_SEARCH_ATTENDANCE",
+                            url: `/employee/attendencemgmt/search-attendance`,
                             roles: [],
                         }
                     ],

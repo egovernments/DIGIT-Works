@@ -40,15 +40,15 @@ const ViewAttendance = () => {
         isDataLoading={false}
         workflowDetails={workflowDetails}
         showTimeLine={true}
-        timelineStatusPrefix={""}
+        timelineStatusPrefix={"ATM_"}
         businessService={"muster-roll-approval"}
         forcedActionPrefix={"ATM"}
         mutate={mutate}
         showToast={showToast}
         setShowToast={setShowToast}
         closeToast={closeToast}
-        tenantId={data?.applicationData?.tenantId}
-        applicationNo={data?.applicationData?.musterRollNumber}
+        tenantId={tenantId}
+        applicationNo={musterRollNumber}
         setshowEditTitle={setshowEditTitle}
       />
     </React.Fragment>
