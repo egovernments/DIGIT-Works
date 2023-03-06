@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Banner, Card, CardText, LinkLabel, EditIcon, ArrowLeftWhite} from "@egovernments/digit-ui-react-components";
+import { Banner, Card, LinkLabel, AddFileFilled, ArrowLeftWhite} from "@egovernments/digit-ui-react-components";
 
 const CreateProjectResponse = () => {
     const {t} = useTranslation();
@@ -17,7 +17,7 @@ const CreateProjectResponse = () => {
                 break;
             }
             case "create-estimate" : {
-                history.push(`/${window.contextPath}/employee/estimate/create-estimate`);
+                history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${queryStrings?.tenantId}&projectNumber=${projectIDsList?.[0]}`);
                 break;
             }
         }
@@ -34,10 +34,10 @@ const CreateProjectResponse = () => {
             />
             <div style={{display: "flex"}}>
                 <LinkLabel style={{ display: "flex", marginRight : "3rem" }} onClick={()=>navigate('search-project')}>
-                    <ArrowLeftWhite style={{marginRight: "8px"}}/>{t("PROJECT_GO_TO_SEARCH_PROJECT")}
+                    <ArrowLeftWhite  fill="#F47738" style={{marginRight: "8px", marginTop : "3px"}}/>{t("PROJECT_GO_TO_SEARCH_PROJECT")}
                 </LinkLabel>
                 <LinkLabel style={{ display: "flex" }} onClick={()=>navigate('create-estimate')}>
-                    <EditIcon style={{marginRight: "8px"}}/>{t("COMMON_CREATE_ESTIMATE")}
+                    <AddFileFilled style={{marginRight: "8px", marginTop : "3px"}}/>{t("COMMON_CREATE_ESTIMATE")}
                 </LinkLabel>      
             </div>
         </Card>

@@ -20,9 +20,9 @@ const ArrowLeft = ({ className }) => (
   </svg>
 );
 
-const ArrowLeftWhite = ({ className }) => (
-  <svg width="16" height="16" viewBox="0 0 16 16" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z" fill="white" />
+const ArrowLeftWhite = ({ className, fill="white", style={} }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" className={className} fill="none" style={style} xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z" fill={fill} />
   </svg>
 );
 const PrivacyMaskIcon = ({ className, style = {} }) => (
@@ -1244,6 +1244,12 @@ const BioMetricIcon = ({fill="#F47738"})=>(
 
 )
 
+const AddFileFilled = ({className="", fill="", style={}}) => (
+  <svg width="19" className={className} height="18" style={style} viewBox="0 0 19 18" fill={fill} xmlns="http://www.w3.org/2000/svg">
+    <path d="M14.6016 8.75C15.2141 8.75 15.8003 8.86375 16.3516 9.05625V5.25L11.1016 0H2.35156C1.38031 0 0.601562 0.77875 0.601562 1.75V14C0.601562 14.9712 1.38906 15.75 2.35156 15.75H9.65781C9.46531 15.1987 9.35156 14.6125 9.35156 14C9.35156 11.1037 11.7053 8.75 14.6016 8.75ZM10.2266 1.3125L15.0391 6.125H10.2266V1.3125ZM18.1016 13.125V14.875H15.4766V17.5H13.7266V14.875H11.1016V13.125H13.7266V10.5H15.4766V13.125H18.1016Z" fill="#F47738"/>
+  </svg>
+)
+
 export {
   AnnouncementIcon,
   ReceiptIcon,
@@ -1372,6 +1378,7 @@ export {
   ArrowCollapseUp,
   ArrowCollapseDown,
   AddFilled,
+  AddFileFilled,
 
   /* Works Management  */
   NoResultsFoundIcon,

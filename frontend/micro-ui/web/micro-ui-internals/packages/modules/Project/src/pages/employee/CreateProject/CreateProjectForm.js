@@ -262,7 +262,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
       });
       history.push({
         pathname: `/${window?.contextPath}/employee/project/create-project-response`,
-        search: `?projectIDs=${queryString}&isSuccess=${isSuccess}`,
+        search: `?projectIDs=${queryString}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
       }); 
     }
 
