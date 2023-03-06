@@ -49,7 +49,16 @@ const AttendenceMgmtCard = () => {
                 link: `/${window?.contextPath}/employee/attendencemgmt/search-attendance`,
                 roles: [],
                 count: 0,
-            }
+            },
+            {
+                label: t("WORKS_WAGESEEKERS"),
+                link: `/${window?.contextPath}/employee/masters/search-wageseeker`,
+                roles: [],
+              },  {
+                label: t("WORKS_MASTERS"),
+                link: `/${window?.contextPath}/employee/masters/search-organization`,
+                roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
+              },
         ],
     };
     return <EmployeeModuleCard {...propsForModuleCard} />;
