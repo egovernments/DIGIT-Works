@@ -11,7 +11,7 @@ const EstimateSearch = () => {
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
         tenant,
-        "commonUiConfig",
+        Digit.Utils.getConfigModuleName(),
         [
             {
                 "name": "SearchEstimateConfig"
@@ -19,7 +19,7 @@ const EstimateSearch = () => {
         ]
     );
 
-    const configs = data?.commonUiConfig?.SearchEstimateConfig?.[0]
+    const configs = data?.[Digit.Utils.getConfigModuleName()]?.SearchEstimateConfig?.[0]
 
     if (isLoading) return <Loader />
     return (

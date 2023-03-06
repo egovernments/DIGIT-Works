@@ -25,7 +25,7 @@ const CreateProject = () => {
 
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
       tenant,
-      "commonUiConfig",
+      Digit.Utils.getConfigModuleName(),
       [
           {
               "name": "CreateProjectConfig"
@@ -33,7 +33,7 @@ const CreateProject = () => {
       ],
       {
         select: (data) => {
-            return data?.commonUiConfig?.CreateProjectConfig[0];
+            return data?.[Digit.Utils.getConfigModuleName()]?.CreateProjectConfig[0];
         },
       }
     );

@@ -8,6 +8,7 @@ import Body from "./atoms/Body";
 import BreadCrumb from "./atoms/BreadCrumb";
 import BreakLine from "./atoms/BreakLine";
 import ButtonSelector from "./atoms/ButtonSelector";
+import Button from "./atoms/Button";
 import Card from "./atoms/Card";
 import CardCaption from "./atoms/CardCaption";
 import CardHeader from "./atoms/CardHeader";
@@ -246,6 +247,7 @@ import UploadFileComposer from "./hoc/UploadFileComposer";
 import WorkflowTimeline from "./atoms/WorkflowTimeline";
 import WorkflowActions from "./atoms/WorkflowActions";
 export {
+  Button,
   ViewImages,
   Phone,
   Body,

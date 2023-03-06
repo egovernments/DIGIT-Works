@@ -4,6 +4,7 @@ class TrackAttendanceTableData {
   String? name;
   String? aadhaar;
   String? individualId;
+  String? id;
   String? skill;
   void Function()? onTap;
   String? monEntryId;
@@ -82,8 +83,9 @@ class IndividualSkills {
   String? skillCode;
   String? name;
   String? aadhaar;
+  String? id;
   IndividualSkills(
-      {this.individualId, this.skillCode, this.name, this.aadhaar});
+      {this.individualId, this.skillCode, this.name, this.aadhaar, this.id});
 }
 
 class EntryExitModel {

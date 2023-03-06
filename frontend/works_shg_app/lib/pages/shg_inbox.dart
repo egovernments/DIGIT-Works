@@ -286,6 +286,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 .individualId,
                                                                         individualId: e
                                                                             .individualId,
+                                                                        id: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? e.id ?? '',
                                                                         skill: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
                                                                             '',
                                                                         monEntryId: e
@@ -339,6 +340,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                     data.individualId =
                                                                         item1.individualId ??
                                                                             '';
+                                                                    data.id = item1.id ?? '';
                                                                     data.skill =
                                                                         item1
                                                                             .skill;
@@ -436,6 +438,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                     data.individualId =
                                                                         item1.individualId ??
                                                                             '';
+                                                                    data.id = item1.id ?? '';
                                                                     data.skill =
                                                                         item1
                                                                             .skill;
@@ -567,14 +570,22 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                           if (individualMusterRollModel
                                                               .musterRoll!
                                                               .isNotEmpty) {
-                                                            Notifiers.getToastMessage(
-                                                                context,
-                                                                AppLocalizations.of(
-                                                                        context)
-                                                                    .translate(i18
-                                                                        .attendanceMgmt
-                                                                        .applicationInWorkFlow),
-                                                                'ERROR');
+                                                            if(individualMusterRollModel.musterRoll!.first.musterRollStatus == 'APPROVED'){
+                                                              Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.notModifyApprovedApplication), 'ERROR');
+                                                            }
+                                                            else{
+                                                              Notifiers
+                                                                  .getToastMessage(
+                                                                  context,
+                                                                  AppLocalizations
+                                                                      .of(
+                                                                      context)
+                                                                      .translate(
+                                                                      i18
+                                                                          .attendanceMgmt
+                                                                          .applicationInWorkFlow),
+                                                                  'ERROR');
+                                                            }
 
                                                             inWorkFlow = true;
                                                           }
@@ -646,7 +657,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                         .instance
                                                                         .colorScheme
                                                                         .secondary)),
-                                                            onPressed: () {
+                                                            onPressed: inWorkFlow ? null : () {
                                                               if (selectedDateRange ==
                                                                   null) {
                                                                 Notifiers.getToastMessage(
@@ -941,15 +952,39 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                   .isNotEmpty) {
                 skillsPayLoad.removeWhere((elem) =>
                     elem["individualId"] == tableDataModel.individualId);
-                skillsPayLoad.add({
-                  "individualId": tableDataModel.individualId,
-                  "additionalDetails": {"code": val}
-                });
+                if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
+                  skillsPayLoad.add({
+                    "id": tableDataModel.id,
+                    "additionalDetails": {
+                      "code": val
+                    }
+                  });
+                }
+                else {
+                  skillsPayLoad.add({
+                    "individualId": tableDataModel.individualId,
+                    "additionalDetails": {
+                      "code": val
+                    }
+                  });
+                }
               } else {
-                skillsPayLoad.add({
-                  "individualId": tableDataModel.individualId,
-                  "additionalDetails": {"code": val}
-                });
+                if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
+                  skillsPayLoad.add({
+                    "id": tableDataModel.id,
+                    "additionalDetails": {
+                      "code": val
+                    }
+                  });
+                }
+                else {
+                  skillsPayLoad.add({
+                    "individualId": tableDataModel.individualId,
+                    "additionalDetails": {
+                      "code": val
+                    }
+                  });
+                }
               }
             },
           )),

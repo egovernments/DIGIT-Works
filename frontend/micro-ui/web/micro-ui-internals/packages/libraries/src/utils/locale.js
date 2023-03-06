@@ -45,16 +45,16 @@ export const convertToLocale = (value = "", key = "") => {
   }
   return `${key}_${convertedValue}`;
 };
-
+/* to transform tenant id ,ward/locality code  to ward/locality name locale */
 export const getMohallaLocale = (value = "", tenantId = "") => {
   let convertedValue = convertDotValues(tenantId);
   if (convertedValue == "NA" || !checkForNotNull(value)) {
     return "COMMON_NA";
   }
   convertedValue = convertedValue.toUpperCase();
-  return convertToLocale(value, `${convertedValue}_REVENUE`);
+  return convertToLocale(value, `${convertedValue}_ADMIN`);
 };
-
+/* to transform tenant id to city name locale */
 export const getCityLocale = (value = "") => {
   let convertedValue = convertDotValues(value);
   if (convertedValue == "NA" || !checkForNotNull(value)) {
