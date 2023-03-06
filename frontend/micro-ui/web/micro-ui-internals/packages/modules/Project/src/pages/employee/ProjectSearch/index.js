@@ -30,7 +30,7 @@ const ProjectSearch = () => {
           <Button
             label={t(configs?.actionLabel)}
             variation="secondary"
-            icon={<AddFilled />}
+            icon={<AddFilled style={{height : "20px", width : "20px"}}/>}
             onButtonClick={() => {
               history.push(`/${window?.contextPath}/employee/${configs?.actionLink}`);
             }}
