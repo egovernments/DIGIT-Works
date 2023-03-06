@@ -32,7 +32,7 @@ const whenHasSubProjectsHorizontalNavConfig =  [
 ];
 
 const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig}) => {
-    const [selectedProjectType, setSelectedProjectType] = useState(createProjectConfig?.defaultValues?.basicDetails_hasSubProjects);
+    const [selectedProjectType, setSelectedProjectType] = useState(createProjectConfig?.defaultValues?.basicDetails_hasSubProjects ? createProjectConfig?.defaultValues?.basicDetails_hasSubProjects : {name : "COMMON_NO", code : "COMMON_NO"});
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
     const [subTypeOfProjectOptions, setsubTypeOfProjectOptions] = useState([]);
     const [withSubProjectSubSchemeOptions, setWithSubProjectSubSchemeOptions] = useState([]);
@@ -199,7 +199,6 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const { mutate: CreateProjectMutation } = Digit.Hooks.works.useCreateProject();
 
     const onSubmit = async(data) => {
-      console.log(data);
       //Transforming Payload to categories of Basic Details, Projects and Sub-Projects
       const transformedPayload = CreateProjectUtils.payload.transform(data);
       //Final Payload

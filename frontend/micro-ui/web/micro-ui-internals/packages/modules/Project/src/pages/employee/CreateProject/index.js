@@ -1,13 +1,12 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMUKTA";
-// import { createProjectConfig } from "../../../configs/createProjectConfig";
+import createProjectConfigMUKTA from "../../../configs/createProjectConfigMUKTA.json";
 import CreateProjectForm from "./CreateProjectForm";
 
 const CreateProject = () => {
     const {t} = useTranslation();
-    let createProjectConfig = createProjectConfigMUKTA;
+    let data = createProjectConfigMUKTA;
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
@@ -23,7 +22,7 @@ const CreateProject = () => {
       return dateString;
     } 
 
-    const { isLoading, data} = Digit.Hooks.useCustomMDMS(
+    const { isLoading, data1} = Digit.Hooks.useCustomMDMS( //change to data
       stateTenant,
       Digit.Utils.getConfigModuleName(),
       [
@@ -39,16 +38,16 @@ const CreateProject = () => {
     );
 
     useEffect(()=>{
-      if(Object.keys(createProjectConfig.CreateProjectConfig[0].defaultValues).includes("basicDetails_dateOfProposal")) {
-        createProjectConfig.CreateProjectConfig[0].defaultValues.basicDetails_dateOfProposal = findCurrentDate();
+      if(Object.keys(data.CreateProjectConfig[0].defaultValues).includes("basicDetails_dateOfProposal")) {
+        data.CreateProjectConfig[0].defaultValues.basicDetails_dateOfProposal = findCurrentDate();
       }
-      if(Object.keys(createProjectConfig.CreateProjectConfig[0].defaultValues).includes("noSubProject_ulb")) {
-        createProjectConfig.CreateProjectConfig[0].defaultValues.noSubProject_ulb = ULBOptions[0];
+      if(Object.keys(data.CreateProjectConfig[0].defaultValues).includes("noSubProject_ulb")) {
+        data.CreateProjectConfig[0].defaultValues.noSubProject_ulb = ULBOptions[0];
       }
-    },[createProjectConfig]) //TODO: - change this to data
+    },[data]) 
 
     const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", 
-      createProjectConfig?.CreateProjectConfig?.[0]?.defaultValues  //TODO: - change this to data
+    data?.CreateProjectConfig?.[0]?.defaultValues
     );
 
     const [sessionFormData, setSessionFormData, clearSessionFormData] = projectSession;
@@ -56,7 +55,7 @@ const CreateProject = () => {
     if(isLoading) return <Loader />
     return (
       <React.Fragment>
-        <CreateProjectForm t={t} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} createProjectConfig={createProjectConfig?.CreateProjectConfig?.[0]}></CreateProjectForm>
+        <CreateProjectForm t={t} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} createProjectConfig={data?.CreateProjectConfig?.[0]}></CreateProjectForm>
       </React.Fragment>
     )
 }
