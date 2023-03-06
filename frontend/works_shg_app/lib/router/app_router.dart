@@ -9,6 +9,7 @@ import '../pages/home.dart';
 import '../pages/language_selection_page.dart';
 import '../pages/login.dart';
 import '../pages/manage_attendance_register.dart';
+import '../pages/otp_verification.dart';
 import '../pages/shg_inbox.dart';
 import '../pages/trackAttendance/track-attendance_inbox.dart';
 import '../pages/track_attendance.dart';
@@ -33,6 +34,7 @@ part 'app_router.gr.dart';
           initial: true,
         ),
         AutoRoute(page: LoginPage, path: 'login'),
+        AutoRoute(page: OTPVerificationPage, path: 'otp')
       ],
     ),
     AutoRoute(
