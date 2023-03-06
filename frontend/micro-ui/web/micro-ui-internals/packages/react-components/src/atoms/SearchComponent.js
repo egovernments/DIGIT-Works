@@ -51,6 +51,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   }, [formState])
 
   const onSubmit = (data) => {
+    
     if(updatedFields.length >= uiConfig?.minReqFields) {
      // here based on screenType call respective dispatch fn
       dispatch({
@@ -109,7 +110,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
       <div className={'search-wrapper'}>
         {header && renderHeader()}
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
-          <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
+          <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`} style={{gap:"2rem"}}>
             <RenderFormFields 
               fields={uiConfig?.fields} 
               control={control} 

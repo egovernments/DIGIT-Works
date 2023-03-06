@@ -2,11 +2,11 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 import inboxConfig from "../../configs/inboxConfig";
-
+import inboxConfigMukta from "../../configs/inboxConfigMukta";
 const EstimateInbox = () => {
     const { t } = useTranslation();
 
-    const configs = inboxConfig();
+    const configs = inboxConfigMukta(t);
 
     return (
         <React.Fragment>
