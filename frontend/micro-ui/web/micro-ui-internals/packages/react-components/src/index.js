@@ -183,7 +183,8 @@ import {
   GotoInboxIcon,
   AddFilled,
   AddFileFilled,
-  
+  LocateIcon,
+
   /* Works Management  */
 
   NoResultsFoundIcon,
@@ -500,6 +501,7 @@ export {
   FirenocIcon,
   CreateEstimateIcon,
   GotoInboxIcon,
+  LocateIcon,
 
   /* Works Management  */
 

@@ -164,7 +164,8 @@
                 "disable": false,
                 "populators": {
                   "name": "noSubProject_geoLocation",
-                  "error": "WORKS_REQUIRED_ERR"
+                  "error": "WORKS_REQUIRED_ERR",
+                  "customIcon" : "geolocation"
                 }
               },
               {

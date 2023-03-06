@@ -131,7 +131,7 @@ export const createProjectConfigMUKTA = {
                 key: "noSubProject_geoLocation",
                 type: "text",
                 disable: false,
-                populators: { name: "noSubProject_geoLocation",  error: ("WORKS_REQUIRED_ERR") }
+                populators: { name: "noSubProject_geoLocation", customIcon : "geolocation", error: ("WORKS_REQUIRED_ERR") }
               },
               {
                 isMandatory: false,
