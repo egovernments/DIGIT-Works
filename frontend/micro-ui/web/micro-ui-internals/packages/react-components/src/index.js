@@ -243,6 +243,7 @@ import NoResultsFound from "./atoms/NoResultsFound";
 import { ViewImages } from "./atoms/ViewImages";
 import InboxSearchComposer from "./hoc/InboxSearchComposer";
 import InboxSearchLinks from "./atoms/InboxSearchLinks";
+import UploadFileComposer from "./hoc/UploadFileComposer";
 import WorkflowTimeline from "./atoms/WorkflowTimeline";
 import WorkflowActions from "./atoms/WorkflowActions";
 export {
@@ -418,6 +419,7 @@ export {
   InboxComposer,
   InboxSearchComposer,
   InboxSearchLinks,
+  UploadFileComposer,
   // Icons
   FilterIcon,
   FilterSvg,
