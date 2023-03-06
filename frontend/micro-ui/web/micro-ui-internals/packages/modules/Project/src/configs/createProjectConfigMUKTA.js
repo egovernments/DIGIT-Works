@@ -5,7 +5,7 @@ export const createProjectConfigMUKTA = {
       {
         "defaultValues" : {
           basicDetails_dateOfProposal : "",
-          basicDetails_hasSubProjects : ""
+          noSubProject_ulb : ""
         },
         "metaData" : {
           showNavs : false,
@@ -39,8 +39,8 @@ export const createProjectConfigMUKTA = {
               },
               {
                   inline: true,
-                  label: "PROJECT_DESC",
-                  isMandatory: false,
+                  label: "PROJECT_PROJECT_DESC",
+                  isMandatory: true,
                   key: "basicDetails_projectDesc",
                   type: "text",
                   disable: false,
@@ -53,50 +53,8 @@ export const createProjectConfigMUKTA = {
           },
           {
             navLink:"Project_Details",
-            head: (""),
+            head: ("WORKS_PROJECT_DETAILS"),
             body: [
-              {
-                isMandatory: true,
-                key: "noSubProject_owningDepartment",
-                type: "radioordropdown",
-                label: "PROJECT_OWNING_DEPT",
-                disable: false,
-                populators: {
-                  name: "noSubProject_owningDepartment",
-                  optionsKey: "name",
-                  error: ("WORKS_REQUIRED_ERR"),
-                  required: true,
-                  optionsCustomStyle : {
-                    top : "2.5rem"
-                  },
-                  mdmsConfig: {
-                    masterName: "Department",
-                    moduleName: "common-masters",
-                    localePrefix: "COMMON_MASTERS_DEPARTMENT",
-                  },
-                },
-              },
-              {
-                isMandatory: false,
-                key: "noSubProject_targetDemocracy",
-                type: "radioordropdown",
-                label: ("PROJECT_TARGET_DEMOGRAPHY"),
-                disable: false,
-                populators: {
-                  name: "noSubProject_targetDemography",
-                  optionsKey: "name",
-                  error: ("WORKS_REQUIRED_ERR"),
-                  required: false,
-                  optionsCustomStyle : {
-                    top : "2.5rem"
-                  },
-                  mdmsConfig: {
-                    masterName: "TargetDemography",
-                    moduleName: "works",
-                    localePrefix: "COMMON_MASTERS",
-                  },
-                },
-              },
               {
                 inline: true,
                 label: ("WORKS_LOR"),
@@ -109,21 +67,6 @@ export const createProjectConfigMUKTA = {
                 },
                 populators: { name: "noSubProject_letterRefNoOrReqNo", error: ("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2 }}
               },
-              {
-                inline: true,
-                label: ("PROJECT_ESTIMATED_COST_IN_RS"),
-                isMandatory: false,
-                key: "noSubProject_estimatedCostInRs",
-                type: "number",
-                disable: false,
-                populators: { name: "noSubProject_estimatedCostInRs" }
-              },
-            ]
-          },
-          {
-            navLink:"Project_Details",
-            head: ("WORKS_WORK_DETAILS"),
-            body: [
               {
                 isMandatory: true,
                 key: "noSubProject_typeOfProject",
@@ -147,32 +90,12 @@ export const createProjectConfigMUKTA = {
               },
               {
                 isMandatory: false,
-                key: "noSubProject_subTypeOfProject",
+                key: "noSubProject_targetDemography",
                 type: "radioordropdown",
-                label: "WORKS_SUB_PROJECT_TYPE",
-                disable: false,
-                preProcess : {
-                  updateDependent : ["populators.options"]
-                },
-                populators: {
-                  name: "noSubProject_subTypeOfProject",
-                  optionsKey: "name",
-                  error: "WORKS_REQUIRED_ERR",
-                  required: false,
-                  optionsCustomStyle : {
-                    top : "2.5rem"
-                  },
-                  options : []
-                },
-              },
-              {
-                isMandatory: false,
-                key: "noSubProject_natureOfWork",
-                type: "radioordropdown",
-                label: "WORKS_WORK_NATURE",
+                label: ("PROJECT_TARGET_DEMOGRAPHY"),
                 disable: false,
                 populators: {
-                  name: "noSubProject_natureOfWork",
+                  name: "noSubProject_targetDemography",
                   optionsKey: "name",
                   error: ("WORKS_REQUIRED_ERR"),
                   required: false,
@@ -180,7 +103,7 @@ export const createProjectConfigMUKTA = {
                     top : "2.5rem"
                   },
                   mdmsConfig: {
-                    masterName: "NatureOfWork",
+                    masterName: "TargetDemography",
                     moduleName: "works",
                     localePrefix: "COMMON_MASTERS",
                   },
@@ -188,58 +111,15 @@ export const createProjectConfigMUKTA = {
               },
               {
                 inline: true,
-                label: "PROJECT_PLANNED_START_DATE",
+                label: ("PROJECT_ESTIMATED_COST_IN_RS"),
                 isMandatory: false,
-                key:"noSubProject_startDate",
-                description: "",
-                type: "date",
+                key: "noSubProject_estimatedCostInRs",
+                type: "number",
                 disable: false,
-                populators: { 
-                  name: "noSubProject_startDate",
-                }
-              },
-              {
-                inline: true,
-                label: "PROJECT_PLANNED_END_DATE",
-                isMandatory: false,
-                key:"noSubProject_endDate",
-                description: "",
-                type: "date",
-                disable: false,
-                preProcess : {
-                  updateDependent : ["populators.validation.customValidation"]
-                },
-                populators: { 
-                  name: "noSubProject_endDate", 
-                  error : ("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), 
-                  validation : {
-                    customValidation : true
-                  }
-                }
-              },
-              {
-                isMandatory: false,
-                key: "noSubProject_recommendedModeOfEntrustment",
-                type: "radioordropdown",
-                label: "ES_COMMON_MODE_OF_ENTRUSTMENT",
-                disable: false,
-                populators: {
-                  name: "noSubProject_recommendedModeOfEntrustment",
-                  optionsKey: "name",
-                  error: ("WORKS_REQUIRED_ERR"),
-                  required: false,
-                  optionsCustomStyle : {
-                    top : "2.5rem"
-                  },
-                  mdmsConfig: {
-                    masterName: "EntrustmentMode",
-                    moduleName: "works",
-                    localePrefix: "COMMON_MASTERS",
-                  },
-                },
+                populators: { name: "noSubProject_estimatedCostInRs" }
               },
             ]
-          },  
+          },
           {
             navLink:"Project_Details",
             head: ("ES_COMMON_LOCATION_DETAILS"),
@@ -247,18 +127,18 @@ export const createProjectConfigMUKTA = {
               {
                 inline: true,
                 label: "WORKS_GEO_LOCATION",
-                isMandatory: true,
+                isMandatory: false,
                 key: "noSubProject_geoLocation",
                 type: "text",
                 disable: false,
                 populators: { name: "noSubProject_geoLocation",  error: ("WORKS_REQUIRED_ERR") }
               },
               {
-                isMandatory: true,
+                isMandatory: false,
                 key: "noSubProject_ulb",
                 type: "radioordropdown",
                 label: ("ES_COMMON_ULB"),
-                disable: false,
+                disable: true,
                 preProcess : {
                   updateDependent : ["populators.options"]
                 },
@@ -274,7 +154,7 @@ export const createProjectConfigMUKTA = {
                 },
               },
               {
-                isMandatory: false,
+                isMandatory: true,
                 key: "noSubProject_ward",
                 type: "radioordropdown",
                 label: "PDF_STATIC_LABEL_ESTIMATE_WARD",
@@ -294,7 +174,7 @@ export const createProjectConfigMUKTA = {
                 },
               },
               {
-                isMandatory: false,
+                isMandatory: true,
                 key: "noSubProject_locality",
                 type: "radioordropdown",
                 label: "WORKS_LOCALITY",
@@ -313,6 +193,23 @@ export const createProjectConfigMUKTA = {
                   options: []
                 },
               },
+            ]
+          },
+          {
+            navLink : "Project_Details",
+            head: "",
+            body: [
+                {
+                    type: "documentUpload",
+                    withoutLabel: true,
+                    module: "Project",
+                    populators:{
+                        error: "WORKS_REQUIRED_ERR",
+                        name: "uploadedDocs",
+                        customClass: "",
+                        localePrefix: "PROJECT",
+                    }
+                }
             ]
           }
         ]

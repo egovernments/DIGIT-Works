@@ -30,6 +30,7 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
   const docConfig = data?.works?.DocumentConfig?.[0]
   
   useEffect(() => {
+    finalDocumentData = [];
     docConfig?.documents?.filter(item => item.active)?.forEach((item) => {
       finalDocumentData.push({
         code: item?.code,

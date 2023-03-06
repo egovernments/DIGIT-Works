@@ -31,8 +31,7 @@ const whenHasSubProjectsHorizontalNavConfig =  [
   }
 ];
 
-const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig}) => {
-    const {t} = useTranslation();
+const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig}) => {
     const [selectedProjectType, setSelectedProjectType] = useState(createProjectConfig?.defaultValues?.basicDetails_hasSubProjects);
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
     const [subTypeOfProjectOptions, setsubTypeOfProjectOptions] = useState([]);
@@ -200,6 +199,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
     const { mutate: CreateProjectMutation } = Digit.Hooks.works.useCreateProject();
 
     const onSubmit = async(data) => {
+      console.log(data);
       //Transforming Payload to categories of Basic Details, Projects and Sub-Projects
       const transformedPayload = CreateProjectUtils.payload.transform(data);
       //Final Payload
@@ -322,6 +322,7 @@ const CreateProjectForm = ({sessionFormData, setSessionFormData, clearSessionFor
                 horizontalNavConfig={navTypeConfig}
                 currentFormCategory={currentFormCategory}
                 onFormValueChange={onFormValueChange}
+                cardClassName = "mukta-header-card"
             />
            )}
       </React.Fragment>

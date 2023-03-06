@@ -23,7 +23,7 @@ import CustomDropdown from "../molecules/CustomDropdown";
 import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
 import HorizontalNav  from "../atoms/HorizontalNav"
 import Toast from "../atoms/Toast";
-import UploadFileComposer from "./uploadFileComposer";
+import UploadFileComposer from "./UploadFileComposer";
 
 const wrapperStyles = {
   // "display":"flex",
@@ -652,13 +652,13 @@ export const FormComposer = (props) => {
       {props?.showMultipleCardsWithoutNavs ? (
           props?.config?.map((section, index, array) => {
             return !section.navLink && (
-              <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
+              <Card style={getCardStyles()} noCardStyle={props.noCardStyle} className={props.cardClassName}>
                 {renderFormFields(props, section, index, array)}
               </Card>
             )
           })
         ) :  (         
-          <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
+          <Card style={getCardStyles()} noCardStyle={props.noCardStyle} className={props.cardClassName}>
             {
               props?.config?.map((section, index, array) => {
                 return !section.navLink && (

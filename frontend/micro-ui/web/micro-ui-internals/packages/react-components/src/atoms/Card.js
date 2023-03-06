@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 
 const Card = ({ onClick, style, children, className, ReactRef, ...props }) => {
+  console.log(className);
   const { pathname } = useLocation();
   const classname = Digit.Hooks.useRouteSubscription(pathname);
   const info = Digit.UserService.getUser()?.info;
