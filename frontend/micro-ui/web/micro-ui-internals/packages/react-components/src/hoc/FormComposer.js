@@ -23,6 +23,7 @@ import CustomDropdown from "../molecules/CustomDropdown";
 import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
 import HorizontalNav  from "../atoms/HorizontalNav"
 import Toast from "../atoms/Toast";
+import UploadFileComposer from "./uploadFileComposer";
 
 const wrapperStyles = {
   // "display":"flex",
@@ -175,7 +176,7 @@ export const FormComposer = (props) => {
             defaultValue={formData?.[populators.name]}
             render={({ onChange, ref, value }) => (
               <TextArea
-                className="field"
+                className="field fullWidth"
                 value={formData?.[populators.name]}
                 type={type}
                 name={populators.name}
@@ -183,6 +184,7 @@ export const FormComposer = (props) => {
                 inputRef={ref}
                 disable={disable}
                 errorStyle={errors?.[populators.name]}
+                style={{marginTop: 0}}
               />
             )}
             name={populators.name}
@@ -317,7 +319,34 @@ export const FormComposer = (props) => {
             control={control}
           />
         );
-
+      case "documentUpload":
+        return (
+          <Controller
+            render={({value = [], onChange}) => (
+              <UploadFileComposer
+                module={config?.module}
+                config={config}
+                register={register}
+                setuploadedstate={value}
+                onChange={onChange}
+                formData={formData}
+                errors={errors}
+                customClass={populators?.customClass}
+                localePrefix={populators?.localePrefix}
+              />
+            )}
+            rules={{validate:(value) => {
+              let isValidate = true
+              if(value?.length > 0) {
+                isValidate = !value?.some(item => item?.isMandatory && item?.uploadedFiles?.length === 0)
+              }
+              return isValidate
+            }}}
+            defaultValue={formData?.[populators.name]}
+            name={populators.name}
+            control={control}
+          />
+        );
       case "form":
         return (
           <form>
@@ -678,7 +707,7 @@ export const FormComposer = (props) => {
           {props.onSkip && props.showSkip && <LinkButton style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)} onClick={props.onSkip} />}
         </ActionBar>
       )}
-      {showErrorToast && <Toast error={true} label={t("WORKS_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+      {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
     </form>
   );
 };

@@ -28,7 +28,7 @@ const CreateProject = () => {
       ],
       {
         select: (data) => {
-            return data?.commonUiConfig?.CreateProjectConfig[0];
+            return data?.[Digit.Utils.getConfigModuleName()]?.CreateProjectConfig[0];
         },
       }
     );
