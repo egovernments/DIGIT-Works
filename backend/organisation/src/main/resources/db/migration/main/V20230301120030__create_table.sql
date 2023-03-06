@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS eg_org_address_geo_location;
 
 DROP TABLE IF EXISTS eg_org_address;
 DROP TABLE IF EXISTS eg_org_contact_detail;
-DROP TABLE IF EXISTS eg_org_identifier;
+DROP TABLE IF EXISTS eg_tax_identifier;
 DROP TABLE IF EXISTS eg_org_jurisdiction;
 DROP TABLE IF EXISTS eg_org_document;
 DROP TABLE IF EXISTS eg_org_function;

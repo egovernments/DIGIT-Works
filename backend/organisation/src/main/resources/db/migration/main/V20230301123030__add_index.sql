@@ -25,8 +25,8 @@ CREATE INDEX IF NOT EXISTS index_eg_org_contact_detail_contact_mobile_number ON 
 CREATE INDEX IF NOT EXISTS index_eg_org_contact_detail_org_id ON eg_org_contact_detail (org_id);
 CREATE INDEX IF NOT EXISTS index_eg_org_contact_detail_contact_email ON eg_org_contact_detail (contact_email);
 
-CREATE INDEX IF NOT EXISTS index_eg_org_identifier_org_id ON eg_org_identifier (org_id);
-CREATE INDEX IF NOT EXISTS index_eg_org_identifier_type ON eg_org_identifier (type);
+CREATE INDEX IF NOT EXISTS index_eg_tax_identifier_org_id ON eg_tax_identifier (org_id);
+CREATE INDEX IF NOT EXISTS index_eg_tax_identifier_type ON eg_tax_identifier (type);
 
 CREATE INDEX IF NOT EXISTS index_eg_org_jurisdiction_org_id ON eg_org_jurisdiction (org_id);
 CREATE INDEX IF NOT EXISTS index_eg_org_jurisdiction_code ON eg_org_jurisdiction (code);
