@@ -8,7 +8,7 @@ const CreateProjectResponse = () => {
     const history = useHistory();
     const queryStrings = Digit.Hooks.useQueryParams();
     const [ projectIDsList, setProjectIDsList ] = useState(queryStrings?.projectIDs.split(','));
-    const [ isResponseSuccess, setIsResponseSuccess ] = useState(Boolean(queryStrings?.isSuccess));
+    const [ isResponseSuccess, setIsResponseSuccess ] = useState(queryStrings?.isSuccess === "true" ? true : queryStrings?.isSuccess === "false" ? false : true);
 
     const navigate = (page) =>{
         switch(page){
@@ -36,9 +36,9 @@ const CreateProjectResponse = () => {
                 <LinkLabel style={{ display: "flex", marginRight : "3rem" }} onClick={()=>navigate('search-project')}>
                     <ArrowLeftWhite  fill="#F47738" style={{marginRight: "8px", marginTop : "3px"}}/>{t("PROJECT_GO_TO_SEARCH_PROJECT")}
                 </LinkLabel>
-                <LinkLabel style={{ display: "flex" }} onClick={()=>navigate('create-estimate')}>
+                {isResponseSuccess && <LinkLabel style={{ display: "flex" }} onClick={()=>navigate('create-estimate')}>
                     <AddFileFilled style={{marginRight: "8px", marginTop : "3px"}}/>{t("COMMON_CREATE_ESTIMATE")}
-                </LinkLabel>      
+                </LinkLabel>  }    
             </div>
         </Card>
     )

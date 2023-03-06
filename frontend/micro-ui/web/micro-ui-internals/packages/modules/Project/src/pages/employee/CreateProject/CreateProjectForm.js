@@ -252,14 +252,16 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
 
     const sendDataToResponsePage = (parentProjectNumber, responseData, isSuccess) => {
       let queryString = parentProjectNumber ? `${parentProjectNumber},` : "";
-      responseData?.Projects?.forEach((project, index ) => {
-        if(index === responseData?.Projects.length - 1){
-          queryString = queryString+project?.projectNumber;
-        }
-        else {
-          queryString = queryString+project?.projectNumber+",";
-        }
-      });
+      if(responseData) {
+        responseData?.Projects?.forEach((project, index ) => {
+          if(index === responseData?.Projects.length - 1){
+            queryString = queryString+project?.projectNumber;
+          }
+          else {
+            queryString = queryString+project?.projectNumber+",";
+          }
+        });
+      }
       history.push({
         pathname: `/${window?.contextPath}/employee/project/create-project-response`,
         search: `?projectIDs=${queryString}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
