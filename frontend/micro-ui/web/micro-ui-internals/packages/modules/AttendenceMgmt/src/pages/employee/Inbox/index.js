@@ -20,7 +20,7 @@ const Inbox = () => {
         ]
     );
    
-    const configs = data?.commonUiConfig?.InboxMusterConfig?.[0]
+    const configs = data?.[Digit.Utils.getConfigModuleName()]?.InboxMusterConfig?.[0]
    
     if(isLoading) return <Loader />
     return (

@@ -806,6 +806,7 @@ input[type="number"] {
 }
 
 .info-banner-wrap {
+  margin: 0;
   &.project-banner {
     background: #FFE2B5;
     p{
@@ -815,6 +816,19 @@ input[type="number"] {
     h2{
       font-size: 18px;
       color: #CC7B2F;
+    }
+  }
+
+  &.doc-banner {
+    margin-bottom: 24px;
+    p{
+      font-size: 16px;
+      font-weight: 400;
+      color: #505A5F;
+    } 
+    h2{
+      font-size: 18px;
+      color: #0B0C0C;
     }
   }
 }

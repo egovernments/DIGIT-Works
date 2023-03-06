@@ -1,16 +1,3 @@
-const status = [
-    {
-        name: 'Active',
-        code: 'ACTIVE',
-        i18nKey: 'ACTIVE'
-    },
-    {
-        name: 'Inactive',
-        code: 'INACTIVE',
-        i18nKey: 'INACTIVE'
-    }
-]
-
 const musterRollStatus = [
     {
         name: 'Submitted',
@@ -36,7 +23,7 @@ const musterRollStatus = [
 
 const searchConfig = () => {
     return {
-        label : "Search Attendance",
+        label : "ATM_SEARCH_ATTENDANCE",
         type: 'search',
         apiDetails: {
             serviceName: "/muster-roll/v1/_search",
@@ -53,8 +40,8 @@ const searchConfig = () => {
             search : {
                 uiConfig : {
                     headerStyle : null,
-                    primaryLabel: 'ACTION_TEST_SEARCH',
-                    secondaryLabel: 'CLEAR_SEARCH_LINk',
+                    primaryLabel: 'ES_COMMON_SEARCH',
+                    secondaryLabel: 'ES_COMMON_CLEAR_SEARCH',
                     minReqFields: 0,
                     defaultValues : {
                         musterRollNumber: "",
@@ -77,7 +64,7 @@ const searchConfig = () => {
                             }
                         },
                         {
-                            label: "REGISTER_ID",
+                            label: "ATM_REGISTER_ID",
                             type: "text",
                             isMandatory: false,
                             disable: false,
@@ -88,25 +75,17 @@ const searchConfig = () => {
                             }
                         },
                         {
-                            label: "REGISTER_STATUS",
-                            type: "dropdown",
-                            isMandatory: false,
-                            disable: false,
-                            populators: {
-                                name: "status",
-                                optionsKey: "i18nKey",
-                                options: status
-                            }
-                        },
-                        {
-                            label: "ATM_MUSTER_ROLL_STATUS",
+                            label: "ES_COMMON_STATUS",
                             type: "dropdown",
                             isMandatory: false,
                             disable: false,
                             populators: {
                                 name: "musterRollStatus",
                                 optionsKey: "i18nKey",
-                                options: musterRollStatus
+                                options: musterRollStatus,
+                                optionsCustomStyle : {
+                                    top : "2.3rem"
+                                }
                             },
                         },
                         {
@@ -144,11 +123,11 @@ const searchConfig = () => {
                             additionalCustomization:true
                         },
                         {
-                            label: "NAME_OF_WORK",
+                            label: "ATM_NAME_OF_WORK",
                             jsonPath: "additionalDetails.attendanceRegisterName"
                         },
                         {
-                            label: "WORKS_ORG_NAME",
+                            label: "ATM_IMPLEMENTING_AGENCY",
                             jsonPath: "additionalDetails.orgName"
                         },
                         {
@@ -157,7 +136,7 @@ const searchConfig = () => {
                             additionalCustomization:true
                         },
                         {
-                            label: "ATM_MUSTER_ROLL_STATUS",
+                            label: "ES_COMMON_STATUS",
                             jsonPath: "musterRollStatus",
                         }
                     ],

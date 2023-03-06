@@ -83,7 +83,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
   const handleModifiedWorkingDays = (e, row) => {
     let val = parseFloat(e.target.value);
     let prevVal = parseFloat(prevAttendanceTotal[row.id])
-    if (val && val !== prevVal) {
+    if (val) {
       setSaveAttendanceState(prevState => 
                     ({...prevState, 
                       displaySave: true, 

@@ -19,7 +19,7 @@ const ProjectSearch = () => {
     },
   ]);
 
-  const configs = data?.commonUiConfig?.SearchProjectConfig?.[0];
+  const configs = data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
 
   if (isLoading) return <Loader />;
   return (

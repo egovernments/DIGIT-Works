@@ -7,7 +7,6 @@ import MobileView from "../../../components/MobileView";
 const ProjectSearchAndInboxComponent = () => {
     const { t } = useTranslation();
     let isMobile = window.Digit.Utils.browser.isMobile();
-    console.log("Mobile : ", isMobile);
 
     const configs = inboxConfig();
     const tenant = Digit.ULBService.getStateId();
@@ -21,8 +20,8 @@ const ProjectSearchAndInboxComponent = () => {
         ]
     );
    
-
     // const configs = data?.commonUiConfig?.projectInboxConfig?.[0]
+
 
     if(isLoading) return <Loader />
     if (isMobile) {
