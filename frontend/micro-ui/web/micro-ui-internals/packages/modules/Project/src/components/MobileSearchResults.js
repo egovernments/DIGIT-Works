@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useMemo, useContext } from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next';
-import { DetailsCard, Card, NoResultsFound, Loader, Link } from "@egovernments/digit-ui-react-components";
+import { DetailsCard, NoResultsFound, Loader } from "@egovernments/digit-ui-react-components";
 import _ from "lodash";
-import { MobileInboxContext } from "./MobileInboxContext";
 
-export const MobileSearchResults = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate }) => {
-    //const {apiDetails} = fullConfig
+export const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig }) => {
+    const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
     let searchResult = data?.[resultsKey]?.length>0 ? data?.[resultsKey] : []
@@ -25,55 +24,43 @@ export const MobileSearchResults = ({ tableContainerClass, config,data,isLoading
   
     //const {state,dispatch} = useContext(MobileInboxContext);
 
-
     const propsMobileInboxCards = useMemo(() => {
-        if (isLoading) {
-          return [];
-        }
-        //console.log(searchResult, config.columns);
-        return searchResult.map((row) => {
-            let test = config?.columns?.map((column) => ({
-                // if (column?.additionalCustomization){
-                //     return Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row.original, column, col, row?.[column?.jsonPath], t) 
-                // }
+      if (isLoading) {
+        return [];
+      }
+      let cardData =  searchResult.map((row) => {
+          let mapping = {};
+          let cols = config?.columns;
+          for(let columnIndex = 0; columnIndex<cols?.length; columnIndex++) {
+            if (cols[columnIndex].additionalCustomization){
+              let col=null,value =row?.[cols[columnIndex]?.jsonPath];
+              mapping[t(cols[columnIndex]?.label)] = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row,cols[columnIndex],col,value,t) 
+            }
+            else {mapping[t(cols[columnIndex]?.label)] = t(row?.[cols[columnIndex]?.jsonPath]) || t("ES_COMMON_NA")}
+          }
+          return mapping;
+      })
+      return cardData;
+    }, [data]);
 
-                [t(column?.label)]: t(row?.[column?.jsonPath]) || t("ES_COMMON_NA"),
-            }))
-            //console.log("TEST : ", test);
-            return test;
-        })
-        
-      }, [data]);
-
-    if (isLoading || isFetching ) 
-       return <Loader />
-    if (data?.length === 0) 
-       return <NoResultsFound/>
+   function RenderResult() {
+    if (searchResult?.length === 0) {
+       return ( <NoResultsFound/> );
+   } 
+    return (
+    <DetailsCard
+    {...{
+      data: propsMobileInboxCards,
+      showActionBar : false,
+   }}
+   />);
+  }
+  
+    if (isLoading) 
+    {   return <Loader /> }
     return (
         <React.Fragment>
-            if (!data || data?.length === 0){
-               <div>
-                 <Card style={{ marginTop: 20 }}>
-                    {t("CS_MYAPPLICATIONS_NO_APPLICATION")
-                          .split("\\n")
-                          .map((text, index) => (
-                          <p key={index} style={{ textAlign: "center" }}>
-                             {text}
-                          </p>
-                          ))
-                    }
-                 </Card>
-               </div>
-             } 
-          <div>
-               <DetailsCard
-               {...{
-                  data: propsMobileInboxCards,
-                  linkPrefix: `/${window.contextPath}/employee/works/view-estimate`,
-                  //serviceRequestIdKey: t("WORKS_ESTIMATE_NO"),
-                }}
-              />
-          </div>
+          <RenderResult/>
         </React.Fragment>
-    )
+    );
 };

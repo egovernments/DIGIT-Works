@@ -8,6 +8,15 @@
         align-items: center;
         display: flex;
         justify-content: space-between;
+        font-size: large;
+        .header{
+            font-weight: normal;  
+            font-size: large;
+            .icon {
+                margin-right: 12px;
+                margin-top: 5px;
+            }
+        }
     }
 
     .filter-header-wrapper {

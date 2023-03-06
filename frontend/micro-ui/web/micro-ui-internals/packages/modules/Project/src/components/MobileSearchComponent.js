@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { MobileInboxContext } from "./MobileInboxContext";
-import { CloseSvg, SubmitBar, SearchIcon, FilterIcon, ActionBar, RefreshIcon, RenderFormFields, Toast,LinkLabel } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, SearchIcon, FilterIcon, ActionBar, ApplyFilterBar, RenderFormFields, Toast } from "@egovernments/digit-ui-react-components";
 
 export const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data, onClose}) => {
   const { t } = useTranslation();
@@ -23,13 +23,11 @@ export const MobileSearchComponent = ({ uiConfig, header = "", screenType = "sea
     getValues,
     reset,
     watch,
-    trigger,
     control,
     formState,
     errors,
     setError,
     clearErrors,
-    unregister,
   } = useForm({
     defaultValues: uiConfig?.defaultValues,
   });
@@ -46,6 +44,7 @@ export const MobileSearchComponent = ({ uiConfig, header = "", screenType = "sea
   }, [formState])
 
   const onSubmit = (data) => {
+    onClose?.()
     if(updatedFields.length >= uiConfig?.minReqFields) {
      // here based on screenType call respective dispatch fn
       dispatch({
@@ -73,61 +72,30 @@ export const MobileSearchComponent = ({ uiConfig, header = "", screenType = "sea
     setShowToast(null);
   }
 
-//   const handleFilterRefresh = () => {
-//     reset(uiConfig?.defaultValues)
-//     dispatch({
-//       type: "clearFilterForm",
-//       state: { ...uiConfig?.defaultValues }
-//       //need to pass form with empty strings 
-//     })
-//   }
-
 const renderHeader = () => {
   switch(uiConfig?.type) {
     case "filter" : {
       return (
-        <span style={{ marginLeft: "8px", fontWeight: "normal",  display : "flex" }}><FilterIcon/>{t("ES_COMMON_FILTER_BY")}:</span>
+        <span className="header" style={{ display : "flex" }}>
+          <span className="icon" style ={{ marginRight: "12px", marginTop: "5px",  paddingBottom: "3px" }}><FilterIcon/></span>
+          <span style ={{ fontSize: "large" }}>{t("ES_COMMON_FILTER_BY")}:</span>
+        </span>
       )
       }
     case "search" : {
       return (
-        <span style={{ marginLeft: "8px", fontWeight: "normal",  display : "flex" }}><SearchIcon/>{t("ES_COMMON_SEARCH_BY")}</span>
-      )
-    }
-    default : {
-      return <span style={{ marginLeft: "8px", fontWeight: "normal",  display : "flex" }}><SearchIcon/>{t("ES_COMMON_SEARCH_BY")}</span>
-    }
-  }
-}
-
-const renderSubmit = () => {
-  switch(uiConfig?.type) {
-    case "filter" : {
-      return (
-        <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
-              { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
-              { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
-        </div>
-      )
-      }
-    case "search" : {
-      return (
-        <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
-             <ActionBar className="clear-search-container">
-              { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
-              { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
-            </ActionBar>
-        </div>
+        <span className="header" style={{ display : "flex" }}>
+          <span className="icon" style ={{ marginRight: "12px", marginTop: "5px"}}><SearchIcon/></span>
+          <span style ={{ fontSize: "large" }}>{t("ES_COMMON_SEARCH_BY")}</span>
+        </span>
       )
     }
     default : {
       return (
-        <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
-             <ActionBar className="clear-search-container">
-              { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
-              { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
-            </ActionBar>
-        </div>
+        <span className="header" style={{ display : "flex" }}>
+          <span className="icon" style ={{ marginRight: "12px", marginTop: "5px"}}><SearchIcon/></span>
+          <span style ={{ fontSize: "large" }}>{t("ES_COMMON_SEARCH_BY")}</span>
+        </span>
       )
     }
   }
@@ -157,7 +125,15 @@ const renderSubmit = () => {
               labelStyle={{fontSize: "16px"}}
               apiDetails={apiDetails}
             />  
-            {renderSubmit()}
+            <ActionBar className="clear-search-container">
+             <ApplyFilterBar
+               submit="submit"
+               labelLink={t(uiConfig?.secondaryLabel)}
+               buttonLink={t(uiConfig?.primaryLabel)}
+              onClear={clearSearch}
+              style={{ flex: 1 }}
+              />
+            </ActionBar>
           </div> 
         </form>
         { showToast && <Toast 

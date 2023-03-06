@@ -18,8 +18,7 @@ const ProjectSearchAndInboxComponent = () => {
                 "name": "InboxProjectConfig"
             }
         ]
-    );
-   
+    )
     // const configs = data?.commonUiConfig?.projectInboxConfig?.[0]
 
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { PopUp, SearchAction, InboxSearchLinks, ResultsTable } from "@egovernments/digit-ui-react-components";
-import { FilterAction } from "@egovernments/digit-ui-react-components";
+import { PopUp, SearchAction, InboxSearchLinks, FilterAction } from "@egovernments/digit-ui-react-components";
 import reducer, { initialInboxState } from "./MobileInboxReducer";
 import { MobileInboxContext } from "./MobileInboxContext";
 import { MobileSearchComponent } from "./MobileSearchComponent";
@@ -10,11 +9,11 @@ import _ from "lodash";
 const MobileView = (props) => {
   const { configs } = props;
   const [enable, setEnable] = useState(false);
-  //const [_sortparams, setSortParams] = useState(sortParams);
   const [state, dispatch] = useReducer(reducer, initialInboxState);
   const [type, setType] = useState("");
   const [popup, setPopup] = useState(false);
   const apiDetails = configs?.apiDetails;
+
 
   useEffect(() => {
     if (type) setPopup(true);
@@ -68,17 +67,16 @@ const MobileView = (props) => {
 
   const { isLoading, data, revalidate, isFetching } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
 
-  // useEffect(() => {
-  //   return () => {
-  //     revalidate();
-  //     setEnable(false);
-  //   };
-  // });
+  useEffect(() => {
+    return () => {
+      revalidate();
+      setEnable(false);
+    };
+  });
 
   const handlePopupClose = () => {
     setPopup(false);
     setType("");
-    //setSortParams(sortParams);
   };
 if(isLoading || !data){
   return null;
