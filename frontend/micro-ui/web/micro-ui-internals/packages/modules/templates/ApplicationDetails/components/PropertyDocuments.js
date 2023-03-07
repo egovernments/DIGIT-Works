@@ -9,7 +9,6 @@ import { CardSubHeader, PDFSvg } from "@egovernments/digit-ui-react-components";
 // );
 
 function PropertyDocuments({ documents, svgStyles = {}, isSendBackFlow=false }) {
-  debugger;
   const { t } = useTranslation();
   const [filesArray, setFilesArray] = useState(() => [] );
   const tenantId = Digit.ULBService.getCurrentTenantId();

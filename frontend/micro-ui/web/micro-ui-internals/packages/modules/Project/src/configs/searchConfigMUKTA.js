@@ -100,7 +100,7 @@ const searchConfigMUKTA = {
                                 populators: { 
                                     name: "projectNumber",
                                     error: `PROJECT_PATTERN_ERR_MSG`,
-                                    validation: { pattern: /^[A-Za-z0-9\/-@# ]*$/, minlength : 2 }
+                                    validation: { pattern: /PR\/[0-9]+-[0-9]+\/[0-9]+\/[0-9]+/i, minlength : 2 }
                                 }
                             },
                             {

@@ -5,7 +5,6 @@ const createDocumentsPayload = (documents, otherDocFileName) => {
 
   for(let docType of Object.keys(documents)) {
     for(let document of documents[docType]) {
-      debugger;
       let payload_modal = {};
       payload_modal.documentType = docType === "others" ? otherDocFileName : docType;
       payload_modal.fileStore = document[1]['fileStoreId']['fileStoreId'];
@@ -16,12 +15,10 @@ const createDocumentsPayload = (documents, otherDocFileName) => {
       documents_payload_list.push(payload_modal);
     }
   }
-  console.log(documents_payload_list);
   return documents_payload_list;
 }
 
 function createProjectList(data, selectedProjectType, parentProjectID, tenantId) {
-    console.log(data);
     let projects_payload = [];
     let project_details;
     let basic_details = data?.basicDetails;
@@ -36,7 +33,6 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
         project_details = data?.withSubProject;
       }
     }
-    console.log(project_details);
     //iterate till all sub-projects. For noSubProject Case, this will iterate only once
     for(let index=1; index<=total_projects; index++) {
         // In case of Sub Projects having Parent ID, project_details will be each sub-project
