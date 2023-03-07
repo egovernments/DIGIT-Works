@@ -146,7 +146,7 @@ public class ContractQueryBuilder {
         preparedStmtList.add(limit);
 
         queryBuilder.append(" OFFSET ? ");
-        preparedStmtList.add(criteria.getPagination().getOffSet());
+        preparedStmtList.add(offset);
 
     }
 

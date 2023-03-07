@@ -24,4 +24,8 @@ public class ContractServiceConstants {
     public static final String JSON_PATH_FOR_OIC_ROLES_VERIFICATION = MDMS_RESP_CONSTANT + MDMS_WORKS_MODULE_NAME + "." + MASTER_OIC_ROLES;
     public static final String JSON_PATH_FOR_OVER_HEADS_VERIFICATION = MDMS_RESP_CONSTANT + MDMS_WORKS_MODULE_NAME + "." + MASTER_OVER_HEADS+ ".*."+COMMON_CODE_FILTER;
     public static final String HRMS_USER_ROLES_CODE = "$.Employees.*.user.roles.*code";
+    public static final String REGISTER_ACTIVE_CODE_CONSTANT = "$.[?(@.active==true && @.code =='";
+    public static final String CREATE_REGISTER_CONSTANT ="' && @.createRegister==true)]";
+    public static final String PROJECT_NAME_CONSTANT = "projectName";
+    public static final String ORG_NAME_CONSTANT = "orgName";
 }

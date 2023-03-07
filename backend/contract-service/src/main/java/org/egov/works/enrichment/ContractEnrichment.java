@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import org.egov.works.web.models.ContractCriteria;
 import org.egov.works.web.models.Pagination;
 
+import static org.egov.works.util.ContractServiceConstants.JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION;
 import static org.egov.works.util.ContractServiceConstants.JSON_PATH_FOR_OVER_HEADS_VERIFICATION;
 
 @Component
@@ -47,15 +48,15 @@ public class ContractEnrichment {
     private AttendanceUtils attendanceUtils;
 
     @Autowired
-    private MDMSDataParser mdmsDataParser;
+    private CommonUtil commonUtil;
 
     @Autowired
     private ObjectMapper mapper;
 
-
     public void enrichContractOnCreate(ContractRequest contractRequest){
+        Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
         // Enrich LineItems
-        enrichContractLineItems(contractRequest);
+        enrichContractLineItems(contractRequest,mdmsForEnrichment);
         // Enrich Contract Number
         enrichContractNumber(contractRequest);
         // Enrich UUID and AuditDetails
@@ -64,8 +65,12 @@ public class ContractEnrichment {
     }
 
     public void enrichContractOnUpdate(ContractRequest contractRequest){
+        Contract contract = contractRequest.getContract();
+        String action = contractRequest.getWorkflow().getAction();
+        log.info("Update:: Enrich contract create request. ContractId ["+contract.getId()+"], action ["+action+"]");
+        Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
         // Enrich LineItems
-        enrichContractLineItems(contractRequest);
+        enrichContractLineItems(contractRequest,mdmsForEnrichment);
         // Enrich UUID and AuditDetails
         enrichIdsAndAuditDetailsOnUpdate(contractRequest);
         //Enrich contract issue date on workflow approve action and start date and end date on workflow accept action
@@ -73,13 +78,24 @@ public class ContractEnrichment {
         //mark contract and its components as INACTIVE when workflow has REJECT action
         enrichContractComponents(contractRequest);
         //Create register as soon as contract is accepted by contractor
-        enrichRegister(contractRequest);
+        enrichRegister(contractRequest,mdmsForEnrichment);
     }
 
-    private void enrichRegister(ContractRequest contractRequest) {
-        Workflow workflow=contractRequest.getWorkflow();
+    private Object fetchMDMSDataForEnrichment(ContractRequest contractRequest) {
+        RequestInfo requestInfo = contractRequest.getRequestInfo();
         Contract contract = contractRequest.getContract();
-        if("ACCEPT".equalsIgnoreCase(workflow.getAction())){
+        String tenantId = contract.getTenantId();
+        String rootTenantId = tenantId.split("\\.")[0];
+        String contractType = contract.getContractType();
+        Object mdmsData = mdmsUtils.fetchMDMSForEnrichment(requestInfo, rootTenantId, contractType);
+        log.info("MDMS data fetched for enrichment. ContractId ["+contract.getId()+"]");
+        return mdmsData;
+    }
+
+    private void enrichRegister(ContractRequest contractRequest,Object mdmsData) {
+        Contract contract = contractRequest.getContract();
+        Workflow workflow=contractRequest.getWorkflow();
+        if("ACCEPT".equalsIgnoreCase(workflow.getAction())  && shouldCreateRegister(mdmsData)){
             log.info("Create register for Contract ["+contract.getId()+"]");
             final String attendanceRegisterNumber = attendanceUtils.createAttendanceRegister(contractRequest);
             final Object additionalDetails = contractRequest.getContract().getAdditionalDetails();
@@ -94,6 +110,13 @@ public class ContractEnrichment {
             }
             log.info("Register created for Contract ["+contract.getId()+"]");
         }
+    }
+
+    private boolean shouldCreateRegister(Object mdmsData) {
+        List<Object> contractTypeRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION);
+        if(!contractTypeRes.isEmpty())
+            return true;
+        return false;
     }
 
     private void enrichContractComponents(ContractRequest contractRequest){
@@ -130,8 +153,6 @@ public class ContractEnrichment {
     private void enrichContractDates(ContractRequest contractRequest){
         Workflow workflow=contractRequest.getWorkflow();
         Contract contract=contractRequest.getContract();
-
-        log.info("Update :: enrich contract dates. ContractId: ["+contract.getId()+"]");
         if("APPROVE".equalsIgnoreCase(workflow.getAction())){
             log.info("Update :: Enriching contract issueDate on workflow 'APPROVE' action. ContractId: ["+contract.getId()+"]");
             long currentTime = Instant.now().toEpochMilli();
@@ -173,7 +194,7 @@ public class ContractEnrichment {
         log.info("Update :: audit details are enriched for contractId ["+contract.getId()+"]");
     }
 
-    private void enrichContractLineItems(ContractRequest contractRequest) {
+    private void enrichContractLineItems(ContractRequest contractRequest,Object mdms) {
         RequestInfo requestInfo = contractRequest.getRequestInfo();
         Contract contract = contractRequest.getContract();
         String tenantId = contract.getTenantId();
@@ -184,8 +205,8 @@ public class ContractEnrichment {
         List<Estimate> fetchedActiveEstimates = fetchActiveEstimates(requestInfo,tenantId,providedEstimateIds);
         log.info("Active estimates are fetched for provided estimate Ids ["+providedEstimateIds+"]");
         log.info("Fetch allowed overheads from mdms");
-        List<Object> objects = fetchAllowedOverheardsFromMDMS(requestInfo,tenantId);
-        log.info("Allowed overheads from fetched: "+objects);
+        List<Object> objects = fetchAllowedOverheardsFromMDMS(mdms);
+        log.info("Allowed overheads are: "+objects);
 
         Map<String, List<LineItems>> providedLineItemsListMap = providedLineItems.stream().collect(Collectors.groupingBy(LineItems::getEstimateId));
         Map<String, List<Estimate>> fetchedEstimateListMap = fetchedActiveEstimates.stream().collect(Collectors.groupingBy(Estimate::getId));
@@ -233,16 +254,15 @@ public class ContractEnrichment {
 
         contract.getLineItems().clear();
         contract.setLineItems(refinedLineItems);
-        log.info("LintItem enrichment is done");
+        log.info("LineItem enrichment is done for");
     }
 
     private List<Estimate> fetchActiveEstimates(RequestInfo requestInfo, String tenantId, Set<String> providedEstimateIds) {
         return estimateServiceUtil.fetchActiveEstimates(requestInfo,tenantId,providedEstimateIds);
     }
 
-    private List<Object> fetchAllowedOverheardsFromMDMS(RequestInfo requestInfo, String tenantId) {
-        Object mdmsForEnrichment = mdmsUtils.fetchMDMSForEnrichment(requestInfo, tenantId.split("\\.")[0]);
-        return mdmsDataParser.parseMDMSData(mdmsForEnrichment, JSON_PATH_FOR_OVER_HEADS_VERIFICATION);
+    private List<Object> fetchAllowedOverheardsFromMDMS(Object mdms) {
+        return commonUtil.readJSONPathValue(mdms, JSON_PATH_FOR_OVER_HEADS_VERIFICATION);
     }
 
     private void addLineItem(List<LineItems> refinedLineItems,LineItems lineItem,List<Object> objects){

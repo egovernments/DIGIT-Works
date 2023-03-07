@@ -94,7 +94,7 @@ public class ContractService {
         return contracts;
     }
 
-    public List<Contract> getContracts(ContractCriteria contractCriteria) {
+    private List<Contract> getContracts(ContractCriteria contractCriteria) {
 
         //get lineItems from db
         log.info("get lineItems from db");

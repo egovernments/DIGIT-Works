@@ -41,6 +41,9 @@ public class AttendanceRegister {
     private BigDecimal endDate = null;
 
     @JsonProperty("status")
-    private Status status = Status.ACTIVE;
+    private Status status = null;
+
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 }
 
