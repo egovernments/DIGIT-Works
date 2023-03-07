@@ -232,10 +232,9 @@ public class CalculationService {
                         .filter(dateTime -> dateTime.toLocalDate().isEqual(attendanceDate))
                         .findFirst().orElse(null);
 
-                if (entryTimestamp != null && exitTimestamp != null) {
-                    totalAttendance = getTotalAttendance(totalAttendance, attendanceEntry, entryTimestamp,exitTimestamp );
-                    attendanceEntry.setAuditDetails(auditDetails);
-                }
+                totalAttendance = getTotalAttendance(totalAttendance, attendanceEntry, entryTimestamp,exitTimestamp );
+                attendanceEntry.setAuditDetails(auditDetails);
+
             }
             individualEntry.setAuditDetails(auditDetails);
             individualEntry.setActualTotalAttendance(totalAttendance);
