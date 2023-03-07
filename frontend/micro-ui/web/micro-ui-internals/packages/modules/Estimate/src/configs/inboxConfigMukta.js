@@ -8,7 +8,7 @@ const inboxConfigMukta = (t) => {
 
             },
             requestBody: {
-                
+
             },
             minParametersForSearchForm: 0,
             minParametersForFilterForm: 0,
