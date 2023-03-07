@@ -69,24 +69,6 @@ const LocationDropdownWrapper = ({populators,formData,props}) => {
                   config={populators}
               />
           </div>}
-          {!populators.allowMultiSelect  &&
-              <Dropdown
-                  inputRef={inputRef}
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                  option={options}
-                  key={populators.name}
-                  optionKey={populators?.optionsKey}
-                  value={props.value?.[0]}
-                  select={(e) => {
-                      props.onChange([e], populators.name);
-                  }}
-                  selected={props.value?.[0] || populators.defaultValue}
-                  defaultValue={props.value?.[0] || populators.defaultValue}
-                  t={t}
-                  errorStyle={errors?.[populators.name]}
-                  optionCardStyles={populators?.optionsCustomStyle}
-              />
-          }
     </>
   )
 }
