@@ -8,25 +8,27 @@ import Header from '../atoms/Header'
 import { Loader } from '../atoms/Loader'
 import MultiUploadWrapper from '../molecules/MultiUploadWrapper'
 import TextInput from '../atoms/TextInput'
+import DocumentConfig from "./DocumentConfig.json";
 
 const UploadFileComposer = ({module, config, Controller, control, register, formData, errors, localePrefix, customClass, customErrorMsg}) => {
   const { t } = useTranslation()
   
   //fetch mdms config based on module name
   const tenant = Digit.ULBService.getStateId();
-  const { isLoading, data } = Digit.Hooks.useCustomMDMS(
-      tenant,
-      "works",
-      [
-          {
-              "name": "DocumentConfig",
-              "filter": `[?(@.module=='${module}')]`
-          }
-      ]
-  );
+  // const { isLoading, data } = Digit.Hooks.useCustomMDMS(
+  //     tenant,
+  //     "works",
+  //     [
+  //         {
+  //             "name": "DocumentConfig",
+  //             "filter": `[?(@.module=='${module}')]`
+  //         }
+  //     ]
+  // );
 
-  const docConfig = data?.works?.DocumentConfig?.[0]
-
+  // const docConfig = data?.works?.DocumentConfig?.[0]
+  const docConfig = DocumentConfig?.DocumentConfig[0];
+  
   const getRegex = (allowedFormats) => {
     if(allowedFormats?.length) {
       const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
@@ -40,7 +42,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
     return /(.*?)(pdf|docx|jpeg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
   }
 
-  if(isLoading) return <Loader />
+  // if(isLoading) return <Loader />
   return (
     <React.Fragment>
       <Header styles={{fontSize: "24px"}}>{t('WORKS_RELEVANT_DOCUMENTS')}</Header>

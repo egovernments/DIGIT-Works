@@ -1,0 +1,208 @@
+{
+    "tenantId": "pg",
+    "moduleName": "works",
+    "DocumentConfig": [ 
+      {
+        "module": "Project",
+        "allowedFileTypes": ["pdf","docx"],
+        "maxSizeInMB": 5,
+        "bannerLabel": "PROJECT_BANNER",
+        "documents": [
+          {
+            "code": "PROJECT_PROPOSAL",
+            "name" : "noSubProject_doc_project_proposal",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : false,
+            "allowedFileTypes": ["png","jpeg","pdf"],
+            "maxSizeInMB": 2,
+            "maxFilesAllowed": 2
+          },
+          {
+            "code": "FINALIZED_WORKLIST",
+            "name" : "noSubProject_doc_finalized_worklist",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : false,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 0
+          },
+          {
+            "code": "FEASIBILITY_ANALYSIS",
+            "name" : "noSubProject_doc_feasibility_analysis",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : false,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 0
+          },
+          {
+            "code": "OTHERS",
+            "name" : "noSubProject_doc_others",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : true,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 3
+          }
+        ]
+      },
+      {
+        "module": "Estimate",
+        "allowedFileTypes": ["pdf","docx"],
+        "maxSizeInMB": 3,
+        "bannerLabel": "",
+        "documents": [
+          {
+            "code": "DETAILED_ESTIMATE",
+            "name" : "doc_detailed_estimate",
+            "active": true,
+            "isMandatory": true,
+            "showTextInput" : true,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 2
+          },
+          {
+            "code": "LABOUR_ANALYSIS",
+            "name" : "doc_labour_analysis",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : false,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 0
+          },
+          {
+            "code": "MATERIAL_ANALYSIS",
+            "name" : "doc_material_analysis",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : false,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 0
+          },
+          {
+            "code": "DESIGN_DOCUMENT",
+            "name" : "doc_design_document",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : false,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 0
+          },
+          {
+            "code": "OTHERS",
+            "name" : "doc_others",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : true,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 3
+          }
+        ]
+      }, 
+      {
+        "module": "Work Order",
+        "allowedFileTypes": ["pdf","docx"],
+        "maxSizeInMB": 5,
+        "bannerLabel": "",
+        "documents": [
+          {
+            "code": "BOQ",
+            "name" : "doc_boq",
+            "active": true,
+            "isMandatory": true,
+            "showTextInput" : true,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 3
+          },
+          {
+            "code": "LABOUR_ANALYSIS",
+            "name" : "doc_labour_analysis",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : false,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null
+          },
+          {
+            "code": "MATERIAL_ANALYSIS",
+            "name" : "doc_material_analysis",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : false,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 0
+          },
+          {
+            "code": "TERMS_AND_CONDITIONS",
+            "name" : "doc_terms_and_conditions",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : false,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 0
+          },
+          {
+            "code": "OTHERS",
+            "name" : "doc_others",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : true,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 0
+          }
+        ]
+      },
+      {
+        "module": "Bill",
+        "allowedFileTypes": ["pdf","docx"],
+        "maxSizeInMB": 2,
+        "bannerLabel": "",
+        "documents": [
+          {
+            "code": "MEASUREMENT_BOOK",
+            "name" : "doc_measurement_book",
+            "active": true,
+            "isMandatory": true,
+            "showTextInput" : true,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 2
+          },
+          {
+            "code": "MATERIAL_UTILIZATION_LOG",
+            "name" : "doc_material_utilization_log",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : false,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 0
+          },
+          {
+            "code": "LABOUR_UTILIZATION_LOG",
+            "name" : "doc_labour_utilization_log",
+            "active": true,
+            "isMandatory": false,
+            "showTextInput" : false,
+            "allowedFileTypes": [],
+            "maxSizeInMB": null,
+            "maxFilesAllowed": 0
+          }
+        ]
+      }
+    ]
+  }
+  

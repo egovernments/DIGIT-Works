@@ -47,9 +47,9 @@ const CreateProject = () => {
     },[data]) 
 
     const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", 
-    data?.CreateProjectConfig?.[0]?.defaultValues
+      data?.CreateProjectConfig?.[0]?.defaultValues
     );
-
+    console.log(data);
     const [sessionFormData, setSessionFormData, clearSessionFormData] = projectSession;
 
     if(isLoading) return <Loader />
