@@ -234,7 +234,8 @@ const inboxConfigMukta = (t) => {
                             disable: false,
                             populators: {
                                 name: "workflowState",
-                                labelPrefix:"WORKFLOW_"
+                                labelPrefix:"WORKFLOW_",
+                                businessService:"estimate-approval"
                             }
                         },
                         // {
