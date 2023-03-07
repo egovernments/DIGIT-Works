@@ -2,14 +2,15 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
-import searchConfig from "../../../configs/searchConfigMUKTA";
+import searchConfigMUKTA from "../../../configs/searchConfigMUKTA";
 
 const ProjectSearch = () => {
+  let renderType = "local";  //mdms, local
   const { t } = useTranslation();
   const history = useHistory();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
-  const searchMDMS = searchConfig?.SearchProjectConfig?.[0];
+  const searchMDMS = searchConfigMUKTA?.SearchProjectConfig?.[0];
   const { isLoading : isWardLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
     tenantId, 'Ward',
     {
@@ -26,16 +27,6 @@ const ProjectSearch = () => {
         }
     });
 
-    const configs = useMemo(
-    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, searchMDMS, "sections.search.uiConfig.fields",{
-      updateDependent : [
-        {
-          key : 'ward',
-          value : wardsAndLocalities?.wards
-        }
-      ]
-    }),[wardsAndLocalities]);
-
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, 
     Digit.Utils.getConfigModuleName(),
@@ -45,7 +36,20 @@ const ProjectSearch = () => {
     },
   ]);
 
-  // const configs = data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
+  let configs = {};
+  if(renderType === "mdms") {
+    configs = data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
+  }else{
+    configs = useMemo(
+      () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, searchMDMS, "sections.search.uiConfig.fields",{
+        updateDependent : [
+          {
+            key : 'ward',
+            value : wardsAndLocalities?.wards
+          }
+        ]
+      }),[wardsAndLocalities]);
+  }
 
   if (isLoading) return <Loader />;
   return (

@@ -89,7 +89,6 @@ export const UICustomizations = {
           }
     
           if (column.label === "WORKS_PROJECT_NAME") {
-            debugger;
             let currentProject = searchResult?.filter(result=>result?.id === row?.id)[0];
             return (
               <div class="tooltip">
