@@ -107,7 +107,7 @@ export const UICustomizations = {
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
 
-      if (column.label === "WORKS_PRJ_SUB_ID") {
+      if (column.label === "WORKS_PROJECT_ID") {
         return (
           <span className="link">
             <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row.tenantId}&projectNumber=${value}`}>
@@ -141,6 +141,16 @@ export const UICustomizations = {
             </span>
           </div>
         );
+      }
+
+      if (column.label === "PROJECT_ESTIMATED_COST") {
+        if( value !== "NA") {
+          return (
+            <p>{`₹ ${value}`}</p>
+          );
+        }else {
+          <p>{"NA"}</p>
+        }
       }
     },
     additionalValidations: (type, data, keys) => {
