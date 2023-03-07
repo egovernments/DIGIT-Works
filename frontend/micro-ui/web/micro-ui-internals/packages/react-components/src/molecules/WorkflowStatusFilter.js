@@ -4,7 +4,7 @@ import { Loader } from '../atoms/Loader';
 
 const WorkflowStatusFilter = ({props,t,populators,formData}) => {
 
-    const { data, isLoading } = Digit.Hooks.useApplicationStatusGeneral({ businessServices: ["estimate-approval"] }, {});
+    const { data, isLoading } = Digit.Hooks.useApplicationStatusGeneral({ businessServices: [populators.businessService] }, {});
 
     if(isLoading) return <Loader />
 
