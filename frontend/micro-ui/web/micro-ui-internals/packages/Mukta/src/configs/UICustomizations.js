@@ -7,5 +7,11 @@ import React from "react";
 var Digit = window.Digit || {};
 
 export const UICustomizations = {
-
+    EstimateInboxConfig:{
+        preProcess:(data) => {
+            console.log(data);
+            
+            return data
+        }
+    }
 }
