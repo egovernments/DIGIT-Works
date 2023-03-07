@@ -322,30 +322,17 @@ export const FormComposer = (props) => {
         );
       case "documentUpload":
         return (
-          <Controller
-            render={({value = [], onChange}) => (
-              <UploadFileComposer
-                module={config?.module}
-                config={config}
-                register={register}
-                setuploadedstate={value}
-                onChange={onChange}
-                formData={formData}
-                errors={errors}
-                customClass={populators?.customClass}
-                localePrefix={populators?.localePrefix}
-              />
-            )}
-            rules={{validate:(value) => {
-              let isValidate = true
-              if(value?.length > 0) {
-                isValidate = !value?.some(item => item?.isMandatory && item?.uploadedFiles?.length === 0)
-              }
-              return isValidate
-            }}}
-            defaultValue={formData?.[populators.name]}
-            name={populators.name}
+          <UploadFileComposer
+            module={config?.module}
+            config={config}
+            Controller={Controller}
+            register={register}
+            formData={formData}
+            errors={errors}
             control={control}
+            customClass={populators?.customClass}
+            customErrorMsg={populators?.error}
+            localePrefix={populators?.localePrefix}
           />
         );
       case "form":
