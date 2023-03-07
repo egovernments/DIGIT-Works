@@ -61,7 +61,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
                   item?.showTextInput ? 
                     <TextInput 
                       style={{ "marginBottom": "16px" }} 
-                      name={`${item?.code}_name`} 
+                      name={`${item?.name}_name`} 
                       placeholder={t('ES_COMMON_ENTER_NAME')}
                       inputRef={register({minLength: 2})}/> : 
                     null  
@@ -102,11 +102,11 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
                     rules={{validate:(value) => {
                       return !(item?.isMandatory && value?.length === 0)
                     }}}
-                    defaultValue={formData?.[item?.code]}
-                    name={item?.code}
+                    defaultValue={formData?.[item?.name]}
+                    name={item?.name}
                     control={control}
                   />
-                   { item?.code && errors && errors[item?.code] && Object.keys(errors[item?.code]).length ? (
+                   { item?.name && errors && errors[item?.name] && Object.keys(errors[item?.name]).length ? (
                       <CardLabelError style={{ fontSize: "12px"}}>
                         {t(config?.populators?.error)}
                       </CardLabelError> ) : null
