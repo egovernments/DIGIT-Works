@@ -71,7 +71,6 @@ export const UICustomizations = {
                 return (
                 <div class="tooltip">
                     <span class="textoverflow" style={{'--max-width': `${column.maxLength}ch`}}>{String(t(value))}</span>
-                    {/* check condtion - if length greater than 20 */}
                     <span class="tooltiptext" style={{whiteSpace: "nowrap"}}>{String(t(value))}</span>
                 </div>
                 );
@@ -82,6 +81,10 @@ export const UICustomizations = {
             if(type === 'date') {
                 return (data[keys.start] && data[keys.end]) ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true
             }
+        },
+        additionalCustomizationForMobile : (value, column) => {
+            if(column.label ==="WORKS_PRJ_SUB_ID" || column.label === "WORKS_PARENT_PROJECT_ID")
+                return `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${value}`
         }
     },
     SearchEstimateConfig: {

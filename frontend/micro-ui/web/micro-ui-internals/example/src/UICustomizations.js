@@ -365,6 +365,10 @@ export const UICustomizations = {
         );
       }
     },
+    additionalCustomizationForMobile : (value, column) => {
+      if(column.label ==="WORKS_PRJ_SUB_ID" || column.label === "WORKS_PARENT_PROJECT_ID")
+          return `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${value}`
+    },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;

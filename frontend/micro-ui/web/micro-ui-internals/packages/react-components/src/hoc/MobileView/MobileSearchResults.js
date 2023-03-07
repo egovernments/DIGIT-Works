@@ -1,15 +1,16 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next';
-import { DetailsCard, NoResultsFound, Loader } from "@egovernments/digit-ui-react-components";
+import DetailsCard from "../../molecules/DetailsCard";
+import NoResultsFound from "../../atoms/NoResultsFound";
+import { Loader } from "../../atoms/Loader";
 import _ from "lodash";
 
-export const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig }) => {
+const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig }) => {
     const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
     let searchResult = data?.[resultsKey]?.length>0 ? data?.[resultsKey] : []
     searchResult = searchResult.reverse()
-
     //reversing reason -> for some reason if we enable sorting on columns results from the api are reversed and shown, for now -> reversing the results(max size 50 so not a performance issue)
     
     // if (fullConfig?.postProcessResult){
@@ -34,14 +35,21 @@ export const MobileSearchResults = ({ config, data, isLoading, isFetching,fullCo
           for(let columnIndex = 0; columnIndex<cols?.length; columnIndex++) {
             if (cols[columnIndex].additionalCustomization){
               let col=null,value =row?.[cols[columnIndex]?.jsonPath];
-              mapping[t(cols[columnIndex]?.label)] = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row,cols[columnIndex],col,value,t) 
+              mapping[t(cols[columnIndex]?.label)] = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row,cols[columnIndex],col,value,t)
             }
-            else {mapping[t(cols[columnIndex]?.label)] = t(row?.[cols[columnIndex]?.jsonPath]) || t("ES_COMMON_NA")}
+            else {
+              mapping[t(cols[columnIndex]?.label)] = t(row?.[cols[columnIndex]?.jsonPath]) || t("ES_COMMON_NA")
+            }
           }
           return mapping;
       })
+      //console.log("cardData :", cardData);
       return cardData;
     }, [data]);
+
+    // function CardLink(value){
+    //   return Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizationForMobile(value)
+    // }
 
    function RenderResult() {
     if (searchResult?.length === 0) {
@@ -49,13 +57,16 @@ export const MobileSearchResults = ({ config, data, isLoading, isFetching,fullCo
    } 
     return (
     <DetailsCard
-    {...{
-      data: propsMobileInboxCards,
-      showActionBar : false,
-   }}
-   />);
-  }
-  
+      {...{
+        data: propsMobileInboxCards,
+        showActionBar : false,
+        // linkPrefix: `/${window.contextPath}/employee/project/search-project`,
+        //serviceRequestIdKey: t("WORKS_PRJ_SUB_ID"),
+    }}
+   />
+   );
+}
+    //console.log("DATA : ", propsMobileInboxCards);
     if (isLoading) 
     {   return <Loader /> }
     return (
@@ -64,3 +75,5 @@ export const MobileSearchResults = ({ config, data, isLoading, isFetching,fullCo
         </React.Fragment>
     );
 };
+
+export default MobileSearchResults;

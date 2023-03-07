@@ -1,12 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { MobileInboxContext } from "./MobileInboxContext";
-import { CloseSvg, SearchIcon, FilterIcon, ActionBar, ApplyFilterBar, RenderFormFields, Toast } from "@egovernments/digit-ui-react-components";
+import { InboxContext } from "../InboxSearchComposerContext";
+import { FilterIcon, SearchIcon, CloseSvg } from "../../atoms/svgindex";
+import ActionBar from "../../atoms/ActionBar";
+import ApplyFilterBar from "../../atoms/ApplyFilterBar";
+import RenderFormFields from "../../molecules/RenderFormFields";
+import Toast from "../../atoms/Toast"; 
+import _ from "lodash";
 
-export const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data, onClose}) => {
+//const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data, onClose, sessionFormData, setSessionFormData, clearSessionFormData }) => {
+const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data, onClose}) => {
   const { t } = useTranslation();
-  const { state, dispatch } = useContext(MobileInboxContext)
+  const { state, dispatch } = useContext(InboxContext)
   const [showToast,setShowToast] = useState(null)
   let updatedFields = [];
   const {apiDetails} = fullConfig
@@ -42,6 +48,13 @@ export const MobileSearchComponent = ({ uiConfig, header = "", screenType = "sea
   useEffect(() => {
     updatedFields = Object.values(formState?.dirtyFields)
   }, [formState])
+
+
+  // useEffect(() => {
+  //   if (!_.isEqual(sessionFormData, formData)) {
+  //     setSessionFormData({ ...sessionFormData, ...formData });
+  // }
+  // }, [formData]);
 
   const onSubmit = (data) => {
     onClose?.()
@@ -147,3 +160,5 @@ const renderHeader = () => {
     </React.Fragment>
   )
 };
+
+export default MobileSearchComponent;

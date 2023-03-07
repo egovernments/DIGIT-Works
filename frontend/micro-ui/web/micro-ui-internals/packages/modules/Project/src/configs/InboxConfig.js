@@ -117,7 +117,7 @@ const inboxConfig = () => {
                     headerStyle : null,
                     primaryLabel: 'ES_COMMON_APPLY',
                     minReqFields: 0,
-                    secondaryLabel: '',
+                    secondaryLabel: 'ES_COMMON_CLEAR_ALL',
                     defaultValues : {
                         projectFromDate: "",
                         projectToDate: "",
