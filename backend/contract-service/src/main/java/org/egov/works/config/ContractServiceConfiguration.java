@@ -74,10 +74,6 @@ public class ContractServiceConfiguration {
     @Value("${contract.kafka.update.topic}")
     private String updateContractTopic;
 
-    //SMSNotification
-//    @Value("${egov.sms.notification.topic}")
-//    private String smsNotificationTopic;
-
     //attendance service register search config
     @Value("${contract.default.offset}")
     private Integer contractDefaultOffset;
@@ -95,6 +91,23 @@ public class ContractServiceConfiguration {
     @Value("${works.estimate.search.endpoint}")
     private String estimateEndpoint;
 
+    //Project Service
+    @Value("${works.project.host}")
+    private String worksProjectManagementSystemHost;
+
+    @Value("${works.project.search.endpoint}")
+    private String worksProjectManagementSystemPath;
+
+    //Location Service
+    @Value("${egov.location.host}")
+    private String locationHost;
+
+    @Value("${egov.location.context.path}")
+    private String locationContextPath;
+
+    @Value("${egov.location.endpoint}")
+    private String locationEndpoint;
+
     //Contract service
     @Value("${works.contract.host}")
     private String contractHost;
@@ -107,6 +120,39 @@ public class ContractServiceConfiguration {
 
     @Value("${contract.org.id.verification.required}")
     private String orgIdVerificationRequired;
+
+    //SMS notification
+   /* @Value("${egov.user.event.notification.enabled}")
+    private Boolean isUserEventsNotificationEnabled;*/
+
+    @Value("${notification.sms.enabled}")
+    private Boolean isSMSEnabled;
+
+    @Value("${kafka.topics.notification.sms}")
+    private String smsNotifTopic;
+
+    //Localization
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    @Value("${egov.localization.statelevel}")
+    private Boolean isLocalizationStateLevel;
+
+/*    @Value("${egov.usr.events.create.topic}")
+    private String saveUserEventsTopic;*/
+
+/*    @Value("${egov.url.shortner.host}")
+    private String urlShortnerHost;
+
+    @Value("${egov.url.shortner.endpoint}")
+    private String urlShortnerEndpoint;*/
+
 
     @PostConstruct
     public void initialize() {
