@@ -143,7 +143,13 @@ const searchConfigMUKTA = {
                             },
                             {
                                 label: "WORKS_PROJECT_NAME",
-                                jsonPath: "name"
+                                jsonPath: "name",
+                                additionalCustomization:true
+                            },
+                            {
+                                label: "ES_COMMON_LOCATION",
+                                jsonPath: "",
+                                additionalCustomization:true
                             },
                             {
                                 label: "PROJECT_ESTIMATED_COST",
