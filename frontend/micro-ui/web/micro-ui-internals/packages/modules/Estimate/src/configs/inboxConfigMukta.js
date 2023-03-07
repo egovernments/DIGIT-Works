@@ -1,4 +1,3 @@
-
 const inboxConfigMukta = (t) => {
     return {
         label: "ACTION_TEST_ESTIMATE_INBOX",
@@ -9,6 +8,7 @@ const inboxConfigMukta = (t) => {
 
             },
             requestBody: {
+                
             },
             minParametersForSearchForm: 0,
             minParametersForFilterForm: 0,
