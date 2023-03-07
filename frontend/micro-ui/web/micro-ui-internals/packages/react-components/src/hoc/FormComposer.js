@@ -23,7 +23,7 @@ import CustomDropdown from "../molecules/CustomDropdown";
 import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
 import HorizontalNav  from "../atoms/HorizontalNav"
 import Toast from "../atoms/Toast";
-import UploadFileComposer from "./uploadFileComposer";
+import UploadFileComposer from "./UploadFileComposer";
 
 const wrapperStyles = {
   // "display":"flex",
