@@ -3,11 +3,10 @@ import MultiSelectDropdown from '../atoms/MultiSelectDropdown'
 import Dropdown from '../atoms/Dropdown'
 import { Loader } from '../atoms/Loader'
 import { useTranslation } from 'react-i18next'
-const LocationDropdownWrapper = ({populators,formData,props,inputRef,errors}) => {
+const LocationDropdownWrapper = ({populators,formData,props}) => {
     //based on type (ward/locality) we will render dropdowns respectively
     //here we will render two types of dropdown based on allowMultiSelect boolean 
     // for singleSelect render <Dropdown/> 
-    
     const [options,setOptions] = useState([])
 
     const tenantId = Digit.ULBService.getCurrentTenantId()
@@ -38,8 +37,7 @@ const LocationDropdownWrapper = ({populators,formData,props,inputRef,errors}) =>
     if(wardsAndLocalities) {
         if(populators.type==="ward"){
             setOptions(wardsAndLocalities?.wards)
-        }
-        else{
+        }else{
             //here you need to set the localities based on the selected ward
             let locs = []
             const selectedWardsCodes = formData?.ward?.map(row=>row.code)

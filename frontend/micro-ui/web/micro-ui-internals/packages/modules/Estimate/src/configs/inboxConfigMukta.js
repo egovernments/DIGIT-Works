@@ -1,33 +1,22 @@
-const inboxConfigMukta = () => {
+
+const inboxConfigMukta = (t) => {
     return {
         label: "ACTION_TEST_ESTIMATE_INBOX",
         type: 'inbox',
         apiDetails: {
-            serviceName: "/inbox/v2/_search",
+            serviceName: "/estimate-service/estimate/v1/_search",
             requestParam: {
 
             },
             requestBody: {
-                inbox:{
-                    processSearchCriteria:{
-                        businessService: [
-                            "estimate-approval"
-                        ],
-                        moduleName: "estimate-service"
-                    },
-                    moduleSearchCriteria:{
-
-                    }
-                }
-                
             },
             minParametersForSearchForm: 0,
             minParametersForFilterForm: 0,
             masterName: "commonUiConfig",
-            moduleName: "EstimateInboxConfig",
-            tableFormJsonPath: "requestBody.inbox",
-            filterFormJsonPath: "requestBody.moduleSearchCriteria",
-            searchFormJsonPath: "requestBody.moduleSearchCriteria",
+            moduleName: "SearchEstimateConfig",
+            tableFormJsonPath: "requestParam",
+            filterFormJsonPath: "requestParam",
+            searchFormJsonPath: "requestParam",
         },
         sections: {
             search: {
@@ -166,7 +155,6 @@ const inboxConfigMukta = () => {
                         fromProposalDate: "",
                         toProposalDate: "",
                         status: "",
-                        workflowState:""
                     },
                     fields: [
                         {
@@ -240,42 +228,14 @@ const inboxConfigMukta = () => {
                             }
                         },
                         {
-                            label: "COMMON_WARD",
-                            type: "locationdropdown",
-                            isMandatory: false,
-                            disable: false,
-                            populators: {
-                                name: "ward1",
-                                type: "ward",
-                                optionsKey: "name",
-                                // defaultText: "COMMON_SELECT_WARD",
-                                // selectedText: "COMMON_SELECTED",
-                                allowMultiSelect: false
-                            }
-                        },
-                        {
-                            label: "COMMON_LOCALITY",
-                            type: "locationdropdown",
-                            isMandatory: false,
-                            disable: false,
-                            populators: {
-                                name: "locality1",
-                                type: "locality",
-                                optionsKey: "name",
-                                // defaultText: "COMMON_SELECT_LOCALITY",
-                                // selectedText: "COMMON_SELECTED",
-                                allowMultiSelect: false
-                            }
-                        },
-                        {
                             label: "COMMON_WORKFLOW_STATES",
                             type: "workflowstatesfilter",
                             isMandatory: false,
                             disable: false,
                             populators: {
                                 name: "workflowState",
-                                labelPrefix:"WF_EST_",
-                                businessService: "estimate-approval"
+                                labelPrefix:"WORKFLOW_",
+                                businessService:"estimate-approval"
                             }
                         },
                         // {
