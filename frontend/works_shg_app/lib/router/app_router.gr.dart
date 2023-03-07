@@ -41,6 +41,16 @@ class _$AppRouter extends RootStackRouter {
         child: const LoginPage(),
       );
     },
+    OTPVerificationRoute.name: (routeData) {
+      final args = routeData.argsAs<OTPVerificationRouteArgs>();
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: OTPVerificationPage(
+          key: args.key,
+          mobileNumber: args.mobileNumber,
+        ),
+      );
+    },
     HomeRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
@@ -138,6 +148,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               LoginRoute.name,
               path: 'login',
+              parent: UnauthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              OTPVerificationRoute.name,
+              path: 'otp',
               parent: UnauthenticatedRouteWrapper.name,
             ),
           ],
@@ -244,6 +259,40 @@ class LoginRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'LoginRoute';
+}
+
+/// generated route for
+/// [OTPVerificationPage]
+class OTPVerificationRoute extends PageRouteInfo<OTPVerificationRouteArgs> {
+  OTPVerificationRoute({
+    Key? key,
+    required String mobileNumber,
+  }) : super(
+          OTPVerificationRoute.name,
+          path: 'otp',
+          args: OTPVerificationRouteArgs(
+            key: key,
+            mobileNumber: mobileNumber,
+          ),
+        );
+
+  static const String name = 'OTPVerificationRoute';
+}
+
+class OTPVerificationRouteArgs {
+  const OTPVerificationRouteArgs({
+    this.key,
+    required this.mobileNumber,
+  });
+
+  final Key? key;
+
+  final String mobileNumber;
+
+  @override
+  String toString() {
+    return 'OTPVerificationRouteArgs{key: $key, mobileNumber: $mobileNumber}';
+  }
 }
 
 /// generated route for

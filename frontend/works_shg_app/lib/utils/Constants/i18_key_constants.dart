@@ -17,6 +17,7 @@ class Login {
   String get contactAdministrator => 'CONTACT_ADMINISTRATOR_FOR_PASSWORD';
   String get otpVerification => 'OTP_VERIFICATION';
   String get enterOTPSent => 'ENTER_OTP_SENT_TO';
+  String get resendOTP => 'CS_RESEND_OTP';
 }
 
 class Common {
@@ -66,6 +67,7 @@ class Common {
   String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
   String get selectAnOption => 'ES_SELECT_AN_OPTION';
   String get action => 'CS_COMMON_ACTION';
+  String get next => 'CS_COMMON_NEXT';
 }
 
 class Home {

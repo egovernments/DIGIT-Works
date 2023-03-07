@@ -1,13 +1,12 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:works_shg_app/blocs/auth/otp_bloc.dart';
+import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/global_variables.dart';
 
-import '../blocs/auth/auth.dart';
 import '../blocs/localization/app_localization.dart';
-import '../utils/notifiers.dart';
 import '../widgets/molecules/desktop_view.dart';
 import '../widgets/molecules/mobile_view.dart';
 
@@ -22,8 +21,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPage extends State<LoginPage> {
   var userIdController = TextEditingController();
-  var passwordController = TextEditingController();
-  var passwordVisible = false;
 
   Widget getLoginCard(BuildContext loginContext) {
     return DigitCard(
@@ -37,77 +34,28 @@ class _LoginPage extends State<LoginPage> {
           ),
           DigitTextField(
             label: AppLocalizations.of(loginContext)
-                .translate(i18.login.loginUserName),
+                .translate(i18.common.mobileNumber),
             controller: userIdController,
             maxLength: 10,
-          ),
-          DigitTextField(
-            label: AppLocalizations.of(loginContext)
-                .translate(i18.login.loginPassword),
-            controller: passwordController,
-            obscureText: !passwordVisible,
-            suffixIcon: buildPasswordVisibility(),
-            maxLines: 1,
           ),
           const SizedBox(height: 16),
           DigitElevatedButton(
             onPressed: () async {
-              loginContext.read<AuthBloc>().add(
-                    AuthLoginEvent(
-                      userId: userIdController.text,
-                      password: passwordController.text,
+              loginContext.read<OTPBloc>().add(
+                    OTPSendEvent(
+                      mobileNumber: userIdController.text,
                     ),
                   );
+              context.router.push(
+                  OTPVerificationRoute(mobileNumber: userIdController.text));
             },
             child: Center(
               child: Text(AppLocalizations.of(loginContext)
-                  .translate(i18.login.loginLabel)),
+                  .translate(i18.common.continueLabel)),
             ),
-          ),
-          BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-            SchedulerBinding.instance.addPostFrameCallback((_) {
-              state.maybeWhen(
-                  error: () => Notifiers.getToastMessage(
-                      context,
-                      AppLocalizations.of(context)
-                          .translate(i18.common.invalidCredentials),
-                      'ERROR'),
-                  orElse: () => Container());
-            });
-            return Container();
-          }),
-          TextButton(
-            onPressed: () => DigitDialog.show(
-              context,
-              title: AppLocalizations.of(context)
-                  .translate(i18.login.forgotPassword),
-              content: AppLocalizations.of(context)
-                  .translate(i18.login.contactAdministrator),
-              primaryActionLabel:
-                  AppLocalizations.of(context).translate(i18.common.oK),
-              primaryAction: () =>
-                  Navigator.of(context, rootNavigator: true).pop(),
-            ),
-            child: Center(
-                child: Text(AppLocalizations.of(context)
-                    .translate(i18.login.forgotPassword))),
           ),
         ],
       ),
-    );
-  }
-
-  Widget buildPasswordVisibility() {
-    return IconButton(
-      icon: Icon(
-        passwordVisible ? Icons.visibility : Icons.visibility_off,
-        color: Theme.of(context).primaryColorLight,
-      ),
-      onPressed: () {
-        setState(() {
-          passwordVisible = !passwordVisible;
-        });
-      },
     );
   }
 

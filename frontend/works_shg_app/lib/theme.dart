@@ -18,26 +18,26 @@ ThemeData get theme => ThemeData(
       backgroundColor: Color(0xff0B4B66),
       centerTitle: false,
     ),
-    textTheme: TextTheme(
-        headline1: const TextStyle(
+    textTheme: const TextTheme(
+        displayLarge: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 32,
             fontFamily: 'Roboto Condensed',
             fontStyle: FontStyle.normal,
             color: Color.fromRGBO(11, 12, 12, 1)),
-        headline2: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24),
-        button: const TextStyle(
+        displaySmall: TextStyle(fontWeight: FontWeight.w700, fontSize: 24),
+        labelLarge: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 19,
             color: Colors.white), // Elevated Button(Orange)
-        displayMedium: const TextStyle(
+        displayMedium: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 16,
             fontFamily: 'Roboto Condensed',
             fontStyle: FontStyle.normal,
             color: Color.fromRGBO(11, 12, 12, 1)),
-        titleMedium: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
-        titleSmall: const TextStyle(
+        titleMedium: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
+        titleSmall: TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 16,
             color: Color.fromRGBO(
