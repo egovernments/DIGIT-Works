@@ -70,23 +70,39 @@ const convertStringToRegEx = (target) => {
     return target;
 }
 
+const updateDependent = (target, dependencyConfig, inputKey) => {
+    //iterate all translate keys and handle translation
+    for(let toUpdate = 0; toUpdate<target?.preProcess?.updateDependent?.length; toUpdate++) {
+        let keyToUpdate = target?.preProcess?.updateDependent[toUpdate];
+        let dependentObject = ((dependencyConfig?.updateDependent?.filter(dependent=>dependent?.key === inputKey)?.[0]?.value));
+        console.log(dependentObject);
+        _.set(target, keyToUpdate, dependentObject);    
+    }
+    return target;
+}
+
 const transform = (preProcesses, target, inputIndex, inputKey, t, dependencyConfig) => {
     //Do not loop preProcess object, to avoid unnecessary 'translate' and 'updateDependent' calls
     //To add any new transform object, simply add a new if statement
     if(preProcesses?.convertStringToRegEx) {
         target = convertStringToRegEx(target);
     }
+    if(preProcesses?.updateDependent) {
+        target = updateDependent(target, dependencyConfig, inputKey);
+    }
     return target;  
 }
 
 const preProcessMDMSConfigInboxSearch = (t, config, jsonpath, dependencyConfig) => {
     let targetConfig = _.get(config, jsonpath);
+    let updatedConfig = [];
+    //Iterate the entire jsonpath array and push the updated objects in the new res array.
+    //Set the updated res in place of the targetConfig
     targetConfig?.map((target, inputIndex) => {
         let preProcesses = target?.preProcess;
-        targetConfig = transform(preProcesses, target, inputIndex, target?.key, t, dependencyConfig);
+        updatedConfig.push(transform(preProcesses, target, inputIndex, target?.key, t, dependencyConfig));
     })
-    _.set(config, jsonpath, targetConfig);
-    debugger;
+    _.set(config, jsonpath, updatedConfig);
     return config;
 }
 

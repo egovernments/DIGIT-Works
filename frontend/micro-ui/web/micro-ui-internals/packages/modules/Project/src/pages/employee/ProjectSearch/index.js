@@ -10,8 +10,31 @@ const ProjectSearch = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
   const searchMDMS = searchConfig?.SearchProjectConfig?.[0];
-  const configs = useMemo(
-    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, searchMDMS, "sections.search.uiConfig.fields", {}),[]);
+  const { isLoading : isWardLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
+    tenantId, 'Ward',
+    {
+        select: (data) => {
+            const wards = []
+            const localities = {}
+            data?.TenantBoundary[0]?.boundary.forEach((item) => {
+                localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}`, label : item?.label }))
+                wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
+            });
+           return {
+                wards, localities
+           }
+        }
+    });
+
+    const configs = useMemo(
+    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, searchMDMS, "sections.search.uiConfig.fields",{
+      updateDependent : [
+        {
+          key : 'ward',
+          value : wardsAndLocalities?.wards
+        }
+      ]
+    }),[wardsAndLocalities]);
 
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, 

@@ -50,9 +50,12 @@ const searchConfig = {
                                 type: "dropdown",
                                 isMandatory: false,
                                 disable: false,
+                                preProcess : {
+                                    updateDependent : ["populators.options"]
+                                },
                                 populators: {
                                     name: "ward",
-                                    optionsKey: "code",
+                                    optionsKey: "name",
                                     optionsCustomStyle : {
                                         top : "2.3rem"
                                     },
