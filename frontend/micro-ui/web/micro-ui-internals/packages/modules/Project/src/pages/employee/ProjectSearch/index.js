@@ -10,7 +10,6 @@ const ProjectSearch = () => {
   const history = useHistory();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
-  const searchMDMS = searchConfigMUKTA?.SearchProjectConfig?.[0];
   const { isLoading : isWardLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
     tenantId, 'Ward',
     {
@@ -40,16 +39,18 @@ const ProjectSearch = () => {
   if(renderType === "mdms") {
     configs = data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
   }else{
-    configs = useMemo(
-      () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, searchMDMS, "sections.search.uiConfig.fields",{
-        updateDependent : [
-          {
-            key : 'ward',
-            value : wardsAndLocalities?.wards
-          }
-        ]
-      }),[wardsAndLocalities]);
+    configs = searchConfigMUKTA?.SearchProjectConfig?.[0];
   }
+
+  configs = useMemo(
+    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.search.uiConfig.fields",{
+      updateDependent : [
+        {
+          key : 'ward',
+          value : wardsAndLocalities?.wards
+        }
+      ]
+  }),[wardsAndLocalities]);
 
   if (isLoading) return <Loader />;
   return (
