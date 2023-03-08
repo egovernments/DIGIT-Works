@@ -11,6 +11,7 @@ import SearchOrganisation from "./pages/employee/SearchOrganisation";
 import SearchWageSeeker from "./pages/employee/SearchWageSeeker";
 import SearchMastersApplication from "./components/SearchMasters";
 import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
+import ViewWageSeeker from "./pages/employee/ViewWageSeeker";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
 
@@ -42,7 +43,8 @@ const componentsToRegister = {
   SearchMastersApplication,
   SearchWageSeeker,
   ViewOrganisation,
-  SearchOrganisation
+  SearchOrganisation,
+  ViewWageSeeker
 };
 
 export const initMastersComponents = () => {

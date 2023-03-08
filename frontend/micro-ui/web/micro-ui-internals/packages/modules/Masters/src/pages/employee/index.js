@@ -37,6 +37,12 @@ const MastersBreadCrumb = ({ location }) => {
       show: location.pathname.includes("/masters/view-organization") ? true : false,
       isBack: fromScreen && true,
     },
+    {
+      path: `/${window.contextPath}/employee/masters/view-wageseeker`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_VIEW_WAGESEEKER")}` : `${t("MASTERS_VIEW_WAGESEEKER")}`,
+      show: location.pathname.includes("/masters/view-wageseeker") ? true : false,
+      isBack: fromScreen && true,
+    }
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 };
@@ -51,7 +57,8 @@ const App = ({ path }) => {
   const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWageSeeker");
   const RegisterWageSeekerComponent = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
   const ViewOrganisationComponent = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
-const SearchOrganisation =  Digit?.ComponentRegistryService?.getComponent("SearchOrganisation");
+  const SearchOrganisation =  Digit?.ComponentRegistryService?.getComponent("SearchOrganisation");
+  const ViewWageSeeker = Digit?.ComponentRegistryService?.getComponent("ViewWageSeeker");
   useEffect(() => {
     return () => {
       if (!window.location.href.includes("create-organization") && Object.keys(sessionFormData) != 0) {
@@ -76,7 +83,7 @@ const SearchOrganisation =  Digit?.ComponentRegistryService?.getComponent("Searc
         {/* WageSeekers Masters*/}
         <PrivateRoute path={`${path}/search-wageseeker`} component={() => <SearchWageSeeker parentRoute={path}/>} />
         <PrivateRoute path={`${path}/create-wageseeker`} component={RegisterWageSeekerComponent} />
-        <PrivateRoute path={`${path}/view-wageseeker`} component={()=><div>View WageSeekers</div>} />
+        <PrivateRoute path={`${path}/view-wageseeker`} component={()=> <ViewWageSeeker parentRoute={path}/>} />
       </AppContainer>
     </Switch>
   );

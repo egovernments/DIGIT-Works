@@ -129,6 +129,9 @@ import useProjectSearch from "./project/useProjectSearch";
 import useViewFinancialDetails from "./project/useViewFinancialDetails";
 
 import useUpdateCustom from "./useUpdateCustom";
+
+import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
+
 const works = {
   useViewEstimateDetails,
   useViewProjectDetails,
@@ -244,6 +247,10 @@ const project = {
   useProjectSearch
 }
 
+const wageSeeker = {
+  useViewWageSeeker
+}
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -305,7 +312,8 @@ const Hooks = {
   useLocation,
   bills,
   masters,
-  project
+  project,
+  wageSeeker
 };
 
 export default Hooks;
