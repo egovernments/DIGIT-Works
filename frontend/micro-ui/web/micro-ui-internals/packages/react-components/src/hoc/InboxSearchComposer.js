@@ -17,27 +17,27 @@ const InboxSearchComposer = (props) => {
         //here if jsonpaths for search & table are same then searchform gets overridden
         
         if (Object.keys(state.searchForm)?.length >= 0) {
-            const result = { ..._.get(apiDetails, apiDetails.searchFormJsonPath, {}), ...state.searchForm }
+            const result = { ..._.get(apiDetails, apiDetails?.searchFormJsonPath, {}), ...state.searchForm }
             Object.keys(result).forEach(key => {
                 if (!result[key]) delete result[key]
             });
-            _.set(apiDetails, apiDetails.searchFormJsonPath, result)
+            _.set(apiDetails, apiDetails?.searchFormJsonPath, result)
         }
         if (Object.keys(state.filterForm)?.length >= 0) {
-            const result = { ..._.get(apiDetails, apiDetails.filterFormJsonPath, {}), ...state.filterForm }
+            const result = { ..._.get(apiDetails, apiDetails?.filterFormJsonPath, {}), ...state.filterForm }
             Object.keys(result).forEach(key => {
                 if (!result[key]) delete result[key]
             });
-            _.set(apiDetails, apiDetails.filterFormJsonPath, result)
+            _.set(apiDetails, apiDetails?.filterFormJsonPath, result)
         }
         if(Object.keys(state.tableForm)?.length >= 0) {
-            _.set(apiDetails, apiDetails.tableFormJsonPath, { ..._.get(apiDetails, apiDetails.tableFormJsonPath, {}),...state.tableForm })  
+            _.set(apiDetails, apiDetails?.tableFormJsonPath, { ..._.get(apiDetails, apiDetails?.tableFormJsonPath, {}),...state.tableForm })  
         }
 
         const searchFormParamCount = Object.keys(state.searchForm).reduce((count,key)=>state.searchForm[key]===""?count:count+1,0)
         const filterFormParamCount = Object.keys(state.filterForm).reduce((count, key) => state.filterForm[key] === "" ? count : count + 1, 0)
         
-        if (Object.keys(state.tableForm)?.length > 0 && (searchFormParamCount >= apiDetails.minParametersForSearchForm || filterFormParamCount >= apiDetails.minParametersForFilterForm)){
+        if (Object.keys(state.tableForm)?.length > 0 && (searchFormParamCount >= apiDetails?.minParametersForSearchForm || filterFormParamCount >= apiDetails?.minParametersForFilterForm)){
             setEnable(true)
         }
 

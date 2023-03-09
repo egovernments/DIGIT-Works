@@ -1,6 +1,5 @@
-import React, {useEffect, useRef} from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import CardSectionHeader from '../atoms/CardSectionHeader'
 import LabelFieldPair from '../atoms/LabelFieldPair'
 import CardLabel from '../atoms/CardLabel'
 import CardLabelError from '../atoms/CardLabelError'
@@ -10,9 +9,8 @@ import { Loader } from '../atoms/Loader'
 import MultiUploadWrapper from '../molecules/MultiUploadWrapper'
 import TextInput from '../atoms/TextInput'
 
-const UploadFileComposer = ({module, customClass, config, register, setuploadedstate, onChange, formData, errors, localePrefix}) => {
+const UploadFileComposer = ({module, config, Controller, control, register, formData, errors, localePrefix, customClass, customErrorMsg}) => {
   const { t } = useTranslation()
-  let finalDocumentData = []
   
   //fetch mdms config based on module name
   const tenant = Digit.ULBService.getStateId();
@@ -29,17 +27,6 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
 
   const docConfig = data?.works?.DocumentConfig?.[0]
   
-  useEffect(() => {
-    docConfig?.documents?.filter(item => item.active)?.forEach((item) => {
-      finalDocumentData.push({
-        code: item?.code,
-        isMandatory: item?.isMandatory,
-        module,
-        uploadedFiles: []
-      })
-    })
-  }, [docConfig])
-
   const getRegex = (allowedFormats) => {
     if(allowedFormats?.length) {
       const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
@@ -53,36 +40,7 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
     return /(.*?)(pdf|docx|jpeg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
   }
 
-  function getFileStoreData(filesData, item, formData) {
-    const numberOfFiles = filesData.length;
-    
-    //get existing data from form
-    if(formData[config?.populators?.name]?.length) {
-      finalDocumentData = formData[config?.populators?.name]
-    } 
-
-    finalDocumentData.map(doc => {
-      if(doc?.code === item?.code) {
-        doc.uploadedFiles = []
-      } 
-      return doc
-    })
-
-    if (numberOfFiles > 0) {
-      const files = finalDocumentData?.filter(doc => doc?.code === item?.code)?.[0]?.uploadedFiles
-      filesData.forEach((value) => {
-        files?.push({
-          fileName: value?.[0],
-          fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
-          documentType: value?.[1]?.file?.type,
-          otherFileName: formData[`${item?.code}_name`] || ""
-        })
-      });
-    }
-    onChange(finalDocumentData);
-  }
-
-  if(isLoading) return <Loader />
+  // if(isLoading) return <Loader />
   return (
     <React.Fragment>
       <Header styles={{fontSize: "24px"}}>{t('WORKS_RELEVANT_DOCUMENTS')}</Header>
@@ -103,32 +61,58 @@ const UploadFileComposer = ({module, customClass, config, register, setuploadeds
                   item?.showTextInput ? 
                     <TextInput 
                       style={{ "marginBottom": "16px" }} 
-                      name={`${item?.code}_name`} 
+                      name={`${item?.name}_name`} 
                       placeholder={t('ES_COMMON_ENTER_NAME')}
                       inputRef={register({minLength: 2})}/> : 
                     null  
                 }
                 <div  style={{marginBottom: '24px'}}>
-                  <MultiUploadWrapper
-                    t={t}
-                    module="works"
-                    getFormState={(filesData) => getFileStoreData(filesData, item, formData, docConfig)}
-                    setuploadedstate={setuploadedstate}
-                    showHintBelow={item?.hintText ? true : false}
-                    hintText={item?.hintText}
-                    allowedFileTypesRegex={getRegex(item?.allowedFileTypes)}
-                    allowedMaxSizeInMB={item?.maxSizeInMB || docConfig?.maxSizeInMB || 5}
-                    maxFilesAllowed={item?.maxFilesAllowed || 1}
-                    customClass={customClass}
-                    customErrorMsg={item?.customErrorMsg}
-                  />   
+                  <Controller
+                    render={({value = [], onChange}) => {
+                      function getFileStoreData(filesData) {
+                        const numberOfFiles = filesData.length;
+                        let finalDocumentData = [];
+                        if (numberOfFiles > 0) {
+                          filesData.forEach((value) => {
+                            finalDocumentData.push({
+                              fileName: value?.[0],
+                              fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
+                              documentType: value?.[1]?.file?.type,
+                            });
+                          });
+                        }
+                        onChange(numberOfFiles>0?filesData:[]);
+                      }
+                      return (
+                        <MultiUploadWrapper
+                          t={t}
+                          module="works"
+                          getFormState={getFileStoreData}
+                          setuploadedstate={value}
+                          showHintBelow={item?.hintText ? true : false}
+                          hintText={item?.hintText}
+                          allowedFileTypesRegex={getRegex(item?.allowedFileTypes)}
+                          allowedMaxSizeInMB={item?.maxSizeInMB || docConfig?.maxSizeInMB || 5}
+                          maxFilesAllowed={item?.maxFilesAllowed || 1}
+                          customErrorMsg={item?.customErrorMsg}
+                          customClass={customClass}
+                        /> 
+                      ) 
+                    }}
+                    rules={{validate:(value) => {
+                      return !(item?.isMandatory && value?.length === 0)
+                    }}}
+                    defaultValue={formData?.[item?.name]}
+                    name={item?.name}
+                    control={control}
+                  />
+                   { item?.name && errors && errors[item?.name] && Object.keys(errors[item?.name]).length ? (
+                      <CardLabelError style={{ fontSize: "12px"}}>
+                        {t(config?.populators?.error)}
+                      </CardLabelError> ) : null
+                    } 
                 </div>
-              </div>    
-              { item?.populators?.name && errors && errors[item?.populators?.name] && Object.keys(errors[item?.populators?.name]).length ? (
-                <CardLabelError style={{ fontSize: "12px", marginTop: "-20px" }}>
-                  {t(item?.populators?.error)}
-                </CardLabelError> ) : null
-              }
+              </div>
             </LabelFieldPair>
           )
         })

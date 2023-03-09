@@ -3,6 +3,15 @@
         "moduleName" : "commonUiConfig",
         "CreateProjectConfig" : [
           {
+            "defaultValues" : {
+              basicDetails_dateOfProposal : "",
+              basicDetails_hasSubProjects : {name : "COMMON_YES", code : "COMMON_YES"},
+              withSubProject_project_estimatedCostInRs : 0
+            },
+            "metaData" : {
+              showNavs : true,
+              currentFormCategory : "project",
+            },
             "form" : [
                 {
                 head: "",
@@ -117,7 +126,7 @@
                       label: ("PROJECT_TARGET_DEMOGRAPHY"),
                       disable: false,
                       populators: {
-                        name: "noSubProject_targetDemocracy",
+                        name: "noSubProject_targetDemography",
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: false,

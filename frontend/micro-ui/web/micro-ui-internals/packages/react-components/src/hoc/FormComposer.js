@@ -160,6 +160,7 @@ export const FormComposer = (props) => {
                   style={type === "date" ? { paddingRight: "3px" } : ""}
                   maxlength={populators?.validation?.maxlength}
                   minlength={populators?.validation?.minlength}
+                  customIcon={populators?.customIcon}
                 />
               )}
               name={populators.name}
@@ -321,30 +322,17 @@ export const FormComposer = (props) => {
         );
       case "documentUpload":
         return (
-          <Controller
-            render={({value = [], onChange}) => (
-              <UploadFileComposer
-                module={config?.module}
-                config={config}
-                register={register}
-                setuploadedstate={value}
-                onChange={onChange}
-                formData={formData}
-                errors={errors}
-                customClass={populators?.customClass}
-                localePrefix={populators?.localePrefix}
-              />
-            )}
-            rules={{validate:(value) => {
-              let isValidate = true
-              if(value?.length > 0) {
-                isValidate = !value?.some(item => item?.isMandatory && item?.uploadedFiles?.length === 0)
-              }
-              return isValidate
-            }}}
-            defaultValue={formData?.[populators.name]}
-            name={populators.name}
+          <UploadFileComposer
+            module={config?.module}
+            config={config}
+            Controller={Controller}
+            register={register}
+            formData={formData}
+            errors={errors}
             control={control}
+            customClass={populators?.customClass}
+            customErrorMsg={populators?.error}
+            localePrefix={populators?.localePrefix}
           />
         );
       case "form":
@@ -652,13 +640,13 @@ export const FormComposer = (props) => {
       {props?.showMultipleCardsWithoutNavs ? (
           props?.config?.map((section, index, array) => {
             return !section.navLink && (
-              <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
+              <Card style={getCardStyles()} noCardStyle={props.noCardStyle} className={props.cardClassName}>
                 {renderFormFields(props, section, index, array)}
               </Card>
             )
           })
         ) :  (         
-          <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
+          <Card style={getCardStyles()} noCardStyle={props.noCardStyle} className={props.cardClassName}>
             {
               props?.config?.map((section, index, array) => {
                 return !section.navLink && (
@@ -671,8 +659,8 @@ export const FormComposer = (props) => {
           </Card>
           )
       }
-      { props?.showNavs && props.horizontalNavConfig && (
-           <HorizontalNav configNavItems={props.horizontalNavConfig?props.horizontalNavConfig:null} showNav={true} activeLink={activeLink} setActiveLink={setActiveLink}>
+      { props?.showFormInNav && props.horizontalNavConfig && (
+           <HorizontalNav configNavItems={props.horizontalNavConfig?props.horizontalNavConfig:null} showNav={props?.showNavs} activeLink={activeLink} setActiveLink={setActiveLink}>
            {props?.showMultipleCardsInNavs ? (
              props?.config?.map((section, index, array) => {
                return section.navLink ? (
