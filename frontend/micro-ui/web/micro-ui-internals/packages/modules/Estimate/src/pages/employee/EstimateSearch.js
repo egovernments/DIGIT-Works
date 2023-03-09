@@ -6,7 +6,7 @@ import searchConfigMukta from "../../configs/searchConfigMukta";
 const EstimateSearch = () => {
     const { t } = useTranslation();
 
-    const configs = searchConfigMukta();
+    // const configs = searchConfigMukta();
     const configModuleName = Digit.Utils.getConfigModuleName()
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
@@ -19,7 +19,7 @@ const EstimateSearch = () => {
         ]
     );
 
-    // const configs = data?.[configModuleName].SearchEstimateConfig?.[0]
+    const configs = data?.[configModuleName].SearchEstimateConfig?.[0]
 
     if (isLoading) return <Loader />
     return (

@@ -16,7 +16,10 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
-    let searchResult = data?.[resultsKey]?.length>0 ? data?.[resultsKey] : []
+    
+    // let searchResult = data?.[resultsKey]?.length>0 ? data?.[resultsKey] : []
+    let searchResult = _.get(data,resultsKey,[])
+    searchResult = searchResult?.length>0 ? searchResult : []
     searchResult = searchResult.reverse();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);

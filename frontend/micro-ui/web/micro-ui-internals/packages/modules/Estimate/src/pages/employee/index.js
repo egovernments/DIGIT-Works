@@ -7,7 +7,7 @@ import CreateEstimate from "./Estimates/CreateEstimate/CreateEstimate";
 import EstimateSearch from "./EstimateSearch";
 import EstimateInbox from "./EstimateInbox";
 import ViewEstimate from "./ViewEstimate";
-
+import EstimateResponse from "./Estimates/CreateEstimate/EstimateResponse";
 const EstimateBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
 
@@ -29,6 +29,12 @@ const EstimateBreadCrumbs = ({ location }) => {
             path: `/${window.contextPath}/employee/estimate/create-estimate`,
             content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_ESTIMATE")}` : t("WORKS_CREATE_ESTIMATE"),
             show: location.pathname.includes("/estimate/create-estimate") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/estimate/response`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("COMMON_RESPONSE")}` : t("COMMON_RESPONSE"),
+            show: location.pathname.includes("/estimate/response") ? true : false,
             isBack: fromScreen && true,
         },
     ];
@@ -84,6 +90,8 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/search-estimate`} component={() => <EstimateSearch {...{ path }} />} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <EstimateInbox {...{ path }} />} />
                     <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/response`} component={() => <EstimateResponse {...{ path }} />} />
+                    
                 </div>
             </React.Fragment>
         </Switch>

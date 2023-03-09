@@ -38,6 +38,7 @@ const CreateEstimate = ({ EstimateSession }) => {
 
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
+
     const cardState = {
 
         "title": " ",
@@ -150,28 +151,22 @@ const CreateEstimate = ({ EstimateSession }) => {
                 const state = {
                     header: t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
                     id: responseData?.estimates[0]?.estimateNumber,
-                    info: t("WORKS_ESTIMATE_ID"),
-                    message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
+                    info: t("ESTIMATE_ESTIMATE_NO"),
+                    // message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
                     links: [
                         {
                             name: t("WORKS_GOTO_ESTIMATE_INBOX"),
-                            redirectUrl: `/${window.contextPath}/employee/works/inbox`,
+                            redirectUrl: `/${window.contextPath}/employee/estimate/inbox`,
                             code: "",
                             svg: "GotoInboxIcon",
                             isVisible: true,
                             type: "inbox",
-                        },
-                        {
-                            name: t("WORKS_CREATE_ESTIMATE"),
-                            redirectUrl: `/${window.contextPath}/employee/estimate/create-estimate`,
-                            code: "",
-                            svg: "CreateEstimateIcon",
-                            isVisible: true,
-                            type: "add",
-                        },
+                        }
                     ],
                 }
-                history.push(`/${window.contextPath}/employee/works/response`, state);
+                
+                history.push(`/${window?.contextPath}/employee/estimate/response`, state);
+                
             },
         });
     }
