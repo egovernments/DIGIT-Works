@@ -51,7 +51,14 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   }, [formState])
 
   const onSubmit = (data) => {
-    
+    //here -> added a custom validator function, if required add in UICustomizations
+    const isAnyError = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck(data) : false 
+    if(isAnyError) {
+      setShowToast(isAnyError)
+      setTimeout(closeToast,3000)
+      return
+    }
+
     if(updatedFields.length >= uiConfig?.minReqFields) {
      // here based on screenType call respective dispatch fn
       dispatch({

@@ -40,5 +40,63 @@ export const UICustomizations = {
             
             return data
         }
-    }
+    },
+    SearchEstimateConfig: {
+        customValidationCheck:(data)=> {
+            
+            //checking both to and from date are present
+            const { fromProposalDate, toProposalDate } = data
+            if ((fromProposalDate === "" && toProposalDate !== "") || (fromProposalDate !== "" && toProposalDate === "") )
+                return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" }
+            
+               
+            return false
+        },
+        preProcess: (data) => {
+            const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromProposalDate);
+            const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toProposalDate);
+            const projectType = data?.params?.projectType?.code;
+            data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromProposalDate, toProposalDate,projectType };
+            //deleting ward data since this is a static field for now
+            delete data?.params?.ward
+            return data;
+        },
+        additionalCustomizations: (row, column, columnConfig, value, t) => {
+            //here we can add multiple conditions
+            //like if a cell is link then we return link
+            //first we can identify which column it belongs to then we can return relevant result
+
+            const getAmount = (item) => {
+                return item.amountDetail.reduce((acc, row) => acc + row.amount, 0);
+            };
+            if (column.label === "ESTIMATE_ESTIMATE_NO") {
+                return (
+                    <span className="link">
+                        <Link
+                            to={`/${window.contextPath
+                                }/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${value}`}
+                        >
+                            {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+                        </Link>
+                    </span>
+                );
+            }
+            if (column.label === "WORKS_ESTIMATED_AMOUNT") {
+                return row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0);
+            }
+            if (column.label === "ES_COMMON_LOCATION") {
+                // let currentProject = searchResult?.filter(result => result?.id === row?.id)[0];
+                // if (currentProject) {
+                //     let locality = currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "";
+                //     let ward = currentProject?.additionalDetails?.ward ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.ward}`) : "";
+                //     let city = currentProject?.address?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`) : "";
+                //     return (
+                //         <p>{`${locality ? locality + ', ' : ''}${ward ? ward + ', ' : ''}${city}`}</p>
+                //     )
+                // }
+                // return <p>{"NA"}</p>
+                return <p>{"Location Data"}</p>
+            }
+        },
+    },
 }
