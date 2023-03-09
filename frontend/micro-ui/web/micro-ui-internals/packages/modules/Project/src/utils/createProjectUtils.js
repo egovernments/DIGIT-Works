@@ -1,16 +1,19 @@
 import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
 
-const createDocumentsPayload = (documents) => {
+const createDocumentsPayload = (documents, otherDocFileName) => {
   let documents_payload_list = [];
-  for(let index in documents) {
-    let payload_modal = {};
-    payload_modal.documentType = "others"; //documents[index][1]['file']['type'];
-    payload_modal.fileStore = documents[index][1]['fileStoreId']['fileStoreId'];
-    payload_modal.documentUid = "";
-    payload_modal.additionalDetails = {
-      fileName : documents[index][1]['file']['name']
+
+  for(let docType of Object.keys(documents)) {
+    for(let document of documents[docType]) {
+      let payload_modal = {};
+      payload_modal.documentType = docType === "others" ? otherDocFileName : docType;
+      payload_modal.fileStore = document[1]['fileStoreId']['fileStoreId'];
+      payload_modal.documentUid = "";
+      payload_modal.additionalDetails = {
+        fileName : document[1]['file']['name']
+      }
+      documents_payload_list.push(payload_modal);
     }
-    documents_payload_list.push(payload_modal);
   }
   return documents_payload_list;
 }
@@ -44,7 +47,14 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
           "department": project_details?.owningDepartment?.code,
           "description":  parentProjectID ? project_details?.projectDesc : basic_details?.projectDesc,
           "referenceID": project_details?.letterRefNoOrReqNo,
-          "documents": createDocumentsPayload(project_details?.uploadedFiles),
+          "documents": createDocumentsPayload(
+            {
+            feasibility_analysis : project_details?.doc_feasibility_analysis, 
+             finalized_worklist : project_details?.doc_finalized_worklist, 
+             others : project_details?.doc_others, 
+             project_proposal : project_details?.doc_project_proposal
+            },
+            project_details?.doc_others_name),
           "natureOfWork" : project_details?.natureOfWork?.code,
           "address": {
             "tenantId": tenantId,

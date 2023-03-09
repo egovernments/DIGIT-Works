@@ -2,16 +2,16 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer,Loader } from "@egovernments/digit-ui-react-components";
 import searchConfig from "../../configs/searchConfig";
-
+import searchConfigMukta from "../../configs/searchConfigMukta";
 const EstimateSearch = () => {
     const { t } = useTranslation();
 
-    // const configs = searchConfig();
-
+    // const configs = searchConfigMukta();
+    const configModuleName = Digit.Utils.getConfigModuleName()
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
         tenant,
-        Digit.Utils.getConfigModuleName(),
+        configModuleName,
         [
             {
                 "name": "SearchEstimateConfig"
@@ -19,7 +19,7 @@ const EstimateSearch = () => {
         ]
     );
 
-    const configs = data?.[Digit.Utils.getConfigModuleName()]?.SearchEstimateConfig?.[0]
+    const configs = data?.[configModuleName].SearchEstimateConfig?.[0]
 
     if (isLoading) return <Loader />
     return (

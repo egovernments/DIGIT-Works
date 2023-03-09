@@ -10,12 +10,26 @@ const WorkflowStatusFilter = ({props,t,populators,formData}) => {
 
   return (
     <>
-        {data?.otherRoleStates?.map(row=>{
+        {data?.userRoleStates?.map(row=>{
             return <CheckBox 
                 onChange={(e) => {
                     const obj = {
                         ...props.value,
                         [e.target.value]:e.target.checked
+                    }
+                    props.onChange(obj)
+                }}
+                value={row.uuid}
+                checked={formData?.[populators.name]?.[row.uuid]}
+                label={t(`${populators.labelPrefix}${row?.state}`)}
+            />
+        })}
+        {data?.otherRoleStates?.map(row => {
+            return <CheckBox
+                onChange={(e) => {
+                    const obj = {
+                        ...props.value,
+                        [e.target.value]: e.target.checked
                     }
                     props.onChange(obj)
                 }}

@@ -8,6 +8,7 @@ import * as privacy from "./privacy";
 import PDFUtil, { downloadReceipt ,downloadPDFFromLink,downloadBill ,getFileUrl} from "./pdf";
 import getFileTypeFromFileStoreURL from "./fileType";
 import preProcessMDMSConfig from "./preProcessMDMSConfig";
+import preProcessMDMSConfigInboxSearch from "./preProcessMDMSConfigInboxSearch";
 import Urls from "../services/atoms/urls";
 import { getLoggedInUserDetails } from "./user";
 
@@ -310,6 +311,7 @@ export default {
   obps,
   pt,
   preProcessMDMSConfig,
+  preProcessMDMSConfigInboxSearch,
   ptAccess,
   NOCAccess,
   mCollectAccess,

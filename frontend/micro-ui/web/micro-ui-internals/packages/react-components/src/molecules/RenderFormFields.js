@@ -202,7 +202,7 @@ const RenderFormFields = (props) => {
                 name={`${populators.name}`}
                 control={control}
                 defaultValue={formData?.[populators.name]}
-                rules={{ required: populators?.isMandatory }}
+                rules={{ required: populators?.isMandatory, ...populators.validation }}
                 render={(props) => {
                   return (
                     <div style={{ display: "grid", gridAutoFlow: "row" }}>
@@ -210,6 +210,8 @@ const RenderFormFields = (props) => {
                         props={props}
                         populators={populators}
                         formData={formData}
+                        inputRef={props.ref}
+                        errors={errors}
                       />
                     </div>
                   );
@@ -296,7 +298,7 @@ const RenderFormFields = (props) => {
           return (
             <LabelFieldPair key={index}>
                 { item.label && (
-                  <CardLabel style={{...props.labelStyle}}>
+                  <CardLabel style={{...props.labelStyle,marginBottom:"0.4rem"}}>
                     {t(item.label)}{ item?.isMandatory ? " * " : null }
                   </CardLabel>) 
                 }

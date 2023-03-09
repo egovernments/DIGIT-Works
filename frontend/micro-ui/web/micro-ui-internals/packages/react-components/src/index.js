@@ -68,10 +68,12 @@ import SubmitBar from "./atoms/SubmitBar";
 import StandaloneSearchBar from "./atoms/StandaloneSearchBar";
 import ULBHomeCard from "./atoms/ULBHomeCard";
 import ViewDetailsCard from "./atoms/ViewDetailsCard";
+
 import {
   AnnouncementIcon,
   ArrowDown,
   ArrowLeft,
+  ArrowLeftWhite,
   ArrowRightInbox,
   Calender,
   CaseIcon,
@@ -180,6 +182,8 @@ import {
   CreateEstimateIcon,
   GotoInboxIcon,
   AddFilled,
+  AddFileFilled,
+  LocateIcon,
 
   /* Works Management  */
 
@@ -345,6 +349,8 @@ export {
   // Icons
   GetApp,
   ArrowLeft,
+  ArrowLeftWhite,
+  AddFileFilled,
   HomeIcon,
   LanguageIcon,
   LogoutIcon,
@@ -502,6 +508,7 @@ export {
   FirenocIcon,
   CreateEstimateIcon,
   GotoInboxIcon,
+  LocateIcon,
 
   /* Works Management  */
 

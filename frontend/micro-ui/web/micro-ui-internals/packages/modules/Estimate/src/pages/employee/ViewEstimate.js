@@ -8,7 +8,6 @@ const ViewEstimate = (props) => {
     const { t } = useTranslation()
     const { tenantId, estimateNumber } = Digit.Hooks.useQueryParams();
     
-    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
     const [cardState,setCardState] = useState({})
     const [activeLink, setActiveLink] = useState("Estimate_Details");
     const configNavItems = [
@@ -75,7 +74,7 @@ const ViewEstimate = (props) => {
             <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
                 {
                     (activeLink === "Project_Details") && (
-                        <ViewProject fromUrl={false} tenantId={tenantId} projectNumber={cardState?.projectId} />
+                        <ViewProject fromUrl={false} tenantId={tenantId} projectNumber={project?.projectNumber} />
                     )
                 }
                 {
