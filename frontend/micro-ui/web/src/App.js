@@ -62,9 +62,7 @@ const initDigitUI = () => {
   initMastersComponents();
   initProjectComponents();
 
-  const moduleReducers = (initData) => ({
-    initData,
-  });
+ 
   window.Digit.Customizations = {
     PGR: {},
     TL: TLCustomisations,
@@ -77,7 +75,9 @@ const initDigitUI = () => {
 initLibraries().then(() => {
   initDigitUI();
 });
-
+const moduleReducers = (initData) => ({
+  initData,
+});
 function App() {
   window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
   const stateCode =
