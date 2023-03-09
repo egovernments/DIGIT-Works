@@ -280,7 +280,8 @@ const CreateEstimate = ({ EstimateSession }) => {
             showMultipleCardsWithoutNavs={false}
             showMultipleCardsInNavs={true}
             horizontalNavConfig={configNavItems}
-            showNavs={true}  
+            showFormInNav={true}  
+            showNavs={true}
         />
 
 

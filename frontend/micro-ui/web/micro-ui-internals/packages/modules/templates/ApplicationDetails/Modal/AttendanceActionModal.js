@@ -32,9 +32,9 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
   );
 
   const empData =  employeeData?.Employees[0]
-  const empDepartment = empData?.assignments?.[0].department
-  const empDesignation = empData?.assignments?.[0].designation
-  const empName = empData?.user?.name
+  const empDepartment = empData?.assignments?.[0]?.department ? t(`COMMON_MASTERS_DEPARTMENT_${empData?.assignments?.[0]?.department}`) : t('NA')
+  const empDesignation = empData?.assignments?.[0]?.designation ? t(`COMMON_MASTERS_DESIGNATION_${empData?.assignments?.[0]?.designation}`) : t('NA')
+  const empName = empData?.user?.name || t('NA')
 
   useEffect(() => {
     const selectedAction = action?.action

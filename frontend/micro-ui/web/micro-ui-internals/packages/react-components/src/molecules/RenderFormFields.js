@@ -202,7 +202,7 @@ const RenderFormFields = (props) => {
                 name={`${populators.name}`}
                 control={control}
                 defaultValue={formData?.[populators.name]}
-                rules={{ required: populators?.isMandatory }}
+                rules={{ required: populators?.isMandatory, ...populators.validation }}
                 render={(props) => {
                   return (
                     <div style={{ display: "grid", gridAutoFlow: "row" }}>
@@ -210,6 +210,8 @@ const RenderFormFields = (props) => {
                         props={props}
                         populators={populators}
                         formData={formData}
+                        inputRef={props.ref}
+                        errors={errors}
                       />
                     </div>
                   );
