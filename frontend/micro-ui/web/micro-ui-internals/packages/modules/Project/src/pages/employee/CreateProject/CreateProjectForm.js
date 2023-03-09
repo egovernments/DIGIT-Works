@@ -98,6 +98,10 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
           {
             key : "noSubProject_endDate",
             value : [!isEndDateValid ? (() => isEndDateValid) : (()=>{})]
+          },
+          {
+            key : "basicDetails_dateOfProposal",
+            value : [new Date().toISOString().split("T")[0]]
           }
         ]
       }),
