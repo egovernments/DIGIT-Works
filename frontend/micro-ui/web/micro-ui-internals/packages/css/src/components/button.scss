@@ -3,13 +3,13 @@
   height: 40px;
   background: theme(colors.white);
   border: 1px solid theme(colors.primary.main);
-  padding: 6px;
+  padding: 12px;
   color: theme(colors.primary.main);
   display: flex;
   align-items: center;
   cursor: pointer;
   svg {
-    margin: 0 15px;
+    margin: 0 10px;
   }
 }
 .jk-digit-primary-btn {
