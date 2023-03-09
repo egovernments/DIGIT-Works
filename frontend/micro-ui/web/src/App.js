@@ -9,15 +9,14 @@ import { initContractsComponents } from "@egovernments/digit-ui-module-contracts
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
-import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { initProjectComponents } from "@egovernments/digit-ui-module-project";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
-import {initMuktaCustomisations} from "@egovernments/digit-ui-customisation-mukta";
+import { initMuktaCustomisations } from "@egovernments/digit-ui-customisation-mukta";
+import { TLCustomisations } from "./Customisations/tl/TLCustomisation";
 
+import { UICustomizations } from "./Customisations/UICustomizations";
 
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
-
-initLibraries();
 
 const enabledModules = [
   // "PGR",
@@ -46,7 +45,7 @@ const enabledModules = [
   "Masters",
   "Estimate",
   "Project",
-  "Mukta"
+  "Mukta",
 ];
 window.Digit.ComponentRegistryService.setupRegistry({});
 
@@ -64,7 +63,11 @@ initProjectComponents();
 const moduleReducers = (initData) => ({
   initData,
 });
-
+window.Digit.Customizations = {
+  PGR: {},
+  TL: TLCustomisations,
+  commonUiConfig: UICustomizations,
+};
 //keep this at last to compile all Mukta specific changes at last
 initMuktaCustomisations();
 

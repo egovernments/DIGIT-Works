@@ -35,7 +35,7 @@ const searchConfigMUKTA = {
                         primaryLabel: 'ES_COMMON_SEARCH',
                         secondaryLabel: 'ES_COMMON_CLEAR_SEARCH',
                         minReqFields: 1,
-                        showFormInstruction : true,
+                        showFormInstruction:"ESTIMATE_SEARCH_HINT",
                         defaultValues : {
                             projectNumber: "",
                             subProjectId: "",
