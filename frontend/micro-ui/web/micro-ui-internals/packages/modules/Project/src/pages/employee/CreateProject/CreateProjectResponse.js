@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Banner, Card, LinkLabel, AddFileFilled, ArrowLeftWhite} from "@egovernments/digit-ui-react-components";
+import { Banner, Card, LinkLabel, AddFileFilled, ArrowLeftWhite, ActionBar, SubmitBar} from "@egovernments/digit-ui-react-components";
 
 const CreateProjectResponse = () => {
     const {t} = useTranslation();
@@ -18,6 +18,10 @@ const CreateProjectResponse = () => {
             }
             case "create-estimate" : {
                 history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${queryStrings?.tenantId}&projectNumber=${projectIDsList?.[0]}`);
+                break;
+            }
+            case "home-screen" : {
+                history.push(`/${window.contextPath}/employee`);
                 break;
             }
         }
@@ -40,6 +44,11 @@ const CreateProjectResponse = () => {
                     <AddFileFilled style={{marginRight: "8px", marginTop : "3px"}}/>{t("COMMON_CREATE_ESTIMATE")}
                 </LinkLabel>  }    
             </div>
+            <ActionBar>
+                <Link to={`/${window.contextPath}/employee`}>
+                    <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+                </Link>
+            </ActionBar>
         </Card>
     )
 }
