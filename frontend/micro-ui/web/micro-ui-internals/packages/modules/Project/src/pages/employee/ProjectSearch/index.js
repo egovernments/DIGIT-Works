@@ -2,10 +2,8 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
-import searchConfigMUKTA from "../../../configs/searchConfigMUKTA";
 
 const ProjectSearch = () => {
-  let renderType = "mdms";  //mdms, local
   const { t } = useTranslation();
   const history = useHistory();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -35,12 +33,8 @@ const ProjectSearch = () => {
     },
   ]);
 
-  let configs = {};
-  if(renderType === "mdms") {
-    configs = data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
-  }else{
-    configs = searchConfigMUKTA?.SearchProjectConfig?.[0];
-  }
+    
+  let configs = data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
 
   configs = useMemo(
     () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.search.uiConfig.fields",{

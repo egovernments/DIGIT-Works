@@ -1,11 +1,9 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import {createProjectConfigMUKTA} from "../../../configs/createProjectConfigMUKTA";
 import CreateProjectForm from "./CreateProjectForm";
 
 const CreateProject = () => {
-    let renderType = "mdms"; //mdms, local
     const {t} = useTranslation();
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -22,7 +20,7 @@ const CreateProject = () => {
       return dateString;
     } 
 
-    const { isLoading, data} = Digit.Hooks.useCustomMDMS( //change to data
+    const { isLoading, data : configs} = Digit.Hooks.useCustomMDMS( //change to data
       stateTenant,
       Digit.Utils.getConfigModuleName(),
       [
@@ -36,13 +34,6 @@ const CreateProject = () => {
         },
       }
     );
-
-    let configs = {};
-    if(renderType === "mdms") {
-      configs = data;
-    }else if(renderType === "local") {
-      configs = createProjectConfigMUKTA?.CreateProjectConfig?.[0];
-    }
 
     useEffect(()=>{
       if(configs) {
