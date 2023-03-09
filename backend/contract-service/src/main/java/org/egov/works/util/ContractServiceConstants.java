@@ -27,5 +27,8 @@ public class ContractServiceConstants {
     public static final String REGISTER_ACTIVE_CODE_CONSTANT = "$.[?(@.active==true && @.code =='";
     public static final String CREATE_REGISTER_CONSTANT ="' && @.createRegister==true)]";
     public static final String PROJECT_NAME_CONSTANT = "projectName";
+    public static final String WARD_CONSTANT = "ward";
+    public static final String PROJECT_TYPE_CONSTANT = "projectType";
+    public static final String PROJECT_ID_CONSTANT = "projectId";
     public static final String ORG_NAME_CONSTANT = "orgName";
 }

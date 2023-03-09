@@ -481,6 +481,24 @@ public class ContractServiceValidator {
             errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_NAME", "Project Name is mandatory");
         }
 
+        Optional<String> projectType = commonUtil.findValue(additionalDetails, PROJECT_TYPE_CONSTANT);
+        if (!projectType.isPresent()) {
+            log.error("Project Type is mandatory");
+            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_TYPE", "Project Type is mandatory");
+        }
+
+        Optional<String> projectId = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT);
+        if (!projectId.isPresent()) {
+            log.error("Project Id is mandatory");
+            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_ID", "Project ID is mandatory");
+        }
+
+        Optional<String> ward = commonUtil.findValue(additionalDetails, WARD_CONSTANT);
+        if (!ward.isPresent()) {
+            log.error("Ward is mandatory");
+            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.WARD", "Ward is mandatory");
+        }
+
         Optional<String> orgName = commonUtil.findValue(additionalDetails, ORG_NAME_CONSTANT);
         if (!orgName.isPresent()) {
             log.error("Org Name is mandatory");
