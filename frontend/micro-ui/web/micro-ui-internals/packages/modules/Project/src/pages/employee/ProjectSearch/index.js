@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import searchConfigMUKTA from "../../../configs/searchConfigMUKTA";
 
 const ProjectSearch = () => {
-  let renderType = "local";  //mdms, local
+  let renderType = "mdms";  //mdms, local
   const { t } = useTranslation();
   const history = useHistory();
   const tenantId = Digit.ULBService.getCurrentTenantId();

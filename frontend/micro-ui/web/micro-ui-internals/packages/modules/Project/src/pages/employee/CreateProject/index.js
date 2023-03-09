@@ -5,7 +5,7 @@ import {createProjectConfigMUKTA} from "../../../configs/createProjectConfigMUKT
 import CreateProjectForm from "./CreateProjectForm";
 
 const CreateProject = () => {
-    let renderType = "local"; //mdms, local
+    let renderType = "mdms"; //mdms, local
     const {t} = useTranslation();
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
