@@ -8,17 +8,17 @@ const EstimateInbox = () => {
 
     //fetch this config from mdms and pass it to the preProcess fn
     // let configs = inboxConfigMukta(t);
-
+    const moduleName = Digit.Utils.getConfigModuleName()
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant,
-        "commonMuktaUiConfig",
+        moduleName,
         [
             {
                 name: "EstimateInboxConfig",
             },
         ]);
         
-    const configs = data?.commonMuktaUiConfig?.EstimateInboxConfig?.[0]
+    const configs = data?.[moduleName]?.EstimateInboxConfig?.[0]
 
     const updatedConfig = useMemo(
         () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs,"sections.search.uiConfig.fields",{}),
