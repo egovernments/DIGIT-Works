@@ -24,7 +24,7 @@ const searchConfigMukta = () => {
                     primaryLabel: 'Search',
                     secondaryLabel: 'Clear Search',
                     minReqFields: 1,
-                    showFormInstruction:true,
+                    showFormInstruction:"ESTIMATE_SEARCH_HINT",
                     defaultValues: {
                         ward: "",
                         projectType: "",

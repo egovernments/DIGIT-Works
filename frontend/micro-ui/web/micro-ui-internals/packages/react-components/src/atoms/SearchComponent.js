@@ -118,7 +118,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
         {header && renderHeader()}
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
           <div>
-            {uiConfig?.showFormInstruction && <p className="search-instruction-header">{t("PROJECT_SELECT_ONE_PARAM_TO_SEARCH")}</p>}
+            {uiConfig?.showFormInstruction && <p className="search-instruction-header">{t(uiConfig?.showFormInstruction)}</p>}
             <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
               <RenderFormFields 
                 fields={uiConfig?.fields} 
