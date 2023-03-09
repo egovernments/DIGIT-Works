@@ -61,7 +61,7 @@ export const UICustomizations = {
             delete data?.params?.ward
             return data;
         },
-        additionalCustomizations: (row, column, columnConfig, value, t) => {
+        additionalCustomizations: (row, column, columnConfig, value, t, searchResult, headerLocale) => {
             //here we can add multiple conditions
             //like if a cell is link then we return link
             //first we can identify which column it belongs to then we can return relevant result
@@ -82,20 +82,20 @@ export const UICustomizations = {
                 );
             }
             if (column.label === "WORKS_ESTIMATED_AMOUNT") {
-                return row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0);
+                return `₹ ${row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0)}`;
             }
             if (column.label === "ES_COMMON_LOCATION") {
-                // let currentProject = searchResult?.filter(result => result?.id === row?.id)[0];
-                // if (currentProject) {
-                //     let locality = currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "";
-                //     let ward = currentProject?.additionalDetails?.ward ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.ward}`) : "";
-                //     let city = currentProject?.address?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`) : "";
-                //     return (
-                //         <p>{`${locality ? locality + ', ' : ''}${ward ? ward + ', ' : ''}${city}`}</p>
-                //     )
-                // }
-                // return <p>{"NA"}</p>
-                return <p>{"Location Data"}</p>
+                const location = searchResult?.[0].additionalDetails?.location
+                if (location) {
+                    let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
+                    let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
+                    let city = location?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(location?.city)}`) : "";
+                    return (
+                        <p>{`${locality ? locality + ', ' : ''}${ward ? ward + ', ' : ''}${city}`}</p>
+                    )
+                }
+                return <p>{"NA"}</p>
+               
             }
         },
     },

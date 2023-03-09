@@ -68,7 +68,7 @@ const searchConfigMukta = () => {
                             }
                         },
                         {
-                            "label": "WORKS_PROJECT_NAME",
+                            "label": "ES_COMMON_PROJECT_NAME",
                             "type": "text",
                             "isMandatory": false,
                             "disable": false,
@@ -94,7 +94,7 @@ const searchConfigMukta = () => {
                             populators: {
                                 name: "estimateNumber",
                                 error: `ESTIMATE_PATTERN_ERR_MSG`,
-                                validation: { pattern: /^[a-z0-9\/-]*$/i, minlength: 2 }
+                                validation: { pattern: "ES\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+", minlength: 2 }
                             },
                         },
                         {

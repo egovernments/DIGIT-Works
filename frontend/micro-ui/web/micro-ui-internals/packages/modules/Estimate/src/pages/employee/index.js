@@ -7,7 +7,7 @@ import CreateEstimate from "./Estimates/CreateEstimate/CreateEstimate";
 import EstimateSearch from "./EstimateSearch";
 import EstimateInbox from "./EstimateInbox";
 import ViewEstimate from "./ViewEstimate";
-
+import EstimateResponse from "./Estimates/CreateEstimate/EstimateResponse";
 const EstimateBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
 
@@ -84,6 +84,8 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/search-estimate`} component={() => <EstimateSearch {...{ path }} />} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <EstimateInbox {...{ path }} />} />
                     <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/response`} component={() => <EstimateResponse {...{ path }} />} />
+                    
                 </div>
             </React.Fragment>
         </Switch>

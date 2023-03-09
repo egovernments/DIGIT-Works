@@ -38,6 +38,7 @@ const CreateEstimate = ({ EstimateSession }) => {
 
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
+    
     const cardState = {
 
         "title": " ",
@@ -155,7 +156,7 @@ const CreateEstimate = ({ EstimateSession }) => {
                     links: [
                         {
                             name: t("WORKS_GOTO_ESTIMATE_INBOX"),
-                            redirectUrl: `/${window.contextPath}/employee/works/inbox`,
+                            redirectUrl: `/${window.contextPath}/employee/estimate/inbox`,
                             code: "",
                             svg: "GotoInboxIcon",
                             isVisible: true,
@@ -171,7 +172,9 @@ const CreateEstimate = ({ EstimateSession }) => {
                         },
                     ],
                 }
-                history.push(`/${window.contextPath}/employee/works/response`, state);
+                
+                history.push(`/${window?.contextPath}/employee/estimate/response`, state);
+                
             },
         });
     }
