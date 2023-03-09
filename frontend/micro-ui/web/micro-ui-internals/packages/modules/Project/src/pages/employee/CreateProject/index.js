@@ -1,5 +1,5 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CreateProjectForm from "./CreateProjectForm";
 
@@ -8,6 +8,7 @@ const CreateProject = () => {
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
+    const [isFormReady, setIsFormReady] = useState(false);
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
 
@@ -35,6 +36,12 @@ const CreateProject = () => {
       }
     );
 
+    const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", 
+      configs?.defaultValues
+    );
+
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = projectSession;
+
     useEffect(()=>{
       if(configs) {
         if(Object.keys(configs?.defaultValues).includes("basicDetails_dateOfProposal")) {
@@ -43,20 +50,18 @@ const CreateProject = () => {
         if(Object.keys(configs?.defaultValues).includes("noSubProject_ulb")) {
           configs.defaultValues.noSubProject_ulb = ULBOptions[0];
         }
+        setSessionFormData(configs?.defaultValues);
+        setIsFormReady(true);
       }
-    },[configs]) 
-
-    const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", 
-      configs?.defaultValues
-    );
-
-    const [sessionFormData, setSessionFormData, clearSessionFormData] = projectSession;
+    },[configs]);
 
     if(isLoading) return <Loader />
     return (
       <React.Fragment>
-        <CreateProjectForm t={t} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} createProjectConfig={configs}></CreateProjectForm>
-      </React.Fragment>
+        {isFormReady && 
+          <CreateProjectForm t={t} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} createProjectConfig={configs}></CreateProjectForm>
+        }
+        </React.Fragment>
     )
 }
 
