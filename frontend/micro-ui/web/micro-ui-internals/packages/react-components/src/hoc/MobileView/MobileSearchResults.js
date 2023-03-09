@@ -23,9 +23,7 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
     //         searchResult = combinedResponse
     //     } 
     // }
-  
-    //const {state,dispatch} = useContext(MobileInboxContext);
-
+    
     const propsMobileInboxCards = useMemo(() => {
       if (isLoading) {
         return [];
@@ -38,7 +36,6 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
             }
           return mapping;
       })
-      //console.log("cardData :", cardData);
       return cardData;
     }, [data]);
 

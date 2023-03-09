@@ -243,11 +243,13 @@ export const UICustomizations = {
             return `/${window.contextPath}/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&projectNumber=${row[key]}`
         },
         MobileDetailsOnClick : (row, t) =>{
+            let link;
             Object.keys(row).map(key => {
-                if(key === t("WORKS_PRJ_SUB_ID") || key === t("WORKS_PARENT_PROJECT_ID"))
-                   return `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${row[key]}`
+                if(key === t("WORKS_PRJ_SUB_ID"))
+                   link = `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&projectNumber=${row[key]}`
             })
-        },
+            return link
+          },
         additionalCustomizationForMobile : (value, key, t) => {
             if(key === t("WORKS_PRJ_SUB_ID") || key === t("WORKS_PARENT_PROJECT_ID"))
                 return `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${value}`

@@ -213,23 +213,6 @@ export const UICustomizations = {
       }
     },
     },
-//     ProjectInboxConfig: {
-//         preProcess: (data) => {
-//             const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom)
-//             const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo)
-//             const projectType = "MP-CWS"
-//             data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors:true,createdFrom,createdTo }
-//             let name = data.body.Projects[0]?.name
-//             name = name?.trim()
-//             delete data.body.Projects[0]?.createdFrom
-//             delete data.body.Projects[0]?.createdTo
-//             delete data.body.Projects[0]?.department
-//             delete data.body.Projects[0]?.createdBy
-//             delete data.body.Projects[0]?.status
-//             data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(), projectType,name}
-
-//   },
-// },
   SearchEstimateConfig: {
     preProcess: (data) => {
       const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromProposalDate);
@@ -373,11 +356,13 @@ export const UICustomizations = {
        return `/${window.contextPath}/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${row[key]}`
    },
     MobileDetailsOnClick : (row, t) =>{
+      let link;
       Object.keys(row).map(key => {
-          if(key === t("WORKS_PRJ_SUB_ID") || key === t("WORKS_PARENT_PROJECT_ID"))
-          return `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${row[key]}`
+          if(key === t("WORKS_PRJ_SUB_ID"))
+             link = `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&projectNumber=${row[key]}`
       })
-  },
+      return link
+    },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;

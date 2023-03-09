@@ -4,9 +4,9 @@ import { Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-reac
 import inboxConfig from "../../../configs/InboxConfig";
 
 const ProjectSearchAndInboxComponent = () => {
-    const { t } = useTranslation();
+   const { t } = useTranslation();
 
-    const configs = inboxConfig();
+    //const configs = inboxConfig();
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
         tenant,
@@ -16,8 +16,9 @@ const ProjectSearchAndInboxComponent = () => {
                 "name": "InboxProjectConfig"
             }
         ]
-    )
-    // const configs = data?.commonUiConfig?.projectInboxConfig?.[0]
+    );
+   
+    const configs = data?.[Digit.Utils.getConfigModuleName()]?.InboxProjectConfig?.[0]
 
     const projectSession = Digit.Hooks.useSessionStorage("SEARCH_AND_FILTER_PROJECT", 
         configs?.defaultValues
