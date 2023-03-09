@@ -64,7 +64,6 @@ const setupLibraries = (Library, service, method) => {
 
 /* To Overide any existing config/middlewares  we need to use similar method */
 const updateCustomConfigs = () => {
-  console.log("TEMP FILE")
   setupLibraries("Customizations", "commonUiConfig", { ...window?.Digit?.Customizations?.commonUiConfig, ...UICustomizations });
 };
 
