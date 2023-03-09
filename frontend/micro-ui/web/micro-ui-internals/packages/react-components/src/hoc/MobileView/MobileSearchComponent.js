@@ -9,8 +9,7 @@ import RenderFormFields from "../../molecules/RenderFormFields";
 import Toast from "../../atoms/Toast"; 
 import _ from "lodash";
 
-//const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data, onClose, sessionFormData, setSessionFormData, clearSessionFormData }) => {
-const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data, onClose}) => {
+const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data, onClose, sessionFormData, setSessionFormData, clearSessionFormData, defaultValues }) => {
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
   const [showToast,setShowToast] = useState(null)
@@ -35,7 +34,7 @@ const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", f
     setError,
     clearErrors,
   } = useForm({
-    defaultValues: uiConfig?.defaultValues,
+    defaultValues: defaultValues,
   });
   const formData = watch();
   const checkKeyDown = (e) => {
@@ -50,11 +49,11 @@ const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", f
   }, [formState])
 
 
-  // useEffect(() => {
-  //   if (!_.isEqual(sessionFormData, formData)) {
-  //     setSessionFormData({ ...sessionFormData, ...formData });
-  // }
-  // }, [formData]);
+  useEffect(() => {
+    if (!_.isEqual(sessionFormData, formData)) {
+      setSessionFormData({ ...sessionFormData, ...formData });
+  }
+  }, [formData]);
 
   const onSubmit = (data) => {
     onClose?.()

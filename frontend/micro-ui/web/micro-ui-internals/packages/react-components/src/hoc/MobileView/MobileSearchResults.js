@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next';
-import DetailsCard from "../../molecules/DetailsCard";
+import { Details } from "../../molecules/DetailsCard";
+import { Link } from "react-router-dom";
 import NoResultsFound from "../../atoms/NoResultsFound";
 import { Loader } from "../../atoms/Loader";
 import _ from "lodash";
@@ -33,40 +34,62 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
           let mapping = {};
           let cols = config?.columns;
           for(let columnIndex = 0; columnIndex<cols?.length; columnIndex++) {
-            if (cols[columnIndex].additionalCustomization){
-              let col=null,value =row?.[cols[columnIndex]?.jsonPath];
-              mapping[t(cols[columnIndex]?.label)] = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row,cols[columnIndex],col,value,t)
-            }
-            else {
               mapping[t(cols[columnIndex]?.label)] = t(row?.[cols[columnIndex]?.jsonPath]) || t("ES_COMMON_NA")
             }
-          }
           return mapping;
       })
       //console.log("cardData :", cardData);
       return cardData;
     }, [data]);
 
-    // function CardLink(value){
-    //   return Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizationForMobile(value)
-    // }
-
-   function RenderResult() {
+  function RenderResult() {
     if (searchResult?.length === 0) {
        return ( <NoResultsFound/> );
-   } 
-    return (
-    <DetailsCard
-      {...{
-        data: propsMobileInboxCards,
-        showActionBar : false,
-        // linkPrefix: `/${window.contextPath}/employee/project/search-project`,
-        //serviceRequestIdKey: t("WORKS_PRJ_SUB_ID"),
-    }}
-   />
-   );
-}
-    //console.log("DATA : ", propsMobileInboxCards);
+    } 
+    return <div>
+      {propsMobileInboxCards.map((row) => {
+        return <Link to={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.MobileDetailsOnClick(row, t)}>
+        <div className="details-container">
+          {Object.keys(row).map(key => {
+            let toRender;
+              if(Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizationForMobile(row[key], key, t)){
+                toRender = (
+                  row[key] === t("ES_COMMON_NA")? 
+                  (
+                    <div className="detail">
+                      <span className="label">
+                        <h2>{key}</h2>
+                      </span>
+                      <span className="name">{String(t("ES_COMMON_NA"))}</span>
+                    </div>
+
+                  ) : (
+                    <div className="detail">
+                     <span className="label">
+                       <h2>{key}</h2>
+                     </span>
+                     <span className="name">
+                       <span className="link">
+                        <Link to={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.getLink(row,key)}>{String(row[key]? row[key] : t("ES_COMMON_NA"))}</Link>
+                       </span>
+                     </span>
+                     </div>
+                  )
+                )
+              }
+              else
+              {
+                toRender = (
+                <Details label={key} name={row[key]} onClick={() =>{}} row={row} />
+                )
+              }
+              return toRender
+            })}
+        </div></Link>
+      })}
+     </div>
+    }
+
     if (isLoading) 
     {   return <Loader /> }
     return (

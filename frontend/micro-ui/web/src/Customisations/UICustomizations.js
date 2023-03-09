@@ -82,10 +82,6 @@ export const UICustomizations = {
                 return (data[keys.start] && data[keys.end]) ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true
             }
         },
-        additionalCustomizationForMobile : (value, column) => {
-            if(column.label ==="WORKS_PRJ_SUB_ID" || column.label === "WORKS_PARENT_PROJECT_ID")
-                return `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${value}`
-        }
     },
     SearchEstimateConfig: {
         preProcess: (data) => {
@@ -242,6 +238,19 @@ export const UICustomizations = {
                 </span>
                 :  t("ES_COMMON_NA")
             }
+        },
+        getLink: (row,key) => {
+            return `/${window.contextPath}/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&projectNumber=${row[key]}`
+        },
+        MobileDetailsOnClick : (row, t) =>{
+            Object.keys(row).map(key => {
+                if(key === t("WORKS_PRJ_SUB_ID") || key === t("WORKS_PARENT_PROJECT_ID"))
+                   return `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${row[key]}`
+            })
+        },
+        additionalCustomizationForMobile : (value, key, t) => {
+            if(key === t("WORKS_PRJ_SUB_ID") || key === t("WORKS_PARENT_PROJECT_ID"))
+                return `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${value}`
         },
         additionalValidations: (type, data, keys) => {
             if(type === 'date') {

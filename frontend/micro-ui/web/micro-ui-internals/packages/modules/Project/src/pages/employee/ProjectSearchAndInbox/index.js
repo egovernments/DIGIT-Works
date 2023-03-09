@@ -19,21 +19,11 @@ const ProjectSearchAndInboxComponent = () => {
     )
     // const configs = data?.commonUiConfig?.projectInboxConfig?.[0]
 
-    // const projectSession = Digit.Hooks.useSessionStorage("INBOX_CREATE", 
-    // {
-    //   projectNumber : "123",
-    //   department : {name : "Street Lights", code : "DEPT_1"},
-    //   projectType : {id : 1,
-    //   name : "Mini Park",
-    //   code : "MP-CWS",
-    //   group : "Capital Works",
-    //   beneficiary : "Slum",
-    //   active : true,
-    //   projectSubType : ["MP001", "MP002"]
-    // }
-    // });
+    const projectSession = Digit.Hooks.useSessionStorage("SEARCH_AND_FILTER_PROJECT", 
+        configs?.defaultValues
+    );
 
-    // const [sessionFormData, setSessionFormData, clearSessionFormData] = projectSession;
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = projectSession;
 
     if(isLoading) return <Loader />
 
@@ -41,7 +31,7 @@ const ProjectSearchAndInboxComponent = () => {
            <React.Fragment>
               <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}</Header>
               <div className="inbox-search-wrapper">
-                 <InboxSearchComposer configs={configs} isInbox={true}></InboxSearchComposer>
+                 <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={configs}></InboxSearchComposer>
               </div>
           </React.Fragment>
       );

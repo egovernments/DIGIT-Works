@@ -12,10 +12,8 @@ import MobileSearchResults from "./MobileView/MobileSearchResults";
 import MediaQuery from 'react-responsive';
 import _ from "lodash";
 
+const InboxSearchComposer = ({sessionFormData, setSessionFormData, clearSessionFormData, configs}) => {
 
-const InboxSearchComposer = (props) => {
-    
-    const { configs } = props;
     const [enable, setEnable] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialInboxState);
 
@@ -215,9 +213,10 @@ const InboxSearchComposer = (props) => {
                     fullConfig={configs}
                     data={data}
                     onClose={handlePopupClose}
-                    // sessionFormData={props.sessionFormData}
-                    // setSessionFormData={props.setSessionFormData}
-                    // clearSessionFormData={props.clearSessionFormData}
+                    sessionFormData={sessionFormData}
+                    setSessionFormData={setSessionFormData}
+                    clearSessionFormData={clearSessionFormData}
+                    defaultValues={sessionFormData}
                     />
                 </div>
               )}
@@ -235,9 +234,10 @@ const InboxSearchComposer = (props) => {
                     fullConfig={configs}
                     data={data}
                     onClose={handlePopupClose}
-                    // sessionFormData={props.sessionFormData}
-                    // setSessionFormData={props.setSessionFormData}
-                    // clearSessionFormData={props.clearSessionFormData}
+                    sessionFormData={sessionFormData}
+                    setSessionFormData={setSessionFormData}
+                    clearSessionFormData={clearSessionFormData}
+                    defaultValues={sessionFormData}
                     />
                 </div>
               )}
