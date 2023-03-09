@@ -37,7 +37,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
       const stringified = JSON.stringify(obj);
       return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
     } 
-    return /(.*?)(pdf|docx|jpeg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
+    return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
   }
 
   // if(isLoading) return <Loader />
