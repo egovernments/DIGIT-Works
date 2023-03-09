@@ -23,6 +23,7 @@ import CustomDropdown from "../molecules/CustomDropdown";
 import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
 import HorizontalNav  from "../atoms/HorizontalNav"
 import Toast from "../atoms/Toast";
+import UploadFileComposer from "./UploadFileComposer";
 
 const wrapperStyles = {
   // "display":"flex",
@@ -159,6 +160,7 @@ export const FormComposer = (props) => {
                   style={type === "date" ? { paddingRight: "3px" } : ""}
                   maxlength={populators?.validation?.maxlength}
                   minlength={populators?.validation?.minlength}
+                  customIcon={populators?.customIcon}
                 />
               )}
               name={populators.name}
@@ -175,7 +177,7 @@ export const FormComposer = (props) => {
             defaultValue={formData?.[populators.name]}
             render={({ onChange, ref, value }) => (
               <TextArea
-                className="field"
+                className="field fullWidth"
                 value={formData?.[populators.name]}
                 type={type}
                 name={populators.name}
@@ -183,6 +185,7 @@ export const FormComposer = (props) => {
                 inputRef={ref}
                 disable={disable}
                 errorStyle={errors?.[populators.name]}
+                style={{marginTop: 0}}
               />
             )}
             name={populators.name}
@@ -317,7 +320,21 @@ export const FormComposer = (props) => {
             control={control}
           />
         );
-
+      case "documentUpload":
+        return (
+          <UploadFileComposer
+            module={config?.module}
+            config={config}
+            Controller={Controller}
+            register={register}
+            formData={formData}
+            errors={errors}
+            control={control}
+            customClass={populators?.customClass}
+            customErrorMsg={populators?.error}
+            localePrefix={populators?.localePrefix}
+          />
+        );
       case "form":
         return (
           <form>
@@ -623,13 +640,13 @@ export const FormComposer = (props) => {
       {props?.showMultipleCardsWithoutNavs ? (
           props?.config?.map((section, index, array) => {
             return !section.navLink && (
-              <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
+              <Card style={getCardStyles()} noCardStyle={props.noCardStyle} className={props.cardClassName}>
                 {renderFormFields(props, section, index, array)}
               </Card>
             )
           })
         ) :  (         
-          <Card style={getCardStyles()} noCardStyle={props.noCardStyle}>
+          <Card style={getCardStyles()} noCardStyle={props.noCardStyle} className={props.cardClassName}>
             {
               props?.config?.map((section, index, array) => {
                 return !section.navLink && (
@@ -642,8 +659,8 @@ export const FormComposer = (props) => {
           </Card>
           )
       }
-      { props?.showNavs && props.horizontalNavConfig && (
-           <HorizontalNav configNavItems={props.horizontalNavConfig?props.horizontalNavConfig:null} showNav={true} activeLink={activeLink} setActiveLink={setActiveLink}>
+      { props?.showFormInNav && props.horizontalNavConfig && (
+           <HorizontalNav configNavItems={props.horizontalNavConfig?props.horizontalNavConfig:null} showNav={props?.showNavs} activeLink={activeLink} setActiveLink={setActiveLink}>
            {props?.showMultipleCardsInNavs ? (
              props?.config?.map((section, index, array) => {
                return section.navLink ? (
@@ -678,7 +695,7 @@ export const FormComposer = (props) => {
           {props.onSkip && props.showSkip && <LinkButton style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)} onClick={props.onSkip} />}
         </ActionBar>
       )}
-      {showErrorToast && <Toast error={true} label={t("WORKS_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+      {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
     </form>
   );
 };

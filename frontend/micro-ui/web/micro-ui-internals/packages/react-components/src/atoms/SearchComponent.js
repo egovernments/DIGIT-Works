@@ -117,23 +117,26 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
       <div className={'search-wrapper'}>
         {header && renderHeader()}
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
-          <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`} style={{gap:"2rem"}}>
-            <RenderFormFields 
-              fields={uiConfig?.fields} 
-              control={control} 
-              formData={formData}
-              errors={errors}
-              register={register}
-              setValue={setValue}
-              getValues={getValues}
-              setError={setError}
-              clearErrors={clearErrors}
-              labelStyle={{fontSize: "16px"}}
-              apiDetails={apiDetails}
-            />  
-            <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
-              { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
-              { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
+          <div>
+            {uiConfig?.showFormInstruction && <p className="search-instruction-header">{t("PROJECT_SELECT_ONE_PARAM_TO_SEARCH")}</p>}
+            <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
+              <RenderFormFields 
+                fields={uiConfig?.fields} 
+                control={control} 
+                formData={formData}
+                errors={errors}
+                register={register}
+                setValue={setValue}
+                getValues={getValues}
+                setError={setError}
+                clearErrors={clearErrors}
+                labelStyle={{fontSize: "16px"}}
+                apiDetails={apiDetails}
+              />  
+              <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
+                { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
+                { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
+              </div>
             </div>
           </div> 
         </form>

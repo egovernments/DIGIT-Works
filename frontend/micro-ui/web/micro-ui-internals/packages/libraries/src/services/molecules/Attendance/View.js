@@ -40,7 +40,7 @@ const getAttendanceTableData = (data, skills, t) => {
       tableRow.guardianName = item?.additionalDetails?.fatherName  || "Harijitpal"
       tableRow.skill = skills[item?.additionalDetails?.skillCode]?.name || t("NA")
       tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount * item?.actualTotalAttendance || 0
-      tableRow.modifiedAmount = tableRow?.amount || 0
+      tableRow.modifiedAmount = (item?.modifiedTotalAttendance ? (skills[item?.additionalDetails?.skillCode]?.amount * item?.modifiedTotalAttendance) : tableRow?.amount) || 0
       tableRow.modifiedWorkingDays = item?.modifiedTotalAttendance ? item?.modifiedTotalAttendance : item?.actualTotalAttendance
       tableRow.bankAccountDetails = {
         accountNo : item?.additionalDetails?.bankDetails || t("NA"),
@@ -86,6 +86,7 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills)
       { title: "ES_COMMON_ORG_NAME", value: musterRoll?.additionalDetails?.orgName || t("NA") },
       { title: "ATM_REGISTER_ID", value: musterRoll?.additionalDetails?.attendanceRegisterNo || t("NA")},
       { title: "ATM_REGISTER_NAME", value: musterRoll?.additionalDetails?.attendanceRegisterName || t("NA") },
+      { title: "ATM_ATTENDENCE_FOR_WEEK", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("NA") },
     ],
     additionalDetails: {
       table: {
@@ -95,13 +96,7 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills)
           tableData: attendanceTableData,
           weekDates: weekDates
         },
-      },
-      dateRange: {
-        title: "ATM_ATTENDENCE_FOR_WEEK",
-        epochStartDate: musterRoll?.startDate,
-        epochEndDate: musterRoll?.endDate,
-        disabled: true
-      },
+      }
     },
   };
   const applicationDetails = { applicationDetails: [registrationDetails] };

@@ -18,7 +18,7 @@ const ProjectSearchAndInboxComponent = () => {
         ]
     );
    
-    const configs = data?.commonUiConfig?.InboxProjectConfig?.[0]
+    const configs = data?.[Digit.Utils.getConfigModuleName()]?.InboxProjectConfig?.[0]
 
     if(isLoading) return <Loader />
     return (

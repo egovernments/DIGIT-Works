@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { LocateIcon } from "./svgindex";
 
 const TextInput = (props) => {
-  
   const user_type = Digit.SessionStorage.get("userType");
   const [date, setDate] = useState(props?.type==="date"&&props?.value);
   const data = props?.watch
@@ -99,6 +99,7 @@ const TextInput = (props) => {
         )}
         {/* {props.type === "date" && <DatePicker {...props} date={date} setDate={setDate} data={data} />} */}
         {props.signature ? props.signatureImg : null}
+        {props.customIcon ? props.customIcon === "geolocation" ? <LocateIcon className="text-input-customIcon" /> : null : null}
       </div>
     </React.Fragment>
   );

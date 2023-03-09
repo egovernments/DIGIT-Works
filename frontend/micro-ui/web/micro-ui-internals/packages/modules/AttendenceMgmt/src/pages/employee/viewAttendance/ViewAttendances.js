@@ -40,7 +40,7 @@ const ViewAttendance = () => {
         isDataLoading={false}
         workflowDetails={workflowDetails}
         showTimeLine={true}
-        timelineStatusPrefix={""}
+        timelineStatusPrefix={"ATM_"}
         businessService={"muster-roll-approval"}
         forcedActionPrefix={"ATM"}
         mutate={mutate}

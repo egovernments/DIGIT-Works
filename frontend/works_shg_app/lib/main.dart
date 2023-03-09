@@ -10,6 +10,7 @@ import 'package:url_strategy/url_strategy.dart';
 import 'package:works_shg_app/blocs/attendance/attendance_user_search.dart';
 import 'package:works_shg_app/blocs/attendance/search_projects/search_projects.dart';
 import 'package:works_shg_app/blocs/attendance/skills/skills_bloc.dart';
+import 'package:works_shg_app/blocs/auth/otp_bloc.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
 import 'package:works_shg_app/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
@@ -86,6 +87,7 @@ class MainApplication extends StatelessWidget {
           lazy: false,
         ),
         BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (context) => OTPBloc()),
         BlocProvider(create: (context) => AttendanceRegisterCreateBloc()),
         BlocProvider(
           create: (_) => UserSearchBloc()..add(const SearchUserEvent()),

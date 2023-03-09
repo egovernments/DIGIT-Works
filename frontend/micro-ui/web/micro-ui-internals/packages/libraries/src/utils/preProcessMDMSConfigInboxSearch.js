@@ -58,26 +58,25 @@ How to use this Pre-Process Utility -
 */
 
 const convertStringToRegEx = (target) => {
-    
     //iterate all translate keys and handle translation
-    for (let toValidate = 0; toValidate < target?.preProcess?.convertStringToRegEx?.length; toValidate++) {
+    for(let toValidate = 0; toValidate<target?.preProcess?.convertStringToRegEx?.length; toValidate++) {
         let keyToValidate = target?.preProcess?.convertStringToRegEx[toValidate];
         let regex = _.get(target, keyToValidate);
-        if (typeof (regex) === "string") {
-            regex = new RegExp(regex);
+        if(typeof(regex) === "string") {
+            regex =  new RegExp(regex);
         }
-        _.set(target, keyToValidate, regex);
+        _.set(target, keyToValidate, regex);    
     }
     return target;
 }
 
 const updateDependent = (target, dependencyConfig, inputKey) => {
     //iterate all translate keys and handle translation
-    for (let toUpdate = 0; toUpdate < target?.preProcess?.updateDependent?.length; toUpdate++) {
+    for(let toUpdate = 0; toUpdate<target?.preProcess?.updateDependent?.length; toUpdate++) {
         let keyToUpdate = target?.preProcess?.updateDependent[toUpdate];
-        let dependentObject = ((dependencyConfig?.updateDependent?.filter(dependent => dependent?.key === inputKey)?.[0]?.value));
+        let dependentObject = ((dependencyConfig?.updateDependent?.filter(dependent=>dependent?.key === inputKey)?.[0]?.value));
         console.log(dependentObject);
-        _.set(target, keyToUpdate, dependentObject);
+        _.set(target, keyToUpdate, dependentObject);    
     }
     return target;
 }
@@ -85,17 +84,16 @@ const updateDependent = (target, dependencyConfig, inputKey) => {
 const transform = (preProcesses, target, inputIndex, inputKey, t, dependencyConfig) => {
     //Do not loop preProcess object, to avoid unnecessary 'translate' and 'updateDependent' calls
     //To add any new transform object, simply add a new if statement
-    if (preProcesses?.convertStringToRegEx) {
+    if(preProcesses?.convertStringToRegEx) {
         target = convertStringToRegEx(target);
     }
-    if (preProcesses?.updateDependent) {
+    if(preProcesses?.updateDependent) {
         target = updateDependent(target, dependencyConfig, inputKey);
     }
-    return target;
+    return target;  
 }
 
 const preProcessMDMSConfigInboxSearch = (t, config, jsonpath, dependencyConfig) => {
-    
     let targetConfig = _.get(config, jsonpath);
     let updatedConfig = [];
     //Iterate the entire jsonpath array and push the updated objects in the new res array.

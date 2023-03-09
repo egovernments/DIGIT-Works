@@ -1,25 +1,29 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 
-import searchConfig from "../../../configs/searchConfig";
-
 const ProjectSearch = () => {
   const { t } = useTranslation();
   const history = useHistory();
-
-  // const configs = searchConfig();
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, 
     Digit.Utils.getConfigModuleName(),
     [
+      {
+        name: "SearchProjectConfig",
+      }
+    ],
     {
-      name: "SearchProjectConfig",
-    },
-  ]);
+      select: (data) => {
+          return data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
+      },
+    }
+    )
 
-  const configs = data?.commonUiConfig?.SearchProjectConfig?.[0];
+  let configs = useMemo(
+    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{}));
+
 
   if (isLoading) return <Loader />;
   return (
@@ -30,7 +34,7 @@ const ProjectSearch = () => {
           <Button
             label={t(configs?.actionLabel)}
             variation="secondary"
-            icon={<AddFilled />}
+            icon={<AddFilled style={{height : "20px", width : "20px"}}/>}
             onButtonClick={() => {
               history.push(`/${window?.contextPath}/employee/${configs?.actionLink}`);
             }}
