@@ -84,6 +84,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/search-wageseeker`} component={() => <SearchWageSeeker parentRoute={path}/>} />
         <PrivateRoute path={`${path}/create-wageseeker`} component={RegisterWageSeekerComponent} />
         <PrivateRoute path={`${path}/view-wageseeker`} component={()=> <ViewWageSeeker parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/modify-wageseeker`} component={()=> <div>Modify WageSeeker</div>} />
       </AppContainer>
     </Switch>
   );
