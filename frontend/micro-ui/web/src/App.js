@@ -9,11 +9,11 @@ import { initContractsComponents } from "@egovernments/digit-ui-module-contracts
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
+import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { initProjectComponents } from "@egovernments/digit-ui-module-project";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initMuktaCustomisations } from "@egovernments/digit-ui-customisation-mukta";
 import { TLCustomisations } from "./Customisations/tl/TLCustomisation";
-
 import { UICustomizations } from "./Customisations/UICustomizations";
 
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
@@ -47,29 +47,36 @@ const enabledModules = [
   "Project",
   "Mukta",
 ];
-window.Digit.ComponentRegistryService.setupRegistry({});
 
-// initDSSComponents();
-// initEngagementComponents();
-// initWorksComponents();
-initHRMSComponents();
-initEstimateComponents();
-initAttendenceMgmtComponents();
-initContractsComponents();
-// initExpenditureComponents();
-initMastersComponents();
-initProjectComponents();
+const initDigitUI = () => {
+  window.Digit.ComponentRegistryService.setupRegistry({});
 
-const moduleReducers = (initData) => ({
-  initData,
-});
-window.Digit.Customizations = {
-  PGR: {},
-  TL: TLCustomisations,
-  commonUiConfig: UICustomizations,
+  // initDSSComponents();
+  // initEngagementComponents();
+  // initWorksComponents();
+  initHRMSComponents();
+  initEstimateComponents();
+  initAttendenceMgmtComponents();
+  initContractsComponents();
+  // initExpenditureComponents();
+  initMastersComponents();
+  initProjectComponents();
+
+  const moduleReducers = (initData) => ({
+    initData,
+  });
+  window.Digit.Customizations = {
+    PGR: {},
+    TL: TLCustomisations,
+    commonUiConfig: UICustomizations,
+  };
+  //keep this at last to compile all Mukta specific changes at last
+  initMuktaCustomisations();
 };
-//keep this at last to compile all Mukta specific changes at last
-initMuktaCustomisations();
+
+initLibraries().then(() => {
+  initDigitUI();
+});
 
 function App() {
   window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
