@@ -298,7 +298,7 @@ const RenderFormFields = (props) => {
           return (
             <LabelFieldPair key={index}>
                 { item.label && (
-                  <CardLabel style={{...props.labelStyle}}>
+                  <CardLabel style={{...props.labelStyle,marginBottom:"0.4rem"}}>
                     {t(item.label)}{ item?.isMandatory ? " * " : null }
                   </CardLabel>) 
                 }

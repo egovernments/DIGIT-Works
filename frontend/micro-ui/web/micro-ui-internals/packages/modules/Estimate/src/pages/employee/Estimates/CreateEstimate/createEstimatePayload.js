@@ -77,7 +77,8 @@ export const createEstimatePayload = (data,projectData) => {
             },//get from project search
             "estimateDetails": fetchEstimateDetails(filteredFormData),
             "additionalDetails": {
-                "documents": data?.uploads?.length > 0 ? fetchDocuments(data?.uploads) : []
+                "documents": data?.uploads?.length > 0 ? fetchDocuments(data?.uploads) : [],
+                "labourMaterialAnalysis":{...filteredFormData?.analysis}
             }
         },
         workflow:{

@@ -7,6 +7,7 @@ import SearchComponent from "../atoms/SearchComponent";
 import _ from "lodash";
 
 const InboxSearchComposer = (props) => {
+    
     const { configs } = props;
     const [enable, setEnable] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialInboxState)
@@ -26,7 +27,7 @@ const InboxSearchComposer = (props) => {
         if (Object.keys(state.filterForm)?.length >= 0) {
             const result = { ..._.get(apiDetails, apiDetails?.filterFormJsonPath, {}), ...state.filterForm }
             Object.keys(result).forEach(key => {
-                if (!result[key]) delete result[key]
+                if (!result[key] || result[key]?.length===0) delete result[key]
             });
             _.set(apiDetails, apiDetails?.filterFormJsonPath, result)
         }

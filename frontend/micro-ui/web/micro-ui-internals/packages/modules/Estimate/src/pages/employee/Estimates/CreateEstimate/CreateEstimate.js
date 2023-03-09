@@ -1,4 +1,4 @@
-import { Card,StatusTable,Row,Header,HorizontalNav,ActionBar,SubmitBar,WorkflowModal,FormComposer,Loader } from '@egovernments/digit-ui-react-components'
+import { Card, StatusTable, Row, Header, HorizontalNav, ActionBar, SubmitBar, WorkflowModal, FormComposer, Loader, Toast, ViewDetailsCard } from '@egovernments/digit-ui-react-components'
 import React,{Fragment,useEffect,useState} from 'react'
 import { useTranslation } from 'react-i18next'
 import getModalConfig from './config'
@@ -19,6 +19,7 @@ const configNavItems = [
 const CreateEstimate = ({ EstimateSession }) => {
     const { t } = useTranslation()
 
+    const [showToast, setShowToast] = useState(null)
     const { tenantId, projectNumber } = Digit.Hooks.useQueryParams();
     const searchParams = {
         Projects: [
@@ -38,9 +39,18 @@ const CreateEstimate = ({ EstimateSession }) => {
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
     const cardState = {
+
         "title": " ",
         "asSectionHeader": true,
         values: [
+            {
+                "title": "WORKS_ESTIMATE_TYPE",
+                "value": "Original Estimate"
+            },
+            {
+                "title": "WORKS_PROJECT_ID",
+                "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID
+            },
             {
                 "title": "WORKS_DATE_PROPOSAL",
                 "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate
@@ -50,15 +60,19 @@ const CreateEstimate = ({ EstimateSession }) => {
                 "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName
             },
             {
-                "title": "EVENTS_DESCRIPTION",
+                "title": "PROJECTS_DESCRIPTION",
                 "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc
-            },
-            {
-                "title": "WORKS_HAS_SUB_PROJECT_LABEL",
-                "value": t(projectData?.projectDetails?.searchedProject?.basicDetails?.projectHasSubProject)
             },
         ]
     }
+    
+    // const cardState = {
+    //     "WORKS_ESTIMATE_TYPE": "Original Estimate",
+    //     "WORKS_PROJECT_ID": projectData?.projectDetails?.searchedProject?.basicDetails?.projectId,
+    //     "ESTIMATE_PROPOSAL_DATE": Digit.DateUtils.ConvertEpochToDate(projectData?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate),
+    //     "ESTIMATE_PROJECT_NAME": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
+    //     "PROJECT_DESC": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc
+    // }
     
     const history = useHistory()
 
@@ -82,48 +96,30 @@ const CreateEstimate = ({ EstimateSession }) => {
 
     const [inputFormData,setInputFormData] = useState(sessionFormData)
 
+    // const estimateFormConfig = createEstimateConfig()
+    const tenant = Digit.ULBService.getStateId();
+    const moduleName = Digit.Utils.getConfigModuleName()
+    const { isLoading: isConfigLoading, data: estimateFormConfig } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        moduleName,
+        [
+            {
+                "name": "CreateEstimateConfig"
+            }
+        ],
+        {
+            select:(data)=> {
+                return data?.[moduleName]?.CreateEstimateConfig?.[0]
+            }
+        }
+    );
+
     const onFormSubmit = async (_data) => {
-        
+
         setInputFormData((prevState) => _data)
         //first do whatever processing you want on form data then pass it over to modal's onSubmit function
         
         setShowModal(true);
-        //      use below code for create contract API CALL
-
-        //     await contractMutation(payload, {
-        //         onError: (error, variables) => {
-        //             setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-        //             setTimeout(() => {
-        //             setShowToast(false);
-        //             }, 5000);
-        //         },
-        //         onSuccess: async (responseData, variables) => {
-        //             history.push(`/${window?.contextPath}/employee/works/response",{
-        //                 header:"Work Order Created Successfully and sent for Approval",
-        //                 id:"WO/ENG/0001/07/2021-22",
-        //                 info:t("WORKS_ORDER_ID"),
-        //                 message:`Work order with Work Order ID {workID} created successfully.`,
-        //                 links:[
-        //                     {
-        //                         name:t("WORKS_CREATE_CONTRACT"),
-        //                         redirectUrl:`/${window?.contextPath}/employee/works/create-contract",
-        //                         code:"",
-        //                         svg:"CreateEstimateIcon",
-        //                         isVisible:true,
-        //                         type:"add"
-        //                     },
-        //                     {
-        //                         name:t("WORKS_GOTO_CONTRACT_INBOX"),
-        //                         redirectUrl:`/${window?.contextPath}/employee/works/create-contract",
-        //                         code:"",
-        //                         svg:"RefreshIcon",
-        //                         isVisible:true,
-        //                         type:"add"
-        //                     }
-        //                 ]
-        //             })
-        //         }
-        //     })
     };
     const onModalSubmit = async (_data) => {
         
@@ -201,9 +197,6 @@ const CreateEstimate = ({ EstimateSession }) => {
         department.i18nKey = `ES_COMMON_${department?.code}`
     })
     useEffect(() => {
-
-        //setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
-        //setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees : [])
         setDepartment(mdmsData?.["common-masters"]?.Department)
         setDesignation(mdmsData?.["common-masters"]?.Designation)
     }, [mdmsData]);
@@ -237,8 +230,10 @@ const CreateEstimate = ({ EstimateSession }) => {
 
     }, [approvers, designation, department])
 
-    const estimateFormConfig = createEstimateConfig(t)
-
+    
+    if(isConfigLoading){
+        return <Loader />
+    }
   return (
     <Fragment>
           {showModal && <WorkflowModal
@@ -260,6 +255,7 @@ const CreateEstimate = ({ EstimateSession }) => {
                 })}
             </StatusTable>
         </Card>}
+        {/* {isLoading? <Loader/>: <ViewDetailsCard cardState={cardState} t={t} />} */}
         <FormComposer
             label={"ACTION_TEST_CREATE_ESTIMATE"}
             config={estimateFormConfig?.form.map((config) => {
@@ -272,19 +268,28 @@ const CreateEstimate = ({ EstimateSession }) => {
             submitInForm={false}
             fieldStyle={{ marginRight: 0 }}
             inline={false}
-            className="card-no-margin"
+            // className="card-no-margin"
             defaultValues={estimateFormConfig?.defaultValues}
             showWrapperContainers={false}
             isDescriptionBold={false}
             noBreakLine={true}
             showMultipleCardsWithoutNavs={false}
-            showMultipleCardsInNavs={true}
+            showMultipleCardsInNavs={false}
             horizontalNavConfig={configNavItems}
             showFormInNav={true}  
             showNavs={true}
+            sectionHeadStyle={{marginTop:"2rem"}}  
         />
-
-
+          {showToast && (
+              <Toast
+                  error={showToast.error}
+                  warning={showToast.warning}
+                  label={t(showToast.label)}
+                  onClose={() => {
+                      setShowToast(null);
+                  }}
+              />
+          )}
     </Fragment>
   )
 }
