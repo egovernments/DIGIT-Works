@@ -98,9 +98,10 @@ const CreateEstimate = ({ EstimateSession }) => {
 
     // const estimateFormConfig = createEstimateConfig()
     const tenant = Digit.ULBService.getStateId();
+    const moduleName = Digit.Utils.getConfigModuleName()
     const { isLoading: isConfigLoading, data: estimateFormConfig } = Digit.Hooks.useCustomMDMS(
         tenant,
-        "commonUiConfig",
+        moduleName,
         [
             {
                 "name": "CreateEstimateConfig"
@@ -108,7 +109,7 @@ const CreateEstimate = ({ EstimateSession }) => {
         ],
         {
             select:(data)=> {
-                return data?.commonUiConfig?.CreateEstimateConfig?.[0]
+                return data?.[moduleName]?.CreateEstimateConfig?.[0]
             }
         }
     );
