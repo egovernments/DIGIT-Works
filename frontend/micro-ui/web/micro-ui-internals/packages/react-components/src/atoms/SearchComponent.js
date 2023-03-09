@@ -51,7 +51,14 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   }, [formState])
 
   const onSubmit = (data) => {
-    
+    //here -> added a custom validator function, if required add in UICustomizations
+    const isAnyError = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck(data) : false 
+    if(isAnyError) {
+      setShowToast(isAnyError)
+      setTimeout(closeToast,3000)
+      return
+    }
+
     if(updatedFields.length >= uiConfig?.minReqFields) {
      // here based on screenType call respective dispatch fn
       dispatch({
@@ -111,7 +118,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
         {header && renderHeader()}
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
           <div>
-            {uiConfig?.showFormInstruction && <p className="search-instruction-header">{t("PROJECT_SELECT_ONE_PARAM_TO_SEARCH")}</p>}
+            {uiConfig?.showFormInstruction && <p className="search-instruction-header">{t(uiConfig?.showFormInstruction)}</p>}
             <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
               <RenderFormFields 
                 fields={uiConfig?.fields} 

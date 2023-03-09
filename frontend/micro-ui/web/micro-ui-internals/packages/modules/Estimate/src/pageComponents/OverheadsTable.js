@@ -223,7 +223,7 @@ const OverheadsTable = ({control,watch,...props}) => {
 
 
     return (
-        <table className='table reports-table sub-work-table'>
+        <table className='table reports-table sub-work-table' style={{ marginTop: "-2rem" }}>
             <thead>
                 <tr>{renderHeader()}</tr>
             </thead>
