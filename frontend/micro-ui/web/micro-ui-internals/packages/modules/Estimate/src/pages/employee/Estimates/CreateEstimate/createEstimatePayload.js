@@ -61,7 +61,6 @@ export const createEstimatePayload = (data,projectData) => {
     
     let filteredFormData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
     const tenantId = Digit.ULBService.getCurrentTenantId()
-    
     let payload = {
         estimate:{
             "tenantId": tenantId,
@@ -77,7 +76,14 @@ export const createEstimatePayload = (data,projectData) => {
             },//get from project search
             "estimateDetails": fetchEstimateDetails(filteredFormData),
             "additionalDetails": {
-                "documents": data?.uploads?.length > 0 ? fetchDocuments(data?.uploads) : []
+                "documents": data?.uploads?.length > 0 ? fetchDocuments(data?.uploads) : [],
+                "labourMaterialAnalysis":{...filteredFormData?.analysis},
+                "creator": Digit.UserService.getUser()?.info?.name,
+                "location":{
+                    locality: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.boundary,
+                    ward: projectData?.projectDetails?.searchedProject?.basicDetails?.ward,
+                    city: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.city
+                }
             }
         },
         workflow:{
