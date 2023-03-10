@@ -208,7 +208,7 @@ export const createProjectConfigMUKTA = {
                     module: "Project",
                     populators:{
                         error: "WORKS_REQUIRED_ERR",
-                        name: "uploadedDocs",
+                        name: "noSubProject_docs",
                         customClass: "",
                         localePrefix: "PROJECT",
                     }
