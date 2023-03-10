@@ -106,7 +106,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
                     name={`${config?.populators?.name}.${item?.name}`}
                     control={control}
                   />
-                   { `${config?.populators?.name}.${item?.name}` && errors && errors[`${config?.populators?.name}.${item?.name}`] && Object.keys(errors[`${config?.populators?.name}.${item?.name}`]).length ? (
+                   {  errors && errors[`${config?.populators?.name}`]?.[`${item?.name}`] && Object.keys(errors[`${config?.populators?.name}`]?.[`${item?.name}`]).length ? (
                       <CardLabelError style={{ fontSize: "12px"}}>
                         {t(config?.populators?.error)}
                       </CardLabelError> ) : null

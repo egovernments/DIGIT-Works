@@ -72,19 +72,36 @@ export const createEstimateConfig = () => {
                     }
                 ]
             },
+            // {
+            //     navLink:"Work Details",
+            //     head: "WORKS_RELEVANT_DOCS",
+            //     body: [
+            //         {
+            //             label: "WORKS_UPLOAD_FILES",
+            //             isMandatory: true,
+            //             key: "document",
+            //             type: "multiupload",
+            //             disable: false,
+            //             populators: { name: "uploads", maxFilesAllowed: 5, hintText: "WORKS_DOC_UPLOAD_HINT", allowedMaxSizeInMB: 5, allowedFileTypesRegex: /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i, showHintBelow:true },
+            //         },
+            //     ],
+            // },
             {
-                navLink:"Work Details",
-                head: "WORKS_RELEVANT_DOCS",
-                body: [
+                "navLink": "Work Details",
+                "head": "",
+                "body": [
                     {
-                        label: "WORKS_UPLOAD_FILES",
-                        isMandatory: true,
-                        key: "document",
-                        type: "multiupload",
-                        disable: false,
-                        populators: { name: "uploads", maxFilesAllowed: 5, hintText: "WORKS_DOC_UPLOAD_HINT", allowedMaxSizeInMB: 5, allowedFileTypesRegex: /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i, showHintBelow:true },
-                    },
-                ],
+                        "type": "documentUpload",
+                        "withoutLabel": true,
+                        "module": "Estimate",
+                        "populators": {
+                            "error": "WORKS_REQUIRED_ERR",
+                            "name": "uploadedDocs",
+                            "customClass": "",
+                            "localePrefix": "ESTIMATE_DOC"
+                        }
+                    }
+                ]
             }
         ]
     }

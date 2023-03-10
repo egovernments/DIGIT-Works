@@ -57,7 +57,7 @@ const OverheadsTable = ({control,watch,...props}) => {
         }
         return obj
     }
-    const columns = [t('WORKS_SNO'), t('PROJECT_DESC'), t('WORKS_PERCENTAGE'),t('WORKS_AMOUNT'), '']
+    const columns = [t('WORKS_SNO'), t('WORKS_OVERHEAD'), t('WORKS_PERCENTAGE'),t('WORKS_AMOUNT'), '']
     const renderHeader = () => {
         return columns?.map((key, index) => {
             return <th key={index} style={getStyles(index+1)} > {key} </th>

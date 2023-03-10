@@ -6,6 +6,90 @@ import { createEstimateConfig } from './createEstimateConfig'
 import { createEstimatePayload } from './createEstimatePayload'
 import { useHistory } from "react-router-dom";
 
+const tempDefault = {
+    "nonSORTablev1": [
+        null,
+        {
+            "description": "proj one",
+            "rate": "20",
+            "estimatedQuantity": "100",
+            "estimatedAmount": "2000.0",
+            "uom": {
+                "code": "KG",
+                "description": "Kilogram",
+                "active": true,
+                "effectiveFrom": 1677044852,
+                "effectiveTo": null,
+                "name": "ES_COMMON_UOM_KG"
+            }
+        }
+    ],
+    "overheadDetails": [
+        null,
+        {
+            "percentage": "12 WORKS_PERCENT",
+            "amount": "240.0",
+            "name": {
+                "code": "GST",
+                "description": "Goods and Service Tax",
+                "active": true,
+                "isAutoCalculated": true,
+                "type": "percentage",
+                "value": "12",
+                "isWorkOrderValue": true,
+                "effectiveFrom": 1677044852,
+                "effectiveTo": null,
+                "name": "ES_COMMON_OVERHEADS_GST"
+            }
+        }
+    ],
+    "analysis": {
+        "labour": "20",
+        "material": "10"
+    },
+    "uploadedDocs": {
+        "ESTIMATE_DOC_OTHERS_name": "",
+        "ESTIMATE_DOC_DETAILED_ESTIMATE": [
+            [
+                "consumerCode-PB-CH-2022-07-27-001010.pdf",
+                {
+                    "file": {},
+                    "fileStoreId": {
+                        "fileStoreId": "dff5389d-147f-4b7f-9451-ca51bfe9189e",
+                        "tenantId": "pg"
+                    }
+                }
+            ]
+        ],
+        "ESTIMATE_DOC_LABOUR_ANALYSIS": [
+            [
+                "consumerCode-PB-CH-2022-07-27-001010.pdf",
+                {
+                    "file": {},
+                    "fileStoreId": {
+                        "fileStoreId": "24b4f89e-7177-4b75-8fa8-dc62ccd2f5a4",
+                        "tenantId": "pg"
+                    }
+                }
+            ]
+        ],
+        "ESTIMATE_DOC_MATERIAL_ANALYSIS": [
+            [
+                "consumerCode-WS_107_2020-21_067948.pdf",
+                {
+                    "file": {},
+                    "fileStoreId": {
+                        "fileStoreId": "2c82f364-b177-451b-a5cc-587837c18e13",
+                        "tenantId": "pg"
+                    }
+                }
+            ]
+        ],
+        "ESTIMATE_DOC_DESIGN_DOCUMENT": [],
+        "ESTIMATE_DOC_OTHERS": []
+    }
+}
+
 const configNavItems = [
     {
         name: "Project Details",
@@ -57,7 +141,7 @@ const CreateEstimate = ({ EstimateSession }) => {
                 "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate
             },
             {
-                "title": "WORKS_PROJECT_NAME_AST",
+                "title": "WORKS_PROJECT_NAME",
                 "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName
             },
             {
@@ -84,16 +168,16 @@ const CreateEstimate = ({ EstimateSession }) => {
 
     const [showModal, setShowModal] = useState(false);
 
-    const rolesForThisAction = "EST_CHECKER" //hardcoded for now
+    const rolesForThisAction = "ESTIMATE_VERIFIER" //hardcoded for now
     const [config, setConfig] = useState({});
     const [approvers, setApprovers] = useState([]);
     const [selectedApprover, setSelectedApprover] = useState({});
 
-    const [department, setDepartment] = useState([]);
-    const [selectedDept, setSelectedDept] = useState({})
+    // const [department, setDepartment] = useState([]);
+    // const [selectedDept, setSelectedDept] = useState({})
 
-    const [designation, setDesignation] = useState([]);
-    const [selectedDesignation, setSelectedDesignation] = useState({})
+    // const [designation, setDesignation] = useState([]);
+    // const [selectedDesignation, setSelectedDesignation] = useState({})
 
     const [inputFormData,setInputFormData] = useState(sessionFormData)
 
@@ -128,8 +212,8 @@ const CreateEstimate = ({ EstimateSession }) => {
             ..._data,
             ...inputFormData,
             selectedApprover,
-            selectedDept,
-            selectedDesignation
+            // selectedDept,
+            // selectedDesignation
         }
         // setSessionFormData(completeFormData)
         
@@ -171,33 +255,34 @@ const CreateEstimate = ({ EstimateSession }) => {
         });
     }
 
-    const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(
-        Digit.ULBService.getCurrentTenantId(),
-        "common-masters",
-        [
-            {
-                "name": "Designation"
-            },
-            {
-                "name": "Department"
-            }
-        ]
-    );
+    // const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(
+    //     Digit.ULBService.getCurrentTenantId(),
+    //     "common-masters",
+    //     [
+    //         {
+    //             "name": "Designation"
+    //         },
+    //         {
+    //             "name": "Department"
+    //         }
+    //     ]
+    // );
 
-    mdmsData?.["common-masters"]?.Designation?.map(designation => {
-        designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
-    })
+    // mdmsData?.["common-masters"]?.Designation?.map(designation => {
+    //     designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
+    // })
 
-    mdmsData?.["common-masters"]?.Department?.map(department => {
-        department.i18nKey = `ES_COMMON_${department?.code}`
-    })
-    useEffect(() => {
-        setDepartment(mdmsData?.["common-masters"]?.Department)
-        setDesignation(mdmsData?.["common-masters"]?.Designation)
-    }, [mdmsData]);
+    // mdmsData?.["common-masters"]?.Department?.map(department => {
+    //     department.i18nKey = `ES_COMMON_${department?.code}`
+    // })
+    // useEffect(() => {
+    //     setDepartment(mdmsData?.["common-masters"]?.Department)
+    //     setDesignation(mdmsData?.["common-masters"]?.Designation)
+    // }, [mdmsData]);
 
 
-    const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept || selectedDesignation) });
+    // const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept || selectedDesignation) });
+    const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
 
 
     employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
@@ -213,17 +298,17 @@ const CreateEstimate = ({ EstimateSession }) => {
                 approvers,
                 selectedApprover,
                 setSelectedApprover,
-                designation,
-                selectedDesignation,
-                setSelectedDesignation,
-                department,
-                selectedDept,
-                setSelectedDept,
-                approverLoading
+                approverLoading,
+                // designation,
+                // selectedDesignation,
+                // setSelectedDesignation,
+                // department,
+                // selectedDept,
+                // setSelectedDept,
             })
         )
 
-    }, [approvers, designation, department])
+    }, [approvers])
 
     
     if(isConfigLoading){
@@ -264,7 +349,8 @@ const CreateEstimate = ({ EstimateSession }) => {
             fieldStyle={{ marginRight: 0 }}
             inline={false}
             // className="card-no-margin"
-            defaultValues={estimateFormConfig?.defaultValues}
+            // defaultValues={estimateFormConfig?.defaultValues}
+            defaultValues = {tempDefault}
             showWrapperContainers={false}
             isDescriptionBold={false}
             noBreakLine={true}
