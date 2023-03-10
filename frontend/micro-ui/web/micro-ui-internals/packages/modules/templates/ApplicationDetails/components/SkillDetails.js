@@ -1,20 +1,19 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { CardLabel } from '@egovernments/digit-ui-react-components'
 
 const SkillDetails = ({ data }) => {
-    const t = useTranslation()
+    const { t } = useTranslation()
     return (
         <React.Fragment>
-            <div>
-                {
-                    data?.length > 0 ? 
-                    data?.map(item => (
-                        <div>
-                            {`${item?.level} - ${item?.type}`}
-                        </div>
-                    ))
-                    : t('NA')
-                }
+            <div className='skill-details-wrapper'>
+                <CardLabel style={{fontSize: "16px", fontWeight: "600", marginBottom: 0}}>{t(data?.title)}</CardLabel>
+                <div className='skill-details'>
+                    { data?.skillData?.length > 0 ? 
+                        data?.skillData?.map((item, index) => (<div key={index}> {`${item?.level} - ${item?.type}`} </div>))
+                        : t('NA')
+                    }
+                </div>
             </div>
         </React.Fragment>
     )

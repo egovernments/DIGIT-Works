@@ -11,9 +11,7 @@ import {
   Row,
   StatusTable,
   Table,
-  WorkflowTimeline,
-  DisplayPhotos,
-  CardLabel
+  WorkflowTimeline
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
 import React, { Fragment, useCallback, useReducer, useState } from "react";
@@ -46,6 +44,7 @@ import MustorRollDetailsTable from "../../../Expenditure/src/components/ViewBill
 import StatusTableWithRadio from "../../../Expenditure/src/components/ViewBill/StatusTableWithRadio";
 import ShowTotalValue from "../../../Expenditure/src/components/ViewBill/ShowTotalValue";
 import SkillDetails from "./SkillDetails";
+import Photos from "./Photos";
 
 
 function ApplicationDetailsContent({
@@ -205,7 +204,8 @@ function ApplicationDetailsContent({
       window.location.href.includes("employee/noc") ||
       window.location.href.includes("employee/ws") ||
       window.location.href.includes("employee/works") ||
-      window.location.href.includes("employee/contracts")
+      window.location.href.includes("employee/contracts") || 
+      window.location.href.includes("employee/masters")
     ) {
       return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
     } else if (checkLocation) {
@@ -462,18 +462,8 @@ function ApplicationDetailsContent({
           )}
           {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
           {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
-          {detail?.additionalDetails?.skills  && 
-            <div style={{marginTop: "20px"}}>
-              <CardLabel style={{ fontSize: "16px", fontStyle: "bold", fontWeight: "600", marginBottom: 0 }}>{t(detail?.additionalDetails?.skills?.title)}</CardLabel>
-              <SkillDetails data={detail?.additionalDetails?.skills?.skillData}/>
-            </div>
-          }
-          {detail?.additionalDetails?.photo && detail?.additionalDetails?.photo?.thumbnailsToShow && 
-            <div style={{marginTop: "20px"}}>
-              <CardLabel style={{ fontSize: "16px", fontStyle: "bold", fontWeight: "600", marginBottom: 0 }}>{t(detail?.additionalDetails?.photo?.title)}</CardLabel>
-              <DisplayPhotos srcs={detail?.additionalDetails?.photo?.thumbnailsToShow?.thumbs} onClick={(src, index) => { OpenImage(src, index, detail?.additionalDetails?.photo?.thumbnailsToShow) }}/>
-            </div>
-          }
+          {detail?.additionalDetails?.skills  &&  <SkillDetails data={detail?.additionalDetails?.skills} />}
+          {detail?.additionalDetails?.photo  &&  <Photos data={detail?.additionalDetails?.photo} OpenImage={OpenImage}/>}
         </React.Fragment>
         </CollapseAndExpandGroups>
       ))}
