@@ -197,7 +197,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                 
                 <td style={getStyles(3)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.percentage`} inputRef={register({
                     required: true,
-                    pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
+                    pattern: /^[a-zA-Z0-9_ .$%@#\/ ]*$/
                 })}
                 // disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
                 disable={true}
