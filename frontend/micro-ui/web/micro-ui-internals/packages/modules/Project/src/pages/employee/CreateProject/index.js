@@ -50,7 +50,8 @@ const CreateProject = () => {
         if(Object.keys(configs?.defaultValues).includes("noSubProject_ulb")) {
           configs.defaultValues.noSubProject_ulb = ULBOptions[0];
         }
-        setSessionFormData(configs?.defaultValues);
+        if(!sessionFormData?.basicDetails_dateOfProposal && !sessionFormData?.noSubProject_ulb)
+          setSessionFormData(configs?.defaultValues);
         setIsFormReady(true);
       }
     },[configs]);
