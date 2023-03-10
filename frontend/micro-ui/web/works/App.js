@@ -68,7 +68,7 @@ const initDigitUI = () => {
     commonUiConfig: UICustomizations,
   };
   //keep this at last to compile all Mukta specific changes at last
-  initMuktaCustomisations();
+  // initMuktaCustomisations();
 };
 
 initLibraries().then(() => {
@@ -77,9 +77,6 @@ initLibraries().then(() => {
 const moduleReducers = (initData) => ({
   initData,
 });
-
-//keep this at last to compile all Mukta specific changes at last
-// initMuktaCustomisations();
 
 function App() {
   window.contextPath = "core-ui";

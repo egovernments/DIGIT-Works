@@ -1,17 +1,15 @@
 //This Utility will return the user details
 export const getLoggedInUserDetails = (type) => {
-    const userInfos = sessionStorage.getItem("Digit.citizen.userRequestObject");
-    const userInfo = userInfos ? JSON.parse(userInfos) : {};
-    let user = userInfo?.value;
+    const userInfos = Digit.UserService.getUser();
     switch(type) {
         case "username" : {
-            return user;
+            return userInfos;
         }
         case "roles" : {
-            return user?.info?.roles?.map((e) => e.code);
+            return userInfos?.info?.roles?.map((e) => e.code);
         }
         default : {
-            return userInfo;
+            return userInfos;
         }
     }
 }
