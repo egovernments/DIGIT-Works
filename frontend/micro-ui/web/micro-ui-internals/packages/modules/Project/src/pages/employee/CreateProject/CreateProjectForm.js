@@ -98,6 +98,10 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
           {
             key : "noSubProject_endDate",
             value : [!isEndDateValid ? (() => isEndDateValid) : (()=>{})]
+          },
+          {
+            key : "basicDetails_dateOfProposal",
+            value : [new Date().toISOString().split("T")[0]]
           }
         ]
       }),
@@ -207,9 +211,10 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
           if(error?.response?.data?.Errors?.[0]?.code === "INVALID_DATE") {
-            setToast(()=>({show : true, label : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), error : true}));
+            // setToast(()=>({show : true, label : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), error : true}));
+            sendDataToResponsePage("", "", false);
           }else {
-            setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
+            sendDataToResponsePage("", "", false);
           }
         },
         onSuccess: async (responseData, variables) => {
@@ -220,9 +225,10 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
                 if(error?.response?.data?.Errors?.[0]?.code === "INVALID_DATE") {
-                  setToast(()=>({show : true, label : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), error : true}));
+                  // setToast(()=>({show : true, label : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), error : true}));
+                  sendDataToResponsePage("", "", false);
                 }else {
-                  setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
+                  sendDataToResponsePage("", "", false);
                 }
               },
               onSuccess: async (responseData, variables) => {
@@ -238,12 +244,12 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             })
           }else{
             if(responseData?.ResponseInfo?.Errors) {
-              setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors?.[0]?.message, error : true}));
+              sendDataToResponsePage("", "", false);
             }else if(responseData?.ResponseInfo?.status){
               sendDataToResponsePage("", responseData, true);
               clearSessionFormData();
             }else{
-              setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
+              sendDataToResponsePage("", "", false);
             }
           }
         },

@@ -37,7 +37,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
       const stringified = JSON.stringify(obj);
       return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
     } 
-    return /(.*?)(pdf|docx|jpeg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
+    return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
   }
 
   // if(isLoading) return <Loader />
@@ -96,6 +96,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
                           maxFilesAllowed={item?.maxFilesAllowed || 1}
                           customErrorMsg={item?.customErrorMsg}
                           customClass={customClass}
+                          tenantId={Digit.ULBService.getCurrentTenantId()}
                         /> 
                       ) 
                     }}
@@ -110,7 +111,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
                       <CardLabelError style={{ fontSize: "12px"}}>
                         {t(config?.populators?.error)}
                       </CardLabelError> ) : null
-                    } 
+                    }
                 </div>
               </div>
             </LabelFieldPair>
