@@ -10,7 +10,7 @@ const createDocumentsPayload = (documents, otherDocFileName) => {
       payload_modal.fileStore = document[1]['fileStoreId']['fileStoreId'];
       payload_modal.documentUid = "";
       payload_modal.additionalDetails = {
-        fileName : document[1]['file']['name']
+        fileName :  docType === "others" ? otherDocFileName : document[1]['file']['name']
       }
       documents_payload_list.push(payload_modal);
     }
