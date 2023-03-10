@@ -6,89 +6,7 @@ import { createEstimateConfig } from './createEstimateConfig'
 import { createEstimatePayload } from './createEstimatePayload'
 import { useHistory } from "react-router-dom";
 
-const tempDefault = {
-    "nonSORTablev1": [
-        null,
-        {
-            "description": "proj one",
-            "rate": "20",
-            "estimatedQuantity": "100",
-            "estimatedAmount": "2000.0",
-            "uom": {
-                "code": "KG",
-                "description": "Kilogram",
-                "active": true,
-                "effectiveFrom": 1677044852,
-                "effectiveTo": null,
-                "name": "ES_COMMON_UOM_KG"
-            }
-        }
-    ],
-    "overheadDetails": [
-        null,
-        {
-            "percentage": "12 WORKS_PERCENT",
-            "amount": "240.0",
-            "name": {
-                "code": "GST",
-                "description": "Goods and Service Tax",
-                "active": true,
-                "isAutoCalculated": true,
-                "type": "percentage",
-                "value": "12",
-                "isWorkOrderValue": true,
-                "effectiveFrom": 1677044852,
-                "effectiveTo": null,
-                "name": "ES_COMMON_OVERHEADS_GST"
-            }
-        }
-    ],
-    "analysis": {
-        "labour": "20",
-        "material": "10"
-    },
-    "uploadedDocs": {
-        "ESTIMATE_DOC_OTHERS_name": "",
-        "ESTIMATE_DOC_DETAILED_ESTIMATE": [
-            [
-                "consumerCode-PB-CH-2022-07-27-001010.pdf",
-                {
-                    "file": {},
-                    "fileStoreId": {
-                        "fileStoreId": "dff5389d-147f-4b7f-9451-ca51bfe9189e",
-                        "tenantId": "pg"
-                    }
-                }
-            ]
-        ],
-        "ESTIMATE_DOC_LABOUR_ANALYSIS": [
-            [
-                "consumerCode-PB-CH-2022-07-27-001010.pdf",
-                {
-                    "file": {},
-                    "fileStoreId": {
-                        "fileStoreId": "24b4f89e-7177-4b75-8fa8-dc62ccd2f5a4",
-                        "tenantId": "pg"
-                    }
-                }
-            ]
-        ],
-        "ESTIMATE_DOC_MATERIAL_ANALYSIS": [
-            [
-                "consumerCode-WS_107_2020-21_067948.pdf",
-                {
-                    "file": {},
-                    "fileStoreId": {
-                        "fileStoreId": "2c82f364-b177-451b-a5cc-587837c18e13",
-                        "tenantId": "pg"
-                    }
-                }
-            ]
-        ],
-        "ESTIMATE_DOC_DESIGN_DOCUMENT": [],
-        "ESTIMATE_DOC_OTHERS": []
-    }
-}
+
 
 const configNavItems = [
     {
@@ -375,8 +293,8 @@ const CreateEstimate = ({ EstimateSession }) => {
             fieldStyle={{ marginRight: 0 }}
             inline={false}
             // className="card-no-margin"
-            // defaultValues={estimateFormConfig?.defaultValues}
-            defaultValues = {tempDefault}
+            defaultValues={estimateFormConfig?.defaultValues}
+            // defaultValues = {tempDefault}
             showWrapperContainers={false}
             isDescriptionBold={false}
             noBreakLine={true}
