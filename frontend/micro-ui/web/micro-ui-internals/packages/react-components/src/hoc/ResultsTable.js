@@ -146,6 +146,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
 
     
     if (isLoading || isFetching ) return <Loader />
+    if(!data) return <></>
     if (searchResult?.length === 0) return <NoResultsFound/>
     return (
         <div >
