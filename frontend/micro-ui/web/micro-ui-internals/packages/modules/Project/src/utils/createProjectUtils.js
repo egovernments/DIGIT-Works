@@ -12,7 +12,7 @@ const createDocumentsPayload = (documents, otherDocFileName) => {
   for(let docType of Object.keys(documents)) {
     for(let document of documents[docType]) {
       let payload_modal = {};
-      payload_modal.documentType = docType === "others" ? otherDocFileName : documentType[docType];
+      payload_modal.documentType = (docType === "others" && otherDocFileName) ? otherDocFileName : documentType[docType];
       payload_modal.fileStore = document[1]['fileStoreId']['fileStoreId'];
       payload_modal.documentUid = "";
       payload_modal.additionalDetails = {
