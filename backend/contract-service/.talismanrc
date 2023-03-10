@@ -1,4 +1,0 @@
-fileignoreconfig:
-- filename: backend/contract-service/src/test/resources/Contract Service Postman Scripts.postman_collection.json
-  checksum: 83fe469ea18a046783edd273d1c0fecfaf86f1624ca22623a3c62a326f48a4fa
-version: ""
