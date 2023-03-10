@@ -11,7 +11,7 @@ import {
   Row,
   StatusTable,
   Table,
-  WorkflowTimeline,
+  WorkflowTimeline
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
 import React, { Fragment, useCallback, useReducer, useState } from "react";
@@ -43,6 +43,8 @@ import AttendanceDateRange from "../../../AttendenceMgmt/src/pageComponents/Atte
 import MustorRollDetailsTable from "../../../Expenditure/src/components/ViewBill/MustorRollDetailsTable";
 import StatusTableWithRadio from "../../../Expenditure/src/components/ViewBill/StatusTableWithRadio";
 import ShowTotalValue from "../../../Expenditure/src/components/ViewBill/ShowTotalValue";
+import SkillDetails from "./SkillDetails";
+import Photos from "./Photos";
 
 
 function ApplicationDetailsContent({
@@ -202,7 +204,8 @@ function ApplicationDetailsContent({
       window.location.href.includes("employee/noc") ||
       window.location.href.includes("employee/ws") ||
       window.location.href.includes("employee/works") ||
-      window.location.href.includes("employee/contracts")
+      window.location.href.includes("employee/contracts") || 
+      window.location.href.includes("employee/masters")
     ) {
       return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
     } else if (checkLocation) {
@@ -459,6 +462,8 @@ function ApplicationDetailsContent({
           )}
           {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
           {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
+          {detail?.additionalDetails?.skills  &&  <SkillDetails data={detail?.additionalDetails?.skills} />}
+          {detail?.additionalDetails?.photo  &&  <Photos data={detail?.additionalDetails?.photo} OpenImage={OpenImage}/>}
         </React.Fragment>
         </CollapseAndExpandGroups>
       ))}
