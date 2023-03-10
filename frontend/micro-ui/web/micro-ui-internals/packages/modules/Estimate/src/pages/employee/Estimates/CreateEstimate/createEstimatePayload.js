@@ -46,19 +46,21 @@ const fetchEstimateDetails = (data) => {
 }
 
 const fetchDocuments = (docs) => {
-    return docs.map(doc=>{
+
+    const obj = Object.keys(docs).map(key=>{
         return {
-            fileName: doc?.[1]?.file?.name,
-            fileStoreId: doc?.[1]?.fileStoreId?.fileStoreId,
-            documentUid: doc?.[1]?.fileStoreId?.fileStoreId,
-            tenantId: doc?.[1]?.fileStoreId?.tenantId,
-            fileType: doc?.[1]?.file?.type
+            fileName: docs?.[key]?.[0]?.[0],
+            fileStoreId: docs?.[key]?.[0]?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: docs?.[key]?.[0]?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: docs?.[key]?.[0]?.[1]?.fileStoreId?.tenantId,
+            fileType: `${key}`
         }
+        
     })
+    return obj
 }
 
 export const createEstimatePayload = (data,projectData) => {
-    
     let filteredFormData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
     const tenantId = Digit.ULBService.getCurrentTenantId()
     let payload = {
@@ -69,14 +71,15 @@ export const createEstimatePayload = (data,projectData) => {
             "wfStatus": "CREATED",
             "name": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
             "description": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc,
-            "executingDepartment": filteredFormData?.selectedDept?.code,
+            "executingDepartment": "DEPT_11",//hardcoded since we are not capturing it anymore and it is required at BE side
+            // "executingDepartment": filteredFormData?.selectedDept?.code,
             // "projectId":"7c941228-6149-4adc-bdb9-8b77f6c3757d",//static for now
             "address": {
                 ...projectData?.projectDetails?.searchedProject?.basicDetails?.address,
             },//get from project search
             "estimateDetails": fetchEstimateDetails(filteredFormData),
             "additionalDetails": {
-                "documents": data?.uploads?.length > 0 ? fetchDocuments(data?.uploads) : [],
+                "documents": fetchDocuments(data?.uploadedDocs) ,
                 "labourMaterialAnalysis":{...filteredFormData?.analysis},
                 "creator": Digit.UserService.getUser()?.info?.name,
                 "location":{
@@ -90,10 +93,11 @@ export const createEstimatePayload = (data,projectData) => {
             "action": "CREATE",
             "comment": filteredFormData?.comments,
             "assignees": [
-                filteredFormData?.selectedApprover?.uuid
+                filteredFormData?.selectedApprover?.uuid ? filteredFormData?.selectedApprover?.uuid: undefined 
             ]
         }
     }
-    
+    if(!payload.workflow.assignees?.[0])
+        delete payload.workflow.assignees
     return payload;
 }

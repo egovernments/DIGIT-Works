@@ -6,6 +6,8 @@ import { createEstimateConfig } from './createEstimateConfig'
 import { createEstimatePayload } from './createEstimatePayload'
 import { useHistory } from "react-router-dom";
 
+
+
 const configNavItems = [
     {
         name: "Project Details",
@@ -57,7 +59,7 @@ const CreateEstimate = ({ EstimateSession }) => {
                 "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate
             },
             {
-                "title": "WORKS_PROJECT_NAME_AST",
+                "title": "WORKS_PROJECT_NAME",
                 "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName
             },
             {
@@ -84,16 +86,16 @@ const CreateEstimate = ({ EstimateSession }) => {
 
     const [showModal, setShowModal] = useState(false);
 
-    const rolesForThisAction = "EST_CHECKER" //hardcoded for now
+    const rolesForThisAction = "ESTIMATE_VERIFIER" //hardcoded for now
     const [config, setConfig] = useState({});
     const [approvers, setApprovers] = useState([]);
     const [selectedApprover, setSelectedApprover] = useState({});
 
-    const [department, setDepartment] = useState([]);
-    const [selectedDept, setSelectedDept] = useState({})
+    // const [department, setDepartment] = useState([]);
+    // const [selectedDept, setSelectedDept] = useState({})
 
-    const [designation, setDesignation] = useState([]);
-    const [selectedDesignation, setSelectedDesignation] = useState({})
+    // const [designation, setDesignation] = useState([]);
+    // const [selectedDesignation, setSelectedDesignation] = useState({})
 
     const [inputFormData,setInputFormData] = useState(sessionFormData)
 
@@ -116,6 +118,32 @@ const CreateEstimate = ({ EstimateSession }) => {
     );
 
     const onFormSubmit = async (_data) => {
+        
+        //added this totalEst amount logic here because setValues in pageComponents don't work
+        //after setting the value, in consequent renders value changes to undefined
+        //check TotalEstAmount.js
+            let totalNonSor = _data?.nonSORTablev1?.reduce((acc, row) => {
+                let amountNonSor = parseFloat(row?.estimatedAmount)
+                amountNonSor = amountNonSor ? amountNonSor : 0
+                return amountNonSor + parseFloat(acc)
+            }, 0)
+            totalNonSor = totalNonSor ? totalNonSor : 0
+            let totalOverHeads = _data?.overheadDetails?.reduce((acc, row) => {
+                let amountOverheads = parseFloat(row?.amount)
+                amountOverheads = amountOverheads ? amountOverheads : 0
+                return amountOverheads + parseFloat(acc)
+            }, 0)
+            totalOverHeads = totalOverHeads ? totalOverHeads : 0
+            _data.totalEstimateAmount =  totalNonSor + totalOverHeads
+
+        let totalLabourAndMaterial = parseInt(_data.analysis.labour) + parseInt(_data.analysis.material)
+        //here check totalEst amount should be less than material+labour
+        
+        if (_data.totalEstimateAmount < totalLabourAndMaterial )   {
+            setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" })
+            return
+        } 
+            
 
         setInputFormData((prevState) => _data)
         //first do whatever processing you want on form data then pass it over to modal's onSubmit function
@@ -128,8 +156,8 @@ const CreateEstimate = ({ EstimateSession }) => {
             ..._data,
             ...inputFormData,
             selectedApprover,
-            selectedDept,
-            selectedDesignation
+            // selectedDept,
+            // selectedDesignation
         }
         // setSessionFormData(completeFormData)
         
@@ -171,33 +199,34 @@ const CreateEstimate = ({ EstimateSession }) => {
         });
     }
 
-    const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(
-        Digit.ULBService.getCurrentTenantId(),
-        "common-masters",
-        [
-            {
-                "name": "Designation"
-            },
-            {
-                "name": "Department"
-            }
-        ]
-    );
+    // const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(
+    //     Digit.ULBService.getCurrentTenantId(),
+    //     "common-masters",
+    //     [
+    //         {
+    //             "name": "Designation"
+    //         },
+    //         {
+    //             "name": "Department"
+    //         }
+    //     ]
+    // );
 
-    mdmsData?.["common-masters"]?.Designation?.map(designation => {
-        designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
-    })
+    // mdmsData?.["common-masters"]?.Designation?.map(designation => {
+    //     designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
+    // })
 
-    mdmsData?.["common-masters"]?.Department?.map(department => {
-        department.i18nKey = `ES_COMMON_${department?.code}`
-    })
-    useEffect(() => {
-        setDepartment(mdmsData?.["common-masters"]?.Department)
-        setDesignation(mdmsData?.["common-masters"]?.Designation)
-    }, [mdmsData]);
+    // mdmsData?.["common-masters"]?.Department?.map(department => {
+    //     department.i18nKey = `ES_COMMON_${department?.code}`
+    // })
+    // useEffect(() => {
+    //     setDepartment(mdmsData?.["common-masters"]?.Department)
+    //     setDesignation(mdmsData?.["common-masters"]?.Designation)
+    // }, [mdmsData]);
 
 
-    const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept || selectedDesignation) });
+    // const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept || selectedDesignation) });
+    const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
 
 
     employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
@@ -213,17 +242,17 @@ const CreateEstimate = ({ EstimateSession }) => {
                 approvers,
                 selectedApprover,
                 setSelectedApprover,
-                designation,
-                selectedDesignation,
-                setSelectedDesignation,
-                department,
-                selectedDept,
-                setSelectedDept,
-                approverLoading
+                approverLoading,
+                // designation,
+                // selectedDesignation,
+                // setSelectedDesignation,
+                // department,
+                // selectedDept,
+                // setSelectedDept,
             })
         )
 
-    }, [approvers, designation, department])
+    }, [approvers])
 
     
     if(isConfigLoading){
@@ -265,6 +294,7 @@ const CreateEstimate = ({ EstimateSession }) => {
             inline={false}
             // className="card-no-margin"
             defaultValues={estimateFormConfig?.defaultValues}
+            // defaultValues = {tempDefault}
             showWrapperContainers={false}
             isDescriptionBold={false}
             noBreakLine={true}
@@ -283,6 +313,7 @@ const CreateEstimate = ({ EstimateSession }) => {
                   onClose={() => {
                       setShowToast(null);
                   }}
+                  isDleteBtn={true}
               />
           )}
     </Fragment>
