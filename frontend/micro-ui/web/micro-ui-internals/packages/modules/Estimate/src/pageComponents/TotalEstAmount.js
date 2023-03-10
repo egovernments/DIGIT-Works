@@ -23,7 +23,7 @@ const TotalEstAmount = ({formData,setValue,t,...props}) => {
 
     
     useEffect(() => {
-      setValue("totalEstAmount",{name:"nipun"})
+        setValue("totalEstAmount", getTotalAmount)
     }, [getTotalAmount])
     
  

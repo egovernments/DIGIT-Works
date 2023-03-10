@@ -200,6 +200,32 @@ const CreateEstimate = ({ EstimateSession }) => {
     );
 
     const onFormSubmit = async (_data) => {
+        
+        //added this totalEst amount logic here because setValues in pageComponents don't work
+        //after setting the value, in consequent renders value changes to undefined
+        //check TotalEstAmount.js
+            let totalNonSor = _data?.nonSORTablev1?.reduce((acc, row) => {
+                let amountNonSor = parseFloat(row?.estimatedAmount)
+                amountNonSor = amountNonSor ? amountNonSor : 0
+                return amountNonSor + parseFloat(acc)
+            }, 0)
+            totalNonSor = totalNonSor ? totalNonSor : 0
+            let totalOverHeads = _data?.overheadDetails?.reduce((acc, row) => {
+                let amountOverheads = parseFloat(row?.amount)
+                amountOverheads = amountOverheads ? amountOverheads : 0
+                return amountOverheads + parseFloat(acc)
+            }, 0)
+            totalOverHeads = totalOverHeads ? totalOverHeads : 0
+            _data.totalEstimateAmount =  totalNonSor + totalOverHeads
+
+        let totalLabourAndMaterial = parseInt(_data.analysis.labour) + parseInt(_data.analysis.material)
+        //here check totalEst amount should be less than material+labour
+        
+        if (_data.totalEstimateAmount < totalLabourAndMaterial )   {
+            setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" })
+            return
+        } 
+            
 
         setInputFormData((prevState) => _data)
         //first do whatever processing you want on form data then pass it over to modal's onSubmit function
@@ -369,6 +395,7 @@ const CreateEstimate = ({ EstimateSession }) => {
                   onClose={() => {
                       setShowToast(null);
                   }}
+                  isDleteBtn={true}
               />
           )}
     </Fragment>
