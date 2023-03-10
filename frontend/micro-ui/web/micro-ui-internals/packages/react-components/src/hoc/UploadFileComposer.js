@@ -96,6 +96,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
                           maxFilesAllowed={item?.maxFilesAllowed || 1}
                           customErrorMsg={item?.customErrorMsg}
                           customClass={customClass}
+                          tenantId={Digit.ULBService.getCurrentTenantId()}
                         /> 
                       ) 
                     }}
