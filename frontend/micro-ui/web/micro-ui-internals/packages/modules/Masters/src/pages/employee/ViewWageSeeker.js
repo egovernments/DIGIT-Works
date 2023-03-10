@@ -7,7 +7,9 @@ import ApplicationDetails from '../../../../templates/ApplicationDetails';
 const ViewWageSeeker = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const { tenantId, individualId } = Digit.Hooks.useQueryParams();
+  //const { tenantId, individualId } = Digit.Hooks.useQueryParams();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const individualId = 123
 
   const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.wageSeeker.useViewWageSeeker(tenantId, {}, {})
   console.log('@@Data', data);
@@ -31,7 +33,7 @@ const ViewWageSeeker = () => {
         tenantId={tenantId}
       />
       <ActionBar>
-          <SubmitBar label={'Modify'} onSubmit={handleModify} />
+          <SubmitBar label={t("ES_COMMON_MODIFY")} onSubmit={handleModify} />
       </ActionBar>
     </React.Fragment>
   )

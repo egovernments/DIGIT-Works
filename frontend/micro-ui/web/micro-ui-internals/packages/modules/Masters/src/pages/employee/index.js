@@ -59,6 +59,7 @@ const App = ({ path }) => {
   const ViewOrganisationComponent = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
   const SearchOrganisation =  Digit?.ComponentRegistryService?.getComponent("SearchOrganisation");
   const ViewWageSeeker = Digit?.ComponentRegistryService?.getComponent("ViewWageSeeker");
+  const ModifyWageSeeker = Digit?.ComponentRegistryService?.getComponent("ModifyWageSeeker");
   useEffect(() => {
     return () => {
       if (!window.location.href.includes("create-organization") && Object.keys(sessionFormData) != 0) {
@@ -84,7 +85,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/search-wageseeker`} component={() => <SearchWageSeeker parentRoute={path}/>} />
         <PrivateRoute path={`${path}/create-wageseeker`} component={RegisterWageSeekerComponent} />
         <PrivateRoute path={`${path}/view-wageseeker`} component={()=> <ViewWageSeeker parentRoute={path}/>} />
-        <PrivateRoute path={`${path}/modify-wageseeker`} component={()=> <div>Modify WageSeeker</div>} />
+        <PrivateRoute path={`${path}/modify-wageseeker`} component={()=> <ModifyWageSeeker parentRoute={path}/>} />
       </AppContainer>
     </Switch>
   );

@@ -12,6 +12,8 @@ import {
   StatusTable,
   Table,
   WorkflowTimeline,
+  DisplayPhotos,
+  CardLabel
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
 import React, { Fragment, useCallback, useReducer, useState } from "react";
@@ -43,6 +45,7 @@ import AttendanceDateRange from "../../../AttendenceMgmt/src/pageComponents/Atte
 import MustorRollDetailsTable from "../../../Expenditure/src/components/ViewBill/MustorRollDetailsTable";
 import StatusTableWithRadio from "../../../Expenditure/src/components/ViewBill/StatusTableWithRadio";
 import ShowTotalValue from "../../../Expenditure/src/components/ViewBill/ShowTotalValue";
+import SkillDetails from "./SkillDetails";
 
 
 function ApplicationDetailsContent({
@@ -459,6 +462,18 @@ function ApplicationDetailsContent({
           )}
           {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
           {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
+          {detail?.additionalDetails?.skills  && 
+            <div style={{marginTop: "20px"}}>
+              <CardLabel style={{ fontSize: "16px", fontStyle: "bold", fontWeight: "600", marginBottom: 0 }}>{t(detail?.additionalDetails?.skills?.title)}</CardLabel>
+              <SkillDetails data={detail?.additionalDetails?.skills?.skillData}/>
+            </div>
+          }
+          {detail?.additionalDetails?.photo && detail?.additionalDetails?.photo?.thumbnailsToShow && 
+            <div style={{marginTop: "20px"}}>
+              <CardLabel style={{ fontSize: "16px", fontStyle: "bold", fontWeight: "600", marginBottom: 0 }}>{t(detail?.additionalDetails?.photo?.title)}</CardLabel>
+              <DisplayPhotos srcs={detail?.additionalDetails?.photo?.thumbnailsToShow?.thumbs} onClick={(src, index) => { OpenImage(src, index, detail?.additionalDetails?.photo?.thumbnailsToShow) }}/>
+            </div>
+          }
         </React.Fragment>
         </CollapseAndExpandGroups>
       ))}
