@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -31,9 +29,6 @@ class OTPVerificationPage extends StatefulWidget {
 }
 
 class _OTPVerificationPage extends State<OTPVerificationPage> {
-  int _timer = 30;
-  bool _canResendOTP = false;
-  Timer? _timerInstance;
   final TextEditingController otpController = TextEditingController();
   bool isDisabled = true;
   Client client = Client();
@@ -41,22 +36,6 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
   @override
   void initState() {
     super.initState();
-    _startTimer();
-  }
-
-  void _startTimer() {
-    _timerInstance = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_timer == 0) {
-        setState(() {
-          _canResendOTP = true;
-        });
-        _timerInstance?.cancel();
-      } else {
-        setState(() {
-          _timer--;
-        });
-      }
-    });
   }
 
   @override
