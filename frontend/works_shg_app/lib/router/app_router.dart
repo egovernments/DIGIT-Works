@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:works_shg_app/pages/register_individual.dart';
+import 'package:works_shg_app/pages/wage_seeker_registration/register_individual.dart';
 
 import '../models/attendance/attendance_registry_model.dart';
 import '../pages/attendance_register_table.dart';
