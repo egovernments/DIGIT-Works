@@ -104,12 +104,11 @@ CREATE TABLE eg_tax_identifier (
 );
 
 CREATE TABLE eg_org_jurisdiction (
-  id                   character varying(256),
+  id                   SERIAL PRIMARY KEY,
   org_id               character varying(256) NOT NULL,
   code                 character varying(64) NOT NULL,
   additional_details   jsonb,
 
-  CONSTRAINT pk_eg_org_jurisdiction PRIMARY KEY (id),
   CONSTRAINT fk_eg_org_jurisdiction FOREIGN KEY (org_id) REFERENCES eg_org (id)
 );
 
