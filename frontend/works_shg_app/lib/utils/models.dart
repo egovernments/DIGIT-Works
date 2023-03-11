@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 
 class TableHeader {
@@ -11,6 +13,14 @@ class TableHeader {
       this.isSortingRequired,
       this.isAscendingOrder,
       this.apiKey});
+}
+
+class CustomFile {
+  final Uint8List bytes;
+  final String name;
+  final String extension;
+
+  CustomFile(this.bytes, this.name, this.extension);
 }
 
 class TableDataRow {
