@@ -696,8 +696,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
       apiKey: 'aadhaarNumber',
     ),
     TableHeader(
-      AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-          .translate(i18.attendanceMgmt.skill),
+      '${AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+          .translate(i18.attendanceMgmt.skill)}*',
     ),
     TableHeader(
       AppLocalizations.of(scaffoldMessengerKey.currentContext!)

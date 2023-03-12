@@ -899,9 +899,9 @@ class _SHGInboxPage extends State<SHGInboxPage> {
               .translate(i18.common.aadhaarNumber),
           apiKey: 'aadhaarNumber',
         ),
-        TableHeader(
-          AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-              .translate(i18.attendanceMgmt.skill),
+    TableHeader(
+      '${AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+          .translate(i18.attendanceMgmt.skill)}*',
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
