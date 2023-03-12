@@ -16,42 +16,43 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$OTPBlocEvent {
-  String get mobileNumber => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String mobileNumber) login,
+    required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String mobileNumber)? login,
+    TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String mobileNumber)? login,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(OTPSendEvent value) login,
+    required TResult Function(DisposeOTPEvent value) dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(OTPSendEvent value)? login,
+    TResult? Function(DisposeOTPEvent value)? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(OTPSendEvent value)? login,
+    TResult Function(DisposeOTPEvent value)? dispose,
     required TResult orElse(),
   }) =>
-      throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $OTPBlocEventCopyWith<OTPBlocEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -60,8 +61,6 @@ abstract class $OTPBlocEventCopyWith<$Res> {
   factory $OTPBlocEventCopyWith(
           OTPBlocEvent value, $Res Function(OTPBlocEvent) then) =
       _$OTPBlocEventCopyWithImpl<$Res, OTPBlocEvent>;
-  @useResult
-  $Res call({String mobileNumber});
 }
 
 /// @nodoc
@@ -73,28 +72,13 @@ class _$OTPBlocEventCopyWithImpl<$Res, $Val extends OTPBlocEvent>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? mobileNumber = null,
-  }) {
-    return _then(_value.copyWith(
-      mobileNumber: null == mobileNumber
-          ? _value.mobileNumber
-          : mobileNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
 }
 
 /// @nodoc
-abstract class _$$OTPSendEventCopyWith<$Res>
-    implements $OTPBlocEventCopyWith<$Res> {
+abstract class _$$OTPSendEventCopyWith<$Res> {
   factory _$$OTPSendEventCopyWith(
           _$OTPSendEvent value, $Res Function(_$OTPSendEvent) then) =
       __$$OTPSendEventCopyWithImpl<$Res>;
-  @override
   @useResult
   $Res call({String mobileNumber});
 }
@@ -156,6 +140,7 @@ class _$OTPSendEvent implements OTPSendEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String mobileNumber) login,
+    required TResult Function() dispose,
   }) {
     return login(mobileNumber);
   }
@@ -164,6 +149,7 @@ class _$OTPSendEvent implements OTPSendEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String mobileNumber)? login,
+    TResult? Function()? dispose,
   }) {
     return login?.call(mobileNumber);
   }
@@ -172,6 +158,7 @@ class _$OTPSendEvent implements OTPSendEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String mobileNumber)? login,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (login != null) {
@@ -184,6 +171,7 @@ class _$OTPSendEvent implements OTPSendEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(OTPSendEvent value) login,
+    required TResult Function(DisposeOTPEvent value) dispose,
   }) {
     return login(this);
   }
@@ -192,6 +180,7 @@ class _$OTPSendEvent implements OTPSendEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(OTPSendEvent value)? login,
+    TResult? Function(DisposeOTPEvent value)? dispose,
   }) {
     return login?.call(this);
   }
@@ -200,6 +189,7 @@ class _$OTPSendEvent implements OTPSendEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(OTPSendEvent value)? login,
+    TResult Function(DisposeOTPEvent value)? dispose,
     required TResult orElse(),
   }) {
     if (login != null) {
@@ -213,12 +203,112 @@ abstract class OTPSendEvent implements OTPBlocEvent {
   const factory OTPSendEvent({required final String mobileNumber}) =
       _$OTPSendEvent;
 
-  @override
   String get mobileNumber;
-  @override
   @JsonKey(ignore: true)
   _$$OTPSendEventCopyWith<_$OTPSendEvent> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DisposeOTPEventCopyWith<$Res> {
+  factory _$$DisposeOTPEventCopyWith(
+          _$DisposeOTPEvent value, $Res Function(_$DisposeOTPEvent) then) =
+      __$$DisposeOTPEventCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$DisposeOTPEventCopyWithImpl<$Res>
+    extends _$OTPBlocEventCopyWithImpl<$Res, _$DisposeOTPEvent>
+    implements _$$DisposeOTPEventCopyWith<$Res> {
+  __$$DisposeOTPEventCopyWithImpl(
+      _$DisposeOTPEvent _value, $Res Function(_$DisposeOTPEvent) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$DisposeOTPEvent implements DisposeOTPEvent {
+  const _$DisposeOTPEvent();
+
+  @override
+  String toString() {
+    return 'OTPBlocEvent.dispose()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$DisposeOTPEvent);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String mobileNumber) login,
+    required TResult Function() dispose,
+  }) {
+    return dispose();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String mobileNumber)? login,
+    TResult? Function()? dispose,
+  }) {
+    return dispose?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String mobileNumber)? login,
+    TResult Function()? dispose,
+    required TResult orElse(),
+  }) {
+    if (dispose != null) {
+      return dispose();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(OTPSendEvent value) login,
+    required TResult Function(DisposeOTPEvent value) dispose,
+  }) {
+    return dispose(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(OTPSendEvent value)? login,
+    TResult? Function(DisposeOTPEvent value)? dispose,
+  }) {
+    return dispose?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(OTPSendEvent value)? login,
+    TResult Function(DisposeOTPEvent value)? dispose,
+    required TResult orElse(),
+  }) {
+    if (dispose != null) {
+      return dispose(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DisposeOTPEvent implements OTPBlocEvent {
+  const factory DisposeOTPEvent() = _$DisposeOTPEvent;
 }
 
 /// @nodoc

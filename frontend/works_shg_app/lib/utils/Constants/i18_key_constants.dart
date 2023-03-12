@@ -13,11 +13,14 @@ class Login {
   String get loginPhoneNumber => 'LOGIN_PHONE_NO';
   String get loginPassword => 'CORE_LOGIN_PASSWORD';
   String get forgotPassword => 'CORE_COMMON_FORGOT_PASSWORD';
-  String get invalidCredentials => 'INVALID_CREDENTIALS';
+  String get invalidOTP => 'LOGIN_INVALID_OTP';
   String get contactAdministrator => 'CONTACT_ADMINISTRATOR_FOR_PASSWORD';
   String get otpVerification => 'OTP_VERIFICATION';
   String get enterOTPSent => 'ENTER_OTP_SENT_TO';
   String get resendOTP => 'CS_RESEND_OTP';
+  String get resendOTPInSec => 'RESEND_OTP_IN_SEC';
+  String get enteredMobileNotRegistered =>
+      'ENTERED_MOBILE_NO_NOT_REGISTERED_AS_CBO';
 }
 
 class Common {
@@ -59,6 +62,7 @@ class Common {
   String get fri => 'CORE_FRI';
   String get sat => 'CORE_SAT';
   String get sun => 'CORE_SUN';
+  String get total => 'TOTAL';
   String get attachments => 'CS_COMMON_ATTACHMENTS';
   String get apply => 'ES_COMMON_APPLY';
   String get cancel => 'CS_ACTION_CANCEL';
@@ -68,6 +72,12 @@ class Common {
   String get selectAnOption => 'ES_SELECT_AN_OPTION';
   String get action => 'CS_COMMON_ACTION';
   String get next => 'CS_COMMON_NEXT';
+  String get fileSize => 'FILE_SIZE';
+  String get chooseFile => 'CHOOSE_FILE';
+  String get noFileUploaded => 'NO_FILE_UPLOADED';
+  String get camera => 'CAMERA';
+  String get fileManager => 'FILE_MANAGER';
+  String get chooseAnAction => 'CHOOSE_AN_ACTION';
 }
 
 class Home {
