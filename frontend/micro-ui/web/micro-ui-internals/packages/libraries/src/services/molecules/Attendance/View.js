@@ -91,7 +91,7 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills)
     additionalDetails: {
       table: {
         weekTable: {
-          tableHeader: "ATM_ENROLLED_USERS",
+          tableHeader: "ATM_ATTENDANCE_DETAILS",
           renderTable: true,
           tableData: attendanceTableData,
           weekDates: weekDates

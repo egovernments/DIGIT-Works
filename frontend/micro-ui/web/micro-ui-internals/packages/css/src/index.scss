@@ -887,3 +887,24 @@ input[type="number"] {
 .search-instruction-header {
   margin-bottom: 1rem;
 }
+
+.skill-details-wrapper {
+  max-width: 950px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+
+    .skill-details {
+      width: 50%;
+    }
+}
+
+@screen sm {
+  .skill-details-wrapper {
+    display: block;
+
+    .skill-details {
+      width: 100%;
+    }
+  }
+}

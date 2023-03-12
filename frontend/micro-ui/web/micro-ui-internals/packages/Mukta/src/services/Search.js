@@ -51,7 +51,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                     BS : 'Works',
                     values: currentProject?.documents?.map((document) => {
                         return {
-                            title: document?.additionalDetails?.fileName,
+                            title: document?.documentType,
                             documentType: document?.documentType,
                             documentUid: document?.fileStore,
                             fileStoreId: document?.fileStore,

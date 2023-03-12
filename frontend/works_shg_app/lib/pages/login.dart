@@ -7,6 +7,7 @@ import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../blocs/localization/app_localization.dart';
+import '../utils/notifiers.dart';
 import '../widgets/molecules/desktop_view.dart';
 import '../widgets/molecules/mobile_view.dart';
 
@@ -21,6 +22,15 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPage extends State<LoginPage> {
   var userIdController = TextEditingController();
+  bool canContinue = false;
+
+  @override
+  void deactivate() {
+    context.read<OTPBloc>().add(
+          const DisposeOTPEvent(),
+        );
+    super.deactivate();
+  }
 
   Widget getLoginCard(BuildContext loginContext) {
     return DigitCard(
@@ -36,22 +46,42 @@ class _LoginPage extends State<LoginPage> {
             label: AppLocalizations.of(loginContext)
                 .translate(i18.common.mobileNumber),
             controller: userIdController,
+            onChange: (value) {
+              setState(() {
+                canContinue = value.length == 10;
+              });
+            },
             maxLength: 10,
           ),
           const SizedBox(height: 16),
-          DigitElevatedButton(
-            onPressed: () async {
-              loginContext.read<OTPBloc>().add(
-                    OTPSendEvent(
-                      mobileNumber: userIdController.text,
-                    ),
-                  );
-              context.router.push(
-                  OTPVerificationRoute(mobileNumber: userIdController.text));
+          BlocListener<OTPBloc, OTPBlocState>(
+            listener: (context, state) {
+              state.maybeWhen(
+                  orElse: () => Container(),
+                  loaded: () {
+                    context.router.push(OTPVerificationRoute(
+                        mobileNumber: userIdController.text));
+                  },
+                  error: () => Notifiers.getToastMessage(
+                      context,
+                      AppLocalizations.of(context)
+                          .translate(i18.login.enteredMobileNotRegistered),
+                      'ERROR'));
             },
-            child: Center(
-              child: Text(AppLocalizations.of(loginContext)
-                  .translate(i18.common.continueLabel)),
+            child: DigitElevatedButton(
+              onPressed: canContinue
+                  ? () async {
+                      loginContext.read<OTPBloc>().add(
+                            OTPSendEvent(
+                              mobileNumber: userIdController.text,
+                            ),
+                          );
+                    }
+                  : null,
+              child: Center(
+                child: Text(AppLocalizations.of(loginContext)
+                    .translate(i18.common.continueLabel)),
+              ),
             ),
           ),
         ],

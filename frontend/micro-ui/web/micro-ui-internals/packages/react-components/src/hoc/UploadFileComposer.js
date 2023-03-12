@@ -61,7 +61,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
                   item?.showTextInput ? 
                     <TextInput 
                       style={{ "marginBottom": "16px" }} 
-                      name={`${item?.name}_name`} 
+                      name={`${config?.populators?.name}.${item?.name}_name`} 
                       placeholder={t('ES_COMMON_ENTER_NAME')}
                       inputRef={register({minLength: 2})}/> : 
                     null  
@@ -104,14 +104,14 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
                       return !(item?.isMandatory && value?.length === 0)
                     }}}
                     defaultValue={formData?.[item?.name]}
-                    name={item?.name}
+                    name={`${config?.populators?.name}.${item?.name}`}
                     control={control}
                   />
-                   { item?.name && errors && errors[item?.name] && Object.keys(errors[item?.name]).length ? (
+                   {  errors && errors[`${config?.populators?.name}`]?.[`${item?.name}`] && Object.keys(errors[`${config?.populators?.name}`]?.[`${item?.name}`]).length ? (
                       <CardLabelError style={{ fontSize: "12px"}}>
                         {t(config?.populators?.error)}
                       </CardLabelError> ) : null
-                    } 
+                    }
                 </div>
               </div>
             </LabelFieldPair>

@@ -3,7 +3,7 @@ import { useQueryClient } from "react-query";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { CreateEstimateIcon, DownloadImgIcon, GotoInboxIcon } from "@egovernments/digit-ui-react-components";
+import { CreateEstimateIcon, DownloadImgIcon, GotoInboxIcon, ArrowLeftWhite } from "@egovernments/digit-ui-react-components";
 import { useHistory, useLocation } from "react-router-dom";
 
 // state = {
@@ -43,7 +43,7 @@ const EstimateResponse = (props) => {
             case "add":
                 return <p><CreateEstimateIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
             case "inbox":
-                return <p><GotoInboxIcon style={{ "display": "inline" }} /> {t(link.name)}</p>
+                return <p><ArrowLeftWhite fill="#F47738" style={{ display:"inline",marginRight:"0.5rem",marginTop:"-2px"}} /> {t(link.name)}</p>
             case "download":
                 return <p style={{ "display": "flex", "flexDirection": "row" }}><DownloadImgIcon style={{ "display": "inline" }} />{t(link.name)}</p>
             default:
@@ -101,7 +101,7 @@ const EstimateResponse = (props) => {
                   : null} */}
                 {t(state.message)}
             </CardText>
-            <div style={{ "display": "flex", "justifyContent": "end", "flexDirection": "row", "alignItems": "flex-end" }}>
+            <div style={{ "display": "flex", "justifyContent": "start", "flexDirection": "row", "alignItems": "flex-end" }}>
 
                 {/* <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} 
                     onClick={handleDownloadPdf}>
