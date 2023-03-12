@@ -43,6 +43,12 @@ const EstimateBreadCrumbs = ({ location }) => {
             show: location.pathname.includes("/estimate/response") ? true : false,
             isBack: fromScreen && true,
         },
+        {
+            path: `/${window.contextPath}/employee/estimate/estimate-details`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("ESTIMATE_VIEW_ESTIMATE")}` : t("ESTIMATE_VIEW_ESTIMATE"),
+            show: location.pathname.includes("/estimate/estimate-details") ? true : false,
+            isBack: fromScreen && true,
+        },
     ];
     return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 

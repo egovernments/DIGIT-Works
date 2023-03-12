@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 var Digit = window.Digit || {};
 
 const businessServiceMap = {
-  estimate: "estimate-approval-2",
+  estimate: "estimate-approval",
 };
 
 export const UICustomizations = {

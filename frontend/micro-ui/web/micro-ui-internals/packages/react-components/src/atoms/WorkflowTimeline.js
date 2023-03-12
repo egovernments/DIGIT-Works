@@ -53,7 +53,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                     {!workflowDetails?.isLoading && (
                         <Fragment>
                             <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
-                                {t("WORKS_WORKFLOW_HISTORY")}
+                                {t("WORKS_WORKFLOW_TIMELINE")}
                             </CardSectionHeader>
                             {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
                                 <CheckPoint
