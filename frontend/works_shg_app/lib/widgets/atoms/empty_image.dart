@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class EmptyImage extends StatelessWidget {
   // final void Function()? widgetFunction;
   final AlignmentGeometry align;
-  const EmptyImage({super.key, this.align = Alignment.centerLeft});
+  final String? label;
+  const EmptyImage({super.key, this.align = Alignment.centerLeft, this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -11,6 +12,13 @@ class EmptyImage extends StatelessWidget {
         alignment: align,
         child: Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 10, right: 8),
-            child: Image.asset('assets/png/empty_message.png')));
+            child: Column(
+              children: [
+                Image.asset('assets/svg/no_result.svg'),
+                Text(
+                  label ?? '',
+                )
+              ],
+            )));
   }
 }

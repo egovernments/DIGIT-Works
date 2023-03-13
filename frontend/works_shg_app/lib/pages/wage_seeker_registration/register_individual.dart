@@ -34,7 +34,7 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
   ];
 
   void updateCurrentStep() {
-    if (currentStep == stepNumbers.length - 1) {
+    if (currentStep <= stepNumbers.length - 1) {
       setState(() {
         currentStep += 1;
       });

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
+import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
 import '../blocs/localization/app_localization.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
@@ -87,8 +88,10 @@ class ViewMusterRollsPage extends StatelessWidget {
                           ),
                         ),
                         musterList.isEmpty
-                            ? Text(t.translate(
-                                i18.attendanceMgmt.noMusterRollsFound))
+                            ? EmptyImage(
+                                label: t.translate(
+                                i18.attendanceMgmt.noMusterRollsFound,
+                              ))
                             : WorkDetailsCard(
                                 musterList,
                                 isSHGInbox: true,
