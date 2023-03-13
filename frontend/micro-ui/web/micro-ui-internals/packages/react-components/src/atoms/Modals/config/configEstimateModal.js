@@ -46,7 +46,7 @@ const configEstimateModal = (
                             allowedFileTypes: /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
                             customClass: "upload-margin-bottom",
                             errorMessage: t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
-                            hintText: "WORKS_DOC_UPLOAD_HINT",
+                            hintText: "WORKFLOW_MODAL_UPLOAD_HINT_TEXT",
                             showHintBelow: true
                         }
                     }

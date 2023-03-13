@@ -92,7 +92,7 @@ export const createEstimatePayload = (data,projectData) => {
             }
         },
         workflow:{
-            "action": "CREATE",
+            "action": "SUBMIT",
             "comment": filteredFormData?.comments,
             "assignees": [
                 filteredFormData?.selectedApprover?.uuid ? filteredFormData?.selectedApprover?.uuid: undefined 
