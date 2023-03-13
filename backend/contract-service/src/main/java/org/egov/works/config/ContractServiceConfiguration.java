@@ -153,6 +153,20 @@ public class ContractServiceConfiguration {
     @Value("${egov.url.shortner.endpoint}")
     private String urlShortnerEndpoint;*/
 
+    //URL shortner
+    @Value("${egov.url.shortner.host}")
+    private String urlShortnerHost;
+
+    @Value("${egov.url.shortner.endpoint}")
+    private String urlShortnerEndpoint;
+
+    //CBO urls for message template
+    @Value("${works.cbo.url.host}")
+    private String cboUrlHost;
+
+    @Value("${works.cbo.url.endpoint}")
+    private String cboUrlEndpoint;
+
 
     @PostConstruct
     public void initialize() {

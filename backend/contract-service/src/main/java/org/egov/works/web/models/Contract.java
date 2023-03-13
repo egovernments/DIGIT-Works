@@ -100,8 +100,8 @@ public class Contract {
     @Valid
     private List<Document> documents = null;
 
-    @JsonIgnore
-//    @JsonProperty("processInstance")
+//    @JsonIgnore
+    @JsonProperty("processInstance")
     private ProcessInstance processInstance = null;
 
     @JsonProperty("auditDetails")

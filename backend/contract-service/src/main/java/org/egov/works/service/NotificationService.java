@@ -133,7 +133,7 @@ public class NotificationService {
             return;
         }
 
-        //get project number, location, userDetails -- works only for REJECT
+        //get project number, location, userDetails -- needs to be changed for CBO-org message
         Map<String, String> smsDetails = getDetailsForSMS(request, CBOMemberUuid);
 
         message = buildMessageForApproveAction_WO_CBO(contract, smsDetails, message);
@@ -222,8 +222,11 @@ public class NotificationService {
     public String buildMessageForApproveAction_WO_CBO(Contract contract, Map<String, String> userDetailsForSMS, String message) {
 
         long dueDate = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(7);
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
+        StringBuilder CBOUrl= new StringBuilder(config.getCboUrlHost()).append(config.getCboUrlEndpoint());
+        String shortendURL = getShortnerURL(CBOUrl.toString());
+
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dueDate);
         String date = formatter.format(calendar.getTime());
@@ -234,7 +237,7 @@ public class NotificationService {
                 .replace("{PROJECT_NAME}", userDetailsForSMS.get("projectName"))
                 .replace("{CONTRACT_NUMBER}", contract.getContractNumber())
                 .replace("{dueDate}", formatter.format(calendar.getTime()))
-                .replace("{Organization_Login_URL}", "CBO-Organization_Login_URL-placeholder");
+                .replace("{Organization_Login_URL}", shortendURL);
         return message;
     }
 
@@ -283,6 +286,25 @@ public class NotificationService {
         }
 
         return localizedMessageMap;
+    }
+
+    /**
+     *
+     * @param actualURL Actual URL
+     * @return Shortened URL
+     */
+    public String getShortnerURL(String actualURL) {
+        HashMap<String,String> body = new HashMap<>();
+        body.put("url",actualURL);
+        StringBuilder builder = new StringBuilder(config.getUrlShortnerHost());
+        builder.append(config.getUrlShortnerEndpoint());
+        String res = restTemplate.postForObject(builder.toString(), body, String.class);
+
+        if(StringUtils.isEmpty(res)){
+            log.error("URL_SHORTENING_ERROR","Unable to shorten url: "+actualURL); ;
+            return actualURL;
+        }
+        else return res;
     }
 
 }
