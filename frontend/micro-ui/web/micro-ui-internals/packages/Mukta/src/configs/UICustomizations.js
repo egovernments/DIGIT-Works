@@ -39,7 +39,22 @@ export const UICustomizations = {
             data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId()
             
             return data
-        }
+        },
+        additionalCustomizationForMobile : (value, key, t) => {
+            if(key === t("ESTIMATE_ESTIMATE_NO"))
+                return `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${value}`
+          },
+          getLink: (row,key) => {
+             return `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${row[key]}`
+         },
+          MobileDetailsOnClick : (row, t) =>{
+            let link;
+            Object.keys(row).map(key => {
+                if(key === t("ESTIMATE_ESTIMATE_NO"))
+                   link =  `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${row[key]}`
+            })
+            return link
+          },
     },
     SearchEstimateConfig: {
         customValidationCheck:(data)=> {
@@ -97,6 +112,21 @@ export const UICustomizations = {
                 return <p>{"NA"}</p>
                
             }
+        },
+        additionalCustomizationForMobile : (value, key, t) => {
+          if(key === t("ESTIMATE_ESTIMATE_NO"))
+                    return `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${value}`
+        },
+        getLink: (row,key) => {
+                 return `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${row[key]}`
+        },
+        MobileDetailsOnClick : (row, t) =>{
+                let link;
+                Object.keys(row).map(key => {
+                    if(key === t("ESTIMATE_ESTIMATE_NO"))
+                       link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${row[key]}`
+                })
+                return link
         },
     },
     SearchProjectConfig: {
@@ -210,6 +240,23 @@ export const UICustomizations = {
                 return <p>{"NA"}</p>
             }
         },
+        additionalCustomizationForMobile : (value, key, t) => {
+            if(key === t("WORKS_PROJECT_ID"))
+                return `/${window.contextPath
+                }/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${value}`
+          },
+          getLink: (row,key) => {
+             return `/${window.contextPath}/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${row[key]}`
+         },
+          MobileDetailsOnClick : (row, t) =>{
+            let link;
+            Object.keys(row).map(key => {
+                if(key === t("WORKS_PROJECT_ID"))
+                   link = `/${window.contextPath
+                   }/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&projectNumber=${row[key]}`
+            })
+            return link
+          },
         additionalValidations: (type, data, keys) => {
             if (type === "date") {
                 return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;

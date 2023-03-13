@@ -32,6 +32,8 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
           let mapping = {};
           let cols = config?.columns;
           for(let columnIndex = 0; columnIndex<cols?.length; columnIndex++) {
+              console.log("KEY FROM CONFIG : ", cols[columnIndex]?.label);
+              console.log("KEY FROM FORM_DATA : ", cols[columnIndex]?.jsonPath);
               mapping[t(cols[columnIndex]?.label)] = t(row?.[cols[columnIndex]?.jsonPath]) || t("ES_COMMON_NA")
             }
           return mapping;

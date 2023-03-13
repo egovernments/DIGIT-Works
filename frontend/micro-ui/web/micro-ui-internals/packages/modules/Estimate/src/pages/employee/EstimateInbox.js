@@ -24,13 +24,18 @@ const EstimateInbox = () => {
         () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs,"sections.search.uiConfig.fields",{}),
         [data]);
     
+    const estimateSession = Digit.Hooks.useSessionStorage("SEARCH_AND_FILTER_ESTIMATE", 
+        configs?.defaultValues
+    );
+
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = estimateSession;
     
     if(isLoading) return <Loader />
     return (
         <React.Fragment>
             <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}</Header>
             <div className="inbox-search-wrapper">
-                <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer>
+                <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={updatedConfig}></InboxSearchComposer>
             </div>
         </React.Fragment>
     )

@@ -43,7 +43,7 @@ const ProjectSearch = () => {
         )}
       </div>
       <div className="inbox-search-wrapper">
-        <InboxSearchComposer configs={configs} isInbox={false}></InboxSearchComposer>
+        <InboxSearchComposer configs={configs}></InboxSearchComposer>
       </div>
     </React.Fragment>
   );

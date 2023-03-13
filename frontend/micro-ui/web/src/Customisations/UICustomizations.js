@@ -77,6 +77,21 @@ export const UICustomizations = {
             }
 
         },
+        additionalCustomizationForMobile : (value, key, t) => {
+            if(key === t("WORKS_PRJ_SUB_ID") || key === t("WORKS_PARENT_PROJECT_ID"))
+                return `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${value}`
+          },
+          getLink: (row,key) => {
+             return `/${window.contextPath}/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId() }&projectNumber=${row[key]}`
+         },
+          MobileDetailsOnClick : (row, t) =>{
+            let link;
+            Object.keys(row).map(key => {
+                if(key === t("WORKS_PRJ_SUB_ID"))
+                   link = `/works-ui/employee/project/project-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&projectNumber=${row[key]}`
+            })
+            return link
+          },
         additionalValidations: (type, data, keys) => {
             if(type === 'date') {
                 return (data[keys.start] && data[keys.end]) ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true
@@ -110,7 +125,22 @@ export const UICustomizations = {
                 
             }
 
-        }
+        },
+        additionalCustomizationForMobile : (value, key, t) => {
+            if(key === t("WORKS_ESTIMATE_ID"))
+                return `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${value}`
+          },
+          getLink: (row,key) => {
+             return `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${row[key]}`
+         },
+          MobileDetailsOnClick : (row, t) =>{
+            let link;
+            Object.keys(row).map(key => {
+                if(key === t("WORKS_ESTIMATE_ID"))
+                   link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${row[key]}`
+            })
+            return link
+          },
     },
     SearchAttendanceConfig: {
         preProcess: (data) => {
@@ -130,7 +160,22 @@ export const UICustomizations = {
             if (column.label === "ATM_NO_OF_INDIVIDUALS") {
                 return <div>{value?.length}</div>
             }
-        }
+        },
+        additionalCustomizationForMobile : (value, key, t) => {
+            if(key === t("ATM_MUSTER_ROLL_NUMBER"))
+                return `/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`
+          },
+          getLink: (row,key) => {
+             return `/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${row[key]}`
+         },
+          MobileDetailsOnClick : (row, t) =>{
+            let link;
+            Object.keys(row).map(key => {
+                if(key === t("ATM_MUSTER_ROLL_NUMBER"))
+                   link = `/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${row[key]}`
+            })
+            return link
+          }
     },
     AttendanceInboxConfig: {
         preProcess: (data) => {
@@ -175,7 +220,22 @@ export const UICustomizations = {
                     parseInt(value) > 0 ? <span className="sla-cell-success">{ t(value) || ""}</span> : <span className="sla-cell-error">{ t(value )|| ""}</span>
                 );
             }
-        }
+        },
+        additionalCustomizationForMobile : (value, key, t) => {
+            if(key === t("ATM_MUSTER_ROLL_ID"))
+                return `/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`
+          },
+          getLink: (row,key) => {
+             return `/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${row[key]}`
+         },
+          MobileDetailsOnClick : (row, t) =>{
+            let link;
+            Object.keys(row).map(key => {
+                if(key === t("ATM_MUSTER_ROLL_ID"))
+                   link = `/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${row[key]}`
+            })
+            return link
+          }
     },
     ProjectInboxConfig: {
         preProcess: (data) => {
