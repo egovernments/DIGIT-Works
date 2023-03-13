@@ -44,7 +44,7 @@ public class DenormalizeAndEnrichEstimateConsumer {
      * @param record
      * @param topic
      */
-    @KafkaListener(topics = {"${estimate.kafka.create.topic}"})
+    @KafkaListener(topics = {"${estimate.kafka.create.topic}","${estimate.kafka.update.topic}"})
     public void listen(final String record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("DenormalizeAndEnrichEstimateConsumer::listen");
         try {
