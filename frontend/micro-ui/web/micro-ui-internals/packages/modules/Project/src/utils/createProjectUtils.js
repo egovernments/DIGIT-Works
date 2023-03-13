@@ -1,12 +1,18 @@
 import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
 
+const documentType = {
+  "feasibility_analysis" : "Feasiblity Analysis",
+  "finalized_worklist" : "Finalized Worklist",
+  "project_proposal" : "Project Proposal"
+}
+
 const createDocumentsPayload = (documents, otherDocFileName) => {
   let documents_payload_list = [];
 
   for(let docType of Object.keys(documents)) {
     for(let document of documents[docType]) {
       let payload_modal = {};
-      payload_modal.documentType = docType === "others" ? otherDocFileName : docType;
+      payload_modal.documentType = (docType === "others" && otherDocFileName) ? otherDocFileName : documentType[docType];
       payload_modal.fileStore = document[1]['fileStoreId']['fileStoreId'];
       payload_modal.documentUid = "";
       payload_modal.additionalDetails = {
@@ -49,12 +55,12 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
           "referenceID": project_details?.letterRefNoOrReqNo,
           "documents": createDocumentsPayload(
             {
-            feasibility_analysis : project_details?.doc_feasibility_analysis, 
-             finalized_worklist : project_details?.doc_finalized_worklist, 
-             others : project_details?.doc_others, 
-             project_proposal : project_details?.doc_project_proposal
+            feasibility_analysis : project_details?.docs?.noSubProject_doc_feasibility_analysis, 
+             finalized_worklist : project_details?.docs?.noSubProject_doc_finalized_worklist, 
+             others : project_details?.docs?.noSubProject_doc_others, 
+             project_proposal : project_details?.docs?.noSubProject_doc_project_proposal
             },
-            project_details?.doc_others_name),
+            project_details?.docs?.noSubProject_doc_others_name),
           "natureOfWork" : project_details?.natureOfWork?.code,
           "address": {
             "tenantId": tenantId,
