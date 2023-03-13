@@ -428,4 +428,7 @@ export const UICustomizations = {
       }
     },
   },
+  EstimateInboxConfig:{
+    
+  }
 };
