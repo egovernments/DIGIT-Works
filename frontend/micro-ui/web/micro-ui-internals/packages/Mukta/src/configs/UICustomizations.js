@@ -11,11 +11,18 @@ export const UICustomizations = {
     EstimateInboxConfig:{
         preProcess:(data) => {
             //set tenantId
+            
             data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId()
             data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId()
             
             // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
+            
+            const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee)
             delete data.body.inbox.moduleSearchCriteria.assignee
+            if (assignee?.code ==="ASSIGNED_TO_ME") {
+                data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid
+            }
+            
             delete data.body.inbox.moduleSearchCriteria.ward
             
             //cloning locality and workflow states to format them
@@ -39,6 +46,39 @@ export const UICustomizations = {
             data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId()
             
             return data
+        },
+        additionalCustomizations: (row, column, columnConfig, value, t)=> {
+            if (column.key === "estimateNumber") {
+                return <span className="link">
+                    <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
+                        {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+                    </Link>
+                </span>
+            }
+
+            else if (column.key === "assignee"){
+                if(value) {
+                    return <span>{value?.[0]?.name}</span>
+                }else{
+                    return <span></span>
+                }
+            }
+
+            else  if (column.key === "state") {
+                return <span>{t(`WF_EST_${value}`)}</span>
+            }
+
+            else if (column.key === "estimatedAmount") {
+                return <span>{`₹ ${value}`}</span>
+            }
+
+            else if (column.key === "sla") {
+                return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span> 
+            }
+
+            else {
+            return <div>{t("NA")}</div>
+            }
         }
     },
     SearchEstimateConfig: {

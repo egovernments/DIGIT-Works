@@ -52,12 +52,12 @@ const ViewEstimate = (props) => {
     useEffect(() => {
       //here set cardstate when estimate and project is available
         setCardState({
-            "WORKS_ESTIMATE_NUMBER": estimate?.estimateNumber,
+            "ESTIMATE_ESTIMATE_NO": estimate?.estimateNumber,
             "WORKS_ESTIMATE_TYPE": "Original Estimate",
             "WORKS_PROJECT_ID": project?.projectNumber,
-            "ESTIMATE_PROPOSAL_DATE": Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal),
-            "ESTIMATE_PROJECT_NAME": project?.name,
-            "PROJECT_DESC": project?.description
+            "ES_COMMON_PROPOSAL_DATE": Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal),
+            "ES_COMMON_PROJECT_NAME": project?.name,
+            "PROJECTS_DESCRIPTION": project?.description
         }) 
     }, [project])
     

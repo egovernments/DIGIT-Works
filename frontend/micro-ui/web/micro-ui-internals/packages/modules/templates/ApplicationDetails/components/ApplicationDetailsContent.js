@@ -274,7 +274,8 @@ function ApplicationDetailsContent({
                   }
                 >
                   {isNocLocation ? `${t(detail.title)}` : t(detail.title)}
-                  {detail?.Component ? <detail.Component /> : null}
+                  
+                  {detail?.Component ? <detail.Component detail={detail} /> : null}
                 </CardSectionHeader>
               </React.Fragment>
             )}
