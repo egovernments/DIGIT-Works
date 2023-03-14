@@ -62,10 +62,7 @@ public class MusterRollApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<MusterRollResponse> attendanceV1SearchPOST(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute MusterRollSearchCriteria searchCriteria) {
-        List<MusterRoll> musterRolls = musterRollService.searchMusterRolls(requestInfoWrapper, searchCriteria);
-        ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(musterRolls)
-                                                    .count(!CollectionUtils.isEmpty(musterRolls) ? musterRolls.size() : 0).build();
+        MusterRollResponse musterRollResponse = musterRollService.searchMusterRolls(requestInfoWrapper, searchCriteria);
         return new ResponseEntity<MusterRollResponse>(musterRollResponse, HttpStatus.OK);
     }
 

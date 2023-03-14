@@ -1,20 +1,13 @@
 package org.egov.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import digit.models.coremodels.Document;
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * Workflow
@@ -27,25 +20,39 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Workflow   {
-        @JsonProperty("action")
-        private String action = null;
+public class Workflow {
+    @JsonProperty("action")
+    private String action = null;
 
-        @JsonProperty("comment")
-        private String comment = null;
+    @JsonProperty("comment")
+    private String comment = null;
 
-        @JsonProperty("assignees")
-        @Valid
-        private List<String> assignees = null;
+    @JsonProperty("assignees")
+    @Valid
+    private List<String> assignees = null;
+
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents = null;
 
 
-        public Workflow addAssigneesItem(String assigneesItem) {
-            if (this.assignees == null) {
+    public Workflow addAssigneesItem(String assigneesItem) {
+        if (this.assignees == null) {
             this.assignees = new ArrayList<>();
-            }
+        }
         this.assignees.add(assigneesItem);
         return this;
+    }
+
+    public Workflow addDocumentsItem(Document documentsItem) {
+        if (this.documents == null) {
+            this.documents = new ArrayList<>();
         }
+        if (!this.documents.contains(documentsItem))
+            this.documents.add(documentsItem);
+
+        return this;
+    }
 
 }
 

@@ -10,6 +10,7 @@ class Urls {
 class CommonServices {
   const CommonServices();
   String get workflow => 'egov-workflow-v2/egov-wf/process/_search';
+  String get fileUpload => 'filestore/v1/files';
 }
 
 class InitServices {
@@ -26,6 +27,7 @@ class UserServices {
   String get userSearchProfile => 'user/_search';
   String get editProfile => 'user/profile/_update';
   String get changePassword => 'user/password/_update';
+  String get sendOtp => 'user-otp/v1/_send';
 }
 
 class MusterRollServices {

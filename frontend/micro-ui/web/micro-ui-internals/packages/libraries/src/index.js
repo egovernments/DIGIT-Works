@@ -40,7 +40,7 @@ import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
 import AttendanceService from "./services/elements/Attendance";
 import { CustomService } from "./services/elements/CustomService";
-
+import { WageSeekerService } from "./services/elements/WageSeeker";
 
 const setupLibraries = (Library, props) => {
   window.Digit = window.Digit || {};
@@ -88,6 +88,7 @@ const initLibraries = () => {
   setupLibraries("BillServices", BillServices);
   setupLibraries("AttendanceService", AttendanceService);
   setupLibraries("CustomService", CustomService);
+  setupLibraries("WageSeekerService", WageSeekerService);
 
   return new Promise((resolve) => {
     initI18n(resolve);

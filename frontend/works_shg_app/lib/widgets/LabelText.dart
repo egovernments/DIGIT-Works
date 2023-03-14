@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class LabelText extends StatelessWidget {
   final input;
   final EdgeInsets? padding;
-  LabelText(this.input, {this.padding});
+  const LabelText(this.input, {super.key, this.padding});
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
@@ -16,7 +16,7 @@ class LabelText extends StatelessWidget {
                     : const EdgeInsets.all(8.0)),
             child: Text(
               input,
-              style: Theme.of(context).textTheme.headline1,
+              style: Theme.of(context).textTheme.displayMedium,
               textAlign: TextAlign.left,
             ),
           ));

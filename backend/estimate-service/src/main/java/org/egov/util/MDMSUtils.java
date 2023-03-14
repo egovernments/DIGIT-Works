@@ -27,6 +27,7 @@ public class MDMSUtils {
     public static final String tenantFilterCode = "$.[?(@.code =='{code}')].code";
     public static final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
     public static final String codeFilter = "$.*.code";
+    public static final String activeCodeFilter = "$.[?(@.active==true)].code";
 
     @Autowired
     private EstimateServiceConfiguration config;
@@ -62,11 +63,13 @@ public class MDMSUtils {
         ModuleDetail estimateDepartmentModuleDetail = getDepartmentModuleRequestData(request);
         ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(request);
         ModuleDetail estimateSorIdModuleDetail = getSorIdModuleRequestData(request);
+        ModuleDetail estimateCategoryModuleDetail = getCategoryModuleRequestData(request);
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(estimateTenantModuleDetail);
         moduleDetails.add(estimateDepartmentModuleDetail);
         moduleDetails.add(estimateSorIdModuleDetail);
+        moduleDetails.add(estimateCategoryModuleDetail);
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
@@ -76,6 +79,22 @@ public class MDMSUtils {
 
         log.info("MDMSUtils::search MDMS request -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
         return mdmsCriteriaReq;
+    }
+
+    private ModuleDetail getCategoryModuleRequestData(EstimateRequest request) {
+        log.info("MDMSUtils::getCategoryModuleRequestData");
+
+        List<MasterDetail> estimateCategoryMasterDetails = new ArrayList<>();
+
+        MasterDetail categoryMasterDetails = MasterDetail.builder().name(MASTER_CATEGORY)
+                .filter(activeCodeFilter).build();
+
+        estimateCategoryMasterDetails.add(categoryMasterDetails);
+
+        ModuleDetail estimateCategoryModuleDetail = ModuleDetail.builder().masterDetails(estimateCategoryMasterDetails)
+                .moduleName(MDMS_WORKS_MODULE_NAME).build();
+
+        return estimateCategoryModuleDetail;
     }
 
 

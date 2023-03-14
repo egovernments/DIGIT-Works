@@ -50,6 +50,7 @@ public class ProjectValidatorTest {
         lenient().when(mdmsUtils.mDMSCall(any(ProjectRequest.class),
                 any(String.class))).thenReturn(mdmsResponse);
         lenient().when(config.getDocumentIdVerificationRequired()).thenReturn("false");
+        lenient().when(config.getMdmsModule()).thenReturn("works");
 
     }
 
@@ -127,11 +128,11 @@ public class ProjectValidatorTest {
     }
 
     @Test
-    void shouldThrowException_IfProjectSubTypeInValidForCreateProject() {
+    void shouldThrowException_IfNatureOfWorkInValidForCreateProject() {
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withProjectForCreateValidationSuccess().build();
-        projectRequest.getProjects().get(0).setProjectSubType("Type-2");
+        projectRequest.getProjects().get(0).setNatureOfWork("Work2");
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateCreateProjectRequest(projectRequest));
-        assertTrue(exception.toString().contains("INVALID_PROJECT_SUB_TYPE"));
+        assertTrue(exception.toString().contains("INVALID_NATURE_OF_WORK"));
     }
 
     @Test
@@ -151,21 +152,13 @@ public class ProjectValidatorTest {
     }
 
     @Test
-    void shouldThrowException_IfBeneficiaryInValidForCreateProject() {
-        ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withProjectForCreateValidationSuccess().build();
-        projectRequest.getProjects().get(0).getTargets().get(0).setBeneficiaryType("B1");
-        CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateCreateProjectRequest(projectRequest));
-        assertTrue(exception.toString().contains("INVALID_BENEFICIARY_TYPE"));
-    }
-
-    @Test
     void shouldThrowException_IfRequestInfoIsNullForSearchProject() {
         ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().addGoodProjectForSearch().build();
         projectRequest.setRequestInfo(null);
         Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
-                (String)searchParams.get("tenantId")));
+                (String)searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
         assertTrue(exception.toString().contains("Request info is mandatory"));
     }
 
@@ -176,7 +169,7 @@ public class ProjectValidatorTest {
         Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
-                (String)searchParams.get("tenantId")));
+                (String)searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
         assertTrue(exception.toString().contains("UserInfo is mandatory"));
     }
 
@@ -186,7 +179,7 @@ public class ProjectValidatorTest {
         Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 null, (Integer)searchParams.get("offset"),
-                (String)searchParams.get("tenantId")));
+                (String)searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
         assertTrue(exception.toString().contains("limit is mandatory"));
     }
 
@@ -196,7 +189,7 @@ public class ProjectValidatorTest {
         Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                  (Integer)searchParams.get("limit"), null,
-                (String)searchParams.get("tenantId")));
+                (String)searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
         assertTrue(exception.toString().contains("offset is mandatory"));
     }
 
@@ -206,7 +199,7 @@ public class ProjectValidatorTest {
         Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
-                null));
+                null, (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
         assertTrue(exception.toString().contains("tenantId is mandatory"));
     }
 
@@ -217,7 +210,7 @@ public class ProjectValidatorTest {
         Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
-                (String) searchParams.get("tenantId")));
+                (String) searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
         assertTrue(exception.toString().contains("Tenant Id must be same in URL param and project request"));
     }
 
@@ -229,8 +222,40 @@ public class ProjectValidatorTest {
         Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
-                (String) searchParams.get("tenantId")));
+                (String) searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
         assertTrue(exception.toString().contains("Start date is required if end date is passed"));
+    }
+
+    @Test
+    void shouldThrowException_IfEndDateLessThanStartDateForSearchProject() {
+        ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProjectForSearch().build();
+        projectRequest.getProjects().get(0).setStartDate(10000L);
+        projectRequest.getProjects().get(0).setEndDate(5000L);
+        Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
+        CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
+                (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
+                (String) searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
+        assertTrue(exception.toString().contains("Start date should be less than end date"));
+    }
+
+    @Test
+    void shouldThrowException_IfCreatedFromGreaterThankCreatedToForSearchProject() {
+        ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProjectForSearch().build();
+        Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
+        CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
+                (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
+                (String) searchParams.get("tenantId"), 10000L, 500L));
+        assertTrue(exception.toString().contains("Created From should be less than Created To"));
+    }
+
+    @Test
+    void shouldThrowException_IfCreatedFromDateMissingWhenCreatedToGivenForSearchProject() {
+        ProjectRequest projectRequest = ProjectRequestTestBuilder.builder().withRequestInfo().addGoodProjectForSearch().build();
+        Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
+        CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
+                (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
+                (String) searchParams.get("tenantId"), null, 500L));
+        assertTrue(exception.toString().contains("Created From date is required if Created To date is given"));
     }
 
     @Test
@@ -240,7 +265,7 @@ public class ProjectValidatorTest {
         projectRequest.setProjects(null);
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
-                (String)searchParams.get("tenantId")));
+                (String)searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
         assertTrue(exception.toString().contains("Projects are mandatory"));
     }
 
@@ -250,7 +275,7 @@ public class ProjectValidatorTest {
         Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
-                (String)searchParams.get("tenantId")));
+                (String)searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
         assertTrue(exception.toString().contains("Any one project search field is required"));
     }
 
@@ -261,7 +286,7 @@ public class ProjectValidatorTest {
         projectRequest.getProjects().get(0).setTenantId(null);
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
-                (String)searchParams.get("tenantId")));
+                (String)searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
         assertTrue(exception.toString().contains("Tenant ID is mandatory"));
     }
 
@@ -273,7 +298,7 @@ public class ProjectValidatorTest {
         projectRequest.getProjects().get(1).setTenantId("t2");
         CustomException exception = assertThrows(CustomException.class, ()-> projectValidator.validateSearchProjectRequest(projectRequest,
                 (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
-                (String)searchParams.get("tenantId")));
+                (String)searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")));
         assertTrue(exception.toString().contains("Tenant Id must be same in URL param and project request"));
     }
 

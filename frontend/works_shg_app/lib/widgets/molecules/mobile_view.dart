@@ -15,7 +15,7 @@ class MobileView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-          SafeArea(child: Center(child: LayoutBuilder(builder:
+          Center(child: LayoutBuilder(builder:
               (BuildContext context, BoxConstraints viewportConstraints) {
             return ConstrainedBox(
                 constraints: BoxConstraints(
@@ -53,7 +53,7 @@ class MobileView extends StatelessWidget {
                               ]),
                               bannerURL)))
                 ])));
-          })))
+          }))
         ]));
   }
 }
