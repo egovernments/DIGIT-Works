@@ -4,15 +4,19 @@ import { useRouteMatch } from "react-router-dom";
 import MastersCard from "./components/MastersCard";
 import ProjectCard from "./components/ProjectCard";
 import { default as EmployeeApp } from "./pages/employee";
+import CreateMasters from "./pages/employee/Master/CreateMasters";
 import SearchMasters from "./pages/employee/Master/SearchMasters";
-import CreateOrganization from "./pages/employee/Master/CreateOrganization";
-import RegisterWageSeeker from "./pages/employee/registerWageSeeker/index";
-import SearchOrganisation from "./pages/employee/SearchOrganisation";
-import SearchWageSeeker from "./pages/employee/SearchWageSeeker";
 import SearchMastersApplication from "./components/SearchMasters";
-import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
-import ViewWageSeeker from "./pages/employee/ViewWageSeeker";
-import ModifyWageSeeker from "./pages/employee/ModifyWageSeeker";
+import ViewMasters from "./pages/employee/Master/ViewMasters";
+
+import RegisterWageSeeker from "./pages/employee/WageSeeker/RegisterWageSeeker";
+import SearchWageSeeker from "./pages/employee/WageSeeker/SearchWageSeeker";
+import ViewWageSeeker from "./pages/employee/WageSeeker/ViewWageSeeker";
+import ModifyWageSeeker from "./pages/employee/WageSeeker/ModifyWageSeeker";
+
+import CreateOrganization from "./pages/employee/Organisation/CreateOrganisation";
+import SearchOrganisation from "./pages/employee/Organisation/SearchOrganisation";
+import ViewOrganisation from "./pages/employee/Organisation/ViewOrganisation";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
 
@@ -26,8 +30,6 @@ export const MastersModule = ({ stateCode, userType, tenants }) => {
     language,
   });
 
-
-
   if (isLoading) {
     return <Loader />;
   }
@@ -38,15 +40,17 @@ const componentsToRegister = {
   MastersModule,
   MasterCard:MastersCard ,
   ProjectsCard:ProjectCard,
+  CreateMasters,
   SearchMasters,
-  CreateOrganization,
-  RegisterWageSeeker,
   SearchMastersApplication,
+  ViewMasters,
+  RegisterWageSeeker,
   SearchWageSeeker,
-  ViewOrganisation,
-  SearchOrganisation,
   ViewWageSeeker,
-  ModifyWageSeeker
+  ModifyWageSeeker,
+  CreateOrganization,
+  SearchOrganisation,
+  ViewOrganisation
 };
 
 export const initMastersComponents = () => {
