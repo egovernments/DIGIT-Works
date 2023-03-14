@@ -4,17 +4,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ErrorRes;
+import org.egov.works.Main;
+import org.egov.works.TestConfiguration;
 import org.egov.works.helper.ContractRequestTestBuilder;
 import org.egov.works.helper.ContractTestBuilder;
+import org.egov.works.repository.AmountBreakupRepository;
+import org.egov.works.repository.ContractRepository;
+import org.egov.works.repository.DocumentRepository;
+import org.egov.works.repository.LineItemsRepository;
 import org.egov.works.service.ContractService;
 import org.egov.works.web.models.ContractRequest;
 import org.egov.works.web.models.ContractResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -30,16 +40,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * API tests for ContractApiController
  */
 
-@SpringBootTest
+@ContextConfiguration(classes = Main.class)
+@WebMvcTest(ContractApiController.class)
+@Import(TestConfiguration.class)
 @AutoConfigureMockMvc
 public class ContractApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private JdbcTemplate jdbcTemplate;
+
 
     @MockBean
-    ContractService contractService;
+    private ContractService contractService;
+
+    @MockBean
+    private AmountBreakupRepository amountBreakupRepository;
+
+    @MockBean
+    private ContractRepository contractRepository;
+
+    @MockBean
+    private DocumentRepository documentRepository;
+
+    @MockBean
+    private LineItemsRepository lineItemsRepository;
+
+
 
     @Test
     public void contractV1CreatePostSuccess() throws Exception {
