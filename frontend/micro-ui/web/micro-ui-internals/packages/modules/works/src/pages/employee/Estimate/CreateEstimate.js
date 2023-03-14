@@ -42,7 +42,7 @@ const CreateEstimate = (props) => {
       },
       onSuccess: async (responseData, variables) => {
         clearSessionFormData();
-        history.push("/works-ui/employee/works/response", {
+        history.push(`/${window?.contextPath}/employee/works/response`, {
           header: t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
           id: responseData?.estimates[0]?.estimateNumber,
           info: t("WORKS_ESTIMATE_ID"),
@@ -50,7 +50,7 @@ const CreateEstimate = (props) => {
           links: [
             {
               name: t("WORKS_CREATE_ESTIMATE"),
-              redirectUrl: "/works-ui/employee/works/create-estimate",
+              redirectUrl: `/${window?.contextPath}/employee/works/create-estimate`,
               code: "",
               svg: "CreateEstimateIcon",
               isVisible: true,
@@ -58,7 +58,7 @@ const CreateEstimate = (props) => {
             },
             {
               name: t("WORKS_GOTO_ESTIMATE_INBOX"),
-              redirectUrl: "/works-ui/employee/works/inbox",
+              redirectUrl: `/${window?.contextPath}/employee/works/inbox`,
               code: "",
               svg: "GotoInboxIcon",
               isVisible: true,
@@ -66,7 +66,7 @@ const CreateEstimate = (props) => {
             },
             {
               name: t("WORKS_DOWNLOAD_PDF"),
-              redirectUrl:"/works-ui/employee/works/inbox",
+              redirectUrl:`/${window?.contextPath}/employee/works/inbox`,
               code:"",
               svg:"DownloadPrefixIcon",
               isVisible:true,

@@ -6,21 +6,18 @@ const inboxConfig = () => {
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
-                limit:10,
-                offset:0,
-                tenantId: Digit.ULBService.getCurrentTenantId(),
             },
             requestBody: {
                 apiOperation: "SEARCH",
                 Projects: [
-                    {
-                        tenantId: Digit.ULBService.getCurrentTenantId()
+                    {   
+                        
                     }
                 ]
             },
             minParametersForSearchForm:1,
             masterName:"commonUiConfig",
-            moduleName:"SearchProjectConfig",
+            moduleName:"ProjectInboxConfig",
             tableFormJsonPath:"requestParam",
             filterFormJsonPath:"requestBody.Projects[0]",
             searchFormJsonPath:"requestBody.Projects[0]"
@@ -57,6 +54,9 @@ const inboxConfig = () => {
                             populators: {
                               name: "department",
                               optionsKey: "name",
+                              optionsCustomStyle : {
+                                top : "2.3rem"
+                              },
                               mdmsConfig: {
                                 masterName: "Department",
                                 moduleName: "common-masters",
@@ -71,11 +71,14 @@ const inboxConfig = () => {
                           disable: false,
                           populators: {
                             name: "projectType",
-                            optionsKey: "code",
+                            optionsKey: "name",
+                            optionsCustomStyle : {
+                                top : "2.3rem"
+                            },
                             mdmsConfig: {
                               masterName: "ProjectType",
                               moduleName: "works",
-                              localePrefix: "ES_COMMON",
+                              localePrefix: "COMMON_MASTERS",
                             }
                           }
                         }
@@ -128,7 +131,7 @@ const inboxConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "projectFromDate"
+                                name: "createdFrom"
                             },
                         },
                         {
@@ -137,8 +140,13 @@ const inboxConfig = () => {
                             isMandatory: false,
                             disable: false,
                             populators: { 
-                                name: "projectToDate"
+                                name: "createdTo",
+                                error: 'DATE_VALIDATION_MSG'
                             },
+                            additionalValidation: {
+                                type: 'date',
+                                keys: {start: 'createdFrom', end: 'createdTo'}
+                            }
                         },
                         {
                             label: "ES_COMMON_CREATED_BY",
@@ -148,10 +156,13 @@ const inboxConfig = () => {
                             populators: {
                               name: "createdBy",
                               optionsKey: "name",
+                              optionsCustomStyle : {
+                                top : "2.3rem"
+                              },
                               mdmsConfig: {
-                                masterName: "TypeOfWork",
+                                masterName: "NatureOfWork",
                                 moduleName: "works",
-                                localePrefix: "WORKS",
+                                localePrefix: "COMMON_MASTERS"
                               }
                             }
                         },
@@ -163,10 +174,13 @@ const inboxConfig = () => {
                             populators: {
                               name: "status",
                               optionsKey: "name",
+                              optionsCustomStyle : {
+                                top : "2.3rem"
+                              },
                               mdmsConfig: {
-                                masterName: "TypeOfWork",
+                                masterName: "NatureOfWork",
                                 moduleName: "works",
-                                localePrefix: "WORKS",
+                                localePrefix: "COMMON_MASTERS"
                               }
                             }
                         }

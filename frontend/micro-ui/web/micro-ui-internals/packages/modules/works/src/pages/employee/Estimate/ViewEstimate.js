@@ -132,7 +132,7 @@ const ViewEstimate = (props) => {
             setShowRejectModal(true)
         }
         if(action?.name==="MODIFY_ESTIMATE"){
-            history.push("/works-ui/employee/works/modify-estimate",{ tenantId,estimateNumber })
+            history.push(`/${window?.contextPath}/employee/works/modify-estimate`,{ tenantId,estimateNumber })
         }
         if(action?.name==="APPROVE_ESTIMATE"){
             

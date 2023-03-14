@@ -124,7 +124,7 @@ const SearchApprovedSubEs = ({ tenantId, onSubmit, data, count,isLoading,resultO
             Cell: ({ row }) => {
                 return (
                         <span className="link">
-                        <Link to={`/works-ui/employee/contracts/create-contract?estimateNumber=${row.original.estimateNumber}&task=${row.original.name}&subEstimate=${row.original["estimateDetailNumber"]}`}>
+                        <Link to={`/${window?.contextPath}/employee/contracts/create-contract?estimateNumber=${row.original.estimateNumber}&task=${row.original.name}&subEstimate=${row.original["estimateDetailNumber"]}`}>
                                 <div style={{"display":"flex","alignItems":"center"}}>
                                     <span ><CreateLoiIcon style={{ "margin": "auto" }} />  </span>
                                     <p>{t("WORKS_CREATE_CONTRACT")}</p>

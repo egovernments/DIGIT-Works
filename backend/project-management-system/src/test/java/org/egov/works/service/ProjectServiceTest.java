@@ -71,15 +71,15 @@ public class ProjectServiceTest {
         Map<String, Object> searchParams = ProjectRequestTestBuilder.builder().getSearchProjectParams();
         when(projectRepository.getProjects(projectRequest, (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
                 (String)searchParams.get("tenantId"), (Long)searchParams.get("lastChangedSince"), (Boolean) searchParams.get("includeDeleted")
-                , (Boolean) searchParams.get("includeAncestors"), (Boolean) searchParams.get("includeDescendants")))
+                , (Boolean) searchParams.get("includeAncestors"), (Boolean) searchParams.get("includeDescendants"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo")))
                 .thenReturn(searchProjectResults);
 
         List<Project> response = projectService.searchProject(projectRequest, (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
                 (String)searchParams.get("tenantId"), (Long)searchParams.get("lastChangedSince"), (Boolean) searchParams.get("includeDeleted")
-                , (Boolean) searchParams.get("includeAncestors"), (Boolean) searchParams.get("includeDescendants"));
+                , (Boolean) searchParams.get("includeAncestors"), (Boolean) searchParams.get("includeDescendants"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo"));
 
         verify(projectValidator, times(1)).validateSearchProjectRequest(projectRequest, (Integer)searchParams.get("limit"), (Integer)searchParams.get("offset"),
-                (String)searchParams.get("tenantId"));
+                (String)searchParams.get("tenantId"), (Long)searchParams.get("createdFrom"), (Long)searchParams.get("createdTo"));
 
         assertEquals(1, response.size());
 

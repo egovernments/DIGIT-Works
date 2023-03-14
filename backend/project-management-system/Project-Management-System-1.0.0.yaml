@@ -82,6 +82,8 @@ paths:
         - $ref: '#/parameters/includeDeleted'
         - $ref: '#/parameters/includeAncestors'
         - $ref: '#/parameters/includeDescendants'
+        - $ref: '#/parameters/createdFrom'
+        - $ref: '#/parameters/createdTo'
       tags:
         - Project
       responses:
@@ -1211,6 +1213,24 @@ parameters:
     default: false
     required: false
 
+  createdFrom:
+    name: createdFrom
+    description: |
+      Used in project search API to limit the search results to only those projects whose creation date is after the specified 'createdFrom' date.
+    in: query
+    required: false
+    type: integer
+    format: int64
+
+  createdTo:
+    name: createdTo
+    description: |
+      Used in project search API to limit the search results to only those projects whose creation date is before the specified 'createdTo' date.
+    in: query
+    required: false
+    type: integer
+    format: int64
+
 definitions:
 
   eventTimestamp:
@@ -1478,9 +1498,14 @@ definitions:
         description: Street Name
         minLength: 2
         maxLength: 256
-      locality:
+      boundaryType:
         type: string
-        description: Locality code
+        description: Boundary Type
+        minLength: 2
+        maxLength: 64
+      boundary:
+        type: string
+        description: Boundary code
         minLength: 2
         maxLength: 128
 
@@ -1625,6 +1650,11 @@ definitions:
         description: Reference to physical documents that have been attached via file upload
         items:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/Document'
+      natureOfWork:
+        type: string
+        description: Specifies nature of work for Project
+        minLength: 2
+        maxLength: 64
       projectHierarchy:
         type: "string"
         description: "Materialized Path of the hierarchy that this project element belongs to"

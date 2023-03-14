@@ -40,7 +40,7 @@ const ModifyEstimate = (props) => {
                 }, 5000);
             },
             onSuccess: async (responseData, variables) => {
-                history.push("/works-ui/employee/works/response",{
+                history.push(`/${window?.contextPath}/employee/works/response`,{
                     header:"Estimate Modified and Forwarded Successfully",
                     id:responseData?.estimates[0]?.estimateNumber,
                     info:"Estimate ID",
@@ -48,7 +48,7 @@ const ModifyEstimate = (props) => {
                     links:[
                         {
                             name:"Go To Estimate Inbox",
-                            redirectUrl:"/works-ui/employee/works/inbox",
+                            redirectUrl:`/${window?.contextPath}/employee/works/inbox`,
                             code:"",
                             svg:"RefreshIcon"
                         }

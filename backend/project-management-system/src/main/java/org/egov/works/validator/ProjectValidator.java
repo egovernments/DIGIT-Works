@@ -47,10 +47,10 @@ public class ProjectValidator {
         //Verify MDMS Data
         validateRequestMDMSData(request, tenantId, errorMap);
 
-        //Get localities in list from all Projects in request body for validation
-        List<String> locationsForValidation = getLocationForValidation(request.getProjects());
-        validateLocation(locationsForValidation, tenantId, requestInfo, errorMap);
-        log.info("Localities in request validated with Location Service");
+        //Get boundaries in list from all Projects in request body for validation
+        Map<String, List<String>> boundariesForValidation = getBoundaryForValidation(request.getProjects());
+        validateBoundary(boundariesForValidation, tenantId, requestInfo, errorMap);
+        log.info("Boundaries in request validated with Location Service");
 
         // Verify provided documentIds are valid.
         validateDocumentIds(request);
@@ -60,16 +60,16 @@ public class ProjectValidator {
     }
 
     /* Validates search Project request body and parameters*/
-    public void validateSearchProjectRequest(ProjectRequest project, Integer limit, Integer offset, String tenantId) {
+    public void validateSearchProjectRequest(ProjectRequest project, Integer limit, Integer offset, String tenantId, Long createdFrom, Long createdTo) {
         Map<String, String> errorMap = new HashMap<>();
         RequestInfo requestInfo = project.getRequestInfo();
 
         //Verify if RequestInfo and UserInfo is present
         validateRequestInfo(requestInfo);
         //Verify if search project request parameters are valid
-        validateSearchProjectRequestParams(limit, offset, tenantId);
+        validateSearchProjectRequestParams(limit, offset, tenantId, createdFrom, createdTo);
         //Verify if search project request is valid
-        validateSearchProjectRequest(project.getProjects(), tenantId);
+        validateSearchProjectRequest(project.getProjects(), tenantId, createdFrom);
         //Verify if project request have multiple tenant Ids
         validateMultipleTenantIds(project);
         //Verify MDMS Data
@@ -103,10 +103,10 @@ public class ProjectValidator {
         //Verify MDMS Data
         validateRequestMDMSData(request, tenantId, errorMap);
 
-        //Get localities in list from all Projects in request body for validation
-        List<String> locationsForValidation = getLocationForValidation(request.getProjects());
-        validateLocation(locationsForValidation, tenantId, requestInfo, errorMap);
-        log.info("Localities in request validated with Location Service");
+        //Get boundaries in list from all Projects in request body for validation
+        Map<String, List<String>> boundariesForValidation = getBoundaryForValidation(request.getProjects());
+        validateBoundary(boundariesForValidation, tenantId, requestInfo, errorMap);
+        log.info("Boundaries in request validated with Location Service");
 
         // Verify provided documentIds are valid.
         validateDocumentIds(request);
@@ -117,7 +117,7 @@ public class ProjectValidator {
     }
 
     /* Validates if search Project request parameters are valid */
-    private void validateSearchProjectRequestParams(Integer limit, Integer offset, String tenantId) {
+    private void validateSearchProjectRequestParams(Integer limit, Integer offset, String tenantId, Long createdFrom, Long createdTo) {
         if (limit == null) {
             log.error("limit is mandatory parameter in Project search");
             throw new CustomException("SEARCH_PROJECT.LIMIT", "limit is mandatory for Project Search");
@@ -131,6 +131,16 @@ public class ProjectValidator {
         if (StringUtils.isBlank(tenantId)) {
             log.error("tenantId is mandatory parameter in Project search");
             throw new CustomException("SEARCH_PROJECT.TENANT_ID", "tenantId is mandatory for Project Search");
+        }
+
+        if ((createdFrom == null || createdFrom == 0) && (createdTo != null && createdTo != 0)) {
+            log.error("Created From date is required if Created To date is given");
+            throw new CustomException("INVALID_DATE_PARAM", "Created From date is required if Created To date is given");
+        }
+
+        if ((createdFrom != null && createdTo != null  && createdTo != 0) && (createdFrom.compareTo(createdTo) > 0)) {
+            log.error("Created From in Project search parameters should be less than Created To");
+            throw new CustomException("INVALID_DATE", "Created From should be less than Created To");
         }
     }
 
@@ -156,6 +166,10 @@ public class ProjectValidator {
                 log.error("Start date should be less than end date");
                 errorMap.put("INVALID_DATE", "Start date should be less than end date");
             }
+            if (project.getAddress() != null && StringUtils.isNotBlank(project.getAddress().getBoundary()) && StringUtils.isBlank(project.getAddress().getBoundaryType()) ) {
+                log.error("Boundary Type is mandatory if boundary is present  in Project request body");
+                errorMap.put("BOUNDARY", "Boundary Type is mandatory if boundary is present in Project request body");
+            }
         }
 
         if (!errorMap.isEmpty())
@@ -163,7 +177,7 @@ public class ProjectValidator {
     }
 
     /* Validates Search Project Request body */
-    private void validateSearchProjectRequest(List<Project> projects, String tenantId) {
+    private void validateSearchProjectRequest(List<Project> projects, String tenantId, Long createdFrom) {
         if (projects == null || projects.size() == 0) {
             log.error("Project list is empty. Projects is mandatory");
             throw new CustomException("PROJECT", "Projects are mandatory");
@@ -181,7 +195,9 @@ public class ProjectValidator {
             if (StringUtils.isBlank(project.getId()) && StringUtils.isBlank(project.getProjectType())
                     && StringUtils.isBlank(project.getName()) && StringUtils.isBlank(project.getProjectNumber())
                     && StringUtils.isBlank(project.getProjectSubType())
-                    && project.getStartDate() == 0 && project.getEndDate() == 0) {
+                    && (project.getStartDate() == null || project.getStartDate() == 0)
+                    && (project.getEndDate() == null || project.getEndDate() == 0)
+                    && (createdFrom == null || createdFrom == 0)) {
                 log.error("Any one project search field is required for Project Search");
                 throw new CustomException("PROJECT_SEARCH_FIELDS", "Any one project search field is required");
             }
@@ -222,32 +238,30 @@ public class ProjectValidator {
 
     /* Validates the request data against MDMS data */
     private void  validateMDMSData(List<Project> projects, Object mdmsData, Map<String, String> errorMap) {
-        final String jsonPathForWorksTypeOfProjectList = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_PROJECTTYPE + ".*.code";
-        String jsonPathForWorksSubTypeOfProject = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_PROJECTTYPE + ".[?(@.active==true && @.code == '{code}')].projectSubType";
-        final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*.code";
-        String jsonPathForBeneficiaryOfProject = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_PROJECTTYPE + ".[?(@.active==true && @.code == '{code}')].beneficiary";
+        final String jsonPathForMDMSTypeOfProjectList = "$.MdmsRes." + config.getMdmsModule() + "." + MASTER_PROJECTTYPE + ".[?(@.active==true)].code";
+        final String jsonPathForMDMSNatureOfWorkList = "$.MdmsRes." + config.getMdmsModule() + "." + MASTER_NATUREOFWORK + ".[?(@.active==true)].code";
+        final String jsonPathForDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*.code";
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
-        final String PLACEHOLDER_CODE = "{code}";
 
         List<Object> deptRes = null;
-        List<Object> beneficiaryTypeRes = null;
         List<Object> typeOfProjectRes = null;
         List<Object> tenantRes = null;
-        List<List<Object>> projectSubTypeRes = null;
+        List<Object> natureOfWorkRes = null;
         try {
-            deptRes = JsonPath.read(mdmsData, jsonPathForWorksDepartment);
-            typeOfProjectRes = JsonPath.read(mdmsData, jsonPathForWorksTypeOfProjectList);
+            deptRes = JsonPath.read(mdmsData, jsonPathForDepartment);
+            typeOfProjectRes = JsonPath.read(mdmsData, jsonPathForMDMSTypeOfProjectList);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
+            if (projects.stream().anyMatch(p -> StringUtils.isNotBlank(p.getNatureOfWork()))) {
+                natureOfWorkRes = JsonPath.read(mdmsData, jsonPathForMDMSNatureOfWorkList);
+            }
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
         }
 
         for (Project project: projects) {
-            boolean isProjectPresentInMDMS = true;
             log.info("Validate Project type with MDMS");
             if (!StringUtils.isBlank(project.getProjectType()) && !typeOfProjectRes.contains(project.getProjectType())) {
-                isProjectPresentInMDMS = false;
                 log.error("The project type: " + project.getProjectType() + " is not present in MDMS");
                 errorMap.put("INVALID_PROJECT_TYPE", "The project type: " + project.getProjectType() + " is not present in MDMS");
             }
@@ -261,33 +275,10 @@ public class ProjectValidator {
                 log.error("The department code: " + project.getDepartment() + " is not present in MDMS");
                 errorMap.put("INVALID_DEPARTMENT_CODE", "The department code: " + project.getDepartment() + " is not present in MDMS");
             }
-
-            //Verify if project subtype is present for project type
-            if (isProjectPresentInMDMS && !StringUtils.isBlank(project.getProjectType())) {
-                log.info("Validate Project Subtype with MDMS");
-                jsonPathForWorksSubTypeOfProject = jsonPathForWorksSubTypeOfProject.replace(PLACEHOLDER_CODE, project.getProjectType());
-                projectSubTypeRes = JsonPath.read(mdmsData, jsonPathForWorksSubTypeOfProject);
-
-                if (!StringUtils.isBlank(project.getProjectSubType()) && !projectSubTypeRes.get(0).contains(project.getProjectSubType())) {
-                    log.error("The project subtype : " + project.getProjectSubType() + " is not present in MDMS for project type : " + project.getProjectType());
-                    errorMap.put("INVALID_PROJECT_SUB_TYPE", "The project subtype : " + project.getProjectSubType() + " is not present in MDMS for project type : " + project.getProjectType());
-                }
-            }
-
-            if (project.getTargets() != null && !StringUtils.isBlank(project.getProjectType())) {
-                for (Target target: project.getTargets()) {
-                    //Verify if beneficiary is present for project type
-                    if (isProjectPresentInMDMS && !StringUtils.isBlank(target.getBeneficiaryType())) {
-                        log.info("Validate Beneficiary Type with MDMS");
-                        jsonPathForBeneficiaryOfProject = jsonPathForBeneficiaryOfProject.replace(PLACEHOLDER_CODE, project.getProjectType());
-                        beneficiaryTypeRes = JsonPath.read(mdmsData, jsonPathForBeneficiaryOfProject);
-
-                        if (!StringUtils.isBlank(target.getBeneficiaryType()) && !beneficiaryTypeRes.contains(target.getBeneficiaryType())) {
-                            log.error("The beneficiary Type : " + target.getBeneficiaryType() + " is not present in MDMS for project type : " + project.getProjectType());
-                            errorMap.put("INVALID_BENEFICIARY_TYPE", "The beneficiary Type : " + target.getBeneficiaryType() + " is not present in MDMS for project type : " + project.getProjectType());
-                        }
-                    }
-                }
+            log.info("Validate Nature of Work with MDMS");
+            if (!StringUtils.isBlank(project.getNatureOfWork()) && !natureOfWorkRes.contains(project.getNatureOfWork())) {
+                log.error("The nature of work: " + project.getNatureOfWork() + " is not present in MDMS");
+                errorMap.put("INVALID_NATURE_OF_WORK", "The nature of work: " + project.getNatureOfWork() + " is not present in MDMS");
             }
         }
     }
@@ -303,21 +294,34 @@ public class ProjectValidator {
         log.info("Request data validated with MDMS");
     }
 
-    /* Returns localities in list for all Projects in request body */
-    private List<String> getLocationForValidation(List<Project> projects) {
-        List<String> localities = new ArrayList<>();
+    /* Returns boundaries map for all Projects in request body with key boundaryType and value as list of all boundaries corresponding to boundaryType*/
+    private Map<String, List<String>> getBoundaryForValidation(List<Project> projects) {
+        Map<String, List<String>> boundariesMap = new HashMap<>();
         for (Project project: projects) {
-            if (project.getAddress() != null && project.getAddress().getLocality() != null) {
-                localities.add(project.getAddress().getLocality());
+
+            if (project.getAddress() != null && StringUtils.isNotBlank(project.getAddress().getBoundary())) {
+                String boundaryType = project.getAddress().getBoundaryType();
+                String boundary = project.getAddress().getBoundary();
+
+                // If the boundary type already exists in the map, add the boundary to the existing list
+                if (boundariesMap.containsKey(boundaryType)) {
+                    boundariesMap.get(boundaryType).add(boundary);
+                }
+                // If the boundary type does not exist in the map, create a new list and add the boundary to it
+                else {
+                    List<String> boundaries = new ArrayList<>();
+                    boundaries.add(boundary);
+                    boundariesMap.put(boundaryType, boundaries);
+                }
             }
         }
-        return localities;
+        return boundariesMap;
     }
 
-    /* Validates Locality data with location service */
-    private void validateLocation(List<String> locations, String tenantId, RequestInfo requestInfo, Map<String, String> errorMap) {
-        if (locations.size() > 0) {
-            boundaryUtil.validateBoundaryDetails(locations, tenantId, requestInfo, BOUNDARY_ADMIN_HIERARCHY_CODE);
+    /* Validates Boundary data with location service */
+    private void validateBoundary(Map<String, List<String>> boundaries, String tenantId, RequestInfo requestInfo, Map<String, String> errorMap) {
+        if (!boundaries.isEmpty()) {
+            boundaryUtil.validateBoundaryDetails(boundaries, tenantId, requestInfo, config.getLocationHierarchyType());
         }
     }
 
