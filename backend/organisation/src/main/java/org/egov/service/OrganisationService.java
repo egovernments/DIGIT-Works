@@ -4,6 +4,8 @@ package org.egov.service;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.OrganisationRepository;
+import org.egov.config.Configuration;
+import org.egov.kafka.Producer;
 import org.egov.validator.OrganisationServiceValidator;
 import org.egov.web.models.OrgRequest;
 import org.egov.web.models.OrgSearchCriteria;
@@ -19,18 +21,34 @@ import java.util.List;
 public class OrganisationService {
 
     @Autowired
-    OrganisationServiceValidator organisationServiceValidator;
+    private OrganisationServiceValidator organisationServiceValidator;
 
     @Autowired
-    OrganisationRepository organisationRepository;
+    private OrganisationRepository organisationRepository;
+
+    @Autowired
+    private OrganisationEnrichmentService organisationEnrichmentService;
+
+    @Autowired
+    private Producer producer;
+
+    @Autowired
+    private Configuration configuration;
+
 
     public OrgRequest createOrganisationWithoutWorkFlow(OrgRequest orgRequest) {
-
+        log.info("OrganisationService::createOrganisationWithoutWorkFlow");
+        organisationServiceValidator.validateCreateOrgRegistryWithoutWorkFlow(orgRequest);
+        organisationEnrichmentService.enrichCreateOrgRegistryWithoutWorkFlow(orgRequest);
+        producer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
         return orgRequest;
     }
 
     public OrgRequest updateOrganisationWithoutWorkFlow(OrgRequest orgRequest) {
-
+        log.info("OrganisationService::updateOrganisationWithoutWorkFlow");
+        organisationServiceValidator.validateUpdateOrgRegistryWithoutWorkFlow(orgRequest);
+        organisationEnrichmentService.enrichUpdateOrgRegistryWithoutWorkFlow(orgRequest);
+        producer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
         return orgRequest;
     }
 

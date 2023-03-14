@@ -61,6 +61,18 @@ public class Configuration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
+    @Value("${egov.idgen.organisation.application.number.name}")
+    private String orgApplicationNumberName;
+
+    @Value("${egov.idgen.organisation.application.number.format}")
+    private String orgApplicationNumberFormat;
+
+    @Value("${egov.idgen.function.application.number.name}")
+    private String functionApplicationNumberName;
+
+    @Value("${egov.idgen.function.application.number.format}")
+    private String functionApplicationNumberFormat;
+
     // Workflow Config
     @Value("${egov.workflow.host}")
     private String wfHost;
@@ -98,4 +110,12 @@ public class Configuration {
     // SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    //topic config
+    @Value("${org.kafka.create.topic}")
+    private String orgKafkaCreateTopic;
+
+    @Value("${org.kafka.update.topic}")
+    private String orgKafkaUpdateTopic;
+
 }

@@ -161,6 +161,11 @@ components:
           type: string
           minLength: 2
           maxLength: 64
+        name:
+          description: Name of the org
+          type: string
+          minLength: 2
+          maxLength: 128
         applicationNumber:
           description: Application number for the org registration
           readOnly: true
@@ -225,11 +230,12 @@ components:
         auditDetails:
           type: object
           allOf:
-          - $ref: '#/components/schemas/AuditDetails'
-          - description: Collection of audit related fields used by most models
-            readOnly: true
+            - $ref: '#/components/schemas/AuditDetails'
+            - description: Collection of audit related fields used by most models
+              readOnly: true
       required:
-      - tenantId
+        - tenantId
+        - name
     Identifier:
       title: Identifier
       description: Object to capture tax identifiers for a organisation
@@ -318,9 +324,9 @@ components:
         auditDetails:
           type: object
           allOf:
-          - $ref: '#/components/schemas/AuditDetails'
-          - description: Collection of audit related fields used by most models
-            readOnly: true
+            - $ref: '#/components/schemas/AuditDetails'
+            - description: Collection of audit related fields used by most models
+              readOnly: true
     OrgServiceRequest:
       title: OrgServiceRequest
       type: object
@@ -328,13 +334,13 @@ components:
         RequestInfo:
           type: object
           allOf:
-          - $ref: '#/components/schemas/RequestInfo'
-          - description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+            - $ref: '#/components/schemas/RequestInfo'
+            - description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
         organisations:
           type: object
           allOf:
-          - $ref: '#/components/schemas/Organisation'
-          - description: Organisation registry
+            - $ref: '#/components/schemas/Organisation'
+            - description: Organisation registry
         workflow:
           $ref: '#/components/schemas/Workflow'
     OrgServiceResponse:
@@ -344,9 +350,9 @@ components:
         ResponseInfo:
           type: object
           allOf:
-          - $ref: '#/components/schemas/ResponseInfo'
-          - description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
-            readOnly: true
+            - $ref: '#/components/schemas/ResponseInfo'
+            - description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
+              readOnly: true
         organisations:
           type: array
           items:
@@ -354,8 +360,8 @@ components:
         pagination:
           type: object
           allOf:
-          - $ref: '#/components/schemas/Pagination'
-          - description: Pagination details
+            - $ref: '#/components/schemas/Pagination'
+            - description: Pagination details
         workflow:
           $ref: '#/components/schemas/Workflow'
     OrgSearchCriteria:
@@ -377,13 +383,11 @@ components:
           type: string
           minLength: 2
           maxLength: 1000
-        type:
-          type: string
         functions:
           type: object
           allOf:
-          - $ref: '#/components/schemas/Function'
-          - description: Represents the functions of an organisation
+            - $ref: '#/components/schemas/Function'
+            - description: Represents the functions of an organisation
         identifierType:
           type: string
         identifierValue:
@@ -399,13 +403,13 @@ components:
         RequestInfo:
           type: object
           allOf:
-          - $ref: '#/components/schemas/RequestInfo'
-          - description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+            - $ref: '#/components/schemas/RequestInfo'
+            - description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
         organisations:
           type: object
           allOf:
-          - $ref: '#/components/schemas/Organisation'
-          - description: Organisation registry
+            - $ref: '#/components/schemas/Organisation'
+            - description: Organisation registry
     OrgResponse:
       title: OrgResponse
       type: object
@@ -413,9 +417,9 @@ components:
         ResponseInfo:
           type: object
           allOf:
-          - $ref: '#/components/schemas/ResponseInfo'
-          - description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
-            readOnly: true
+            - $ref: '#/components/schemas/ResponseInfo'
+            - description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
+              readOnly: true
         organisations:
           type: array
           items:
@@ -423,8 +427,8 @@ components:
         pagination:
           type: object
           allOf:
-          - $ref: '#/components/schemas/Pagination'
-          - description: Pagination details
+            - $ref: '#/components/schemas/Pagination'
+            - description: Pagination details
     additionalFields:
       title: additionalFields
       type: object
@@ -500,8 +504,8 @@ components:
         geoLocation:
           $ref: '#/components/schemas/GeoLocation'
       required:
-      - tenantId
-      - locality
+        - tenantId
+        - locality
     AuditDetails:
       title: AuditDetails
       description: Collection of audit related fields used by most models
@@ -549,8 +553,8 @@ components:
           readOnly: true
           type: string
       required:
-      - code
-      - name
+        - code
+        - name
     Document:
       title: Document
       description: This object holds list of documents attached during the transaciton for a property
@@ -593,8 +597,8 @@ components:
           items:
             type: string
       required:
-      - code
-      - message
+        - code
+        - message
     ErrorRes1:
       title: ErrorRes1
       description: All APIs will return ErrorRes in case of failure which will carry ResponseHeader as metadata and Error object as actual representation of error. In case of bulk apis, some apis may chose to return the array of Error objects to indicate individual failure.
@@ -603,16 +607,16 @@ components:
         ResponseHeader:
           type: object
           allOf:
-          - $ref: '#/components/schemas/ResponseHeader'
-          - description: ResponseHeader should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseHeader should always correspond to the same values in respective request's RequestHeader.
-            readOnly: true
+            - $ref: '#/components/schemas/ResponseHeader'
+            - description: ResponseHeader should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseHeader should always correspond to the same values in respective request's RequestHeader.
+              readOnly: true
         Errors:
           description: Error response array corresponding to Request Object array. In case of single object submission or _search related paths this may be an array of one error element
           type: array
           items:
             $ref: '#/components/schemas/Error'
       required:
-      - ResponseHeader
+        - ResponseHeader
     Field:
       title: Field
       type: object
@@ -628,8 +632,8 @@ components:
           minLength: 2
           maxLength: 10000
       required:
-      - key
-      - value
+        - key
+        - value
     GeoLocation:
       title: GeoLocation
       type: object
@@ -650,8 +654,8 @@ components:
       description: Sorting order
       type: string
       enum:
-      - asc
-      - desc
+        - asc
+        - desc
     RequestInfo:
       title: RequestInfo
       description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
@@ -695,18 +699,18 @@ components:
         userInfo:
           type: object
           allOf:
-          - $ref: '#/components/schemas/UserInfo'
-          - description: This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.
-            readOnly: true
+            - $ref: '#/components/schemas/UserInfo'
+            - description: This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.
+              readOnly: true
         correlationId:
           readOnly: true
           type: string
       required:
-      - apiId
-      - ver
-      - ts
-      - action
-      - msgId
+        - apiId
+        - ver
+        - ts
+        - action
+        - msgId
     ResponseHeader:
       title: ResponseHeader
       description: ResponseHeader should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseHeader should always correspond to the same values in respective request's RequestHeader.
@@ -727,16 +731,16 @@ components:
         status:
           type: object
           allOf:
-          - $ref: '#/components/schemas/Status1'
-          - description: status of request processing
+            - $ref: '#/components/schemas/Status1'
+            - description: status of request processing
         signature:
           description: Hash describing the current ResponseHeader
           type: string
         error:
           type: object
           allOf:
-          - $ref: '#/components/schemas/Error'
-          - description: Error object will be returned as a part of reponse body in conjunction with ResponseHeader as part of ErrorResponse whenever the request processing status in the ResponseHeader is FAILED. HTTP return in this scenario will usually be HTTP 400.
+            - $ref: '#/components/schemas/Error'
+            - description: Error object will be returned as a part of reponse body in conjunction with ResponseHeader as part of ErrorResponse whenever the request processing status in the ResponseHeader is FAILED. HTTP return in this scenario will usually be HTTP 400.
         information:
           description: Additional information from API
           type: object
@@ -747,9 +751,9 @@ components:
           description: Any additional information if required e.g. status url (to find out the current status of an asynchronous processing response), additional links to perform special functions like file uploads etc.
           type: object
       required:
-      - resMsgId
-      - msgId
-      - status
+        - resMsgId
+        - msgId
+        - status
     ResponseInfo:
       title: ResponseInfo
       description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
@@ -778,14 +782,14 @@ components:
         status:
           type: object
           allOf:
-          - $ref: '#/components/schemas/Status'
-          - description: status of request processing - to be enhanced in futuer to include INPROGRESS
+            - $ref: '#/components/schemas/Status'
+            - description: status of request processing - to be enhanced in futuer to include INPROGRESS
       required:
-      - apiId
-      - ver
-      - ts
-      - status
-    
+        - apiId
+        - ver
+        - ts
+        - status
+
     Role:
       title: Role
       description: minimal representation of the Roles in the system to be carried along in UserInfo with RequestInfo meta data. Actual authorization service to extend this to have more role related attributes
@@ -799,23 +803,23 @@ components:
           description: brief description of the role
           type: string
       required:
-      - name
-    
+        - name
+
     Status:
       title: Status
       description: status of request processing - to be enhanced in futuer to include INPROGRESS
       type: string
       enum:
-      - SUCCESSFUL
-      - FAILED
+        - SUCCESSFUL
+        - FAILED
     Status1:
       title: Status1
       description: status of request processing
       type: string
       enum:
-      - COMPLETED
-      - ACCEPTED
-      - FAILED
+        - COMPLETED
+        - ACCEPTED
+        - FAILED
     TenantRole:
       title: TenantRole
       description: User role carries the tenant related role information for the user. A user can have multiple roles per tenant based on the need of the tenant. A user may also have multiple roles for multiple tenants.
@@ -830,8 +834,8 @@ components:
           items:
             $ref: '#/components/schemas/Role'
       required:
-      - tenantId
-      - roles
+        - tenantId
+        - roles
     UserInfo:
       title: UserInfo
       description: This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.
@@ -864,9 +868,9 @@ components:
           items:
             $ref: '#/components/schemas/TenantRole'
       required:
-      - tenantId
-      - userName
-      - primaryrole
+        - tenantId
+        - userName
+        - primaryrole
     Pagination:
       title: Pagination
       description: Pagination details
@@ -894,8 +898,8 @@ components:
         order:
           type: object
           allOf:
-          - $ref: '#/components/schemas/Order'
-          - description: Sorting order
+            - $ref: '#/components/schemas/Order'
+            - description: Sorting order
     Workflow:
       title: Workflow
       type: object
@@ -915,4 +919,4 @@ components:
           items:
             $ref: '#/components/schemas/Document'
       required:
-      - action
+        - action
