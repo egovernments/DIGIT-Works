@@ -30,6 +30,12 @@ public class HRMSUtils {
 
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
+        log.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        log.info("Contract debugging token =====> "+requestInfoWrapper.getRequestInfo().getAuthToken());
+        log.info("Contract debugging roles =====> "+requestInfoWrapper.getRequestInfo().getUserInfo().getRoles());
+        log.info("Contract debugging uuid =====> "+requestInfoWrapper.getRequestInfo().getUserInfo().getUuid());
+        log.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
         Object res = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
 
         List<String> roles = null;
