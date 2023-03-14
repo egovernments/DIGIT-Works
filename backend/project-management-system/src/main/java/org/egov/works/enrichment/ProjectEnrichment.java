@@ -55,11 +55,11 @@ public class ProjectEnrichment {
             }
 
             //Enrich Project id and audit details
-            enrichProjectRequest(projects.get(i), null, requestInfo, parentProjects);
+            enrichProjectRequestOnCreate(projects.get(i), requestInfo, parentProjects);
             log.info("Enriched project request with id and Audit details");
 
             //Enrich Address id and audit details
-            enrichProjectAddress(projects.get(i), null, requestInfo);
+            enrichProjectAddressOnCreate(projects.get(i), requestInfo);
             log.info("Enriched project Address with id and Audit details");
 
             //Enrich target id and audit details
@@ -82,13 +82,16 @@ public class ProjectEnrichment {
             String projectId = String.valueOf(project.getId());
             Project projectFromDB = projectsFromDB.stream().filter(p -> projectId.equals(String.valueOf(p.getId()))).findFirst().orElse(null);
 
-            //Updating lastModifiedTime and lastModifiedBy for Project
-            enrichProjectRequest(project, projectFromDB, requestInfo, null);
-            log.info("Enriched project in update project request");
 
-            //Add address if id is empty or update lastModifiedTime and lastModifiedBy if id exists
-            enrichProjectAddress(project, projectFromDB, requestInfo);
-            log.info("Enriched address in update project request");
+            if (projectFromDB != null) {
+                //Updating lastModifiedTime and lastModifiedBy for Project
+                enrichProjectRequestOnUpdate(project, projectFromDB, requestInfo);
+                log.info("Enriched project in update project request");
+
+                //Add address if id is empty or update lastModifiedTime and lastModifiedBy if id exists
+                enrichProjectAddressOnUpdate(project, projectFromDB, requestInfo);
+                log.info("Enriched address in update project request");
+            }
 
             //Add new target if id is empty or update lastModifiedTime and lastModifiedBy if id exists
             enrichProjectTarget(project, projectFromDB, requestInfo);
@@ -101,22 +104,23 @@ public class ProjectEnrichment {
 
     }
 
-    /* Enrich Project with id and audit details if project id is empty or if project already present, update last modified by and last modified time */
-    private void enrichProjectRequest(Project projectRequest, Project projectFromDB, RequestInfo requestInfo, List<Project> parentProjects) {
-        if (StringUtils.isBlank(projectRequest.getId())) {
-            projectRequest.setId(UUID.randomUUID().toString());
-            log.info("Project id set to " + projectRequest.getId());
-            AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
-            projectRequest.setAuditDetails(auditDetails);
-            if (parentProjects != null && StringUtils.isNotBlank(projectRequest.getParent())) {
-                enrichProjectHierarchy(projectRequest, parentProjects);
-            }
-        } else if (projectFromDB != null) {
-            projectRequest.setAuditDetails(projectFromDB.getAuditDetails());
-            AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), projectFromDB.getAuditDetails(), false);
-            projectRequest.setAuditDetails(auditDetails);
-            log.info("Enriched project audit details for project " + projectRequest.getId());
+    /* Enrich Project with id and audit details */
+    private void enrichProjectRequestOnCreate(Project projectRequest, RequestInfo requestInfo, List<Project> parentProjects) {
+        projectRequest.setId(UUID.randomUUID().toString());
+        log.info("Project id set to " + projectRequest.getId());
+        AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
+        projectRequest.setAuditDetails(auditDetails);
+        if (parentProjects != null && StringUtils.isNotBlank(projectRequest.getParent())) {
+            enrichProjectHierarchy(projectRequest, parentProjects);
         }
+    }
+
+    /* Enrich Project update request with last modified by and last modified time */
+    private void enrichProjectRequestOnUpdate(Project projectRequest, Project projectFromDB, RequestInfo requestInfo) {
+        projectRequest.setAuditDetails(projectFromDB.getAuditDetails());
+        AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), projectFromDB.getAuditDetails(), false);
+        projectRequest.setAuditDetails(auditDetails);
+        log.info("Enriched project audit details for project " + projectRequest.getId());
     }
 
     //Enrich Project with Parent Hierarchy. If parent Project hierarchy is not present then add parent locality at the beginning of project hierarchy, if present add Parent project's project hierarchy
@@ -137,19 +141,36 @@ public class ProjectEnrichment {
         log.info("Project hierarchy set for project " + projectRequest.getId());
     }
 
-    /* Enrich Address with id and audit details if address id is empty or if address already present, update last modified by and last modified time */
-    private void enrichProjectAddress(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
+    /* Enrich Address with id and audit details in project create request */
+    private void enrichProjectAddressOnCreate(Project projectFromRequest, RequestInfo requestInfo) {
+        if (projectFromRequest.getAddress() != null) {
+            projectFromRequest.getAddress().setId(UUID.randomUUID().toString());
+            AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
+            projectFromRequest.getAddress().setAuditDetails(auditDetails);
+            log.info("Added address with id " + projectFromRequest.getAddress().getId() + " for project " + projectFromRequest.getId());
+        }
+    }
+
+    /* Enrich last modified by and last modified time for address in update project request. If id is not present add address */
+    private void enrichProjectAddressOnUpdate(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
         if (projectFromRequest.getAddress() != null) {
             if (StringUtils.isBlank(projectFromRequest.getAddress().getId())) {
-                projectFromRequest.getAddress().setId(UUID.randomUUID().toString());
-                AuditDetails auditDetails = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
-                projectFromRequest.getAddress().setAuditDetails(auditDetails);
-                log.info("Added address with id " + projectFromRequest.getAddress().getId() + " for project " + projectFromRequest.getId());
-            } else if (projectFromDB != null) {
+                log.info("Adding address for project " + projectFromDB.getId());
+                enrichProjectAddressOnCreate(projectFromRequest, requestInfo);
+            } else {
                 projectFromRequest.getAddress().setAuditDetails(projectFromDB.getAddress().getAuditDetails());
                 AuditDetails auditDetailsAddress = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), projectFromDB.getAddress().getAuditDetails(), false);
                 projectFromRequest.getAddress().setAuditDetails(auditDetailsAddress);
                 log.info("Enriched address audit details for project " + projectFromRequest.getId());
+            }
+        } else {
+            log.info("Address not provided in project update request for project " + projectFromRequest.getId());
+            if (projectFromDB.getAddress() != null && StringUtils.isNotBlank(projectFromDB.getAddress().getId())) {
+                projectFromRequest.setAddress(projectFromDB.getAddress());
+                log.info("Enriched address details from DB with id " + projectFromDB.getAddress().getId() + " in project response body " + projectFromRequest.getId());
+            } else {
+                projectFromRequest.setAddress(null);
+                log.info("Address not found for project " + projectFromRequest.getId() + " in DB");
             }
         }
     }

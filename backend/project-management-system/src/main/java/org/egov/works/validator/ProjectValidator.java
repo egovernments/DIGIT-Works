@@ -360,15 +360,28 @@ public class ProjectValidator {
                 }
             }
 
-            if (projectFromDB.getAddress() != null && StringUtils.isBlank(project.getAddress().getId())) {
+//            if (projectFromDB.getAddress() != null && StringUtils.isBlank(project.getAddress().getId())) {
+//                log.error("The address with id " + projectFromDB.getAddress().getId() + " already exists for the project");
+//                throw new CustomException("INVALID_PROJECT_MODIFY.ADDRESS", "The address with id " + projectFromDB.getAddress().getId() + " already exists for the project " + projectFromDB.getProjectNumber());
+//            }
+
+            //Checks for a project if address already present in DB
+            if ((projectFromDB.getAddress() != null && projectFromDB.getAddress().getId() != null) && project.getAddress() != null && StringUtils.isBlank(project.getAddress().getId())) {
                 log.error("The address with id " + projectFromDB.getAddress().getId() + " already exists for the project");
                 throw new CustomException("INVALID_PROJECT_MODIFY.ADDRESS", "The address with id " + projectFromDB.getAddress().getId() + " already exists for the project " + projectFromDB.getProjectNumber());
             }
 
-            if (projectFromDB.getAddress() != null && StringUtils.isNotBlank(project.getAddress().getId()) && !projectFromDB.getAddress().getId().equals(project.getAddress().getId())) {
+            if ( project.getAddress() != null
+                    && StringUtils.isNotBlank(project.getAddress().getId())
+                    && (projectFromDB.getAddress() == null || StringUtils.isBlank(projectFromDB.getAddress().getId()) || !projectFromDB.getAddress().getId().equals(project.getAddress().getId())) ) {
                 log.error("The address id " + project.getAddress().getId() + " that you are trying to update does not exists for the project");
                 throw new CustomException("INVALID_PROJECT_MODIFY.ADDRESS", "The address id " + project.getAddress().getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
             }
+
+//            if (projectFromDB.getAddress() != null && StringUtils.isNotBlank(project.getAddress().getId()) && !projectFromDB.getAddress().getId().equals(project.getAddress().getId())) {
+//                log.error("The address id " + project.getAddress().getId() + " that you are trying to update does not exists for the project");
+//                throw new CustomException("INVALID_PROJECT_MODIFY.ADDRESS", "The address id " + project.getAddress().getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
+//            }
         }
 
     }
