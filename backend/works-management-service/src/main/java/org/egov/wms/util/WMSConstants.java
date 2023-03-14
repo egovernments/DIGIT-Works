@@ -63,7 +63,4 @@ public class WMSConstants {
 
     public static final String SORT_KEY = "sort";
 
-    public static final String TENANTID_KEY = "tenantId";
-
-
 }
