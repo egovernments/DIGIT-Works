@@ -41,6 +41,16 @@ class _$AppRouter extends RootStackRouter {
         child: const LoginPage(),
       );
     },
+    OTPVerificationRoute.name: (routeData) {
+      final args = routeData.argsAs<OTPVerificationRouteArgs>();
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: OTPVerificationPage(
+          key: args.key,
+          mobileNumber: args.mobileNumber,
+        ),
+      );
+    },
     HomeRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
@@ -64,6 +74,24 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: const WorkOrderPage(),
+      );
+    },
+    ViewMusterRollsRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const ViewMusterRollsPage(),
+      );
+    },
+    SHGInboxRoute.name: (routeData) {
+      final args = routeData.argsAs<SHGInboxRouteArgs>();
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: SHGInboxPage(
+          args.tenantId,
+          args.musterRollNo,
+          args.projectDetails,
+          key: args.key,
+        ),
       );
     },
     ManageAttendanceRegisterRoute.name: (routeData) {
@@ -122,6 +150,11 @@ class _$AppRouter extends RootStackRouter {
               path: 'login',
               parent: UnauthenticatedRouteWrapper.name,
             ),
+            RouteConfig(
+              OTPVerificationRoute.name,
+              path: 'otp',
+              parent: UnauthenticatedRouteWrapper.name,
+            ),
           ],
         ),
         RouteConfig(
@@ -141,6 +174,16 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               WorkOrderRoute.name,
               path: 'work-orders',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              ViewMusterRollsRoute.name,
+              path: 'muster-rolls',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              SHGInboxRoute.name,
+              path: 'shg-inbox/:tenantId/:musterRollNo',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -219,6 +262,40 @@ class LoginRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [OTPVerificationPage]
+class OTPVerificationRoute extends PageRouteInfo<OTPVerificationRouteArgs> {
+  OTPVerificationRoute({
+    Key? key,
+    required String mobileNumber,
+  }) : super(
+          OTPVerificationRoute.name,
+          path: 'otp',
+          args: OTPVerificationRouteArgs(
+            key: key,
+            mobileNumber: mobileNumber,
+          ),
+        );
+
+  static const String name = 'OTPVerificationRoute';
+}
+
+class OTPVerificationRouteArgs {
+  const OTPVerificationRouteArgs({
+    this.key,
+    required this.mobileNumber,
+  });
+
+  final Key? key;
+
+  final String mobileNumber;
+
+  @override
+  String toString() {
+    return 'OTPVerificationRouteArgs{key: $key, mobileNumber: $mobileNumber}';
+  }
+}
+
+/// generated route for
 /// [HomePage]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute()
@@ -294,6 +371,66 @@ class WorkOrderRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'WorkOrderRoute';
+}
+
+/// generated route for
+/// [ViewMusterRollsPage]
+class ViewMusterRollsRoute extends PageRouteInfo<void> {
+  const ViewMusterRollsRoute()
+      : super(
+          ViewMusterRollsRoute.name,
+          path: 'muster-rolls',
+        );
+
+  static const String name = 'ViewMusterRollsRoute';
+}
+
+/// generated route for
+/// [SHGInboxPage]
+class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
+  SHGInboxRoute({
+    required String tenantId,
+    required String musterRollNo,
+    required List<Map<String, dynamic>> projectDetails,
+    Key? key,
+  }) : super(
+          SHGInboxRoute.name,
+          path: 'shg-inbox/:tenantId/:musterRollNo',
+          args: SHGInboxRouteArgs(
+            tenantId: tenantId,
+            musterRollNo: musterRollNo,
+            projectDetails: projectDetails,
+            key: key,
+          ),
+          rawPathParams: {
+            'tenantId': tenantId,
+            'musterRollNo': musterRollNo,
+          },
+        );
+
+  static const String name = 'SHGInboxRoute';
+}
+
+class SHGInboxRouteArgs {
+  const SHGInboxRouteArgs({
+    required this.tenantId,
+    required this.musterRollNo,
+    required this.projectDetails,
+    this.key,
+  });
+
+  final String tenantId;
+
+  final String musterRollNo;
+
+  final List<Map<String, dynamic>> projectDetails;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'SHGInboxRouteArgs{tenantId: $tenantId, musterRollNo: $musterRollNo, projectDetails: $projectDetails, key: $key}';
+  }
 }
 
 /// generated route for

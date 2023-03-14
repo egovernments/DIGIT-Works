@@ -29,7 +29,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
     final List<Map<String, dynamic>> workOrders = fakeWorkOrderDetails
         .map((e) => {
               'cardDetails': {
-                i18.workOrder.projects: e['Contract ID'],
+                i18.workOrder.contractID: e['Contract ID'],
                 i18.attendanceMgmt.nameOfWork: e['Name of the Work'],
                 i18.workOrder.contractIssueDate: e['Contract Issued Date'],
                 i18.workOrder.contractAmount: e['Contract Amount'],

@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:universal_html/html.dart' as html;
-import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 import 'package:works_shg_app/services/urls.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
@@ -17,6 +16,7 @@ import '../../data/repositories/remote/getGlobalConfig_repo.dart';
 import '../../data/repositories/remote/mdms.dart';
 import '../../models/init_mdms/global_config_model.dart';
 import '../../services/local_storage.dart';
+import '../localization/app_localization.dart';
 
 part 'app_initilization.freezed.dart';
 
@@ -64,6 +64,8 @@ class AppInitializationBloc
           },
         ]);
     GlobalVariables.globalConfigObject = globalConfigModel;
+    GlobalVariables.stateInfoListModel =
+        result.commonMastersModel!.stateInfoListModel!.first;
     StateInfoListModel ss =
         result.commonMastersModel!.stateInfoListModel!.first.copyWith(
             languages: [

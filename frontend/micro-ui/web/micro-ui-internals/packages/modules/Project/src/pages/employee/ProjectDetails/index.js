@@ -1,5 +1,5 @@
-import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav } from '@egovernments/digit-ui-react-components'
-import React, { Fragment,useEffect,useState } from 'react'
+import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav, Menu, Toast } from '@egovernments/digit-ui-react-components'
+import React, { Fragment,useEffect,useRef,useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 import ProjectDetailsNavDetails from './ProjectDetailsNavDetails'
@@ -13,6 +13,15 @@ const ProjectDetails = () => {
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const [configNavItems, setNavTypeConfig] = useState([]);
     const [subProjects, setSubProjects] = useState([]);
+    const menuRef = useRef();
+    const [showActions, setShowActions] = useState(false);
+    const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
+    const [actionsMenu, setActionsMenu] = useState([ 
+        {
+            name : "MODIFY_PROJECT"
+        }
+    ]);
+    const [toast, setToast] = useState({show : false, label : "", error : false});
     const navConfigs = [
         {
             "name":"Project_Details",
@@ -29,8 +38,7 @@ const ProjectDetails = () => {
             "code":"PROJECTS_SUB_PROJECT_DETAILS",
             "active" : false 
         }
-    ]
-
+    ];
     const searchParams = {
         Projects : [
             {
@@ -46,19 +54,76 @@ const ProjectDetails = () => {
         includeDescendants : true
     }
 
+    const closeMenu = () => {
+        setShowActions(false);
+    }
+
+    Digit.Hooks.useClickOutside(menuRef, closeMenu, showActions );
+
     const handleParentProjectSearch = (parentProjectNumber) => {
         history.push(`/${window.contextPath}/employee/project/project-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${parentProjectNumber}`);
     }
 
-    const handleNavigateToEstimatesScreen = () => {
-        history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
+    const handleActionBar = (option) => {
+        if(option?.name === "CREATE_ESTIMATE"){
+            history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
+        }
+        if(option?.name === "VIEW_ESTIMATE"){
+            history.push(`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&estimateNumber=${estimates?.[0]?.estimateNumber}`);
+        }
+        if(option?.name === "MODIFY_PROJECT"){
+            if(estimates?.length !==0 && estimates?.[0]?.wfStatus !== "" && estimates?.[0]?.wfStatus !== "REJECTED") {
+                setToast({show : true, label : t("COMMON_CANNOT_MODIFY_PROJECT_EST_CREATED"), error : true});
+            }else {
+                history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
+            }
+        }
     }
 
-    const { data } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
+    const handleToastClose = () => {
+      setToast({show : false, label : "", error : false});
+    }
+
+    const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
+
+    //fetch estimate details
+    const { data : estimates } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
+
+    useEffect(()=>{
+        let isUserEstimateCreator = loggedInUserRoles?.includes("EST_CREATOR");
+        if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED") && isUserEstimateCreator) {
+            setActionsMenu([
+                {
+                    name : "CREATE_ESTIMATE"
+                },
+                {
+                    name : "MODIFY_PROJECT"
+                }
+            ])
+        }else {
+            setActionsMenu([
+                {
+                    name : "VIEW_ESTIMATE"
+                },
+                {
+                    name : "MODIFY_PROJECT"
+                }
+            ])
+        }
+    },[estimates]);
+
+     //remove Toast after 3s
+     useEffect(()=>{
+        if(toast?.show) {
+          setTimeout(()=>{
+            handleToastClose();
+          },3000);
+        }
+      },[toast?.show])
 
     //update config for Nav once we get the data
     useEffect(()=>{
-        if(data?.projectDetails?.subProjects.length > 0) {
+        if(data?.projectDetails?.subProjects?.length > 0) {
             navConfigs[2].active = true;
             setSubProjects(data?.projectDetails?.subProjects);
         }else{
@@ -67,23 +132,24 @@ const ProjectDetails = () => {
         let filterdNavConfig = navConfigs.filter((config)=>config.active === true);
         setNavTypeConfig(filterdNavConfig);
     },[data]);
+
     return (
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
                 <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_PROJECT_DETAILS")}</Header>
             </div>
 
-            <Card className={"employeeCard-override"} >
+            {/* <Card className={"employeeCard-override"} >
                 <StatusTable>
                     <Row className="border-none" label={`${t("WORKS_PROJECT_ID")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectID} textStyle={{ whiteSpace: "pre" }} />
-                    <Row className="border-none" label={`${t("PDF_STATIC_LABEL_ESTIMATE_PROPOSAL_DATE")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate} textStyle={{ whiteSpace: "pre" }} />
-                    <Row className="border-none" label={`${t("PDF_STATIC_LABEL_ESTIMATE_PROJECT_NAME")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectName} textStyle={{ whiteSpace: "pre" }} isMandotary={true} />
+                    <Row className="border-none" label={`${t("ES_COMMON_PROPOSAL_DATE")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate} textStyle={{ whiteSpace: "pre" }} />
+                    <Row className="border-none" label={`${t("ES_COMMON_PROJECT_NAME")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectName} textStyle={{ whiteSpace: "pre" }} isMandotary={true} />
                     <Row className="border-none" label={`${t("PROJECT_DESC")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectDesc} textStyle={{ whiteSpace: "pre" }} />
                     <Row className="border-none" label={`${t("WORKS_THE_PROJECT_HAS_SUB_PROJECT_LABEL")}:`} text={t(data?.projectDetails?.searchedProject?.basicDetails?.projectHasSubProject)} textStyle={{ whiteSpace: "pre" }} />
                     <Row className="border-none" label={`${t("WORKS_PARENT_PROJECT_ID")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID} textStyle={{ whiteSpace: "pre" }} isValueLink={data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID === "NA" ? "" : data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID} navigateLinkHandler={()=>handleParentProjectSearch(data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID)}/>
                 </StatusTable>
-            </Card>
-            <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>  
+            </Card> */}
+            <HorizontalNav showNav={false} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>  
               <ProjectDetailsNavDetails 
                 activeLink={activeLink}
                 subProjects={subProjects}
@@ -92,8 +158,17 @@ const ProjectDetails = () => {
               />
             </HorizontalNav>
             <ActionBar>
-                <SubmitBar onSubmit={handleNavigateToEstimatesScreen} label={t("ACTION_TEST_CREATE_ESTIMATE")} />
-            </ActionBar>
+                    {showActions ? 
+                        <Menu
+                            localeKeyPrefix={`COMMON`}
+                            options={actionsMenu}
+                            optionKey={"name"}
+                            t={t}
+                            onSelect={handleActionBar}
+                        /> : null}
+                <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)}/>
+        </ActionBar>
+        {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
         </div>
     )
 }

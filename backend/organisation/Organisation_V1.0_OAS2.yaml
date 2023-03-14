@@ -259,7 +259,7 @@ definitions:
           type: string
           minLength: 1
           maxLength: 64
-        applicationStatus:
+        orgStatus:
           description: The status of the org
           type: string
           minLength: 2
@@ -453,6 +453,11 @@ definitions:
         type: array
         items:
           type: string
+      documents:  
+        type: array
+        items:
+          type: string
+          format: uuid
     required:
     - action
   OrgServiceRequest:

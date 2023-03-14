@@ -1,7 +1,10 @@
 const searchConfig = () => {
     return {
-        label : "WORKS_SEARCH_PROJECT",
+        label : "WORKS_SEARCH_PROJECTS",
         type: 'search',
+        "actionLabel": "WORKS_CREATE_PROJECT",
+        "actionRole": "EMPLOYEE",
+        "actionLink": "project/create-project",
         apiDetails: {
             serviceName: "/pms/project/v1/_search",
             requestParam: {
@@ -26,8 +29,8 @@ const searchConfig = () => {
             search : {
                 uiConfig : {
                     headerStyle : null,
-                    primaryLabel: 'ACTION_TEST_SEARCH',
-                    secondaryLabel: 'CLEAR_SEARCH_LINk',
+                    primaryLabel: 'ES_COMMON_SEARCH',
+                    secondaryLabel: 'ES_COMMON_CLEAR_SEARCH',
                     minReqFields: 1,
                     defaultValues : {
                         projectNumber: "",
@@ -79,10 +82,13 @@ const searchConfig = () => {
                           populators: {
                             name: "projectType",
                             optionsKey: "code",
+                            optionsCustomStyle : {
+                                top : "2.3rem"
+                            },
                             mdmsConfig: {
                               masterName: "ProjectType",
                               moduleName: "works",
-                              localePrefix: "ES_COMMON"
+                              localePrefix: "COMMON_MASTERS"
                             }
                           },
                         },
@@ -106,7 +112,7 @@ const searchConfig = () => {
                             },
                             additionalValidation: {
                                 type: 'date',
-                                keys: {start: 'startDate', end: 'endDate'}
+                                keys: {start: 'createdFrom', end: 'createdTo'}
                             }
                         }
                     ]
@@ -143,7 +149,7 @@ const searchConfig = () => {
                             jsonPath: "projectSubType",
                         },
                         {
-                            label: "WORKS_WORK_NATURE",
+                            label: "ES_COMMON_WORK_NATURE",
                             jsonPath: "natureOfWork",
                         },
                         {
@@ -152,15 +158,15 @@ const searchConfig = () => {
                             additionalCustomization:true
                         },
                         {
-                            label: "WORKS_CREATED_BY",
-                            jsonPath: "createdBy",
+                            label: "ES_COMMON_CREATED_BY",
+                            jsonPath: "additionalDetails.creator",
                         },
                         {
-                            label: "WORKS_STATUS",
+                            label: "ES_COMMON_STATUS",
                             jsonPath: "status",
                         },
                         {
-                            label: "WORKS_TOTAL_AMOUNT",
+                            label: "ES_COMMON_TOTAL_AMOUNT",
                             jsonPath: "additionalDetails.estimatedCostInRs",
                         }
                     ],

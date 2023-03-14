@@ -22,8 +22,8 @@ class WorkDetailsCard extends StatelessWidget {
   final bool isWorkOrderInbox;
   final bool isSHGInbox;
   final bool isTrackAttendance;
-  final AttendanceRegistersModel? attendanceRegistersModel;
-  final MusterRollsModel? musterRollsModel;
+  final List<AttendanceRegister>? attendanceRegistersModel;
+  final List<MusterRoll>? musterRollsModel;
 
   const WorkDetailsCard(this.detailsList,
       {this.isAttendanceInbox = false,
@@ -45,14 +45,8 @@ class WorkDetailsCard extends StatelessWidget {
         list.add(GestureDetector(
           child: DigitCard(
               child: getCardDetails(context, detailsList[i],
-                  userList: attendanceRegistersModel!
-                      .attendanceRegister![i].staffEntries!
-                      .map((e) => e.userId.toString())
-                      .toList(),
-                  attendanceRegisterId:
-                      attendanceRegistersModel!.attendanceRegister![i].id,
-                  attendanceRegister:
-                      attendanceRegistersModel!.attendanceRegister![i])),
+                  attendanceRegisterId: attendanceRegistersModel![i].id,
+                  attendanceRegister: attendanceRegistersModel![i])),
         ));
       }
     } else if (isWorkOrderInbox) {
@@ -70,30 +64,23 @@ class WorkDetailsCard extends StatelessWidget {
               ? () {
                   context.read<IndividualMusterRollSearchBloc>().add(
                         SearchIndividualMusterRollEvent(
-                            id: musterRollsModel!.musterRoll![i].id ?? '',
-                            tenantId: musterRollsModel!.musterRoll![i].tenantId
-                                .toString()),
+                            id: musterRollsModel![i].id ?? '',
+                            tenantId: musterRollsModel![i].tenantId.toString()),
                       );
-                  // context.router.push(SHGInboxRoute(
-                  //     projectDetails: [
-                  //       detailsList[i],
-                  //     ],
-                  //     tenantId:
-                  //         musterRollsModel!.musterRoll![i].tenantId.toString(),
-                  //     musterRollNo: musterRollsModel!
-                  //         .musterRoll![i].musterRollNumber
-                  //         .toString()));
+                  context.router.push(SHGInboxRoute(
+                      projectDetails: [
+                        detailsList[i],
+                      ],
+                      tenantId: musterRollsModel![i].tenantId.toString(),
+                      musterRollNo:
+                          musterRollsModel![i].musterRollNumber.toString()));
                   context.read<MusterRollEstimateBloc>().add(
                         ViewEstimateMusterRollEvent(
-                          tenantId: musterRollsModel!.musterRoll![i].tenantId
-                              .toString(),
-                          registerId: musterRollsModel!
-                              .musterRoll![i].registerId
-                              .toString(),
-                          startDate:
-                              musterRollsModel!.musterRoll![i].startDate ?? 0,
-                          endDate:
-                              musterRollsModel!.musterRoll![i].endDate ?? 0,
+                          tenantId: musterRollsModel![i].tenantId.toString(),
+                          registerId:
+                              musterRollsModel![i].registerId.toString(),
+                          startDate: musterRollsModel![i].startDate ?? 0,
+                          endDate: musterRollsModel![i].endDate ?? 0,
                         ),
                       );
                 }
@@ -220,7 +207,7 @@ class WorkDetailsCard extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 16),
                 width: MediaQuery.of(context).size.width > 720
                     ? MediaQuery.of(context).size.width / 3.5
-                    : MediaQuery.of(context).size.width / 3,
+                    : MediaQuery.of(context).size.width / 3.5,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,

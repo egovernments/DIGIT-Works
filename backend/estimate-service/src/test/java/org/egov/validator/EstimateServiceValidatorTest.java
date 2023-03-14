@@ -161,12 +161,4 @@ public class EstimateServiceValidatorTest {
         assertTrue(exception.getMessage().contentEquals("Work flow's action is mandatory"));
     }
 
-    @Test
-    void validateEstimateOnCreate_IfWorkflowAssigneeIsNull() {
-        EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
-        estimateRequest.getWorkflow().setAssignees(null);
-        CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getMessage().contentEquals("Work flow's assignee is mandatory"));
-    }
-
 }

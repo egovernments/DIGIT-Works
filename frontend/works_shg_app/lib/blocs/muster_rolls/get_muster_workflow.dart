@@ -18,6 +18,7 @@ class MusterGetWorkflowBloc
     extends Bloc<MusterGetWorkflowEvent, MusterGetWorkflowState> {
   MusterGetWorkflowBloc() : super(const MusterGetWorkflowState.initial()) {
     on<GetMusterWorkflowEvent>(_onGetWorkflow);
+    on<DisposeMusterRollWorkflowEvent>(_onDispose);
   }
 
   FutureOr<void> _onGetWorkflow(
@@ -28,18 +29,25 @@ class MusterGetWorkflowBloc
       MusterWorkFlowModel musterWorkFlowModel =
           await WorkFlowRepository(client.init()).getWorkFlow(
               url: Urls.commonServices.workflow,
-              options: Options(
-                  extra: {"accessToken": GlobalVariables.getAuthToken()}),
+              options:
+                  Options(extra: {"accessToken": GlobalVariables.authToken}),
               queryParameters: {
             "tenantId": event.tenantId,
             "businessServices": "muster-roll-approval",
             "businessIds": event.musterRollNumber
           });
       await Future.delayed(const Duration(seconds: 2));
-      emit(MusterGetWorkflowState.loaded(musterWorkFlowModel));
+      emit(MusterGetWorkflowState.loaded(musterWorkFlowModel: musterWorkFlowModel, isInWorkflow: !(musterWorkFlowModel.processInstances!.isNotEmpty &&
+          musterWorkFlowModel.processInstances?.first.workflowState
+              ?.applicationStatus == 'REJECTED')));
     } on DioError catch (e) {
       emit(const MusterGetWorkflowState.error());
     }
+  }
+
+  FutureOr<void> _onDispose(DisposeMusterRollWorkflowEvent event,
+      MusterGetWorkflowEmitter emit) async {
+    emit(const MusterGetWorkflowState.initial());
   }
 }
 
@@ -49,6 +57,8 @@ class MusterGetWorkflowEvent with _$MusterGetWorkflowEvent {
     required String tenantId,
     required String musterRollNumber,
   }) = GetMusterWorkflowEvent;
+  const factory MusterGetWorkflowEvent.dispose() =
+      DisposeMusterRollWorkflowEvent;
 }
 
 @freezed
@@ -57,7 +67,8 @@ class MusterGetWorkflowState with _$MusterGetWorkflowState {
   const factory MusterGetWorkflowState.initial() = _Initial;
   const factory MusterGetWorkflowState.loading() = _Loading;
   const factory MusterGetWorkflowState.loaded(
-      MusterWorkFlowModel? musterWorkFlowModel) = _Loaded;
+      {MusterWorkFlowModel? musterWorkFlowModel,
+      @Default(false) bool isInWorkflow}) = _Loaded;
   const factory MusterGetWorkflowState.error() = _Error;
 
   // const factory MusterGetWorkflowState({

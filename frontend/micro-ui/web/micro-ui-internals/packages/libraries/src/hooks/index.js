@@ -1,5 +1,6 @@
 import { useInitStore } from "./store";
 import useWorkflowDetails from "./workflow";
+import useWorkflowDetailsWorks from "./workflowWorks";
 import useSessionStorage from "./useSessionStorage";
 import useQueryParams from "./useQueryParams";
 import useDocumentSearch from "./useDocumentSearch";
@@ -95,20 +96,20 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useSearchWORKS from "./works/useSearchWORKS";
 import useSearchApprovedEstimates from "./works/useSearchApprovedEstimates";
 import useViewEstimateDetails from "./works/useViewEstimateDetails";
-import useViewProjectDetailsInEstimate from './works/useViewProjectDetailsInEstimate'
+import useViewProjectDetails from './works/useViewProjectDetails'
 import useViewProjectClosureDetails from "./works/useViewProjectClosureDetails";
 import useViewProjectClosureDetailsBills from "./works/useViewProjectClosureBills";
 import useViewProjectClosureDetailsClosureChecklist from "./works/useViewProjectClosureDetailsClosureChecklist";
 import useViewProjectClosureDetailsKickoffChecklist from "./works/useViewProjectClosureDetailsKickoffChecklist";
 import useViewLOIDetails from "./works/useViewLOIDetails";
 import useCreateLOI from "./works/useCreateLOI";
-import useEstimateSearch from "./works/useSearch";
+import useEstimateSearchWorks from "./works/useSearch";
 import useCreateEstimate from "./works/useCreateEstimate";
 import useCreateEstimateNew from "./works/useCreateEstimateNew";
-import useSearchEstimate from "./works/userSearchEstimate";
+import useSearchEstimate from "./works/useSearchEstimate";
 import useApplicationActionsLOI from "./works/useApplicationActions";
 import useApplicationActionsEstimate from "./works/useUpdateEstimate";
-import useUpdateEstimate from "./works/useUpdateEstimate";
+import useUpdateEstimateWorks from "./works/useUpdateEstimate";
 import useWorksInbox from "./works/useInbox";
 import useKickoffInbox from "./works/useKickoffInbox";
 import useViewContractDetails from "./contracts/useViewContractDetails";
@@ -118,36 +119,53 @@ import useUpdateAttendance from "./attendance/useUpdateAttendance";
 import useLocation from "./useLocation";
 import useViewBills from "./bills/useViewBills";
 import useViewOrg from "./bills/useViewOrg";
-import useViewFinancialDetails from "./project/useViewFinancialDetails";
 import useCreateProject from "./works/useCreateProject";
+
+import useEstimateSearch from "./estimates/useEstimateSearch";
+import useUpdateEstimate from "./estimates/useUpdateEstimate";
+import useEstimateDetailsScreen from "./estimates/useEstimateDetailsScreen";
+
+import useProjectSearch from "./project/useProjectSearch";
+import useViewFinancialDetails from "./project/useViewFinancialDetails";
+
+import useUpdateCustom from "./useUpdateCustom";
+
+import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
 
 const works = {
   useViewEstimateDetails,
-  useViewProjectDetailsInEstimate,
+  useViewProjectDetails,
   useViewProjectClosureDetails,
   useViewProjectClosureDetailsBills,
   useViewProjectClosureDetailsKickoffChecklist,
   useViewProjectClosureDetailsClosureChecklist,
   useViewLOIDetails,
   useCreateLOI,
-  useEstimateSearch,
+  useEstimateSearchWorks,
   useSearchWORKS,
   useCreateEstimate,
   useCreateEstimateNew,
   useSearchEstimate,
   useApplicationActionsLOI,
-  useUpdateEstimate,
+  useUpdateEstimate:useUpdateEstimateWorks,
   useApplicationActionsEstimate,
   useSearchApprovedEstimates,
   useInbox: useWorksInbox,
   useKickoffInbox,
-  useCreateProject
+  useCreateProject,
+  useUpdateCustom
 };
 
 const contracts = {
   useViewContractDetails,
   useViewContractDetailsClosureScreen
 };
+
+const estimates = {
+  useEstimateSearch,
+  useUpdateEstimate,
+  useEstimateDetailsScreen
+}
 
 const pgr = {
   useComplaintDetails,
@@ -225,7 +243,12 @@ const masters = {
 }
 
 const project = {
-  useViewFinancialDetails
+  useViewFinancialDetails,
+  useProjectSearch
+}
+
+const wageSeeker = {
+  useViewWageSeeker
 }
 
 const Hooks = {
@@ -237,6 +260,7 @@ const Hooks = {
   useFetchBillsForBuissnessService,
   useGetPaymentRulesForBusinessServices,
   useWorkflowDetails,
+  useWorkflowDetailsWorks,
   useInitStore,
   useClickOutside,
   useUserSearch,
@@ -282,13 +306,14 @@ const Hooks = {
   useDynamicData,
   useBulkPdfDetails,
   useBillAmendmentInbox,
-  works,
   contracts,
+  estimates,
   attendance,
   useLocation,
   bills,
   masters,
-  project
+  project,
+  wageSeeker
 };
 
 export default Hooks;

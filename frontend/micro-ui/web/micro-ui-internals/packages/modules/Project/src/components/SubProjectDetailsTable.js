@@ -60,7 +60,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 const wards = []
                 const localities = {}
                 data?.TenantBoundary[0]?.boundary.forEach((item) => {
-                    localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }))
+                    localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}`, label : item?.label }))
                     wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
                 });
                return {
@@ -71,7 +71,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
         
     useEffect(()=>{
         let filteredSubTypeOfProject = ( subProjectTypeOfProjectOptions && subProjectTypeOfProjectOptions?.projectSubType ) ? (
-        subProjectTypeOfProjectOptions?.projectSubType.map(projectSubType=>({code : projectSubType, name : `ES_COMMON_${projectSubType}`}))) : [];
+        subProjectTypeOfProjectOptions?.projectSubType.map(projectSubType=>({code : projectSubType, name : `COMMON_MASTERS_${projectSubType}`}))) : [];
         setSubProjectSubTypeOfProjectOptions(filteredSubTypeOfProject);
     },[subProjectTypeOfProjectOptions]);
 
@@ -87,7 +87,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                 {
                 select: (data) => {
                     const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
-                    return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
+                    return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
                 },
                 enabled: options?.mdmsConfig ? true : false,
                 }
@@ -233,7 +233,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                     mdmsConfig: {
                                         masterName: "ProjectType",
                                         moduleName: "works",
-                                        localePrefix: "ES_COMMON",
+                                        localePrefix: "COMMON_MASTERS",
                                 }})
                             )}
                       />
@@ -264,7 +264,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                 mdmsConfig: {
                                     masterName: "NatureOfWork",
                                     moduleName: "works",
-                                    localePrefix: "ES_COMMON",
+                                    localePrefix: "COMMON_MASTERS",
                             }})
                         )}
                       />
@@ -306,7 +306,7 @@ const SubProjectDetailsTable = ({t, register, control, setValue, onChange, error
                                 mdmsConfig: {
                                     masterName: "EntrustmentMode",
                                     moduleName: "works",
-                                    localePrefix: "ES_COMMON",
+                                    localePrefix: "COMMON_MASTERS",
                             }})
                         )}
                       />

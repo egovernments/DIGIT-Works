@@ -211,6 +211,10 @@ const Urls = {
     }
   },
 
+  wageseeker: {
+    search: "/individual/v1/_search"
+  },
+
   noc: {
     nocSearch: "/noc-services/v1/noc/_search",
   },

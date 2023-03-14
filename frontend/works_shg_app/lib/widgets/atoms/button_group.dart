@@ -18,7 +18,7 @@ class ButtonGroup extends StatelessWidget {
           alignment: Alignment.centerLeft,
           width: MediaQuery.of(context).size.width > 760
               ? MediaQuery.of(context).size.width / 2
-              : MediaQuery.of(context).size.width / 1.15,
+              : MediaQuery.of(context).size.width / 1.20,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -41,18 +41,22 @@ class ButtonGroup extends StatelessWidget {
                       child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15.0),
                           child: Text(outlinedButtonLabel,
-                              style: Theme.of(context).textTheme.subtitle2)),
+                              style: Theme.of(context).textTheme.titleSmall)),
                     )),
                     Expanded(
-                        child: DigitElevatedButton(
-                      onPressed: elevatedCallBack,
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: Text(elevatedButtonLabel,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle1!
-                                  .apply(color: Colors.white))),
+                        child: SizedBox(
+                      height: 42,
+                      child: DigitElevatedButton(
+                        onPressed: elevatedCallBack,
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 0),
+                            child: Text(elevatedButtonLabel,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .apply(color: Colors.white))),
+                      ),
                     ))
                   ],
                 ),

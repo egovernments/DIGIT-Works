@@ -9,13 +9,13 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
   const allLinks = [
     {
       text: t("WORKS_CREATE_ESTIMATE"),
-      link: `/works-ui/employee/works/create-estimate`,
+      link: `/${window?.contextPath}/employee/works/create-estimate`,
       businessService: "WORKS",
       roles: [],
     },
     {
       text: t("WORKS_SEARCH_EST"),
-      link: `/works-ui/employee/works/search-Estimate`,
+      link: `/${window?.contextPath}/employee/works/search-Estimate`,
       businessService: "WORKS",
       roles: [],
     },

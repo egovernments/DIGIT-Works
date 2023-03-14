@@ -10,12 +10,13 @@ import CustomDropdown from './CustomDropdown';
 import MobileNumber from '../atoms/MobileNumber';
 import DateRangeNew from './DateRangeNew';
 import MultiUploadWrapper from "./MultiUploadWrapper";
-
-
+import MultiSelectDropdown from '../atoms/MultiSelectDropdown';
+import LocationDropdownWrapper from './LocationDropdownWrapper';
+import WorkflowStatusFilter from './WorkflowStatusFilter';
 const RenderFormFields = (props) => {
     const { t } = useTranslation();
     const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors, apiDetails} = props
-
+    
     const fieldSelector = (type, populators, isMandatory, disable = false, component, config) => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         let customValidations = config?.additionalValidation ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalValidations(config?.additionalValidation?.type, formData, config?.additionalValidation?.keys) : null
@@ -165,7 +166,80 @@ const RenderFormFields = (props) => {
                     control={control}
                   />
                 );
+            
+            case "multiselectdropdown":
+              return (
+                <Controller
+                  name={`${populators.name}`}
+                  control={control}
+                  defaultValue={formData?.[populators.name]}
+                  rules={{ required: populators?.isMandatory }}
+                  render={(props) => {
+                    return (
+                      <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                        <MultiSelectDropdown
+                          options={populators?.options}
+                          optionsKey={populators?.optionsKey}
+                          props={props}
+                          isPropsNeeded={true}
+                          onSelect={(e) => {
+                            props.onChange(e?.map(row=>{return row?.[1] ? row[1] : null}).filter(e=>e))
+                          }}
+                          selected={props?.value}
+                          defaultLabel={t(populators?.defaultText)}
+                          defaultUnit={t(populators?.selectedText)}
+                          config={populators}
+                        />
+                      </div>
+                    );
+                  }}
+                />
+              );
 
+          case "locationdropdown":
+            return (
+              <Controller
+                name={`${populators.name}`}
+                control={control}
+                defaultValue={formData?.[populators.name]}
+                rules={{ required: populators?.isMandatory, ...populators.validation }}
+                render={(props) => {
+                  return (
+                    <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                      <LocationDropdownWrapper
+                        props={props}
+                        populators={populators}
+                        formData={formData}
+                        inputRef={props.ref}
+                        errors={errors}
+                      />
+                    </div>
+                  );
+                }}
+              />
+            );
+
+            case "workflowstatesfilter":
+            return (
+              <Controller
+                name={`${populators.name}`}
+                control={control}
+                defaultValue={formData?.[populators.name]}
+                rules={{ required: populators?.isMandatory }}
+                render={(props) => {
+                  return (
+                    <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                      <WorkflowStatusFilter
+                        props={props}
+                        populators={populators}
+                        t={t}
+                        formData={formData}
+                      />
+                    </div>
+                  );
+                }}
+              />
+            );
             case "dateRange":
               return (
                 <Controller
@@ -224,7 +298,7 @@ const RenderFormFields = (props) => {
           return (
             <LabelFieldPair key={index}>
                 { item.label && (
-                  <CardLabel style={{...props.labelStyle}}>
+                  <CardLabel style={{...props.labelStyle,marginBottom:"0.4rem"}}>
                     {t(item.label)}{ item?.isMandatory ? " * " : null }
                   </CardLabel>) 
                 }

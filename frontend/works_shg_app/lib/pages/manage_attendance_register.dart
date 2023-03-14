@@ -31,17 +31,17 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
           return state.maybeWhen(
               loading: () => Loaders.circularLoader(context),
               loaded: (AttendanceRegistersModel? attendanceRegistersModel) {
-                final attendanceRegisters =
-                    List.from(attendanceRegistersModel!.attendanceRegister!);
+                final attendanceRegisters = List<AttendanceRegister>.from(
+                    attendanceRegistersModel!.attendanceRegister!);
 
-                attendanceRegisters.sort((a, b) => b
-                    .registerAuditDetails!.createdTime!
-                    .compareTo(a.registerAuditDetails!.createdTime!.toInt()));
+                attendanceRegisters.sort((a, b) =>
+                    b.registerAuditDetails!.lastModifiedTime!.compareTo(
+                        a.registerAuditDetails!.lastModifiedTime!.toInt()));
 
                 final projectList = attendanceRegisters
                     .map((e) => {
                           i18.attendanceMgmt.nameOfWork: e.name,
-                          i18.attendanceMgmt.winCode: e.registerNumber,
+                          i18.attendanceMgmt.registerId: e.registerNumber,
                           i18.attendanceMgmt.engineerInCharge: e.id,
                           i18.common.dates:
                               '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
@@ -73,8 +73,7 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
                               elevatedButtonLabel: AppLocalizations.of(context)
                                   .translate(
                                       i18.attendanceMgmt.enrollWageSeeker),
-                              attendanceRegistersModel:
-                                  attendanceRegistersModel,
+                              attendanceRegistersModel: attendanceRegisters,
                             )
                     ]);
               },
