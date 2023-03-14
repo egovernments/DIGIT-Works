@@ -5,6 +5,8 @@ import contractInboxFilter from "./components/inbox/NewInboxFilter";
 import EmployeeApp from "./pages/employee";
 import SearchContractApplication from "./components/SearchContract";
 import ContractsCard from "./components/ContractsCard";
+import CreateWorkOrder from "./pages/employee/CreateWorkOrder";
+import WOTermsAndConditions from "./components/WOTermsAndConditions";
 
 const ContractsModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
@@ -28,7 +30,9 @@ const componentsToRegister = {
     ContractsModule,
     contractInboxFilter,
     SearchContractApplication,
-    ContractCard:ContractsCard
+    ContractCard:ContractsCard,
+    CreateWorkOrder,
+    WOTermsAndConditions
 };
 
 export const initContractsComponents = () => {

@@ -908,3 +908,16 @@ input[type="number"] {
     }
   }
 }
+
+.fc-header-texts {
+  height: 25px;
+  color: #000 !important;
+  border: none;
+  display: flex;
+  padding-top: 10px;
+}
+
+.disabled-text-field {
+  color: #000 !important;
+  background-color: #FAFAFA;
+}

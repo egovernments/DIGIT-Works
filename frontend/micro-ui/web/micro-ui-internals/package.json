@@ -9,6 +9,7 @@
     "packages/react-components",
     "packages/modules/Project",
     "packages/modules/Estimate",
+    "packages/modules/Contracts",
     "packages/modules/AttendenceMgmt",
     "packages/Mukta"
     ],
