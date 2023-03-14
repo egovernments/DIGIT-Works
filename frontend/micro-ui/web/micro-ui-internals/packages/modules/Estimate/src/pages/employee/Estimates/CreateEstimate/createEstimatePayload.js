@@ -76,6 +76,7 @@ export const createEstimatePayload = (data,projectData) => {
             // "projectId":"7c941228-6149-4adc-bdb9-8b77f6c3757d",//static for now
             "address": {
                 ...projectData?.projectDetails?.searchedProject?.basicDetails?.address,
+                tenantId//here added because in address tenantId is mandatory from BE side
             },//get from project search
             "estimateDetails": fetchEstimateDetails(filteredFormData),
             "additionalDetails": {

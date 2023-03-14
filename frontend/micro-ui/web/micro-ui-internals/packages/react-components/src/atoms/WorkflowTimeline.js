@@ -58,7 +58,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                             {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
                                 <CheckPoint
                                     isCompleted={true}
-                                    label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.state}`)}
+                                    label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.[statusAttribute]}`)}
                                     customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0])}
                                 />
                             ) : (

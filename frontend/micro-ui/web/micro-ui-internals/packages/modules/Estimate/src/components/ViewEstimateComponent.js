@@ -28,6 +28,7 @@ const ViewEstimateComponent = (props) => {
                 forcedActionPrefix={"ACTION_"}
                 tenantId={tenantId}
                 applicationNo={estimateNumber}
+                statusAttribute={"state"}
             />
             <WorkflowActions
                 forcedActionPrefix={"ACTIONS"}

@@ -30,7 +30,7 @@ export const UICustomizations = {
             if(locality.length>0)
             data.body.inbox.moduleSearchCriteria.locality = locality
             if(states.length>0)
-            data.body.inbox.moduleSearchCriteria.state = states
+            data.body.inbox.moduleSearchCriteria.status = states
             
             const projectType = _.clone(data.body.inbox.moduleSearchCriteria.projectType ? data.body.inbox.moduleSearchCriteria.projectType:{})
             if (projectType?.code) data.body.inbox.moduleSearchCriteria.projectType = projectType.code
