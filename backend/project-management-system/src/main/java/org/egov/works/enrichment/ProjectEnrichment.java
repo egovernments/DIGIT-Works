@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -63,11 +64,11 @@ public class ProjectEnrichment {
             log.info("Enriched project Address with id and Audit details");
 
             //Enrich target id and audit details
-            enrichProjectTarget(projects.get(i), null, requestInfo);
+            enrichProjectTargetOnCreate(projects.get(i), requestInfo);
             log.info("Enriched target with id and Audit details");
 
             //Enrich document id and audit details
-            enrichProjectDocument(projects.get(i), null, requestInfo);
+            enrichProjectDocumentOnCreate(projects.get(i), requestInfo);
             log.info("Enriched documents with id and Audit details");
         }
 
@@ -91,15 +92,16 @@ public class ProjectEnrichment {
                 //Add address if id is empty or update lastModifiedTime and lastModifiedBy if id exists
                 enrichProjectAddressOnUpdate(project, projectFromDB, requestInfo);
                 log.info("Enriched address in update project request");
+
+                //Add new target if id is empty or update lastModifiedTime and lastModifiedBy if id exists
+                enrichProjectTargetOnUpdate(project, projectFromDB, requestInfo);
+                log.info("Enriched target in update project request");
+
+                //Add new document if id is empty or update lastModifiedTime and lastModifiedBy if id exists
+                enrichProjectDocumentOnUpdate(project, projectFromDB, requestInfo);
+                log.info("Enriched document in update project request");
             }
 
-            //Add new target if id is empty or update lastModifiedTime and lastModifiedBy if id exists
-            enrichProjectTarget(project, projectFromDB, requestInfo);
-            log.info("Enriched target in update project request");
-
-            //Add new document if id is empty or update lastModifiedTime and lastModifiedBy if id exists
-            enrichProjectDocument(project, projectFromDB, requestInfo);
-            log.info("Enriched document in update project request");
         }
 
     }
@@ -175,8 +177,20 @@ public class ProjectEnrichment {
         }
     }
 
-    /* Enrich Target with id and audit details if target id is empty or if target already present, update last modified by and last modified time */
-    private void enrichProjectTarget(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
+    /* Enrich Target with id and audit details in create project request */
+    private void enrichProjectTargetOnCreate(Project projectFromRequest, RequestInfo requestInfo) {
+        if (projectFromRequest.getTargets() != null) {
+            for (Target target: projectFromRequest.getTargets()) {
+                target.setId(UUID.randomUUID().toString());
+                AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
+                target.setAuditDetails(auditDetailsForAdd);
+                log.info("Added target with id " + target.getId() + " for project " + projectFromRequest.getId());
+            }
+        }
+    }
+
+    /* Enrich last modified by and last modified time for target in update project request. If id is not present add target */
+    private void enrichProjectTargetOnUpdate(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
         if (projectFromRequest.getTargets() != null) {
             for (Target target: projectFromRequest.getTargets()) {
                 if (StringUtils.isBlank(target.getId())) {
@@ -184,20 +198,45 @@ public class ProjectEnrichment {
                     AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
                     target.setAuditDetails(auditDetailsForAdd);
                     log.info("Added target with id " + target.getId() + " for project " + projectFromRequest.getId());
-                } else if (projectFromDB != null) {
+                } else {
                     String targetId = String.valueOf(target.getId());
-                    Target targetFromDB = projectFromDB.getTargets().stream().filter(t -> targetId.equals(String.valueOf(t.getId()))).findFirst().orElse(null);
-                    target.setAuditDetails(targetFromDB.getAuditDetails());
-                    AuditDetails auditDetailsTarget = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), targetFromDB.getAuditDetails(), false);
-                    target.setAuditDetails(auditDetailsTarget);
-                    log.info("Enriched target audit details for target " + targetId);
+                    if (projectFromDB.getTargets() != null) {
+                        Target targetFromDB = projectFromDB.getTargets().stream().filter(t -> targetId.equals(String.valueOf(t.getId())) && !t.getIsDeleted()).findFirst().orElse(null);
+                        if (targetFromDB != null) {
+                            target.setAuditDetails(targetFromDB.getAuditDetails());
+                            AuditDetails auditDetailsTarget = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), targetFromDB.getAuditDetails(), false);
+                            target.setAuditDetails(auditDetailsTarget);
+                            log.info("Enriched target audit details for target " + targetId);
+                        }
+                    }
                 }
+            }
+            if (projectFromDB.getTargets() != null) {
+                Set<String> targetIdsInRequest = projectFromRequest.getTargets().stream().map(Target :: getId).collect(Collectors.toSet());
+                List<Target> filteredTargetsFromDB = projectFromDB.getTargets().stream().filter(t -> !targetIdsInRequest.contains(t.getId()) && !t.getIsDeleted()).collect(Collectors.toList());
+                projectFromRequest.getTargets().addAll(filteredTargetsFromDB);
+            }
+        } else {
+            if (projectFromDB.getTargets() != null) {
+                projectFromRequest.setTargets(projectFromDB.getTargets().stream().filter(t -> !t.getIsDeleted()).collect(Collectors.toList()));
             }
         }
     }
 
-    /* Enrich Document with id and audit details if document id is empty or if document already present, update last modified by and last modified time */
-    private void enrichProjectDocument(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
+    /* Enrich Document with id and audit details in create project request */
+    private void enrichProjectDocumentOnCreate(Project projectFromRequest, RequestInfo requestInfo) {
+        if (projectFromRequest.getDocuments() != null) {
+            for (Document document: projectFromRequest.getDocuments()) {
+                document.setId(UUID.randomUUID().toString());
+                AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
+                document.setAuditDetails(auditDetailsForAdd);
+                log.info("Added document with id " + document.getId() + " for project " + projectFromRequest.getId());
+            }
+        }
+    }
+
+    /* Enrich last modified by and last modified time for document in update project request. If id is not present add document */
+    private void enrichProjectDocumentOnUpdate(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
         if (projectFromRequest.getDocuments() != null) {
             for (Document document: projectFromRequest.getDocuments()) {
                 if (StringUtils.isBlank(document.getId())) {
@@ -205,14 +244,27 @@ public class ProjectEnrichment {
                     AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
                     document.setAuditDetails(auditDetailsForAdd);
                     log.info("Added document with id " + document.getId() + " for project " + projectFromRequest.getId());
-                } else if (projectFromDB != null) {
+                } else {
                     String documentId = String.valueOf(document.getId());
-                    Document documentFromDB = projectFromDB.getDocuments().stream().filter(d -> documentId.equals(String.valueOf(d.getId()))).findFirst().orElse(null);
-                    document.setAuditDetails(documentFromDB.getAuditDetails());
-                    AuditDetails auditDetailsDocument = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), documentFromDB.getAuditDetails(), false);
-                    document.setAuditDetails(auditDetailsDocument);
-                    log.info("Enriched document audit details for document " + documentId);
+                    if (projectFromDB.getDocuments() != null) {
+                        Document documentFromDB = projectFromDB.getDocuments().stream().filter(d -> documentId.equals(String.valueOf(d.getId()))).findFirst().orElse(null);
+                        if (documentFromDB != null) {
+                            document.setAuditDetails(documentFromDB.getAuditDetails());
+                            AuditDetails auditDetailsDocument = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), documentFromDB.getAuditDetails(), false);
+                            document.setAuditDetails(auditDetailsDocument);
+                            log.info("Enriched document audit details for document " + documentId);
+                        }
+                    }
                 }
+            }
+            if (projectFromDB.getDocuments() != null) {
+                Set<String> documentIdsInRequest = projectFromRequest.getDocuments().stream().map(Document :: getId).collect(Collectors.toSet());
+                List<Document> filteredDocumentsFromDB = projectFromDB.getDocuments().stream().filter(d -> !documentIdsInRequest.contains(d.getId())).collect(Collectors.toList());
+                projectFromRequest.getDocuments().addAll(filteredDocumentsFromDB);
+            }
+        } else {
+            if (projectFromDB.getDocuments() != null) {
+                projectFromRequest.setDocuments(projectFromDB.getDocuments());
             }
         }
     }
