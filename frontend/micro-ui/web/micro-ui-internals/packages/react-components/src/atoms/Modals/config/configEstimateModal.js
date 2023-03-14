@@ -5,8 +5,97 @@ import React, { useState } from 'react'
 const configEstimateModal = (
     t,
     action,
-    approvers
+    approvers,
+    moduleName="estimate"
 ) => {
+    
+    const {action:actionString} = action
+    console.log(actionString);
+
+    const configMap = {
+        "estimate": {
+            "default":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "REJECT": {
+                comments: {
+                    isMandatory: true,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            },
+            "SENDBACK": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            },
+            "SENDBACKTOORIGINATOR": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            }
+
+        }
+    }
+//field can have (comments,assignee,upload)
+    const fetchIsMandatory = (field) => {
+        
+        if(configMap?.[moduleName]?.[actionString]){
+            console.log(configMap?.[moduleName]?.[actionString]?.[field]?.isMandatory);
+            return configMap?.[moduleName]?.[actionString]?.[field]?.isMandatory ? configMap?.[moduleName]?.[actionString]?.[field]?.isMandatory : false
+        }else{
+            console.log(configMap?.[moduleName]?.default?.[field]?.isMandatory);
+            return configMap?.[moduleName]?.default?.[field]?.isMandatory ? configMap?.[moduleName]?.default?.[field]?.isMandatory: false
+        }
+    }
+    const fetchIsShow = (field) => {
+        
+        if (configMap?.[moduleName]?.[actionString]) {
+            console.log(configMap?.[moduleName]?.[actionString]?.[field]?.show);
+           return configMap?.[moduleName]?.[actionString]?.[field]?.show ? configMap?.[moduleName]?.[actionString]?.[field]?.show : false
+        } else {
+            console.log(configMap?.[moduleName]?.default?.[field]?.show);
+            return configMap?.[moduleName]?.default?.[field]?.show ? configMap?.[moduleName]?.default?.[field]?.show:false
+        }
+        
+    }
+
     return {
         label: {
             heading: `WF_MODAL_HEADER_ESTIMATE_${action.action}`,
@@ -19,21 +108,25 @@ const configEstimateModal = (
                     {
                         label: t("WF_MODAL_APPROVER"),
                         type: "dropdown",
-                        isMandatory: false,
+                        // isMandatory: true,
+                        isMandatory: fetchIsMandatory("assignee"),
                         disable: false,
                         key:"assignees",
                         populators: {
                             name: "assignee",
                             optionsKey: "nameOfEmp",
                             options: approvers,
-                            hideInForm:approvers ? false : true
+                            // hideInForm:approvers ? false : true
+                            hideInForm: !fetchIsShow("assignee")
                         },
                     },
                     {
                         label: t("WF_MODAL_COMMENTS"),
                         type: "textarea",
+                        isMandatory: fetchIsMandatory("comments"),
                         populators: {
                             name: "comments",
+                            hideInForm:!fetchIsShow("comments")
                         },
                     },
                     {
@@ -47,7 +140,8 @@ const configEstimateModal = (
                             customClass: "upload-margin-bottom",
                             errorMessage: t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
                             hintText: "WORKFLOW_MODAL_UPLOAD_HINT_TEXT",
-                            showHintBelow: true
+                            showHintBelow: true,
+                            hideInForm:!fetchIsShow("upload")
                         }
                     }
                 ]
