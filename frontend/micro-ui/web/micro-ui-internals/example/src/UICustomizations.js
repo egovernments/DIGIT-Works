@@ -430,5 +430,8 @@ export const UICustomizations = {
   },
   EstimateInboxConfig:{
     
+  },
+  BillInboxConfig: {
+    
   }
 };
