@@ -52,7 +52,7 @@ CREATE TABLE eg_org_address (
   additional_details  jsonb,
 
 
-  CONSTRAINT pk_eg_org_address PRIMARY KEY (id)
+  CONSTRAINT pk_eg_org_address PRIMARY KEY (id),
   CONSTRAINT fk_eg_org_address FOREIGN KEY (org_id) REFERENCES eg_org (id)
 );
 
