@@ -5,14 +5,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.OrgSearchCriteria;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 @Slf4j
-public class OrganizationServiceValidator {
+public class OrganisationServiceValidator {
 
-    public void validateSearchProjectRequest(RequestInfo requestInfo, OrgSearchCriteria searchCriteria) {
+    public void validateSearchOrganisationRequest(RequestInfo requestInfo, OrgSearchCriteria searchCriteria) {
         //Verify if RequestInfo and UserInfo is present
         validateRequestInfo(requestInfo);
         //Verify the search criteria
@@ -40,13 +42,23 @@ public class OrganizationServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
 
         if (searchCriteria == null) {
-            log.error("Organization is mandatory");
-            throw new CustomException("ORGANIZATION", "Organization is mandatory");
+            log.error("Organisation is mandatory");
+            throw new CustomException("ORGANISATION", "Organisation is mandatory");
         }
 
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
-            log.error("Tenant ID is mandatory in Organization request body");
+            log.error("Tenant ID is mandatory in Organisation request body");
             errorMap.put("TENANT_ID", "Tenant ID is mandatory");
         }
+
+        if ((searchCriteria.getFunctions() != null && searchCriteria.getFunctions().getValidFrom() != null && searchCriteria.getFunctions().getValidTo() != null) &&
+                (searchCriteria.getFunctions().getValidFrom().compareTo(searchCriteria.getFunctions().getValidTo()) > 0)) {
+            log.error("Valid From in search parameters should be less than Valid To");
+            throw new CustomException("INVALID_DATE", "Valid From in search parameters should be less than Valid To");
+        }
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
     }
+
 }

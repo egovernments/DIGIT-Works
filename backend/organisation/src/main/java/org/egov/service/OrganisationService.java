@@ -3,14 +3,14 @@ package org.egov.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.validator.OrganizationServiceValidator;
+import org.egov.repository.OrganisationRepository;
+import org.egov.validator.OrganisationServiceValidator;
 import org.egov.web.models.OrgRequest;
 import org.egov.web.models.OrgSearchCriteria;
 import org.egov.web.models.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 
@@ -19,8 +19,10 @@ import java.util.List;
 public class OrganisationService {
 
     @Autowired
-    OrganizationServiceValidator organizationServiceValidator;
+    OrganisationServiceValidator organisationServiceValidator;
 
+    @Autowired
+    OrganisationRepository organisationRepository;
 
     public OrgRequest createOrganisationWithoutWorkFlow(OrgRequest orgRequest) {
 
@@ -33,8 +35,9 @@ public class OrganisationService {
     }
 
     public List<Organisation> searchOrganisation(RequestInfo requestInfo, OrgSearchCriteria searchCriteria) {
-        organizationServiceValidator.validateSearchProjectRequest(requestInfo, searchCriteria);
-        return Collections.emptyList();
+        organisationServiceValidator.validateSearchOrganisationRequest(requestInfo, searchCriteria);
+        List<Organisation> organisations = organisationRepository.getOrganisations(requestInfo, searchCriteria);
+        return organisations;
     }
 
     public Integer countAllOrganisations(OrgSearchCriteria searchCriteria) {
