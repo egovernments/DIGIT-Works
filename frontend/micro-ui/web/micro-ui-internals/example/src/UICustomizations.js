@@ -7,6 +7,7 @@ var Digit = window.Digit || {};
 
 const businessServiceMap = {
   estimate: "estimate-approval-4",
+  contracts: "contract-approval-mukta"
 };
 
 export const UICustomizations = {
