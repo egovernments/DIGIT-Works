@@ -34,7 +34,7 @@ CONSTRAINT pk_eg_org PRIMARY KEY (id)
 CREATE TABLE eg_org_address (
 
   id                  character varying(256),
-  tenant_id           character varying(64) NOT NULL,
+  tenant_id           character varying(64),
   org_id              character varying(256) NOT NULL,
   door_no             character varying,
   plot_no             character varying,
@@ -53,6 +53,7 @@ CREATE TABLE eg_org_address (
 
 
   CONSTRAINT pk_eg_org_address PRIMARY KEY (id)
+  CONSTRAINT fk_eg_org_address FOREIGN KEY (org_id) REFERENCES eg_org (id)
 );
 
 --CREATE TABLE eg_org_address_boundary (
@@ -82,7 +83,7 @@ CREATE TABLE eg_org_address_geo_location (
 
 CREATE TABLE eg_org_contact_detail (
   id                       character varying(256),
-  tenant_id                character varying(64) NOT NULL,
+  tenant_id                character varying(64),
   org_id                   character varying(256) NOT NULL,
   contact_name             character varying(64),
   contact_mobile_number    numeric,
@@ -115,7 +116,7 @@ CREATE TABLE eg_org_jurisdiction (
 CREATE TABLE eg_org_function (
   id                        character varying(256),
   org_id                    character varying(256) NOT NULL,
-  application_number        character varying(140) UNIQUE NOT NULL,
+  application_number        character varying(140) NOT NULL,
   type                      character varying(256),
   category                  character varying(256),
   class                     character varying(256),
