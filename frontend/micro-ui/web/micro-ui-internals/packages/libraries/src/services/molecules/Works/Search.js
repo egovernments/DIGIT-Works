@@ -31,7 +31,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             asSectionHeader: false,
             values: [
                     { title: "PROJECT_OWNING_DEPT", value: currentProject?.department ? t(`COMMON_MASTERS_DEPARTMENT_${currentProject?.department}`) : "NA" },
-                    { title: "PROJECT_TARGET_DEMOGRAPHY", value: "NA" }, //backend to update this
+                    { title: "PROJECT_TARGET_DEMOGRAPHY",value: currentProject?.additionalDetails?.targetDemography?.code ? t(`COMMON_MASTERS_${currentProject?.additionalDetails?.targetDemography?.code }`) : "NA" },
                     { title: "WORKS_LOR", value: currentProject?.referenceID || "NA" },
                     { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs || "NA" },
                 ]
@@ -42,7 +42,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 values: [
                     { title: "WORKS_PROJECT_TYPE", value: currentProject?.projectType ? t(`WORKS_PROJECT_TYPE_${currentProject?.projectType}`) : "NA" }, //backend to update this
                     { title: "WORKS_SUB_PROJECT_TYPE", value: currentProject?.projectSubType ? t(`ES_COMMON_${currentProject?.projectSubType}`) : "NA" }, //backend to update this
-                    { title: "WORKS_WORK_NATURE", value: "NA" }, //backend to update this
+                    { title: "WORKS_WORK_NATURE", value: currentProject?.natureOfWork?.code ? t(`ES_COMMON_${currentProject?.natureOfWork?.code}`) : "NA" },
                     { title: "WORKS_MODE_OF_INS", value: "NA" }, //backend to update this
                 ],
             };
@@ -50,7 +50,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 title: "WORKS_LOCATION_DETAILS",
                 asSectionHeader: true,
                 values: [
-                    { title: "WORKS_LOCALITY",value: currentProject?.address?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.address?.locality}`) : "NA" },
+                    { title: "WORKS_LOCALITY",value: currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "NA" },
                     { title: "WORKS_WARD", value: "NA" }, ///backend to update this
                     { title: "PDF_STATIC_LABEL_ESTIMATE_ULB", value: currentProject?.address?.city ? t(currentProject?.address?.city) : "NA" }, //will check with Backend
                     { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" }, //will check with Backend
@@ -86,6 +86,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                     projectParentProjectID : currentProject?.ancestors?.[0]?.projectNumber || "NA",
                     uuid:currentProject?.id,
                     address:currentProject?.address,
+                    ward: currentProject?.additionalDetails?.ward
                 }
                 totalProjects.searchedProject = {
                     basicDetails : basicDetails,
@@ -187,130 +188,66 @@ export const WorksSearch = {
     }, 
     viewEstimateScreen: async (t, tenantId, estimateNumber) => {
 
-        const workflowDetails = await WorksSearch.workflowDataDetails(tenantId, estimateNumber);
-
+        
         const estimateArr = await WorksSearch?.searchEstimate(tenantId, { estimateNumber })
         const estimate = estimateArr?.[0]
-        let wardLocation =estimate?.location.replace(/(^:)|(:$)/g, '').split(":")
-        const additionalDetails = estimate?.additionalDetails
-        //const estimate = sampleEstimateSearchResponse?.estimates?.[0] 
-        let details = []
-        const estimateValues={
-            title: " ",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_ESTIMATE_ID", value: estimate?.estimateNumber},
-                { title: "WORKS_STATUS", value: t(`ES_COMMON_${estimate?.estimateStatus}`)}
-            ]
-        }
+        
+        const nonSOR = estimate?.estimateDetails?.filter(row=>row?.category?.includes("NON-SOR"))
+        const overheads = estimate?.estimateDetails?.filter(row => row?.category?.includes("OVERHEAD"))
+        
 
-        const estimateDetails = {
-            title: "WORKS_ESTIMATE_DETAILS",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_DATE_PROPOSAL", value: Digit.DateUtils.ConvertEpochToDate(estimate?.proposalDate) || t("NA") },
-                { title: "WORKS_DEPARTMENT", value: t(`ES_COMMON_${estimate?.department}`) || t("NA") },
-                { title: "WORKS_LOR", value: estimate?.requirementNumber || t("NA") },
-                { title: "WORKS_ELECTION_WARD", value: wardLocation[4] ? t(`ES_COMMON_${wardLocation[4]}`) : t("NA") },
-                { title: "WORKS_LOCATION", value: wardLocation[5] ? t(`ES_COMMON_${wardLocation[5]}`) : t("NA") },
-                { title: "WORKS_WORK_CATEGORY", value: estimate?.workCategory || t("NA") },
-                { title: "WORKS_BENEFICIERY", value: estimate?.beneficiaryType || t("NA") },
-                { title: "WORKS_WORK_NATURE", value: estimate?.natureOfWork || t("NA") },
-                { title: "WORKS_WORK_TYPE", value: estimate?.typeOfWork || t("NA") },
-                { title: "WORKS_SUB_TYPE_WORK", value: t(`ES_COMMON_${estimate?.subTypeOfWork}`) || t("NA") },
-                { title: "WORKS_MODE_OF_INS", value: estimate?.entrustmentMode || t("NA") },
+        const tableHeaderNonSor = [t("WORKS_SNO"), t("EVENTS_DESCRIPTION"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")] 
+        const tableHeaderOverheads = [t("WORKS_SNO"), t("WORKS_OVERHEAD"), t("WORKS_PERCENTAGE"), t("WORKS_AMOUNT")]
+        
+        const tableRowsNonSor = nonSOR?.map((row,index)=>{
+            return [
+                index+1,
+                row?.description,
+                row?.uom,
+                row?.unitRate,
+                row?.noOfunit,
+                row?.amountDetail[0]?.amount?.toFixed(2)
             ]
-        };
-
-        const approveEstimateDetails = {
-            title: "WORKS_ESTIMATE_DETAILS",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_DATE_PROPOSAL", value: Digit.DateUtils.ConvertEpochToDate(estimate?.proposalDate) || t("NA") },
-                { title: "WORKS_LOR", value: estimate?.requirementNumber || t("NA") }
-            ]
-        }
-
-        const locationDetails = {
-            title: "WORKS_LOCATION_DETAILS",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_LOCATION", value: (`ES_COMMON_${wardLocation[5]}`) || t("NA") },
-                { title: "WORKS_LOCALITY", value: (`ES_COMMON_${wardLocation[5]}`) || t("NA")},
-                { title: "WORKS_WARD", value: t(`ES_COMMON_${wardLocation[4]}`) || t("NA") },
-                { title: "WORKS_ULB", value: (`ES_COMMON_${wardLocation[3]}`) || t("NA")},
-                { title: "WORKS_GEO_LOCATION", value: (`ES_COMMON_${wardLocation[2]}`) || t("NA")}
-            ]
-        }
-
-        const approvedWorkDetails = {
-            title: "WORKS_WORK_DETAILS",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_WORK_NATURE", value: estimate?.natureOfWork || t("NA") },
-                { title: "WORKS_WORK_TYPE", value: estimate?.typeOfWork || t("NA") }
-            ]
-        }
-
-        const approvedFinancialDetails = {
-            title: "WORKS_FINANCIAL_DETAILS",
-            asSectionHeader: true,
-            values: [
-                {title: "WORKS_CHART_ACCOUNTS", value: ""}
-            ]
-        }
-
-        const financialDetails = {
-            title: "WORKS_FINANCIAL_DETAILS",
-            asSectionHeader: true,
-            values: [
-                { title: "WORKS_FUND", value: t(`ES_COMMON_FUND_${estimate?.fund}`) || t("NA") },
-                { title: "WORKS_FUNCTION", value: t(`ES_COMMON_${estimate?.function}`) || t("NA") },
-                { title: "WORKS_BUDGET_HEAD", value: t(`ES_COMMON_${estimate?.budgetHead}`) || t("NA") },
-                { title: "WORKS_SCHEME", value: t(`ES_COMMON_${estimate?.scheme}`) || t("NA") },
-                { title: "WORKS_SUB_SCHEME", value: t(`ES_COMMON_${estimate?.subScheme}`) || t("NA") },
-            ]
-        };
-        let tableHeader=[]
-        {estimate.estimateStatus === "APPROVED" ?
-            tableHeader = [t("WORKS_SNO"), t("WORKS_NAME_OF_WORK"), t("WORKS_ESTIMATED_AMT"),t("WORKS_ACTION")] :
-            tableHeader = [t("WORKS_SNO"), t("WORKS_NAME_OF_WORK"), t("WORKS_ESTIMATED_AMT")] }
-
-        // const tableRows = [["1", "Construction of CC drain from D No 45-142-A-58-A to 45-142-472-A at Venkateramana Colony in Ward No 43", "640000"], ["", "Total Amount", "640000"]]
-        let totalAmount = 0;
-        const tableRows=estimate?.estimateDetails.map((item,index)=>{
-            totalAmount= totalAmount + item.amount;
-            return (estimate?.estimateStatus === "APPROVED" ?
-                [index+1,
-                item?.name,
-                item?.amount,
-                t("WORKS_CREATE_CONTRACT")] :
-                [index+1,
-                item?.name,
-                item?.amount]
-            )
         })
-        tableRows.push(["",t("WORKS_TOTAL_AMT"),totalAmount])
-        tableRows.map((item)=>{
-            let amount = item[2];
-            amount = amount.toString();
-            var lastThree = amount.substring(amount.length-3);
-            var otherNumbers = amount.substring(0,amount.length-3);
-            if(otherNumbers != '')
-                lastThree = ',' + lastThree;
-            var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
-            item[2] = res
+        const totalAmountNonSor = nonSOR.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0).toFixed(2)
+        tableRowsNonSor.push(["","","","" ,t("RT_TOTAL"), totalAmountNonSor])
+        
+        const tableRowsOverheads = overheads?.map((row, index) => {
+            return [
+                index + 1,
+                row?.additionalDetails?.row?.name?.description,
+                row?.additionalDetails?.row?.name?.type?.includes("percent") ? `${row?.additionalDetails?.row?.name?.value}%`:t("WORKS_LUMPSUM"),
+                row?.amountDetail?.[0]?.amount?.toFixed(2)
+            ]
         })
-
-        const workDetails = {
-            title: "WORKS_WORK_DETAILS",
+        const totalAmountOverheads = overheads.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0).toFixed(2)
+        tableRowsOverheads.push(["","", t("RT_TOTAL"), totalAmountOverheads])
+        const nonSorItems = {
+            title: "WORKS_NON_SOR",
             asSectionHeader: true,
             isTable: true,
-            headers: tableHeader,
-            tableRows: tableRows,
-            state: estimate
+            headers: tableHeaderNonSor,
+            tableRows: tableRowsNonSor,
+            state: estimate,
+            tableStyles:{
+                rowStyle:{},
+                cellStyle:[{},{"width":"40vw"},{},{},{},{"textAlign":"right"}]
+            }
         }
-        const files = additionalDetails?.filesAttached
+        const overheadItems = {
+            title: "WORKS_OVERHEADS",
+            asSectionHeader: true,
+            isTable: true,
+            headers: tableHeaderOverheads,
+            tableRows: tableRowsOverheads,
+            state: estimate,
+            tableStyles: {
+                rowStyle: {},
+                cellStyle: [{}, { "width": "50vw" }, {}, { "textAlign": "right" }]
+            }
+        }
+        
+        const files = estimate?.additionalDetails?.documents
         const documentDetails = {
             title: "",
             asSectionHeader: true,
@@ -318,9 +255,9 @@ export const WorksSearch = {
                 documents: [{
                     title: "WORKS_RELEVANT_DOCS",
                     BS: 'Works',
-                    values: files?.map((document) => {
+                    values: files?.filter(doc=>doc?.fileStoreId)?.map((document) => {
                         return {
-                            title: document?.fileName,
+                            title: document?.fileType,
                             documentType: document?.documentType,
                             documentUid: document?.fileStoreId,
                             fileStoreId: document?.fileStoreId,
@@ -330,14 +267,33 @@ export const WorksSearch = {
                 ]
             }
         }
-        estimate?.estimateStatus === "APPROVED" ?
-        details = [...details, estimateValues, approveEstimateDetails, locationDetails, approvedWorkDetails, approvedFinancialDetails, workDetails, documentDetails] :
-        details = [...details, estimateValues, estimateDetails, financialDetails, workDetails, documentDetails]
+
+        const totalEstAmt = {
+            "title": " ",
+            "asSectionHeader": true,
+            "Component": Digit.ComponentRegistryService.getComponent("ViewTotalEstAmount"),
+            "value": estimate?.additionalDetails?.totalEstimatedAmount || t("NA")
+        }
+
+        const labourDetails = {
+            "title": "ESTIMATE_LABOUR_ANALYSIS",
+            "asSectionHeader": true,
+            "Component": Digit.ComponentRegistryService.getComponent("ViewLabourAnalysis"),
+            "value": [
+                {
+                    "title": "ESTIMATE_LABOUR_COST",
+                    "value": estimate?.additionalDetails?.labourMaterialAnalysis?.labour || t("NA")
+                },
+                {
+                    "title": "ESTIMATE_MATERIAL_COST",
+                    "value": estimate?.additionalDetails?.labourMaterialAnalysis?.material || t("NA")
+                },
+            ]
+        }
+        const details = [nonSorItems, overheadItems,totalEstAmt,labourDetails,documentDetails]
         return {
             applicationDetails: details,
-            processInstancesDetails: workflowDetails?.ProcessInstances,
             applicationData:estimate,
-            workflowDetails: workflowDetails
         }
     },
     workflowDataDetails: async (tenantId, businessIds) => {

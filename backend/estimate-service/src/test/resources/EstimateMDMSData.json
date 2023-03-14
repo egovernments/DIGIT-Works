@@ -1,7 +1,13 @@
 {
   "ResponseInfo": null,
   "MdmsRes": {
-    "works": {},
+    "works": {
+      "Category": [
+        "OVERHEAD",
+        "SOR",
+        "NON-SOR"
+      ]
+    },
     "common-masters": {
       "Department": [
         {

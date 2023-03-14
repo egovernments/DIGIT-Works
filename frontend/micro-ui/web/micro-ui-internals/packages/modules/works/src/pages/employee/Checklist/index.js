@@ -44,6 +44,7 @@ const Checklist = (props) => {
             showWrapperContainers={true}
             isDescriptionBold={true}
             noBreakLine={true}
+            showFormInNav={true}
             showNavs={true}
             showMultipleCardsWithoutNavs={true}
             showMultipleCardsInNavs={false}

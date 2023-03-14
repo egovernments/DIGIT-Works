@@ -57,7 +57,7 @@ const OverheadsTable = ({control,watch,...props}) => {
         }
         return obj
     }
-    const columns = [t('WORKS_SNO'), t('PROJECT_DESC'), t('WORKS_PERCENTAGE'),t('WORKS_AMOUNT'), '']
+    const columns = [t('WORKS_SNO'), t('WORKS_OVERHEAD'), t('WORKS_PERCENTAGE'),t('WORKS_AMOUNT'), '']
     const renderHeader = () => {
         return columns?.map((key, index) => {
             return <th key={index} style={getStyles(index+1)} > {key} </th>
@@ -197,7 +197,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                 
                 <td style={getStyles(3)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.percentage`} inputRef={register({
                     required: true,
-                    pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
+                    pattern: /^[a-zA-Z0-9_ .$%@#\/ ]*$/
                 })}
                 // disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
                 disable={true}
@@ -223,7 +223,7 @@ const OverheadsTable = ({control,watch,...props}) => {
 
 
     return (
-        <table className='table reports-table sub-work-table'>
+        <table className='table reports-table sub-work-table' style={{ marginTop: "-2rem" }}>
             <thead>
                 <tr>{renderHeader()}</tr>
             </thead>

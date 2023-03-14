@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 
 class TableHeader {
@@ -11,6 +13,14 @@ class TableHeader {
       this.isSortingRequired,
       this.isAscendingOrder,
       this.apiKey});
+}
+
+class CustomFile {
+  final Uint8List bytes;
+  final String name;
+  final String extension;
+
+  CustomFile(this.bytes, this.name, this.extension);
 }
 
 class TableDataRow {
@@ -65,4 +75,15 @@ class MenuItemModel {
   final String code;
 
   MenuItemModel({this.name = 'SKill 1', this.code = ' SKILL1'});
+}
+
+class Skill {
+  final String code;
+  Skill({required this.code});
+}
+
+class SkillCategory {
+  final String code;
+
+  SkillCategory({required this.code});
 }

@@ -75,8 +75,8 @@ const inboxConfig = () => {
                 uiConfig : {
                     links : [
                         {
-                            text: "WORKS_ENROLL_WAGE_SEEKER",
-                            url: `/employee/contracts/create-contract`,
+                            text: "ATM_SEARCH_ATTENDANCE",
+                            url: `/employee/attendencemgmt/search-attendance`,
                             roles: [],
                         }
                     ],
@@ -148,7 +148,7 @@ const inboxConfig = () => {
                             additionalCustomization:true
                         },
                         {
-                            label: "ATM_IA_AP",
+                            label: "ATM_IMPLEMENTING_AGENCY",
                             jsonPath: "businessObject.additionalDetails.orgName",
                         },
                         {

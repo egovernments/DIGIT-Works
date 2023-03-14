@@ -1,7 +1,6 @@
 .modern-radio-container {
     margin: 24px 0;
     display: flex;
-    cursor: pointer;
     user-select: none;
     height: 100px;
     &.week-table {
@@ -59,4 +58,55 @@
 .helper-text {
   color: #666;
   padding-right: 8px;
+}
+
+.radio-full-circle {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #00703C;
+}
+
+.radio-full-circle::after {
+  content: "F";
+  color: #00703C;
+}
+
+.radio-half-circle {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #F4A938;
+}
+
+.radio-half-circle::after {
+  content: "H";
+  color: #F4A938;
+}
+
+.radio-no-circle {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #D4351C;
+}
+
+.radio-no-circle::after {
+  content: "A";
+  color: #D4351C;
 }

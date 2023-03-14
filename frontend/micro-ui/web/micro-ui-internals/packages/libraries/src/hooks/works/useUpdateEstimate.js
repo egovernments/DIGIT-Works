@@ -1,8 +1,8 @@
 import { useMutation } from "react-query";
 import ApplicationUpdateActionsEstimate from "../../services/molecules/Works/ApplicationUpdateActionsEstimate";
 
-const useApplicationActionsEstimate = (businessService) => {
-    return useMutation((applicationData) => ApplicationUpdateActionsEstimate(applicationData, businessService));
+const useApplicationActionsEstimate = () => {
+    return useMutation((applicationData) => ApplicationUpdateActionsEstimate(applicationData));
 };
 
 export default useApplicationActionsEstimate;
