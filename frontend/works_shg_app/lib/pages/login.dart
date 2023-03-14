@@ -1,5 +1,6 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/auth/otp_bloc.dart';
 import 'package:works_shg_app/router/app_router.dart';
@@ -27,7 +28,7 @@ class _LoginPage extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   bool autoValidation = false;
   bool phoneNumberAutoValidation = false;
-  FocusNode _numberFocus = new FocusNode();
+  final FocusNode _numberFocus = FocusNode();
 
   @override
   void initState() {
@@ -86,6 +87,9 @@ class _LoginPage extends State<LoginPage> {
                   ? AutovalidateMode.always
                   : AutovalidateMode.disabled,
               textInputType: TextInputType.number,
+              inputFormatter: [
+                FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+              ],
               validator: (val) {
                 if (val!.trim().isEmpty || val!.trim().length != 10) {
                   return '${AppLocalizations.of(context).translate(i18.login.pleaseEnterMobile)}';
