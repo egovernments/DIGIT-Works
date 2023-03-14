@@ -137,12 +137,12 @@ public class OrganisationServiceValidator {
             throw new CustomException(errorMap);
     }
 
-    public void validateSearchOrganisationRequest(RequestInfo requestInfo, OrgSearchCriteria searchCriteria) {
+    public void validateSearchOrganisationRequest(OrgSearchRequest orgSearchRequest) {
         Map<String, String> errorMap = new HashMap<>();
         //Verify if RequestInfo and UserInfo is present
-        validateRequestInfo(requestInfo, errorMap);
+        validateRequestInfo(orgSearchRequest.getRequestInfo(), errorMap);
         //Verify the search criteria
-        validateSearchCriteria(searchCriteria);
+        validateSearchCriteria(orgSearchRequest.getSearchCriteria());
 
     }
 

@@ -55,7 +55,7 @@ public class OrganisationApiController {
             @ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType,
             @ApiParam(value = "") @Valid @RequestBody OrgSearchRequest body) {
 
-        List<Organisation> organisations = organisationService.searchOrganisation(body.getRequestInfo(), body.getSearchCriteria());
+        List<Organisation> organisations = organisationService.searchOrganisation(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         Integer count = organisationService.countAllOrganisations(body.getSearchCriteria());
         OrgServiceResponse orgServiceResponse = OrgServiceResponse.builder().responseInfo(responseInfo).organisations(organisations).totalCount(count).build();

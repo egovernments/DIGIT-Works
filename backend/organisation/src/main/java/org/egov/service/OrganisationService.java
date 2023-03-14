@@ -7,9 +7,7 @@ import org.egov.repository.OrganisationRepository;
 import org.egov.config.Configuration;
 import org.egov.kafka.Producer;
 import org.egov.validator.OrganisationServiceValidator;
-import org.egov.web.models.OrgRequest;
-import org.egov.web.models.OrgSearchCriteria;
-import org.egov.web.models.Organisation;
+import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,9 +50,9 @@ public class OrganisationService {
         return orgRequest;
     }
 
-    public List<Organisation> searchOrganisation(RequestInfo requestInfo, OrgSearchCriteria searchCriteria) {
-        organisationServiceValidator.validateSearchOrganisationRequest(requestInfo, searchCriteria);
-        List<Organisation> organisations = organisationRepository.getOrganisations(requestInfo, searchCriteria);
+    public List<Organisation> searchOrganisation(OrgSearchRequest orgSearchRequest) {
+        organisationServiceValidator.validateSearchOrganisationRequest(orgSearchRequest);
+        List<Organisation> organisations = organisationRepository.getOrganisations(orgSearchRequest);
         return organisations;
     }
 

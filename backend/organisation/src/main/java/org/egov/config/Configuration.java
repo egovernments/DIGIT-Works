@@ -118,4 +118,12 @@ public class Configuration {
     @Value("${org.kafka.update.topic}")
     private String orgKafkaUpdateTopic;
 
+    //search config
+    @Value("${org.search.max.limit}")
+    private Integer maxLimit;
+    @Value("${org.default.offset}")
+    private Integer defaultOffset;
+    @Value("${org.default.limit}")
+    private Integer defaultLimit;
+
 }

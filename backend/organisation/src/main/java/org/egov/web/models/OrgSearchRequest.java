@@ -23,6 +23,9 @@ public class OrgSearchRequest {
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("searchCriteria")
+    @JsonProperty("SearchCriteria")
     private OrgSearchCriteria searchCriteria = null;
+
+    @JsonProperty("Pagination")
+    private Pagination pagination = null;
 }

@@ -32,8 +32,8 @@ public class OrgSearchCriteria {
     @Size(min = 2, max = 1000)
     private String tenantId = null;
 
-    @JsonProperty("type")
-    private String type = null;
+    @JsonProperty("name")
+    private String name = null;
 
     @JsonProperty("functions")
     private Function functions = null;
