@@ -16,6 +16,7 @@ CREATE TABLE eg_org (
   id                     character varying(256),
   tenant_id              character varying(64) NOT NULL,
   application_number     character varying(140) NOT NULL,
+  name                   character varying(140) NOT NULL,
   org_number             character varying(140),
   external_ref_number    character varying(64),
   date_of_incorporation  bigint,
