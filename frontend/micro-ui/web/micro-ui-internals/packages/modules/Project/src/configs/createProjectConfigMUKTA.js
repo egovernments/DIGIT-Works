@@ -119,7 +119,19 @@ export const createProjectConfigMUKTA = {
                 key: "noSubProject_estimatedCostInRs",
                 type: "number",
                 disable: false,
-                populators: { name: "noSubProject_estimatedCostInRs" }
+                preProcess: {
+                  convertStringToRegEx: [
+                    populators.validation.pattern
+                  ]
+                },
+                populators: {
+                    name: noSubProject_estimatedCostInRs,
+                    error: PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST,
+                    validation: {
+                      pattern: /^(?:0|[1-9]\d*)(?:\.(?!.*000)\d+)?$/,
+                      maxlength : 32
+                    }
+                  }
               },
             ]
           },
