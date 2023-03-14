@@ -38,7 +38,7 @@ export const createProjectConfigMUKTA = {
                   preProcess : {
                     convertStringToRegEx : ["populators.validation.pattern"]
                   },
-                  populators: { name: "basicDetails_projectName", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_NAME", validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2, maxlength : 32 }}
+                  populators: { name: "basicDetails_projectName", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_NAME", validation: { pattern: /^[a-z0-9\/{ \/ .\- _$@#\' } ]*$/i, minlength : 2, maxlength : 32 }}
               },
               {
                   inline: true,
@@ -50,7 +50,7 @@ export const createProjectConfigMUKTA = {
                   preProcess : {
                     convertStringToRegEx : ["populators.validation.pattern"]
                   },
-                  populators: { name: "basicDetails_projectDesc", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_DESC", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2, maxlength : 256 }}
+                  populators: { name: "basicDetails_projectDesc", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_DESC", validation: { pattern: /^[a-z0-9\/{ \/ .\- _$@#\'() } ]*$/i, minlength : 2, maxlength : 256 }}
               }
               ]
           },
@@ -68,7 +68,7 @@ export const createProjectConfigMUKTA = {
                 preProcess : {
                   convertStringToRegEx : ["populators.validation.pattern"]
                 },
-                populators: { name: "noSubProject_letterRefNoOrReqNo", error: ("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2, maxlength : 32 }}
+                populators: { name: "noSubProject_letterRefNoOrReqNo", error: ("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[a-z0-9\/{ \/ .\- _$@#\' } ]*$/i, minlength : 2, maxlength : 32 }}
               },
               {
                 isMandatory: true,
