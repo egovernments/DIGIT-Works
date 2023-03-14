@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 var Digit = window.Digit || {};
 
 const businessServiceMap = {
-  estimate: "estimate-approval",
+  estimate: "estimate-approval-5",
 };
 
 export const UICustomizations = {
@@ -38,11 +38,10 @@ export const UICustomizations = {
     }
   },
   enableHrmsSearch: (businessService, action) => {
+    
     if (businessService === businessServiceMap.estimate) {
       return (
-        action.action.includes("CHECK") ||
-        action.action.includes("ADMIN") ||
-        action.action.includes("APPROVE") ||
+        action.action.includes("TECHNICALSANCTION") ||
         action.action.includes("VERIFYANDFORWARD")
       );
     }

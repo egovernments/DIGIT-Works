@@ -42,6 +42,18 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             ]
         };
 
+        const financialDetails = {
+            title: "WORKS_FINANCIAL_DETAILS",
+            asSectionHeader: false,
+            values: [
+              { title: "WORKS_FUND", value: currentProject?.additionalDetails?.fund ? t(`ES_COMMON_FIN_${currentProject?.additionalDetails?.fund}`) : "NA" },
+              { title: "WORKS_FUNCTION", value: currentProject?.additionalDetails?.function ? t(`ES_COMMON_${currentProject?.additionalDetails?.function}`) : "NA" },
+              { title: "WORKS_BUDGET_HEAD", value: currentProject?.additionalDetails?.budgetHead ? t(`ES_COMMON_FIN_${currentProject?.additionalDetails?.budgetHead}`)  : "NA"},
+              { title: "WORKS_SCHEME", value: currentProject?.additionalDetails?.scheme ? t(`ES_COMMON_${currentProject?.additionalDetails?.scheme}`) : "NA"},
+              { title: "WORKS_SUB_SCHEME", value: currentProject?.additionalDetails?.subScheme ? t(`ES_COMMON_${currentProject?.additionalDetails?.subScheme}`) : "NA"}
+            ],
+          };
+
         const documentDetails = {
             title: "",
             asSectionHeader: true,
@@ -79,6 +91,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 headerDetails, 
                 projectDetails, 
                 locationDetails, 
+                financialDetails,
                 documentDetails
             }
         }
@@ -102,7 +115,7 @@ export const Search = {
         let projects = createProjectsArray(t, response?.Projects, searchParams, headerLocale);
         //searched Project details
         projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
-        projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
+        projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails,projects?.searchedProject?.financialDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
 
         return {
             projectDetails : projectDetails,
