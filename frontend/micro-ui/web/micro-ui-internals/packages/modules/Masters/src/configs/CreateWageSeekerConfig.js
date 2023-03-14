@@ -33,7 +33,24 @@ export const CreateWageSeekerConfig = {
                 "fileStoreId": "859303bc-d889-4775-be36-1f2c23c88301",
                 "tenantId": "pg.citya"
               }
-            }]]
+            }]],
+          skillDetails_skillCategory: {
+            "name": "COMMON_MASTERS_UNSKILLED",
+            "code": "UNSKILLED",
+          },
+          skillDetails_skill: {
+            "name": "COMMON_MASTERS_MALE_MULIA",
+            "code": "MALE_MULIA",
+          },
+          financeDetails_accountHolderName: 'Asha Devi',
+          financeDetails_accountNumber: '10000213400421',
+          financeDetails_accountType: {
+            "name": "MASTERS_SAVINGS",
+            "code": "SAVINGS",
+            "active": true
+          },
+          financeDetails_ifsc: 'SBIN007123',
+          financeDetails_branchName: 'Block1, Kormangala, Bangalore'
         },
         "metaData" : {
           showNavs : false,
@@ -102,8 +119,12 @@ export const CreateWageSeekerConfig = {
                 key: "basicDetails_dateOfBirth",
                 type: "date",
                 disable: false,
+                preProcess : {
+                  updateDependent : ["populators.max"]
+                },
                 populators: { 
                     name: "basicDetails_dateOfBirth",
+                    max: "currentDate"
                 }
               },
               {
@@ -182,6 +203,9 @@ export const CreateWageSeekerConfig = {
                 key: "skillDetails_skillCategory",
                 type: "radioordropdown",
                 disable: false,
+                preProcess : {
+                  updateDependent : ["populators.options"]
+                },
                 populators: {
                   name: "skillDetails_skillCategory",
                   optionsKey: "name",
@@ -198,6 +222,9 @@ export const CreateWageSeekerConfig = {
                 key: "skillDetails_skill",
                 type: "radioordropdown",
                 disable: false,
+                preProcess : {
+                  updateDependent : ["populators.options"]
+                },
                 populators: {
                   name: "skillDetails_skill",
                   optionsKey: "name",
@@ -210,130 +237,136 @@ export const CreateWageSeekerConfig = {
               }
             ]
           },
-          // {
-          //   navLink:"Project_Details",
-          //   head: "Location Details",
-          //   body: [
-          //     {
-          //       label: "City",
-          //       isMandatory: true,
-          //       key: "city",
-          //       type: "radioordropdown",
-          //       disable: true,
-          //       populators: {
-          //         name: "city",
-          //         optionsKey: "name",
-          //         error: "WORKS_REQUIRED_ERR",
-          //         optionsCustomStyle : {
-          //           top : "2.3rem"
-          //         },
-          //         options: []
-          //       }
-          //     },
-          //     {
-          //       label: "Ward",
-          //       isMandatory: true,
-          //       key: "ward",
-          //       type: "radioordropdown",
-          //       disable: false,
-          //       populators: {
-          //         name: "ward",
-          //         optionsKey: "name",
-          //         error: ("WORKS_REQUIRED_ERR"),
-          //         optionsCustomStyle : {
-          //           top : "2.3rem"
-          //         },
-          //         options: []
-          //       }
-          //     },
-          //     {
-          //       label: "Locality",
-          //       isMandatory: true,
-          //       key: "locality",
-          //       type: "radioordropdown",
-          //       disable: false,
-          //       populators: {
-          //         name: "locality",
-          //         optionsKey: "name",
-          //         error: ("WORKS_REQUIRED_ERR"),
-          //         optionsCustomStyle : {
-          //           top : "2.3rem"
-          //         },
-          //         options: []
-          //       }
-          //     },
-          //     {
-          //       label: "Street name",
-          //       isMandatory: false,
-          //       key: "streetName",
-          //       type: "text",
-          //       disable: false,
-          //       populators: { name: "streetName", validation: { minlength : 2 }}
-          //     },
-          //     {
-          //       label: "Door / House number",
-          //       isMandatory: false,
-          //       key: "houseName",
-          //       type: "text",
-          //       disable: false,
-          //       populators: { name: "houseName", validation: { minlength : 2 }}
-          //     }
-          //   ]
-          // },
-          // {
-          //   navLink:"Project_Details",
-          //   head: "Financial Details",
-          //   body: [
-          //     {
-          //       label: "Account holder's name",
-          //       isMandatory: true,
-          //       key: "accountHolderName",
-          //       type: "text",
-          //       disable: false,
-          //       populators: { name: "accountHolderName", validation: { minlength : 2 }}
-          //     },
-          //     {
-          //       label: "Account number",
-          //       isMandatory: true,
-          //       key: "accountNumber",
-          //       type: "number",
-          //       disable: false,
-          //       populators: { name: "accountNumber" }
-          //     },
-          //     {
-          //       label: "Account Type",
-          //       isMandatory: true,
-          //       key: "accountType",
-          //       type: "radioordropdown",
-          //       disable: true,
-          //       populators: {
-          //         name: "accountType",
-          //         optionsKey: "name",
-          //         error: "WORKS_REQUIRED_ERR",
-          //         optionsCustomStyle : {
-          //           top : "2.3rem"
-          //         },
-          //         options: []
-          //       }
-          //     },
-          //     {
-          //       label:"IFSC",
-          //       isMandatory: true,
-          //       key: "ifsc",
-          //       type: "text",
-          //       disable: false,
-          //       populators: { name: "ifsc", error: "WORKS_REQUIRED_ERR", validation: {minlength : 2} },
-          //     },
-          //     {
-          //       label: "Branch name",
-          //       isMandatory: false,
-          //       key: "branchName",
-          //       type: "text",
-          //       disable: false,
-          //       populators: { name: "branchName", validation: { minlength : 2 }}
-          //     }
-          //   ]
-          // }
+          {
+            navLink:"Project_Details",
+            head: "Location Details",
+            body: [
+              {
+                label: "City",
+                isMandatory: true,
+                key: "locDetails_city",
+                type: "radioordropdown",
+                disable: true,
+                preProcess : {
+                  updateDependent : ["populators.options"]
+                },
+                populators: {
+                  name: "locDetails_city",
+                  optionsKey: "name",
+                  error: "WORKS_REQUIRED_ERR",
+                  optionsCustomStyle : {
+                    top : "2.3rem"
+                  },
+                  options: []
+                }
+              },
+              {
+                label: "Ward",
+                isMandatory: true,
+                key: "locDetails_ward",
+                type: "radioordropdown",
+                disable: false,
+                populators: {
+                  name: "locDetails_ward",
+                  optionsKey: "name",
+                  error: ("WORKS_REQUIRED_ERR"),
+                  optionsCustomStyle : {
+                    top : "2.3rem"
+                  },
+                  options: []
+                }
+              },
+              {
+                label: "Locality",
+                isMandatory: true,
+                key: "locDetails_locality",
+                type: "radioordropdown",
+                disable: false,
+                populators: {
+                  name: "locDetails_locality",
+                  optionsKey: "name",
+                  error: ("WORKS_REQUIRED_ERR"),
+                  optionsCustomStyle : {
+                    top : "2.3rem"
+                  },
+                  options: []
+                }
+              },
+              {
+                label: "Street name",
+                isMandatory: false,
+                key: "locDetails_streetName",
+                type: "text",
+                disable: false,
+                populators: { name: "locDetails_streetName", validation: { minlength : 2 }}
+              },
+              {
+                label: "Door / House number",
+                isMandatory: false,
+                key: "locDetails_houseName",
+                type: "text",
+                disable: false,
+                populators: { name: "locDetails_houseName", validation: { minlength : 2 }}
+              }
+            ]
+          },
+          {
+            navLink:"Project_Details",
+            head: "Financial Details",
+            body: [
+              {
+                label: "Account holder's name",
+                isMandatory: true,
+                key: "financeDetails_accountHolderName",
+                type: "text",
+                disable: false,
+                populators: { name: "financeDetails_accountHolderName", validation: { minlength : 2 }}
+              },
+              {
+                label: "Account number",
+                isMandatory: true,
+                key: "financeDetails_accountNumber",
+                type: "number",
+                disable: false,
+                populators: { name: "financeDetails_accountNumber" }
+              },
+              {
+                label: "Account Type",
+                isMandatory: true,
+                key: "financeDetails_accountType",
+                type: "radioordropdown",
+                populators: {
+                  name: "financeDetails_accountType",
+                  optionsKey: "name",
+                  error: "WORKS_REQUIRED_ERR",
+                  optionsCustomStyle : {
+                    top : "2.3rem"
+                  },
+                  mdmsConfig: {
+                    masterName: "BankAccType",
+                    moduleName: "works",
+                    localePrefix: "MASTERS",
+                  }
+                }
+              },
+              {
+                label:"IFSC",
+                isMandatory: true,
+                key: "financeDetails_ifsc",
+                type: "text",
+                disable: false,
+                populators: { name: "financeDetails_ifsc", error: "WORKS_REQUIRED_ERR", validation: {minlength : 2} },
+              },
+              {
+                label: "Branch name",
+                isMandatory: false,
+                key: "financeDetails_branchName",
+                type: "text",
+                disable: false,
+                populators: { name: "financeDetails_branchName", validation: { minlength : 2 }}
+              }
+            ]
+          }
         ]
       }
     ]
