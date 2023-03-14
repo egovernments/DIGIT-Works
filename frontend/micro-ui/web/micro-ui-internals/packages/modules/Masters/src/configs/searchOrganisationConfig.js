@@ -37,24 +37,19 @@ const searchOrganisationConfig = () => {
           },
           fields: [
             {
-              label: "MASTERS_WARD",
-              type: "dropdown",
-              isMandatory: false,
-              disable: false,
-              populators: {
-                name: "boundaryCode",
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
-                optionsKey: "name",
-                options: [
-                  {
-                    code: "WARD1",
-                    name: "WARD1",
-                  },
-                ],
-              },
-            },
+              "label": "COMMON_WARD",
+              "type": "locationdropdown",
+              "isMandatory": false,
+              "disable": false,
+              "populators": {
+                  "name": "boundaryCode",
+                  "type": "ward",
+                  "optionsKey": "name",
+                  "defaultText": "COMMON_SELECT_WARD",
+                  "selectedText": "COMMON_SELECTED",
+                  "allowMultiSelect": false
+              }
+          },
             {
               label: "MASTERS_ORGANISATION_TYPE",
               type: "dropdown",
