@@ -72,7 +72,7 @@ const ProjectDetails = () => {
             history.push(`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&estimateNumber=${estimates?.[0]?.estimateNumber}`);
         }
         if(option?.name === "MODIFY_PROJECT"){
-            if(estimates?.length !==0 && estimates?.[0]?.wfStatus !== "" && estimates?.[0]?.wfStatus !== "REJECTED") {
+            if((estimates?.length !==0 && estimates?.[0]?.wfStatus !== "") && ( estimates?.length !==0 && estimates?.[0]?.wfStatus !== "REJECTED")) {
                 setToast({show : true, label : t("COMMON_CANNOT_MODIFY_PROJECT_EST_CREATED"), error : true});
             }else {
                 history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
@@ -90,23 +90,21 @@ const ProjectDetails = () => {
     const { data : estimates } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
 
     useEffect(()=>{
-        let isUserEstimateCreator = loggedInUserRoles?.includes("EST_CREATOR");
-        if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED") && isUserEstimateCreator) {
-            setActionsMenu([
-                {
-                    name : "CREATE_ESTIMATE"
-                },
-                {
-                    name : "MODIFY_PROJECT"
-                }
-            ])
+        let isUserEstimateCreator = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
+        if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED")) {
+            if(isUserEstimateCreator) {
+                setActionsMenu([
+                    {
+                        name : "CREATE_ESTIMATE"
+                    }
+                ])
+            }else {
+                setActionsMenu([])
+            }
         }else {
             setActionsMenu([
                 {
                     name : "VIEW_ESTIMATE"
-                },
-                {
-                    name : "MODIFY_PROJECT"
                 }
             ])
         }

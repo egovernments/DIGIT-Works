@@ -30,7 +30,7 @@ class OTPVerificationPage extends StatefulWidget {
 
 class _OTPVerificationPage extends State<OTPVerificationPage> {
   final TextEditingController otpController = TextEditingController();
-  bool isDisabled = true;
+  bool next = false;
   Client client = Client();
 
   @override
@@ -48,7 +48,7 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
     var localizationText =
         '${AppLocalizations.of(context).translate(i18.login.enterOTPSent)}';
     localizationText = localizationText.replaceFirst(
-        '{mobileNumber}', '+91${widget.mobileNumber}');
+        '{mobileNumber}', '+91 - ${widget.mobileNumber}');
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: [
@@ -63,11 +63,17 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
                     .translate(i18.login.otpVerification)),
                 const SizedBox(height: 10),
                 SubLabelText(localizationText),
-                DigitOTPField(
-                  numberOfFields: 6,
-                  onChanged: (value) {
-                    otpController.text = value;
-                  },
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: DigitOTPField(
+                    numberOfFields: 6,
+                    onChanged: (value) {
+                      otpController.text = value;
+                      setState(() {
+                        next = value.length == 6;
+                      });
+                    },
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -90,18 +96,23 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                DigitElevatedButton(
-                  onPressed: () async {
-                    context.read<AuthBloc>().add(
-                          AuthLoginEvent(
-                            userId: widget.mobileNumber,
-                            password: otpController.text,
-                          ),
-                        );
-                  },
-                  child: Center(
-                    child: Text(AppLocalizations.of(context)
-                        .translate(i18.common.next)),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: DigitElevatedButton(
+                    onPressed: next
+                        ? () {
+                            context.read<AuthBloc>().add(
+                                  AuthLoginEvent(
+                                    userId: widget.mobileNumber,
+                                    password: otpController.text,
+                                  ),
+                                );
+                          }
+                        : null,
+                    child: Center(
+                      child: Text(AppLocalizations.of(context)
+                          .translate(i18.common.next)),
+                    ),
                   ),
                 ),
                 BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {

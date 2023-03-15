@@ -11,11 +11,18 @@ export const UICustomizations = {
     EstimateInboxConfig:{
         preProcess:(data) => {
             //set tenantId
+            
             data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId()
             data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId()
             
             // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
+            
+            const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee)
             delete data.body.inbox.moduleSearchCriteria.assignee
+            if (assignee?.code ==="ASSIGNED_TO_ME") {
+                data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid
+            }
+            
             delete data.body.inbox.moduleSearchCriteria.ward
             
             //cloning locality and workflow states to format them

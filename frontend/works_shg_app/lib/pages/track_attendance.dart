@@ -572,9 +572,17 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                     ]);
                                                               }
                                                               else {
-                                                                return const EmptyImage(
-                                                                  align: Alignment.center,
-                                                                );
+                                                                return Column(children: [
+                                                                  const EmptyImage(
+                                                                    align: Alignment.center,
+                                                                  ),
+                                                                  ButtonLink(
+                                                                    AppLocalizations.of(context).translate(
+                                                                        i18.attendanceMgmt.addNewWageSeeker),
+                                                                        () {},
+                                                                    align: Alignment.center,
+                                                                  ),
+                                                                ],);
                                                               }
                                                               },);
                                                           },)

@@ -40,7 +40,7 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
     const [config,setConfig] = useState(null)
 
     //hrms user search
-    let { isLoading: isLoadingHrmsSearch, isError, error, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch({ roles: action?.assigneeRoles?.toString(), isActive: true }, tenantId, null, null, { enabled: action?.assigneeRoles?.length > 0 && enableAssignee ? true : false });
+    let { isLoading: isLoadingHrmsSearch, isError, error, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch({ roles: action?.assigneeRoles?.toString(), isActive: true }, tenantId, null, null, { enabled: action?.assigneeRoles?.length > 0 && enableAssignee });
     
     assigneeOptions = assigneeOptions?.Employees
     assigneeOptions?.map(emp => emp.nameOfEmp = emp?.user?.name || t("ES_COMMON_NA"))
@@ -48,12 +48,12 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
     useEffect(() => {
       if(assigneeOptions?.length >=0){
       setConfig(
-        configEstimateModal(t,action,assigneeOptions)
+        configEstimateModal(t,action,assigneeOptions,businessService)
       )
       }
       else {
         setConfig(
-            configEstimateModal(t, action, undefined)
+            configEstimateModal(t, action, undefined, businessService)
         )
       }
       

@@ -61,6 +61,7 @@ const fetchDocuments = (docs) => {
 }
 
 export const createEstimatePayload = (data,projectData) => {
+    
     let filteredFormData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
     const tenantId = Digit.ULBService.getCurrentTenantId()
     let payload = {
@@ -88,11 +89,12 @@ export const createEstimatePayload = (data,projectData) => {
                     ward: projectData?.projectDetails?.searchedProject?.basicDetails?.ward,
                     city: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.city
                 },
-                "projectNumber": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID
+                "projectNumber": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID,
+                "totalEstimatedAmount": data?.totalEstimateAmount
             }
         },
         workflow:{
-            "action": "CREATE",
+            "action": "SUBMIT",
             "comment": filteredFormData?.comments,
             "assignees": [
                 filteredFormData?.selectedApprover?.uuid ? filteredFormData?.selectedApprover?.uuid: undefined 

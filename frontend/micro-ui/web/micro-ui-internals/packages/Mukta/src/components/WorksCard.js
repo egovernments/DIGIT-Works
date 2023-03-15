@@ -11,26 +11,27 @@ const WorksCard = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId()
   const requestCriteria = {
-    url:'/inbox/v2/_search',
+    url: '/inbox/v2/_search',
     body: {
-        inbox: {
-            tenantId,
-            processSearchCriteria: {
-                businessService: [
-                    "muster-roll-approval"
-                ],
-                moduleName: "muster-roll-service"
-            },
-            moduleSearchCriteria: {
-                tenantId
-            },
-            limit: 10,
-            offset: 0
-        }
+      inbox: {
+        tenantId,
+        processSearchCriteria: {
+          businessService: [
+            "muster-roll-approval"
+          ],
+          moduleName: "muster-roll-service"
+        },
+        moduleSearchCriteria: {
+          tenantId
+        },
+        limit: 10,
+        offset: 0
+      }
     }
-};
-const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+  };
 
+  const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+  
   const requestCriteriaEstimate = {
     url: '/inbox/v2/_search',
     body: {
@@ -40,7 +41,31 @@ const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
           businessService: [
             "estimate-approval-5"
           ],
-          moduleName: "contract-approval-mukta"
+          moduleName: "estimate-service"
+        },
+        moduleSearchCriteria: {
+          tenantId
+        },
+        limit: 10,
+        offset: 0
+      }
+    },
+    changeQueryName: "EstimateInbox"
+  };
+
+  const { isLoading: isLoadingEstimate, data: dataEstimate } = Digit.Hooks.useCustomAPIHook(requestCriteriaEstimate);
+
+  
+  const requestCriteriaContract = {
+    url: '/inbox/v2/_search',
+    body: {
+      inbox: {
+        tenantId,
+        processSearchCriteria: {
+          businessService: [
+            "contract-approval-mukta"
+          ],
+          moduleName: "contract-service"
         },
         moduleSearchCriteria: {
           tenantId
@@ -54,18 +79,17 @@ const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
   const { isLoading: isLoadingContract, data: dataContract } = Digit.Hooks.useCustomAPIHook(requestCriteriaEstimate);
 
-
   let links = [
     {
       label: t("ACTION_TEST_PROJECT"),
       link: `/${window?.contextPath}/employee/project/search-project`,
-      roles: ["PC","PV","EMPLOYEE","SUPERUSER"],
+      roles: ["PROJECT_CREATOR","PROJECT_VIEWER"],
     },
     {
       label: t("WORKS_ESTIMATES"),  
       link: `/${window?.contextPath}/employee/estimate/inbox`,
-      roles: ["ESTIMATE_CREATOR","ESTIMATE_VERIFIER","TECHNICAL_SANCTIONER","ESTIMATE_APPROVER","EMPLOYEE","SUPERUSER"],
-      count: 1,
+      roles: ["ESTIMATE_CREATOR","ESTIMATE_VERIFIER","TECHNICAL_SANCTIONER","ESTIMATE_APPROVER"],
+      count: isLoadingEstimate ? "-" : dataEstimate?.totalCount, 
     },
     {
       label: t("WORKS_CONTRACTS"),
@@ -76,18 +100,24 @@ const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
     {
       label: t("WORKS_MUSTERROLLS"),
       link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
-      roles: ["MV","MA","EMPLOYEE","SUPERUSER"],
+      roles: ["MUSTER_ROLL_VERIFIER","MUSTER_ROLL_APPROVER"],
       count: isLoading ? "-" : data?.totalCount,
     },
     {
       label: t("WORKS_WAGESEEKERS"),
       link: `/${window?.contextPath}/employee/masters/search-wageseeker`,
-      roles: ["MUKTA_ADMIN","EMPLOYEE","SUPERUSER"],
+      roles: ["MUKTA_ADMIN"],
     },
     {
       label: t("WORKS_MASTERS"),
       link: `/${window?.contextPath}/employee/masters/search-organization`,
-      roles: ["MUKTA_ADMIN","EMPLOYEE","SUPERUSER"],
+      roles: ["MUKTA_ADMIN"],
+    },
+    {
+      label: t("ACTION_TEST_BILLS"),
+      link: `/${window?.contextPath}/employee/expenditure/billinbox`,
+      roles: ["BILL_CREATOR", "BILL_VIEWER"],
+      count: 10,
     },
     {
       label: t("WORKS_DASHBOARD"),

@@ -6,14 +6,12 @@ const configEstimateModal = (
     t,
     action,
     approvers,
-    moduleName="estimate"
+    businessService
 ) => {
-    
     const {action:actionString} = action
-    console.log(actionString);
 
     const configMap = {
-        "estimate": {
+        "estimate-approval-5": {
             "default":{
                 comments:{
                     isMandatory:false,
@@ -69,29 +67,44 @@ const configEstimateModal = (
                     isMandatory: false,
                     show: true
                 }
-            }
+            },
+            "APPROVE": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            },
+
 
         }
     }
 //field can have (comments,assignee,upload)
     const fetchIsMandatory = (field) => {
         
-        if(configMap?.[moduleName]?.[actionString]){
-            console.log(configMap?.[moduleName]?.[actionString]?.[field]?.isMandatory);
-            return configMap?.[moduleName]?.[actionString]?.[field]?.isMandatory ? configMap?.[moduleName]?.[actionString]?.[field]?.isMandatory : false
+        if(configMap?.[businessService]?.[actionString]){
+            console.log(configMap?.[businessService]?.[actionString]?.[field]?.isMandatory);
+            return configMap?.[businessService]?.[actionString]?.[field]?.isMandatory ? configMap?.[businessService]?.[actionString]?.[field]?.isMandatory : false
         }else{
-            console.log(configMap?.[moduleName]?.default?.[field]?.isMandatory);
-            return configMap?.[moduleName]?.default?.[field]?.isMandatory ? configMap?.[moduleName]?.default?.[field]?.isMandatory: false
+            console.log(configMap?.[businessService]?.default?.[field]?.isMandatory);
+            return configMap?.[businessService]?.default?.[field]?.isMandatory ? configMap?.[businessService]?.default?.[field]?.isMandatory: false
         }
     }
     const fetchIsShow = (field) => {
         
-        if (configMap?.[moduleName]?.[actionString]) {
-            console.log(configMap?.[moduleName]?.[actionString]?.[field]?.show);
-           return configMap?.[moduleName]?.[actionString]?.[field]?.show ? configMap?.[moduleName]?.[actionString]?.[field]?.show : false
+        if (configMap?.[businessService]?.[actionString]) {
+            console.log(configMap?.[businessService]?.[actionString]?.[field]?.show);
+           return configMap?.[businessService]?.[actionString]?.[field]?.show ? configMap?.[businessService]?.[actionString]?.[field]?.show : false
         } else {
-            console.log(configMap?.[moduleName]?.default?.[field]?.show);
-            return configMap?.[moduleName]?.default?.[field]?.show ? configMap?.[moduleName]?.default?.[field]?.show:false
+            console.log(configMap?.[businessService]?.default?.[field]?.show);
+            return configMap?.[businessService]?.default?.[field]?.show ? configMap?.[businessService]?.default?.[field]?.show:false
         }
         
     }

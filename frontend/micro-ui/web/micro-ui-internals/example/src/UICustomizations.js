@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 var Digit = window.Digit || {};
 
 const businessServiceMap = {
-  estimate: "estimate-approval-4",
+  estimate: "estimate-approval-5",
   contracts: "contract-approval-mukta"
 };
 
@@ -39,11 +39,10 @@ export const UICustomizations = {
     }
   },
   enableHrmsSearch: (businessService, action) => {
+    
     if (businessService === businessServiceMap.estimate) {
       return (
-        action.action.includes("CHECK") ||
-        action.action.includes("ADMIN") ||
-        action.action.includes("APPROVE") ||
+        action.action.includes("TECHNICALSANCTION") ||
         action.action.includes("VERIFYANDFORWARD")
       );
     }
@@ -355,16 +354,22 @@ export const UICustomizations = {
     },
   },
   SearchWageSeekerConfig: {
+    preProcess: (data) => {
+      // const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
+      // const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
+      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
+      // data.body.Individual = { ...data.body.Individual, tenantId: Digit.ULBService.getCurrentTenantId() };
+      return data;
+    },
     additionalCustomizations: (row, column, columnConfig, value, t) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
-
       if (column.label === "MASTERS_WAGESEEKER_ID") {
         return (
           <span className="link">
-            <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row.tenantId}&wageseekerId=${value?.[0]}`}>
-              {value?.[0] && t("ES_COMMON_NA")}
+            <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row.tenantId}&wageseekerId=${value}`}>
+              {value?value: t("ES_COMMON_NA")}
             </Link>
           </span>
         );
@@ -376,6 +381,13 @@ export const UICustomizations = {
         return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
       }
       if (column.label === "MASTERS_WARD") {
+        return value ? (
+          <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+        ) : (
+          t("ES_COMMON_NA")
+        );
+      }
+      if (column.label === "MASTERS_LOCALITY") {
         return value ? (
           <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
         ) : (
@@ -429,4 +441,7 @@ export const UICustomizations = {
       }
     },
   },
+  EstimateInboxConfig:{
+    
+  }
 };

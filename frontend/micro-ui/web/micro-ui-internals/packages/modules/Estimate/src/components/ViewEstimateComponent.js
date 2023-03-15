@@ -23,15 +23,15 @@ const ViewEstimateComponent = (props) => {
                 applicationData={applicationDetails?.applicationData}
                 moduleCode="Estimate"
                 showTimeLine={true}
-                timelineStatusPrefix={"ESTIMATE_"}
+                timelineStatusPrefix={"WF_ESTIMATE_STATUS_"}
                 businessService={businessService}
-                forcedActionPrefix={"ACTION_"}
+                // forcedActionPrefix={"ACTION_"}
                 tenantId={tenantId}
                 applicationNo={estimateNumber}
                 statusAttribute={"state"}
             />
             <WorkflowActions
-                forcedActionPrefix={"ACTIONS"}
+                forcedActionPrefix={"WF_ESTIMATE_ACTION"}
                 businessService={businessService}
                 applicationNo={estimateNumber}
                 tenantId={tenantId}

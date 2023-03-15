@@ -21,6 +21,7 @@ class Login {
   String get resendOTPInSec => 'RESEND_OTP_IN_SEC';
   String get enteredMobileNotRegistered =>
       'ENTERED_MOBILE_NO_NOT_REGISTERED_AS_CBO';
+  String get pleaseEnterMobile => 'ENTER_REGISTERED_MOBILE';
 }
 
 class Common {
@@ -83,6 +84,9 @@ class Common {
 class Home {
   const Home();
   String get registerIndividual => 'REGISTER_INDIVIDUAL';
+  String get registerWageSeeker => 'REGISTER_WAGE_SEEKER';
+  String get mukta => 'MUKTA';
+  String get myWorks => 'MY_WORKS';
   String get manageWageSeekers => 'MANAGE_WAGE_SEEKERS';
   String get workOrder => 'ACTION_TEST_VIEW_WORK_ORDER';
   String get worksMgmt => 'WORKS_MGMT';
@@ -90,6 +94,7 @@ class Home {
   String get musterRoll => 'ACTION_TEST_MUSTER_ROLL';
   String get trackAttendance => 'TRACK_ATTENDENCE';
   String get inbox => 'ES_COMMON_INBOX';
+  String get musterRolls => 'WORKS_MUSTERROLLS';
 }
 
 class WorkOrder {
@@ -97,8 +102,14 @@ class WorkOrder {
   String get warningMsg => 'WRNG_MSG_WORKORDER';
   String get projects => 'WORKS_PROJECT';
   String get contractID => 'WORKS_CONTRACT_ID';
+  String get workOrderNo => 'WORKS_ORDER_NO';
+  String get roleOfCBO => 'WORKS_ROLE_CBO';
   String get contractIssueDate => 'WORKS_CONTRACT_ISSUE_DATE';
   String get contractAmount => 'WORKS_CONTRACT_AMOUNT';
+  String get dueDate => 'WORKS_DUE_DATE';
+  String get noWorkOrderAssigned => 'NO_WORK_ORDERS_ASSIGNED';
+  String get workOrderAcceptSuccess => 'WORK_ORDER_ACCEPTED_SUCCESS';
+  String get workOrderDeclineSuccess => 'WORK_ORDER_DECLINE_SUCCESS';
 }
 
 class AttendanceMgmt {

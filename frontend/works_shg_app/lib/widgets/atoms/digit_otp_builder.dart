@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class DigitOTPField extends StatefulWidget {
   final int numberOfFields;
@@ -9,8 +10,8 @@ class DigitOTPField extends StatefulWidget {
   const DigitOTPField(
       {super.key,
       this.numberOfFields = 6,
-      this.fieldWidth = 40,
-      this.fieldHeight = 50,
+      this.fieldWidth = 35,
+      this.fieldHeight = 40,
       required this.onChanged});
 
   @override
@@ -58,6 +59,10 @@ class _DigitOTPField extends State<DigitOTPField> {
             textAlign: TextAlign.center,
             obscureText: false,
             focusNode: focusNodes[index],
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^[0-9]+$')),
+              CustomLengthLimitingTextInputFormatter(1),
+            ],
             controller: controllers[index],
             onChanged: (value) {
               if (value.length == 1) {
@@ -74,16 +79,6 @@ class _DigitOTPField extends State<DigitOTPField> {
               }
               widget.onChanged(getOtp());
             },
-            // decoration: InputDecoration(
-            //   contentPadding: EdgeInsets.zero,
-            //   border: const OutlineInputBorder(
-            //     borderSide: BorderSide(width: 2),
-            //   ),
-            //   focusedBorder: OutlineInputBorder(
-            //     borderSide: BorderSide(
-            //         width: 2, color: DigitTheme.instance.colorScheme.secondary),
-            //   ),
-            // ),
           ),
         );
       }),
@@ -96,5 +91,20 @@ class _DigitOTPField extends State<DigitOTPField> {
       otp += controller.text;
     }
     return otp;
+  }
+}
+
+class CustomLengthLimitingTextInputFormatter extends TextInputFormatter {
+  final int maxLength;
+
+  CustomLengthLimitingTextInputFormatter(this.maxLength);
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.length > maxLength) {
+      return oldValue;
+    }
+    return newValue;
   }
 }
