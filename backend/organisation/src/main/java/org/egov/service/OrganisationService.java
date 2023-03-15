@@ -56,8 +56,7 @@ public class OrganisationService {
         return organisations;
     }
 
-    public Integer countAllOrganisations(OrgSearchCriteria searchCriteria) {
-
-        return 0;
+    public Integer countAllOrganisations(OrgSearchRequest orgSearchRequest) {
+        return organisationRepository.getOrganisationsCount(orgSearchRequest);
     }
 }

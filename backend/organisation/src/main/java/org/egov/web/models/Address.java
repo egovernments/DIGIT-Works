@@ -28,6 +28,9 @@ public class Address {
     @JsonProperty("tenantId")
     private String tenantId = null;
 
+    @JsonProperty("orgId")
+    private String orgId = null;
+
     @JsonProperty("doorNo")
     private String doorNo = null;
 
@@ -64,8 +67,14 @@ public class Address {
     @JsonProperty("street")
     private String street = null;
 
-    @JsonProperty("boundary")
-    private Boundary boundary = null;
+    @JsonProperty("boundaryType")
+    private String boundaryType = null;
+
+    @JsonProperty("boundaryCode")
+    private String boundaryCode = null;
+
+//    @JsonProperty("boundary")
+//    private Boundary boundary = null;
 
     @JsonProperty("geoLocation")
     private GeoLocation geoLocation = null;

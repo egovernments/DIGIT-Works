@@ -2,7 +2,7 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.Document;
+import org.egov.web.models.Document;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -135,7 +135,7 @@ public class Organisation {
         return this;
     }
 
-    public Organisation addDocumentsItem(digit.models.coremodels.Document documentsItem) {
+    public Organisation addDocumentsItem(Document documentsItem) {
         if (this.documents == null) {
             this.documents = new ArrayList<>();
         }

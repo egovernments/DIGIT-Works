@@ -17,6 +17,9 @@ public class GeoLocation {
     @Valid
     private String id = null;
 
+    @JsonProperty("addressId")
+    private String addressId = null;
+
     @JsonProperty("latitude")
     private Double latitude = null;
 

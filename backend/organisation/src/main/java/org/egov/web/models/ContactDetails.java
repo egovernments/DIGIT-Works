@@ -28,6 +28,12 @@ public class ContactDetails {
     @Valid
     private String id = null;
 
+    @JsonProperty("tenantId")
+    private String tenantId = null;
+
+    @JsonProperty("orgId")
+    private String orgId = null;
+
     @JsonProperty("contactName")
     @Size(min = 2, max = 64)
     private String contactName = null;

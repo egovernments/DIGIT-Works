@@ -28,6 +28,9 @@ public class Identifier {
     @Valid
     private String id = null;
 
+    @JsonProperty("orgId")
+    private String orgId = null;
+
     @JsonProperty("type")
     @Size(min = 2, max = 64)
     private String type = null;

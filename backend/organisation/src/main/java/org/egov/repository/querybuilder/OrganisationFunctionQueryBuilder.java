@@ -43,8 +43,13 @@ public class OrganisationFunctionQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
-    public String getOrganisationSearchQuery(OrgSearchRequest orgSearchRequest, List<Object> preparedStmtList) {
-        String query = FETCH_ORGANISATION_FUNCTION_QUERY;
+    private static final String ORGANISATIONS_COUNT_QUERY = "SELECT DISTINCT(org.id) from eg_org org " +
+            "LEFT JOIN eg_org_function orgFunction ON org.id = orgFunction.org_id";
+
+    private static final String COUNT_WRAPPER = "SELECT COUNT(*) FROM ({INTERNAL_QUERY}) as count";
+
+    public String getOrganisationSearchQuery(OrgSearchRequest orgSearchRequest, List<Object> preparedStmtList, Boolean isCountQuery) {
+        String query = isCountQuery ? ORGANISATIONS_COUNT_QUERY : FETCH_ORGANISATION_FUNCTION_QUERY;
         StringBuilder queryBuilder = new StringBuilder(query);
         OrgSearchCriteria searchCriteria = orgSearchRequest.getSearchCriteria();
 
@@ -116,6 +121,10 @@ public class OrganisationFunctionQueryBuilder {
             }
         }
 
+        if (isCountQuery) {
+            return queryBuilder.toString();
+        }
+
         addOrderByClause(queryBuilder, orgSearchRequest.getPagination());
         return addPaginationWrapper(queryBuilder.toString(), preparedStmtList, orgSearchRequest.getPagination());
     }
@@ -147,7 +156,7 @@ public class OrganisationFunctionQueryBuilder {
     private void addOrderByClause(StringBuilder queryBuilder, Pagination pagination) {
         log.info("OrganisationQueryBuilder::getOrganisationQuery");
         //default
-        if (pagination.getSortBy() == null) {
+        if (pagination == null || pagination.getSortBy() == null) {
             queryBuilder.append(" ORDER BY org.created_time ");
         } else {
             switch (pagination.getSortBy()) {
@@ -163,7 +172,7 @@ public class OrganisationFunctionQueryBuilder {
             }
         }
 
-        if (pagination.getOrder() == "ASC")
+        if (pagination != null && pagination.getOrder() == "ASC")
             queryBuilder.append(" ASC ");
         else queryBuilder.append(" DESC ");
     }
@@ -174,19 +183,28 @@ public class OrganisationFunctionQueryBuilder {
         double offset = config.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
 
-        if (pagination.getLimit() != null) {
+        if (pagination != null && pagination.getLimit() != null) {
             if (pagination.getLimit() <= config.getMaxLimit())
                 limit = pagination.getLimit();
             else
                 limit = config.getMaxLimit();
         }
 
-        if (pagination.getOffSet() != null)
+        if (pagination != null && pagination.getOffSet() != null)
             offset = pagination.getOffSet();
 
         preparedStmtList.add(offset);
         preparedStmtList.add(limit + offset);
 
         return finalQuery;
+    }
+
+    public String getSearchCountQueryString(OrgSearchRequest orgSearchRequest, List<Object> preparedStmtList) {
+        log.info("OrganisationSearchQueryBuilder::getSearchCountQueryString");
+        String query = getOrganisationSearchQuery(orgSearchRequest, preparedStmtList, true);
+        if (query != null)
+            return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
     }
 }

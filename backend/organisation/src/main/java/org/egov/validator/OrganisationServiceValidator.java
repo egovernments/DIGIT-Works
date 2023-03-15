@@ -69,16 +69,16 @@ public class OrganisationServiceValidator {
                         throw new CustomException("ADDRESS.TENANT_ID", "Tenant id is mandatory");
                     }
 
-                    Boundary addressBoundary = address.getBoundary();
-                    if (addressBoundary == null) {
-                        throw new CustomException("ADDRESS.BOUNDARY", "Address's boundary is mandatory");
-                    }
-                    if (StringUtils.isBlank(addressBoundary.getCode())) {
-                        throw new CustomException("ADDRESS.BOUNDARY.CODE", "Address's boundary code is mandatory");
-                    }
-                    if (StringUtils.isBlank(addressBoundary.getName())) {
-                        throw new CustomException("ADDRESS.BOUNDARY.NAME", "Address's boundary name is mandatory");
-                    }
+//                    Boundary addressBoundary = address.getBoundary();
+//                    if (addressBoundary == null) {
+//                        throw new CustomException("ADDRESS.BOUNDARY", "Address's boundary is mandatory");
+//                    }
+//                    if (StringUtils.isBlank(addressBoundary.getCode())) {
+//                        throw new CustomException("ADDRESS.BOUNDARY.CODE", "Address's boundary code is mandatory");
+//                    }
+//                    if (StringUtils.isBlank(addressBoundary.getName())) {
+//                        throw new CustomException("ADDRESS.BOUNDARY.NAME", "Address's boundary name is mandatory");
+//                    }
 
                 }
             }
@@ -150,8 +150,8 @@ public class OrganisationServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
 
         if (searchCriteria == null) {
-            log.error("Organisation is mandatory");
-            throw new CustomException("ORGANISATION", "Organisation is mandatory");
+            log.error("Search criteria is mandatory");
+            throw new CustomException("ORGANISATION", "Search criteria is mandatory");
         }
 
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {

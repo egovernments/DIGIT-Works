@@ -87,8 +87,8 @@ CREATE TABLE eg_org_contact_detail (
   tenant_id                character varying(64),
   org_id                   character varying(256) NOT NULL,
   contact_name             character varying(64),
-  contact_mobile_number    numeric,
-  contact_email            numeric,
+  contact_mobile_number    character varying(15),
+  contact_email            character varying(64),
 
   CONSTRAINT pk_eg_org_contact_detail PRIMARY KEY (id),
   CONSTRAINT fk_eg_org_contact_detail FOREIGN KEY (org_id) REFERENCES eg_org (id)
@@ -98,7 +98,7 @@ CREATE TABLE eg_tax_identifier (
   id                     character varying(256),
   org_id                 character varying(256) NOT NULL,
   type                   character varying(64),
-  value                  numeric,
+  value                  character varying(64),
   additional_details     jsonb,
 
   CONSTRAINT pk_eg_tax_identifier PRIMARY KEY (id),
@@ -138,8 +138,8 @@ CREATE TABLE eg_org_function (
 
 CREATE TABLE eg_org_document (
   id                    character varying(256),
-  org_id                character varying(256) NOT NULL,
-  org_func_id           character varying(256) NOT NULL,
+  org_id                character varying(256),
+  org_func_id           character varying(256),
   document_type         character varying,
   file_store            character varying,
   document_uid          character varying(256),

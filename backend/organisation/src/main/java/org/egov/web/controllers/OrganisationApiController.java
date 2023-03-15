@@ -57,7 +57,7 @@ public class OrganisationApiController {
 
         List<Organisation> organisations = organisationService.searchOrganisation(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        Integer count = organisationService.countAllOrganisations(body.getSearchCriteria());
+        Integer count = organisationService.countAllOrganisations(body);
         OrgServiceResponse orgServiceResponse = OrgServiceResponse.builder().responseInfo(responseInfo).organisations(organisations).totalCount(count).build();
         return new ResponseEntity<OrgServiceResponse>(orgServiceResponse, HttpStatus.OK);
     }
