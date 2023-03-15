@@ -88,7 +88,7 @@ const CreateWorkOrder = () => {
             //set document object
             let documents =  createDocumentObject(estimate?.additionalDetails?.documents);
             let officerInCharge = createOfficerInChargeObject();
-            setSessionFormData({...defaultValues});
+            setSessionFormData({...defaultValues, ...sessionFormData});
             setConfig(createWorkOrderConfigMUKTA({defaultValues, documents, officerInCharge}));
         }
     },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch])
