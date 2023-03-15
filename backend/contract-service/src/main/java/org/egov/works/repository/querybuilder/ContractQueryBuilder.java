@@ -66,6 +66,12 @@ public class ContractQueryBuilder {
             addToPreparedStatement(preparedStmtList, ids);
         }
 
+        if (StringUtils.isNotBlank(criteria.getContractNumber())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.contract_number=? ");
+            preparedStmtList.add(criteria.getContractNumber());
+        }
+
         List<String> orgIds = criteria.getOrgIds();
         if (orgIds != null && !orgIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);

@@ -38,6 +38,9 @@ public class ContractCriteria {
     @Size(min = 2, max = 64)
     private String tenantId = null;
 
+    @JsonProperty("contractNumber")
+    private String contractNumber = null;
+
     @JsonProperty("ids")
     private List<String> ids = null;
 
