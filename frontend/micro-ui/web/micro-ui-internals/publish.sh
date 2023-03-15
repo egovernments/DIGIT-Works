@@ -38,3 +38,9 @@ cd "$BASEDIR/packages/modules/Masters" && yarn && yarn prepublish && npm publish
 
 msg "Building and publishing Works module"
 cd "$BASEDIR/packages/modules/works" && yarn && yarn prepublish && npm publish --tag works-1.0
+
+msg "Building and publishing Project module"
+cd "$BASEDIR/packages/modules/Project" && yarn && yarn prepublish && npm publish --tag works-1.0
+
+msg "Building and publishing Estimate module"
+cd "$BASEDIR/packages/modules/Estimate" && yarn && yarn prepublish && npm publish --tag works-1.0
