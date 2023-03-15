@@ -206,7 +206,12 @@
             "navLink": "WO_Details",
             "head": "COMMON_LABOUR_AND_MATERIAL_ANALYSIS",
             "body": [
-
+              {
+                "key": "labourAndMaterialAnalysis",
+                "type": "component",
+                "component": "ViewEstimateDocs",
+                "withoutLabel": true
+              }
             ]
           },
           {
@@ -242,4 +247,4 @@
         ]
       }
     ]
-  }
+}

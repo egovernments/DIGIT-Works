@@ -47,6 +47,10 @@ const Urls = {
     searchProject : "/pms/project/v1/_search",
   },
 
+  contracts : {
+    createWO : "/contract-service/contract/v1/_create"
+  },
+
   fsm: {
     search: "/fsm/v1/_search",
     create: "/fsm/v1/_create",

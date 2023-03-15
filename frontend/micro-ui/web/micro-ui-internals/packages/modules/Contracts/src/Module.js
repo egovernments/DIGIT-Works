@@ -7,6 +7,7 @@ import SearchContractApplication from "./components/SearchContract";
 import ContractsCard from "./components/ContractsCard";
 import CreateWorkOrder from "./pages/employee/CreateWorkOrder";
 import WOTermsAndConditions from "./components/WOTermsAndConditions";
+import ViewEstimateDocs from "./components/ViewEstimateDocs";
 
 const ContractsModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
@@ -32,7 +33,8 @@ const componentsToRegister = {
     SearchContractApplication,
     ContractCard:ContractsCard,
     CreateWorkOrder,
-    WOTermsAndConditions
+    WOTermsAndConditions,
+    ViewEstimateDocs
 };
 
 export const initContractsComponents = () => {

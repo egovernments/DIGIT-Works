@@ -79,7 +79,7 @@ const WOTermsAndConditions = (props) => {
             <td style={getStyles(1)}>{i}</td>
 
             <td style={getStyles(2)} ><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.description`} inputRef={register({
-            required: true,
+            required: false,
             //Don't remove this whitespace in pattern, it is used for validation
             pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
             })

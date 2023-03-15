@@ -131,6 +131,9 @@ import useViewFinancialDetails from "./project/useViewFinancialDetails";
 import useUpdateCustom from "./useUpdateCustom";
 
 import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
+import useCreateWO from "./works/useCreateWO";
+
+
 
 const works = {
   useViewEstimateDetails,
@@ -158,7 +161,8 @@ const works = {
 
 const contracts = {
   useViewContractDetails,
-  useViewContractDetailsClosureScreen
+  useViewContractDetailsClosureScreen,
+  useCreateWO
 };
 
 const estimates = {

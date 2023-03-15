@@ -1,7 +1,8 @@
 import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
-import React, { Fragment, useMemo } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
+import { createWorkOrderUtils } from "../../../../utils/createWorkOrderUtils";
 
 const navConfig =  [
     {
@@ -14,27 +15,40 @@ const navConfig =  [
     }
 ];
 
-const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData}) => {
+const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project}) => {
     const {t} = useTranslation();
+    const [selectedOfficerInCharge, setSelectedOfficerInCharge] = useState([]);
 
-    //Call Pre-Process here
-    const config = useMemo(
-        () => Digit.Utils.preProcessMDMSConfig(t, createWorkOrderConfig, {
-          updateDependent : []
-        }),
-        []);
+    const fetchOfficerInChargeDesignation = (data) => {
+        return data?.assignments?.filter(assignment=>assignment?.isCurrentAssignment)?.[0]?.designation;
+    }
 
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
+            if(formData.nameOfOfficerInCharge) {
+                setValue("designationOfOfficerInCharge", fetchOfficerInChargeDesignation(formData.nameOfOfficerInCharge?.data));
+            }
+
             setSessionFormData({ ...sessionFormData, ...formData });
         }
     }
 
-    const onSubmit = (_data) => {
-        //handle submit here
-        console.log(_data);
+    const { mutate: CreateWOMutation } = Digit.Hooks.contracts.useCreateWO();
+
+
+    const onSubmit = async (data) => {
+        const payload = createWorkOrderUtils({tenantId, estimate, project, data});
+        
+        await CreateWOMutation(payload, {
+            onError: async (error, variables) => {
+                console.log("RESPONSE-->",error?.response?.data?.Errors);
+            },
+            onSuccess: async (responseData, variables) => {
+                console.log(responseData);
+            },
+        });
     }
 
     return (
@@ -44,7 +58,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                     createWorkOrderConfig && (
                     <FormComposer
                         label={"ACTION_TEST_CREATE_WO"}
-                        config={config?.form?.map((config) => {
+                        config={createWorkOrderConfig?.form?.map((config) => {
                         return {
                             ...config,
                             body: config?.body.filter((a) => !a.hideInEmployee),
@@ -59,7 +73,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                         showWrapperContainers={false}
                         isDescriptionBold={false}
                         noBreakLine={true}
-                        showNavs={config?.metaData?.showNavs}
+                        showNavs={createWorkOrderConfig?.metaData?.showNavs}
                         showFormInNav={true}
                         showMultipleCardsWithoutNavs={false}
                         showMultipleCardsInNavs={false}

@@ -119,4 +119,16 @@ export const WorksService = {
            params: {tenantId, limit : filters?.limit, offset : filters?.offset, includeAncestors : filters?.includeAncestors, includeDescendants : filters?.includeDescendants},
            auth:true,
        }),
+    createWO: (details) =>{
+        Request({
+            url: Urls?.contracts?.createWO,
+            data: details,
+            useCache: false,
+            setTimeParam: false,
+            userService: true,
+            method: "POST",
+            params: {},
+            auth: true,
+        })
+    }
 }
