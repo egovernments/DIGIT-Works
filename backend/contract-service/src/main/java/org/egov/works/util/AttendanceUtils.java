@@ -85,12 +85,21 @@ public class AttendanceUtils {
     private JSONObject getRegisterAdditionalDetails(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
         Object additionalDetails = contract.getAdditionalDetails();
+        String ward = commonUtil.findValue(additionalDetails, WARD_CONSTANT).get();
         String orgName = commonUtil.findValue(additionalDetails, ORG_NAME_CONSTANT).get();
+        String projectId = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT).get();
+        String projectName = commonUtil.findValue(additionalDetails, PROJECT_NAME_CONSTANT).get();
+        String projectType = commonUtil.findValue(additionalDetails, PROJECT_TYPE_CONSTANT).get();
         String officerInCharge = commonUtil.findValue(additionalDetails, OFFICER_IN_CHARGE_ID_CONSTANT).get();
+
         JSONObject registerAdditionalDetails = new JSONObject();
         registerAdditionalDetails.put("contractId",contract.getContractNumber());
         registerAdditionalDetails.put("orgName",orgName);
         registerAdditionalDetails.put("officerInCharge",officerInCharge);
+        registerAdditionalDetails.put("ward",ward);
+        registerAdditionalDetails.put("projectId",projectId);
+        registerAdditionalDetails.put("projectName",projectName);
+        registerAdditionalDetails.put("projectType",projectType);
         return registerAdditionalDetails;
     }
 
