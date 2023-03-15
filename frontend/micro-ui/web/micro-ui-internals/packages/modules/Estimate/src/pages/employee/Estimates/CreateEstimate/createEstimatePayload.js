@@ -89,6 +89,7 @@ export const createEstimatePayload = (data,projectData) => {
                     ward: projectData?.projectDetails?.searchedProject?.basicDetails?.ward,
                     city: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.city
                 },
+                "projectNumber": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID,
                 "totalEstimatedAmount": data?.totalEstimateAmount
             }
         },
