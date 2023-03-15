@@ -31,29 +31,34 @@ export const InboxBillConfig = {
                         },
                         fields : [
                             {
-                                label:"Bill Number",
+                                label:"WORKS_BILL_NUMBER",
                                 type: "text",
                                 isMandatory: false,
                                 disable: false,
+                                preProcess: {
+                                    convertStringToRegEx: [
+                                        "populators.validation.pattern"
+                                    ]
+                                },
                                 populators: { 
                                     name: "billNumber",
                                     error: 'Enter valid bill number',
-                                    validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\'() } ]*$/i, minlength : 2 }
+                                    validation: { pattern: "^[A-Za-z0-9\\/-]*$", minlength : 2 }
                                 }
                             },
                             {
-                                label:"Project ID",
+                                label:"WORKS_PROJECT_ID",
                                 type: "text",
                                 isMandatory: false,
                                 disable: false,
                                 populators: { 
                                     name: "projectNumber",
                                     error: 'Enter valid project number',
-                                    validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\'() } ]*$/i, minlength : 2 }
+                                    validation: { pattern: "^[A-Za-z0-9\\/-]*$", minlength : 2 }
                                 }
                             },
                             {
-                                label: "Bill type",
+                                label: "WORKS_BILL_TYPE",
                                 type: "dropdown",
                                 isMandatory: false,
                                 disable: false,
@@ -80,19 +85,19 @@ export const InboxBillConfig = {
                     uiConfig : {
                         links : [
                             {
-                                text: "Create Bill",
+                                text: "EXP_CREATE_BILL",
                                 url: `/employee/expenditure/create-bill`,
                                 roles: [],
                             },
                             {
-                                text: "Search Bill",
+                                text: "EXP_SEARCH_BILL",
                                 url: `/employee/expenditure/search-bill`,
                                 roles: [],
                             }
                         ],
                         label : "MUKTA",
                         logoIcon : {
-                            component : "BioMetricIcon",
+                            component : "PropertyHouse",
                             customClass : "search-icon--projects"       
                         }
                     },
@@ -121,11 +126,11 @@ export const InboxBillConfig = {
                                     options: [
                                         {
                                             code: "ASSIGNED_TO_ME",
-                                            name: "BILL_INBOX_ASSIGNED_TO_ME"
+                                            name: "COMMON_INBOX_ASSIGNED_TO_ME"
                                         },
                                         {
                                             code: "ASSIGNED_TO_ALL",
-                                            name: "BILL_INBOX_ASSIGNED_TO_ALL"
+                                            name: "COMMON_INBOX_ASSIGNED_TO_ALL"
                                         }
                                     ],
                                     optionsKey: "name",
@@ -187,33 +192,33 @@ export const InboxBillConfig = {
                     uiConfig: {
                         columns: [
                             {
-                                label: "Bill number",
+                                label: "WORKS_BILL_NUMBER",
                                 jsonPath: "businessObject.musterRollNumber",
                                 additionalCustomization:true 
                             },
                             {
-                                label: "Project name",
+                                label: "ES_COMMON_PROJECT_NAME",
                                 jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
                             },
                             {
-                                label: "CBO name",
+                                label: "ES_COMMON_CBO_NAME",
                                 jsonPath: "businessObject"
                             },
                             {
-                                label: "Assignee",
+                                label: "COMMON_ASSIGNEE",
                                 jsonPath: "businessObject.additionalDetails.orgName",
                             },
                             {
-                                label: "Workflow state",
+                                label: "COMMON_WORKFLOW_STATES",
                                 jsonPath: "businessObject.individualEntries"
                             },
                             {
-                                label: "Amount (₹)",
+                                label: "ES_COMMON_AMOUNT",
                                 jsonPath: "businessObject.serviceSla",
                                 additionalCustomization:true
                             },
                             {
-                                label: "SLA days remaining",
+                                label: "COMMON_SLA_DAYS",
                                 jsonPath: "businessObject.serviceSla",
                                 additionalCustomization:true
                             }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from "react-i18next";
 import { useLocation } from 'react-router-dom';
 import { Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
@@ -10,7 +10,7 @@ const BillInbox = () => {
   const stateTenant = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  /*
+  
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(
       stateTenant,
       Digit.Utils.getConfigModuleName(),
@@ -25,12 +25,14 @@ const BillInbox = () => {
         },
       }
   );
-  */
 
-  console.log('InboxBillConfig', InboxBillConfig);
-  console.log('Digit.Utils.getConfigModuleName()', Digit.Utils.getConfigModuleName())
-  const configs = InboxBillConfig?.InboxBillConfig?.[0]
-  console.log('@@', configs);
+  let configs = useMemo(
+    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{}));
+
+  //For local
+  // let configs = useMemo(
+  //   () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, InboxBillConfig?.InboxBillConfig?.[0], "sections.search.uiConfig.fields",{}));
+
   //if(isLoading) return <Loader />
   return (
       <React.Fragment>
