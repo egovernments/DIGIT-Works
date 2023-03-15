@@ -444,7 +444,28 @@ export const UICustomizations = {
     
   },
   BillInboxConfig: {
-    
+    preProcess: (data) => {
+      data.body.inbox = {
+        ...data.body.inbox,
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+        processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId() },
+      };
+      return data;
+    },
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      if (column.label === "WORKS_BILL_NUMBER") {
+        return (
+          <span className="link">
+            <Link
+              to={`/works-ui/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}
+            >
+              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+    }
   },
   SearchBillConfig: {
     
