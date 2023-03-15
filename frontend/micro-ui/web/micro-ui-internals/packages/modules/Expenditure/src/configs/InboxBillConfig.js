@@ -37,7 +37,8 @@ export const InboxBillConfig = {
                                 disable: false,
                                 populators: { 
                                     name: "billNumber",
-                                    validation: { minlength : 2 }
+                                    error: 'Enter valid bill number',
+                                    validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\'() } ]*$/i, minlength : 2 }
                                 }
                             },
                             {
@@ -47,7 +48,8 @@ export const InboxBillConfig = {
                                 disable: false,
                                 populators: { 
                                     name: "projectNumber",
-                                    validation: { minlength : 2 }
+                                    error: 'Enter valid project number',
+                                    validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\'() } ]*$/i, minlength : 2 }
                                 }
                             },
                             {
@@ -67,8 +69,7 @@ export const InboxBillConfig = {
                                     localePrefix: "COMMON_MASTERS_BILL",
                                   }
                                 }
-                            },
-    
+                            }
                         ]
                     },
                     label : "",
@@ -111,28 +112,71 @@ export const InboxBillConfig = {
                         },
                         fields : [
                             {
-                                label:"ATM_MUSTER_ROLL_DATE_RANGE",
-                                type: "dateRange",
-                                isMandatory: false,
-                                disable: false,
-                                populators: { 
-                                    name: "musterRolldateRange"
-                                },
-                            },
-                            {
-                                label: "ES_COMMON_STATUS",
-                                type: "dropdown",
+                                label: "",
+                                type: "radio",
                                 isMandatory: false,
                                 disable: false,
                                 populators: {
-                                    name: "musterRollStatus",
-                                    optionsKey: "i18nKey",
-                                    options: [],
-                                    optionsCustomStyle : {
-                                        top : "2.3rem"
+                                    name: "assignee",
+                                    options: [
+                                        {
+                                            code: "ASSIGNED_TO_ME",
+                                            name: "BILL_INBOX_ASSIGNED_TO_ME"
+                                        },
+                                        {
+                                            code: "ASSIGNED_TO_ALL",
+                                            name: "BILL_INBOX_ASSIGNED_TO_ALL"
+                                        }
+                                    ],
+                                    optionsKey: "name",
+                                    styles: {
+                                        gap: "1rem",
+                                        flexDirection: "column"
+                                    },
+                                    innerStyles: {
+                                        display: "flex"
                                     }
-                                },
+                                }
                             },
+                            {
+                                label: "COMMON_WARD",
+                                type: "locationdropdown",
+                                isMandatory: false,
+                                disable: false,
+                                populators: {
+                                    name: "ward",
+                                    type: "ward",
+                                    optionsKey: "name",
+                                    defaultText: "COMMON_SELECT_WARD",
+                                    selectedText: "COMMON_SELECTED",
+                                    allowMultiSelect: true
+                                }
+                            },
+                            {
+                                label: "COMMON_LOCALITY",
+                                type: "locationdropdown",
+                                isMandatory: false,
+                                disable: false,
+                                populators: {
+                                    name: "locality",
+                                    type: "locality",
+                                    optionsKey: "name",
+                                    defaultText: "COMMON_SELECT_LOCALITY",
+                                    selectedText: "COMMON_SELECTED",
+                                    allowMultiSelect: true
+                                }
+                            },
+                            {
+                                label: "COMMON_WORKFLOW_STATES",
+                                type: "workflowstatesfilter",
+                                isMandatory: false,
+                                disable: false,
+                                populators: {
+                                    name: "state",
+                                    labelPrefix: "WF_EST_",
+                                    businessService: "estimate-approval-5"
+                                }
+                            }
                         ]
                     },
                     label : "ES_COMMON_FILTERS",

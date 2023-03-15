@@ -432,5 +432,8 @@ export const UICustomizations = {
   },
   BillInboxConfig: {
     
+  },
+  SearchBillConfig: {
+    
   }
 };
