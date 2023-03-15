@@ -9,13 +9,23 @@ export const InboxBillConfig = {
             apiDetails: {
                 serviceName: "/inbox/v2/_search",
                 requestParam: {},
-                requestBody: {},
+                requestBody: {
+                    inbox: {
+                        processSearchCriteria: {
+                            businessService: [
+                                "muster-roll-approval"
+                            ],
+                            moduleName: "muster-roll-service"
+                        },
+                        moduleSearchCriteria: {}
+                    }
+                },
                 minParametersForSearchForm:1,
                 masterName:"commonUiConfig",
                 moduleName:"BillInboxConfig",
-                tableFormJsonPath:"requestBody",
-                filterFormJsonPath:"requestBody",
-                searchFormJsonPath:"requestBody",
+                tableFormJsonPath:"requestBody.inbox",
+                filterFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
+                searchFormJsonPath:"requestBody.inbox.moduleSearchCriteria"
             },
             sections : {
                 search : {
@@ -86,12 +96,12 @@ export const InboxBillConfig = {
                         links : [
                             {
                                 text: "EXP_CREATE_BILL",
-                                url: `/employee/expenditure/create-bill`,
+                                url: "/employee/contracts/search-contract",
                                 roles: [],
                             },
                             {
                                 text: "EXP_SEARCH_BILL",
-                                url: `/employee/expenditure/search-bill`,
+                                url: "/employee/expenditure/search-bill",
                                 roles: [],
                             }
                         ],
@@ -178,8 +188,8 @@ export const InboxBillConfig = {
                                 disable: false,
                                 populators: {
                                     name: "state",
-                                    labelPrefix: "WF_EST_",
-                                    businessService: "estimate-approval-5"
+                                    labelPrefix: "COMMON_MASTERS_",
+                                    businessService: "muster-roll-approval"
                                 }
                             }
                         ]
@@ -198,23 +208,23 @@ export const InboxBillConfig = {
                             },
                             {
                                 label: "ES_COMMON_PROJECT_NAME",
-                                jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
+                                jsonPath: "businessObject.additionalDetails.projectName",
                             },
                             {
                                 label: "ES_COMMON_CBO_NAME",
-                                jsonPath: "businessObject"
+                                jsonPath: "businessObject.additionalDetails.orgName"
                             },
                             {
                                 label: "COMMON_ASSIGNEE",
-                                jsonPath: "businessObject.additionalDetails.orgName",
+                                jsonPath: "businessObject.additionalDetails.assignee",
                             },
                             {
                                 label: "COMMON_WORKFLOW_STATES",
-                                jsonPath: "businessObject.individualEntries"
+                                jsonPath: "businessObject.billStatus"
                             },
                             {
                                 label: "ES_COMMON_AMOUNT",
-                                jsonPath: "businessObject.serviceSla",
+                                jsonPath: "businessObject.additionalDetails.amount",
                                 additionalCustomization:true
                             },
                             {

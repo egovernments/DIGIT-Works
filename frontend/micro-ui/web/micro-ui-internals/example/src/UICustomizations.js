@@ -465,6 +465,18 @@ export const UICustomizations = {
           </span>
         );
       }
+
+      if (column.label === "ES_COMMON_AMOUNT") {
+        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+      }
+
+      if (column.label === "COMMON_SLA_DAYS") {
+        return value ? (parseInt(value) > 0 ? (
+          <span className="sla-cell-success">{t(value) || ""}</span>
+        ) : (
+          <span className="sla-cell-error">{t(value) || ""}</span>
+        )) : t("ES_COMMON_NA")
+      }
     }
   },
   SearchBillConfig: {
