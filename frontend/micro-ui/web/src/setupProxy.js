@@ -27,7 +27,8 @@ module.exports = function (app) {
     "/pms/project",
     "/inbox/v2/_search",
     "/individual/v1/_search",
-    "/contract-service"
+    "/contract-service",
+    "/org-services"
   ].forEach((location) =>
     app.use(location, createProxy)
   );

@@ -228,6 +228,10 @@ const Urls = {
   bills:{
     cancelBill:"/billing-service/bill/v2/_cancelbill"
   },
+
+  organisation : {
+    search : "/org-services/organisation/v1/_search"
+  },
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
 };

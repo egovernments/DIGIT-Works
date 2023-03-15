@@ -1,4 +1,4 @@
-const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge}) => {
+const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge, nameOfCBO}) => {
 
   return {
     tenantId: "pg",
@@ -87,11 +87,7 @@ const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge})
                   optionsCustomStyle: {
                     top: "2.5rem"
                   },
-                  mdmsConfig: {
-                    masterName: "TargetDemography",
-                    moduleName: "works",
-                    localePrefix: "COMMON_MASTERS"
-                  }
+                  options : nameOfCBO
                 }
               },
               {

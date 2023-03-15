@@ -119,7 +119,7 @@ export const WorksService = {
            params: {tenantId, limit : filters?.limit, offset : filters?.offset, includeAncestors : filters?.includeAncestors, includeDescendants : filters?.includeDescendants},
            auth:true,
        }),
-    createWO: (details) =>{
+    createWO: (details) =>
         Request({
             url: Urls?.contracts?.createWO,
             data: details,
@@ -129,6 +129,16 @@ export const WorksService = {
             method: "POST",
             params: {},
             auth: true,
+        }),
+    searchOrg :(details) =>
+        Request({
+            url: Urls?.organisation?.search,
+            data: details,
+            useCache: false,
+            setTimeParam: false,
+            userService: true,
+            method: "POST",
+            params: {},
+            auth: true,
         })
-    }
 }

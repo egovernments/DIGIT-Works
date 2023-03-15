@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA";
 import CreateWorkOrderForm from "./CreateWorkOrderForm";
 
 const CreateWorkOrder = () => {
 
     const queryStrings = Digit.Hooks.useQueryParams();
-    const estimateNumber = queryStrings?.estimateNumber || "ES/2022-23/000768";
+    const estimateNumber = queryStrings?.estimateNumber || "ES/2022-23/000764";
     const tenantId = queryStrings?.tenantId || "pg.citya";
     const [config, setConfig] = useState({});
 
@@ -66,16 +67,29 @@ const CreateWorkOrder = () => {
         ];
     }
 
+    const searchOrgPayload = {
+        "SearchCriteria": {
+            "tenantId": "pg.citya"
+        }
+    }
+
 
     //hrms user search
     const  { isLoading: isLoadingHrmsSearch, isError, error, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch({ roles: "OFFICER_IN_CHARGE", isActive: true }, tenantId, null, null, { enabled: true });
 
+    //organisation search
+    const { isLoading : isOrgSearchLoading, data : organisationOptions } = Digit.Hooks.organisation.useSearchOrg(searchOrgPayload);
+    
     const createOfficerInChargeObject = () => {
         return assigneeOptions?.Employees?.filter(employees=>employees?.isActive).map((employee=>( { code : employee?.code, name : employee?.user?.name, data : employee} )))
     }
 
+    const createNameOfCBOObject = () => {
+        return organisationOptions?.organisations?.map(organisationOption => ( {code : organisationOption?.id, name : organisationOption?.name, applicationNumber : organisationOption?.applicationNumber } ))
+    }
+
     useEffect(()=>{
-        if((!isEstimateLoading && !isProjectLoading && !isLoadingHrmsSearch)) {
+        if((!isEstimateLoading && !isProjectLoading && !isLoadingHrmsSearch && !isOrgSearchLoading)) {
             //set default values
             let defaultValues = {
                 basicDetails_projectID :  project?.projectNumber,
@@ -88,10 +102,11 @@ const CreateWorkOrder = () => {
             //set document object
             let documents =  createDocumentObject(estimate?.additionalDetails?.documents);
             let officerInCharge = createOfficerInChargeObject();
-            setSessionFormData({...defaultValues, ...sessionFormData});
-            setConfig(createWorkOrderConfigMUKTA({defaultValues, documents, officerInCharge}));
+            let nameOfCBO = createNameOfCBOObject();
+            setSessionFormData({...sessionFormData, ...defaultValues});
+            setConfig(createWorkOrderConfigMUKTA({defaultValues, documents, officerInCharge, nameOfCBO}));
         }
-    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch])
+    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading])
 
     return (
         <React.Fragment>

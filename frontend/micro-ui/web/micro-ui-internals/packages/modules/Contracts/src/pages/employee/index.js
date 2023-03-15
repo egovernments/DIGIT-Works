@@ -51,6 +51,7 @@ const App = ({ path }) => {
   const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
   const locationCheck = window.location.href.includes("/employee/ws/new-application");
   const CreateWorkOrderComponent = Digit?.ComponentRegistryService?.getComponent("CreateWorkOrder");
+  const CreateWOResponseComponent = Digit?.ComponentRegistryService?.getComponent("CreateWOResponse");
 
   const getBreadCrumbStyles = (screenType) => {
     // Defining 4 types for now -> create,view,inbox,search
@@ -90,6 +91,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/create-contract`} component={() => <CreateWorkOrderComponent parentRoute={path}/>} />
           <PrivateRoute path={`${path}/search-contract`} component={() => <SearchContracts />} />
           <PrivateRoute path={`${path}/view-contract`} component={() => <ViewContract />} />
+          <PrivateRoute path={`${path}/create-contract-response`} component={() => <CreateWOResponseComponent />} />
           <PrivateRoute
             path={`${path}/inbox`}
             component={() => (

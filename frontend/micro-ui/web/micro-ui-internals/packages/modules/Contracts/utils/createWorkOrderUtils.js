@@ -20,12 +20,10 @@ const createDocumentsPayload = (documents, otherDocFileName) => {
         documents_payload_list.push(payload_modal);
       }
     }
-    console.log(documents_payload_list);
     return documents_payload_list;
 }
 
 export const createWorkOrderUtils = ({tenantId, estimate, project, data}) => {
-    console.log(data);
     return {
         contract : {
             "tenantId": tenantId,
@@ -36,7 +34,7 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, data}) => {
             "securityDeposit": 0,
             "agreementDate": 0,
             "defectLiabilityPeriod": 0, 
-            "orgId": data?.cboID || "string",
+            "orgId": data?.cboID,
             "startDate": 0,
             "endDate": 0,
             "status" : "ACTIVE",

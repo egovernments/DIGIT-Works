@@ -1,8 +1,9 @@
-import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Toast } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { createWorkOrderUtils } from "../../../../utils/createWorkOrderUtils";
+import { useHistory } from "react-router-dom";
 
 const navConfig =  [
     {
@@ -18,6 +19,8 @@ const navConfig =  [
 const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project}) => {
     const {t} = useTranslation();
     const [selectedOfficerInCharge, setSelectedOfficerInCharge] = useState([]);
+    const [toast, setToast] = useState({show : false, label : "", error : false});
+    const history = useHistory();
 
     const fetchOfficerInChargeDesignation = (data) => {
         return data?.assignments?.filter(assignment=>assignment?.isCurrentAssignment)?.[0]?.designation;
@@ -31,24 +34,62 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                 setValue("designationOfOfficerInCharge", fetchOfficerInChargeDesignation(formData.nameOfOfficerInCharge?.data));
             }
 
+            if(formData.nameOfCBO) {
+                setValue("cboID", formData.nameOfCBO?.applicationNumber);
+            }
+
             setSessionFormData({ ...sessionFormData, ...formData });
         }
     }
 
+    const handleToastClose = () => {
+        setToast({show : false, label : "", error : false});
+    }
+
     const { mutate: CreateWOMutation } = Digit.Hooks.contracts.useCreateWO();
 
+    //remove Toast after 3s
+    useEffect(()=>{
+        if(toast?.show) {
+        setTimeout(()=>{
+            handleToastClose();
+        },3000);
+        }
+    },[toast?.show]);
 
     const onSubmit = async (data) => {
         const payload = createWorkOrderUtils({tenantId, estimate, project, data});
         
         await CreateWOMutation(payload, {
             onError: async (error, variables) => {
-                console.log("RESPONSE-->",error?.response?.data?.Errors);
+                if(error?.response?.data?.Errors?.[0]?.code === "INVALID_ESTIMATELINEITEMID") {
+                    setToast(()=>({show : true, label : t("ESTIMATE_ALREADY_ASSOCIATED_TO_OTHER_CONTRACT"), error : true}));
+                }else {
+                    setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                }
             },
             onSuccess: async (responseData, variables) => {
-                console.log(responseData);
+                if(responseData?.ResponseInfo?.Errors) {
+                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                    }else if(responseData?.ResponseInfo?.status){
+                        sendDataToResponsePage(responseData?.contracts?.[0]?.contractNumber, responseData, true);
+                        clearSessionFormData();
+                    }else{
+                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                    }
             },
         });
+    }
+
+    const sendDataToResponsePage = (contractNumber, responseData, isSuccess) => {
+        let queryString = "";
+        if(responseData) {
+          queryString = contractNumber;
+        }
+        history.push({
+          pathname: `/${window?.contextPath}/employee/contracts/create-contract-response`,
+          search: `?contractNumber=${queryString}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
+        }); 
     }
 
     return (
@@ -83,6 +124,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                     />
                     )
                 }
+               {toast?.show && <Toast error={toast?.error} label={toast?.label} isDleteBtn={true} onClose={handleToastClose} />}
         </React.Fragment>
     )
 }

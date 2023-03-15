@@ -132,6 +132,7 @@ import useUpdateCustom from "./useUpdateCustom";
 
 import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
 import useCreateWO from "./works/useCreateWO";
+import useSearchOrg from "./works/useSearchOrg";
 
 
 
@@ -164,6 +165,10 @@ const contracts = {
   useViewContractDetailsClosureScreen,
   useCreateWO
 };
+
+const organisation = {
+  useSearchOrg
+}
 
 const estimates = {
   useEstimateSearch,
@@ -317,7 +322,8 @@ const Hooks = {
   bills,
   masters,
   project,
-  wageSeeker
+  wageSeeker,
+  organisation
 };
 
 export default Hooks;
