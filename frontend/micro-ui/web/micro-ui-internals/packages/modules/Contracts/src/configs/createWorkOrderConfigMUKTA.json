@@ -4,7 +4,10 @@
     "CreateWorkOrderConfig": [
       {
         "defaultValues": {
-        },
+          "basicDetails_projectID" : "",
+          "basicDetails_dateOfProposal" : "",
+          "basicDetails_projectName" : ""
+      },
         "metaData": {
           "showNavs": true
         },
