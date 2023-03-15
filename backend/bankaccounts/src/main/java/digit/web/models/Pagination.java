@@ -33,10 +33,17 @@ public class Pagination {
     private Double totalCount = null;
 
     @JsonProperty("sortBy")
-    private String sortBy = null;
+    private SortBy sortBy;
 
     @JsonProperty("order")
     private Order order = null;
 
+    public enum SortBy {
+        createdTime,
+        accountHolderName,
+        serviceCode,
+        accountNumber,
+        bankBranchIdentifierCode
+    }
 
 }

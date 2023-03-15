@@ -1,14 +1,13 @@
 package digit.service;
 
 
+import digit.repository.BankAccountRepository;
 import digit.validator.BankAccountValidator;
-import digit.web.models.BankAccount;
-import digit.web.models.BankAccountRequest;
-import digit.web.models.BankAccountSearchRequest;
-import digit.web.models.Pagination;
+import digit.web.models.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +22,8 @@ public class BankAccountService {
     @Autowired
     private EnrichmentService enrichmentService;
 
+    @Autowired
+    private BankAccountRepository bankAccountRepository;
 
     public BankAccountRequest createBankAccount(BankAccountRequest bankAccountRequest) {
         log.info("BankAccountService::createBankAccount");
@@ -30,21 +31,36 @@ public class BankAccountService {
         return bankAccountRequest;
     }
 
+    /**
+     * @param searchRequest
+     * @return
+     */
     public List<BankAccount> searchBankAccount(BankAccountSearchRequest searchRequest) {
         log.info("BankAccountService::searchBankAccount");
         bankAccountValidator.validateBankAccountOnSearch(searchRequest);
         enrichmentService.enrichBankAccountOnSearch(searchRequest);
 
+        List<BankAccount> bankAccountList = bankAccountRepository.getBankAccount(searchRequest);
+        if (!CollectionUtils.isEmpty(bankAccountList))
+            return bankAccountList;
 
         return Collections.emptyList();
     }
 
-    public Pagination countAllBankAccounts(BankAccountSearchRequest body) {
+    public Pagination countAllBankAccounts(BankAccountSearchRequest searchRequest) {
         log.info("BankAccountService::countAllBankAccounts");
-        //Pagination.builder().totalCount(count).build();//TODO- add offset and limit
-        return null;
+        BankAccountSearchCriteria searchCriteria = searchRequest.getBankAccountDetails();
+        Pagination pagination = searchRequest.getPagination();
+
+        searchCriteria.setIsCountNeeded(Boolean.TRUE);
+
+        Integer count = bankAccountRepository.getBankAccountCount(searchRequest);
+        pagination.setTotalCount(Double.valueOf(count));
+
+        return pagination;
     }
 
+    //TODO
     public BankAccountRequest updateBankAccount(BankAccountRequest bankAccountRequest) {
         log.info("BankAccountService::updateBankAccount");
         return bankAccountRequest;

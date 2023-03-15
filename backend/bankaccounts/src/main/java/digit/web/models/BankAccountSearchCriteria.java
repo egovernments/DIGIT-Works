@@ -1,5 +1,6 @@
 package digit.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,6 +56,9 @@ public class BankAccountSearchCriteria {
     @JsonProperty("bankBranchIdentifierCode")
     @Valid
     private BankBranchIdentifier bankBranchIdentifierCode = null;
+
+    @JsonIgnore
+    private Boolean isCountNeeded = false;
 
 
     public BankAccountSearchCriteria addIdsItem(String idsItem) {
