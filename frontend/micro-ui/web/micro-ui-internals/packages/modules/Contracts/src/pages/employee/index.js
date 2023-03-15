@@ -5,7 +5,8 @@ import { Switch, useLocation } from "react-router-dom";
 import CreateContract from "./CreateContract";
 import Inbox from "./Inbox";
 import SearchContracts from "./SearchContract";
-import ViewContract from "./ViewContract";
+//import ViewContract from "./ViewContract";
+import ViewContractDetails from "./ViewContractDetails";
 
 const ContractsBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -88,7 +89,8 @@ const App = ({ path }) => {
           </div>
           <PrivateRoute path={`${path}/create-contract`} component={() => <CreateContract ContractSession={ContractSession} />} />
           <PrivateRoute path={`${path}/search-contract`} component={() => <SearchContracts />} />
-          <PrivateRoute path={`${path}/view-contract`} component={() => <ViewContract />} />
+          {/* <PrivateRoute path={`${path}/view-contract`} component={() => <ViewContract />} /> */}
+          <PrivateRoute path={`${path}/view-contract`} component={() => <ViewContractDetails />} />
           <PrivateRoute
             path={`${path}/inbox`}
             component={() => (

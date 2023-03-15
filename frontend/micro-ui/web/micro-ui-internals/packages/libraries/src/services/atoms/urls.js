@@ -215,6 +215,10 @@ const Urls = {
     search: "/individual/v1/_search"
   },
 
+  contracts: {
+    search: "/contract-service/contract/v1/_search"
+  },
+
   noc: {
     nocSearch: "/noc-services/v1/noc/_search",
   },

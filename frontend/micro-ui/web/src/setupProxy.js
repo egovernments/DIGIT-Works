@@ -22,6 +22,7 @@ module.exports = function (app) {
     "/vehicle",
     "/vendor",
     "/property-services",
+    "/contract-service",
     "/fsm-calculator/v1/billingSlab/_search",
     "/muster-roll",
     "/pms/project",
