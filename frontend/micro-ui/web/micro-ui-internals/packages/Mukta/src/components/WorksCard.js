@@ -30,6 +30,31 @@ const WorksCard = () => {
     }
 };
 const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+
+  const requestCriteriaEstimate = {
+    url: '/inbox/v2/_search',
+    body: {
+      inbox: {
+        tenantId,
+        processSearchCriteria: {
+          businessService: [
+            "estimate-approval-5"
+          ],
+          moduleName: "contract-approval-mukta"
+        },
+        moduleSearchCriteria: {
+          tenantId
+        },
+        limit: 10,
+        offset: 0
+      }
+    },
+    changeQueryName: "ContractInbox"
+  };
+
+  const { isLoading: isLoadingContract, data: dataContract } = Digit.Hooks.useCustomAPIHook(requestCriteriaEstimate);
+
+
   let links = [
     {
       label: t("ACTION_TEST_PROJECT"),
@@ -46,7 +71,7 @@ const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
       label: t("WORKS_CONTRACTS"),
       link: `/${window?.contextPath}/employee/contracts/inbox`,
       roles: ["WC","WV","WA","EMPLOYEE","SUPERUSER"],
-      count: 1,
+      count: isLoadingContract? "-": dataContract?.totalCount,
     },
     {
       label: t("WORKS_MUSTERROLLS"),

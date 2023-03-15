@@ -6,7 +6,7 @@ import inboxConfigMukta from "./inboxConfigMukta";
 const ContractsInbox = () => {
   const { t } = useTranslation()
   //fetch this config from mdms and pass it to the preProcess fn
-  let configs = inboxConfigMukta(t);
+  let configs = inboxConfigMukta();
   const moduleName = Digit.Utils.getConfigModuleName()
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant,

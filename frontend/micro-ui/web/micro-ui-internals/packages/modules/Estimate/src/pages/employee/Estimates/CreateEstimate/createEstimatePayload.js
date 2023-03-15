@@ -87,7 +87,8 @@ export const createEstimatePayload = (data,projectData) => {
                     locality: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.boundary,
                     ward: projectData?.projectDetails?.searchedProject?.basicDetails?.ward,
                     city: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.city
-                }
+                },
+                "projectNumber": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID
             }
         },
         workflow:{

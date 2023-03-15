@@ -39,6 +39,39 @@ export const UICustomizations = {
             data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId()
             
             return data
+        },
+        additionalCustomizations: (row, column, columnConfig, value, t) => {
+            if (column.key === "estimateNumber") {
+                return <span className="link">
+                    <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
+                        {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+                    </Link>
+                </span>
+            }
+
+            else if (column.key === "assignee") {
+                if (value) {
+                    return <span>{value?.[0]?.name}</span>
+                } else {
+                    return <span></span>
+                }
+            }
+
+            else if (column.key === "state") {
+                return <span>{t(`WF_EST_${value}`)}</span>
+            }
+
+            else if (column.key === "estimatedAmount") {
+                return <span>{`₹ ${value}`}</span>
+            }
+
+            else if (column.key === "sla") {
+                return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>
+            }
+
+            else {
+                return <div>{t("NA")}</div>
+            }
         }
     },
     SearchEstimateConfig: {
@@ -216,4 +249,74 @@ export const UICustomizations = {
             }
         },
     },
+    ContractsInboxConfig: {
+        preProcess: (data) => {
+
+            //set tenantId(inbox,moduleSearch,ProcessSearch)
+            data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId()
+            data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId()
+            data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId()
+
+            const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee)
+            delete data.body.inbox.moduleSearchCriteria.assignee
+            if (assignee?.code === "ASSIGNED_TO_ME") {
+                data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid
+            }
+
+        
+            delete data.body.inbox.moduleSearchCriteria.ward
+
+            //cloning locality and workflow states to format them
+            let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : [])
+            let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : [])
+            delete data.body.inbox.moduleSearchCriteria.locality
+            delete data.body.inbox.moduleSearchCriteria.state
+            locality = locality?.map(row => row?.code)
+            states = Object.keys(states)?.filter(key => states[key])
+
+            //adding formatted data to these keys 
+            if (locality.length > 0)
+                data.body.inbox.moduleSearchCriteria.locality = locality
+            if (states.length > 0)
+                data.body.inbox.moduleSearchCriteria.status = states
+
+            const projectType = _.clone(data.body.inbox.moduleSearchCriteria.projectType ? data.body.inbox.moduleSearchCriteria.projectType : {})
+            if (projectType?.code) data.body.inbox.moduleSearchCriteria.projectType = projectType.code
+
+            return data
+        },
+        additionalCustomizations: (row, column, columnConfig, value, t) => {
+            if (column.key === "workOrderNumber") {
+                return <span className="link">
+                    <Link to={`/${window.contextPath}/employee/contract/contract-details?tenantId=${row.ProcessInstance.tenantId}&workOrderNumber=${value}`}>
+                        {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+                    </Link>
+                </span>
+            }
+
+            else if (column.key === "assignee") {
+                if (value) {
+                    return <span>{value?.[0]?.name}</span>
+                } else {
+                    return <span></span>
+                }
+            }
+
+            else if (column.key === "state") {
+                return <span>{t(`WF_WO_${value}`)}</span>
+            }
+
+            else if (column.key === "estimatedAmount") {
+                return <span>{`₹ ${value}`}</span>
+            }
+
+            else if (column.key === "sla") {
+                return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>
+            }
+
+            else {
+                return <div>{t("NA")}</div>
+            }
+        }
+    }
 }

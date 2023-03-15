@@ -11,9 +11,9 @@ const inboxConfigMukta = () => {
                 inbox: {
                     processSearchCriteria: {
                         businessService: [
-                            "contract-approval-mukta"//CHANGE
+                            "contract-approval-mukta"
                         ],
-                        moduleName: "contracts-service"//CHANGE
+                        moduleName: "contract-service"
                     },
                     moduleSearchCriteria: {
 
@@ -24,7 +24,7 @@ const inboxConfigMukta = () => {
             minParametersForSearchForm: 0,
             minParametersForFilterForm: 0,
             masterName: "commonUiConfig",
-            moduleName: "EstimateInboxConfig",//CHANGE
+            moduleName: "ContractsInboxConfig",
             tableFormJsonPath: "requestBody.inbox",
             filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
             searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
@@ -37,7 +37,7 @@ const inboxConfigMukta = () => {
                     secondaryLabel: 'Clear Search',
                     minReqFields: 1,
                     defaultValues: {
-                        estimateNumber: "",//CHANGE
+                        workOrderNumber: "",
                         projectId: "",
                         projectType: "",
                     },
@@ -51,7 +51,7 @@ const inboxConfigMukta = () => {
                                 convertStringToRegEx: ["populators.validation.pattern"]
                             },
                             populators: {
-                                name: "estimateNumber",//CHANGE
+                                name: "workOrderNumber",
                                 error: `ESTIMATE_PATTERN_ERR_MSG`,
                                 validation: { pattern: "^[a-zA-Z0-9\\/-]*$", minlength: 2 }
                             },
@@ -103,33 +103,49 @@ const inboxConfigMukta = () => {
                 uiConfig: {
                     columns: [
                         {
-                            label: "WORKS_ESTIMATE_ID",
-                            jsonPath: "estimateNumber",
-                            additionalCustomization: true
+                            label: "WORKS_ORDER_NO",
+                            jsonPath: "ProcessInstance.businessId",
+                            additionalCustomization: true,
+                            key:"workOrderNumber"
                         },
                         {
-                            label: "WORKS_PROJECT_ID",
-                            jsonPath: "projectId"
+                            label: "WORKS_PROJECT_NAME",
+                            jsonPath: "businessObject.additionalDetails.projectName"
                         },
                         {
-                            label: "PROJECT_OWNING_DEPT",
-                            jsonPath: "executingDepartment",
-                            translate: true,
-                            prefix: "COMMON_MASTERS_DEPARTMENT_",
+                            label: "ES_COMMON_CBO_NAME",
+                            jsonPath: "businessObject.additionalDetails.cboName",
+                            //translate: true,
+                            //prefix: "COMMON_MASTERS_DEPARTMENT_",
                         },
                         {
-                            label: "WORKS_STATUS",
-                            jsonPath: "wfStatus",
+                            label: "COMMON_ASSIGNEE",
+                            jsonPath: "ProcessInstance.assignes",
+                            "additionalCustomization": true,
+                            "key": "assignee"
                         },
                         {
-                            label: "WORKS_ESTIMATED_AMOUNT",
-                            jsonPath: "estimateDetails",
-                            additionalCustomization: true
+                            label: "COMMON_WORKFLOW_STATES",
+                            jsonPath: "ProcessInstance.state.state",
+                            "additionalCustomization": true,
+                            "key": "state"
                         },
+                        {
+                            label: "ES_COMMON_AMOUNT",
+                            jsonPath: "businessObject.additionalDetails.totalEstimatedAmount",
+                            additionalCustomization: true,
+                            "key": "estimatedAmount"
+                        },
+                        {
+                            "label": "COMMON_SLA_DAYS",
+                            "jsonPath": "businessObject.serviceSla",
+                            "additionalCustomization": true,
+                            "key": "sla"
+                        }
                     ],
                     enableGlobalSearch: false,
                     enableColumnSort: true,
-                    resultsJsonPath: "estimates",
+                    resultsJsonPath: "items",
                 },
                 children: {},
                 show: true
@@ -140,7 +156,7 @@ const inboxConfigMukta = () => {
                         {
                             text: "ACTION_TEST_CREATE_WO",
                             url: `/employee/estimate/search-estimate`,
-                            roles: [],
+                            roles: ["WORK_ORDER_CREATOR",],
                         },
                         {
                             text: "ACTION_TEST_SEARCH_WO",
@@ -168,7 +184,7 @@ const inboxConfigMukta = () => {
                         state: "",
                         ward: [],
                         locality: [],
-                        assignee: ""
+                        assignee: { code: "ASSIGNED_TO_ALL", name: "COMMON_INBOX_ASSIGNED_TO_ALL" }
                     },
                     fields: [
                         {
