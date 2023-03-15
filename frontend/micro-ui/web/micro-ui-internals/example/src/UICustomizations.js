@@ -491,6 +491,36 @@ export const UICustomizations = {
     }
   },
   SearchBillConfig: {
-    
+    preProcess: (data) => {
+      const fromDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromDate);
+      const toDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toDate);
+      const musterRollStatus = data?.params?.musterRollStatus?.code;
+      const status = data?.params?.status?.code;
+      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus, status };
+      return data;
+    },
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      if (column.label === "WORKS_BILL_NUMBER") {
+        return (
+          <span className="link">
+            <Link
+              to={`/${
+                window.contextPath
+              }/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}
+            >
+              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if (column.label === "EXP_BILL_AMOUNT") {
+        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+      }
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
+      }
+    }
   }
 };

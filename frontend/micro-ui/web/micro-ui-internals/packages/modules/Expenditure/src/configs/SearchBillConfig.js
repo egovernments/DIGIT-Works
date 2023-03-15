@@ -6,15 +6,15 @@ export const SearchBillConfig = {
             label : "EXP_SEARCH_BILL",
             type: 'search',
             apiDetails: {
-                serviceName: "/pms/project/v1/_search",
+                serviceName: "/muster-roll/v1/_search",
                 requestParam: {},
                 requestBody: {},
                 minParametersForSearchForm:1,
                 masterName:"commonUiConfig",
                 moduleName:"SearchBillConfig",
                 tableFormJsonPath:"requestParam",
-                filterFormJsonPath:"requestBody",
-                searchFormJsonPath:"requestBody",
+                filterFormJsonPath:"rrequestParam",
+                searchFormJsonPath:"requestParam",
             },
             sections : {
                 search : {
@@ -28,7 +28,7 @@ export const SearchBillConfig = {
                             ward: "",
                             billType: "",
                             projectName: "",
-                            billNumber: "",
+                            musterRollNumber: "",
                             status: "",
                             createdFrom: "",
                             createdTo: ""
@@ -89,7 +89,7 @@ export const SearchBillConfig = {
                                 isMandatory: false,
                                 disable: false,
                                 populators: { 
-                                    name: "billNumber",
+                                    name: "musterRollNumber",
                                     error: "ES_COMMON_BILL_PATTERN_ERR_MSG",
                                     validation: { pattern: "^[A-Za-z0-9\\/-]*$", minlength : 2 }
                                 }
@@ -126,10 +126,10 @@ export const SearchBillConfig = {
                                     name: "createdTo",
                                     error: 'DATE_VALIDATION_MSG'
                                 },
-                                // additionalValidation: {
-                                //     type: 'date',
-                                //     keys: {start: 'createdFrom', end: 'createdTo'}
-                                // }
+                                additionalValidation: {
+                                    type: 'date',
+                                    keys: {start: 'createdFrom', end: 'createdTo'}
+                                }
                             }
                         ]
                     },
@@ -143,39 +143,39 @@ export const SearchBillConfig = {
                         columns: [
                             {
                                 label: "WORKS_BILL_NUMBER",
-                                jsonPath: "businessObject.musterRollNumber",
+                                jsonPath: "musterRollNumber",
                                 additionalCustomization:true 
                             },
                             {
                                 label: "WORKS_PROJECT_NAME",
-                                jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
+                                jsonPath: "additionalDetails.projectName",
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
                                 jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
-                                additionalCustomization:true 
+                                additionalCustomization:false 
                             },
                             {
                                 label: "ES_COMMON_CBO_NAME",
-                                jsonPath: "businessObject"
+                                jsonPath: "additionalDetails.orgName"
                             },
                             {
                                 label: "WORKS_BILL_TYPE",
-                                jsonPath: "businessObject.additionalDetails.orgName",
+                                jsonPath: "additionalDetails.contractId",
                             },
                             {
                                 label: "CORE_COMMON_STATUS",
-                                jsonPath: "businessObject.individualEntries"
+                                jsonPath: "musterRollStatus"
                             },
                             {
                                 label: "EXP_BILL_AMOUNT",
-                                jsonPath: "businessObject.serviceSla",
+                                jsonPath: "additionalDetails.amount",
                                 additionalCustomization:true
                             }
                         ],
                         enableGlobalSearch: false,
                         enableColumnSort: true,
-                        resultsJsonPath: "Bills",
+                        resultsJsonPath: "musterRolls",
                     },
                     children: {},
                     show: true 
