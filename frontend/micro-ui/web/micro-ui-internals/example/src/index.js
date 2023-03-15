@@ -9,7 +9,7 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 // import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 // import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
-// import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
+import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
@@ -82,7 +82,7 @@ const initDigitUI = () => {
   initAttendenceMgmtComponents();
   initHRMSComponents();
   initContractsComponents();
-  // initExpenditureComponents();
+  initExpenditureComponents();
   initMastersComponents();
   initProjectComponents();
 

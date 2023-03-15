@@ -11,6 +11,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.util.TimeZone;
 
 @Component
@@ -20,25 +21,9 @@ import java.util.TimeZone;
 @AllArgsConstructor
 @Setter
 @Getter
-public class Configuration {
+public class ContractServiceConfiguration {
     @Value("${app.timezone}")
     private String timeZone;
-
-    // User Config
-    @Value("${egov.user.host}")
-    private String userHost;
-
-    @Value("${egov.user.context.path}")
-    private String userContextPath;
-
-    @Value("${egov.user.create.path}")
-    private String userCreateEndpoint;
-
-    @Value("${egov.user.search.path}")
-    private String userSearchEndpoint;
-
-    @Value("${egov.user.update.path}")
-    private String userUpdateEndpoint;
 
     //Idgen Config
     @Value("${egov.idgen.host}")
@@ -47,7 +32,22 @@ public class Configuration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
+    //Attendance Config
+    @Value("${egov.attendance.host}")
+    private String attendanceHost;
+
+    @Value("${egov.attendance.register.path}")
+    private String attendanceRegisterPath;
+
+    @Value("${egov.idgen.contract.number.name}")
+    private String idgenContractNumberName;
+
     //Workflow Config
+    @Value("${contract.workflow.module.name}")
+    private String contractWFModuleName;
+    @Value("${contract.workflow.business.service}")
+    private String contractWFBusinessService;
+
     @Value("${egov.workflow.host}")
     private String wfHost;
 
@@ -74,16 +74,16 @@ public class Configuration {
     @Value("${egov.hrms.search.endpoint}")
     private String hrmsEndPoint;
 
-    //URLShortening
-    @Value("${egov.url.shortner.host}")
-    private String urlShortnerHost;
+    // kafka topics
+    @Value("${contract.kafka.create.topic}")
+    private String createContractTopic;
 
-    @Value("${egov.url.shortner.endpoint}")
-    private String urlShortnerEndpoint;
+    @Value("${contract.kafka.update.topic}")
+    private String updateContractTopic;
 
     //SMSNotification
-    @Value("${egov.sms.notification.topic}")
-    private String smsNotificationTopic;
+//    @Value("${egov.sms.notification.topic}")
+//    private String smsNotificationTopic;
 
     //attendance service register search config
     @Value("${contract.default.offset}")
@@ -91,6 +91,26 @@ public class Configuration {
 
     @Value("${contract.default.limit}")
     private Integer contractDefaultLimit;
+
+    @Value("${contract.search.max.limit}")
+    private Integer contractMaxLimit;
+
+    //Estimate service
+    @Value("${works.estimate.host}")
+    private String estimateHost;
+
+    @Value("${works.estimate.search.endpoint}")
+    private String estimateEndpoint;
+
+    //Contract service
+    @Value("${works.contract.host}")
+    private String contractHost;
+
+    @Value("${works.contract.search.endpoint}")
+    private String contractEndpoint;
+
+    @Value("${contract.org.id.verification.required}")
+    private String orgIdVerificationRequired;
 
     @PostConstruct
     public void initialize() {
