@@ -89,4 +89,18 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    //Topic
+    @Value("${bank.account.kafka.create.topic}")
+    private String saveBankAccountTopic;
+
+    //search
+    @Value("${bank.account.default.offset}")
+    private Integer defaultOffset;
+
+    @Value("${bank.account.default.limit}")
+    private Integer defaultLimit;
+
+    @Value("${bank.account.search.max.limit}")
+    private Integer maxLimit;
 }

@@ -1,16 +1,14 @@
 package digit.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.Size;
 
 /**
  * Object to capture bank branch identifier for a banking org to be used for wire transfers.
@@ -22,18 +20,18 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BankBranchIdentifier   {
-        @JsonProperty("type")
+public class BankBranchIdentifier {
 
-        @Size(min=2,max=64)         private String type = null;
+    @JsonProperty("type")
+    @Size(min = 2, max = 64)
+    private String type = null;
 
-        @JsonProperty("code")
+    @JsonProperty("code")
+    @Size(min = 2, max = 64)
+    private String code = null;
 
-        @Size(min=2,max=64)         private String code = null;
-
-        @JsonProperty("additionalDetails")
-
-                private Object additionalDetails = null;
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
 
 }

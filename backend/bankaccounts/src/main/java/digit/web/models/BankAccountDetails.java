@@ -1,22 +1,21 @@
 package digit.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import digit.web.models.AuditDetails;
-import digit.web.models.BankBranchIdentifier;
-import digit.web.models.Document;
+import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.Document;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
 
 /**
  * Account details
@@ -28,64 +27,59 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BankAccountDetails   {
-        @JsonProperty("id")
+public class BankAccountDetails {
 
-          @Valid
-                private UUID id = null;
+    @JsonProperty("id")
+    @Valid
+    private UUID id = null;
 
-        @JsonProperty("tenantId")
-          @NotNull
+    @JsonProperty("tenantId")
+    @NotNull
+    @Size(min = 2, max = 64)
+    private String tenantId = null;
 
-        @Size(min=2,max=64)         private String tenantId = null;
+    @JsonProperty("accountHolderName")
+    @Size(min = 2, max = 64)
+    private String accountHolderName = null;
 
-        @JsonProperty("accountHolderName")
+    @JsonProperty("accountNumber")
+    @NotNull
+    @Size(min = 2, max = 64)
+    private String accountNumber = null;
 
-        @Size(min=2,max=64)         private String accountHolderName = null;
+    @JsonProperty("accountType")
+    @Size(min = 2, max = 64)
+    private String accountType = null;
 
-        @JsonProperty("accountNumber")
-          @NotNull
+    @JsonProperty("isPrimary")
+    private Boolean isPrimary = true;
 
-        @Size(min=2,max=64)         private String accountNumber = null;
+    @JsonProperty("bankBranchIdentifier")
+    @NotNull
+    @Valid
+    private BankBranchIdentifier bankBranchIdentifier = null;
 
-        @JsonProperty("accountType")
+    @JsonProperty("isActive")
+    private Boolean isActive = null;
 
-        @Size(min=2,max=64)         private String accountType = null;
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents = null;
 
-        @JsonProperty("isPrimary")
+    @JsonProperty("additionalFields")
+    private Object additionalFields = null;
 
-                private Boolean isPrimary = true;
-
-        @JsonProperty("bankBranchIdentifier")
-          @NotNull
-
-          @Valid
-                private BankBranchIdentifier bankBranchIdentifier = null;
-
-        @JsonProperty("isActive")
-
-                private Boolean isActive = null;
-
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
-
-        @JsonProperty("additionalFields")
-
-                private Object additionalFields = null;
-
-        @JsonProperty("auditDetails")
-
-          @Valid
-                private AuditDetails auditDetails = null;
+    @JsonProperty("auditDetails")
+    @Valid
+    private AuditDetails auditDetails = null;
 
 
-        public BankAccountDetails addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
+    public BankAccountDetails addDocumentsItem(Document documentsItem) {
+        if (this.documents == null) {
             this.documents = new ArrayList<>();
-            }
+        }
         this.documents.add(documentsItem);
         return this;
-        }
+    }
 
 }

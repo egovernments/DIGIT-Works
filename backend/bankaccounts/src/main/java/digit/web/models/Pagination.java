@@ -1,16 +1,14 @@
 package digit.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.DecimalMax;
 
 /**
  * Pagination details
@@ -22,26 +20,23 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Pagination   {
-        @JsonProperty("limit")
+public class Pagination {
 
-         @DecimalMax("100")         private Double limit = 10d;
+    @JsonProperty("limit")
+    @DecimalMax("100")
+    private Double limit = 10d;
 
-        @JsonProperty("offSet")
+    @JsonProperty("offSet")
+    private Double offSet = 0d;
 
-                private Double offSet = 0d;
+    @JsonProperty("totalCount")
+    private Double totalCount = null;
 
-        @JsonProperty("totalCount")
+    @JsonProperty("sortBy")
+    private String sortBy = null;
 
-                private Double totalCount = null;
-
-        @JsonProperty("sortBy")
-
-                private String sortBy = null;
-
-        @JsonProperty("order")
-
-                private Order order = null;
+    @JsonProperty("order")
+    private Order order = null;
 
 
 }
