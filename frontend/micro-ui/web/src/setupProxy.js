@@ -10,6 +10,7 @@ module.exports = function (app) {
     "/localization",
     "/egov-workflow-v2",
     "/pgr-services",
+    "/contract-service",
     "/filestore",
     "/egov-hrms",
     "/user-otp",

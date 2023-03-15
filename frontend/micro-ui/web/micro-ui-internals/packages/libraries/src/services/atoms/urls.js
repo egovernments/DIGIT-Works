@@ -152,6 +152,9 @@ const Urls = {
     create: "/edcr/rest/dcr/scrutinize",
   },
 
+  contracts: {
+    search: "/contract-service/contract/v1/_search",
+  },
   events: {
     search: "/egov-user-event/v1/events/_search",
     update: "/egov-user-event/v1/events/lat/_update",

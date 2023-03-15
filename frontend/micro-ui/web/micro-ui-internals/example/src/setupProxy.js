@@ -64,6 +64,7 @@ module.exports = function (app) {
     "/inbox/v1/dss/_search",
     "/loi-service",
     "/estimate-service",
+    "/contract-service",
     "/loi-service",
     "/works-inbox-service/v2/_search",
     "/egov-pdf/download/WORKSESTIMATE/estimatepdf",
