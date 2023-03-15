@@ -153,27 +153,27 @@
                   "name": "designationOfOfficerInCharge", 
                   "customClass" : "disabled-text-field"
                 }
-              },
+              }, 
               {
+                "inline": true,
+                "label": "COMMON_PROJECT_COMP_PERIOD_DAYS",
                 "isMandatory": true,
                 "key": "projectCompletionPeriodInDays",
-                "type": "radioordropdown",
-                "label": "COMMON_PROJECT_COMP_PERIOD_DAYS",
+                "type": "number",
                 "disable": false,
+                "preProcess": {
+                    "convertStringToRegEx": [
+                      "populators.validation.pattern"
+                    ]
+                },
                 "populators": {
-                  "name": "projectCompletionPeriodInDays",
-                  "optionsKey": "name",
-                  "error": "WORKS_REQUIRED_ERR",
-                  "required": false,
-                  "optionsCustomStyle": {
-                    "top": "2.5rem"
-                  },
-                  "mdmsConfig": {
-                    "masterName": "TargetDemography",
-                    "moduleName": "works",
-                    "localePrefix": "COMMON_MASTERS"
+                    "name": "projectCompletionPeriodInDays",
+                    "error": "COMMON_PATTERN_ERR_MSG_PROJECT_WO_AMT",
+                    "validation": {
+                      "pattern": "^(?:0|[1-9]\\d*)(?:\\.(?!.*000)\\d+)?$",
+                      "maxlength" : 10
+                    }
                   }
-                }
               },
               {
                 "inline": true,
