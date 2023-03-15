@@ -236,6 +236,10 @@ definitions:
         type: string
         description: Contract Type
         example: Work Order
+      contractNumber:
+        type: string
+        description: Contract Number
+        example: WO/2022-23/000338
       ids:
         type: array
         description: Search by contract ids
