@@ -31,7 +31,7 @@ class SearchMyWorksBloc extends Bloc<SearchMyWorksEvent, SearchMyWorksState> {
               url: Urls.workServices.myWorks,
               body: {
                 "tenantId": 'pg.citya',
-                "orgIds": [GlobalVariables.uuid],
+                "orgIds": [],
               },
               options: Options(extra: {
                 "userInfo": GlobalVariables.userRequestModel,
