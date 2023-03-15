@@ -102,8 +102,14 @@ class WorkOrder {
   String get warningMsg => 'WRNG_MSG_WORKORDER';
   String get projects => 'WORKS_PROJECT';
   String get contractID => 'WORKS_CONTRACT_ID';
+  String get workOrderNo => 'WORKS_ORDER_NO';
+  String get roleOfCBO => 'WORKS_ROLE_CBO';
   String get contractIssueDate => 'WORKS_CONTRACT_ISSUE_DATE';
   String get contractAmount => 'WORKS_CONTRACT_AMOUNT';
+  String get dueDate => 'WORKS_DUE_DATE';
+  String get noWorkOrderAssigned => 'NO_WORK_ORDERS_ASSIGNED';
+  String get workOrderAcceptSuccess => 'WORK_ORDER_ACCEPTED_SUCCESS';
+  String get workOrderDeclineSuccess => 'WORK_ORDER_DECLINE_SUCCESS';
 }
 
 class AttendanceMgmt {
