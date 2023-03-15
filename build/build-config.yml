@@ -86,6 +86,14 @@ config:
         image-name: "contract-service"
       - work-dir: "backend/contract-service/src/main/resources/db"
         image-name: "contract-service-db"
+        
+  - name: "builds/digit-works/backend/bankaccounts"
+    build:
+      - work-dir: "backend/bankaccounts"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "bankaccounts"
+      - work-dir: "backend/bankaccounts/src/main/resources/db"
+        image-name: "bankaccounts-db"
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
