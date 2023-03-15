@@ -1,22 +1,22 @@
 package org.egov.util;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
-import org.egov.web.models.AttendanceEntry;
-import org.egov.web.models.IndividualEntry;
-import org.egov.web.models.MusterRoll;
-import org.egov.web.models.MusterRollSearchCriteria;
+import org.egov.web.models.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -52,7 +52,7 @@ public class MusterRollServiceUtil {
      * @param skillCode
      *
      */
-    public void populateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode) {
+    public void populateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode, Individual matchedIndividual, boolean isCreate) {
         final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_WAGER_SEEKER_SKILLS + ".*";
         List<LinkedHashMap<String,String>> musterRes = null;
 
@@ -65,7 +65,7 @@ public class MusterRollServiceUtil {
         }
 
         String skillValue = "";
-        if (!CollectionUtils.isEmpty(musterRes)) {
+        if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
             for (Object object : musterRes) {
                 LinkedHashMap<String, String> codeValueMap = (LinkedHashMap<String, String>) object;
                 if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
@@ -74,23 +74,83 @@ public class MusterRollServiceUtil {
                 }
             }
         }
-        if (StringUtils.isNotBlank(skillValue)) {
-            log.info("MusterRollServiceUtil::populateAdditionalDetails::start");
 
-            JSONObject additionalDetails = new JSONObject();
+        // populate individual details for estimate and create
+        log.info("MusterRollServiceUtil::populateAdditionalDetails::start");
+        JSONObject additionalDetails = new JSONObject();
+
+        additionalDetails.put("userId",matchedIndividual.getIndividualId());
+        additionalDetails.put("userName",matchedIndividual.getName().getGivenName());
+        additionalDetails.put("fatherName",matchedIndividual.getFatherName());
+        Identifier aadhaar = matchedIndividual.getIdentifiers().stream()
+                            .filter(identifier -> identifier.getIdentifierType().contains("AADHAAR"))
+                                    .findFirst().orElse(null);
+        if (aadhaar != null) {
+            additionalDetails.put("aadharNumber",aadhaar.getIdentifierId());
+        }
+
+
+
+        //populate individual's skill details in create and update (user selected skill will be set in additionalDetails)
+        if (isCreate) {
             additionalDetails.put("skillCode",skillCode);
             additionalDetails.put("skillValue",skillValue);
-            //TODO dummy value --- will be replaced with actual values from individual service
-            additionalDetails.put("userName","Piyush HarjitPal");
-            additionalDetails.put("fatherName","Harijitpal");
-            additionalDetails.put("aadharNumber","9099-1234-1234");
-            additionalDetails.put("bankDetails","880182873839-SBIN0001237");
+        }
 
-            try {
-               individualEntry.setAdditionalDetails(mapper.readValue(additionalDetails.toString(), Object.class));
-            } catch (IOException e) {
-                throw new CustomException("MusterRollServiceUtil::populateAdditionalDetails::PARSING ERROR", "Failed to set additionalDetail object");
+        //populate list of skills of the individual in estimate additionalDetails
+        if (!isCreate && !CollectionUtils.isEmpty(matchedIndividual.getSkills())) {
+            List<String> skillList = new ArrayList<>();
+            for (Skill skill : matchedIndividual.getSkills()) {
+                skillList.add(skill.getLevel()+"."+skill.getType());
             }
+            additionalDetails.put("skillCode",skillList);
+        }
+
+        //TODO dummy value --- will be replaced with actual values from banking service
+        additionalDetails.put("bankDetails","880182873839-SBIN0001237");
+
+        try {
+            individualEntry.setAdditionalDetails(mapper.readValue(additionalDetails.toString(), Object.class));
+        } catch (IOException e) {
+            throw new CustomException("MusterRollServiceUtil::populateAdditionalDetails::PARSING ERROR", "Failed to set additionalDetail object");
+        }
+
+
+    }
+
+
+    public void updateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode) {
+        final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_WAGER_SEEKER_SKILLS + ".*";
+        List<LinkedHashMap<String,String>> musterRes = null;
+
+        try {
+            musterRes = JsonPath.read(mdmsData, jsonPathForWorksMuster);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException("MusterRollServiceUtil::updateAdditionalDetails::JSONPATH_ERROR", "Failed to parse mdms response");
+        }
+
+        String skillValue = "";
+        if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
+            for (Object object : musterRes) {
+                LinkedHashMap<String, String> codeValueMap = (LinkedHashMap<String, String>) object;
+                if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
+                    skillValue = codeValueMap.get("name");
+                    break;
+                }
+            }
+        }
+
+        try {
+            JsonNode node = mapper.readTree(mapper.writeValueAsString(individualEntry.getAdditionalDetails()));
+            ((ObjectNode)node).put("skillCode", skillCode);
+            ((ObjectNode)node).put("skillValue", skillValue);
+            individualEntry.setAdditionalDetails(mapper.readValue(node.toString(), Object.class));
+
+        } catch (IOException e) {
+            log.info("MusterRollServiceUtil::updateAdditionalDetails::Failed to parse additionalDetail object from request"+e);
+            throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object from request on update");
         }
 
     }

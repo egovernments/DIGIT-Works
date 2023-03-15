@@ -70,6 +70,7 @@ public class CalculationService {
         String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
         Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
 
+
         //fetch the log events for all individuals in a muster roll
         List<AttendanceLog> attendanceLogList = fetchAttendanceLogsAndHours(musterRollRequest,mdmsData);
         Map<String,List<LocalDateTime>> individualEntryAttendanceMap = populateAttendanceLogEvents(attendanceLogList,ENTRY_EVENT);
@@ -85,6 +86,11 @@ public class CalculationService {
         //calculate attendance aggregate and per day per individual attendance
         List<IndividualEntry> individualEntries = new ArrayList<>();
         List<IndividualEntry> individualEntriesFromRequest = musterRoll.getIndividualEntries();
+
+        // fetch individual details from individual service
+        List<String> individualIds = new ArrayList<>();
+        individualIds.addAll(individualExitAttendanceMap.keySet());
+        List<Individual> individuals = fetchIndividualDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId(),musterRoll);
 
         for (Map.Entry<String,List<LocalDateTime>> entry : individualExitAttendanceMap.entrySet()) {
             IndividualEntry individualEntry = new IndividualEntry();
@@ -147,10 +153,19 @@ public class CalculationService {
             log.debug("CalculationService::createAttendance::Attendance Entry::size::"+attendanceEntries.size());
             individualEntry.setAuditDetails(auditDetails);
             individualEntry.setActualTotalAttendance(totalAttendance);
-            //TODO - user object from the below method will be passed to setAdditionalDetails
-            fetchUserDetails(individualEntry);
-            //Set skill level - default is "Skill 1"
-            setAdditionalDetails(individualEntry,individualEntriesFromRequest,mdmsData);
+            //Set individual details in additionalDetails
+            if (!CollectionUtils.isEmpty(individuals)) {
+                Individual individual = individuals.stream()
+                                .filter(ind -> ind.getId().equalsIgnoreCase(individualEntry.getIndividualId()))
+                                        .findFirst().orElse(null);
+                if (individual != null) {
+                    setAdditionalDetails(individualEntry,individualEntriesFromRequest,mdmsData,individual, isCreate);
+                } else {
+                    log.info("CalculationService::createAttendance::No match found in individual service for the individual id from attendance log - "+individualEntry.getIndividualId());
+                }
+
+            }
+
             individualEntries.add(individualEntry);
         }
         musterRoll.setIndividualEntries(individualEntries);
@@ -379,10 +394,9 @@ public class CalculationService {
      * @param individualEntriesFromRequest
      * @param mdmsData
      */
-    private void setAdditionalDetails(IndividualEntry individualEntry, List<IndividualEntry> individualEntriesFromRequest, Object mdmsData) {
+    private void setAdditionalDetails(IndividualEntry individualEntry, List<IndividualEntry> individualEntriesFromRequest, Object mdmsData, Individual matchedIndividual, boolean isCreate) {
 
-        //TODO Default skill code will be fetched from individual service
-        String skillCode = DEFAULT_SKILL_LEVEL;
+        String skillCode = null;
         if (!CollectionUtils.isEmpty(individualEntriesFromRequest)) {
             IndividualEntry individualEntryRequest = individualEntriesFromRequest.stream()
                                                         .filter(individual -> individual.getIndividualId().equalsIgnoreCase(individualEntry.getIndividualId()))
@@ -399,17 +413,52 @@ public class CalculationService {
         }
 
         //Update the skill value based on the code from request or set as default skill
-        musterRollServiceUtil.populateAdditionalDetails(mdmsData, individualEntry, skillCode);
+        musterRollServiceUtil.populateAdditionalDetails(mdmsData, individualEntry, skillCode, matchedIndividual, isCreate);
     }
 
     /**
-     * Fetch the user details - Name, Father's name and Aadhar details
-     * @param individualEntry
+     * Fetch the individual details - Name, Father's name and Aadhar details from individual service
+     * @param ids
      *
      */
-    private void fetchUserDetails(IndividualEntry individualEntry){
-        //TODO Search the individual service using the individualId (from IndividualEntry) and fetch the UUID of the individual
-        //Invoke the search api of user using the UUID to get the name, father's name , aadhar and bank details
+    private List<Individual> fetchIndividualDetails(List<String> ids,RequestInfo requestInfo, String tenantId, MusterRoll musterRoll){
+        // fetch the individual details from individual service
+        StringBuilder uri = new StringBuilder();
+        uri.append(config.getIndividualHost()).append(config.getIndividualSearchEndpoint());
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
+                .queryParam("limit",100)
+                .queryParam("offset",0)
+                .queryParam("tenantId",tenantId);
+
+        IndividualSearch individualSearch = IndividualSearch.builder().id(ids).build();
+        IndividualSearchRequest individualSearchRequest = IndividualSearchRequest.builder()
+                                    .requestInfo(requestInfo).individual(individualSearch).build();
+
+        IndividualBulkResponse response = null;
+        log.info("CalculationService::fetchIndividualDetails::call individual search with tenantId::"+tenantId
+                +"::individual ids::"+ids);
+
+        try {
+            response  = restTemplate.postForObject(uriBuilder.toUriString(),individualSearchRequest,IndividualBulkResponse.class);
+        }  catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
+            log.error("CalculationService::fetchIndividualDetails::Error thrown from individual search service::"+httpClientOrServerExc.getStatusCode());
+            throw new CustomException("INDIVIDUAL_SEARCH_SERVICE_EXCEPTION","Error thrown from individual search service::"+httpClientOrServerExc.getStatusCode());
+        }
+
+        if (response == null || CollectionUtils.isEmpty(response.getIndividual())) {
+            StringBuffer exceptionMessage = new StringBuffer();
+            exceptionMessage.append("Indiviudal search returned empty response for registerId ");
+            exceptionMessage.append(musterRoll.getRegisterId());
+            exceptionMessage.append(" with startDate - ");
+            exceptionMessage.append(musterRoll.getStartDate());
+            exceptionMessage.append(" and endDate - ");
+            exceptionMessage.append(musterRoll.getEndDate());
+            throw new CustomException("INDIVIDUAL_SEARCH_SERVICE_EMPTY",exceptionMessage.toString());
+        }
+
+        log.info("CalculationService::fetchIndividualDetails::Individual search fetched successfully");
+        return response.getIndividual();
+
     }
 
     /**
