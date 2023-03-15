@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
 import CreateContract from "./CreateContract";
-import Inbox from "./Inbox";
+import ContractsInbox from "./ContractsInbox.js/ContractsInbox";
 import SearchContracts from "./SearchContract";
 //import ViewContract from "./ViewContract";
 import ViewContractDetails from "./ViewContractDetails";
@@ -94,7 +94,7 @@ const App = ({ path }) => {
           <PrivateRoute
             path={`${path}/inbox`}
             component={() => (
-              <Inbox parentRoute={path} businessService="WORKS" filterComponent="contractInboxFilter" initialStates={{}} isInbox={true} />
+              <ContractsInbox parentRoute={path} businessService="WORKS" filterComponent="contractInboxFilter" initialStates={{}} isInbox={true} />
             )}
           />
         </div>
