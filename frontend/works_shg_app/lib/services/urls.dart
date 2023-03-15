@@ -5,6 +5,7 @@ class Urls {
   static AttendanceRegisterServices attendanceRegisterServices =
       const AttendanceRegisterServices();
   static CommonServices commonServices = const CommonServices();
+  static WorkServices workServices = const WorkServices();
 }
 
 class CommonServices {
@@ -28,6 +29,12 @@ class UserServices {
   String get editProfile => 'user/profile/_update';
   String get changePassword => 'user/password/_update';
   String get sendOtp => 'user-otp/v1/_send';
+}
+
+class WorkServices {
+  const WorkServices();
+  String get myWorks => 'contract-service/contract/v1/_search';
+  String get updateWorkOrder => 'contract-service/contract/v1/_update';
 }
 
 class MusterRollServices {

@@ -1,9 +1,9 @@
 package org.egov.works.web.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.ProcessInstance;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +17,6 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Contract details
@@ -33,7 +32,7 @@ import java.util.UUID;
 public class Contract {
     @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("contractNumber")
     @Size(min = 1, max = 64)
@@ -50,14 +49,14 @@ public class Contract {
 
     @JsonProperty("executingAuthority")
     @NotNull
-    private ExecutingAuthorityEnum executingAuthority = null;
+    private String executingAuthority = null;
 
     @JsonProperty("contractType")
-    private ContractTypeEnum contractType = null;
+    private String contractType = null;
 
-    @JsonProperty("totalContractedamount")
+    @JsonProperty("totalContractedAmount")
     @Valid
-    private BigDecimal totalContractedamount = null;
+    private BigDecimal totalContractedAmount = null;
 
     @JsonProperty("securityDeposit")
     @Valid
@@ -66,6 +65,10 @@ public class Contract {
     @JsonProperty("agreementDate")
     @Valid
     private BigDecimal agreementDate = null;
+
+    @JsonProperty("issueDate")
+    @Valid
+    private BigDecimal issueDate = null;
 
     @JsonProperty("defectLiabilityPeriod")
     @Valid
@@ -81,12 +84,24 @@ public class Contract {
     @JsonProperty("endDate")
     @Valid
     private BigDecimal endDate = null;
+
+    @JsonProperty("completionPeriod")
+    @Valid
+    private Integer completionPeriod = null;
+
+    @JsonProperty("status")
+    @Valid
+    private Status status = null;
+
     @JsonProperty("lineItems")
     @Valid
     private List<LineItems> lineItems = null;
     @JsonProperty("documents")
     @Valid
     private List<Document> documents = null;
+
+    @JsonProperty("processInstance")
+    private ProcessInstance processInstance = null;
 
     @JsonProperty("auditDetails")
     @Valid
@@ -115,64 +130,64 @@ public class Contract {
     /**
      * The executing authority of the given contract
      */
-    public enum ExecutingAuthorityEnum {
-        DEPARTMENT("DEPARTMENT"),
-
-        CONTRACTOR("CONTRACTOR");
-
-        private String value;
-
-        ExecutingAuthorityEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonCreator
-        public static ExecutingAuthorityEnum fromValue(String text) {
-            for (ExecutingAuthorityEnum b : ExecutingAuthorityEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+//    public enum ExecutingAuthorityEnum {
+//        DEPARTMENT("DEPARTMENT"),
+//
+//        CONTRACTOR("CONTRACTOR");
+//
+//        private String value;
+//
+//        ExecutingAuthorityEnum(String value) {
+//            this.value = value;
+//        }
+//
+//        @JsonCreator
+//        public static ExecutingAuthorityEnum fromValue(String text) {
+//            for (ExecutingAuthorityEnum b : ExecutingAuthorityEnum.values()) {
+//                if (String.valueOf(b.value).equals(text)) {
+//                    return b;
+//                }
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        @JsonValue
+//        public String toString() {
+//            return String.valueOf(value);
+//        }
+//    }
 
     /**
      * Type of the contract. This will decide the other attributes of the contract and how it will be processed down the line.
      */
-    public enum ContractTypeEnum {
-        WORK_ORDER("WORK_ORDER"),
-
-        PURCHASE_ORDER("PURCHASE_ORDER");
-
-        private String value;
-
-        ContractTypeEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonCreator
-        public static ContractTypeEnum fromValue(String text) {
-            for (ContractTypeEnum b : ContractTypeEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+//    public enum ContractTypeEnum {
+//        WORK_ORDER("WORK_ORDER"),
+//
+//        PURCHASE_ORDER("PURCHASE_ORDER");
+//
+//        private String value;
+//
+//        ContractTypeEnum(String value) {
+//            this.value = value;
+//        }
+//
+//        @JsonCreator
+//        public static ContractTypeEnum fromValue(String text) {
+//            for (ContractTypeEnum b : ContractTypeEnum.values()) {
+//                if (String.valueOf(b.value).equals(text)) {
+//                    return b;
+//                }
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        @JsonValue
+//        public String toString() {
+//            return String.valueOf(value);
+//        }
+//    }
 
 }
 

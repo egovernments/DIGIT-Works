@@ -6,11 +6,13 @@ import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/atoms/button_group.dart';
 
-import '../blocs/attendance/create_attendance_register.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/muster_roll_estimate.dart';
+import '../blocs/work_orders/accept_work_order.dart';
+import '../blocs/work_orders/decline_work_order.dart';
 import '../models/attendance/attendance_registry_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
+import '../models/works/contracts_model.dart';
 import '../utils/constants.dart';
 
 class WorkDetailsCard extends StatelessWidget {
@@ -24,6 +26,7 @@ class WorkDetailsCard extends StatelessWidget {
   final bool isTrackAttendance;
   final List<AttendanceRegister>? attendanceRegistersModel;
   final List<MusterRoll>? musterRollsModel;
+  final ContractsModel? contractModel;
 
   const WorkDetailsCard(this.detailsList,
       {this.isAttendanceInbox = false,
@@ -35,6 +38,7 @@ class WorkDetailsCard extends StatelessWidget {
       this.outlinedButtonLabel = '',
       this.attendanceRegistersModel,
       this.musterRollsModel,
+      this.contractModel,
       super.key});
 
   @override
@@ -109,8 +113,9 @@ class WorkDetailsCard extends StatelessWidget {
                   ? AppLocalizations.of(context)
                       .translate(cardDetails.values.elementAt(j).toString())
                   : cardDetails.values.elementAt(j).toString(),
-          isActiveStatus:
-              cardDetails.values.elementAt(j).toString() == Constants.active,
+          isActiveStatus: cardDetails.keys.elementAt(j).toString() ==
+                  i18.common.status &&
+              cardDetails.values.elementAt(j).toString() != Constants.active,
           isRejectStatus: cardDetails.values.elementAt(j).toString() ==
               Constants.rejected));
     }
@@ -131,27 +136,25 @@ class WorkDetailsCard extends StatelessWidget {
                     .translate(i18.workOrder.warningMsg),
                 primaryActionLabel:
                     AppLocalizations.of(context).translate(i18.common.confirm),
-                primaryAction: () =>
-                    Navigator.of(context, rootNavigator: true).pop(),
+                primaryAction: () {
+                  context.read<DeclineWorkOrderBloc>().add(
+                        WorkOrderDeclineEvent(
+                            contractsModel: payload,
+                            action: 'DECLINE',
+                            comments: 'DECLINE contract'),
+                      );
+                },
                 secondaryActionLabel:
                     AppLocalizations.of(context).translate(i18.common.back),
                 secondaryAction: () =>
                     Navigator.of(context, rootNavigator: true).pop(),
               ),
               elevatedCallBack: () {
-                context.read<AttendanceRegisterCreateBloc>().add(
-                      CreateAttendanceRegisterEvent(
-                        tenantId: payload!['tenantId'],
-                        registerNumber: "",
-                        name: cardDetails.values.elementAt(1).toString(),
-                        contractCreated: payload['contractCreated'],
-                        contractId: cardDetails.values.elementAt(0).toString(),
-                        orgName: payload['orgName'],
-                        startDate: DateTime.now().millisecondsSinceEpoch,
-                        endDate: DateTime.now()
-                            .add(const Duration(days: 7))
-                            .millisecondsSinceEpoch,
-                      ),
+                context.read<AcceptWorkOrderBloc>().add(
+                      WorkOrderAcceptEvent(
+                          contractsModel: payload,
+                          action: 'ACCEPT',
+                          comments: 'Accept contract'),
                     );
               },
             ),
