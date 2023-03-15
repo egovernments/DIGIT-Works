@@ -133,6 +133,16 @@ public class MusterRollRequestBuilderTest {
         return attendanceLogResponse;
     }
 
+    public static IndividualBulkResponse getIndividualResponse() {
+        List<Individual> individuals = new ArrayList<>();
+        Individual individual = Individual.builder().id("123e4567-e89b-12d3-a456-426614174444")
+                .build();
+        individuals.add(individual);
+
+        IndividualBulkResponse response = IndividualBulkResponse.builder().individual(individuals).build();
+        return response;
+    }
+
     public static AttendanceRegisterResponse getAttendanceRegisterResponse() {
         List<AttendanceRegister> attendanceRegisterList = new ArrayList<>();
         AttendanceRegister attendanceRegister = AttendanceRegister.builder().id("196dc78f-54eb-4462-a924-f9e753834228").build();
