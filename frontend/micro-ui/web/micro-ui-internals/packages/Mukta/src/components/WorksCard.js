@@ -8,6 +8,10 @@ const WorksCard = () => {
   // if (!Digit.Utils.wsAccess()) {
   //   return null;
   // }
+
+  //getting the businessServiceMap
+  const businessServiceMap = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService()
+
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId()
   const requestCriteria = {
@@ -17,7 +21,7 @@ const WorksCard = () => {
         tenantId,
         processSearchCriteria: {
           businessService: [
-            "muster-roll-approval"
+            businessServiceMap?.attendencemgmt
           ],
           moduleName: "muster-roll-service"
         },
@@ -39,7 +43,7 @@ const WorksCard = () => {
         tenantId,
         processSearchCriteria: {
           businessService: [
-            "estimate-approval-5"
+            businessServiceMap?.estimate
           ],
           moduleName: "estimate-service"
         },
@@ -63,7 +67,7 @@ const WorksCard = () => {
         tenantId,
         processSearchCriteria: {
           businessService: [
-            "contract-approval-mukta"
+            businessServiceMap?.contracts
           ],
           moduleName: "contract-service"
         },
@@ -77,7 +81,7 @@ const WorksCard = () => {
     changeQueryName: "ContractInbox"
   };
 
-  const { isLoading: isLoadingContract, data: dataContract } = Digit.Hooks.useCustomAPIHook(requestCriteriaEstimate);
+  const { isLoading: isLoadingContract, data: dataContract } = Digit.Hooks.useCustomAPIHook(requestCriteriaContract);
 
   let links = [
     {
@@ -94,7 +98,7 @@ const WorksCard = () => {
     {
       label: t("WORKS_CONTRACTS"),
       link: `/${window?.contextPath}/employee/contracts/inbox`,
-      roles: ["WC","WV","WA","EMPLOYEE","SUPERUSER"],
+      roles: ["WORK_ORDER_CREATOR", "WORK_ORDER_VIEWER", "WORK_ORDER_APPROVER"],
       count: isLoadingContract? "-": dataContract?.totalCount,
     },
     {

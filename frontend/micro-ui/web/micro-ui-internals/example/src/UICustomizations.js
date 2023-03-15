@@ -7,10 +7,12 @@ var Digit = window.Digit || {};
 
 const businessServiceMap = {
   estimate: "estimate-approval-5",
-  contracts: "contract-approval-mukta"
+  contracts: "contract-approval-mukta",
+  attendencemgmt: "muster-roll-approval"
 };
 
 export const UICustomizations = {
+  businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
     if (businessService === businessServiceMap.estimate) {
       const workflow = {
@@ -49,11 +51,19 @@ export const UICustomizations = {
     return false;
   },
   getBusinessService: (moduleCode) => {
-    if (moduleCode.includes("estimate")) {
+    if (moduleCode?.includes("estimate")) {
       return businessServiceMap?.estimate;
     }
-
-    return null;
+    else if (moduleCode?.includes("contract")) {
+      return businessServiceMap?.contracts;
+    }
+    else if (moduleCode?.includes("attendence")) {
+      return businessServiceMap?.attendencemgmt;
+    }
+    else{
+      return businessServiceMap
+    }
+   
   },
   SearchProjectConfig: {
     preProcess: (data) => {
