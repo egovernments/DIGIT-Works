@@ -28,8 +28,33 @@ const WorksCard = () => {
             offset: 0
         }
     }
-};
-const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+  };
+
+  const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+  const requestCriteriaEstimate = {
+    url: '/inbox/v2/_search',
+    body: {
+      inbox: {
+        tenantId,
+        processSearchCriteria: {
+          businessService: [
+            "estimate-approval-5"
+          ],
+          moduleName: "estimate-service"
+        },
+        moduleSearchCriteria: {
+          tenantId
+        },
+        limit: 10,
+        offset: 0
+      }
+    },
+    changeQueryName:"EstimateInbox"
+  };
+  
+  const { isLoading:isLoadingEstimate, data:dataEstimate } = Digit.Hooks.useCustomAPIHook(requestCriteriaEstimate);
+
+
   let links = [
     {
       label: t("ACTION_TEST_PROJECT"),
@@ -40,7 +65,7 @@ const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
       label: t("WORKS_ESTIMATES"),  
       link: `/${window?.contextPath}/employee/estimate/inbox`,
       roles: ["ESTIMATE_CREATOR","ESTIMATE_VERIFIER","TECHNICAL_SANCTIONER","ESTIMATE_APPROVER"],
-      count: 1,
+      count: isLoadingEstimate ? "-" : dataEstimate?.totalCount, 
     },
     {
       label: t("WORKS_CONTRACTS"),

@@ -38,7 +38,7 @@ export const createProjectConfigMUKTA = {
                   preProcess : {
                     convertStringToRegEx : ["populators.validation.pattern"]
                   },
-                  populators: { name: "basicDetails_projectName", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_NAME", validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2, maxlength : 32 }}
+                  populators: { name: "basicDetails_projectName", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_NAME", validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\' } ]*$/i, minlength : 2, maxlength : 32 }}
               },
               {
                   inline: true,
@@ -50,7 +50,7 @@ export const createProjectConfigMUKTA = {
                   preProcess : {
                     convertStringToRegEx : ["populators.validation.pattern"]
                   },
-                  populators: { name: "basicDetails_projectDesc", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_DESC", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2, maxlength : 256 }}
+                  populators: { name: "basicDetails_projectDesc", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_DESC", validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\'() } ]*$/i, minlength : 2, maxlength : 256 }}
               }
               ]
           },
@@ -68,7 +68,7 @@ export const createProjectConfigMUKTA = {
                 preProcess : {
                   convertStringToRegEx : ["populators.validation.pattern"]
                 },
-                populators: { name: "noSubProject_letterRefNoOrReqNo", error: ("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2, maxlength : 32 }}
+                populators: { name: "noSubProject_letterRefNoOrReqNo", error: ("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\' } ]*$/i, minlength : 2, maxlength : 32 }}
               },
               {
                 isMandatory: true,
@@ -119,7 +119,19 @@ export const createProjectConfigMUKTA = {
                 key: "noSubProject_estimatedCostInRs",
                 type: "number",
                 disable: false,
-                populators: { name: "noSubProject_estimatedCostInRs" }
+                preProcess: {
+                  convertStringToRegEx: [
+                    populators.validation.pattern
+                  ]
+                },
+                populators: {
+                    name: noSubProject_estimatedCostInRs,
+                    error: PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST,
+                    validation: {
+                      pattern: /^(?:0|[1-9]\d*)(?:\.(?!.*000)\d+)?$/,
+                      maxlength : 32
+                    }
+                  }
               },
             ]
           },
@@ -194,6 +206,113 @@ export const createProjectConfigMUKTA = {
                     top : "2.5rem"
                   },
                   options: []
+                },
+              },
+            ]
+          },
+          {
+            navLink : "Project_Details",
+            head: ("WORKS_FINANCIAL_DETAILS"),
+            body: [
+              {
+                isMandatory: false,
+                key: "noSubProject_fund",
+                type: "radioordropdown",
+                label: "WORKS_FUND",
+                disable: false,
+                populators: {
+                  name: "noSubProject_fund",
+                  optionsKey: "name",
+                  error: ("WORKS_REQUIRED_ERR"),
+                  required: false,
+                  optionsCustomStyle : {
+                    top : "2.5rem"
+                  },
+                  mdmsConfig: {
+                    masterName: "Fund",
+                    moduleName: "finance",
+                    localePrefix: "COMMON_MASTERS_FUND",
+                  },
+                },
+              },
+              {
+                isMandatory: false,
+                key: "noSubProject_function",
+                type: "radioordropdown",
+                label: "WORKS_FUNCTION",
+                disable: false,
+                populators: {
+                  name: "noSubProject_function",
+                  optionsKey: "name",
+                  error: ("WORKS_REQUIRED_ERR"),
+                  required: false,
+                  optionsCustomStyle : {
+                    top : "2.5rem"
+                  },
+                  mdmsConfig: {
+                    masterName: "Functions",
+                    moduleName: "finance",
+                    localePrefix: "COMMON_MASTERS_FUN",
+                  },
+                },
+              },
+              {
+                isMandatory: false,
+                key: "noSubProject_budgetHead",
+                type: "radioordropdown",
+                label: "WORKS_BUDGET_HEAD",
+                disable: false,
+                populators: {
+                  name: "noSubProject_budgetHead",
+                  optionsKey: "name",
+                  error: ("WORKS_REQUIRED_ERR"),
+                  required: false,
+                  optionsCustomStyle : {
+                    top : "2.5rem"
+                  },
+                  mdmsConfig: {
+                    masterName: "BudgetHead",
+                    moduleName: "finance",
+                    localePrefix: "COMMON_MASTERS_BUDGET_HEAD",
+                  },
+                },
+              },
+              {
+                isMandatory: false,
+                key: "noSubProject_scheme",
+                type: "radioordropdown",
+                label: "WORKS_SCHEME",
+                disable: false,
+                populators: {
+                  name: "noSubProject_scheme",
+                  optionsKey: "name",
+                  error: ("WORKS_REQUIRED_ERR"),
+                  required: false,
+                  optionsCustomStyle : {
+                    top : "2.5rem"
+                  },
+                  mdmsConfig: {
+                    masterName: "Scheme",
+                    moduleName: "finance",
+                    localePrefix: "COMMON_MASTERS_SCHEME",
+                  },
+                },
+              },
+              {
+                isMandatory: false,
+                key: "noSubProject_subScheme",
+                type: "radioordropdown",
+                label: "WORKS_SUB_SCHEME",
+                disable: false,
+                populators: {
+                  name: "noSubProject_subScheme",
+                  optionsKey: "code",
+                  error: "WORKS_REQUIRED_ERR",
+                  required: false,
+                  optionsCustomStyle : {
+                    top : "2.5rem"
+                  },
+                  options : []
                 },
               },
             ]
