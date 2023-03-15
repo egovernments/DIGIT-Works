@@ -153,8 +153,8 @@ class WorkDetailsCard extends StatelessWidget {
                 context.read<AcceptWorkOrderBloc>().add(
                       WorkOrderAcceptEvent(
                           contractsModel: payload,
-                          action: 'APPROVE',
-                          comments: 'APPROVE contract'),
+                          action: 'ACCEPT',
+                          comments: 'Accept contract'),
                     );
               },
             ),

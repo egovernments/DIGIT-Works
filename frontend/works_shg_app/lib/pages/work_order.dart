@@ -67,18 +67,20 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                           'cardDetails': {
                             i18.workOrder.workOrderNo: e.contractNumber ?? 'NA',
                             i18.workOrder.roleOfCBO:
-                                e.executingAuthority ?? 'NA',
+                                AppLocalizations.of(context)
+                                    .translate(e.executingAuthority ?? 'NA'),
                             i18.attendanceMgmt.engineerInCharge:
                                 e.additionalDetails?.officerInChargeId ?? 'NA',
                             i18.workOrder.contractIssueDate: e.issueDate != null
                                 ? DateFormats.timeStampToDate(e.issueDate,
                                     format: "dd/MM/yyyy")
                                 : 'NA',
-                            i18.workOrder.dueDate: DateFormats.timeStampToDate(
-                                e.endDate,
-                                format: "dd/MM/yyyy"),
+                            i18.workOrder.dueDate: e.endDate != null
+                                ? DateFormats.timeStampToDate(e.endDate,
+                                    format: "dd/MM/yyyy")
+                                : 'NA',
                             i18.workOrder.contractAmount:
-                                '₹ ${e.totalContractedAmount}' ?? '₹ 0',
+                                '₹ ${e.totalContractedAmount ?? 0}',
                             i18.common.status: e.wfStatus,
                           },
                           'payload': e.toMap()
