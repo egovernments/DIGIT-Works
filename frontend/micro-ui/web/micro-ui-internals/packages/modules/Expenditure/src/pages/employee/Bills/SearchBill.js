@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from "react-i18next";
 import { useLocation } from 'react-router-dom';
 import { Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
@@ -25,10 +25,15 @@ const SearchBill = () => {
         },
       }
   );
+
+  let configs = useMemo(
+    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{}));
   */
 
-  const configs = SearchBillConfig?.SearchBillConfig?.[0]
-  console.log('@@', configs);
+  //For local
+  let configs = useMemo(
+    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, SearchBillConfig?.SearchBillConfig?.[0], "sections.search.uiConfig.fields",{}));
+
   //if(isLoading) return <Loader />
   return (
     <React.Fragment>

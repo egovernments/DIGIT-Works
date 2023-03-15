@@ -3,7 +3,7 @@ export const SearchBillConfig = {
     "moduleName": "commonMuktaUiConfig",
     "SearchBillConfig":[
         {
-            label : "Search Bill",
+            label : "EXP_SEARCH_BILL",
             type: 'search',
             apiDetails: {
                 serviceName: "/pms/project/v1/_search",
@@ -25,12 +25,13 @@ export const SearchBillConfig = {
                         minReqFields: 1,
                         showFormInstruction : "",
                         defaultValues : {
-                            projectNumber: "",
-                            subProjectId: "",
-                            name: "",
-                            projectType: "",
-                            startDate: "",
-                            endDate: ""
+                            ward: "",
+                            billType: "",
+                            projectName: "",
+                            billNumber: "",
+                            status: "",
+                            createdFrom: "",
+                            createdTo: ""
                         },
                         fields : [
                             {
@@ -51,7 +52,7 @@ export const SearchBillConfig = {
                                 }
                             },
                             {
-                                label: "Bill type",
+                                label: "WORKS_BILL_TYPE",
                                 type: "dropdown",
                                 isMandatory: false,
                                 disable: false,
@@ -69,7 +70,7 @@ export const SearchBillConfig = {
                                 }
                             },
                             {
-                                label: "Project Name",
+                                label: "WORKS_PROJECT_NAME",
                                 type: "text",
                                 isMandatory: false,
                                 disable: false,
@@ -77,24 +78,24 @@ export const SearchBillConfig = {
                                     convertStringToRegEx : ["populators.validation.pattern"]
                                 },
                                 populators: { 
-                                    name: "name",
+                                    name: "projectName",
                                     error: `PROJECT_PATTERN_ERR_MSG`,
-                                    validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\'() } ]*$/i, minlength : 2 }
+                                    validation: { pattern: "^[A-Za-z0-9\\/-]*$", minlength : 2 }
                                 }
                             },
                             {
-                                label:"Bill number",
+                                label:"WORKS_BILL_NUMBER",
                                 type: "text",
                                 isMandatory: false,
                                 disable: false,
                                 populators: { 
-                                    name: "projectNumber",
-                                    error: `Please enter valid bill number`,
-                                    validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\'() } ]*$/i, minlength : 2 }
+                                    name: "billNumber",
+                                    error: "ES_COMMON_BILL_PATTERN_ERR_MSG",
+                                    validation: { pattern: "^[A-Za-z0-9\\/-]*$", minlength : 2 }
                                 }
                             },
                             {
-                                label: "Status",
+                                label: "CORE_COMMON_STATUS",
                                 type: "dropdown",
                                 isMandatory: false,
                                 disable: false,
@@ -108,7 +109,7 @@ export const SearchBillConfig = {
                                 }
                             },
                             {
-                                label: "Created From",
+                                label: "ES_COMMON_CREATED_FROM",
                                 type: "date",
                                 isMandatory: false,
                                 disable: false,
@@ -117,7 +118,7 @@ export const SearchBillConfig = {
                                 },
                             },
                             {
-                                label: "Created To",
+                                label: "ES_COMMON_CREATED_TO",
                                 type: "date",
                                 isMandatory: false,
                                 disable: false,
@@ -141,33 +142,33 @@ export const SearchBillConfig = {
                     uiConfig: {
                         columns: [
                             {
-                                label: "Bill number",
+                                label: "WORKS_BILL_NUMBER",
                                 jsonPath: "businessObject.musterRollNumber",
                                 additionalCustomization:true 
                             },
                             {
-                                label: "Project name",
+                                label: "WORKS_PROJECT_NAME",
                                 jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
                             },
                             {
-                                label: "Location",
+                                label: "ES_COMMON_LOCATION",
                                 jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
                                 additionalCustomization:true 
                             },
                             {
-                                label: "CBO name",
+                                label: "ES_COMMON_CBO_NAME",
                                 jsonPath: "businessObject"
                             },
                             {
-                                label: "Bill Type",
+                                label: "WORKS_BILL_TYPE",
                                 jsonPath: "businessObject.additionalDetails.orgName",
                             },
                             {
-                                label: "Status",
+                                label: "CORE_COMMON_STATUS",
                                 jsonPath: "businessObject.individualEntries"
                             },
                             {
-                                label: "Bill amount (₹)",
+                                label: "EXP_BILL_AMOUNT",
                                 jsonPath: "businessObject.serviceSla",
                                 additionalCustomization:true
                             }
