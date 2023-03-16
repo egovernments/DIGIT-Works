@@ -26,7 +26,11 @@ export const SearchBillConfig = {
                         showFormInstruction : "",
                         defaultValues : {
                             ward: "",
-                            billType: "",
+                            billType: {
+                                name: "Work Order",
+                                code: "WORK_ORDER",
+                                active: true
+                            },
                             projectName: "",
                             musterRollNumber: "",
                             status: "",
@@ -165,7 +169,8 @@ export const SearchBillConfig = {
                             },
                             {
                                 label: "CORE_COMMON_STATUS",
-                                jsonPath: "musterRollStatus"
+                                jsonPath: "musterRollStatus",
+                                additionalCustomization:true
                             },
                             {
                                 label: "EXP_BILL_AMOUNT",

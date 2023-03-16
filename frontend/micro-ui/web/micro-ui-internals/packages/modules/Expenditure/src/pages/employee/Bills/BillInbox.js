@@ -35,7 +35,7 @@ const BillInbox = () => {
   //if(isLoading) return <Loader />
   return (
       <React.Fragment>
-          <Header styles={{ fontSize: "32px" }}>{`${t(configs?.label)} (${state?.count})`}</Header>
+          <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}{state?.count ? <span className="inbox-count">{state?.count}</span> : null}</Header>
           <div className="inbox-search-wrapper">
               <InboxSearchComposer configs={configs}></InboxSearchComposer>
           </div>

@@ -37,7 +37,11 @@ export const InboxBillConfig = {
                         defaultValues : {
                             billNumber: "",
                             projectNumber:"",
-                            billType: ""
+                            billType:  {
+                                name: "Work Order",
+                                code: "WORK_ORDER",
+                                active: true
+                            }
                         },
                         fields : [
                             {
@@ -107,7 +111,7 @@ export const InboxBillConfig = {
                         ],
                         label : "MUKTA",
                         logoIcon : {
-                            component : "PropertyHouse",
+                            component : "BioMetricIcon",
                             customClass : "search-icon--projects"       
                         }
                     },
@@ -220,7 +224,8 @@ export const InboxBillConfig = {
                             },
                             {
                                 label: "COMMON_WORKFLOW_STATES",
-                                jsonPath: "businessObject.billStatus"
+                                jsonPath: "businessObject.musterRollStatus",
+                                additionalCustomization:true
                             },
                             {
                                 label: "ES_COMMON_AMOUNT",

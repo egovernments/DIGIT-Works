@@ -484,6 +484,10 @@ export const UICustomizations = {
           <span className="sla-cell-error">{t(value) || ""}</span>
         )) : t("ES_COMMON_NA")
       }
+
+      if (column.label === "COMMON_WORKFLOW_STATES") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      }
     }
   },
   SearchBillConfig: {
@@ -492,6 +496,7 @@ export const UICustomizations = {
       const toDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toDate);
       const musterRollStatus = data?.params?.musterRollStatus?.code;
       const status = data?.params?.status?.code;
+      delete data.params.billType;
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus, status };
       return data;
     },
@@ -511,6 +516,9 @@ export const UICustomizations = {
       }
       if (column.label === "EXP_BILL_AMOUNT") {
         return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+      }
+      if(column.label === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
       }
     },
     additionalValidations: (type, data, keys) => {

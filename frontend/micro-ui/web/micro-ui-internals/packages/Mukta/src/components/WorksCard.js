@@ -130,7 +130,7 @@ const WorksCard = () => {
     },
     {
       label: t("ACTION_TEST_BILLS"),
-      link: `/${window?.contextPath}/employee/expenditure/billinbox`,
+      link: `/${window?.contextPath}/employee/expenditure/inbox`,
       roles: ROLES.BILLS,
       count: isLoading ? "-" : data?.totalCount,
     },
