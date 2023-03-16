@@ -3,13 +3,12 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
 import CreateContract from "./CreateContract";
-import ContractsInbox from "./ContractsInbox.js/ContractsInbox";
+import Inbox from "./ContractsInbox/Inbox.js"
 import SearchContracts from "./SearchContract";
 import ViewContract from "./ViewContract";
 
 const ContractsBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
-
   const search = useLocation().search;
   const fromScreen = new URLSearchParams(search).get("from") || null;
   const crumbs = [
@@ -20,7 +19,7 @@ const ContractsBreadCrumbs = ({ location }) => {
     },
     {
       path: `/${window.contextPath}/employee/contracts/`,
-      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACT")}` : t("WORKS_CONTRACT"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACTS")}` : t("WORKS_CONTRACTS"),
       show: location.pathname.includes("/contracts/create-contract") ? true : false,
       isBack: fromScreen && true,
     },
@@ -32,13 +31,13 @@ const ContractsBreadCrumbs = ({ location }) => {
     },
     {
       path: `/${window.contextPath}/employee/contracts/search-contract`,
-      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACT")}` : t("WORKS_CONTRACT"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACTS")}` : t("WORKS_CONTRACTS"),
       show: location.pathname.includes("/contracts/search-contract") ? true : false,
       isBack: fromScreen && true,
     },
     {
       path: `/${window.contextPath}/employee/contracts/view-contract`,
-      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACT")}` : t("WORKS_CONTRACT"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACTS")}` : t("WORKS_CONTRACTS"),
       show: location.pathname.includes("/contracts/view-contract") ? true : false,
       isBack: fromScreen && true,
     },
@@ -51,6 +50,9 @@ const App = ({ path }) => {
   const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {});
   const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
   const locationCheck = window.location.href.includes("/employee/ws/new-application");
+  const CreateWorkOrderComponent = Digit?.ComponentRegistryService?.getComponent("CreateWorkOrder");
+  const CreateWOResponseComponent = Digit?.ComponentRegistryService?.getComponent("CreateWOResponse");
+
   const getBreadCrumbStyles = (screenType) => {
     // Defining 4 types for now -> create,view,inbox,search
 
@@ -73,7 +75,7 @@ const App = ({ path }) => {
 
   useEffect(() => {
     return () => {
-      if (!window.location.href.includes("create-contract") && Object.keys(sessionFormData) != 0) {
+      if (!window.location.href.includes("create-contract") && sessionFormData && Object.keys(sessionFormData) != 0) {
         clearSessionFormData();
       }
     };
@@ -86,13 +88,14 @@ const App = ({ path }) => {
           <div style={getBreadCrumbStyles(window.location.href)}>
             <ContractsBreadCrumbs location={location} />
           </div>
-          <PrivateRoute path={`${path}/create-contract`} component={() => <CreateContract ContractSession={ContractSession} />} />
+          <PrivateRoute path={`${path}/create-contract`} component={() => <CreateWorkOrderComponent parentRoute={path}/>} />
           <PrivateRoute path={`${path}/search-contract`} component={() => <SearchContracts />} />
           <PrivateRoute path={`${path}/view-contract`} component={() => <ViewContract />} />
+          <PrivateRoute path={`${path}/create-contract-response`} component={() => <CreateWOResponseComponent />} />
           <PrivateRoute
             path={`${path}/inbox`}
             component={() => (
-              <ContractsInbox parentRoute={path} businessService="WORKS" filterComponent="contractInboxFilter" initialStates={{}} isInbox={true} />
+              <Inbox parentRoute={path} businessService="WORKS" filterComponent="contractInboxFilter" initialStates={{}} isInbox={true} />
             )}
           />
         </div>

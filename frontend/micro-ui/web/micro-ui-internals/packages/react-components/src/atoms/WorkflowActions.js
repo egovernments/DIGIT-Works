@@ -7,7 +7,7 @@ import ActionModal from "./Modals";
 import { Loader } from "./Loader";
 import Toast from "./Toast";
 
-const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails,url }) => {
+const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged }) => {
   
    //for testing from url these 2 lines of code are kept here
   const { estimateNumber } = Digit.Hooks.useQueryParams();
@@ -86,6 +86,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         
       },
       onSuccess:(data,variables) => {
+        setStateChanged(`WF_UPDATE_SUCCESS_${selectAction.action}`)
         setIsEnableLoader(false)
         //show success toast acc to selectAction
         setShowToast({ label: `WF_UPDATE_SUCCESS_${selectAction.action}` })
