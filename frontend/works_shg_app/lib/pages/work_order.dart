@@ -59,6 +59,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                       context, error.toString(), 'ERROR'),
                   loaded: (ContractsModel? contracts) {
                     workOrderList = contracts!.contracts!
+                        .where((e) => e.wfStatus == 'APPROVED')
                         .map((e) => {
                               'cardDetails': {
                                 i18.workOrder.workOrderNo:

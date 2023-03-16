@@ -65,7 +65,7 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          '${AppLocalizations.of(context).translate(i18.workOrder.projects)}(${attendanceRegistersModel!.attendanceRegister!.length})',
+                          '${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceRegisters)}(${attendanceRegistersModel!.attendanceRegister!.length})',
                           style: Theme.of(context).textTheme.displayMedium,
                           textAlign: TextAlign.left,
                         ),

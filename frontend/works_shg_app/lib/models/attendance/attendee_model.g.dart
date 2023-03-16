@@ -31,6 +31,7 @@ _$_AttendeesTrackList _$$_AttendeesTrackListFromJson(
     _$_AttendeesTrackList(
       name: json['name'] as String?,
       aadhaar: json['aadhaar'] as String?,
+      individualGaurdianName: json['individualGaurdianName'] as String?,
       individualId: json['individualId'] as String?,
       id: json['id'] as String?,
       skill: json['skill'] as String?,
@@ -65,6 +66,7 @@ Map<String, dynamic> _$$_AttendeesTrackListToJson(
     <String, dynamic>{
       'name': instance.name,
       'aadhaar': instance.aadhaar,
+      'individualGaurdianName': instance.individualGaurdianName,
       'individualId': instance.individualId,
       'id': instance.id,
       'skill': instance.skill,
