@@ -90,7 +90,8 @@ export const createEstimatePayload = (data,projectData) => {
                     city: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.city
                 },
                 "projectNumber": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID,
-                "totalEstimatedAmount": data?.totalEstimateAmount
+                "totalEstimatedAmount": data?.totalEstimateAmount,
+                "tenantId": tenantId
             }
         },
         workflow:{
