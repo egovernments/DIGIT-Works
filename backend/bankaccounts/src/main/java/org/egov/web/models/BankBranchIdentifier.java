@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 /**
@@ -21,6 +22,10 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Builder
 public class BankBranchIdentifier {
+
+    @JsonProperty("id")
+    @Valid
+    private String id = null;
 
     @JsonProperty("type")
     @Size(min = 2, max = 64)

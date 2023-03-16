@@ -199,7 +199,9 @@ components:
           $ref: >-
                 https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         bankAccounts:
-          $ref: '#/components/schemas/BankAccount'
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccount'
     BankAccountResponse:
       type: object
       properties:
