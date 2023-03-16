@@ -65,7 +65,7 @@ const App = ({ path }) => {
                     <ExpenditureBreadCrumbs location={location} />
                 </React.Fragment>
                 <PrivateRoute path={`${path}/create-application`} component={() => <div>Hi</div>} />
-                <PrivateRoute path={`${path}/billinbox`} component={() => <BILLInbox parentRoute={path} businessService="WORKS" filterComponent="billInboxFilter" initialStates={{}} isInbox={true} />}/>
+                <PrivateRoute path={`${path}/billinbox`} component={() => <BillInbox parentRoute={path} />}/>
                 <PrivateRoute path={`${path}/view-bills/bills`} component={ViewBillsComponent}></PrivateRoute>
                 <PrivateRoute path={`${path}/view-bills/menu`} component={ViewBillsMenuComponent}></PrivateRoute>
                 <PrivateRoute path={`${path}/create-bill`} component={() => <CreateBill parentRoute={path} />}/>
