@@ -9,7 +9,7 @@ const inboxConfigMukta = () => {
                 "inbox": {
                     "processSearchCriteria": {
                         "businessService": [
-                            "estimate-approval-5"
+                            "mukta-estimate"
                         ],
                         "moduleName": "estimate-service"
                     },
@@ -257,7 +257,7 @@ const inboxConfigMukta = () => {
                             "populators": {
                                 "name": "state",
                                 "labelPrefix": "WF_EST_",
-                                "businessService": "estimate-approval-5"
+                                "businessService": "mukta-estimate"
                             }
                         }
                     ]

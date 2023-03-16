@@ -11,7 +11,7 @@ const configEstimateModal = (
     const {action:actionString} = action
 
     const configMap = {
-        "estimate-approval-5": {
+        "mukta-estimate": {
             "default":{
                 comments:{
                     isMandatory:false,

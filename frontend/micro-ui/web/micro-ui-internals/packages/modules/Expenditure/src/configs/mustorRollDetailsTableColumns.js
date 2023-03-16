@@ -3,28 +3,125 @@ import React from "react";
 const GetCell = (value) => <span className="cell-text">{value}</span>;
 
 const renderTotalLabel = (value) => {
-    return (
-      <div className="total-attendence-label">
-        <span>{value}</span>
-      </div>
-    );
+  return (
+    <div className="total-attendence-label">
+      <span>{value}</span>
+    </div>
+  );
 };
 
 const renderBankAccountDetails = (value) => {
     return (
       <div className="column-bank-details">
-        <p className="detail">{value.accountNo}</p>
-        <p className="detail">{value.ifsc}</p>
+        <p className="detail">{value?.accountNo}</p>
+        <p className="detail">{value?.ifsc}</p>
       </div>
     );
 };
 
 export const mustorRollDetailsTableColumns = (t) => [
+  {
+    Header: () => <p>{t("WORKS_SNO")}</p>,
+    accessor: "sno",
+    Cell: ({ value, column, row }) => {
+      if (row.original.type === "total") {
+        return renderTotalLabel(t(row.original.sno));
+      }
+      return String(t(value));
+    },
+  },
+  {
+    Header: () => <p>{t("EXP_REG_ID")}</p>,
+    accessor: "registerId",
+    Cell: ({ value, column, row }) => {
+      return String(t(value));
+    },
+  },
+  {
+    Header: () => <p>{t("CORE_COMMON_NAME")}</p>,
+    accessor: "nameOfIndividual",
+    Cell: ({ value, column, row }) => {
+      return String(t(value));
+    },
+  },
+  {
+    Header: () => <p>{t("EXP_FATHER_GUARDIAN_NAME")}</p>,
+    accessor: "guardianName",
+    Cell: ({ value, column, row }) => {
+      return String(t(value));
+    },
+  },
+  {
+    Header: () => <p>{t("EXP_SKILL")}</p>,
+    accessor: "skill",
+    Cell: ({ value, column, row }) => {
+      return String(t(value));
+    }
+  },
+  {
+    Header: () => <p>{t("EXP_DAYS_WORKED")}</p>,
+    accessor: "actualWorkingDays",
+    Cell: ({ value, column, row }) => {
+      return String(t(value));
+    }
+  },
+  {
+    Header: () => <p>{ t("EXP_DAYS_MEASURED")}</p>,
+    accessor: "modifiedWorkingDays",
+    Cell: ({ value, column, row }) => {
+      return String(t(value));
+    }
+  },
+  {
+    Header: () => <p>{t("EXP_PER_DAY_WAGE")}</p>,
+    accessor: "amount",
+    Cell: ({ value, column, row }) => {
+      return Digit.Utils.dss.formatterWithoutRound(value, 'number');
+    }
+  },
+  {
+    Header: () => <p>{t("EXP_TOTAL_WAGE")}</p>,
+    accessor: "modifiedAmount",
+    Cell: ({ value, column, row }) => {
+      return Digit.Utils.dss.formatterWithoutRound(value, 'number');
+    }
+  },
+  {
+    Header: () => <p>{t("EXP_BANK_ACCOUNT_DETAILS")}</p>,
+    accessor: "bankAccountDetails",
+    Cell: ({ value, column, row }) => {
+      return renderBankAccountDetails(value);
+    }
+  },
+  {
+    Header: () => <p>{t("ES_COMMON_PAYMENT_STATUS")}</p>,
+    accessor: "paymentStatus",
+    Cell: ({ value, column, row }) => {
+      if (row.original.type === "total") {
+        return String(t(value));
+      }
+      if(value === 'PAYMENT_COMPLETED') {
+        return <span style={{"color":"#0B6623"}}>{t(`BILL_STATUS_${value}`)}</span>
+      } else {
+        return <span style={{"color":"#FF0000"}}>{t(`BILL_STATUS_${value}`)}</span>
+      }
+    }
+  },
+  // {
+  //     Header: t("EXP_AADHAR_NO"),
+  //     accessor: "aadharNumber",
+  //     Cell: ({ value, column, row }) => {
+  //       return String(t(value));
+  //     }
+  // }    
+]
+
+/*
+export const mustorRollDetailsTableColumns = (t) => [
     {
         Header: t("EXP_SNO"),
         accessor: "sno",
         Cell: ({value, row}) => {
-            
             if (row.original.type === "total") {
               return renderTotalLabel(t(value))
             }
@@ -59,3 +156,4 @@ export const mustorRollDetailsTableColumns = (t) => [
         accessor: (row) => (GetCell(row?.aadhar)),
     }    
 ]
+*/

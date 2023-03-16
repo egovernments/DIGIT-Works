@@ -1,3 +1,4 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 
 class DigitIndicator extends StatelessWidget {
@@ -58,7 +59,8 @@ class DigitIndicator extends StatelessWidget {
             decoration: BoxDecoration(
               border: isSelected
                   ? Border.all(
-                      color: activeBorderColor ?? Colors.blue,
+                      color: activeBorderColor ??
+                          const DigitColors().burningOrange,
                       width: activeBorderWidth,
                     )
                   : null,

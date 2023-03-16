@@ -3,7 +3,7 @@ var Digit = window.Digit || {};
 
 
 /* Recreated a new hook in same name*/
-export const logout = async () => {
+export const logoutV1 = async () => {
   let user = Digit.UserService.getUser();
   if (!user || !user.info || !user.access_token) return false;
   const { type } = user.info;

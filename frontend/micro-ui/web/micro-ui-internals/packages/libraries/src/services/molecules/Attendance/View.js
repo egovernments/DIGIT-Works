@@ -34,10 +34,10 @@ const getAttendanceTableData = (data, skills, t) => {
       let tableRow = {}
       tableRow.id = item.id
       tableRow.sno = index + 1
-      tableRow.registerId = t("NA") || data?.registerId 
-      tableRow.actualWorkingDays = item?.actualTotalAttendance
-      tableRow.nameOfIndividual = item?.additionalDetails?.userName || "Piyush HarjitPal"
-      tableRow.guardianName = item?.additionalDetails?.fatherName  || "Harijitpal"
+      tableRow.registerId = item?.additionalDetails?.userId || t("NA")
+      tableRow.actualWorkingDays = item?.actualTotalAttendance || 0
+      tableRow.nameOfIndividual = item?.additionalDetails?.userName || t("NA")
+      tableRow.guardianName = item?.additionalDetails?.fatherName  || t("NA")
       tableRow.skill = skills[item?.additionalDetails?.skillCode]?.name || t("NA")
       tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount * item?.actualTotalAttendance || 0
       tableRow.modifiedAmount = (item?.modifiedTotalAttendance ? (skills[item?.additionalDetails?.skillCode]?.amount * item?.modifiedTotalAttendance) : tableRow?.amount) || 0

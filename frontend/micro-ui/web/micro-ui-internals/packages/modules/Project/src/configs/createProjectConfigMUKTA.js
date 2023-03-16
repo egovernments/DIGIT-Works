@@ -129,7 +129,8 @@ export const createProjectConfigMUKTA = {
                     error: PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST,
                     validation: {
                       pattern: /^(?:0|[1-9]\d*)(?:\.(?!.*000)\d+)?$/,
-                      maxlength : 32
+                      maxlength : 32,
+                      step : "0.01"
                     }
                   }
               },
