@@ -7,7 +7,7 @@ import ActionModal from "./Modals";
 import { Loader } from "./Loader";
 import Toast from "./Toast";
 
-const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged }) => {
+const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode }) => {
   
    //for testing from url these 2 lines of code are kept here
   const { estimateNumber } = Digit.Hooks.useQueryParams();
@@ -89,7 +89,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       onError:(error,variables)=>{
         setIsEnableLoader(false)
         //show error toast acc to selectAction
-        setShowToast({ error: true, label: `WF_UPDATE_ERROR_${selectAction.action}`, isDleteBtn:true })
+        setShowToast({ error: true, label: `WF_UPDATE_ERROR_${moduleCode.toUpperCase()}_${selectAction.action}`, isDleteBtn:true })
         
 
         
@@ -98,7 +98,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       onSuccess:(data,variables) => {
         setIsEnableLoader(false)
         //show success toast acc to selectAction
-        setShowToast({ label: `WF_UPDATE_SUCCESS_${selectAction.action}` })
+        setShowToast({ label: `WF_UPDATE_SUCCESS_${moduleCode.toUpperCase()}_${selectAction.action}` })
         
 
         // to refetch updated workflowData and re-render timeline and actions
@@ -155,6 +155,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         submitAction={submitAction}
         businessService={businessService}
         applicationDetails={applicationDetails}
+        moduleCode={moduleCode}
       />}
       {showToast && <Toast
         error={showToast?.error}

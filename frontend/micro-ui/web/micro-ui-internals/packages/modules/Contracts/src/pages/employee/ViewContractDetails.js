@@ -1,7 +1,7 @@
 import React, { useState, useEffect }from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
-import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader } from '@egovernments/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions } from '@egovernments/digit-ui-react-components';
 import ApplicationDetails from '../../../../templates/ApplicationDetails';
 
 
@@ -10,6 +10,8 @@ const ViewContractDetails = () => {
     const [showToast, setShowToast] = useState(null);
     const queryStrings = Digit.Hooks.useQueryParams();
     const tenantId = Digit.ULBService.getCurrentTenantId();
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts")
+
     const payload = {
         tenantId : queryStrings?.tenantId || tenantId,
         contractNumber : queryStrings?.workOrderNumber
@@ -73,6 +75,15 @@ const ViewContractDetails = () => {
             {activeLink === "Work_Order" && <ContractDetails fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} data={data} isLoading={isContractLoading}/>}
             {activeLink === "Terms_and_Conditions" && <TermsAndConditions data={data?.applicationData?.additionalDetails?.termsAndConditions}/>}
           </HorizontalNav>
+          <WorkflowActions
+              forcedActionPrefix={"WF_CONTRACT_ACTION"}
+              businessService={businessService}
+              applicationNo={payload?.contractNumber}
+              tenantId={tenantId}
+              applicationDetails={data?.applicationData}
+              url={Digit.Utils.Urls.contracts.update}
+              moduleCode="Contract"
+          />
         </div>
       </React.Fragment>
     );

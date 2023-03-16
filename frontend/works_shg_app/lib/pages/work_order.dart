@@ -38,7 +38,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
 
   afterViewBuild() {
     context.read<SearchMyWorksBloc>().add(
-          MyWorksSearchEvent(),
+          const MyWorksSearchEvent(),
         );
   }
 
@@ -59,6 +59,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                       context, error.toString(), 'ERROR'),
                   loaded: (ContractsModel? contracts) {
                     workOrderList = contracts!.contracts!
+                        .where((e) => e.wfStatus == 'APPROVED')
                         .map((e) => {
                               'cardDetails': {
                                 i18.workOrder.workOrderNo:
@@ -153,6 +154,9 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                             context,
                                             '${contractsModel?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderDeclineSuccess)}',
                                             'SUCCESS');
+                                        context.read<SearchMyWorksBloc>().add(
+                                              const MyWorksSearchEvent(),
+                                            );
                                         hasLoaded = true;
                                       }
                                     },
@@ -179,8 +183,11 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                       if (!hasLoaded) {
                                         Notifiers.getToastMessage(
                                             context,
-                                            '${contractsModel?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}',
+                                            '${contractsModel?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}. ${contractsModel?.contracts?.first.additionalDetails?.attendanceRegisterNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceCreateSuccess)}',
                                             'SUCCESS');
+                                        context.read<SearchMyWorksBloc>().add(
+                                              const MyWorksSearchEvent(),
+                                            );
                                         hasLoaded = true;
                                       }
                                     },

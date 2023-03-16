@@ -116,6 +116,7 @@ class WorkOrder {
 class AttendanceMgmt {
   const AttendanceMgmt();
   String get registerId => 'REGISTER_ID';
+  String get attendanceRegisters => 'ATTENDANCE_REGISTERS';
   String get cboRole => 'CBO_ROLE';
   String get officeInCharge => 'OFFICER_IN_CHARGE';
   String get projectId => 'WORKS_PROJECT_ID';
