@@ -41,18 +41,8 @@ const ViewEstimateComponent = (props) => {
 
     const handleActionBar = (option) => {
         if (option?.name === "CREATE_CONTRACT") {
-            history.push(`/${window.contextPath}/employee/contract/create-contract?tenantId=${tenantId}&estimateNumber=${estimateNumber}`);
+            history.push(`/${window.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&estimateNumber=${estimateNumber}`);
         }
-        // if (option?.name === "VIEW_ESTIMATE") {
-        //     history.push(`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&estimateNumber=${estimates?.[0]?.estimateNumber}`);
-        // }
-        // if (option?.name === "MODIFY_PROJECT") {
-        //     if ((estimates?.length !== 0 && estimates?.[0]?.wfStatus !== "") && (estimates?.length !== 0 && estimates?.[0]?.wfStatus !== "REJECTED")) {
-        //         setToast({ show: true, label: t("COMMON_CANNOT_MODIFY_PROJECT_EST_CREATED"), error: true });
-        //     } else {
-        //         history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
-        //     }
-        // }
     }
 
     if (isLoading) return <Loader />
