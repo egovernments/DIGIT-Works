@@ -201,10 +201,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                               !(att.denrollmentDate! <=
                                                   DateTime.now()
                                                       .millisecondsSinceEpoch))
-                                          .map((e) => {
-                                                "uuid":
-                                                    e.individualId.toString()
-                                              })
+                                          .map((e) =>
+                                              {"id": e.individualId.toString()})
                                           .toList();
                                   context.read<IndividualSearchBloc>().add(
                                         SearchIndividualIdEvent(
@@ -221,7 +219,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                 .map((e) =>
                                                     e.individualId.toString())
                                                 .toList(),
-                                            tenant: widget.tenantId),
+                                            tenant: 'pg.citya'),
                                       );
                                 }
                               }
@@ -236,7 +234,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                             loading: () => Loaders.circularLoader(context),
                             initial: () {
                               existingAttendeeList.clear();
-                              return Container();
+                              return const EmptyImage(align: Alignment.center);
                             },
                             loaded: (IndividualListModel? individualListModel) {
                               userList =
@@ -247,16 +245,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                 "aadhaar": e.identifiers?.first
                                                         .identifierId ??
                                                     e.individualId,
-                                                "individualCode":
-                                                    e.individualId,
-                                                "skill": AppLocalizations.of(
-                                                        context)
-                                                    .translate(
-                                                        '${e.skills!.first.level?.toUpperCase()}_${e.skills!.first.type?.toUpperCase()}'),
                                                 "individualId": e.id,
                                                 "uuid": e.id,
-                                                "individualGaurdianName":
-                                                    e.fatherName,
                                                 "mobileNumber": e.mobileNumber,
                                                 "tenantId": e.tenantId
                                               })
@@ -267,11 +257,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                   var userToAdd = {
                                     "name": user["name"],
                                     "aadhaar": user["aadhaar"],
-                                    "individualCode": user["individualCode"],
-                                    "uuid": user["uuid"],
-                                    "skill": user["skill"],
-                                    "individualGaurdianName":
-                                        user["individualGaurdianName"],
                                     "individualId": user["individualId"],
                                     "mobileNumber": user["mobileNumber"],
                                     "tenantId": user["tenantId"]
@@ -480,8 +465,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
         addToTableList.add({
           "name": user["name"],
           "aadhaar": user["aadhaar"],
-          "individualCode": user["individualCode"],
-          "skill": user["skill"],
           "uuid": user["uuid"],
           "mobileNumber": user["mobileNumber"],
           "tenantId": user["tenantId"]
@@ -505,12 +488,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       "registerId": widget.attendanceRegister?.id.toString(),
                       "individualId": e["uuid"],
                       "tenantId": e["tenantId"],
-                      "additionalDetails": {
-                        "individualName": e["name"],
-                        "individualID": e["individualCode"],
-                        "individualGaurdianName": e["individualGaurdianName"],
-                        "identifierId": e["aadhaar"]
-                      }
+                      "additionalDetails": {"name": e["name"]}
                     })
                 .toList()
             : [];
@@ -530,8 +508,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('${user["name"]}', style: style),
-            Text('${user["individualCode"]}',
-                style: style.apply(fontSizeDelta: -2))
+            Text('${user["aadhaar"]}', style: style.apply(fontSizeDelta: -2))
           ],
         ));
   }
@@ -539,7 +516,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   Future<List<dynamic>> onSearchVendorList(pattern) async {
     searchUser = true;
     context.read<IndividualSearchBloc>().add(
-          SearchIndividualEvent(mobileNumber: pattern, tenant: widget.tenantId),
+          SearchIndividualEvent(mobileNumber: pattern, tenant: 'pg.citya'),
         );
     await Future.delayed(const Duration(seconds: 2));
     setState(() {
@@ -563,13 +540,13 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-              .translate(i18.common.fatherName),
-          apiKey: 'individualGaurdianName',
+              .translate(i18.common.aadhaarNumber),
+          apiKey: 'aadhaarNumber',
         ),
         TableHeader(
             AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-                .translate(i18.attendanceMgmt.skill),
-            apiKey: 'skill'),
+                .translate(i18.common.bankAccountNumber),
+            apiKey: 'bankNumber'),
         TableHeader(
             AppLocalizations.of(scaffoldMessengerKey.currentContext!)
                 .translate(i18.common.action),
@@ -579,10 +556,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   TableDataRow getAttendanceRow(TableDataModel tableDataModel) {
     return TableDataRow([
       TableData(label: tableDataModel.name, apiKey: tableDataModel.name),
+      TableData(label: tableDataModel.aadhaar, apiKey: tableDataModel.aadhaar),
       TableData(
-          label: tableDataModel.individualGaurdianName,
-          apiKey: tableDataModel.individualGaurdianName),
-      TableData(label: tableDataModel.skill, apiKey: tableDataModel.skill),
+          label: tableDataModel.bankNumber, apiKey: tableDataModel.bankNumber),
       TableData(
           widget: DeleteButton(
               onTap: () => onDelete(tableDataModel.uuid.toString())))

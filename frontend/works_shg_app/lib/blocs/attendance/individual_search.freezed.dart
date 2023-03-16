@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
-part of 'muster_roll_estimate.dart';
+part of 'individual_search.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,77 +15,65 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$MusterRollEstimateEvent {
+mixin _$IndividualSearchEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)
-        estimate,
-    required TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)
-        viewEstimate,
+    required TResult Function(String tenant, String mobileNumber) search,
+    required TResult Function(String tenant, List<String>? ids) idSearch,
     required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        estimate,
-    TResult? Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        viewEstimate,
+    TResult? Function(String tenant, String mobileNumber)? search,
+    TResult? Function(String tenant, List<String>? ids)? idSearch,
     TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        estimate,
-    TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        viewEstimate,
+    TResult Function(String tenant, String mobileNumber)? search,
+    TResult Function(String tenant, List<String>? ids)? idSearch,
     TResult Function()? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(EstimateMusterRollEvent value) estimate,
-    required TResult Function(ViewEstimateMusterRollEvent value) viewEstimate,
-    required TResult Function(DisposeEstimateMusterRollEvent value) dispose,
+    required TResult Function(SearchIndividualEvent value) search,
+    required TResult Function(SearchIndividualIdEvent value) idSearch,
+    required TResult Function(DisposeSearchIndividualEvent value) dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(EstimateMusterRollEvent value)? estimate,
-    TResult? Function(ViewEstimateMusterRollEvent value)? viewEstimate,
-    TResult? Function(DisposeEstimateMusterRollEvent value)? dispose,
+    TResult? Function(SearchIndividualEvent value)? search,
+    TResult? Function(SearchIndividualIdEvent value)? idSearch,
+    TResult? Function(DisposeSearchIndividualEvent value)? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(EstimateMusterRollEvent value)? estimate,
-    TResult Function(ViewEstimateMusterRollEvent value)? viewEstimate,
-    TResult Function(DisposeEstimateMusterRollEvent value)? dispose,
+    TResult Function(SearchIndividualEvent value)? search,
+    TResult Function(SearchIndividualIdEvent value)? idSearch,
+    TResult Function(DisposeSearchIndividualEvent value)? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $MusterRollEstimateEventCopyWith<$Res> {
-  factory $MusterRollEstimateEventCopyWith(MusterRollEstimateEvent value,
-          $Res Function(MusterRollEstimateEvent) then) =
-      _$MusterRollEstimateEventCopyWithImpl<$Res, MusterRollEstimateEvent>;
+abstract class $IndividualSearchEventCopyWith<$Res> {
+  factory $IndividualSearchEventCopyWith(IndividualSearchEvent value,
+          $Res Function(IndividualSearchEvent) then) =
+      _$IndividualSearchEventCopyWithImpl<$Res, IndividualSearchEvent>;
 }
 
 /// @nodoc
-class _$MusterRollEstimateEventCopyWithImpl<$Res,
-        $Val extends MusterRollEstimateEvent>
-    implements $MusterRollEstimateEventCopyWith<$Res> {
-  _$MusterRollEstimateEventCopyWithImpl(this._value, this._then);
+class _$IndividualSearchEventCopyWithImpl<$Res,
+        $Val extends IndividualSearchEvent>
+    implements $IndividualSearchEventCopyWith<$Res> {
+  _$IndividualSearchEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -94,47 +82,36 @@ class _$MusterRollEstimateEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$EstimateMusterRollEventCopyWith<$Res> {
-  factory _$$EstimateMusterRollEventCopyWith(_$EstimateMusterRollEvent value,
-          $Res Function(_$EstimateMusterRollEvent) then) =
-      __$$EstimateMusterRollEventCopyWithImpl<$Res>;
+abstract class _$$SearchIndividualEventCopyWith<$Res> {
+  factory _$$SearchIndividualEventCopyWith(_$SearchIndividualEvent value,
+          $Res Function(_$SearchIndividualEvent) then) =
+      __$$SearchIndividualEventCopyWithImpl<$Res>;
   @useResult
-  $Res call({int startDate, int endDate, String registerId, String tenantId});
+  $Res call({String tenant, String mobileNumber});
 }
 
 /// @nodoc
-class __$$EstimateMusterRollEventCopyWithImpl<$Res>
-    extends _$MusterRollEstimateEventCopyWithImpl<$Res,
-        _$EstimateMusterRollEvent>
-    implements _$$EstimateMusterRollEventCopyWith<$Res> {
-  __$$EstimateMusterRollEventCopyWithImpl(_$EstimateMusterRollEvent _value,
-      $Res Function(_$EstimateMusterRollEvent) _then)
+class __$$SearchIndividualEventCopyWithImpl<$Res>
+    extends _$IndividualSearchEventCopyWithImpl<$Res, _$SearchIndividualEvent>
+    implements _$$SearchIndividualEventCopyWith<$Res> {
+  __$$SearchIndividualEventCopyWithImpl(_$SearchIndividualEvent _value,
+      $Res Function(_$SearchIndividualEvent) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? startDate = null,
-    Object? endDate = null,
-    Object? registerId = null,
-    Object? tenantId = null,
+    Object? tenant = null,
+    Object? mobileNumber = null,
   }) {
-    return _then(_$EstimateMusterRollEvent(
-      startDate: null == startDate
-          ? _value.startDate
-          : startDate // ignore: cast_nullable_to_non_nullable
-              as int,
-      endDate: null == endDate
-          ? _value.endDate
-          : endDate // ignore: cast_nullable_to_non_nullable
-              as int,
-      registerId: null == registerId
-          ? _value.registerId
-          : registerId // ignore: cast_nullable_to_non_nullable
+    return _then(_$SearchIndividualEvent(
+      tenant: null == tenant
+          ? _value.tenant
+          : tenant // ignore: cast_nullable_to_non_nullable
               as String,
-      tenantId: null == tenantId
-          ? _value.tenantId
-          : tenantId // ignore: cast_nullable_to_non_nullable
+      mobileNumber: null == mobileNumber
+          ? _value.mobileNumber
+          : mobileNumber // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -142,94 +119,81 @@ class __$$EstimateMusterRollEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$EstimateMusterRollEvent implements EstimateMusterRollEvent {
-  const _$EstimateMusterRollEvent(
-      {required this.startDate,
-      required this.endDate,
-      required this.registerId,
-      required this.tenantId});
+class _$SearchIndividualEvent
+    with DiagnosticableTreeMixin
+    implements SearchIndividualEvent {
+  const _$SearchIndividualEvent(
+      {required this.tenant, required this.mobileNumber});
 
   @override
-  final int startDate;
+  final String tenant;
   @override
-  final int endDate;
-  @override
-  final String registerId;
-  @override
-  final String tenantId;
+  final String mobileNumber;
 
   @override
-  String toString() {
-    return 'MusterRollEstimateEvent.estimate(startDate: $startDate, endDate: $endDate, registerId: $registerId, tenantId: $tenantId)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualSearchEvent.search(tenant: $tenant, mobileNumber: $mobileNumber)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'IndividualSearchEvent.search'))
+      ..add(DiagnosticsProperty('tenant', tenant))
+      ..add(DiagnosticsProperty('mobileNumber', mobileNumber));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$EstimateMusterRollEvent &&
-            (identical(other.startDate, startDate) ||
-                other.startDate == startDate) &&
-            (identical(other.endDate, endDate) || other.endDate == endDate) &&
-            (identical(other.registerId, registerId) ||
-                other.registerId == registerId) &&
-            (identical(other.tenantId, tenantId) ||
-                other.tenantId == tenantId));
+            other is _$SearchIndividualEvent &&
+            (identical(other.tenant, tenant) || other.tenant == tenant) &&
+            (identical(other.mobileNumber, mobileNumber) ||
+                other.mobileNumber == mobileNumber));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, startDate, endDate, registerId, tenantId);
+  int get hashCode => Object.hash(runtimeType, tenant, mobileNumber);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$EstimateMusterRollEventCopyWith<_$EstimateMusterRollEvent> get copyWith =>
-      __$$EstimateMusterRollEventCopyWithImpl<_$EstimateMusterRollEvent>(
+  _$$SearchIndividualEventCopyWith<_$SearchIndividualEvent> get copyWith =>
+      __$$SearchIndividualEventCopyWithImpl<_$SearchIndividualEvent>(
           this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)
-        estimate,
-    required TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)
-        viewEstimate,
+    required TResult Function(String tenant, String mobileNumber) search,
+    required TResult Function(String tenant, List<String>? ids) idSearch,
     required TResult Function() dispose,
   }) {
-    return estimate(startDate, endDate, registerId, tenantId);
+    return search(tenant, mobileNumber);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        estimate,
-    TResult? Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        viewEstimate,
+    TResult? Function(String tenant, String mobileNumber)? search,
+    TResult? Function(String tenant, List<String>? ids)? idSearch,
     TResult? Function()? dispose,
   }) {
-    return estimate?.call(startDate, endDate, registerId, tenantId);
+    return search?.call(tenant, mobileNumber);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        estimate,
-    TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        viewEstimate,
+    TResult Function(String tenant, String mobileNumber)? search,
+    TResult Function(String tenant, List<String>? ids)? idSearch,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
-    if (estimate != null) {
-      return estimate(startDate, endDate, registerId, tenantId);
+    if (search != null) {
+      return search(tenant, mobileNumber);
     }
     return orElse();
   }
@@ -237,193 +201,170 @@ class _$EstimateMusterRollEvent implements EstimateMusterRollEvent {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(EstimateMusterRollEvent value) estimate,
-    required TResult Function(ViewEstimateMusterRollEvent value) viewEstimate,
-    required TResult Function(DisposeEstimateMusterRollEvent value) dispose,
+    required TResult Function(SearchIndividualEvent value) search,
+    required TResult Function(SearchIndividualIdEvent value) idSearch,
+    required TResult Function(DisposeSearchIndividualEvent value) dispose,
   }) {
-    return estimate(this);
+    return search(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(EstimateMusterRollEvent value)? estimate,
-    TResult? Function(ViewEstimateMusterRollEvent value)? viewEstimate,
-    TResult? Function(DisposeEstimateMusterRollEvent value)? dispose,
+    TResult? Function(SearchIndividualEvent value)? search,
+    TResult? Function(SearchIndividualIdEvent value)? idSearch,
+    TResult? Function(DisposeSearchIndividualEvent value)? dispose,
   }) {
-    return estimate?.call(this);
+    return search?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(EstimateMusterRollEvent value)? estimate,
-    TResult Function(ViewEstimateMusterRollEvent value)? viewEstimate,
-    TResult Function(DisposeEstimateMusterRollEvent value)? dispose,
+    TResult Function(SearchIndividualEvent value)? search,
+    TResult Function(SearchIndividualIdEvent value)? idSearch,
+    TResult Function(DisposeSearchIndividualEvent value)? dispose,
     required TResult orElse(),
   }) {
-    if (estimate != null) {
-      return estimate(this);
+    if (search != null) {
+      return search(this);
     }
     return orElse();
   }
 }
 
-abstract class EstimateMusterRollEvent implements MusterRollEstimateEvent {
-  const factory EstimateMusterRollEvent(
-      {required final int startDate,
-      required final int endDate,
-      required final String registerId,
-      required final String tenantId}) = _$EstimateMusterRollEvent;
+abstract class SearchIndividualEvent implements IndividualSearchEvent {
+  const factory SearchIndividualEvent(
+      {required final String tenant,
+      required final String mobileNumber}) = _$SearchIndividualEvent;
 
-  int get startDate;
-  int get endDate;
-  String get registerId;
-  String get tenantId;
+  String get tenant;
+  String get mobileNumber;
   @JsonKey(ignore: true)
-  _$$EstimateMusterRollEventCopyWith<_$EstimateMusterRollEvent> get copyWith =>
+  _$$SearchIndividualEventCopyWith<_$SearchIndividualEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$ViewEstimateMusterRollEventCopyWith<$Res> {
-  factory _$$ViewEstimateMusterRollEventCopyWith(
-          _$ViewEstimateMusterRollEvent value,
-          $Res Function(_$ViewEstimateMusterRollEvent) then) =
-      __$$ViewEstimateMusterRollEventCopyWithImpl<$Res>;
+abstract class _$$SearchIndividualIdEventCopyWith<$Res> {
+  factory _$$SearchIndividualIdEventCopyWith(_$SearchIndividualIdEvent value,
+          $Res Function(_$SearchIndividualIdEvent) then) =
+      __$$SearchIndividualIdEventCopyWithImpl<$Res>;
   @useResult
-  $Res call({int startDate, int endDate, String registerId, String tenantId});
+  $Res call({String tenant, List<String>? ids});
 }
 
 /// @nodoc
-class __$$ViewEstimateMusterRollEventCopyWithImpl<$Res>
-    extends _$MusterRollEstimateEventCopyWithImpl<$Res,
-        _$ViewEstimateMusterRollEvent>
-    implements _$$ViewEstimateMusterRollEventCopyWith<$Res> {
-  __$$ViewEstimateMusterRollEventCopyWithImpl(
-      _$ViewEstimateMusterRollEvent _value,
-      $Res Function(_$ViewEstimateMusterRollEvent) _then)
+class __$$SearchIndividualIdEventCopyWithImpl<$Res>
+    extends _$IndividualSearchEventCopyWithImpl<$Res, _$SearchIndividualIdEvent>
+    implements _$$SearchIndividualIdEventCopyWith<$Res> {
+  __$$SearchIndividualIdEventCopyWithImpl(_$SearchIndividualIdEvent _value,
+      $Res Function(_$SearchIndividualIdEvent) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? startDate = null,
-    Object? endDate = null,
-    Object? registerId = null,
-    Object? tenantId = null,
+    Object? tenant = null,
+    Object? ids = freezed,
   }) {
-    return _then(_$ViewEstimateMusterRollEvent(
-      startDate: null == startDate
-          ? _value.startDate
-          : startDate // ignore: cast_nullable_to_non_nullable
-              as int,
-      endDate: null == endDate
-          ? _value.endDate
-          : endDate // ignore: cast_nullable_to_non_nullable
-              as int,
-      registerId: null == registerId
-          ? _value.registerId
-          : registerId // ignore: cast_nullable_to_non_nullable
+    return _then(_$SearchIndividualIdEvent(
+      tenant: null == tenant
+          ? _value.tenant
+          : tenant // ignore: cast_nullable_to_non_nullable
               as String,
-      tenantId: null == tenantId
-          ? _value.tenantId
-          : tenantId // ignore: cast_nullable_to_non_nullable
-              as String,
+      ids: freezed == ids
+          ? _value._ids
+          : ids // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$ViewEstimateMusterRollEvent implements ViewEstimateMusterRollEvent {
-  const _$ViewEstimateMusterRollEvent(
-      {required this.startDate,
-      required this.endDate,
-      required this.registerId,
-      required this.tenantId});
+class _$SearchIndividualIdEvent
+    with DiagnosticableTreeMixin
+    implements SearchIndividualIdEvent {
+  const _$SearchIndividualIdEvent(
+      {required this.tenant, final List<String>? ids})
+      : _ids = ids;
 
   @override
-  final int startDate;
+  final String tenant;
+  final List<String>? _ids;
   @override
-  final int endDate;
-  @override
-  final String registerId;
-  @override
-  final String tenantId;
+  List<String>? get ids {
+    final value = _ids;
+    if (value == null) return null;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
-  String toString() {
-    return 'MusterRollEstimateEvent.viewEstimate(startDate: $startDate, endDate: $endDate, registerId: $registerId, tenantId: $tenantId)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualSearchEvent.idSearch(tenant: $tenant, ids: $ids)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'IndividualSearchEvent.idSearch'))
+      ..add(DiagnosticsProperty('tenant', tenant))
+      ..add(DiagnosticsProperty('ids', ids));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ViewEstimateMusterRollEvent &&
-            (identical(other.startDate, startDate) ||
-                other.startDate == startDate) &&
-            (identical(other.endDate, endDate) || other.endDate == endDate) &&
-            (identical(other.registerId, registerId) ||
-                other.registerId == registerId) &&
-            (identical(other.tenantId, tenantId) ||
-                other.tenantId == tenantId));
+            other is _$SearchIndividualIdEvent &&
+            (identical(other.tenant, tenant) || other.tenant == tenant) &&
+            const DeepCollectionEquality().equals(other._ids, _ids));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, startDate, endDate, registerId, tenantId);
+  int get hashCode => Object.hash(
+      runtimeType, tenant, const DeepCollectionEquality().hash(_ids));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$ViewEstimateMusterRollEventCopyWith<_$ViewEstimateMusterRollEvent>
-      get copyWith => __$$ViewEstimateMusterRollEventCopyWithImpl<
-          _$ViewEstimateMusterRollEvent>(this, _$identity);
+  _$$SearchIndividualIdEventCopyWith<_$SearchIndividualIdEvent> get copyWith =>
+      __$$SearchIndividualIdEventCopyWithImpl<_$SearchIndividualIdEvent>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)
-        estimate,
-    required TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)
-        viewEstimate,
+    required TResult Function(String tenant, String mobileNumber) search,
+    required TResult Function(String tenant, List<String>? ids) idSearch,
     required TResult Function() dispose,
   }) {
-    return viewEstimate(startDate, endDate, registerId, tenantId);
+    return idSearch(tenant, ids);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        estimate,
-    TResult? Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        viewEstimate,
+    TResult? Function(String tenant, String mobileNumber)? search,
+    TResult? Function(String tenant, List<String>? ids)? idSearch,
     TResult? Function()? dispose,
   }) {
-    return viewEstimate?.call(startDate, endDate, registerId, tenantId);
+    return idSearch?.call(tenant, ids);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        estimate,
-    TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        viewEstimate,
+    TResult Function(String tenant, String mobileNumber)? search,
+    TResult Function(String tenant, List<String>? ids)? idSearch,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
-    if (viewEstimate != null) {
-      return viewEstimate(startDate, endDate, registerId, tenantId);
+    if (idSearch != null) {
+      return idSearch(tenant, ids);
     }
     return orElse();
   }
@@ -431,89 +372,93 @@ class _$ViewEstimateMusterRollEvent implements ViewEstimateMusterRollEvent {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(EstimateMusterRollEvent value) estimate,
-    required TResult Function(ViewEstimateMusterRollEvent value) viewEstimate,
-    required TResult Function(DisposeEstimateMusterRollEvent value) dispose,
+    required TResult Function(SearchIndividualEvent value) search,
+    required TResult Function(SearchIndividualIdEvent value) idSearch,
+    required TResult Function(DisposeSearchIndividualEvent value) dispose,
   }) {
-    return viewEstimate(this);
+    return idSearch(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(EstimateMusterRollEvent value)? estimate,
-    TResult? Function(ViewEstimateMusterRollEvent value)? viewEstimate,
-    TResult? Function(DisposeEstimateMusterRollEvent value)? dispose,
+    TResult? Function(SearchIndividualEvent value)? search,
+    TResult? Function(SearchIndividualIdEvent value)? idSearch,
+    TResult? Function(DisposeSearchIndividualEvent value)? dispose,
   }) {
-    return viewEstimate?.call(this);
+    return idSearch?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(EstimateMusterRollEvent value)? estimate,
-    TResult Function(ViewEstimateMusterRollEvent value)? viewEstimate,
-    TResult Function(DisposeEstimateMusterRollEvent value)? dispose,
+    TResult Function(SearchIndividualEvent value)? search,
+    TResult Function(SearchIndividualIdEvent value)? idSearch,
+    TResult Function(DisposeSearchIndividualEvent value)? dispose,
     required TResult orElse(),
   }) {
-    if (viewEstimate != null) {
-      return viewEstimate(this);
+    if (idSearch != null) {
+      return idSearch(this);
     }
     return orElse();
   }
 }
 
-abstract class ViewEstimateMusterRollEvent implements MusterRollEstimateEvent {
-  const factory ViewEstimateMusterRollEvent(
-      {required final int startDate,
-      required final int endDate,
-      required final String registerId,
-      required final String tenantId}) = _$ViewEstimateMusterRollEvent;
+abstract class SearchIndividualIdEvent implements IndividualSearchEvent {
+  const factory SearchIndividualIdEvent(
+      {required final String tenant,
+      final List<String>? ids}) = _$SearchIndividualIdEvent;
 
-  int get startDate;
-  int get endDate;
-  String get registerId;
-  String get tenantId;
+  String get tenant;
+  List<String>? get ids;
   @JsonKey(ignore: true)
-  _$$ViewEstimateMusterRollEventCopyWith<_$ViewEstimateMusterRollEvent>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$SearchIndividualIdEventCopyWith<_$SearchIndividualIdEvent> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$DisposeEstimateMusterRollEventCopyWith<$Res> {
-  factory _$$DisposeEstimateMusterRollEventCopyWith(
-          _$DisposeEstimateMusterRollEvent value,
-          $Res Function(_$DisposeEstimateMusterRollEvent) then) =
-      __$$DisposeEstimateMusterRollEventCopyWithImpl<$Res>;
+abstract class _$$DisposeSearchIndividualEventCopyWith<$Res> {
+  factory _$$DisposeSearchIndividualEventCopyWith(
+          _$DisposeSearchIndividualEvent value,
+          $Res Function(_$DisposeSearchIndividualEvent) then) =
+      __$$DisposeSearchIndividualEventCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$DisposeEstimateMusterRollEventCopyWithImpl<$Res>
-    extends _$MusterRollEstimateEventCopyWithImpl<$Res,
-        _$DisposeEstimateMusterRollEvent>
-    implements _$$DisposeEstimateMusterRollEventCopyWith<$Res> {
-  __$$DisposeEstimateMusterRollEventCopyWithImpl(
-      _$DisposeEstimateMusterRollEvent _value,
-      $Res Function(_$DisposeEstimateMusterRollEvent) _then)
+class __$$DisposeSearchIndividualEventCopyWithImpl<$Res>
+    extends _$IndividualSearchEventCopyWithImpl<$Res,
+        _$DisposeSearchIndividualEvent>
+    implements _$$DisposeSearchIndividualEventCopyWith<$Res> {
+  __$$DisposeSearchIndividualEventCopyWithImpl(
+      _$DisposeSearchIndividualEvent _value,
+      $Res Function(_$DisposeSearchIndividualEvent) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$DisposeEstimateMusterRollEvent
-    implements DisposeEstimateMusterRollEvent {
-  const _$DisposeEstimateMusterRollEvent();
+class _$DisposeSearchIndividualEvent
+    with DiagnosticableTreeMixin
+    implements DisposeSearchIndividualEvent {
+  const _$DisposeSearchIndividualEvent();
 
   @override
-  String toString() {
-    return 'MusterRollEstimateEvent.dispose()';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualSearchEvent.dispose()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(DiagnosticsProperty('type', 'IndividualSearchEvent.dispose'));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DisposeEstimateMusterRollEvent);
+            other is _$DisposeSearchIndividualEvent);
   }
 
   @override
@@ -522,12 +467,8 @@ class _$DisposeEstimateMusterRollEvent
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)
-        estimate,
-    required TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)
-        viewEstimate,
+    required TResult Function(String tenant, String mobileNumber) search,
+    required TResult Function(String tenant, List<String>? ids) idSearch,
     required TResult Function() dispose,
   }) {
     return dispose();
@@ -536,12 +477,8 @@ class _$DisposeEstimateMusterRollEvent
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        estimate,
-    TResult? Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        viewEstimate,
+    TResult? Function(String tenant, String mobileNumber)? search,
+    TResult? Function(String tenant, List<String>? ids)? idSearch,
     TResult? Function()? dispose,
   }) {
     return dispose?.call();
@@ -550,12 +487,8 @@ class _$DisposeEstimateMusterRollEvent
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        estimate,
-    TResult Function(
-            int startDate, int endDate, String registerId, String tenantId)?
-        viewEstimate,
+    TResult Function(String tenant, String mobileNumber)? search,
+    TResult Function(String tenant, List<String>? ids)? idSearch,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
@@ -568,9 +501,9 @@ class _$DisposeEstimateMusterRollEvent
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(EstimateMusterRollEvent value) estimate,
-    required TResult Function(ViewEstimateMusterRollEvent value) viewEstimate,
-    required TResult Function(DisposeEstimateMusterRollEvent value) dispose,
+    required TResult Function(SearchIndividualEvent value) search,
+    required TResult Function(SearchIndividualIdEvent value) idSearch,
+    required TResult Function(DisposeSearchIndividualEvent value) dispose,
   }) {
     return dispose(this);
   }
@@ -578,9 +511,9 @@ class _$DisposeEstimateMusterRollEvent
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(EstimateMusterRollEvent value)? estimate,
-    TResult? Function(ViewEstimateMusterRollEvent value)? viewEstimate,
-    TResult? Function(DisposeEstimateMusterRollEvent value)? dispose,
+    TResult? Function(SearchIndividualEvent value)? search,
+    TResult? Function(SearchIndividualIdEvent value)? idSearch,
+    TResult? Function(DisposeSearchIndividualEvent value)? dispose,
   }) {
     return dispose?.call(this);
   }
@@ -588,9 +521,9 @@ class _$DisposeEstimateMusterRollEvent
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(EstimateMusterRollEvent value)? estimate,
-    TResult Function(ViewEstimateMusterRollEvent value)? viewEstimate,
-    TResult Function(DisposeEstimateMusterRollEvent value)? dispose,
+    TResult Function(SearchIndividualEvent value)? search,
+    TResult Function(SearchIndividualIdEvent value)? idSearch,
+    TResult Function(DisposeSearchIndividualEvent value)? dispose,
     required TResult orElse(),
   }) {
     if (dispose != null) {
@@ -600,20 +533,17 @@ class _$DisposeEstimateMusterRollEvent
   }
 }
 
-abstract class DisposeEstimateMusterRollEvent
-    implements MusterRollEstimateEvent {
-  const factory DisposeEstimateMusterRollEvent() =
-      _$DisposeEstimateMusterRollEvent;
+abstract class DisposeSearchIndividualEvent implements IndividualSearchEvent {
+  const factory DisposeSearchIndividualEvent() = _$DisposeSearchIndividualEvent;
 }
 
 /// @nodoc
-mixin _$MusterRollEstimateState {
+mixin _$IndividualSearchState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(EstimateMusterRollsModel? musterRollsModel)
-        loaded,
+    required TResult Function(IndividualListModel? individualListModel) loaded,
     required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -621,7 +551,7 @@ mixin _$MusterRollEstimateState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(IndividualListModel? individualListModel)? loaded,
     TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -629,7 +559,7 @@ mixin _$MusterRollEstimateState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(IndividualListModel? individualListModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
@@ -662,17 +592,17 @@ mixin _$MusterRollEstimateState {
 }
 
 /// @nodoc
-abstract class $MusterRollEstimateStateCopyWith<$Res> {
-  factory $MusterRollEstimateStateCopyWith(MusterRollEstimateState value,
-          $Res Function(MusterRollEstimateState) then) =
-      _$MusterRollEstimateStateCopyWithImpl<$Res, MusterRollEstimateState>;
+abstract class $IndividualSearchStateCopyWith<$Res> {
+  factory $IndividualSearchStateCopyWith(IndividualSearchState value,
+          $Res Function(IndividualSearchState) then) =
+      _$IndividualSearchStateCopyWithImpl<$Res, IndividualSearchState>;
 }
 
 /// @nodoc
-class _$MusterRollEstimateStateCopyWithImpl<$Res,
-        $Val extends MusterRollEstimateState>
-    implements $MusterRollEstimateStateCopyWith<$Res> {
-  _$MusterRollEstimateStateCopyWithImpl(this._value, this._then);
+class _$IndividualSearchStateCopyWithImpl<$Res,
+        $Val extends IndividualSearchState>
+    implements $IndividualSearchStateCopyWith<$Res> {
+  _$IndividualSearchStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -689,7 +619,7 @@ abstract class _$$_InitialCopyWith<$Res> {
 
 /// @nodoc
 class __$$_InitialCopyWithImpl<$Res>
-    extends _$MusterRollEstimateStateCopyWithImpl<$Res, _$_Initial>
+    extends _$IndividualSearchStateCopyWithImpl<$Res, _$_Initial>
     implements _$$_InitialCopyWith<$Res> {
   __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
       : super(_value, _then);
@@ -697,12 +627,19 @@ class __$$_InitialCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
+class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   const _$_Initial() : super._();
 
   @override
-  String toString() {
-    return 'MusterRollEstimateState.initial()';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualSearchState.initial()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(DiagnosticsProperty('type', 'IndividualSearchState.initial'));
   }
 
   @override
@@ -719,8 +656,7 @@ class _$_Initial extends _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(EstimateMusterRollsModel? musterRollsModel)
-        loaded,
+    required TResult Function(IndividualListModel? individualListModel) loaded,
     required TResult Function(String? error) error,
   }) {
     return initial();
@@ -731,7 +667,7 @@ class _$_Initial extends _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(IndividualListModel? individualListModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return initial?.call();
@@ -742,7 +678,7 @@ class _$_Initial extends _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(IndividualListModel? individualListModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -790,7 +726,7 @@ class _$_Initial extends _Initial {
   }
 }
 
-abstract class _Initial extends MusterRollEstimateState {
+abstract class _Initial extends IndividualSearchState {
   const factory _Initial() = _$_Initial;
   const _Initial._() : super._();
 }
@@ -804,7 +740,7 @@ abstract class _$$_LoadingCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadingCopyWithImpl<$Res>
-    extends _$MusterRollEstimateStateCopyWithImpl<$Res, _$_Loading>
+    extends _$IndividualSearchStateCopyWithImpl<$Res, _$_Loading>
     implements _$$_LoadingCopyWith<$Res> {
   __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
       : super(_value, _then);
@@ -812,12 +748,19 @@ class __$$_LoadingCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loading extends _Loading {
+class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   const _$_Loading() : super._();
 
   @override
-  String toString() {
-    return 'MusterRollEstimateState.loading()';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualSearchState.loading()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(DiagnosticsProperty('type', 'IndividualSearchState.loading'));
   }
 
   @override
@@ -834,8 +777,7 @@ class _$_Loading extends _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(EstimateMusterRollsModel? musterRollsModel)
-        loaded,
+    required TResult Function(IndividualListModel? individualListModel) loaded,
     required TResult Function(String? error) error,
   }) {
     return loading();
@@ -846,7 +788,7 @@ class _$_Loading extends _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(IndividualListModel? individualListModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return loading?.call();
@@ -857,7 +799,7 @@ class _$_Loading extends _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(IndividualListModel? individualListModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -905,7 +847,7 @@ class _$_Loading extends _Loading {
   }
 }
 
-abstract class _Loading extends MusterRollEstimateState {
+abstract class _Loading extends IndividualSearchState {
   const factory _Loading() = _$_Loading;
   const _Loading._() : super._();
 }
@@ -915,14 +857,12 @@ abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({EstimateMusterRollsModel? musterRollsModel});
-
-  $EstimateMusterRollsModelCopyWith<$Res>? get musterRollsModel;
+  $Res call({IndividualListModel? individualListModel});
 }
 
 /// @nodoc
 class __$$_LoadedCopyWithImpl<$Res>
-    extends _$MusterRollEstimateStateCopyWithImpl<$Res, _$_Loaded>
+    extends _$IndividualSearchStateCopyWithImpl<$Res, _$_Loaded>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
@@ -930,41 +870,36 @@ class __$$_LoadedCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? musterRollsModel = freezed,
+    Object? individualListModel = freezed,
   }) {
     return _then(_$_Loaded(
-      freezed == musterRollsModel
-          ? _value.musterRollsModel
-          : musterRollsModel // ignore: cast_nullable_to_non_nullable
-              as EstimateMusterRollsModel?,
+      freezed == individualListModel
+          ? _value.individualListModel
+          : individualListModel // ignore: cast_nullable_to_non_nullable
+              as IndividualListModel?,
     ));
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $EstimateMusterRollsModelCopyWith<$Res>? get musterRollsModel {
-    if (_value.musterRollsModel == null) {
-      return null;
-    }
-
-    return $EstimateMusterRollsModelCopyWith<$Res>(_value.musterRollsModel!,
-        (value) {
-      return _then(_value.copyWith(musterRollsModel: value));
-    });
   }
 }
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded {
-  const _$_Loaded(this.musterRollsModel) : super._();
+class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
+  const _$_Loaded(this.individualListModel) : super._();
 
   @override
-  final EstimateMusterRollsModel? musterRollsModel;
+  final IndividualListModel? individualListModel;
 
   @override
-  String toString() {
-    return 'MusterRollEstimateState.loaded(musterRollsModel: $musterRollsModel)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualSearchState.loaded(individualListModel: $individualListModel)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'IndividualSearchState.loaded'))
+      ..add(DiagnosticsProperty('individualListModel', individualListModel));
   }
 
   @override
@@ -972,12 +907,12 @@ class _$_Loaded extends _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Loaded &&
-            (identical(other.musterRollsModel, musterRollsModel) ||
-                other.musterRollsModel == musterRollsModel));
+            (identical(other.individualListModel, individualListModel) ||
+                other.individualListModel == individualListModel));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, musterRollsModel);
+  int get hashCode => Object.hash(runtimeType, individualListModel);
 
   @JsonKey(ignore: true)
   @override
@@ -990,11 +925,10 @@ class _$_Loaded extends _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(EstimateMusterRollsModel? musterRollsModel)
-        loaded,
+    required TResult Function(IndividualListModel? individualListModel) loaded,
     required TResult Function(String? error) error,
   }) {
-    return loaded(musterRollsModel);
+    return loaded(individualListModel);
   }
 
   @override
@@ -1002,10 +936,10 @@ class _$_Loaded extends _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(IndividualListModel? individualListModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
-    return loaded?.call(musterRollsModel);
+    return loaded?.call(individualListModel);
   }
 
   @override
@@ -1013,12 +947,12 @@ class _$_Loaded extends _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(IndividualListModel? individualListModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(musterRollsModel);
+      return loaded(individualListModel);
     }
     return orElse();
   }
@@ -1061,12 +995,12 @@ class _$_Loaded extends _Loaded {
   }
 }
 
-abstract class _Loaded extends MusterRollEstimateState {
-  const factory _Loaded(final EstimateMusterRollsModel? musterRollsModel) =
+abstract class _Loaded extends IndividualSearchState {
+  const factory _Loaded(final IndividualListModel? individualListModel) =
       _$_Loaded;
   const _Loaded._() : super._();
 
-  EstimateMusterRollsModel? get musterRollsModel;
+  IndividualListModel? get individualListModel;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -1082,7 +1016,7 @@ abstract class _$$_ErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$_ErrorCopyWithImpl<$Res>
-    extends _$MusterRollEstimateStateCopyWithImpl<$Res, _$_Error>
+    extends _$IndividualSearchStateCopyWithImpl<$Res, _$_Error>
     implements _$$_ErrorCopyWith<$Res> {
   __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
       : super(_value, _then);
@@ -1103,15 +1037,23 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error {
+class _$_Error extends _Error with DiagnosticableTreeMixin {
   const _$_Error(this.error) : super._();
 
   @override
   final String? error;
 
   @override
-  String toString() {
-    return 'MusterRollEstimateState.error(error: $error)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualSearchState.error(error: $error)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'IndividualSearchState.error'))
+      ..add(DiagnosticsProperty('error', error));
   }
 
   @override
@@ -1136,8 +1078,7 @@ class _$_Error extends _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(EstimateMusterRollsModel? musterRollsModel)
-        loaded,
+    required TResult Function(IndividualListModel? individualListModel) loaded,
     required TResult Function(String? error) error,
   }) {
     return error(this.error);
@@ -1148,7 +1089,7 @@ class _$_Error extends _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(IndividualListModel? individualListModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return error?.call(this.error);
@@ -1159,7 +1100,7 @@ class _$_Error extends _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(IndividualListModel? individualListModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -1207,7 +1148,7 @@ class _$_Error extends _Error {
   }
 }
 
-abstract class _Error extends MusterRollEstimateState {
+abstract class _Error extends IndividualSearchState {
   const factory _Error(final String? error) = _$_Error;
   const _Error._() : super._();
 

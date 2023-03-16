@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:works_shg_app/blocs/attendance/attendance_user_search.dart';
+import 'package:works_shg_app/blocs/attendance/individual_search.dart';
 import 'package:works_shg_app/blocs/attendance/search_projects/search_projects.dart';
 import 'package:works_shg_app/blocs/attendance/skills/skills_bloc.dart';
 import 'package:works_shg_app/blocs/auth/otp_bloc.dart';
@@ -121,6 +122,9 @@ class MainApplication extends StatelessWidget {
         BlocProvider(create: (context) => SearchMyWorksBloc()),
         BlocProvider(create: (context) => AcceptWorkOrderBloc()),
         BlocProvider(create: (context) => DeclineWorkOrderBloc()),
+        BlocProvider(
+            create: (context) =>
+                IndividualSearchBloc(const IndividualSearchState.initial())),
         BlocProvider(
             create: (context) => SkillsBloc(const SkillsBlocState.initial(),
                 AttendanceMDMSRepository(client.init()))),

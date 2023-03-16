@@ -36,8 +36,8 @@ class _SideBar extends State<SideBar> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext buildContext) {
+    final theme = Theme.of(buildContext);
 
     return ScrollableContent(
       footer: const PoweredByDigit(),
@@ -46,7 +46,7 @@ class _SideBar extends State<SideBar> {
             builder: (context, userState) {
           return !userState.loading && userState.userSearchModel != null
               ? SizedBox(
-                  height: MediaQuery.of(context).size.height / 3,
+                  height: MediaQuery.of(buildContext).size.height / 3,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -105,15 +105,9 @@ class _SideBar extends State<SideBar> {
                                 data.value.split('_').last),
                           ).load();
                         },
-                        rowItems: digitRowCardItems != null
-                            ? digitRowCardItems!
-                                .map((e) =>
-                                    DigitRowCardModel.fromJson(e.toJson()))
-                                .toList()
-                            : state.digitRowCardItems
-                                ?.map((e) =>
-                                    DigitRowCardModel.fromJson(e.toJson()))
-                                .toList() as List<DigitRowCardModel>,
+                        rowItems: state.digitRowCardItems
+                            ?.map((e) => DigitRowCardModel.fromJson(e.toJson()))
+                            .toList() as List<DigitRowCardModel>,
                         width: 85)
                     : const Text('');
               },
