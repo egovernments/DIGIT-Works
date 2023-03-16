@@ -45,136 +45,152 @@ class _WorkOrderPage extends State<WorkOrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      drawer: DrawerWrapper(const Drawer(
-          child: SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
-      body: SingleChildScrollView(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Back(
-          backLabel: AppLocalizations.of(context).translate(i18.common.back),
-        ),
-        BlocListener<SearchMyWorksBloc, SearchMyWorksState>(
+        appBar: AppBar(),
+        drawer: DrawerWrapper(const Drawer(
+            child:
+                SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
+        body: SingleChildScrollView(
+          child: BlocListener<SearchMyWorksBloc, SearchMyWorksState>(
             listener: (context, state) {
-          state.maybeWhen(
-              orElse: () => false,
-              loading: () => Loaders.circularLoader(context),
-              error: (String? error) =>
-                  Notifiers.getToastMessage(context, error.toString(), 'ERROR'),
-              loaded: (ContractsModel? contracts) {
-                workOrderList = contracts!.contracts!
-                    .map((e) => {
-                          'cardDetails': {
-                            i18.workOrder.workOrderNo: e.contractNumber ?? 'NA',
-                            i18.workOrder.roleOfCBO:
-                                AppLocalizations.of(context)
-                                    .translate(e.executingAuthority ?? 'NA'),
-                            i18.attendanceMgmt.engineerInCharge:
-                                e.additionalDetails?.officerInChargeId ?? 'NA',
-                            i18.workOrder.contractIssueDate: e.issueDate != null
-                                ? DateFormats.timeStampToDate(e.issueDate,
-                                    format: "dd/MM/yyyy")
-                                : 'NA',
-                            i18.workOrder.dueDate: e.endDate != null
-                                ? DateFormats.timeStampToDate(e.endDate,
-                                    format: "dd/MM/yyyy")
-                                : 'NA',
-                            i18.workOrder.contractAmount:
-                                '₹ ${e.totalContractedAmount ?? 0}',
-                            i18.common.status: e.wfStatus,
-                          },
-                          'payload': e.toMap()
-                        })
-                    .toList();
-              });
-        }, child: BlocBuilder<SearchMyWorksBloc, SearchMyWorksState>(
+              state.maybeWhen(
+                  orElse: () => false,
+                  loading: () => Loaders.circularLoader(context),
+                  error: (String? error) => Notifiers.getToastMessage(
+                      context, error.toString(), 'ERROR'),
+                  loaded: (ContractsModel? contracts) {
+                    workOrderList = contracts!.contracts!
+                        .map((e) => {
+                              'cardDetails': {
+                                i18.workOrder.workOrderNo:
+                                    e.contractNumber ?? 'NA',
+                                i18.workOrder.roleOfCBO:
+                                    AppLocalizations.of(context).translate(
+                                        e.executingAuthority ?? 'NA'),
+                                i18.attendanceMgmt.engineerInCharge:
+                                    e.additionalDetails?.officerInChargeId ??
+                                        'NA',
+                                i18.workOrder.contractIssueDate: e.issueDate !=
+                                        null
+                                    ? DateFormats.timeStampToDate(e.issueDate,
+                                        format: "dd/MM/yyyy")
+                                    : 'NA',
+                                i18.workOrder.dueDate: e.endDate != null
+                                    ? DateFormats.timeStampToDate(e.endDate,
+                                        format: "dd/MM/yyyy")
+                                    : 'NA',
+                                i18.workOrder.contractAmount:
+                                    '₹ ${e.totalContractedAmount ?? 0}',
+                                i18.common.status: e.wfStatus,
+                              },
+                              'payload': e.toMap()
+                            })
+                        .toList();
+                  });
+            },
+            child: BlocBuilder<SearchMyWorksBloc, SearchMyWorksState>(
                 builder: (context, searchState) {
-          return searchState.maybeWhen(
-              orElse: () => Container(),
-              loading: () => Loaders.circularLoader(context),
-              loaded: (ContractsModel? contractsModel) => Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            '${AppLocalizations.of(context).translate(i18.home.workOrder)} (${workOrderList.length})',
-                            style: Theme.of(context).textTheme.displayMedium,
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        workOrderList.isNotEmpty
-                            ? WorkDetailsCard(
-                                workOrderList,
-                                isWorkOrderInbox: true,
-                                elevatedButtonLabel:
-                                    AppLocalizations.of(context)
-                                        .translate(i18.common.accept),
-                                outlinedButtonLabel:
-                                    AppLocalizations.of(context)
-                                        .translate(i18.common.decline),
-                              )
-                            : EmptyImage(
-                                label: AppLocalizations.of(context).translate(
-                                    i18.workOrder.noWorkOrderAssigned),
-                                align: Alignment.center,
-                              ),
-                      ]));
-        })),
-        BlocBuilder<DeclineWorkOrderBloc, DeclineWorkOrderState>(
-            builder: (context, state) {
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            state.maybeWhen(
-                initial: () => Container(),
-                loading: () => hasLoaded = false,
-                error: (String? error) {
-                  if (!hasLoaded) {
-                    Notifiers.getToastMessage(
-                        context, error.toString(), 'ERROR');
-                    hasLoaded = true;
-                  }
-                },
-                loaded: (ContractsModel? contractsModel) {
-                  if (!hasLoaded) {
-                    Notifiers.getToastMessage(
-                        context,
-                        '${contractsModel?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderDeclineSuccess)}',
-                        'SUCCESS');
-                    hasLoaded = true;
-                  }
-                },
-                orElse: () => Container());
-          });
-          return Container();
-        }),
-        BlocBuilder<AcceptWorkOrderBloc, AcceptWorkOrderState>(
-            builder: (context, state) {
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            state.maybeWhen(
-                initial: () => Container(),
-                loading: () => hasLoaded = false,
-                error: (String? error) {
-                  if (!hasLoaded) {
-                    Notifiers.getToastMessage(
-                        context, error.toString(), 'ERROR');
-                    hasLoaded = true;
-                  }
-                },
-                loaded: (ContractsModel? contractsModel) {
-                  if (!hasLoaded) {
-                    Notifiers.getToastMessage(
-                        context,
-                        '${contractsModel?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}',
-                        'SUCCESS');
-                    hasLoaded = true;
-                  }
-                },
-                orElse: () => Container());
-          });
-          return Container();
-        }),
-      ])),
-    );
+              return searchState.maybeWhen(
+                  orElse: () => Container(),
+                  loading: () => Loaders.circularLoader(context),
+                  loaded: (ContractsModel? contractsModel) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Back(
+                              backLabel: AppLocalizations.of(context)
+                                  .translate(i18.common.back),
+                            ),
+                            Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      '${AppLocalizations.of(context).translate(i18.home.workOrder)} (${workOrderList.length})',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium,
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  workOrderList.isNotEmpty
+                                      ? WorkDetailsCard(
+                                          workOrderList,
+                                          isWorkOrderInbox: true,
+                                          elevatedButtonLabel:
+                                              AppLocalizations.of(context)
+                                                  .translate(i18.common.accept),
+                                          outlinedButtonLabel:
+                                              AppLocalizations.of(context)
+                                                  .translate(
+                                                      i18.common.decline),
+                                        )
+                                      : EmptyImage(
+                                          label: AppLocalizations.of(context)
+                                              .translate(i18.workOrder
+                                                  .noWorkOrderAssigned),
+                                          align: Alignment.center,
+                                        ),
+                                ]),
+                            BlocBuilder<DeclineWorkOrderBloc,
+                                    DeclineWorkOrderState>(
+                                builder: (context, state) {
+                              SchedulerBinding.instance
+                                  .addPostFrameCallback((_) {
+                                state.maybeWhen(
+                                    initial: () => Container(),
+                                    loading: () => hasLoaded = false,
+                                    error: (String? error) {
+                                      if (!hasLoaded) {
+                                        Notifiers.getToastMessage(
+                                            context, error.toString(), 'ERROR');
+                                        hasLoaded = true;
+                                      }
+                                    },
+                                    loaded: (ContractsModel? contractsModel) {
+                                      if (!hasLoaded) {
+                                        Notifiers.getToastMessage(
+                                            context,
+                                            '${contractsModel?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderDeclineSuccess)}',
+                                            'SUCCESS');
+                                        hasLoaded = true;
+                                      }
+                                    },
+                                    orElse: () => Container());
+                              });
+                              return Container();
+                            }),
+                            BlocBuilder<AcceptWorkOrderBloc,
+                                    AcceptWorkOrderState>(
+                                builder: (context, state) {
+                              SchedulerBinding.instance
+                                  .addPostFrameCallback((_) {
+                                state.maybeWhen(
+                                    initial: () => Container(),
+                                    loading: () => hasLoaded = false,
+                                    error: (String? error) {
+                                      if (!hasLoaded) {
+                                        Notifiers.getToastMessage(
+                                            context, error.toString(), 'ERROR');
+                                        hasLoaded = true;
+                                      }
+                                    },
+                                    loaded: (ContractsModel? contractsModel) {
+                                      if (!hasLoaded) {
+                                        Notifiers.getToastMessage(
+                                            context,
+                                            '${contractsModel?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}',
+                                            'SUCCESS');
+                                        hasLoaded = true;
+                                      }
+                                    },
+                                    orElse: () => Container());
+                              });
+                              return Container();
+                            }),
+                          ]));
+            }),
+          ),
+        ));
   }
 }

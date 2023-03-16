@@ -23,12 +23,12 @@ module.exports = function (app) {
     "/vehicle",
     "/vendor",
     "/property-services",
+    "/contract-service",
     "/fsm-calculator/v1/billingSlab/_search",
     "/muster-roll",
     "/pms/project",
     "/inbox/v2/_search",
     "/individual/v1/_search",
-    "/contract-service",
     "/org-services"
   ].forEach((location) =>
     app.use(location, createProxy)

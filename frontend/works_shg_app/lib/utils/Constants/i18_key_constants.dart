@@ -79,6 +79,7 @@ class Common {
   String get camera => 'CAMERA';
   String get fileManager => 'FILE_MANAGER';
   String get chooseAnAction => 'CHOOSE_AN_ACTION';
+  String get fatherName => 'FATHER_NAME';
 }
 
 class Home {
@@ -115,6 +116,10 @@ class WorkOrder {
 class AttendanceMgmt {
   const AttendanceMgmt();
   String get registerId => 'REGISTER_ID';
+  String get cboRole => 'CBO_ROLE';
+  String get officeInCharge => 'OFFICER_IN_CHARGE';
+  String get projectId => 'WORKS_PROJECT_ID';
+  String get projectDesc => 'WORKS_PROJECT_DESCRIPTION';
   String get musterRolls => 'ATM_MUSTER_ROLLS';
   String get enrollWageSeeker => 'WORKS_ENROLL_WAGE_SEEKER';
   String get updateAttendance => 'UPDATE_ATTENDANCE';
