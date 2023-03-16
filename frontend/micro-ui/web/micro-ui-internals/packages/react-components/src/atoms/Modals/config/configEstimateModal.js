@@ -6,12 +6,12 @@ const configEstimateModal = (
     t,
     action,
     approvers,
-    businessService
+    businessService,
+    moduleCode
 ) => {
     const {action:actionString} = action
-
     const configMap = {
-        "estimate-approval-5": {
+        "mukta-estimate": {
             "default":{
                 comments:{
                     isMandatory:false,
@@ -81,9 +81,93 @@ const configEstimateModal = (
                     isMandatory: false,
                     show: true
                 }
+            }
+        },
+        "contract-approval-mukta": {
+            "default":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
             },
-
-
+            "REJECT": {
+                comments: {
+                    isMandatory: true,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            },
+            "SEND_BACK": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            },
+            "VERIFY_AND_FORWARD": {
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "SEND_BACK_TO_ORIGINATOR": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            },
+            "APPROVE": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            },
         }
     }
 //field can have (comments,assignee,upload)
@@ -111,8 +195,8 @@ const configEstimateModal = (
 
     return {
         label: {
-            heading: `WF_MODAL_HEADER_ESTIMATE_${action.action}`,
-            submit: `WF_MODAL_SUBMIT_ESTIMATE_${action.action}`,
+            heading: `WF_MODAL_HEADER_${moduleCode.toUpperCase()}_${action.action}`,
+            submit: `WF_MODAL_SUBMIT_${moduleCode.toUpperCase()}_${action.action}`,
             cancel: "WF_MODAL_CANCEL",
         },
         form: [

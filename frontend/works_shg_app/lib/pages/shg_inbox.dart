@@ -19,6 +19,7 @@ import '../blocs/muster_rolls/muster_roll_estimate.dart';
 import '../blocs/muster_rolls/search_individual_muster_roll.dart';
 import '../models/attendance/attendee_model.dart';
 import '../models/mdms/attendance_hours.dart';
+import '../models/muster_rolls/estimate_muster_roll_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
 import '../models/muster_rolls/muster_workflow_model.dart';
 import '../models/skills/skills.dart';
@@ -262,7 +263,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                             loading: () => Loaders
                                                                 .circularLoader(
                                                                     context),
-                                                            loaded: (MusterRollsModel?
+                                                            loaded: (EstimateMusterRollsModel?
                                                                 viewMusterRollsModel) {
                                                               List<AttendeesTrackList>
                                                                   attendeeList =
@@ -286,6 +287,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 .individualId,
                                                                         individualId: e
                                                                             .individualId,
+                                                                        individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName,
                                                                         id: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? e.id ?? '',
                                                                         skill: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
                                                                             '',
@@ -854,7 +856,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
     if (searchController.text.isNotEmpty) {
       setState(() {
         newList.retainWhere((e) =>
-            e.individualId!.toLowerCase().contains(searchController.text));
+            e.name!.toLowerCase().contains(searchController.text.toLowerCase()));
       });
     } else {
       onSubmit(registerId.toString());

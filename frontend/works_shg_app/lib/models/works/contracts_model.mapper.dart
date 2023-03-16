@@ -585,7 +585,7 @@ class ContractProcessInstanceMapper
     extends MapperBase<ContractProcessInstance> {
   static MapperContainer container = MapperContainer(
     mappers: {ContractProcessInstanceMapper()},
-  );
+  )..linkAll({ContractStateMapper.container});
 
   @override
   ContractProcessInstanceMapperElement createElement(
@@ -609,12 +609,27 @@ class ContractProcessInstanceMapperElement
   ContractProcessInstance decode(dynamic v) =>
       checkedType(v, (Map<String, dynamic> map) => fromMap(map));
   ContractProcessInstance fromMap(Map<String, dynamic> map) =>
-      ContractProcessInstance();
+      ContractProcessInstance(
+          action: container.$getOpt(map, 'action'),
+          tenantId: container.$getOpt(map, 'tenantId'),
+          state: container.$getOpt(map, 'state'),
+          id: container.$getOpt(map, 'id'),
+          businessId: container.$getOpt(map, 'businessId'),
+          businessService: container.$getOpt(map, 'businessService'),
+          moduleName: container.$getOpt(map, 'moduleName'));
 
   @override
   Function get encoder => encode;
   dynamic encode(ContractProcessInstance v) => toMap(v);
-  Map<String, dynamic> toMap(ContractProcessInstance c) => {};
+  Map<String, dynamic> toMap(ContractProcessInstance c) => {
+        'action': container.$enc(c.action, 'action'),
+        'tenantId': container.$enc(c.tenantId, 'tenantId'),
+        'state': container.$enc(c.state, 'state'),
+        'id': container.$enc(c.id, 'id'),
+        'businessId': container.$enc(c.businessId, 'businessId'),
+        'businessService': container.$enc(c.businessService, 'businessService'),
+        'moduleName': container.$enc(c.moduleName, 'moduleName')
+      };
 
   @override
   String stringify(ContractProcessInstance self) =>
@@ -677,7 +692,15 @@ abstract class ContractProcessInstanceCopyWith<
   ContractProcessInstanceCopyWith<$R2, $In, $Out2>
       chain<$R2, $Out2 extends ContractProcessInstance>(
           Then<ContractProcessInstance, $Out2> t, Then<$Out2, $R2> t2);
-  $R call();
+  ContractStateCopyWith<$R, ContractState, ContractState>? get state;
+  $R call(
+      {String? action,
+      String? tenantId,
+      ContractState? state,
+      String? id,
+      String? businessId,
+      String? businessService,
+      String? moduleName});
 }
 
 class _ContractProcessInstanceCopyWithImpl<$R,
@@ -693,7 +716,25 @@ class _ContractProcessInstanceCopyWithImpl<$R,
           _ContractProcessInstanceCopyWithImpl($value, t, t2);
 
   @override
-  $R call() => $then(ContractProcessInstance());
+  ContractStateCopyWith<$R, ContractState, ContractState>? get state =>
+      $value.state?.copyWith.chain($identity, (v) => call(state: v));
+  @override
+  $R call(
+          {Object? action = $none,
+          Object? tenantId = $none,
+          Object? state = $none,
+          Object? id = $none,
+          Object? businessId = $none,
+          Object? businessService = $none,
+          Object? moduleName = $none}) =>
+      $then(ContractProcessInstance(
+          action: or(action, $value.action),
+          tenantId: or(tenantId, $value.tenantId),
+          state: or(state, $value.state),
+          id: or(id, $value.id),
+          businessId: or(businessId, $value.businessId),
+          businessService: or(businessService, $value.businessService),
+          moduleName: or(moduleName, $value.moduleName)));
 }
 
 class ContractAdditionalDetailsMapper
@@ -726,6 +767,8 @@ class ContractAdditionalDetailsMapperElement
   ContractAdditionalDetails fromMap(Map<String, dynamic> map) =>
       ContractAdditionalDetails(
           officerInChargeId: container.$getOpt(map, 'officerInChargeId'),
+          attendanceRegisterNumber:
+              container.$getOpt(map, 'attendanceRegisterNumber'),
           projectId: container.$getOpt(map, 'projectId'),
           projectType: container.$getOpt(map, 'projectType'),
           orgName: container.$getOpt(map, 'orgName'),
@@ -738,6 +781,8 @@ class ContractAdditionalDetailsMapperElement
   Map<String, dynamic> toMap(ContractAdditionalDetails c) => {
         'officerInChargeId':
             container.$enc(c.officerInChargeId, 'officerInChargeId'),
+        'attendanceRegisterNumber': container.$enc(
+            c.attendanceRegisterNumber, 'attendanceRegisterNumber'),
         'projectId': container.$enc(c.projectId, 'projectId'),
         'projectType': container.$enc(c.projectType, 'projectType'),
         'orgName': container.$enc(c.orgName, 'orgName'),
@@ -747,10 +792,11 @@ class ContractAdditionalDetailsMapperElement
 
   @override
   String stringify(ContractAdditionalDetails self) =>
-      'ContractAdditionalDetails(officerInChargeId: ${container.asString(self.officerInChargeId)}, orgName: ${container.asString(self.orgName)}, projectId: ${container.asString(self.projectId)}, projectName: ${container.asString(self.projectName)}, projectType: ${container.asString(self.projectType)}, ward: ${container.asString(self.ward)})';
+      'ContractAdditionalDetails(officerInChargeId: ${container.asString(self.officerInChargeId)}, attendanceRegisterNumber: ${container.asString(self.attendanceRegisterNumber)}, orgName: ${container.asString(self.orgName)}, projectId: ${container.asString(self.projectId)}, projectName: ${container.asString(self.projectName)}, projectType: ${container.asString(self.projectType)}, ward: ${container.asString(self.ward)})';
   @override
   int hash(ContractAdditionalDetails self) =>
       container.hash(self.officerInChargeId) ^
+      container.hash(self.attendanceRegisterNumber) ^
       container.hash(self.orgName) ^
       container.hash(self.projectId) ^
       container.hash(self.projectName) ^
@@ -760,6 +806,8 @@ class ContractAdditionalDetailsMapperElement
   bool equals(
           ContractAdditionalDetails self, ContractAdditionalDetails other) =>
       container.isEqual(self.officerInChargeId, other.officerInChargeId) &&
+      container.isEqual(
+          self.attendanceRegisterNumber, other.attendanceRegisterNumber) &&
       container.isEqual(self.orgName, other.orgName) &&
       container.isEqual(self.projectId, other.projectId) &&
       container.isEqual(self.projectName, other.projectName) &&
@@ -807,6 +855,7 @@ abstract class ContractAdditionalDetailsCopyWith<
           Then<ContractAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2);
   $R call(
       {String? officerInChargeId,
+      String? attendanceRegisterNumber,
       String? projectId,
       String? projectType,
       String? orgName,
@@ -829,6 +878,7 @@ class _ContractAdditionalDetailsCopyWithImpl<$R,
   @override
   $R call(
           {Object? officerInChargeId = $none,
+          Object? attendanceRegisterNumber = $none,
           Object? projectId = $none,
           Object? projectType = $none,
           Object? orgName = $none,
@@ -836,6 +886,8 @@ class _ContractAdditionalDetailsCopyWithImpl<$R,
           Object? ward = $none}) =>
       $then(ContractAdditionalDetails(
           officerInChargeId: or(officerInChargeId, $value.officerInChargeId),
+          attendanceRegisterNumber:
+              or(attendanceRegisterNumber, $value.attendanceRegisterNumber),
           projectId: or(projectId, $value.projectId),
           projectType: or(projectType, $value.projectType),
           orgName: or(orgName, $value.orgName),

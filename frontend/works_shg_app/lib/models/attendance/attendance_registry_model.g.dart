@@ -68,6 +68,11 @@ _$_AttendanceRegisterAdditionalDetails
         _$_AttendanceRegisterAdditionalDetails(
           contractId: json['contractId'] as String?,
           orgName: json['orgName'] as String?,
+          officerInCharge: json['officerInCharge'] as String?,
+          executingAuthority: json['executingAuthority'] as String?,
+          projectId: json['projectId'] as String?,
+          projectName: json['projectName'] as String?,
+          projectType: json['projectType'] as String?,
         );
 
 Map<String, dynamic> _$$_AttendanceRegisterAdditionalDetailsToJson(
@@ -75,6 +80,11 @@ Map<String, dynamic> _$$_AttendanceRegisterAdditionalDetailsToJson(
     <String, dynamic>{
       'contractId': instance.contractId,
       'orgName': instance.orgName,
+      'officerInCharge': instance.officerInCharge,
+      'executingAuthority': instance.executingAuthority,
+      'projectId': instance.projectId,
+      'projectName': instance.projectName,
+      'projectType': instance.projectType,
     };
 
 _$_RegisterAuditDetails _$$_RegisterAuditDetailsFromJson(
@@ -119,6 +129,10 @@ _$_AttendeesEntries _$$_AttendeesEntriesFromJson(Map<String, dynamic> json) =>
       individualId: json['individualId'] as String?,
       enrollmentDate: json['enrollmentDate'] as int?,
       denrollmentDate: json['denrollmentDate'] as int?,
+      additionalDetails: json['additionalDetails'] == null
+          ? null
+          : AttendeesAdditionalDetails.fromJson(
+              json['additionalDetails'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_AttendeesEntriesToJson(_$_AttendeesEntries instance) =>
@@ -129,4 +143,25 @@ Map<String, dynamic> _$$_AttendeesEntriesToJson(_$_AttendeesEntries instance) =>
       'individualId': instance.individualId,
       'enrollmentDate': instance.enrollmentDate,
       'denrollmentDate': instance.denrollmentDate,
+      'additionalDetails': instance.additionalDetails,
+    };
+
+_$_AttendeesAdditionalDetails _$$_AttendeesAdditionalDetailsFromJson(
+        Map<String, dynamic> json) =>
+    _$_AttendeesAdditionalDetails(
+      individualName: json['individualName'] as String?,
+      individualGaurdianName: json['individualGaurdianName'] as String?,
+      individualID: json['individualID'] as String?,
+      identifierId: json['identifierId'] as String?,
+      bankNumber: json['bankNumber'] as String?,
+    );
+
+Map<String, dynamic> _$$_AttendeesAdditionalDetailsToJson(
+        _$_AttendeesAdditionalDetails instance) =>
+    <String, dynamic>{
+      'individualName': instance.individualName,
+      'individualGaurdianName': instance.individualGaurdianName,
+      'individualID': instance.individualID,
+      'identifierId': instance.identifierId,
+      'bankNumber': instance.bankNumber,
     };

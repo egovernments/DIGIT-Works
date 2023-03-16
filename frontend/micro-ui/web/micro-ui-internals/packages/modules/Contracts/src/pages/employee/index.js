@@ -5,7 +5,8 @@ import { Switch, useLocation } from "react-router-dom";
 import CreateContract from "./CreateContract";
 import Inbox from "./ContractsInbox/Inbox.js"
 import SearchContracts from "./SearchContract";
-import ViewContract from "./ViewContract";
+//import ViewContract from "./ViewContract";
+import ViewContractDetails from "./ViewContractDetails";
 
 const ContractsBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -36,9 +37,9 @@ const ContractsBreadCrumbs = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
-      path: `/${window.contextPath}/employee/contracts/view-contract`,
+      path: `/${window.contextPath}/employee/contracts/contract-details`,
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACTS")}` : t("WORKS_CONTRACTS"),
-      show: location.pathname.includes("/contracts/view-contract") ? true : false,
+      show: location.pathname.includes("/contracts/contract-details") ? true : false,
       isBack: fromScreen && true,
     },
   ];
@@ -88,9 +89,9 @@ const App = ({ path }) => {
           <div style={getBreadCrumbStyles(window.location.href)}>
             <ContractsBreadCrumbs location={location} />
           </div>
-          <PrivateRoute path={`${path}/create-contract`} component={() => <CreateWorkOrderComponent parentRoute={path}/>} />
+          <PrivateRoute path={`${path}/contract-details`} component={() => <ViewContractDetails />} />
           <PrivateRoute path={`${path}/search-contract`} component={() => <SearchContracts />} />
-          <PrivateRoute path={`${path}/view-contract`} component={() => <ViewContract />} />
+          <PrivateRoute path={`${path}/create-contract`} component={() => <CreateWorkOrderComponent parentRoute={path}/>} />
           <PrivateRoute path={`${path}/create-contract-response`} component={() => <CreateWOResponseComponent />} />
           <PrivateRoute
             path={`${path}/inbox`}

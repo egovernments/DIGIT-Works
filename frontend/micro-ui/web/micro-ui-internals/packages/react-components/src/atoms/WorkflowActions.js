@@ -7,7 +7,7 @@ import ActionModal from "./Modals";
 import { Loader } from "./Loader";
 import Toast from "./Toast";
 
-const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged }) => {
+const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode }) => {
   
    //for testing from url these 2 lines of code are kept here
   const { estimateNumber } = Digit.Hooks.useQueryParams();
@@ -50,6 +50,14 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   const closeMenu = () => {
     setDisplayMenu(false);
   }
+  
+ 
+  setTimeout(() => {
+    setShowToast(null);
+  }, 10000);
+    
+  
+  
   Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu);
 
   if (actions?.length > 0) {
@@ -81,21 +89,24 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       onError:(error,variables)=>{
         setIsEnableLoader(false)
         //show error toast acc to selectAction
-        setShowToast({ error: true, label: `WF_UPDATE_ERROR_${selectAction.action}`, isDleteBtn:true })
-        //console.log(selectAction);
+        setShowToast({ error: true, label: `WF_UPDATE_ERROR_${moduleCode.toUpperCase()}_${selectAction.action}`, isDleteBtn:true })
+        
+
+        
         
       },
       onSuccess:(data,variables) => {
-        setStateChanged(`WF_UPDATE_SUCCESS_${selectAction.action}`)
         setIsEnableLoader(false)
         //show success toast acc to selectAction
-        setShowToast({ label: `WF_UPDATE_SUCCESS_${selectAction.action}` })
+        setShowToast({ label: `WF_UPDATE_SUCCESS_${moduleCode.toUpperCase()}_${selectAction.action}` })
+        
 
         // to refetch updated workflowData and re-render timeline and actions
         workflowDetails.revalidate()
 
-        //console.log(selectAction);
         
+        //COMMENTING THIS FOR NOW BECAUSE DUE TO THIS TOAST IS NOT SHOWING SINCE THE WHOLE PARENT COMP RE-RENDERS
+        // setStateChanged(`WF_UPDATE_SUCCESS_${selectAction.action}`)
       }
     })
   }
@@ -144,6 +155,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         submitAction={submitAction}
         businessService={businessService}
         applicationDetails={applicationDetails}
+        moduleCode={moduleCode}
       />}
       {showToast && <Toast
         error={showToast?.error}

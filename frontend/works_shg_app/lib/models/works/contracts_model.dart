@@ -92,11 +92,21 @@ class ContractProcessInstance with ContractProcessInstanceMappable {
   String? action;
   String? moduleName;
   ContractState? state;
+
+  ContractProcessInstance(
+      {this.action,
+      this.tenantId,
+      this.state,
+      this.id,
+      this.businessId,
+      this.businessService,
+      this.moduleName});
 }
 
 @MappableClass()
 class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
   String? officerInChargeId;
+  String? attendanceRegisterNumber;
   String? orgName;
   String? projectId;
   String? projectName;
@@ -105,6 +115,7 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
 
   ContractAdditionalDetails(
       {this.officerInChargeId,
+      this.attendanceRegisterNumber,
       this.projectId,
       this.projectType,
       this.orgName,
