@@ -22,7 +22,6 @@ import javax.validation.Valid;
 public class BankAccountSearchRequest {
 
     @JsonProperty("RequestInfo")
-    @Valid
     private RequestInfo requestInfo = null;
 
     @JsonProperty("bankAccountDetails")

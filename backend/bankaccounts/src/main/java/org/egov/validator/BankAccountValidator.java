@@ -22,7 +22,7 @@ public class BankAccountValidator {
         log.info("BankAccountValidator::validateSearchBankAccount");
         BankAccountSearchCriteria searchCriteria = searchRequest.getBankAccountDetails();
         RequestInfo requestInfo = searchRequest.getRequestInfo();
-        if (searchCriteria == null || requestInfo == null) {
+        if (searchCriteria == null) {
             throw new CustomException("BANK_ACCOUNTS_SEARCH_CRITERIA_REQUEST", "Bank accounts search criteria request is mandatory");
         }
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {

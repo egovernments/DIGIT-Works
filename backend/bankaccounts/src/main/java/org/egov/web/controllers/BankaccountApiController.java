@@ -55,10 +55,11 @@ public class BankaccountApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<BankAccountResponse> bankaccountV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody BankAccountSearchRequest body) {
+        //TODO: remove it -start
         log.info("search request : {}",body);
         log.info("search criteria : {}",body.getBankAccountDetails());
         log.info("search request info : {}",body.getRequestInfo());
-        log.info("search request user info : {}",body.getRequestInfo().getUserInfo());
+        //TODO: remove it -end
         List<BankAccount> bankAccounts = bankAccountService.searchBankAccount(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         Pagination pagination = bankAccountService.countAllBankAccounts(body);
