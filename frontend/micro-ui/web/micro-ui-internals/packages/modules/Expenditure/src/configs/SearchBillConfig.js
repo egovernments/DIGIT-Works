@@ -38,23 +38,23 @@ export const SearchBillConfig = {
                             createdTo: ""
                         },
                         fields : [
-                            {
-                                label: "COMMON_WARD",
-                                type: "locationdropdown",
-                                isMandatory: false,
-                                disable: false,
-                                populators: {
-                                    name: "ward",
-                                    type: "ward",
-                                    optionsKey: "name",
-                                    defaultText: "COMMON_SELECT_WARD",
-                                    selectedText: "COMMON_SELECTED",
-                                    allowMultiSelect: false,
-                                    optionsCustomStyle : {
-                                        top : "2.3rem"
-                                    }
-                                }
-                            },
+                            // {
+                            //     label: "COMMON_WARD",
+                            //     type: "locationdropdown",
+                            //     isMandatory: false,
+                            //     disable: false,
+                            //     populators: {
+                            //         name: "ward",
+                            //         type: "ward",
+                            //         optionsKey: "name",
+                            //         defaultText: "COMMON_SELECT_WARD",
+                            //         selectedText: "COMMON_SELECTED",
+                            //         allowMultiSelect: false,
+                            //         optionsCustomStyle : {
+                            //             top : "2.3rem"
+                            //         }
+                            //     }
+                            // },
                             {
                                 label: "WORKS_BILL_TYPE",
                                 type: "dropdown",
@@ -157,7 +157,7 @@ export const SearchBillConfig = {
                             {
                                 label: "ES_COMMON_LOCATION",
                                 jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
-                                additionalCustomization:false 
+                                additionalCustomization:true 
                             },
                             {
                                 label: "ES_COMMON_CBO_NAME",

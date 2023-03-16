@@ -7,10 +7,10 @@ const getAttendanceTableData = (data, skills, t) => {
       let tableRow = {}
       tableRow.id = item.id
       tableRow.sno = index + 1
-      tableRow.registerId = "ID-1239-1312" || data?.registerId || t("NA")
+      tableRow.registerId = item?.additionalDetails?.userId || t("NA")
       tableRow.nameOfIndividual = item?.additionalDetails?.userName || t("NA")
       tableRow.guardianName = item?.additionalDetails?.fatherName  || t("NA")
-      tableRow.skill = t("COMMON_MASTERS_SKILLS_HIGHLY_SKILLED.FITTER") || t("NA")
+      tableRow.skill = t(`COMMON_MASTERS_SKILLS_${item?.additionalDetails?.skillCode}`) || t("NA")
       tableRow.actualWorkingDays = item?.actualTotalAttendance
       tableRow.modifiedWorkingDays = item?.modifiedTotalAttendance ? item?.modifiedTotalAttendance : item?.actualTotalAttendance
       tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount || 0
@@ -19,7 +19,7 @@ const getAttendanceTableData = (data, skills, t) => {
         accountNo : item?.additionalDetails?.bankDetails || t("NA"),
         ifscCode : null
       }
-      tableRow.paymentStatus = 'Payment Completed'
+      tableRow.paymentStatus = 'Payment Pending'
       //tableRow.aadharNumber = item?.additionalDetails?.aadharNumber || t("NA")
       tableData[item.id] = tableRow
     });
@@ -50,19 +50,21 @@ const transformViewDataToApplicationDetails = async (t, data, skills) => {
   
   const musterRoll = data.musterRolls[0]
   const musterTableData = getAttendanceTableData(musterRoll, skills, t)
+  const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+  const location = t(`TENANT_TENANTS_${headerLocale}`)
 
   const BillDetails = {
     title: " ",
     asSectionHeader: true,
     values: [
-      { title: "WORKS_BILL_NUMBER", value: musterRoll?.musterRollNumber || t("NA")},
-      { title: "Work order number", value: "WO/2022-23/000052" || t("NA")},
-      { title: "WORKS_PROJECT_ID", value: "PJ/2022-23/000051" || t("NA")},
-      { title: "PROJECTS_DESCRIPTION", value: "RWHS Scheme at Ward 2"|| t("NA") },
-      { title: "ES_COMMON_LOCATION", value: "MG Road, Ward 1"|| t("NA") },
-      { title: "Bill Classification", value: "To Approve"|| t("NA") },
-      { title: "Bill Date", value: "12/03/2023"|| t("NA") },
-      { title: "ES_COMMON_STATUS", value: "Approved"|| t("NA") }
+      { title: "WORKS_BILL_NUMBER", value: musterRoll?.musterRollNumber || t("ES_COMMON_NA")},
+      { title: "Work order number", value: musterRoll?.additionalDetails?.contractId || t("ES_COMMON_NA")},
+      { title: "WORKS_PROJECT_ID", value: musterRoll?.additionalDetails?.projectId || t("ES_COMMON_NA")},
+      { title: "PROJECTS_DESCRIPTION", value: musterRoll?.additionalDetails?.projectName|| t("ES_COMMON_NA") },
+      { title: "ES_COMMON_LOCATION", value: location || t("ES_COMMON_NA") },
+      { title: "Bill Classification", value: "Work Order"|| t("ES_COMMON_NA") },
+      { title: "Bill Date", value: Digit.DateUtils.ConvertTimestampToDate(musterRoll?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy') || t("ES_COMMON_NANA") },
+      { title: "ES_COMMON_STATUS", value: `BILL_STATUS_${musterRoll?.musterRollStatus}`|| t("ES_COMMON_NA") }
     ]
   }
 
@@ -70,8 +72,8 @@ const transformViewDataToApplicationDetails = async (t, data, skills) => {
     title: "Beneficiary Details",
     asSectionHeader: true,
     values: [
-        { title: "Muster roll ID", value: musterRoll?.musterRollNumber || t("NA")},
-        { title: "Muster roll period", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("NA") }
+        { title: "Muster roll ID", value: musterRoll?.musterRollNumber || t("ES_COMMON_NA")},
+        { title: "Muster roll period", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("ES_COMMON_NA") }
     ],
     additionalDetails : {
       table : {

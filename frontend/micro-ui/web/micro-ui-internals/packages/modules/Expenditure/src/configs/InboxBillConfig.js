@@ -126,8 +126,8 @@ export const InboxBillConfig = {
                         minReqFields: 0,
                         secondaryLabel: '',
                         defaultValues : {
-                            musterRolldateRange:"",
-                            musterRollStatus: ""
+                            assignee: "",
+                            state: ""
                         },
                         fields : [
                             {
@@ -157,34 +157,34 @@ export const InboxBillConfig = {
                                     }
                                 }
                             },
-                            {
-                                label: "COMMON_WARD",
-                                type: "locationdropdown",
-                                isMandatory: false,
-                                disable: false,
-                                populators: {
-                                    name: "ward",
-                                    type: "ward",
-                                    optionsKey: "name",
-                                    defaultText: "COMMON_SELECT_WARD",
-                                    selectedText: "COMMON_SELECTED",
-                                    allowMultiSelect: true
-                                }
-                            },
-                            {
-                                label: "COMMON_LOCALITY",
-                                type: "locationdropdown",
-                                isMandatory: false,
-                                disable: false,
-                                populators: {
-                                    name: "locality",
-                                    type: "locality",
-                                    optionsKey: "name",
-                                    defaultText: "COMMON_SELECT_LOCALITY",
-                                    selectedText: "COMMON_SELECTED",
-                                    allowMultiSelect: true
-                                }
-                            },
+                            // {
+                            //     label: "COMMON_WARD",
+                            //     type: "locationdropdown",
+                            //     isMandatory: false,
+                            //     disable: false,
+                            //     populators: {
+                            //         name: "ward",
+                            //         type: "ward",
+                            //         optionsKey: "name",
+                            //         defaultText: "COMMON_SELECT_WARD",
+                            //         selectedText: "COMMON_SELECTED",
+                            //         allowMultiSelect: true
+                            //     }
+                            // },
+                            // {
+                            //     label: "COMMON_LOCALITY",
+                            //     type: "locationdropdown",
+                            //     isMandatory: false,
+                            //     disable: false,
+                            //     populators: {
+                            //         name: "locality",
+                            //         type: "locality",
+                            //         optionsKey: "name",
+                            //         defaultText: "COMMON_SELECT_LOCALITY",
+                            //         selectedText: "COMMON_SELECTED",
+                            //         allowMultiSelect: true
+                            //     }
+                            // },
                             {
                                 label: "COMMON_WORKFLOW_STATES",
                                 type: "workflowstatesfilter",

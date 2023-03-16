@@ -520,6 +520,10 @@ export const UICustomizations = {
       if(column.label === "CORE_COMMON_STATUS") {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
       }
+      if(column.label === "ES_COMMON_LOCATION") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+        return value ? t(`TENANT_TENANTS_${headerLocale}`) : t("ES_COMMON_NA")
+      }
     },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {

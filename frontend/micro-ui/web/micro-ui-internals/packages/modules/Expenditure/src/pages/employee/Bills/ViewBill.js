@@ -6,9 +6,7 @@ import ApplicationDetails from '../../../../../templates/ApplicationDetails';
 
 const ViewBill = () => {
   const { t } = useTranslation();
-  //const { tenantId, billNumber } = Digit.Hooks.useQueryParams();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const billNumber = "MR/2022-23/03/15/000547"
+  const { tenantId, billNumber } = Digit.Hooks.useQueryParams();
 
   const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.bills.useViewBill(tenantId, {}, { musterRollNumber: billNumber })
   console.log('@@Data', data);
