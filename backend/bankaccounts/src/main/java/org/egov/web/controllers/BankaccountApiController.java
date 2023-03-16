@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.BankAccountService;
 import org.egov.util.ResponseInfoFactory;
@@ -25,6 +26,7 @@ import java.util.List;
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-03-14T17:30:53.139+05:30[Asia/Kolkata]")
 @Controller
 @RequestMapping("/bankaccount/v1")
+@Slf4j
 public class BankaccountApiController {
 
     private final ObjectMapper objectMapper;
@@ -53,6 +55,10 @@ public class BankaccountApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<BankAccountResponse> bankaccountV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody BankAccountSearchRequest body) {
+        log.info("search request : {}",body);
+        log.info("search criteria : {}",body.getBankAccountDetails());
+        log.info("search request info : {}",body.getRequestInfo());
+        log.info("search request user info : {}",body.getRequestInfo().getUserInfo());
         List<BankAccount> bankAccounts = bankAccountService.searchBankAccount(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         Pagination pagination = bankAccountService.countAllBankAccounts(body);
