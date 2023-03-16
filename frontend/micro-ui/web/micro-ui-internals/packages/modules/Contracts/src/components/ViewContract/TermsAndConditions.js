@@ -49,7 +49,7 @@ const TermsAndConditions = (props) => {
           <td style={getStyles(1)}>{i}</td>
           <td style={getStyles(2)} ><div>
 
-          <p>There is description</p>
+          <p>{props.data[1].description}</p>
           {errors && errors?.[formFieldName]?.[row.key]?.description?.type === "pattern" && (
               <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
           {errors && errors?.[formFieldName]?.[row.key]?.description?.type === "required" && (

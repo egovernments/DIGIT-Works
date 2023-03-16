@@ -7,28 +7,27 @@ const ContractDetails = (props) => {
 
     const { t } = useTranslation()
 
-    const { tenantId, contractNumber } = Digit.Hooks.useQueryParams();
+    //const { tenantId, contractNumber } = Digit.Hooks.useQueryParams();
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract-approval-mukta")
 
-    const { isLoading: isContractLoading,data } = Digit.Hooks.contracts.useViewContractDetails(
-        props.tenantId,{tenantId: props.tenantId, contractNumber: props.contractNumber}, {})
-    console.log("DATAAA :", data);
+    // const { isLoading: isContractLoading, data } = Digit.Hooks.contracts.useViewContractDetails(
+    //     props.tenantId,{tenantId: props.tenantId, contractNumber: props.contractNumber}, {})
 
-    if (isContractLoading) return <Loader />
+    if (props.isLoading) return <Loader />
 
     return (
         <div>
             <ApplicationDetails
-                applicationDetails={props.applicationDetails}
-                isLoading={isContractLoading}
-                applicationData={props.applicationDetails?.applicationData}
+                applicationDetails={props.data?.applicationDetails}
+                isLoading={props.isLoading}
+                applicationData={props.data?.applicationData}
                 moduleCode="contracts"
                 showTimeLine={true}
                 timelineStatusPrefix={"WF_CONTRACT_STATUS_"}
                 businessService={businessService}
                 // forcedActionPrefix={"ACTION_"}
-                tenantId={tenantId}
-                applicationNo={contractNumber}
+                tenantId={props.tenantId}
+                applicationNo={props.contractNumber}
                 statusAttribute={"state"}
             />
             {/* <WorkflowActions

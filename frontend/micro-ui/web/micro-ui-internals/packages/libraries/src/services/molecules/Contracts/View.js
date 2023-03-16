@@ -92,43 +92,24 @@ const dummyData = {
 
 const transformViewDataToApplicationDetails = async (t, data, workflowDetails, tenantId) => {
     if(data?.contracts?.length === 0) return;
-    
-    const contract = data.contracts[0]
-    const headerDetails = {
-        title: " ",
-        asSectionHeader: true,
-        values: [
-            { title: "WORK_ORDER_NUMBER", value: contract?.contractNumber || t("NA")},
-            { title: "WORKS_PROJECT_ID", value: contract?.additionalDetails.projectId || t("NA")},
-            { title: "WORKS_DATE_PROPOSAL", value: Digit.DateUtils.ConvertTimestampToDate(contract?.auditDetails?.createdTime, 'dd/MM/yyyy') || t("NA")},
-            { title: "WORKS_PROJECT_NAME", value: 'Wall Painting in the Ward 1' || t("NA")},
-            { title: "PROJECT_PROJECT_DESC", value: 'Wall Painting in the Ward 1' || t("NA")}
-        ],
-        additionalDetails: {}
-    }
+    const contract = data.contracts?.[0]
+    console.log("DATA :", contract);
     const contractDetails = {
-        title: "WORK_ORDER",
-        asSectionHeader: true,
+        title: " ",
+        asSectionHeader: false,
         values: [
-            { title: "NAME_OF_CBO", value: 'Maa Shakti SHG' || t("NA")},
-            { title: "WORKS_ORGN_ID", value: '123' || t("NA")},
-            { title: "ROLE_OF_CBO", value: 'Implementation Agency' || t("NA")},
-            { title: "WORKS_OFFICER_INCHARGE_DES", value: 'Junior Engineer' || t("NA")},
-            { title: "Name of officer In-charge", value: 'S Srinivas' || t("NA")},
-            { title: "WORKS_CONT_PERIOD", value: contract?.completionPeriod || t("NA")},
-            { title: "Work order amount", value: contract?.lineItems?.amountBreakup?.amount || t("NA")},
-        ]
-    }
-    const TermsAndConditions = {
-        title: "TERMS_AND_CONDITIONS",
-        asSectionHeader: true,
-        values: [
-            { title: "Description", value: 'desc' || t("NA")},
+            { title: "COMMON_NAME_OF_CBO", value: contract?.additionalDetails?.cboName || t("NA")},
+            { title: "WORKS_ORGN_ID", value: contract?.orgId || t("NA")},
+            { title: "COMMON_ROLE_OF_CBO", value: 'Implementation Agency' || t("NA")},
+            { title: "COMMON_DESGN_OF_OFFICER_IN_CHARGE", value: 'Junior Engineer' || t("NA")},
+            { title: "COMMON_NAME_OF_OFFICER_IN_CHARGE", value: 'S Srinivas' || t("NA")},
+            { title: "COMMON_PROJECT_COMP_PERIOD_DAYS", value: contract?.completionPeriod || t("NA")},
+            { title: "COMMON_WORK_ORDER_AMT_RS", value: contract?.totalContractedAmount || t("NA")},
         ]
     }
 
 
-    const applicationDetails = { applicationDetails: [headerDetails, contractDetails, TermsAndConditions] };
+    const applicationDetails = { applicationDetails: [contractDetails] };
 
   return {
     applicationDetails,

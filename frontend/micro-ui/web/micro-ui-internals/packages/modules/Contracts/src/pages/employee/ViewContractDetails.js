@@ -1,7 +1,7 @@
 import React, { useState, useEffect }from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
-import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav } from '@egovernments/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader } from '@egovernments/digit-ui-react-components';
 import ApplicationDetails from '../../../../templates/ApplicationDetails';
 
 
@@ -35,8 +35,7 @@ const ViewContractDetails = () => {
     const ContractDetails = Digit.ComponentRegistryService.getComponent("ContractDetails");
     const TermsAndConditions = Digit.ComponentRegistryService.getComponent("TermsAndConditions");
 
-    const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
-
+    const {isContractLoading, data, isError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
 
     //fetching project data
     const { isLoading: isProjectLoading, data: project } = Digit.Hooks.project.useProjectSearch({
@@ -53,7 +52,6 @@ const ViewContractDetails = () => {
             enabled: !!(data?.applicationData?.additionalDetails?.projectId) 
         }
     })
-    console.log("projectt :", project);
 
   
     useEffect(() => {
@@ -83,6 +81,9 @@ const ViewContractDetails = () => {
 
     console.log("workflow :", workflowDetails);
     */
+
+    if(isProjectLoading || isContractLoading) 
+         return <Loader/>;
    
     return (
       <React.Fragment>
@@ -90,25 +91,10 @@ const ViewContractDetails = () => {
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
             <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_VIEW_WORK_ORDER")}</Header>
           </div>
-          <ApplicationDetails
-            applicationDetails={data?.applicationDetails}
-            isLoading={isLoading}
-            applicationData={data?.applicationData}
-            moduleCode="contracts"
-            isDataLoading={false}
-            workflowDetails={{}}
-            businessService={"contracts"}
-            showTimeLine={true}
-            mutate={() => {}}
-            tenantId={tenantId}
-            showToast={showToast}
-            setShowToast={setShowToast}
-            applicationNo={payload?.contractNumber}
-          />
           <ViewDetailsCard cardState={cardState} t={t} />
           <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
-            {activeLink === "Work_Order" && <ContractDetails fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} />}
-            {activeLink === "Terms_and_Conditions" && <TermsAndConditions />}
+            {activeLink === "Work_Order" && <ContractDetails fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} data={data} isLoading={isContractLoading}/>}
+            {activeLink === "Terms_and_Conditions" && <TermsAndConditions data={data?.applicationData?.additionalDetails?.termsAndConditions}/>}
           </HorizontalNav>
         </div>
       </React.Fragment>
