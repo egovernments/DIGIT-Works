@@ -8,9 +8,9 @@ const ViewBill = () => {
   const { t } = useTranslation();
   //const { tenantId, billNumber } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const billNumber = 123
+  const billNumber = "MR/2022-23/03/15/000547"
 
-  const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.bills.useViewBill(tenantId, {}, {})
+  const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.bills.useViewBill(tenantId, {}, { musterRollNumber: billNumber })
   console.log('@@Data', data);
 
   return (
@@ -20,7 +20,7 @@ const ViewBill = () => {
         applicationDetails={data?.applicationDetails}
         isLoading={isLoading}
         applicationData={data?.applicationData}
-        moduleCode="Masters"
+        moduleCode="AttendenceMgmt"
         isDataLoading={false}
         workflowDetails={data?.workflowDetails}
         showTimeLine={false}

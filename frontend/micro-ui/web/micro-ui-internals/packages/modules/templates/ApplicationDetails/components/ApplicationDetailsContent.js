@@ -394,7 +394,7 @@ function ApplicationDetailsContent({
             : null}
             {detail?.additionalDetails?.table
               ? detail?.additionalDetails?.table?.mustorRollTable && (
-                <MustorRollDetailsTable></MustorRollDetailsTable>
+                <MustorRollDetailsTable musterData={detail?.additionalDetails?.table?.tableData}></MustorRollDetailsTable>
                 )
             : null}
             {detail?.additionalDetails?.showTotal && <ShowTotalValue topBreakLine={detail?.additionalDetails?.showTotal?.topBreakLine} bottomBreakLine={detail?.additionalDetails?.showTotal?.bottomBreakLine} label={detail?.additionalDetails?.showTotal?.label} value={detail?.additionalDetails?.showTotal?.value}></ShowTotalValue>}
