@@ -111,10 +111,6 @@ public class EnrichmentService {
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         Workflow workflow = musterRollRequest.getWorkflow();
 
-        //fetch the update additionalDetails from the request and persist it
-        Object additionalDetails = musterRollRequest.getMusterRoll().getAdditionalDetails();
-        existingMusterRoll.setAdditionalDetails(additionalDetails);
-
         log.info("EnrichmentService::enrichMusterRollOnUpdate::Workflow action is "+workflow.getAction());
 
 
