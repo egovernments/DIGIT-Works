@@ -49,7 +49,8 @@ const Urls = {
 
   contracts : {
     createWO : "/contract-service/contract/v1/_create",
-    search: "/contract-service/contract/v1/_search"
+    search: "/contract-service/contract/v1/_search",
+    update: "/contract-service/contract/v1/_update"
   },
 
   fsm: {

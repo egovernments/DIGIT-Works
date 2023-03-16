@@ -70,6 +70,7 @@ const ViewEstimateComponent = (props) => {
                 applicationDetails={applicationDetails?.applicationData}
                 url={Digit.Utils.Urls.works.updateEstimate}
                 setStateChanged={setStateChanged}
+                moduleCode="Estimate"
             />
 
             {/* Adding another action bar to show Create Contract Option */}

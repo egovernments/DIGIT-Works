@@ -14,8 +14,8 @@ const ContractDetails = (props) => {
                 applicationDetails={props.data?.applicationDetails}
                 isLoading={props.isLoading}
                 applicationData={""}
-                moduleCode="contracts"
-                showTimeLine={false}
+                moduleCode="Contract"
+                showTimeLine={true}
                 timelineStatusPrefix={"WF_CONTRACT_STATUS_"}
                 businessService={businessService}
                 // forcedActionPrefix={"ACTION_"}
@@ -23,14 +23,6 @@ const ContractDetails = (props) => {
                 applicationNo={props.contractNumber}
                 statusAttribute={"state"}
             />
-            {/* <WorkflowActions
-                forcedActionPrefix={"WF_CONTRACT_ACTION"}
-                businessService={businessService}
-                applicationNo={contractNumber}
-                tenantId={tenantId}
-                applicationDetails={props.applicationDetails?.applicationData}
-                url={Digit.Utils.Urls.works.updateEstimate}
-            /> */}
         </div>
     )
 }
