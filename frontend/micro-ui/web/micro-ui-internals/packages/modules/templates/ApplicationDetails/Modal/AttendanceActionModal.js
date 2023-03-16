@@ -101,7 +101,7 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     let musterRoll = data?.applicationDetails?.[0]?.applicationData
     musterRoll = { ...musterRoll, 
                     additionalDetails: { 
-                    ...musterRoll.additionalDetails, projectName: 'Building Walls', assignee: 'John Doe', amount: 5000, billType: 'Work Order', projectId : 'PR/2022-23/03/001111'}
+                      projectName: 'Building Walls', assignee: 'John Doe', amount: 5000, billType: 'Work Order', projectId : 'PR/2022-23/03/001111', ...musterRoll.additionalDetails }
                   }
     return musterRoll
   }
