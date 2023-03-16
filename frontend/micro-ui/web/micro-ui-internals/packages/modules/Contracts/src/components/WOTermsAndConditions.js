@@ -2,16 +2,30 @@ import { AddIcon, CardLabelError, DeleteIcon, TextInput } from "@egovernments/di
 import React, { Fragment, useState } from "react";
 
 const WOTermsAndConditions = (props) => {
-    
+    const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE",{});
+    const [sessionFormData] = ContractSession;
+
     const formFieldName = "WOTermsAndConditions" // this will be the key under which the data for this table will be present on onFormSubmit
     const { t, register, errors , setValue, getValues, formData} = props
-    const initialState = [
-        {
-        key: 1,
-        isShow: true,
-        },
-    ];
-    const [rows, setRows] = useState(initialState);
+
+    //update sub project table with session data
+    const renderWOTermsAndConditionsFromSession = () => {
+      if(!sessionFormData?.WOTermsAndConditions) {
+          return [{
+              key: 1,
+              isShow: true,
+          }];
+      }
+      let tableState = [];
+      for(let i = 1; i<sessionFormData?.WOTermsAndConditions?.length; i++) {
+          tableState.push({
+              key: i,
+              isShow: true,
+          })
+      }
+      return tableState;
+    }
+    const [rows, setRows] = useState(renderWOTermsAndConditionsFromSession());
 
     const getStyles = (index) => {
         let obj = {}
@@ -29,7 +43,7 @@ const WOTermsAndConditions = (props) => {
         return obj
       }
   
-    const columns = [t('WORKS_SNO'), t('PROJECT_DESC'),''];
+    const columns = [t('WORKS_SNO'), t('COMMON_DESC'),''];
     const renderHeader = () => {
         return columns?.map((key, index) => {
         return <th key={index} style={getStyles(index + 1)} > {key} </th>

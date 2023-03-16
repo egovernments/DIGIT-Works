@@ -6,8 +6,8 @@ import CreateWorkOrderForm from "./CreateWorkOrderForm";
 const CreateWorkOrder = () => {
 
     const queryStrings = Digit.Hooks.useQueryParams();
-    const estimateNumber = queryStrings?.estimateNumber || "ES/2022-23/000764";
-    const tenantId = queryStrings?.tenantId || "pg.citya";
+    const estimateNumber = queryStrings?.estimateNumber || "";
+    const tenantId = queryStrings?.tenantId || "";
     const [config, setConfig] = useState({});
 
      //fetching estimate data
@@ -49,7 +49,7 @@ const CreateWorkOrder = () => {
     const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
 
     const createDocumentObject = (documents) => {
-        let docs =  documents.filter(document=>document?.fileStoreId)?.map((document) => {
+        let docs =  documents?.filter(document=>document?.fileStoreId)?.map((document) => {
             return {
                 title: document?.fileType,
                 documentType: document?.fileType,

@@ -62,7 +62,10 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, data}) => {
                 "projectName": project?.name,
                 "orgName": data?.nameOfCBO?.code,
                 "projectId": project?.id,
-                "estimateDocs" : estimate?.additionalDetails?.documents
+                "estimateDocs" : estimate?.additionalDetails?.documents,
+                "cboName" : data?.nameOfCBO?.code,
+                "totalEstimatedAmount" : estimate?.additionalDetails?.totalEstimatedAmount,
+                "termsAndConditions" : data?.WOTermsAndConditions
             }
         },
         workflow : {
