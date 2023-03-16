@@ -7,15 +7,6 @@ import searchContractConfig from "../../configs/searchContractConfig";
 
 const SearchContractDetails = () => {
     const { t } = useTranslation();
-    //const history = useHistory()
-    //const tenant = Digit.ULBService.getStateId();
-    // const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, "commonUiConfig", [
-    //   {
-    //     name: "SearchProjectConfig",
-    //   },
-    // ]);
-  
-    //const configs = data?.commonUiConfig?.SearchProjectConfig?.[0]
     const configs = searchContractConfig();
   
     //if (isLoading) return <Loader />;

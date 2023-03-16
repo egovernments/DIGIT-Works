@@ -1,11 +1,11 @@
 const contractStatus = [
   {
-      name: 'Active',
+      name: 'ACTIVE',
       code: 'ACTIVE',
       i18nKey: 'ACTIVE'
   },
   {
-      name: 'Inactive',
+      name: 'INACTIVE',
       code: 'INACTIVE',
       i18nKey: 'INACTIVE'
   }
@@ -16,15 +16,10 @@ const searchContractConfig = () => {
 return {
   label: "WORKS_SEARCH_CONTRACT",
   type: "search",
-  actionLabel: "WORKS_CREATE_CONTRACT",
-  actionRole: "CONTRACT_CREATOR",
-  actionLink: "contracts/create-contract",
   apiDetails: {
-    serviceName: "/contract-service/contract/v1/_search",
+    serviceName: "wms/contract/_search",
     requestParam: {},
     requestBody: {
-      // apiOperation: "SEARCH",
-      // contracts: {},
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
@@ -42,7 +37,7 @@ return {
         primaryLabel: "ES_COMMON_SEARCH",
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
         minReqFields: 1,
-        showFormInstruction: "PROJECT_SELECT_ONE_PARAM_TO_SEARCH",
+        showFormInstruction: "CONTRACT_SEARCH_HINT",
         defaultValues: {
           ward: "",
           projectType: "",
@@ -181,11 +176,12 @@ return {
           },
           {
             label: "NAME_OF_CBO",
-            jsonPath: "",
+            jsonPath: "additionalDetails?.orgName",
           },
           {
             label: "ROLE_OF_CBO",
-            jsonPath: "",
+            jsonPath: "executingAuthority",
+            //additionalCustomization: true,
           },
           {
             label: "WORKS_LOCATION",
@@ -197,7 +193,7 @@ return {
           },
           {
             label: "WORKS_ORDER_AMOUNT",
-            jsonPath: "lineItems.amountBreakups.amount",
+            jsonPath: "totalContractedAmount",
             additionalCustomization: true,
           },
         ],
