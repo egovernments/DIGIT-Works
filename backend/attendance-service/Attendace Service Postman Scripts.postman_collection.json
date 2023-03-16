@@ -640,63 +640,6 @@
 					"response": []
 				},
 				{
-					"name": "Search Attendance Register - Success - State level tenant",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response is successful\", () => ",
-									"   pm.expect(pm.response.to.have.status(200)));",
-									"",
-									"pm.test(\"Register Search response is received\", function () {",
-									"    var res = pm.response.json();",
-									"    var id = res.attendanceRegister[0].id;",
-									"    pm.expect(id).to.eql(pm.collectionVariables.get(\"registerId\"));",
-									"    }",
-									");"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n        \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"action\": \"\",\n        \"did\": 1,\n        \"key\": \"\",\n        \"msgId\": \"20170310130900|en_IN\",\n        \"requesterId\": \"\",\n        \"ts\": 1513579888683,\n        \"ver\": \".01\",\n        \"authToken\": \"{{token}}\"\n    }\n}\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/attendance/v1/_search?tenantId={{stateLevelTenant}}&ids={{registerId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"attendance",
-								"v1",
-								"_search"
-							],
-							"query": [
-								{
-									"key": "tenantId",
-									"value": "{{stateLevelTenant}}"
-								},
-								{
-									"key": "ids",
-									"value": "{{registerId}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Search Attendance Register - Success - Unassociated AttendeeId",
 					"event": [
 						{
