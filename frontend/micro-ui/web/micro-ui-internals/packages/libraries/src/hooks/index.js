@@ -135,6 +135,7 @@ import useCreateWO from "./works/useCreateWO";
 import useSearchOrg from "./works/useSearchOrg";
 
 
+import useViewBill from "./bills/useViewBill";
 
 const works = {
   useViewEstimateDetails,
@@ -245,7 +246,8 @@ const attendance = {
 };
 
 const bills = {
-  useViewBills
+  useViewBills,
+  useViewBill
 }
 const masters = {
   useViewOrg

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
 import inboxConfigMukta from "./inboxConfigMukta";
 
-const ContractsInbox = () => {
+const Inbox = () => {
   const { t } = useTranslation()
   //fetch this config from mdms and pass it to the preProcess fn
   let configs = inboxConfigMukta();
@@ -34,4 +34,4 @@ const ContractsInbox = () => {
   )
 }
 
-export default ContractsInbox
+export default Inbox
