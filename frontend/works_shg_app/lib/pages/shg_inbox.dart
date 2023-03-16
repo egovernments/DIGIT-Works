@@ -19,6 +19,7 @@ import '../blocs/muster_rolls/muster_roll_estimate.dart';
 import '../blocs/muster_rolls/search_individual_muster_roll.dart';
 import '../models/attendance/attendee_model.dart';
 import '../models/mdms/attendance_hours.dart';
+import '../models/muster_rolls/estimate_muster_roll_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
 import '../models/muster_rolls/muster_workflow_model.dart';
 import '../models/skills/skills.dart';
@@ -262,7 +263,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                             loading: () => Loaders
                                                                 .circularLoader(
                                                                     context),
-                                                            loaded: (MusterRollsModel?
+                                                            error: (String? error) => Notifiers.getToastMessage(context, error.toString(), 'ERROR'),
+                                                            loaded: (EstimateMusterRollsModel?
                                                                 viewMusterRollsModel) {
                                                               List<AttendeesTrackList>
                                                                   attendeeList =

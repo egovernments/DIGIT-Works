@@ -7,7 +7,6 @@ import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import '../blocs/attendance/search_projects/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 import '../models/attendance/attendance_registry_model.dart';
-import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/drawer_wrapper.dart';
@@ -40,12 +39,19 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
 
                 final projectList = attendanceRegisters
                     .map((e) => {
-                          i18.attendanceMgmt.nameOfWork: e.name,
+                          i18.workOrder.workOrderNo: e
+                                  .attendanceRegisterAdditionalDetails
+                                  ?.contractId ??
+                              'NA',
                           i18.attendanceMgmt.registerId: e.registerNumber,
-                          i18.attendanceMgmt.engineerInCharge: e.id,
-                          i18.common.dates:
-                              '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                          i18.common.status: e.status
+                          i18.attendanceMgmt.projectId: e
+                                  .attendanceRegisterAdditionalDetails
+                                  ?.projectId ??
+                              'NA',
+                          i18.attendanceMgmt.projectDesc: e
+                                  .attendanceRegisterAdditionalDetails
+                                  ?.projectName ??
+                              'NA'
                         })
                     .toList();
 

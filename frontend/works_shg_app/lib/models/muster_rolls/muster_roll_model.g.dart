@@ -106,6 +106,7 @@ _$_MusterIndividualAdditionalDetails
           fatherName: json['fatherName'] as String?,
           aadharNumber: json['aadharNumber'] as String?,
           bankDetails: json['bankDetails'] as String?,
+          userId: json['userId'] as String?,
           skillCode: json['skillCode'] as String?,
           skillValue: json['skillValue'] as String?,
         );
@@ -117,6 +118,7 @@ Map<String, dynamic> _$$_MusterIndividualAdditionalDetailsToJson(
       'fatherName': instance.fatherName,
       'aadharNumber': instance.aadharNumber,
       'bankDetails': instance.bankDetails,
+      'userId': instance.userId,
       'skillCode': instance.skillCode,
       'skillValue': instance.skillValue,
     };

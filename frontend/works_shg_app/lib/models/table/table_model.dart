@@ -8,8 +8,11 @@ class TableDataModel with _$TableDataModel {
   @JsonSerializable(explicitToJson: true)
   const factory TableDataModel({
     required String? name,
-    required String? aadhaar,
+    String? aadhaar,
+    String? individualGaurdianName,
+    String? skill,
     String? uuid,
+    String? individualId,
     String? bankNumber,
     double? monIndex,
     double? tueIndex,
