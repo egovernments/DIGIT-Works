@@ -16,6 +16,7 @@ const ProjectDetails = () => {
     const menuRef = useRef();
     const [showActions, setShowActions] = useState(false);
     const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
+    const [hideActionBar, setHideActionBar] = useState(true);
     const [actionsMenu, setActionsMenu] = useState([ 
         {
             name : "MODIFY_PROJECT"
@@ -87,28 +88,35 @@ const ProjectDetails = () => {
     const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
 
     //fetch estimate details
-    const { data : estimates } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
+    const { data : estimates, isError : isEstimateSearchError } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
 
     useEffect(()=>{
         let isUserEstimateCreator = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
-        if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED")) {
-            if(isUserEstimateCreator) {
+        if(isEstimateSearchError) {
+            setActionsMenu([]);
+            setHideActionBar(true);
+        }else {
+            setHideActionBar(false);
+            if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED")) {
+                if(isUserEstimateCreator) {
+                    setActionsMenu([
+                        {
+                            name : "CREATE_ESTIMATE"
+                        }
+                    ])
+                }else {
+                    setHideActionBar(true);
+                    setActionsMenu([])
+                }
+            }else{
                 setActionsMenu([
                     {
-                        name : "CREATE_ESTIMATE"
+                        name : "VIEW_ESTIMATE"
                     }
                 ])
-            }else {
-                setActionsMenu([])
             }
-        }else {
-            setActionsMenu([
-                {
-                    name : "VIEW_ESTIMATE"
-                }
-            ])
         }
-    },[estimates]);
+    },[estimates, isEstimateSearchError]);
 
      //remove Toast after 3s
      useEffect(()=>{
@@ -155,7 +163,9 @@ const ProjectDetails = () => {
                 filters={filters}
               />
             </HorizontalNav>
-            <ActionBar>
+            {
+                !hideActionBar &&
+                <ActionBar>
                     {showActions ? 
                         <Menu
                             localeKeyPrefix={`COMMON`}
@@ -163,9 +173,11 @@ const ProjectDetails = () => {
                             optionKey={"name"}
                             t={t}
                             onSelect={handleActionBar}
-                        /> : null}
-                <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)}/>
-        </ActionBar>
+                        /> : null
+                    }
+                    <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)}/>
+                </ActionBar>
+            }
         {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
         </div>
     )

@@ -49,14 +49,15 @@ const fetchDocuments = (docs) => {
 
     const obj = Object.keys(docs).map(key=>{
         return {
-            fileName: docs?.[key]?.[0]?.[0],
+            fileName: key?.includes("OTHERS") ? docs?.["ESTIMATE_DOC_OTHERS_name"]: docs?.[key]?.[0]?.[0] ,
             fileStoreId: docs?.[key]?.[0]?.[1]?.fileStoreId?.fileStoreId,
             documentUid: docs?.[key]?.[0]?.[1]?.fileStoreId?.fileStoreId,
             tenantId: docs?.[key]?.[0]?.[1]?.fileStoreId?.tenantId,
-            fileType: `${key}`
+            fileType: key?.includes("OTHERS") ? docs?.["ESTIMATE_DOC_OTHERS_name"] :`${key}`
         }
         
     })
+    
     return obj
 }
 
@@ -90,7 +91,8 @@ export const createEstimatePayload = (data,projectData) => {
                     city: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.city
                 },
                 "projectNumber": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID,
-                "totalEstimatedAmount": data?.totalEstimateAmount
+                "totalEstimatedAmount": data?.totalEstimateAmount,
+                "tenantId": tenantId
             }
         },
         workflow:{

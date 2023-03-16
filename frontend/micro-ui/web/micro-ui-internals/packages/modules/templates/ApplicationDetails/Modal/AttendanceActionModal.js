@@ -77,7 +77,8 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
   }
 
   const submitBasedOnAction = (action, comments) => {
-    let musterRoll = { tenantId, id: applicationDetails?.applicationDetails?.[0]?.applicationData?.id}
+    //passing complete muster object with updated additionalDetails
+    let musterRoll = updateMusterObject(applicationDetails)
     let workflow = { action: action?.action, comment: (comments || `${action?.action} done`), assignees: [] }
 
     const selectedAction = action?.action
@@ -94,6 +95,15 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     }
     const dataTobeSubmitted = {musterRoll, workflow}
     submitAction(dataTobeSubmitted)
+  }
+
+  const updateMusterObject = (data) => {
+    let musterRoll = data?.applicationDetails?.[0]?.applicationData
+    musterRoll = { ...musterRoll, 
+                    additionalDetails: { 
+                      projectName: 'Building Walls', assignee: 'John Doe', amount: 5000, billType: 'Work Order', projectId : 'PR/2022-23/03/001111', ...musterRoll.additionalDetails }
+                  }
+    return musterRoll
   }
 
   const cardStyle = () => {

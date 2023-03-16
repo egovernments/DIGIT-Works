@@ -47,6 +47,10 @@ const Urls = {
     searchProject : "/pms/project/v1/_search",
   },
 
+  contracts : {
+    createWO : "/contract-service/contract/v1/_create"
+  },
+
   fsm: {
     search: "/fsm/v1/_search",
     create: "/fsm/v1/_create",
@@ -226,6 +230,10 @@ const Urls = {
   },
   bills:{
     cancelBill:"/billing-service/bill/v2/_cancelbill"
+  },
+
+  organisation : {
+    search : "/org-services/organisation/v1/_search"
   },
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",

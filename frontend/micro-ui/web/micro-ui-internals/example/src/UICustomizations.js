@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 var Digit = window.Digit || {};
 
 const businessServiceMap = {
-  estimate: "estimate-approval-5",
+  estimate: "mukta-estimate",
   contracts: "contract-approval-mukta",
   attendencemgmt: "muster-roll-approval",
 };
@@ -165,11 +165,12 @@ export const UICustomizations = {
       const endDate = Digit.Utils.pt.convertDateToEpoch(convertedEndDate, "dayStart");
       const attendanceRegisterName = data.body.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim();
       const musterRollStatus = data.body.inbox?.moduleSearchCriteria?.musterRollStatus?.code;
+      const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.musterRollNumber;
       data.body.inbox = {
         ...data.body.inbox,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName, musterRollNumber },
       };
       return data;
     },
@@ -500,4 +501,85 @@ export const UICustomizations = {
       }
   },
 },
+  BillInboxConfig: {
+    preProcess: (data) => {
+      const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber;
+      data.body.inbox = {
+        ...data.body.inbox,
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+        processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber },
+      };
+      return data;
+    },
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      if (column.label === "WORKS_BILL_NUMBER") {
+        return (
+          <span className="link">
+            <Link
+              to={`/works-ui/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}
+            >
+              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+
+      if (column.label === "ES_COMMON_AMOUNT") {
+        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+      }
+
+      if (column.label === "COMMON_SLA_DAYS") {
+        return value ? (parseInt(value) > 0 ? (
+          <span className="sla-cell-success">{t(value) || ""}</span>
+        ) : (
+          <span className="sla-cell-error">{t(value) || ""}</span>
+        )) : t("ES_COMMON_NA")
+      }
+
+      if (column.label === "COMMON_WORKFLOW_STATES") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      }
+    }
+  },
+  SearchBillConfig: {
+    preProcess: (data) => {
+      const fromDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromDate);
+      const toDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toDate);
+      const musterRollStatus = data?.params?.musterRollStatus?.code;
+      delete data.params.billType;
+      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus };
+      return data;
+    },
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      if (column.label === "WORKS_BILL_NUMBER") {
+        return (
+          <span className="link">
+            <Link
+              to={`/${
+                window.contextPath
+              }/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}
+            >
+              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if (column.label === "EXP_BILL_AMOUNT") {
+        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+      }
+      if(column.label === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      }
+      if(column.label === "ES_COMMON_LOCATION") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+        return t(`TENANT_TENANTS_${headerLocale}`)
+      }
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
+      }
+    }
+  }
 };
