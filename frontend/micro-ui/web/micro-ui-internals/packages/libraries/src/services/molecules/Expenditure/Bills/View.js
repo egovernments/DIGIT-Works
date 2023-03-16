@@ -58,22 +58,22 @@ const transformViewDataToApplicationDetails = async (t, data, skills) => {
     asSectionHeader: true,
     values: [
       { title: "WORKS_BILL_NUMBER", value: musterRoll?.musterRollNumber || t("ES_COMMON_NA")},
-      { title: "Work order number", value: musterRoll?.additionalDetails?.contractId || t("ES_COMMON_NA")},
+      { title: "WORKS_ORDER_NO", value: musterRoll?.additionalDetails?.contractId || t("ES_COMMON_NA")},
       { title: "WORKS_PROJECT_ID", value: musterRoll?.additionalDetails?.projectId || t("ES_COMMON_NA")},
       { title: "PROJECTS_DESCRIPTION", value: musterRoll?.additionalDetails?.projectName || t("ES_COMMON_NA") },
       { title: "ES_COMMON_LOCATION", value: location || t("ES_COMMON_NA") },
-      { title: "Bill Classification", value: musterRoll?.additionalDetails?.billType || t("ES_COMMON_NA") },
-      { title: "Bill Date", value: Digit.DateUtils.ConvertTimestampToDate(musterRoll?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy') || t("ES_COMMON_NA") },
+      { title: "EXP_BILL_CLASSIFICATION", value: musterRoll?.additionalDetails?.billType || t("ES_COMMON_NA") },
+      { title: "WORKS_BILL_DATE", value: Digit.DateUtils.ConvertTimestampToDate(musterRoll?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy') || t("ES_COMMON_NA") },
       { title: "ES_COMMON_STATUS", value: `BILL_STATUS_${musterRoll?.musterRollStatus}`|| t("ES_COMMON_NA") }
     ]
   }
 
   const beneficiaryDetails = {
-    title: "Beneficiary Details",
+    title: "EXP_BENEFICIARY_DETAILS",
     asSectionHeader: true,
     values: [
-        { title: "Muster roll ID", value: musterRoll?.musterRollNumber || t("ES_COMMON_NA")},
-        { title: "Muster roll period", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("ES_COMMON_NA") }
+        { title: "ES_COMMON_MUSTER_ROLL_ID", value: musterRoll?.musterRollNumber || t("ES_COMMON_NA")},
+        { title: "ES_COMMON_MUSTER_ROLL_PERIOD", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("ES_COMMON_NA") }
     ],
     additionalDetails : {
       table : {
