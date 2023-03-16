@@ -49,7 +49,7 @@ public class BankaccountApiController {
     public ResponseEntity<BankAccountResponse> bankaccountV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody BankAccountRequest body) {
         BankAccountRequest bankAccountRequest = bankAccountService.createBankAccount(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        BankAccountResponse bankAccountResponse = BankAccountResponse.builder().responseInfo(responseInfo).bankAccounts(Collections.singletonList(bankAccountRequest.getBankAccounts())).build();
+        BankAccountResponse bankAccountResponse = BankAccountResponse.builder().responseInfo(responseInfo).bankAccounts(bankAccountRequest.getBankAccounts()).build();
         return new ResponseEntity<BankAccountResponse>(bankAccountResponse, HttpStatus.OK);
     }
 
@@ -71,7 +71,7 @@ public class BankaccountApiController {
     public ResponseEntity<BankAccountResponse> bankaccountV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody BankAccountRequest body) {
         BankAccountRequest bankAccountRequest = bankAccountService.updateBankAccount(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        BankAccountResponse bankAccountResponse = BankAccountResponse.builder().responseInfo(responseInfo).bankAccounts(Collections.singletonList(bankAccountRequest.getBankAccounts())).build();
+        BankAccountResponse bankAccountResponse = BankAccountResponse.builder().responseInfo(responseInfo).bankAccounts(bankAccountRequest.getBankAccounts()).build();
         return new ResponseEntity<BankAccountResponse>(bankAccountResponse, HttpStatus.OK);
     }
 
