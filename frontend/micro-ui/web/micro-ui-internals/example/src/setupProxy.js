@@ -64,6 +64,7 @@ module.exports = function (app) {
     "/inbox/v1/dss/_search",
     "/loi-service",
     "/estimate-service",
+    "/contract-service",
     "/loi-service",
     "/works-inbox-service/v2/_search",
     "/egov-pdf/download/WORKSESTIMATE/estimatepdf",
@@ -71,7 +72,6 @@ module.exports = function (app) {
     "/pms/project",
     "/inbox/v2/_search",
     "/individual/v1/_search",
-    "/contract-service",
     "/org-services",
     "/org-services/organisation/v1/_search"
   ].forEach((location) => app.use(location, createProxy));

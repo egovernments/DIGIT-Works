@@ -5,10 +5,13 @@ import contractInboxFilter from "./components/inbox/NewInboxFilter";
 import EmployeeApp from "./pages/employee";
 import SearchContractApplication from "./components/SearchContract";
 import ContractsCard from "./components/ContractsCard";
+import ContractDetails from "./components/ViewContract/ContractDetails";
+import TermsAndConditions from "./components/ViewContract/TermsAndConditions";
 import CreateWorkOrder from "./pages/employee/CreateWorkOrder";
 import WOTermsAndConditions from "./components/WOTermsAndConditions";
 import ViewEstimateDocs from "./components/ViewEstimateDocs";
 import CreateWOResponse from "./pages/employee/CreateWorkOrder/CreateWOResponse";
+
 
 const ContractsModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
@@ -33,10 +36,13 @@ const componentsToRegister = {
     contractInboxFilter,
     SearchContractApplication,
     ContractCard:ContractsCard,
+    ContractDetails,
+    TermsAndConditions,
     CreateWorkOrder,
     WOTermsAndConditions,
     ViewEstimateDocs,
     CreateWOResponse
+
 };
 
 export const initContractsComponents = () => {
