@@ -131,6 +131,7 @@ import useViewFinancialDetails from "./project/useViewFinancialDetails";
 import useUpdateCustom from "./useUpdateCustom";
 
 import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
+import useViewBill from "./bills/useViewBill";
 
 const works = {
   useViewEstimateDetails,
@@ -236,7 +237,8 @@ const attendance = {
 };
 
 const bills = {
-  useViewBills
+  useViewBills,
+  useViewBill
 }
 const masters = {
   useViewOrg

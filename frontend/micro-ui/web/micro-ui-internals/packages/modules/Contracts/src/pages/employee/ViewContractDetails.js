@@ -36,7 +36,7 @@ const ViewContractDetails = () => {
     const TermsAndConditions = Digit.ComponentRegistryService.getComponent("TermsAndConditions");
 
     const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
-    console.log('@@Data', data);
+
 
     //fetching project data
     const { isLoading: isProjectLoading, data: project } = Digit.Hooks.project.useProjectSearch({
