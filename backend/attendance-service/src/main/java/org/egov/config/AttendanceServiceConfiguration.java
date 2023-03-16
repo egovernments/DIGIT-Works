@@ -96,6 +96,12 @@ public class AttendanceServiceConfiguration {
     @Value("${attendance.register.open.search.enabled.roles}")
     private String registerOpenSearchEnabledRoles;
 
+    //Individual servcie
+    @Value("${works.individual.host}")
+    private String individualHost;
+    @Value("${works.individual.search.endpoint}")
+    private String individualSearchEndpoint;
+
 }
 
 
