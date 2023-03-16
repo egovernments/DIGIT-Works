@@ -10,7 +10,10 @@ _$_TableDataModel _$$_TableDataModelFromJson(Map<String, dynamic> json) =>
     _$_TableDataModel(
       name: json['name'] as String?,
       aadhaar: json['aadhaar'] as String?,
+      individualGaurdianName: json['individualGaurdianName'] as String?,
+      skill: json['skill'] as String?,
       uuid: json['uuid'] as String?,
+      individualId: json['individualId'] as String?,
       bankNumber: json['bankNumber'] as String?,
       monIndex: (json['monIndex'] as num?)?.toDouble(),
       tueIndex: (json['tueIndex'] as num?)?.toDouble(),
@@ -24,7 +27,10 @@ Map<String, dynamic> _$$_TableDataModelToJson(_$_TableDataModel instance) =>
     <String, dynamic>{
       'name': instance.name,
       'aadhaar': instance.aadhaar,
+      'individualGaurdianName': instance.individualGaurdianName,
+      'skill': instance.skill,
       'uuid': instance.uuid,
+      'individualId': instance.individualId,
       'bankNumber': instance.bankNumber,
       'monIndex': instance.monIndex,
       'tueIndex': instance.tueIndex,

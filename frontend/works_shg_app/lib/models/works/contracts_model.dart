@@ -92,6 +92,15 @@ class ContractProcessInstance with ContractProcessInstanceMappable {
   String? action;
   String? moduleName;
   ContractState? state;
+
+  ContractProcessInstance(
+      {this.action,
+      this.tenantId,
+      this.state,
+      this.id,
+      this.businessId,
+      this.businessService,
+      this.moduleName});
 }
 
 @MappableClass()

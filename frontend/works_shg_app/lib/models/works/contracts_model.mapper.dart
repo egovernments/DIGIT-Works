@@ -585,7 +585,7 @@ class ContractProcessInstanceMapper
     extends MapperBase<ContractProcessInstance> {
   static MapperContainer container = MapperContainer(
     mappers: {ContractProcessInstanceMapper()},
-  );
+  )..linkAll({ContractStateMapper.container});
 
   @override
   ContractProcessInstanceMapperElement createElement(
@@ -609,12 +609,27 @@ class ContractProcessInstanceMapperElement
   ContractProcessInstance decode(dynamic v) =>
       checkedType(v, (Map<String, dynamic> map) => fromMap(map));
   ContractProcessInstance fromMap(Map<String, dynamic> map) =>
-      ContractProcessInstance();
+      ContractProcessInstance(
+          action: container.$getOpt(map, 'action'),
+          tenantId: container.$getOpt(map, 'tenantId'),
+          state: container.$getOpt(map, 'state'),
+          id: container.$getOpt(map, 'id'),
+          businessId: container.$getOpt(map, 'businessId'),
+          businessService: container.$getOpt(map, 'businessService'),
+          moduleName: container.$getOpt(map, 'moduleName'));
 
   @override
   Function get encoder => encode;
   dynamic encode(ContractProcessInstance v) => toMap(v);
-  Map<String, dynamic> toMap(ContractProcessInstance c) => {};
+  Map<String, dynamic> toMap(ContractProcessInstance c) => {
+        'action': container.$enc(c.action, 'action'),
+        'tenantId': container.$enc(c.tenantId, 'tenantId'),
+        'state': container.$enc(c.state, 'state'),
+        'id': container.$enc(c.id, 'id'),
+        'businessId': container.$enc(c.businessId, 'businessId'),
+        'businessService': container.$enc(c.businessService, 'businessService'),
+        'moduleName': container.$enc(c.moduleName, 'moduleName')
+      };
 
   @override
   String stringify(ContractProcessInstance self) =>
@@ -677,7 +692,15 @@ abstract class ContractProcessInstanceCopyWith<
   ContractProcessInstanceCopyWith<$R2, $In, $Out2>
       chain<$R2, $Out2 extends ContractProcessInstance>(
           Then<ContractProcessInstance, $Out2> t, Then<$Out2, $R2> t2);
-  $R call();
+  ContractStateCopyWith<$R, ContractState, ContractState>? get state;
+  $R call(
+      {String? action,
+      String? tenantId,
+      ContractState? state,
+      String? id,
+      String? businessId,
+      String? businessService,
+      String? moduleName});
 }
 
 class _ContractProcessInstanceCopyWithImpl<$R,
@@ -693,7 +716,25 @@ class _ContractProcessInstanceCopyWithImpl<$R,
           _ContractProcessInstanceCopyWithImpl($value, t, t2);
 
   @override
-  $R call() => $then(ContractProcessInstance());
+  ContractStateCopyWith<$R, ContractState, ContractState>? get state =>
+      $value.state?.copyWith.chain($identity, (v) => call(state: v));
+  @override
+  $R call(
+          {Object? action = $none,
+          Object? tenantId = $none,
+          Object? state = $none,
+          Object? id = $none,
+          Object? businessId = $none,
+          Object? businessService = $none,
+          Object? moduleName = $none}) =>
+      $then(ContractProcessInstance(
+          action: or(action, $value.action),
+          tenantId: or(tenantId, $value.tenantId),
+          state: or(state, $value.state),
+          id: or(id, $value.id),
+          businessId: or(businessId, $value.businessId),
+          businessService: or(businessService, $value.businessService),
+          moduleName: or(moduleName, $value.moduleName)));
 }
 
 class ContractAdditionalDetailsMapper

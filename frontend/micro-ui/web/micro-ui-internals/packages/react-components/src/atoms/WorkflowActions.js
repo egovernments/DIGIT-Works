@@ -50,6 +50,14 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   const closeMenu = () => {
     setDisplayMenu(false);
   }
+  
+ 
+  setTimeout(() => {
+    setShowToast(null);
+  }, 10000);
+    
+  
+  
   Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu);
 
   if (actions?.length > 0) {
@@ -82,20 +90,23 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         setIsEnableLoader(false)
         //show error toast acc to selectAction
         setShowToast({ error: true, label: `WF_UPDATE_ERROR_${selectAction.action}`, isDleteBtn:true })
-        //console.log(selectAction);
+        
+
+        
         
       },
       onSuccess:(data,variables) => {
-        setStateChanged(`WF_UPDATE_SUCCESS_${selectAction.action}`)
         setIsEnableLoader(false)
         //show success toast acc to selectAction
         setShowToast({ label: `WF_UPDATE_SUCCESS_${selectAction.action}` })
+        
 
         // to refetch updated workflowData and re-render timeline and actions
         workflowDetails.revalidate()
 
-        //console.log(selectAction);
         
+        //COMMENTING THIS FOR NOW BECAUSE DUE TO THIS TOAST IS NOT SHOWING SINCE THE WHOLE PARENT COMP RE-RENDERS
+        // setStateChanged(`WF_UPDATE_SUCCESS_${selectAction.action}`)
       }
     })
   }

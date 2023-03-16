@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 var Digit = window.Digit || {};
 
 const businessServiceMap = {
-  estimate: "estimate-approval-5",
+  estimate: "mukta-estimate",
   contracts: "contract-approval-mukta",
   attendencemgmt: "muster-roll-approval",
 };
@@ -193,11 +193,12 @@ export const UICustomizations = {
       const endDate = Digit.Utils.pt.convertDateToEpoch(convertedEndDate, "dayStart");
       const attendanceRegisterName = data.body.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim();
       const musterRollStatus = data.body.inbox?.moduleSearchCriteria?.musterRollStatus?.code;
+      const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.musterRollNumber;
       data.body.inbox = {
         ...data.body.inbox,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName, musterRollNumber },
       };
       return data;
     },
@@ -480,11 +481,12 @@ export const UICustomizations = {
   EstimateInboxConfig:{},
   BillInboxConfig: {
     preProcess: (data) => {
+      const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber;
       data.body.inbox = {
         ...data.body.inbox,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId() },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber },
       };
       return data;
     },
@@ -523,9 +525,8 @@ export const UICustomizations = {
       const fromDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromDate);
       const toDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toDate);
       const musterRollStatus = data?.params?.musterRollStatus?.code;
-      const status = data?.params?.status?.code;
       delete data.params.billType;
-      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus, status };
+      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus };
       return data;
     },
     additionalCustomizations: (row, column, columnConfig, value, t) => {
@@ -550,7 +551,7 @@ export const UICustomizations = {
       }
       if(column.label === "ES_COMMON_LOCATION") {
         const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
-        return value ? t(`TENANT_TENANTS_${headerLocale}`) : t("ES_COMMON_NA")
+        return t(`TENANT_TENANTS_${headerLocale}`)
       }
     },
     additionalValidations: (type, data, keys) => {

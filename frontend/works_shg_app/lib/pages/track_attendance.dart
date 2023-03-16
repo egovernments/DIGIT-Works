@@ -23,6 +23,7 @@ import '../blocs/muster_rolls/muster_roll_estimate.dart';
 import '../models/attendance/attendance_registry_model.dart';
 import '../models/attendance/attendee_model.dart';
 import '../models/mdms/attendance_hours.dart';
+import '../models/muster_rolls/estimate_muster_roll_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
 import '../models/muster_rolls/muster_workflow_model.dart';
 import '../models/skills/skills.dart';
@@ -247,7 +248,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                           child:  BlocBuilder<MusterRollEstimateBloc, MusterRollEstimateState>(
                                                           builder: (context, musterState) {
                                                              return musterState.maybeWhen(orElse: () => Container(),
-                                                              loaded: (MusterRollsModel? musterRollsModel) {
+                                                              error: (String? error) => Notifiers.getToastMessage(context, error.toString(), 'ERROR'),
+                                                              loading: () => Loaders.circularLoader(context),
+                                                              loaded: (EstimateMusterRollsModel? musterRollsModel) {
                                                               if (musterRollsModel!.musterRoll!.first.individualEntries != null) {
                                                                 List<AttendeesTrackList> attendeeList = individualAttendanceRegisterModel.attendanceRegister!.first.attendeesEntries!.where((e) => e.denrollmentDate == null || !(e.denrollmentDate! <= individualAttendanceRegisterModel.attendanceRegister!.first.endDate!.toInt())).toList().map((e) =>
                                                                     AttendeesTrackList(name: e.id, aadhaar: e.individualId, individualId: e.individualId)).toList();

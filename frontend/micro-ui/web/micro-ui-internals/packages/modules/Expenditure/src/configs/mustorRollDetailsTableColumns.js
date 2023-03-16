@@ -38,7 +38,7 @@ export const mustorRollDetailsTableColumns = (t) => [
     },
   },
   {
-    Header: () => <p>{t("EXP_NAME_OF_THE_INDIVIDUAL")}</p>,
+    Header: () => <p>{t("CORE_COMMON_NAME")}</p>,
     accessor: "nameOfIndividual",
     Cell: ({ value, column, row }) => {
       return String(t(value));
@@ -52,35 +52,35 @@ export const mustorRollDetailsTableColumns = (t) => [
     },
   },
   {
-    Header: () => <p>{t("ATM_SKILL")}</p>,
+    Header: () => <p>{t("EXP_SKILL")}</p>,
     accessor: "skill",
     Cell: ({ value, column, row }) => {
       return String(t(value));
     }
   },
   {
-    Header: () => <p>{"Days worked"}</p>,
+    Header: () => <p>{t("EXP_DAYS_WORKED")}</p>,
     accessor: "actualWorkingDays",
     Cell: ({ value, column, row }) => {
       return String(t(value));
     }
   },
   {
-    Header: () => <p>{"Days measured"}</p>,
+    Header: () => <p>{ t("EXP_DAYS_MEASURED")}</p>,
     accessor: "modifiedWorkingDays",
     Cell: ({ value, column, row }) => {
       return String(t(value));
     }
   },
   {
-    Header: () => <p>{"Per day wage (₹)"}</p>,
+    Header: () => <p>{t("EXP_PER_DAY_WAGE")}</p>,
     accessor: "amount",
     Cell: ({ value, column, row }) => {
       return Digit.Utils.dss.formatterWithoutRound(value, 'number');
     }
   },
   {
-    Header: () => <p>{"Total Wage (₹)"}</p>,
+    Header: () => <p>{t("EXP_TOTAL_WAGE")}</p>,
     accessor: "modifiedAmount",
     Cell: ({ value, column, row }) => {
       return Digit.Utils.dss.formatterWithoutRound(value, 'number');
@@ -94,10 +94,17 @@ export const mustorRollDetailsTableColumns = (t) => [
     }
   },
   {
-    Header: () => <p>{"Payment Status"}</p>,
+    Header: () => <p>{t("ES_COMMON_PAYMENT_STATUS")}</p>,
     accessor: "paymentStatus",
     Cell: ({ value, column, row }) => {
-      return String(t(value));
+      if (row.original.type === "total") {
+        return String(t(value));
+      }
+      if(value === 'PAYMENT_COMPLETED') {
+        return <span style={{"color":"#0B6623"}}>{t(`BILL_STATUS_${value}`)}</span>
+      } else {
+        return <span style={{"color":"#FF0000"}}>{t(`BILL_STATUS_${value}`)}</span>
+      }
     }
   },
   // {

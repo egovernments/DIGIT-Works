@@ -612,7 +612,8 @@ mixin _$MusterRollEstimateState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
+    required TResult Function(EstimateMusterRollsModel? musterRollsModel)
+        loaded,
     required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -620,7 +621,7 @@ mixin _$MusterRollEstimateState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
     TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -628,7 +629,7 @@ mixin _$MusterRollEstimateState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
@@ -718,7 +719,8 @@ class _$_Initial extends _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
+    required TResult Function(EstimateMusterRollsModel? musterRollsModel)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return initial();
@@ -729,7 +731,7 @@ class _$_Initial extends _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return initial?.call();
@@ -740,7 +742,7 @@ class _$_Initial extends _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -832,7 +834,8 @@ class _$_Loading extends _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
+    required TResult Function(EstimateMusterRollsModel? musterRollsModel)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return loading();
@@ -843,7 +846,7 @@ class _$_Loading extends _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return loading?.call();
@@ -854,7 +857,7 @@ class _$_Loading extends _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -912,9 +915,9 @@ abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({MusterRollsModel? musterRollsModel});
+  $Res call({EstimateMusterRollsModel? musterRollsModel});
 
-  $MusterRollsModelCopyWith<$Res>? get musterRollsModel;
+  $EstimateMusterRollsModelCopyWith<$Res>? get musterRollsModel;
 }
 
 /// @nodoc
@@ -933,18 +936,19 @@ class __$$_LoadedCopyWithImpl<$Res>
       freezed == musterRollsModel
           ? _value.musterRollsModel
           : musterRollsModel // ignore: cast_nullable_to_non_nullable
-              as MusterRollsModel?,
+              as EstimateMusterRollsModel?,
     ));
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $MusterRollsModelCopyWith<$Res>? get musterRollsModel {
+  $EstimateMusterRollsModelCopyWith<$Res>? get musterRollsModel {
     if (_value.musterRollsModel == null) {
       return null;
     }
 
-    return $MusterRollsModelCopyWith<$Res>(_value.musterRollsModel!, (value) {
+    return $EstimateMusterRollsModelCopyWith<$Res>(_value.musterRollsModel!,
+        (value) {
       return _then(_value.copyWith(musterRollsModel: value));
     });
   }
@@ -956,7 +960,7 @@ class _$_Loaded extends _Loaded {
   const _$_Loaded(this.musterRollsModel) : super._();
 
   @override
-  final MusterRollsModel? musterRollsModel;
+  final EstimateMusterRollsModel? musterRollsModel;
 
   @override
   String toString() {
@@ -986,7 +990,8 @@ class _$_Loaded extends _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
+    required TResult Function(EstimateMusterRollsModel? musterRollsModel)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return loaded(musterRollsModel);
@@ -997,7 +1002,7 @@ class _$_Loaded extends _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return loaded?.call(musterRollsModel);
@@ -1008,7 +1013,7 @@ class _$_Loaded extends _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -1057,10 +1062,11 @@ class _$_Loaded extends _Loaded {
 }
 
 abstract class _Loaded extends MusterRollEstimateState {
-  const factory _Loaded(final MusterRollsModel? musterRollsModel) = _$_Loaded;
+  const factory _Loaded(final EstimateMusterRollsModel? musterRollsModel) =
+      _$_Loaded;
   const _Loaded._() : super._();
 
-  MusterRollsModel? get musterRollsModel;
+  EstimateMusterRollsModel? get musterRollsModel;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -1130,7 +1136,8 @@ class _$_Error extends _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
+    required TResult Function(EstimateMusterRollsModel? musterRollsModel)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return error(this.error);
@@ -1141,7 +1148,7 @@ class _$_Error extends _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return error?.call(this.error);
@@ -1152,7 +1159,7 @@ class _$_Error extends _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(EstimateMusterRollsModel? musterRollsModel)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {

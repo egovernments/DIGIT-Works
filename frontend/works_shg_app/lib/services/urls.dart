@@ -53,4 +53,5 @@ class AttendanceRegisterServices {
   String get createAttendanceLog => 'attendance/log/v1/_create';
   String get updateAttendanceLog => 'attendance/log/v1/_update';
   String get deEnrollAttendee => 'attendance/attendee/v1/_delete';
+  String get individualSearch => 'individual/v1/_search';
 }

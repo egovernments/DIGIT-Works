@@ -6,8 +6,8 @@ import { mustorRollDummyData } from '../../configs/mustorRollDummyData'
 
 const MustorRollDetailsTable = ({ musterData }) => {
     const { t } = useTranslation()
+    const [tableData, setTableData] = useState([]);
     const mustorRollDetailsColumns = useMemo(() => mustorRollDetailsTableColumns(t))
-    let tableRows = Object.values(musterData);
 
     const updateAmtAndWorkingDays = (state) => {
       let totalAmount = 0
@@ -37,46 +37,48 @@ const MustorRollDetailsTable = ({ musterData }) => {
       const { totalAmount, totalActualWorkingDays } = updateAmtAndWorkingDays(musterData)
       const { totalModifiedAmount, totalModifiedActualWorkingDays } = updateModifiedAmtAndWorkingDays(musterData)
       musterData = { ...musterData, total: { ...musterData.total, amount: totalAmount, actualWorkingDays: totalActualWorkingDays, modifiedAmount: totalModifiedAmount, modifiedWorkingDays: totalModifiedActualWorkingDays}  };
-      tableRows = Object.values(musterData);
+      setTableData(Object.values(musterData))
     }, [])
-   
+
     return (
         <React.Fragment>
         <div style={{ padding: "0px", overflowX: "scroll" }} className='card week-table-card-wrapper'>
+          { tableData?.length > 0 &&
             <Table
-                t={t}
-                className="wage-seekers-table week-table"
-                customTableWrapperClassName="table-wrapper attendence-table"
-                disableSort={false}
-                autoSort={false}
-                columns={mustorRollDetailsColumns}
-                initSortId="S N "
-                data={tableRows}
-                totalRecords={tableRows?.length}
-                isPaginationRequired={false}
-                styles={{marginTop: "16px"}}
-                getCellProps={(cellInfo) => {
-                    let tableProp = {};
-                    if(cellInfo.column.Header === "Modified Amount(Rs)") {
-                      tableProp["data-modified-amt"] = "modified-amt";
+              t={t}
+              className="wage-seekers-table week-table"
+              customTableWrapperClassName="table-wrapper attendence-table"
+              disableSort={false}
+              autoSort={false}
+              columns={mustorRollDetailsColumns}
+              initSortId="S N "
+              data={tableData}
+              totalRecords={tableData?.length}
+              isPaginationRequired={false}
+              styles={{marginTop: "16px"}}
+              getCellProps={(cellInfo) => {
+                  let tableProp = {};
+                  if(cellInfo.column.Header === "Modified Amount(Rs)") {
+                    tableProp["data-modified-amt"] = "modified-amt";
+                  }
+                  if(cellInfo.value === undefined) {
+                    tableProp["data-radio-selection"] = "last-radio";
+                  }
+                  if(cellInfo?.row?.original?.type === "total") {
+                    tableProp["data-last-row-cell"] = "last-row";
+                  }
+                  if (cellInfo.value === "ES_COMMON_TOTAL_AMOUNT") {
+                    tableProp["colSpan"] = 4;
+                  }
+                  if(cellInfo.value === "DNR") {
+                    tableProp["style"] = {
+                      display: "none",
                     }
-                    if(cellInfo.value === undefined) {
-                      tableProp["data-radio-selection"] = "last-radio";
-                    }
-                    if(cellInfo?.row?.original?.type === "total") {
-                      tableProp["data-last-row-cell"] = "last-row";
-                    }
-                    if (cellInfo.value === "ES_COMMON_TOTAL_AMOUNT") {
-                      tableProp["colSpan"] = 4;
-                    }
-                    if(cellInfo.value === "DNR") {
-                      tableProp["style"] = {
-                        display: "none",
-                      }
-                    }
-                    return tableProp;
-                }}
+                  }
+                  return tableProp;
+              }}
             />
+          }
         </div>
         </React.Fragment>
     )
