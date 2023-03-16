@@ -110,7 +110,7 @@ const inboxConfigMukta = () => {
                         },
                         {
                             label: "WORKS_PROJECT_NAME",
-                            jsonPath: "businessObject.additionalDetails.projectName"
+                            jsonPath: "businessObject.additionalDetails.orgName"
                         },
                         {
                             label: "ES_COMMON_CBO_NAME",
@@ -132,7 +132,7 @@ const inboxConfigMukta = () => {
                         },
                         {
                             label: "ES_COMMON_AMOUNT",
-                            jsonPath: "businessObject.additionalDetails.totalEstimatedAmount",
+                            jsonPath: "businessObject.totalContractedAmount",
                             additionalCustomization: true,
                             "key": "estimatedAmount"
                         },
