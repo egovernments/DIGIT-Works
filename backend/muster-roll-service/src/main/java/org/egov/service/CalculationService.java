@@ -87,10 +87,11 @@ public class CalculationService {
         List<IndividualEntry> individualEntries = new ArrayList<>();
         List<IndividualEntry> individualEntriesFromRequest = musterRoll.getIndividualEntries();
 
-        // fetch individual details from individual service
+        // fetch individual details from individual service and account details from bank account service
         List<String> individualIds = new ArrayList<>();
         individualIds.addAll(individualExitAttendanceMap.keySet());
         List<Individual> individuals = fetchIndividualDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId(),musterRoll);
+        List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId(),musterRoll);
 
         for (Map.Entry<String,List<LocalDateTime>> entry : individualExitAttendanceMap.entrySet()) {
             IndividualEntry individualEntry = new IndividualEntry();
@@ -154,14 +155,18 @@ public class CalculationService {
             individualEntry.setAuditDetails(auditDetails);
             individualEntry.setActualTotalAttendance(totalAttendance);
             //Set individual details in additionalDetails
-            if (!CollectionUtils.isEmpty(individuals)) {
+            if (!CollectionUtils.isEmpty(individuals) /*&& !CollectionUtils.isEmpty(bankAccounts)*/) {
                 Individual individual = individuals.stream()
                                 .filter(ind -> ind.getId().equalsIgnoreCase(individualEntry.getIndividualId()))
                                         .findFirst().orElse(null);
-                if (individual != null) {
-                    setAdditionalDetails(individualEntry,individualEntriesFromRequest,mdmsData,individual, isCreate);
+                BankAccount bankAccount = bankAccounts.stream()
+                                .filter(account -> account.getReferenceId().equalsIgnoreCase(individualEntry.getIndividualId()))
+                                        .findFirst().orElse(null);
+
+                if (individual != null /*&& bankAccount != null*/) {
+                    setAdditionalDetails(individualEntry,individualEntriesFromRequest,mdmsData,individual,bankAccount,isCreate);
                 } else {
-                    log.info("CalculationService::createAttendance::No match found in individual service for the individual id from attendance log - "+individualEntry.getIndividualId());
+                    log.info("CalculationService::createAttendance::No match found in individual and bank account service for the individual id from attendance log - "+individualEntry.getIndividualId());
                 }
 
             }
@@ -394,7 +399,7 @@ public class CalculationService {
      * @param individualEntriesFromRequest
      * @param mdmsData
      */
-    private void setAdditionalDetails(IndividualEntry individualEntry, List<IndividualEntry> individualEntriesFromRequest, Object mdmsData, Individual matchedIndividual, boolean isCreate) {
+    private void setAdditionalDetails(IndividualEntry individualEntry, List<IndividualEntry> individualEntriesFromRequest, Object mdmsData, Individual matchedIndividual, BankAccount bankAccount, boolean isCreate) {
 
         String skillCode = null;
         if (!CollectionUtils.isEmpty(individualEntriesFromRequest)) {
@@ -413,7 +418,7 @@ public class CalculationService {
         }
 
         //Update the skill value based on the code from request or set as default skill
-        musterRollServiceUtil.populateAdditionalDetails(mdmsData, individualEntry, skillCode, matchedIndividual, isCreate);
+        musterRollServiceUtil.populateAdditionalDetails(mdmsData, individualEntry, skillCode, matchedIndividual, bankAccount, isCreate);
     }
 
     /**
@@ -458,6 +463,51 @@ public class CalculationService {
 
         log.info("CalculationService::fetchIndividualDetails::Individual search fetched successfully");
         return response.getIndividual();
+
+    }
+
+    /**
+     * Fetch the bank account details from bankAccount service
+     * @param ids
+     *
+     */
+    private List<BankAccount> fetchBankaccountDetails(List<String> ids,RequestInfo requestInfo, String tenantId, MusterRoll musterRoll){
+        // fetch the bank account details from bank account service
+        StringBuilder uri = new StringBuilder();
+        uri.append(config.getBankaccountsHost()).append(config.getBankaccountsSearchEndpoint());
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString());
+
+        BankAccountSearchCriteria bankAccountSearchCriteria = BankAccountSearchCriteria.builder().tenantId(tenantId)
+                .serviceCode("IND").referenceId(ids).build();
+        Pagination pagination = Pagination.builder().limit(100d).build();
+        BankAccountSearchRequest bankAccountSearchRequest = BankAccountSearchRequest.builder().
+                requestInfo(requestInfo).bankAccountDetails(bankAccountSearchCriteria).pagination(pagination).build();
+
+        BankAccountResponse response = null;
+        log.info("CalculationService::fetchBankaccountDetails::call bankaccounts search with tenantId::"+tenantId
+                +"::individual ids::"+ids);
+
+        try {
+            response  = restTemplate.postForObject(uriBuilder.toUriString(),bankAccountSearchRequest,BankAccountResponse.class);
+        }  catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
+            log.error("CalculationService::fetchBankaccountDetails::Error thrown from bankaccounts search service::"+httpClientOrServerExc.getStatusCode());
+            throw new CustomException("BANKACCOUNTS_SEARCH_SERVICE_EXCEPTION","Error thrown from bankaccounts search service::"+httpClientOrServerExc.getStatusCode());
+        }
+
+        if (response == null || CollectionUtils.isEmpty(response.getBankAccounts())) {
+            /*StringBuffer exceptionMessage = new StringBuffer();
+            exceptionMessage.append("Bankaccounts search returned empty response for registerId ");
+            exceptionMessage.append(musterRoll.getRegisterId());
+            exceptionMessage.append(" with startDate - ");
+            exceptionMessage.append(musterRoll.getStartDate());
+            exceptionMessage.append(" and endDate - ");
+            exceptionMessage.append(musterRoll.getEndDate());
+            throw new CustomException("BANKACCOUNTS_SEARCH_SERVICE_EMPTY",exceptionMessage.toString());*/
+            return new ArrayList<>();
+        }
+
+        log.info("CalculationService::fetchBankaccountDetails::Individual search fetched successfully");
+        return response.getBankAccounts();
 
     }
 

@@ -52,7 +52,7 @@ public class MusterRollServiceUtil {
      * @param skillCode
      *
      */
-    public void populateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode, Individual matchedIndividual, boolean isCreate) {
+    public void populateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode, Individual matchedIndividual, BankAccount bankAccount, boolean isCreate) {
         final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_WAGER_SEEKER_SKILLS + ".*";
         List<LinkedHashMap<String,String>> musterRes = null;
 
@@ -82,6 +82,7 @@ public class MusterRollServiceUtil {
         additionalDetails.put("userId",matchedIndividual.getIndividualId());
         additionalDetails.put("userName",matchedIndividual.getName().getGivenName());
         additionalDetails.put("fatherName",matchedIndividual.getFatherName());
+        additionalDetails.put("mobileNo",matchedIndividual.getMobileNumber());
         Identifier aadhaar = matchedIndividual.getIdentifiers().stream()
                             .filter(identifier -> identifier.getIdentifierType().contains("AADHAAR"))
                                     .findFirst().orElse(null);
@@ -106,8 +107,20 @@ public class MusterRollServiceUtil {
             additionalDetails.put("skillCode",skillList);
         }
 
-        //TODO dummy value --- will be replaced with actual values from banking service
-        additionalDetails.put("bankDetails","880182873839-SBIN0001237");
+        if (bankAccount != null) {
+            List<BankAccountDetails> bankAccountDetails= bankAccount.getBankAccountDetails();
+            if (!CollectionUtils.isEmpty(bankAccountDetails)) {
+                String accountNumber = bankAccountDetails.get(0).getAccountNumber();
+                String ifscCode = bankAccountDetails.get(0).getBankBranchIdentifier().getCode();
+                String accountHolderName = bankAccountDetails.get(0).getAccountHolderName();
+                String accountType = bankAccountDetails.get(0).getAccountType();
+                additionalDetails.put("bankDetails",accountNumber+"-"+ifscCode);
+                additionalDetails.put("accountHolderName",accountHolderName);
+                additionalDetails.put("accountType",accountType);
+            }
+        }
+
+
 
         try {
             individualEntry.setAdditionalDetails(mapper.readValue(additionalDetails.toString(), Object.class));
