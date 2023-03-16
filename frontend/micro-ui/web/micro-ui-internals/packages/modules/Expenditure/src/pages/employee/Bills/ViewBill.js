@@ -9,7 +9,6 @@ const ViewBill = () => {
   const { tenantId, billNumber } = Digit.Hooks.useQueryParams();
 
   const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.bills.useViewBill(tenantId, {}, { musterRollNumber: billNumber })
-  console.log('@@Data', data);
 
   return (
     <React.Fragment>
