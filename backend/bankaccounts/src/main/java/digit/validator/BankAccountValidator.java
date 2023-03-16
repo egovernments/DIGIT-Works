@@ -15,13 +15,14 @@ public class BankAccountValidator {
 
     /**
      * validate the search bank account
+     *
      * @param searchRequest
      */
     public void validateBankAccountOnSearch(BankAccountSearchRequest searchRequest) {
         log.info("BankAccountValidator::validateSearchBankAccount");
         BankAccountSearchCriteria searchCriteria = searchRequest.getBankAccountDetails();
         RequestInfo requestInfo = searchRequest.getRequestInfo();
-        if (searchCriteria == null || requestInfo == null ) {
+        if (searchCriteria == null || requestInfo == null) {
             throw new CustomException("BANK_ACCOUNTS_SEARCH_CRITERIA_REQUEST", "Bank accounts search criteria request is mandatory");
         }
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
