@@ -1,3 +1,26 @@
+const billStatus = [
+    {
+        name: 'Submitted',
+        code: 'SUBMITTED',
+        i18nKey: 'SUBMITTED'
+    },
+    {
+        name: 'Approved',
+        code: 'APPROVED',
+        i18nKey: 'APPROVED'
+    },
+    {
+        name: 'Rejected',
+        code: 'REJECTED',
+        i18nKey: 'REJECTED'
+    },
+    {
+        name: 'Verified',
+        code: 'VERIFIED',
+        i18nKey: 'VERIFIED'
+    }
+]
+
 export const SearchBillConfig = {
     "tenantId": "pg",
     "moduleName": "commonMuktaUiConfig",
@@ -104,12 +127,12 @@ export const SearchBillConfig = {
                                 isMandatory: false,
                                 disable: false,
                                 populators: {
-                                    name: "status",
+                                    name: "musterRollStatus",
                                     optionsKey: "name",
                                     optionsCustomStyle: {
                                         top: "2.3rem"
                                     },
-                                    options: []
+                                    options: billStatus
                                 }
                             },
                             {
@@ -156,7 +179,7 @@ export const SearchBillConfig = {
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
-                                jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
+                                jsonPath: "",
                                 additionalCustomization:true 
                             },
                             {
@@ -165,7 +188,7 @@ export const SearchBillConfig = {
                             },
                             {
                                 label: "WORKS_BILL_TYPE",
-                                jsonPath: "additionalDetails.contractId",
+                                jsonPath: "additionalDetails.billType",
                             },
                             {
                                 label: "CORE_COMMON_STATUS",

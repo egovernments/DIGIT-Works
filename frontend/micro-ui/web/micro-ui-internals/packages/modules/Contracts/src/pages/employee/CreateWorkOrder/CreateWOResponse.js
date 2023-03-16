@@ -13,7 +13,7 @@ const CreateWOResponse = () => {
     const navigate = (page) =>{
         switch(page){
             case "contracts-inbox" : {
-                
+                history.push(`/${window.contextPath}/employee/contracts/inbox`)
             }
         }
     }
