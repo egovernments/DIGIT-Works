@@ -96,7 +96,7 @@ public class BankAccountQueryBuilder {
 
         if (!CollectionUtils.isEmpty(bankAccountDetails.getAccountNumber())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" bankAcctDetail.account_number IN (").append(createQuery(ids)).append(")");
+            queryBuilder.append(" bankAcctDetail.account_number IN (").append(createQuery(bankAccountDetails.getAccountNumber())).append(")");
             addToPreparedStatement(preparedStmtList, bankAccountDetails.getAccountNumber());
         }
 
@@ -114,7 +114,7 @@ public class BankAccountQueryBuilder {
 
         if (!CollectionUtils.isEmpty(bankAccountDetails.getReferenceId())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" bankAcct.reference_id IN (").append(createQuery(ids)).append(")");
+            queryBuilder.append(" bankAcct.reference_id IN (").append(createQuery(bankAccountDetails.getReferenceId())).append(")");
             addToPreparedStatement(preparedStmtList, bankAccountDetails.getReferenceId());
         }
 

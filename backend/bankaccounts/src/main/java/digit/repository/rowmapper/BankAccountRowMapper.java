@@ -107,7 +107,7 @@ public class BankAccountRowMapper implements ResultSetExtractor<List<BankAccount
         Document bankDocument = Document.builder()
                 .id(rs.getString("bankAcctDocId"))
                 .documentType(rs.getString("document_type"))
-                .fileStore(rs.getString("filestore_id"))
+                .fileStore(rs.getString("file_store"))
                 .documentUid(rs.getString("document_uid"))
                 .build();
 

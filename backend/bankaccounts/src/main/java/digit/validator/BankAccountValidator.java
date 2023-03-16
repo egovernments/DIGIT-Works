@@ -22,7 +22,7 @@ public class BankAccountValidator {
         BankAccountSearchCriteria searchCriteria = searchRequest.getBankAccountDetails();
         RequestInfo requestInfo = searchRequest.getRequestInfo();
         if (searchCriteria == null || requestInfo == null ) {
-            throw new CustomException("ESTIMATE_SEARCH_CRITERIA_REQUEST", "Estimate search criteria request is mandatory");
+            throw new CustomException("BANK_ACCOUNTS_SEARCH_CRITERIA_REQUEST", "Bank accounts search criteria request is mandatory");
         }
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
             throw new CustomException("TENANT_ID", "TenantId is mandatory");
