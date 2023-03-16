@@ -8,7 +8,7 @@ var Digit = window.Digit || {};
 const businessServiceMap = {
   estimate: "estimate-approval-5",
   contracts: "contract-approval-mukta",
-  attendencemgmt: "muster-roll-approval"
+  attendencemgmt: "muster-roll-approval",
 };
 
 export const UICustomizations = {
@@ -41,29 +41,21 @@ export const UICustomizations = {
     }
   },
   enableHrmsSearch: (businessService, action) => {
-    
     if (businessService === businessServiceMap.estimate) {
-      return (
-        action.action.includes("TECHNICALSANCTION") ||
-        action.action.includes("VERIFYANDFORWARD")
-      );
+      return action.action.includes("TECHNICALSANCTION") || action.action.includes("VERIFYANDFORWARD");
     }
     return false;
   },
   getBusinessService: (moduleCode) => {
     if (moduleCode?.includes("estimate")) {
       return businessServiceMap?.estimate;
-    }
-    else if (moduleCode?.includes("contract")) {
+    } else if (moduleCode?.includes("contract")) {
       return businessServiceMap?.contracts;
-    }
-    else if (moduleCode?.includes("attendence")) {
+    } else if (moduleCode?.includes("attendence")) {
       return businessServiceMap?.attendencemgmt;
+    } else {
+      return businessServiceMap;
     }
-    else{
-      return businessServiceMap
-    }
-   
   },
   SearchProjectConfig: {
     preProcess: (data) => {
@@ -379,7 +371,7 @@ export const UICustomizations = {
         return (
           <span className="link">
             <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row.tenantId}&wageseekerId=${value}`}>
-              {value?value: t("ES_COMMON_NA")}
+              {value ? value : t("ES_COMMON_NA")}
             </Link>
           </span>
         );
@@ -412,16 +404,22 @@ export const UICustomizations = {
     },
   },
   SearchOrganisationConfig: {
+    preProcess: (data) => {
+      // const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
+      // const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
+      // data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
+      data.body.SearchCriteria = { ...data.body.SearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() };
+      return data;
+    },
     additionalCustomizations: (row, column, columnConfig, value, t) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
-
       if (column.label === "MASTERS_ORGANISATION_ID") {
         return (
           <span className="link">
-            <Link to={`/${window.contextPath}/employee/masters/view-organisation?tenantId=${row.tenantId}&orgId=${value?.[0]}`}>
-              {value?.[0] && t("ES_COMMON_NA")}
+            <Link to={`/${window.contextPath}/employee/masters/view-organisation?tenantId=${row.tenantId}&orgId=${value}`}>
+              {value ? value : t("ES_COMMON_NA")}
             </Link>
           </span>
         );
@@ -438,7 +436,7 @@ export const UICustomizations = {
       if (column.label === "MASTERS_LOCATION") {
         return value ? (
           <span style={{ whiteSpace: "nowrap" }}>
-            {String(`${t(Digit.Utils.locale.getCityLocale(value))} ${t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId))}`)}
+            {String(`${t(Digit.Utils.locale.getCityLocale(row?.tenantId))} ${t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId))}`)}
           </span>
         ) : (
           t("ES_COMMON_NA")
@@ -451,9 +449,7 @@ export const UICustomizations = {
       }
     },
   },
-  EstimateInboxConfig:{
-    
-  },
+  EstimateInboxConfig:{},
   BillInboxConfig: {
     preProcess: (data) => {
       data.body.inbox = {
