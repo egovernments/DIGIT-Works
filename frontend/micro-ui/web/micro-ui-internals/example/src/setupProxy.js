@@ -71,7 +71,8 @@ module.exports = function (app) {
     "/muster-roll",
     "/pms/project",
     "/inbox/v2/_search",
-    "/individual/v1/_search"
+    "/individual/v1/_search",
+    "/org-services/organisation/v1/_search"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

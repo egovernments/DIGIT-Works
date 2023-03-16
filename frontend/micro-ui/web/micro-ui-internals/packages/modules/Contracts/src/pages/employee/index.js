@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
 import CreateContract from "./CreateContract";
-import Inbox from "./Inbox";
+import Inbox from "./ContractsInbox/Inbox.js"
 import SearchContracts from "./SearchContract";
 //import ViewContract from "./ViewContract";
 import ViewContractDetails from "./ViewContractDetails";

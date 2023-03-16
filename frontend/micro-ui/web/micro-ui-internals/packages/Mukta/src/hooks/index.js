@@ -1,10 +1,10 @@
-import {logout} from "./logout";
+import {logoutV1} from "./logout";
 import useSearchEstimate from "./useSearchEstimate";
 import useViewProjectDetails from "./useViewProjectDetails";
 import useViewContractDetails from "./contracts/useViewContractDetails";
 
 const UserService={
-    logout,
+    logoutV1,
 }
 
 const works = {
