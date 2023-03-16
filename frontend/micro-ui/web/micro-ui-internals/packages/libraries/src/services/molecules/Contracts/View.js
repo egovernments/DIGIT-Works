@@ -138,10 +138,10 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
   }
 } 
 
-const workflowDataDetails = async (tenantId, businessIds) => {
-    const response = await Digit.WorkflowService.getByBusinessId(tenantId, businessIds);
-    return response
-}
+// const workflowDataDetails = async (tenantId, businessIds) => {
+//     const response = await Digit.WorkflowService.getByBusinessId(tenantId, businessIds);
+//     return response
+// }
 
 export const View = {
     fetchContractDetails: async (t, tenantId, data, searchParams) => {

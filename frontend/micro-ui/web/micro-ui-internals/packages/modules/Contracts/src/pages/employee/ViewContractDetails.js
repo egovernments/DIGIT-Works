@@ -45,24 +45,25 @@ const ViewContractDetails = () => {
             Projects: [
                 {
                     tenantId,
-                    id:payload?.contractNumber?.projectId
+                    id:data?.applicationData?.additionalDetails?.projectId
                 }
             ]
         },
         config:{
-            enabled: !!(payload?.contractNumber?.projectId) 
+            enabled: !!(data?.applicationData?.additionalDetails?.projectId) 
         }
     })
+    console.log("projectt :", project);
 
   
     useEffect(() => {
         //here set cardstate when contract and project is available
           setCardState({
-              "WORKS_ORDER_ID": "",
-              "WORKS_PROJECT_ID": "",            
-              "ES_COMMON_PROPOSAL_DATE": Digit.DateUtils.ConvertEpochToDate(""),
-              "ES_COMMON_PROJECT_NAME": "",
-              "PROJECTS_DESCRIPTION": ""
+              "WORKS_ORDER_ID": payload?.contractNumber,
+              "WORKS_PROJECT_ID": project?.projectNumber,            
+              "ES_COMMON_PROPOSAL_DATE": Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal),
+              "ES_COMMON_PROJECT_NAME": project?.name,
+              "PROJECTS_DESCRIPTION": project?.description
           }) 
       }, [project])
 
@@ -98,14 +99,11 @@ const ViewContractDetails = () => {
             workflowDetails={{}}
             businessService={"contracts"}
             showTimeLine={true}
-            mutate={() => {}} //mutate={mutate}
+            mutate={() => {}}
             tenantId={tenantId}
             showToast={showToast}
             setShowToast={setShowToast}
             applicationNo={payload?.contractNumber}
-            //setshowEditTitle={setshowEditTitle}
-            //timelineStatusPrefix={"ATM_"}
-            //forcedActionPrefix={"ATM"}
           />
           <ViewDetailsCard cardState={cardState} t={t} />
           <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>

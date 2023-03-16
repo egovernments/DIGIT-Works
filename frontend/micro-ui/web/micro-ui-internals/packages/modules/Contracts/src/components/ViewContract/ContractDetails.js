@@ -13,12 +13,11 @@ const ContractDetails = (props) => {
     const { isLoading: isContractLoading,data } = Digit.Hooks.contracts.useViewContractDetails(
         props.tenantId,{tenantId: props.tenantId, contractNumber: props.contractNumber}, {})
     console.log("DATAAA :", data);
-    console.log("contract number :", props.contractNumber);
 
     if (isContractLoading) return <Loader />
 
     return (
-        <>
+        <div>
             <ApplicationDetails
                 applicationDetails={props.applicationDetails}
                 isLoading={isContractLoading}
@@ -32,15 +31,15 @@ const ContractDetails = (props) => {
                 applicationNo={contractNumber}
                 statusAttribute={"state"}
             />
-            <WorkflowActions
+            {/* <WorkflowActions
                 forcedActionPrefix={"WF_CONTRACT_ACTION"}
                 businessService={businessService}
                 applicationNo={contractNumber}
                 tenantId={tenantId}
                 applicationDetails={props.applicationDetails?.applicationData}
                 url={Digit.Utils.Urls.works.updateEstimate}
-            />
-        </>
+            /> */}
+        </div>
     )
 }
 
