@@ -13,17 +13,17 @@ const ViewContractDetails = () => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
     // contractNumber = "WO/2022-23/000329"
 
-    const searchParams = {
-              tenantId : queryStrings?.tenantId || tenantId,
-              contractNumber : queryStrings?.contractNumber
-          }
+    const payload = {
+        tenantId : queryStrings?.tenantId || tenantId,
+        contractNumber : queryStrings?.workOrderNumber
+    }
 
-    const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(searchParams?.tenantId, {}, searchParams)
+    const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
     console.log('@@Data', data);
-    console.log("tenantid :",searchParams?.tenantId);
-    console.log("contractNumber :",searchParams?.contractNumber);
+  
 
 
+    /*
     let workflowDetails = Digit.Hooks.useWorkflowDetails(
       {
           tenantId: searchParams?.tenantId,
@@ -37,7 +37,7 @@ const ViewContractDetails = () => {
     );
 
     console.log("workflow :", workflowDetails);
-        
+    */
    
     return (
       <React.Fragment>
@@ -48,14 +48,14 @@ const ViewContractDetails = () => {
           applicationData={data?.applicationData}
           moduleCode="contracts"
           isDataLoading={false}
-          workflowDetails={workflowDetails}
+          workflowDetails={{}}
           businessService={"contracts"} 
           showTimeLine={true}
           mutate={()=>{}} //mutate={mutate}
           tenantId={tenantId}
           showToast={showToast}
           setShowToast={setShowToast}
-          applicationNo={searchParams?.contractNumber}
+          applicationNo={payload?.contractNumber}
           //setshowEditTitle={setshowEditTitle}
           //timelineStatusPrefix={"ATM_"}
           //forcedActionPrefix={"ATM"}

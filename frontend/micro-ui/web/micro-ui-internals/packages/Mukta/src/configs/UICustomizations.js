@@ -295,7 +295,7 @@ export const UICustomizations = {
         additionalCustomizations: (row, column, columnConfig, value, t) => {
             if (column.key === "workOrderNumber") {
                 return <span className="link">
-                    <Link to={`/${window.contextPath}/employee/contract/contract-details?tenantId=${row.ProcessInstance.tenantId}&workOrderNumber=${value}`}>
+                    <Link to={`/${window.contextPath}/employee/contracts/contract-details?tenantId=${row.ProcessInstance.tenantId}&workOrderNumber=${value}`}>
                         {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
                     </Link>
                 </span>

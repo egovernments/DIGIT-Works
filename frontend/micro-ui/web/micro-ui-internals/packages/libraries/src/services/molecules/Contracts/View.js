@@ -140,17 +140,15 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
 
 export const View = {
     fetchContractDetails: async (t, tenantId, data, searchParams) => {
-    //return transformViewDataToApplicationDetails(t, dummyData, tenantId)
-        
-              try {
-                  const response = await ContractService.search(tenantId, data, searchParams);
-                  console.log('response', response);
-                  return transformViewDataToApplicationDetails(t, response)
-              } catch (error) {
-                  console.log('error', error);
-                  throw new Error(error?.response?.data?.Errors[0].message);
-              }
-        
+    //return transformViewDataToApplicationDetails(t, dummyData, tenantId) 
+    try {
+        const response = await ContractService.search(tenantId, data, searchParams);
+        console.log('response', response);
+        return transformViewDataToApplicationDetails(t, response)
+        } catch (error) {
+            console.log('error', error);
+            throw new Error(error?.response?.data?.Errors[0].message);
+        }  
     }
 }
 

@@ -90,7 +90,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/create-contract`} component={() => <CreateContract ContractSession={ContractSession} />} />
           <PrivateRoute path={`${path}/search-contract`} component={() => <SearchContracts />} />
           {/* <PrivateRoute path={`${path}/view-contract`} component={() => <ViewContract />} /> */}
-          <PrivateRoute path={`${path}/view-contract`} component={() => <ViewContractDetails />} />
+          <PrivateRoute path={`${path}/contract-details`} component={() => <ViewContractDetails />} />
           <PrivateRoute
             path={`${path}/inbox`}
             component={() => (
