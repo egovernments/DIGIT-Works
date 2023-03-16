@@ -108,8 +108,28 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
         ]
     }
 
+    const documentDetails = {
+        title: "",
+        asSectionHeader: true,
+        additionalDetails: {
+            documents: [{
+                title: "WORKS_RELEVANT_DOCUMENTS",
+                BS : 'Works',
+                values: contract?.documents?.map((document) => {
+                    return {
+                        title: document?.documentType,
+                        documentType: document?.documentType,
+                        documentUid: document?.documentUid,
+                        fileStoreId: document?.fileStore,
+                    };
+                }),
+            },
+            ]
+        }
+    }
 
-    const applicationDetails = { applicationDetails: [contractDetails] };
+
+    const applicationDetails = { applicationDetails: [contractDetails, documentDetails] };
 
   return {
     applicationDetails,
