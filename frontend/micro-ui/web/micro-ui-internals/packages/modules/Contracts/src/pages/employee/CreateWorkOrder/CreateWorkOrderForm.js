@@ -31,7 +31,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
             if(formData.nameOfOfficerInCharge) {
-                setValue("designationOfOfficerInCharge", fetchOfficerInChargeDesignation(formData.nameOfOfficerInCharge?.data));
+                setValue("designationOfOfficerInCharge", t(`COMMON_MASTERS_DESIGNATION_${fetchOfficerInChargeDesignation(formData.nameOfOfficerInCharge?.data)}`));
             }
 
             if(formData.nameOfCBO) {
@@ -65,7 +65,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                 if(error?.response?.data?.Errors?.[0]?.code === "INVALID_ESTIMATELINEITEMID") {
                     setToast(()=>({show : true, label : t("ESTIMATE_ALREADY_ASSOCIATED_TO_OTHER_CONTRACT"), error : true}));
                 }else {
-                    setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                    setToast(()=>({show : true, label : t(error?.response?.data?.Errors?.[0]?.code), error : true}));
                 }
             },
             onSuccess: async (responseData, variables) => {

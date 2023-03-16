@@ -6,8 +6,8 @@ import CreateWorkOrderForm from "./CreateWorkOrderForm";
 const CreateWorkOrder = () => {
 
     const queryStrings = Digit.Hooks.useQueryParams();
-    const estimateNumber = queryStrings?.estimateNumber || "";
-    const tenantId = queryStrings?.tenantId || "";
+    const estimateNumber = queryStrings?.estimateNumber;
+    const tenantId = queryStrings?.tenantId;
     const [config, setConfig] = useState({});
 
      //fetching estimate data
@@ -30,13 +30,6 @@ const CreateWorkOrder = () => {
             enabled: !!(estimate?.projectId) 
         }
     })
-
-    if(!isEstimateLoading) {
-        console.log(estimate);
-        if(!isProjectLoading) {
-            console.log("PROJECT",project);
-        }
-     }
 
     const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {
         basicDetails_projectID : "",
