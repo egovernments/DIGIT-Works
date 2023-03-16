@@ -48,7 +48,8 @@ const Urls = {
   },
 
   contracts : {
-    createWO : "/contract-service/contract/v1/_create"
+    createWO : "/contract-service/contract/v1/_create",
+    search: "/contract-service/contract/v1/_search"
   },
 
   fsm: {
@@ -217,10 +218,6 @@ const Urls = {
 
   wageseeker: {
     search: "/individual/v1/_search"
-  },
-
-  contracts: {
-    search: "/contract-service/contract/v1/_search"
   },
 
   noc: {
