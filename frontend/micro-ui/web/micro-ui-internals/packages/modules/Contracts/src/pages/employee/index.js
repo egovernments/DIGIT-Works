@@ -37,9 +37,9 @@ const ContractsBreadCrumbs = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
-      path: `/${window.contextPath}/employee/contracts/view-contract`,
+      path: `/${window.contextPath}/employee/contracts/contract-details`,
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CONTRACTS")}` : t("WORKS_CONTRACTS"),
-      show: location.pathname.includes("/contracts/view-contract") ? true : false,
+      show: location.pathname.includes("/contracts/contract-details") ? true : false,
       isBack: fromScreen && true,
     },
   ];
