@@ -263,7 +263,6 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                             loading: () => Loaders
                                                                 .circularLoader(
                                                                     context),
-                                                            error: (String? error) => Notifiers.getToastMessage(context, error.toString(), 'ERROR'),
                                                             loaded: (EstimateMusterRollsModel?
                                                                 viewMusterRollsModel) {
                                                               List<AttendeesTrackList>
@@ -288,6 +287,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 .individualId,
                                                                         individualId: e
                                                                             .individualId,
+                                                                        individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName,
                                                                         id: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? e.id ?? '',
                                                                         skill: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
                                                                             '',
@@ -856,7 +856,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
     if (searchController.text.isNotEmpty) {
       setState(() {
         newList.retainWhere((e) =>
-            e.individualId!.toLowerCase().contains(searchController.text));
+            e.name!.toLowerCase().contains(searchController.text.toLowerCase()));
       });
     } else {
       onSubmit(registerId.toString());

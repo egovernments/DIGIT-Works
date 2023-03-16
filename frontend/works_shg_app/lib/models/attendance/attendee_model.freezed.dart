@@ -338,6 +338,7 @@ AttendeesTrackList _$AttendeesTrackListFromJson(Map<String, dynamic> json) {
 mixin _$AttendeesTrackList {
   String? get name => throw _privateConstructorUsedError;
   String? get aadhaar => throw _privateConstructorUsedError;
+  String? get individualGaurdianName => throw _privateConstructorUsedError;
   String? get individualId => throw _privateConstructorUsedError;
   String? get id => throw _privateConstructorUsedError;
   String? get skill => throw _privateConstructorUsedError;
@@ -380,6 +381,7 @@ abstract class $AttendeesTrackListCopyWith<$Res> {
   $Res call(
       {String? name,
       String? aadhaar,
+      String? individualGaurdianName,
       String? individualId,
       String? id,
       String? skill,
@@ -424,6 +426,7 @@ class _$AttendeesTrackListCopyWithImpl<$Res, $Val extends AttendeesTrackList>
   $Res call({
     Object? name = freezed,
     Object? aadhaar = freezed,
+    Object? individualGaurdianName = freezed,
     Object? individualId = freezed,
     Object? id = freezed,
     Object? skill = freezed,
@@ -458,6 +461,10 @@ class _$AttendeesTrackListCopyWithImpl<$Res, $Val extends AttendeesTrackList>
       aadhaar: freezed == aadhaar
           ? _value.aadhaar
           : aadhaar // ignore: cast_nullable_to_non_nullable
+              as String?,
+      individualGaurdianName: freezed == individualGaurdianName
+          ? _value.individualGaurdianName
+          : individualGaurdianName // ignore: cast_nullable_to_non_nullable
               as String?,
       individualId: freezed == individualId
           ? _value.individualId
@@ -586,6 +593,7 @@ abstract class _$$_AttendeesTrackListCopyWith<$Res>
   $Res call(
       {String? name,
       String? aadhaar,
+      String? individualGaurdianName,
       String? individualId,
       String? id,
       String? skill,
@@ -629,6 +637,7 @@ class __$$_AttendeesTrackListCopyWithImpl<$Res>
   $Res call({
     Object? name = freezed,
     Object? aadhaar = freezed,
+    Object? individualGaurdianName = freezed,
     Object? individualId = freezed,
     Object? id = freezed,
     Object? skill = freezed,
@@ -663,6 +672,10 @@ class __$$_AttendeesTrackListCopyWithImpl<$Res>
       aadhaar: freezed == aadhaar
           ? _value.aadhaar
           : aadhaar // ignore: cast_nullable_to_non_nullable
+              as String?,
+      individualGaurdianName: freezed == individualGaurdianName
+          ? _value.individualGaurdianName
+          : individualGaurdianName // ignore: cast_nullable_to_non_nullable
               as String?,
       individualId: freezed == individualId
           ? _value.individualId
@@ -774,6 +787,7 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
   const _$_AttendeesTrackList(
       {this.name,
       this.aadhaar,
+      this.individualGaurdianName,
       this.individualId,
       this.id,
       this.skill,
@@ -807,6 +821,8 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
   final String? name;
   @override
   final String? aadhaar;
+  @override
+  final String? individualGaurdianName;
   @override
   final String? individualId;
   @override
@@ -868,7 +884,7 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
 
   @override
   String toString() {
-    return 'AttendeesTrackList(name: $name, aadhaar: $aadhaar, individualId: $individualId, id: $id, skill: $skill, monEntryId: $monEntryId, monExitId: $monExitId, monIndex: $monIndex, tueEntryId: $tueEntryId, tueExitId: $tueExitId, tueIndex: $tueIndex, wedEntryId: $wedEntryId, wedExitId: $wedExitId, wedIndex: $wedIndex, thuEntryId: $thuEntryId, thuExitId: $thuExitId, thursIndex: $thursIndex, friEntryId: $friEntryId, friExitId: $friExitId, friIndex: $friIndex, satEntryId: $satEntryId, satExitId: $satExitId, satIndex: $satIndex, sunEntryId: $sunEntryId, sunExitId: $sunExitId, sunIndex: $sunIndex, auditDetails: $auditDetails)';
+    return 'AttendeesTrackList(name: $name, aadhaar: $aadhaar, individualGaurdianName: $individualGaurdianName, individualId: $individualId, id: $id, skill: $skill, monEntryId: $monEntryId, monExitId: $monExitId, monIndex: $monIndex, tueEntryId: $tueEntryId, tueExitId: $tueExitId, tueIndex: $tueIndex, wedEntryId: $wedEntryId, wedExitId: $wedExitId, wedIndex: $wedIndex, thuEntryId: $thuEntryId, thuExitId: $thuExitId, thursIndex: $thursIndex, friEntryId: $friEntryId, friExitId: $friExitId, friIndex: $friIndex, satEntryId: $satEntryId, satExitId: $satExitId, satIndex: $satIndex, sunEntryId: $sunEntryId, sunExitId: $sunExitId, sunIndex: $sunIndex, auditDetails: $auditDetails)';
   }
 
   @override
@@ -878,6 +894,8 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
             other is _$_AttendeesTrackList &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.aadhaar, aadhaar) || other.aadhaar == aadhaar) &&
+            (identical(other.individualGaurdianName, individualGaurdianName) ||
+                other.individualGaurdianName == individualGaurdianName) &&
             (identical(other.individualId, individualId) ||
                 other.individualId == individualId) &&
             (identical(other.id, id) || other.id == id) &&
@@ -934,6 +952,7 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
         runtimeType,
         name,
         aadhaar,
+        individualGaurdianName,
         individualId,
         id,
         skill,
@@ -980,6 +999,7 @@ abstract class _AttendeesTrackList implements AttendeesTrackList {
   const factory _AttendeesTrackList(
           {final String? name,
           final String? aadhaar,
+          final String? individualGaurdianName,
           final String? individualId,
           final String? id,
           final String? skill,
@@ -1014,6 +1034,8 @@ abstract class _AttendeesTrackList implements AttendeesTrackList {
   String? get name;
   @override
   String? get aadhaar;
+  @override
+  String? get individualGaurdianName;
   @override
   String? get individualId;
   @override

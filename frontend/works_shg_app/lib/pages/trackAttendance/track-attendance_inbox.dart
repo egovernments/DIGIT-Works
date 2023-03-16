@@ -39,15 +39,19 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                 final List<Map<String, dynamic>> projectList =
                     attendanceRegisters
                         .map((e) => {
-                              i18.attendanceMgmt.nameOfWork: e.name,
-                              i18.attendanceMgmt.winCode: e
+                              i18.workOrder.workOrderNo: e
                                       .attendanceRegisterAdditionalDetails
                                       ?.contractId ??
                                   'NA',
                               i18.attendanceMgmt.registerId: e.registerNumber,
-                              i18.common.startDate: DateFormats.timeStampToDate(
-                                  e.startDate,
-                                  format: "dd/MM/yyyy"),
+                              i18.attendanceMgmt.projectId: e
+                                      .attendanceRegisterAdditionalDetails
+                                      ?.projectId ??
+                                  'NA',
+                              i18.attendanceMgmt.projectId: e
+                                      .attendanceRegisterAdditionalDetails
+                                      ?.projectName ??
+                                  'NA',
                               i18.attendanceMgmt.individualsCount:
                                   e.attendeesEntries != null
                                       ? e.attendeesEntries
@@ -58,10 +62,12 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                                           .toList()
                                           .length
                                       : 0,
+                              i18.common.startDate: DateFormats.timeStampToDate(
+                                  e.startDate,
+                                  format: "dd/MM/yyyy"),
                               i18.common.endDate: DateFormats.timeStampToDate(
                                   e.endDate,
                                   format: "dd/MM/yyyy"),
-                              i18.common.status: e.status
                             })
                         .toList();
 
@@ -75,7 +81,7 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          '${AppLocalizations.of(context).translate(i18.workOrder.projects)}(${attendanceRegistersModel!.attendanceRegister!.length})',
+                          '${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceRegisters)}(${attendanceRegistersModel!.attendanceRegister!.length})',
                           style: Theme.of(context).textTheme.displayMedium,
                           textAlign: TextAlign.left,
                         ),
