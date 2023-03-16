@@ -293,9 +293,8 @@ export const UICustomizations = {
         const fromDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromDate);
         const toDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toDate);
         const musterRollStatus = data?.params?.musterRollStatus?.code;
-        const status = data?.params?.status?.code;
         delete data.params.billType;
-        data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus, status };
+        data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus };
         return data;
     },
     additionalCustomizations: (row, column, columnConfig, value, t) => {

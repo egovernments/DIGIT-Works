@@ -1,3 +1,26 @@
+const billStatus = [
+    {
+        name: 'Submitted',
+        code: 'SUBMITTED',
+        i18nKey: 'SUBMITTED'
+    },
+    {
+        name: 'Approved',
+        code: 'APPROVED',
+        i18nKey: 'APPROVED'
+    },
+    {
+        name: 'Rejected',
+        code: 'REJECTED',
+        i18nKey: 'REJECTED'
+    },
+    {
+        name: 'Verified',
+        code: 'VERIFIED',
+        i18nKey: 'VERIFIED'
+    }
+]
+
 export const SearchBillConfig = {
     "tenantId": "pg",
     "moduleName": "commonMuktaUiConfig",
@@ -104,12 +127,12 @@ export const SearchBillConfig = {
                                 isMandatory: false,
                                 disable: false,
                                 populators: {
-                                    name: "status",
+                                    name: "musterRollStatus",
                                     optionsKey: "name",
                                     optionsCustomStyle: {
                                         top: "2.3rem"
                                     },
-                                    options: []
+                                    options: billStatus
                                 }
                             },
                             {
