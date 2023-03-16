@@ -17,7 +17,7 @@ return {
   label: "WORKS_SEARCH_CONTRACT",
   type: "search",
   apiDetails: {
-    serviceName: "wms/contract/_search",
+    serviceName: "/wms/contract/_search",
     requestParam: {},
     requestBody: {
     },
