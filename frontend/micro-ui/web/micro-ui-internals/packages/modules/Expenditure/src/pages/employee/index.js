@@ -2,7 +2,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb, AppContainer } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
-import BILLInbox from "./billInbox";
 import CreateBill from "./CreateBill";
 
 const ExpenditureBreadCrumbs = ({ location }) => {
