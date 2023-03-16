@@ -32,7 +32,8 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
         t,
         closeModal,
         submitAction,
-        businessService
+        businessService,
+        moduleCode
     } = props
 
     const enableAssignee = Digit?.Customizations?.["commonUiConfig"]?.enableHrmsSearch(businessService,action)
@@ -48,12 +49,12 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
     useEffect(() => {
       if(assigneeOptions?.length >=0){
       setConfig(
-        configEstimateModal(t,action,assigneeOptions,businessService)
+        configEstimateModal(t,action,assigneeOptions,businessService, moduleCode)
       )
       }
       else {
         setConfig(
-            configEstimateModal(t, action, undefined, businessService)
+            configEstimateModal(t, action, undefined, businessService, moduleCode)
         )
       }
       

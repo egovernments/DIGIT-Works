@@ -39,10 +39,38 @@ export const UICustomizations = {
         workflow,
       };
     }
+    if (businessService === businessServiceMap.contracts) {
+      const workflow = {
+        comment: data?.comments,
+        documents: data?.documents?.map((document) => {
+          return {
+            documentType: action?.action + " DOC",
+            fileName: document?.[1]?.file?.name,
+            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: document?.[1]?.fileStoreId?.tenantId,
+          };
+        }),
+        assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+        action: action.action,
+      };
+      //filtering out the data
+      Object.keys(workflow).forEach((key, index) => {
+        if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
+      });
+
+      return {
+        contract: applicationDetails,
+        workflow
+      };
+    }
   },
   enableHrmsSearch: (businessService, action) => {
     if (businessService === businessServiceMap.estimate) {
       return action.action.includes("TECHNICALSANCTION") || action.action.includes("VERIFYANDFORWARD");
+    }
+    if (businessService === businessServiceMap.contracts) {
+      return action.action.includes("VERIFY_AND_FORWARD");
     }
     return false;
   },

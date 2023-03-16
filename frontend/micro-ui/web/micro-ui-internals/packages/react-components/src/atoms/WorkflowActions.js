@@ -7,7 +7,7 @@ import ActionModal from "./Modals";
 import { Loader } from "./Loader";
 import Toast from "./Toast";
 
-const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged }) => {
+const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode }) => {
   
    //for testing from url these 2 lines of code are kept here
   const { estimateNumber } = Digit.Hooks.useQueryParams();
@@ -144,6 +144,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         submitAction={submitAction}
         businessService={businessService}
         applicationDetails={applicationDetails}
+        moduleCode={moduleCode}
       />}
       {showToast && <Toast
         error={showToast?.error}
