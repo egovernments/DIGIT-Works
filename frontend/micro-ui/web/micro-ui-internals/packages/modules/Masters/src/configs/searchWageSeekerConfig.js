@@ -37,30 +37,25 @@ const searchWageSeekerConfig = () => {
           },
           fields: [
             {
-              label: "MASTERS_WARD",
-              type: "dropdown",
-              isMandatory: false,
-              disable: false,
-              populators: {
-                name: "boundaryCode",
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
-                optionsKey: "name",
-                options: [
-                  {
-                    code: "WARD1",
-                    name: "WARD1",
-                  },
-                ],
-              },
-            },
+              "label": "COMMON_WARD",
+              "type": "locationdropdown",
+              "isMandatory": false,
+              "disable": false,
+              "populators": {
+                  "name": "wardCode",
+                  "type": "ward",
+                  "optionsKey": "name",
+                  "defaultText": "COMMON_SELECT_WARD",
+                  "selectedText": "COMMON_SELECTED",
+                  "allowMultiSelect": false
+              }
+          },
             {
               label: "MASTERS_WAGESEEKER_NAME",
               type: "text",
               isMandatory: false,
               disable: false,
-              populators: { name: "name", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
+              populators: { name: "name.givenName", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
             },
             {
               label: "MASTERS_WAGESEEKER_ID",
@@ -68,7 +63,7 @@ const searchWageSeekerConfig = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                name: "id",
+                name: "individualId",
                 error: `PROJECT_PATTERN_ERR_MSG`,
                 validation: { pattern: /^[a-z0-9\/-@# ]*$/i, minlength: 2 },
               },
@@ -90,7 +85,7 @@ const searchWageSeekerConfig = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                name: "category",
+                name: "socialCategory",
                 optionsKey: "code",
                 optionsCustomStyle: {
                   top: "2.3rem",
@@ -137,11 +132,11 @@ const searchWageSeekerConfig = () => {
           columns: [
             {
               label: "MASTERS_WAGESEEKER_ID",
-              jsonPath: "id",
+              jsonPath: "individualId",
               additionalCustomization: true,
             },
             {
-              label: "WORKS_PROJECT_NAME",
+              label: "MASTERS_WAGESEEKER_NAME",
               jsonPath: "name.givenName",
             },
             {
@@ -150,8 +145,8 @@ const searchWageSeekerConfig = () => {
             },
             {
               label: "MASTERS_SOCIAL_CATEGORY",
-              jsonPath: "projectType",
-              additionalCustomization: true,
+              jsonPath: "additionalFields.fields[0].value",
+              // additionalCustomization: true,
             },
             {
               label: "MASTERS_ULB",
@@ -160,7 +155,7 @@ const searchWageSeekerConfig = () => {
             },
             {
               label: "MASTERS_WARD",
-              jsonPath: "address[0].ward",
+              jsonPath: "address[0].ward.code",
               additionalCustomization: true,
             },
             {

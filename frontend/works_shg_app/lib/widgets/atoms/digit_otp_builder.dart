@@ -10,8 +10,8 @@ class DigitOTPField extends StatefulWidget {
   const DigitOTPField(
       {super.key,
       this.numberOfFields = 6,
-      this.fieldWidth = 40,
-      this.fieldHeight = 50,
+      this.fieldWidth = 35,
+      this.fieldHeight = 40,
       required this.onChanged});
 
   @override

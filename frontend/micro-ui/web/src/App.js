@@ -4,7 +4,7 @@ import React from "react";
 // import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 // import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
-// import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
+import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
@@ -58,7 +58,7 @@ const initDigitUI = () => {
   initEstimateComponents();
   initAttendenceMgmtComponents();
   initContractsComponents();
-  // initExpenditureComponents();
+  initExpenditureComponents();
   initMastersComponents();
   initProjectComponents();
 

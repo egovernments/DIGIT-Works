@@ -1,11 +1,12 @@
-package org.egov.works.util;
+package digit.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.works.config.Configuration;
+import digit.config.Configuration;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -29,8 +30,10 @@ public class MdmsUtil {
     private Configuration configs;
 
 
+
+
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
-                                                             List<String> masterNameList) {
+                                                                                List<String> masterNameList) {
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
@@ -40,8 +43,8 @@ public class MdmsUtil {
         try {
             response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
             mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
-        } catch (Exception e) {
-            log.error("Exception occurred while fetching category lists from mdms: ", e);
+        }catch(Exception e) {
+            log.error("Exception occurred while fetching category lists from mdms: ",e);
         }
 
         return mdmsResponse.getMdmsRes();
@@ -51,7 +54,7 @@ public class MdmsUtil {
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,
                                            String moduleName, List<String> masterNameList) {
         List<MasterDetail> masterDetailList = new ArrayList<>();
-        for (String masterName : masterNameList) {
+        for(String masterName: masterNameList) {
             MasterDetail masterDetail = new MasterDetail();
             masterDetail.setName(masterName);
             masterDetailList.add(masterDetail);
