@@ -90,7 +90,7 @@ const dummyData = {
         }
 }
 
-const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
+const transformViewDataToApplicationDetails = async (t, data, workflowDetails, tenantId) => {
     if(data?.contracts?.length === 0) return;
     
     const contract = data.contracts[0]
@@ -133,19 +133,24 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   return {
     applicationDetails,
     applicationData: contract,
-    processInstancesDetails: {},
-    workflowDetails: {}
+    processInstancesDetails: workflowDetails?.ProcessInstances,
+    workflowDetails
   }
 } 
 
+const workflowDataDetails = async (tenantId, businessIds) => {
+    const response = await Digit.WorkflowService.getByBusinessId(tenantId, businessIds);
+    return response
+}
+
 export const View = {
     fetchContractDetails: async (t, tenantId, data, searchParams) => {
-    //return transformViewDataToApplicationDetails(t, dummyData, tenantId)
-        
+    //return transformViewDataToApplicationDetails(t, dummyData, workflowDataDetails, tenantId)
               try {
                   const response = await ContractService.search(tenantId, data, searchParams);
+                //   const workflowDetails = await workflowDataDetails(tenantId, searchParams.contractNumber);
                   console.log('response', response);
-                  return transformViewDataToApplicationDetails(t, response)
+                  return transformViewDataToApplicationDetails(t, response, {})
               } catch (error) {
                   console.log('error', error);
                   throw new Error(error?.response?.data?.Errors[0].message);
