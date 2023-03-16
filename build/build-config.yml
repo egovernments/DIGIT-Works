@@ -94,6 +94,14 @@ config:
         image-name: "bankaccounts"
       - work-dir: "backend/bankaccounts/src/main/resources/db"
         image-name: "bankaccounts-db"
+        
+  - name: "builds/digit-works/backend/expenses-billing"
+    build:
+      - work-dir: "backend/expenses-billing"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "expenses-billing"
+      - work-dir: "backend/expenses-billing/src/main/resources/db"
+        image-name: "expenses-billing-db"
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
