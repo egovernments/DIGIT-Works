@@ -1,3 +1,4 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 
 import 'digit_indicator.dart';
@@ -49,72 +50,28 @@ class DigitBaseStepper extends StatefulWidget {
     );
   }
 
-  /// Each child defines a step. Hence, total number of children determines the total number of steps.
   final List<Widget>? children;
-
   final List<Widget>? textChildren;
-
-  /// Whether to enable or disable the next and previous buttons.
   final bool nextPreviousButtonsDisabled;
-
-  /// Whether to allow tapping a step to move to that step or not.
   final bool stepTappingDisabled;
-
-  /// Icon to be used for the previous button.
   final Icon? previousButtonIcon;
-
-  /// Icon to be used for the next button.
   final Icon? nextButtonIcon;
-
-  /// This callback provides the __index__ of the step that is reached.
   final OnStepReached? onStepReached;
-
-  /// The color of the step when it is not reached.
   final Color? stepColor;
-
-  /// The color of a step when it is reached.
   final Color? activeStepColor;
-
-  /// The border color of a step when it is reached.
   final Color? activeStepBorderColor;
-
-  /// The color of the line that separates the steps.
   final Color? lineColor;
-
-  /// The length of the line that separates the steps.
   final double lineLength;
-
-  /// The radius of individual dot within the line that separates the steps.
   final double lineDotRadius;
-
-  /// The radius of a step.
   final double stepRadius;
-
-  /// The animation effect to show when a step is reached.
   final Curve stepReachedAnimationEffect;
-
-  /// The duration of the animation effect to show when a step is reached.
   final Duration stepReachedAnimationDuration;
-
-  /// Whether the stepping is enabled or disabled.
   final bool steppingEnabled;
-
-  /// Amount of padding on each side of the child widget.
   final double padding;
-
-  /// Amount of margin on each side of the step.
   final double margin;
-
-  /// The width of the active step border.
   final double activeStepBorderWidth;
-
-  /// Whether to disable scrolling or not.
   final bool scrollingDisabled;
-
-  /// The step that is currently active.
   final int activeStep;
-
-  /// Specifies the alignment of the stepper.
   final AlignmentGeometry? alignment;
 
   @override
@@ -173,11 +130,13 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
       children: <Widget>[
         widget.nextPreviousButtonsDisabled
             ? _previousButton()
-            : SizedBox.shrink(),
+            : const SizedBox.shrink(),
         Expanded(
           child: _stepperBuilder(),
         ),
-        widget.nextPreviousButtonsDisabled ? _nextButton() : SizedBox.shrink(),
+        widget.nextPreviousButtonsDisabled
+            ? _nextButton()
+            : const SizedBox.shrink(),
       ],
     );
   }
@@ -249,7 +208,12 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
       margin: widget.margin,
       activeBorderWidth: widget.activeStepBorderWidth,
       textChild: widget.textChildren![index],
-      child: widget.children![index],
+      child: index < _selectedIndex
+          ? Icon(
+              Icons.check_circle,
+              color: DigitTheme.instance.colorScheme.primary,
+            )
+          : widget.children![index],
     );
   }
 

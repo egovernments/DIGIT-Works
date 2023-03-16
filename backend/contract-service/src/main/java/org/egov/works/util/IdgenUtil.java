@@ -1,7 +1,7 @@
 package org.egov.works.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.works.config.Configuration;
+import org.egov.works.config.ContractServiceConfiguration;
 import digit.models.coremodels.IdGenerationRequest;
 import digit.models.coremodels.IdGenerationResponse;
 import digit.models.coremodels.IdRequest;
@@ -27,7 +27,7 @@ public class IdgenUtil {
     private ServiceRequestRepository restRepo;
 
     @Autowired
-    private Configuration configs;
+    private ContractServiceConfiguration configs;
 
     public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count) {
         List<IdRequest> reqList = new ArrayList<>();
@@ -42,7 +42,7 @@ public class IdgenUtil {
         List<IdResponse> idResponses = response.getIdResponses();
 
         if (CollectionUtils.isEmpty(idResponses))
-            throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
+            throw new CustomException("IDGEN_ERROR", "No ids returned from idgen Service");
 
         return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
     }

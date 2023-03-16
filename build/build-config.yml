@@ -34,7 +34,7 @@ config:
         image-name: "muster-roll-service"
       - work-dir: "backend/muster-roll-service/src/main/resources/db"
         image-name: "muster-roll-service-db"
-
+        
   - name: "builds/digit-works/backend/estimate-service"
     build:
       - work-dir: "backend/estimate-service"
@@ -56,7 +56,7 @@ config:
       - work-dir: "backend/works-inbox-service"
         dockerfile: "build/maven/Dockerfile"
         image-name: "works-inbox-service"
-
+        
   - name: "builds/digit-works/backend/project-management-system"
     build:
       - work-dir: "backend/project-management-system"
@@ -64,6 +64,20 @@ config:
         image-name: "project-management-system"
       - work-dir: "backend/project-management-system/src/main/resources/db"
         image-name: "project-management-system-db"
+
+  - name: "builds/digit-works/backend/works-management-service"
+    build:
+      - work-dir: "backend/works-management-service"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "works-management-service"
+  
+  - name: "builds/digit-works/backend/organisation"
+    build:
+      - work-dir: "backend/organisation"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "organisation"
+      - work-dir: "backend/organisation/src/main/resources/db"
+        image-name: "organisation-db"
 
   - name: "builds/digit-works/backend/contract-service"
     build:
@@ -79,15 +93,22 @@ config:
       - work-dir: frontend/micro-ui/
         dockerfile: frontend/micro-ui/web/docker/Dockerfile
         image-name: works-ui
-        
+
   - name: builds/digit-works/frontend/works
     build:
       - work-dir: frontend/micro-ui/
         dockerfile: frontend/micro-ui/web/works/Dockerfile
         image-name: core-ui
 
+
   - name: builds/digit-works/frontend/works-shg-app
     build:
       - work-dir: frontend/works_shg_app/
         dockerfile: frontend/works_shg_app/docker/Dockerfile
         image-name: works-shg-app
+
+  - name: builds/digit-works/frontend/micro-ui/core-ui
+    build:
+      - work-dir: frontend/micro-ui/
+        dockerfile: frontend/micro-ui/web/docker/Dockerfile
+        image-name: core-ui
