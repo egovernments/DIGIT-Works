@@ -13,7 +13,6 @@ import 'package:works_shg_app/widgets/atoms/delete_button.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 import 'package:works_shg_app/widgets/molecules/digit_table.dart' as shg_app;
 
-import '../blocs/attendance/attendance_user_search.dart';
 import '../blocs/attendance/create_attendee.dart';
 import '../blocs/attendance/de_enroll_attendee.dart';
 import '../blocs/attendance/individual_search.dart';
@@ -78,8 +77,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
   @override
   void deactivate() {
-    context.read<AttendanceUserSearchBloc>().add(
-          const DisposeSearchAttendanceUserEvent(),
+    context.read<IndividualSearchBloc>().add(
+          const DisposeSearchIndividualEvent(),
         );
     context.read<AttendeeCreateBloc>().add(
           const CreateAttendeeDisposeEvent(),
@@ -481,6 +480,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           "name": user["name"],
           "aadhaar": user["aadhaar"],
           "individualCode": user["individualCode"],
+          "individualGaurdianName": user["individualGaurdianName"],
           "skill": user["skill"],
           "uuid": user["uuid"],
           "mobileNumber": user["mobileNumber"],
