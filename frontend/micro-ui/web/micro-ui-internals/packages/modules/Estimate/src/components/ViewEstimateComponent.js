@@ -10,6 +10,9 @@ const ViewEstimateComponent = (props) => {
     const [actionsMenu, setActionsMenu] = useState([
         
     ]);
+    const [isStateChanged, setStateChanged] = useState(``)
+    
+    const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
 
     const { t } = useTranslation()
 
@@ -21,16 +24,17 @@ const ViewEstimateComponent = (props) => {
     }
     Digit.Hooks.useClickOutside(menuRef, closeMenu, showActions);
 
-    const { isLoading, data: applicationDetails } = Digit.Hooks.estimates.useEstimateDetailsScreen(t, tenantId, estimateNumber)
+    const { isLoading, data: applicationDetails } = Digit.Hooks.estimates.useEstimateDetailsScreen(t, tenantId, estimateNumber,{}, isStateChanged)
+    
 
     useEffect(() => {
-        if (applicationDetails?.applicationData?.wfStatus === "APPROVED"){
+        let isUserContractCreator = loggedInUserRoles?.includes("WORK_ORDER_CREATOR");
+        if (applicationDetails?.applicationData?.wfStatus === "APPROVED" && isUserContractCreator){
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_CONTRACT"
             }]))
         }
-      
-    }, [applicationDetails])
+    }, [applicationDetails, isStateChanged])
     
 
     
@@ -75,6 +79,7 @@ const ViewEstimateComponent = (props) => {
                 tenantId={tenantId}
                 applicationDetails={applicationDetails?.applicationData}
                 url={Digit.Utils.Urls.works.updateEstimate}
+                setStateChanged={setStateChanged}
             />
 
             {/* Adding another action bar to show Create Contract Option */}
