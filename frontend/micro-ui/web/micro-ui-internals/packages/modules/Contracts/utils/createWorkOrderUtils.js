@@ -24,6 +24,7 @@ const createDocumentsPayload = (documents, otherDocFileName) => {
 }
 
 export const createWorkOrderUtils = ({tenantId, estimate, project, data}) => {
+    debugger;
     return {
         contract : {
             "tenantId": tenantId,
@@ -61,7 +62,7 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, data}) => {
                 "ward": project?.additionalDetails?.ward,
                 "projectName": project?.name,
                 "orgName": data?.nameOfCBO?.name,
-                "projectId": project?.id,
+                "projectId": project?.projectNumber,
                 "estimateDocs" : estimate?.additionalDetails?.documents,
                 "cboName" : data?.nameOfCBO?.name,
                 "cboCode" : data?.nameOfCBO?.code,
