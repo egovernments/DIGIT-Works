@@ -97,7 +97,14 @@ export const mustorRollDetailsTableColumns = (t) => [
     Header: () => <p>{"Payment Status"}</p>,
     accessor: "paymentStatus",
     Cell: ({ value, column, row }) => {
-      return String(t(value));
+      if (row.original.type === "total") {
+        return String(t(value));
+      }
+      if(value === 'PAYMENT_COMPLETED') {
+        return <span style={{"color":"#0B6623"}}>{t(`EXP_${value}`)}</span>
+      } else {
+        return <span style={{"color":"#FF0000"}}>{t(`EXP_${value}`)}</span>
+      }
     }
   },
   // {

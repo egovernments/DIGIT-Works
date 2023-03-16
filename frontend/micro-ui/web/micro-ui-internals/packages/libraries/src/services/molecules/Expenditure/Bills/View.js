@@ -19,7 +19,7 @@ const getAttendanceTableData = (data, skills, t) => {
         accountNo : item?.additionalDetails?.bankDetails || t("NA"),
         ifscCode : null
       }
-      tableRow.paymentStatus = 'Payment Pending'
+      tableRow.paymentStatus = 'PAYMENT_PENDING'
       //tableRow.aadharNumber = item?.additionalDetails?.aadharNumber || t("NA")
       tableData[item.id] = tableRow
     });
@@ -60,10 +60,10 @@ const transformViewDataToApplicationDetails = async (t, data, skills) => {
       { title: "WORKS_BILL_NUMBER", value: musterRoll?.musterRollNumber || t("ES_COMMON_NA")},
       { title: "Work order number", value: musterRoll?.additionalDetails?.contractId || t("ES_COMMON_NA")},
       { title: "WORKS_PROJECT_ID", value: musterRoll?.additionalDetails?.projectId || t("ES_COMMON_NA")},
-      { title: "PROJECTS_DESCRIPTION", value: musterRoll?.additionalDetails?.projectName|| t("ES_COMMON_NA") },
+      { title: "PROJECTS_DESCRIPTION", value: musterRoll?.additionalDetails?.projectName || t("ES_COMMON_NA") },
       { title: "ES_COMMON_LOCATION", value: location || t("ES_COMMON_NA") },
-      { title: "Bill Classification", value: "Work Order"|| t("ES_COMMON_NA") },
-      { title: "Bill Date", value: Digit.DateUtils.ConvertTimestampToDate(musterRoll?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy') || t("ES_COMMON_NANA") },
+      { title: "Bill Classification", value: musterRoll?.additionalDetails?.billType || t("ES_COMMON_NA") },
+      { title: "Bill Date", value: Digit.DateUtils.ConvertTimestampToDate(musterRoll?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy') || t("ES_COMMON_NA") },
       { title: "ES_COMMON_STATUS", value: `BILL_STATUS_${musterRoll?.musterRollStatus}`|| t("ES_COMMON_NA") }
     ]
   }

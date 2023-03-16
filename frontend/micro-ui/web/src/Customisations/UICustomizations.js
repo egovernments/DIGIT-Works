@@ -141,11 +141,12 @@ export const UICustomizations = {
             const endDate = Digit.Utils.pt.convertDateToEpoch(convertedEndDate, 'dayStart')
             const attendanceRegisterName = data.body.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim()
             const musterRollStatus = data.body.inbox?.moduleSearchCriteria?.musterRollStatus?.code
+            const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.musterRollNumber
             data.body.inbox = { 
                 ...data.body.inbox, 
                 tenantId: Digit.ULBService.getCurrentTenantId(), 
                 processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-                moduleSearchCriteria: {tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName}
+                moduleSearchCriteria: {tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName, musterRollNumber}
             }
             return data
         },
@@ -248,13 +249,14 @@ export const UICustomizations = {
     },
     BillInboxConfig: {
         preProcess: (data) => {
-          data.body.inbox = {
-            ...data.body.inbox,
-            tenantId: Digit.ULBService.getCurrentTenantId(),
-            processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-            moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId() },
-          };
-          return data;
+            const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber
+            data.body.inbox = {
+                ...data.body.inbox,
+                tenantId: Digit.ULBService.getCurrentTenantId(),
+                processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
+                moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber },
+            };
+            return data;
         },
         additionalCustomizations: (row, column, columnConfig, value, t) => {
           if (column.label === "WORKS_BILL_NUMBER") {
@@ -298,27 +300,27 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, column, columnConfig, value, t) => {
         if (column.label === "WORKS_BILL_NUMBER") {
-        return (
-            <span className="link">
-            <Link
-                to={`/${
-                window.contextPath
-                }/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}
-            >
-                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-            </Link>
-            </span>
-        );
+            return (
+                <span className="link">
+                <Link
+                    to={`/${
+                    window.contextPath
+                    }/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}
+                >
+                    {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+                </Link>
+                </span>
+            );
         }
         if (column.label === "EXP_BILL_AMOUNT") {
-        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+            return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
         }
         if(column.label === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+            return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
         }
         if(column.label === "ES_COMMON_LOCATION") {
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
-        return value ? t(`TENANT_TENANTS_${headerLocale}`) : t("ES_COMMON_NA")
+            const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+            return t(`TENANT_TENANTS_${headerLocale}`)
         }
     },
     additionalValidations: (type, data, keys) => {

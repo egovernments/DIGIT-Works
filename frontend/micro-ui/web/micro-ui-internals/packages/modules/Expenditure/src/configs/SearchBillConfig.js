@@ -156,7 +156,7 @@ export const SearchBillConfig = {
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
-                                jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
+                                jsonPath: "",
                                 additionalCustomization:true 
                             },
                             {
@@ -165,7 +165,7 @@ export const SearchBillConfig = {
                             },
                             {
                                 label: "WORKS_BILL_TYPE",
-                                jsonPath: "additionalDetails.contractId",
+                                jsonPath: "additionalDetails.billType",
                             },
                             {
                                 label: "CORE_COMMON_STATUS",

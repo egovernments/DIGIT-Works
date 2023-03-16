@@ -165,11 +165,12 @@ export const UICustomizations = {
       const endDate = Digit.Utils.pt.convertDateToEpoch(convertedEndDate, "dayStart");
       const attendanceRegisterName = data.body.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim();
       const musterRollStatus = data.body.inbox?.moduleSearchCriteria?.musterRollStatus?.code;
+      const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.musterRollNumber;
       data.body.inbox = {
         ...data.body.inbox,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName, musterRollNumber },
       };
       return data;
     },
@@ -452,11 +453,12 @@ export const UICustomizations = {
   EstimateInboxConfig:{},
   BillInboxConfig: {
     preProcess: (data) => {
+      const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber;
       data.body.inbox = {
         ...data.body.inbox,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId() },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber },
       };
       return data;
     },
@@ -522,7 +524,7 @@ export const UICustomizations = {
       }
       if(column.label === "ES_COMMON_LOCATION") {
         const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
-        return value ? t(`TENANT_TENANTS_${headerLocale}`) : t("ES_COMMON_NA")
+        return t(`TENANT_TENANTS_${headerLocale}`)
       }
     },
     additionalValidations: (type, data, keys) => {
