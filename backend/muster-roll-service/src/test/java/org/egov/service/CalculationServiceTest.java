@@ -6,10 +6,7 @@ import org.egov.helper.MusterRollRequestBuilderTest;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
-import org.egov.web.models.AttendanceEntry;
-import org.egov.web.models.AttendanceLogResponse;
-import org.egov.web.models.IndividualBulkResponse;
-import org.egov.web.models.MusterRollRequest;
+import org.egov.web.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,6 +52,7 @@ public class CalculationServiceTest {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         getMockAttendanceLogsSuccess();
         getMockIndividualSuccess();
+        getMockBankDetailsSuccess();
         calculationService.createAttendance(musterRollRequest,true);
         assertEquals(2, musterRollRequest.getMusterRoll().getIndividualEntries().size());
     }
@@ -64,6 +62,7 @@ public class CalculationServiceTest {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         getMockAttendanceLogsSuccess();
         getMockIndividualSuccess();
+        getMockBankDetailsSuccess();
         calculationService.createAttendance(musterRollRequest,true);
         AttendanceEntry attendanceEntry = musterRollRequest.getMusterRoll().getIndividualEntries().get(0).getAttendanceEntries().get(0);
         assertEquals(new BigDecimal("0.5"),attendanceEntry.getAttendance());
@@ -74,6 +73,7 @@ public class CalculationServiceTest {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         getMockAttendanceLogsSuccess();
         getMockIndividualSuccess();
+        getMockBankDetailsSuccess();
         calculationService.createAttendance(musterRollRequest,true);
         AttendanceEntry attendanceEntry = musterRollRequest.getMusterRoll().getIndividualEntries().get(0).getAttendanceEntries().get(2);
         assertEquals(new BigDecimal("1.0"),attendanceEntry.getAttendance());
@@ -84,6 +84,7 @@ public class CalculationServiceTest {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         getMockAttendanceLogsSuccess();
         getMockIndividualSuccess();
+        getMockBankDetailsSuccess();
         calculationService.createAttendance(musterRollRequest,true);
         AttendanceEntry attendanceEntry = musterRollRequest.getMusterRoll().getIndividualEntries().get(0).getAttendanceEntries().get(3);
         assertEquals(new BigDecimal("0.0"),attendanceEntry.getAttendance());
@@ -94,6 +95,7 @@ public class CalculationServiceTest {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         getMockAttendanceLogsSuccess();
         getMockIndividualSuccess();
+        getMockBankDetailsSuccess();
         calculationService.createAttendance(musterRollRequest,true);
         BigDecimal totalAttendance = musterRollRequest.getMusterRoll().getIndividualEntries().get(0).getActualTotalAttendance();
         assertEquals(new BigDecimal("2.0"),totalAttendance);
@@ -131,6 +133,15 @@ public class CalculationServiceTest {
         lenient().when(config.getIndividualSearchEndpoint()).thenReturn("/attendance/log/v1/_search");
         IndividualBulkResponse response = MusterRollRequestBuilderTest.getIndividualResponse();
         lenient().when(restTemplate.postForObject(any(String.class),any(Object.class),eq(IndividualBulkResponse.class))).
+                thenReturn(response);
+    }
+
+    void getMockBankDetailsSuccess() {
+        //MOCK Attendance log search service response
+        lenient().when(config.getBankaccountsHost()).thenReturn("http://localhost:8023");
+        lenient().when(config.getBankaccountsSearchEndpoint()).thenReturn("/attendance/log/v1/_search");
+        BankAccountResponse response = MusterRollRequestBuilderTest.getBankDetailsResponse();
+        lenient().when(restTemplate.postForObject(any(String.class),any(Object.class),eq(BankAccountResponse.class))).
                 thenReturn(response);
     }
 
