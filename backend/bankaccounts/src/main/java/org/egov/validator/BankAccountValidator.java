@@ -49,7 +49,7 @@ public class BankAccountValidator {
         List<BankAccount> bankAccountList = bankAccountRequest.getBankAccounts();
         RequestInfo requestInfo = bankAccountRequest.getRequestInfo();
 
-        validateRequestInfo(requestInfo, errorMap);
+        //validateRequestInfo(requestInfo, errorMap);
         validateBankAccount(bankAccountList, errorMap);
 
         if (!errorMap.isEmpty())
