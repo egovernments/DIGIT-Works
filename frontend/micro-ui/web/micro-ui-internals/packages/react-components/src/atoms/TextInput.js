@@ -25,7 +25,7 @@ const TextInput = (props) => {
             type={props?.validation && props.ValidationRequired ? props?.validation?.type : (props.type || "text")}
             name={props.name}
             id={props.id}
-            className={`${user_type ? "employee-card-input-error" : "card-input-error"} ${props.disable && "disabled"}`}
+            className={`${user_type ? "employee-card-input-error" : "card-input-error"} ${props.disable && "disabled"} ${props.customClass}`}
             placeholder={props.placeholder}
             onChange={(event) => {
               if(props?.type === "number" && props?.maxlength) {
@@ -62,7 +62,7 @@ const TextInput = (props) => {
             type={props?.validation && props.ValidationRequired ? props?.validation?.type : (props.type || "text")}
             name={props.name}
             id={props.id}
-            className={`${user_type ? "employee-card-input" : "citizen-card-input"} ${props.disable && "disabled"} focus-visible ${props.errorStyle && "employee-card-input-error"}`}
+            className={`${user_type ? "employee-card-input" : "citizen-card-input"} ${props.disable && "disabled"} focus-visible ${props.errorStyle && "employee-card-input-error"} ${props.customClass}`}
             placeholder={props.placeholder}
             onChange={(event) => {
               if(props?.type === "number" && props?.maxlength) {

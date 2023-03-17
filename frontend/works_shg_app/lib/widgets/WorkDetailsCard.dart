@@ -115,7 +115,7 @@ class WorkDetailsCard extends StatelessWidget {
                   : cardDetails.values.elementAt(j).toString(),
           isActiveStatus: cardDetails.keys.elementAt(j).toString() ==
                   i18.common.status &&
-              cardDetails.values.elementAt(j).toString() != Constants.active,
+              cardDetails.values.elementAt(j).toString() != Constants.rejected,
           isRejectStatus: cardDetails.values.elementAt(j).toString() ==
               Constants.rejected));
     }

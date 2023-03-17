@@ -23,6 +23,7 @@ import '../blocs/muster_rolls/muster_roll_estimate.dart';
 import '../models/attendance/attendance_registry_model.dart';
 import '../models/attendance/attendee_model.dart';
 import '../models/mdms/attendance_hours.dart';
+import '../models/muster_rolls/estimate_muster_roll_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
 import '../models/muster_rolls/muster_workflow_model.dart';
 import '../models/skills/skills.dart';
@@ -238,7 +239,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                               IndividualSkills(individualId: e.individualId, skillCode: e.musterIndividualAdditionalDetails?.skillCode ?? '',
                                                               name: e.musterIndividualAdditionalDetails?.userName ?? e.individualId ?? '',
                                                               aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId ?? '',
-                                                              id: e.id)).toList();
+                                                              individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName ?? '',
+                                                              id: e.id,
+                                                              )).toList();
                                                               }
                                                               else{
                                                                 existingSkills.clear();
@@ -247,15 +250,20 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                           child:  BlocBuilder<MusterRollEstimateBloc, MusterRollEstimateState>(
                                                           builder: (context, musterState) {
                                                              return musterState.maybeWhen(orElse: () => Container(),
-                                                              loaded: (MusterRollsModel? musterRollsModel) {
-                                                              if (musterRollsModel!.musterRoll!.first.individualEntries != null) {
+                                                              loading: () => Loaders.circularLoader(context),
+                                                              loaded: (EstimateMusterRollsModel? musterRollsModel) {
                                                                 List<AttendeesTrackList> attendeeList = individualAttendanceRegisterModel.attendanceRegister!.first.attendeesEntries!.where((e) => e.denrollmentDate == null || !(e.denrollmentDate! <= individualAttendanceRegisterModel.attendanceRegister!.first.endDate!.toInt())).toList().map((e) =>
-                                                                    AttendeesTrackList(name: e.id, aadhaar: e.individualId, individualId: e.individualId)).toList();
-                                                                if (musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty) {
-                                                                  attendeeList = musterRollsModel.musterRoll!.first.individualEntries!.map((e) =>
+                                                                    AttendeesTrackList(name: e.additionalDetails?.individualName, aadhaar: e.additionalDetails?.identifierId, individualId: e.individualId,
+                                                                        individualGaurdianName: e.additionalDetails?.individualGaurdianName)).toList();
+                                                              if (attendeeList != null && attendeeList.isNotEmpty) {
+                                                                print('muster');
+                                                                print(musterRollsModel);
+                                                                if (musterRollsModel?.musterRoll != null && musterRollsModel!.musterRoll!.isNotEmpty && musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty) {
+                                                                  attendeeList = musterRollsModel!.musterRoll!.first.individualEntries!.map((e) =>
                                                                       AttendeesTrackList(
-                                                                          name: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).name : e.individualId,
-                                                                          aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ?? e.individualId,
+                                                                          name: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).name : e.musterIndividualAdditionalDetails?.userName,
+                                                                          aadhaar: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).aadhaar : e.musterIndividualAdditionalDetails?.aadharNumber ?? e.musterIndividualAdditionalDetails?.userId,
+                                                                          individualGaurdianName: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).individualGaurdianName : e.musterIndividualAdditionalDetails?.fatherName ?? e.musterIndividualAdditionalDetails?.userId,
                                                                           individualId: e.individualId,
                                                                           id: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).id : e.id ?? '',
                                                                           skill: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
@@ -287,6 +295,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                       TrackAttendanceTableData data = TrackAttendanceTableData();
                                                                       data.name = item1.name;
                                                                       data.aadhaar = item1.aadhaar;
+                                                                      data.individualGaurdianName = item1.individualGaurdianName;
                                                                       data.individualId = item1.individualId ?? '';
                                                                       data.id = item1.id ?? '';
                                                                       data.skill = item1.skill ?? '';
@@ -321,6 +330,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                       TrackAttendanceTableData data = TrackAttendanceTableData();
                                                                       data.name = item1.name;
                                                                       data.aadhaar = item1.aadhaar;
+                                                                      data.individualGaurdianName = item1.individualGaurdianName;
                                                                       data.individualId = item1.individualId ?? '';
                                                                       data.id = item1.id;
                                                                       data.skill = item1.skill ?? '';
@@ -493,10 +503,10 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                               orElse: () => Container());
                                                                                                         },
                                                                                                         child: DigitElevatedButton(
-                                                                                                          onPressed: selectedDateRange!.endDate > DateTime.now().millisecondsSinceEpoch ? null : musterRollsModel !=
-                                                                                                              null && musterRollsModel.musterRoll!.first
+                                                                                                          onPressed: selectedDateRange!.endDate > DateTime.now().millisecondsSinceEpoch ? null : musterRollsModel?.musterRoll !=
+                                                                                                              null && musterRollsModel!.musterRoll!.first
                                                                                                               .individualEntries != null &&
-                                                                                                              musterRollsModel.musterRoll!.first
+                                                                                                              musterRollsModel!.musterRoll!.first
                                                                                                                   .individualEntries!.isNotEmpty
                                                                                                               ? musterRollsSearch?.musterRoll != null &&
                                                                                                               musterRollsSearch!.musterRoll!.isNotEmpty
@@ -650,7 +660,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
         // e.name!.toLowerCase().contains(searchController.text) ||
         //     e.aadhaar!.contains(searchController.text));
         newList.retainWhere((e) =>
-            e.individualId!.toLowerCase().contains(searchController.text));
+            e.name!.toLowerCase().contains(searchController.text.toLowerCase()));
       });
     } else {
       onSubmit(widget.id);
@@ -700,8 +710,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
     ),
     TableHeader(
       AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-          .translate(i18.common.aadhaarNumber),
-      apiKey: 'aadhaarNumber',
+          .translate(i18.common.fatherName),
+      apiKey: 'individualGaurdianName',
     ),
     TableHeader(
       '${AppLocalizations.of(scaffoldMessengerKey.currentContext!)
@@ -744,7 +754,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
   TableDataRow getAttendanceRow(TrackAttendanceTableData tableDataModel) {
     return TableDataRow([
       TableData(label: tableDataModel.name, apiKey: tableDataModel.name),
-      TableData(label: tableDataModel.aadhaar, apiKey: tableDataModel.aadhaar),
+      TableData(label: tableDataModel.individualGaurdianName, apiKey: tableDataModel.individualGaurdianName),
       TableData(
           apiKey: tableDataModel.skill,
           widget: DropDownDialog(

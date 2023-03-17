@@ -36,7 +36,7 @@ class AppLogo extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     AppLocalizations.of(context).translate(
-                        GlobalVariables.stateInfoListModel!.code.toString()),
+                        'STATE_${GlobalVariables.stateInfoListModel!.code.toString()}'),
                     style: const TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.w400,
