@@ -50,7 +50,7 @@ export const SearchBillConfig = {
                         defaultValues : {
                             ward: "",
                             billType: {
-                                name: "Work Order",
+                                name: "COMMON_MASTERS_BILL_WORK_ORDER",
                                 code: "WORK_ORDER",
                                 active: true
                             },
