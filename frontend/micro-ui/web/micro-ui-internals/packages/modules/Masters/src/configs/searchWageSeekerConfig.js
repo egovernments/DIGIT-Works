@@ -44,7 +44,7 @@ const searchWageSeekerConfig = () => {
               "populators": {
                   "name": "wardCode",
                   "type": "ward",
-                  "optionsKey": "name",
+                "optionsKey": "i18nKey",
                   "defaultText": "COMMON_SELECT_WARD",
                   "selectedText": "COMMON_SELECTED",
                   "allowMultiSelect": false

@@ -217,7 +217,7 @@ const inboxConfigMukta = () => {
                             populators: {
                                 name: "ward",
                                 type: "ward",
-                                optionsKey: "name",
+                                optionsKey: "i18nKey",
                                 defaultText: "COMMON_SELECT_WARD",
                                 selectedText: "COMMON_SELECTED",
                                 allowMultiSelect: true
@@ -231,7 +231,7 @@ const inboxConfigMukta = () => {
                             populators: {
                                 name: "locality",
                                 type: "locality",
-                                optionsKey: "name",
+                                optionsKey: "i18nKey",
                                 defaultText: "COMMON_SELECT_LOCALITY",
                                 selectedText: "COMMON_SELECTED",
                                 allowMultiSelect: true
