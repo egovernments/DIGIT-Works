@@ -41,16 +41,9 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
           listener: (context, state) {
             state.maybeWhen(
                 loading: () => Loaders.circularLoader(context),
-                orElse: () => Container());
-          },
-          child: BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
-              builder: (context, state) {
-            return state.maybeWhen(
-                loading: () => Loaders.circularLoader(context),
-                loaded: (MusterRollsModel? musterRollsModel) {
-                  if (musterRollsModel?.musterRoll != null) {
-                    musters =
-                        List<MusterRoll>.from(musterRollsModel!.musterRoll!);
+                loaded: (MusterRollsModel? musterRoll) {
+                  if (musterRoll?.musterRoll != null) {
+                    musters = List<MusterRoll>.from(musterRoll!.musterRoll!);
                     musters.sort((a, b) =>
                         b.musterAuditDetails!.lastModifiedTime!.compareTo(
                             a.musterAuditDetails!.lastModifiedTime!.toInt()));
@@ -75,6 +68,14 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                             })
                         .toList();
                   }
+                },
+                orElse: () => Container());
+          },
+          child: BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
+              builder: (context, state) {
+            return state.maybeWhen(
+                loading: () => Loaders.circularLoader(context),
+                loaded: (MusterRollsModel? musterRollsModel) {
                   return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -85,7 +86,7 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            '${t.translate(i18.attendanceMgmt.musterRolls)}(${musterRollsModel!.musterRoll!.length})',
+                            '${t.translate(i18.attendanceMgmt.musterRolls)}(${musterList.length})',
                             style: Theme.of(context).textTheme.displayMedium,
                             textAlign: TextAlign.left,
                           ),
