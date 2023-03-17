@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import _ from "lodash";
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
@@ -482,11 +483,18 @@ export const UICustomizations = {
   BillInboxConfig: {
     preProcess: (data) => {
       const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber;
+      let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state:[])
+      delete data.body.inbox.moduleSearchCriteria.state
+      states = Object.keys(states)?.filter(key=>states[key])
+      
+      let status;
+      if(states.length>0) status = states
+
       data.body.inbox = {
         ...data.body.inbox,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber, status }
       };
       return data;
     },

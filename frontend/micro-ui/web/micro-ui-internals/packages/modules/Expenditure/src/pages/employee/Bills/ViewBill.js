@@ -12,7 +12,7 @@ const ViewBill = () => {
 
   return (
     <React.Fragment>
-      <Header>{"View Wage Bill"}</Header>
+      <Header>{t("EXP_VIEW_BILL")}</Header>
       <ApplicationDetails
         applicationDetails={data?.applicationDetails}
         isLoading={isLoading}
