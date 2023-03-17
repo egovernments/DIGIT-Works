@@ -77,6 +77,14 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
   @override
   void deactivate() {
+    existingAttendeeList.clear();
+    userList.clear();
+    filteredUserList.clear();
+    addToTableList.clear();
+    attendeeTableList.clear();
+    userTableList.clear();
+    createAttendeePayLoadList.clear();
+    deleteAttendeePayLoadList.clear();
     context.read<IndividualSearchBloc>().add(
           const DisposeSearchIndividualEvent(),
         );

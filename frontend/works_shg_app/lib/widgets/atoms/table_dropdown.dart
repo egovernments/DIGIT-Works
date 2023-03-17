@@ -13,7 +13,8 @@ class DropDownDialog extends StatefulWidget {
       {super.key,
       required this.options,
       required this.onChanged,
-      required this.selectedOption, this.isDisabled = false});
+      required this.selectedOption,
+      this.isDisabled = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -31,9 +32,11 @@ class _DropDownDialogState extends State<DropDownDialog> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           InkWell(
-            onTap: widget.isDisabled ? null : () {
-              _showDialog(context);
-            },
+            onTap: widget.isDisabled
+                ? null
+                : () {
+                    _showDialog(context);
+                  },
             child: Container(
               width: 120,
               height: 40,
@@ -47,7 +50,8 @@ class _DropDownDialogState extends State<DropDownDialog> {
                   SizedBox(
                     width: 80,
                     child: Text(
-                      widget.selectedOption,
+                      AppLocalizations.of(context)
+                          .translate(widget.selectedOption),
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 12),
                     ),
