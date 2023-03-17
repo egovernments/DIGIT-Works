@@ -117,7 +117,16 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set(\"tenantId\", \"pg.citya\");"
+									"pm.collectionVariables.set(\"tenantId\", \"pg.citya\");",
+									"// pm.collectionVariables.set(\"individualId\", \"2d12b93a-829b-4aef-9073-5418e2315355\");",
+									"//dev",
+									"pm.collectionVariables.set(\"individualId-1\", \"246f1ae3-1f2b-4ea7-931d-6858b825665a\");",
+									"pm.collectionVariables.set(\"individualId-2\", \"5fd7935d-8b90-4be4-93fd-92b218fdad09\");",
+									"",
+									"",
+									"//qa",
+									"// pm.collectionVariables.set(\"individualId-1\", \"246f1ae3-1f2b-4ea7-931d-6858b825665a\");",
+									"// pm.collectionVariables.set(\"individualId-2\", \"5fd7935d-8b90-4be4-93fd-92b218fdad09\");"
 								],
 								"type": "text/javascript"
 							}
@@ -2181,7 +2190,6 @@
 									"// let requestData = JSON.parse(pm.request.body.raw);",
 									"// pm.collectionVariables.set(\"individualId\", requestData.attendees[0].individualId);",
 									"let responseData = pm.response.json();",
-									"pm.collectionVariables.set(\"individualId\", responseData.attendees[0].individualId);",
 									"pm.collectionVariables.set(\"attendeeEnrollmentDate\", responseData.attendees[0].enrollmentDate);",
 									"",
 									""
@@ -2204,7 +2212,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Enroll attendee to register\",\n        \"authToken\":\"{{token}}\"\n    },\n    \"attendees\":[\n         {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"2d12b93a-829b-4aef-9073-5418e2315355\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        }      \n\n    ]\n\n}",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Enroll attendee to register\",\n        \"authToken\":\"{{token}}\"\n    },\n    \"attendees\":[\n         {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"{{individualId-1}}\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        }      \n\n    ]\n\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2299,7 +2307,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Enroll attendee to register\",\n        \"authToken\":\"{{token}}\"\n    },\n    \"attendees\":[\n         {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"{{individualId}}\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        }      \n\n    ]\n\n}",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Enroll attendee to register\",\n        \"authToken\":\"{{token}}\"\n    },\n    \"attendees\":[\n         {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"{{individualId-1}}\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        }      \n\n    ]\n\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2388,108 +2396,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Enroll attendee to register\",\n        \"authToken\":\"{{token}}\"\n    },\n    \"attendees\":[\n         {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"928ca23a-9bec-11ed-a8fc-0242ac120002\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        },\n                 {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"928ca23a-9bec-11ed-a8fc-0242ac120002\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        }      \n\n    ]\n\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/attendance/attendee/v1/_create",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"attendance",
-								"attendee",
-								"v1",
-								"_create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Attendee - Enroll - Multiple Attendees",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"RequestInfo is required\", function () {",
-									"    var req = JSON.parse(pm.request.body.raw);",
-									"    pm.expect(req.RequestInfo).to.not.be.null;",
-									"    pm.expect(req.RequestInfo).to.not.be.undefined;",
-									"    }",
-									");",
-									"",
-									"pm.test(\"Attendee are required\", function () {",
-									"    var req = JSON.parse(pm.request.body.raw);",
-									"    pm.expect(req.attendees).to.not.be.undefined;",
-									"    pm.expect(req.attendees).to.not.be.null;",
-									"    }",
-									");",
-									"",
-									"pm.test(\"TenantId is required\", function () {",
-									"    var req = JSON.parse(pm.request.body.raw);",
-									"        req.attendees.forEach(attendee => {",
-									"    pm.expect(attendee.tenantId).to.be.not.null;",
-									"    pm.expect(attendee.tenantId).to.be.not.undefined;",
-									"    pm.expect(attendee.tenantId).not.to.eql(\"\");",
-									"    });    ",
-									"    }",
-									");",
-									"",
-									"pm.test(\"Attendee registerId is required\", function () {",
-									"    var req = JSON.parse(pm.request.body.raw);",
-									"    req.attendees.forEach(attendee => {",
-									"   pm.expect(attendee.registerId).to.be.not.null;",
-									"    pm.expect(attendee.registerId).to.be.not.undefined;",
-									"    pm.expect(attendee.registerId).not.to.eql(\"\");",
-									"    });     ",
-									"    }",
-									");",
-									"",
-									"pm.test(\"Attendee individualId is required\", function () {",
-									"    var req = JSON.parse(pm.request.body.raw);",
-									"    req.attendees.forEach(attendee => {",
-									"    pm.expect(attendee.individualId).to.be.not.null;",
-									"    pm.expect(attendee.individualId).to.be.not.undefined;",
-									"    pm.expect(attendee.individualId).not.to.eql(\"\");",
-									"    });     ",
-									"    }",
-									");",
-									"",
-									"",
-									"pm.test(\"Response is successful\", () => ",
-									"   pm.expect(pm.response.to.have.status(200))",
-									");",
-									"",
-									"pm.test(\"Enrollment date is enriched\", function () {",
-									"    var res = pm.response.json();",
-									"    res.attendees.forEach(attendee => {",
-									"    pm.expect(attendee.enrollmentDate).to.be.not.null;",
-									"    });     ",
-									"    }",
-									");",
-									"",
-									"let requestData = JSON.parse(pm.request.body.raw);",
-									"pm.collectionVariables.set(\"individualId-1\", requestData.attendees[0].individualId);",
-									"pm.collectionVariables.set(\"individualId-2\", requestData.attendees[1].individualId);",
-									"",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Enroll attendee to register\",\n        \"authToken\":\"{{token}}\"\n    },\n    \"attendees\":[\n         {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"246f1ae3-1f2b-4ea7-931d-6858b825665a\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        },\n                 {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"5fd7935d-8b90-4be4-93fd-92b218fdad09\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        }      \n\n    ]\n\n}",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Enroll attendee to register\",\n        \"authToken\":\"{{token}}\"\n    },\n    \"attendees\":[\n         {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"{{individualId-1}}\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        },\n                 {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"{{individualId-1}}\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        }      \n\n    ]\n\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2582,7 +2489,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n   \"RequestInfo\":{\n      \"apiId\":\"mukta-services\",\n      \"ver\":null,\n      \"ts\":null,\n      \"action\":null,\n      \"did\":null,\n      \"key\":null,\n      \"msgId\":\"search with from and to values\",\n      \"authToken\":\"{{token}}\"\n      },\n   \"attendees\":[\n      {\n         \"registerId\": \"{{registerId}}\",\n         \"individualId\": \"{{individualId}}\",\n         \"enrollmentDate\":null,\n         \"denrollmentDate\":null,\n         \"tenantId\":\"{{tenantId}}\"\n      }\n   ]\n}",
+							"raw": "{\n   \"RequestInfo\":{\n      \"apiId\":\"mukta-services\",\n      \"ver\":null,\n      \"ts\":null,\n      \"action\":null,\n      \"did\":null,\n      \"key\":null,\n      \"msgId\":\"search with from and to values\",\n      \"authToken\":\"{{token}}\"\n      },\n   \"attendees\":[\n      {\n         \"registerId\": \"{{registerId}}\",\n         \"individualId\": \"{{individualId-1}}\",\n         \"enrollmentDate\":null,\n         \"denrollmentDate\":null,\n         \"tenantId\":\"{{tenantId}}\"\n      }\n   ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2669,7 +2576,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n   \"RequestInfo\":{\n      \"apiId\":\"mukta-services\",\n      \"ver\":null,\n      \"ts\":null,\n      \"action\":null,\n      \"did\":null,\n      \"key\":null,\n      \"msgId\":\"search with from and to values\",\n      \"authToken\":\"{{token}}\"\n      },\n   \"attendees\":[\n      {\n         \"registerId\": \"{{registerId}}\",\n         \"individualId\": \"{{individualId}}\",\n         \"enrollmentDate\":null,\n         \"denrollmentDate\":null,\n         \"tenantId\":\"{{tenantId}}\"\n      }\n   ]\n}",
+							"raw": "{\n   \"RequestInfo\":{\n      \"apiId\":\"mukta-services\",\n      \"ver\":null,\n      \"ts\":null,\n      \"action\":null,\n      \"did\":null,\n      \"key\":null,\n      \"msgId\":\"search with from and to values\",\n      \"authToken\":\"{{token}}\"\n      },\n   \"attendees\":[\n      {\n         \"registerId\": \"{{registerId}}\",\n         \"individualId\": \"{{individualId-1}}\",\n         \"enrollmentDate\":null,\n         \"denrollmentDate\":null,\n         \"tenantId\":\"{{tenantId}}\"\n      }\n   ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2686,6 +2593,104 @@
 								"attendee",
 								"v1",
 								"_delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Attendee - Enroll - Multiple Attendees",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"RequestInfo is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    pm.expect(req.RequestInfo).to.not.be.null;",
+									"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+									"    }",
+									");",
+									"",
+									"pm.test(\"Attendee are required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    pm.expect(req.attendees).to.not.be.undefined;",
+									"    pm.expect(req.attendees).to.not.be.null;",
+									"    }",
+									");",
+									"",
+									"pm.test(\"TenantId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"        req.attendees.forEach(attendee => {",
+									"    pm.expect(attendee.tenantId).to.be.not.null;",
+									"    pm.expect(attendee.tenantId).to.be.not.undefined;",
+									"    pm.expect(attendee.tenantId).not.to.eql(\"\");",
+									"    });    ",
+									"    }",
+									");",
+									"",
+									"pm.test(\"Attendee registerId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    req.attendees.forEach(attendee => {",
+									"   pm.expect(attendee.registerId).to.be.not.null;",
+									"    pm.expect(attendee.registerId).to.be.not.undefined;",
+									"    pm.expect(attendee.registerId).not.to.eql(\"\");",
+									"    });     ",
+									"    }",
+									");",
+									"",
+									"pm.test(\"Attendee individualId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    req.attendees.forEach(attendee => {",
+									"    pm.expect(attendee.individualId).to.be.not.null;",
+									"    pm.expect(attendee.individualId).to.be.not.undefined;",
+									"    pm.expect(attendee.individualId).not.to.eql(\"\");",
+									"    });     ",
+									"    }",
+									");",
+									"",
+									"",
+									"pm.test(\"Response is successful\", () => ",
+									"   pm.expect(pm.response.to.have.status(200))",
+									");",
+									"",
+									"pm.test(\"Enrollment date is enriched\", function () {",
+									"    var res = pm.response.json();",
+									"    res.attendees.forEach(attendee => {",
+									"    pm.expect(attendee.enrollmentDate).to.be.not.null;",
+									"    });     ",
+									"    }",
+									");",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Enroll attendee to register\",\n        \"authToken\":\"{{token}}\"\n    },\n    \"attendees\":[\n         {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"{{individualId-1}}\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        },\n                 {\n            \"registerId\": \"{{registerId}}\",\n            \"individualId\": \"{{individualId-2}}\",\n            \"enrollmentDate\":null,\n            \"denrollmentDate\":null,\n            \"tenantId\":\"{{tenantId}}\"\n        }      \n\n    ]\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/attendance/attendee/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"attendance",
+								"attendee",
+								"v1",
+								"_create"
 							]
 						}
 					},
