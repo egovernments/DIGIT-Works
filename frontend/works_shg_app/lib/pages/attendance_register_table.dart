@@ -126,7 +126,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                         margin: const EdgeInsets.all(8.0),
                         child: AutoCompleteSearchBar(
                           hintText: AppLocalizations.of(context)
-                              .translate(i18.common.searchByNameAadhaar),
+                              .translate(i18.common.searchByMobileNumber),
                           controller: searchController,
                           suggestionsBoxController: suggestionsBoxController,
                           onSuggestionSelected: onSuggestionSelected,
@@ -235,7 +235,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                             loading: () => Loaders.circularLoader(context),
                             initial: () {
                               existingAttendeeList.clear();
-                              return Container();
+                              return const EmptyImage(align: Alignment.center);
                             },
                             loaded: (IndividualListModel? individualListModel) {
                               userList =

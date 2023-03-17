@@ -32,6 +32,12 @@ class SearchMyWorksBloc extends Bloc<SearchMyWorksEvent, SearchMyWorksState> {
               body: {
                 "tenantId": 'pg.citya',
                 "orgIds": [],
+                "pagination": {
+                  "limit": "100",
+                  "offSet": "0",
+                  "sortBy": "lastModifiedTime",
+                  "order": "desc"
+                }
               },
               options: Options(extra: {
                 "userInfo": GlobalVariables.userRequestModel,

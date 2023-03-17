@@ -99,6 +99,8 @@ _$_EstimateMusterIndividualAdditionalDetails
           skillCode: (json['skillCode'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList(),
+          accountHolderName: json['accountHolderName'] as String?,
+          accountType: json['accountType'] as String?,
           skillValue: json['skillValue'] as String?,
         );
 
@@ -111,5 +113,7 @@ Map<String, dynamic> _$$_EstimateMusterIndividualAdditionalDetailsToJson(
       'bankDetails': instance.bankDetails,
       'userId': instance.userId,
       'skillCode': instance.skillCode,
+      'accountHolderName': instance.accountHolderName,
+      'accountType': instance.accountType,
       'skillValue': instance.skillValue,
     };
