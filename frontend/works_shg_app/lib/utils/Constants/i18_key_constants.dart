@@ -56,6 +56,7 @@ class Common {
   String get aadhaarNumber => 'CORE_COMMON_AADHAAR';
   String get bankAccountNumber => 'CORE_COMMON_BANK_ACCOUNT_NO';
   String get searchByNameAadhaar => 'CORE_SEARCH_BY_NAME_AADHAAR';
+  String get searchByMobileNumber => 'CORE_SEARCH_BY_MOBILE';
   String get mon => 'CORE_MON';
   String get tue => 'CORE_TUE';
   String get wed => 'CORE_WED';

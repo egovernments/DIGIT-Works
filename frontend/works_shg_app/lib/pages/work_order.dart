@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
@@ -59,7 +60,9 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                       context, error.toString(), 'ERROR'),
                   loaded: (ContractsModel? contracts) {
                     workOrderList = contracts!.contracts!
-                        .where((e) => e.wfStatus == 'APPROVED')
+                        .where((e) =>
+                            e.wfStatus == 'APPROVED' ||
+                            e.wfStatus == 'ACCEPTED')
                         .map((e) => {
                               'cardDetails': {
                                 i18.workOrder.workOrderNo:
@@ -75,12 +78,16 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                     ? DateFormats.timeStampToDate(e.issueDate,
                                         format: "dd/MM/yyyy")
                                     : 'NA',
-                                i18.workOrder.dueDate: e.endDate != null
-                                    ? DateFormats.timeStampToDate(e.endDate,
-                                        format: "dd/MM/yyyy")
+                                i18.workOrder.dueDate: e.issueDate != null
+                                    ? DateFormats.getFilteredDate(
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                                e.issueDate ?? 0)
+                                            .add(const Duration(days: 7))
+                                            .toLocal()
+                                            .toString())
                                     : 'NA',
                                 i18.workOrder.contractAmount:
-                                    '₹ ${e.totalContractedAmount ?? 0}',
+                                    '₹ ${NumberFormat('##,##,##,##,000').format(e.totalContractedAmount ?? 0)}',
                                 i18.common.status: e.wfStatus,
                               },
                               'payload': e.toMap()
@@ -183,7 +190,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                       if (!hasLoaded) {
                                         Notifiers.getToastMessage(
                                             context,
-                                            '${contractsModel?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}. ${contractsModel?.contracts?.first.additionalDetails?.attendanceRegisterNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceCreateSuccess)}',
+                                            '${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}. ${contractsModel?.contracts?.first.additionalDetails?.attendanceRegisterNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceCreateSuccess)}',
                                             'SUCCESS');
                                         context.read<SearchMyWorksBloc>().add(
                                               const MyWorksSearchEvent(),

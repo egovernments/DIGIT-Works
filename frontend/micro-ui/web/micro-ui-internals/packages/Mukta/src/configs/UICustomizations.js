@@ -69,7 +69,7 @@ export const UICustomizations = {
             }
 
             else if (column.key === "estimatedAmount") {
-                return <span>{`₹ ${value}`}</span>
+                return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")}</span>
             }
 
             else if (column.key === "sla") {
@@ -122,7 +122,8 @@ export const UICustomizations = {
                 );
             }
             if (column.label === "WORKS_ESTIMATED_AMOUNT") {
-                return `₹ ${row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0)}`;
+                const amt = row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0)
+                return (amt ? Digit.Utils.dss.formatterWithoutRound(amt, 'number') : t("ES_COMMON_NA"));
             }
             if (column.label === "ES_COMMON_LOCATION") {
                 const location = searchResult?.[0].additionalDetails?.location
