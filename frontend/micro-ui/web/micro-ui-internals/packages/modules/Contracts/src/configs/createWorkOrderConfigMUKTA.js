@@ -26,6 +26,7 @@ const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge, 
                 key: "basicDetails_projectID",
                 type: "text",
                 disable: true,
+                appendColon : true,
                 populators: {
                   name: "basicDetails_projectID",
                   customClass: "fc-header-texts"
@@ -38,6 +39,7 @@ const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge, 
                 key: "basicDetails_dateOfProposal",
                 type: "text",
                 disable: true,
+                appendColon : true,
                 populators: {
                   name: "basicDetails_dateOfProposal",
                   customClass: "fc-header-texts"
@@ -50,6 +52,7 @@ const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge, 
                 key: "basicDetails_projectName",
                 type: "text",
                 disable: true,
+                appendColon : true,
                 populators: {
                   name: "basicDetails_projectName",
                   customClass: "fc-header-texts"
@@ -62,6 +65,7 @@ const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge, 
                 key: "basicDetails_projectDesc",
                 type: "text",
                 disable: true,
+                appendColon : true,
                 populators: {
                   name: "basicDetails_projectDesc",
                   customClass: "fc-header-texts"
@@ -166,7 +170,7 @@ const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge, 
                 },
                 populators: {
                   name: "projectCompletionPeriodInDays",
-                  error: "COMMON_PATTERN_ERR_MSG_PROJECT_WO_AMT",
+                  error: "COMMON_PATTERN_ERR_MSG_PROJECT_COMP_PERIOD",
                   validation: {
                     pattern: /^(?:0|[1-9]\d*)(?:\.(?!.*000)\d+)?$/,
                     maxlength: 10
