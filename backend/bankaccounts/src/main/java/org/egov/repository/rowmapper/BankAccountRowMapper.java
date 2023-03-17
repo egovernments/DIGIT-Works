@@ -144,6 +144,7 @@ public class BankAccountRowMapper implements ResultSetExtractor<List<BankAccount
     private BankBranchIdentifier getBankIdentifier(String bankAcctDetailId, ResultSet rs) throws SQLException {
         log.info("BankAccountRowMapper::getBankIdentifier");
         BankBranchIdentifier bankBranchIdentifier = BankBranchIdentifier.builder()
+                .id(rs.getString("bankAcctIdntfrId"))
                 .code(rs.getString("code"))
                 .type(rs.getString("type"))
                 .build();

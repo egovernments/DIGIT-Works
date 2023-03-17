@@ -9,10 +9,9 @@ import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
- * BankAccountRequest
+ * BankAccountSearchRequest
  */
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-03-14T17:30:53.139+05:30[Asia/Kolkata]")
@@ -20,15 +19,18 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BankAccountRequest {
+public class BankAccountSearchRequest {
 
     @JsonProperty("RequestInfo")
-    @Valid
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("bankAccounts")
+    @JsonProperty("bankAccountDetails")
     @Valid
-    private List<BankAccount> bankAccounts = null;
+    private BankAccountSearchCriteria bankAccountDetails = null;
+
+    @JsonProperty("pagination")
+    @Valid
+    private Pagination pagination = null;
 
 
 }
