@@ -53,7 +53,7 @@ const searchConfigMUKTA = {
                                 populators: {
                                     name: "ward",
                                     type: "ward",
-                                    optionsKey: "name",
+                                    optionsKey: "i18nKey",
                                     allowMultiSelect: false,
                                     optionsCustomStyle : {
                                         top : "2.3rem"

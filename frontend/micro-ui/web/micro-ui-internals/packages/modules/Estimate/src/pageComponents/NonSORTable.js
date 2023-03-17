@@ -79,7 +79,7 @@ const NonSORTable = ({control,watch,...props}) => {
     }
     return true
   }
-  const errorCardStyle = {width:"100%"}
+  const errorCardStyle = { width: "100%","fontSize": "12px" }
   const removeRow = (row) => {
     //make a new state here which doesn't have this key
     const updatedState = rows.map(e => {

@@ -28,7 +28,8 @@ module.exports = function (app) {
     "/inbox/v2/_search",
     "/individual/v1/_search",
     "/contract-service",
-    "/org-services"
+    "/org-services",
+    "/expensebilling"
   ].forEach((location) =>
     app.use(location, createProxy)
   );
