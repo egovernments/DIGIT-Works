@@ -58,7 +58,9 @@ class WorkDetailsCard extends StatelessWidget {
         list.add(GestureDetector(
           child: DigitCard(
               child: getCardDetails(context, detailsList[i]['cardDetails'],
-                  payload: detailsList[i]['payload'])),
+                  payload: detailsList[i]['payload'],
+                  isAccept: detailsList[i]['cardDetails'][i18.common.status] ==
+                      'ACCEPTED')),
         ));
       }
     } else {
@@ -102,7 +104,8 @@ class WorkDetailsCard extends StatelessWidget {
       {List<String>? userList,
       AttendanceRegister? attendanceRegister,
       String? attendanceRegisterId,
-      Map<String, dynamic>? payload}) {
+      Map<String, dynamic>? payload,
+      bool? isAccept}) {
     var labelList = <Widget>[];
     for (int j = 0; j < cardDetails.length; j++) {
       labelList.add(getItemWidget(context,
@@ -119,7 +122,7 @@ class WorkDetailsCard extends StatelessWidget {
           isRejectStatus: cardDetails.values.elementAt(j).toString() ==
               Constants.rejected));
     }
-    if (isWorkOrderInbox) {
+    if (isWorkOrderInbox && !isAccept!) {
       labelList.add(Container(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -143,6 +146,7 @@ class WorkDetailsCard extends StatelessWidget {
                             action: 'DECLINE',
                             comments: 'DECLINE contract'),
                       );
+                  Navigator.of(context, rootNavigator: true).pop();
                 },
                 secondaryActionLabel:
                     AppLocalizations.of(context).translate(i18.common.back),
