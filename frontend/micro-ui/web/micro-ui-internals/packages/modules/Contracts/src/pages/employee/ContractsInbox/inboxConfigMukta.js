@@ -110,11 +110,11 @@ const inboxConfigMukta = () => {
                         },
                         {
                             label: "WORKS_PROJECT_NAME",
-                            jsonPath: "businessObject.additionalDetails.orgName"
+                            jsonPath: "businessObject.additionalDetails.projectName"
                         },
                         {
                             label: "ES_COMMON_CBO_NAME",
-                            jsonPath: "businessObject.additionalDetails.cboName",
+                            jsonPath: "businessObject.additionalDetails.orgName",
                             //translate: true,
                             //prefix: "COMMON_MASTERS_DEPARTMENT_",
                         },

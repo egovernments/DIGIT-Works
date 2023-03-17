@@ -306,7 +306,7 @@ export const UICustomizations = {
                 if (value) {
                     return <span>{value?.[0]?.name}</span>
                 } else {
-                    return <span></span>
+                    return <span>{t("NA")}</span>
                 }
             }
 
