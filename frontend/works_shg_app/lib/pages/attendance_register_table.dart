@@ -235,7 +235,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                             loading: () => Loaders.circularLoader(context),
                             initial: () {
                               existingAttendeeList.clear();
-                              return Container();
+                              return const EmptyImage(align: Alignment.center);
                             },
                             loaded: (IndividualListModel? individualListModel) {
                               userList =
