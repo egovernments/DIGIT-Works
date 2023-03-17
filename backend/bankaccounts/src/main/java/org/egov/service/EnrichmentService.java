@@ -21,6 +21,10 @@ public class EnrichmentService {
         log.info("EnrichmentService::enrichBankAccountOnSearch");
         BankAccountSearchCriteria searchCriteria = searchRequest.getBankAccountDetails();
         Pagination pagination = searchRequest.getPagination();
+        if (pagination == null) {
+            pagination = new Pagination();
+            searchRequest.setPagination(pagination);
+        }
         if (pagination.getLimit() == null)
             pagination.setLimit(Double.valueOf(config.getDefaultLimit()));
 

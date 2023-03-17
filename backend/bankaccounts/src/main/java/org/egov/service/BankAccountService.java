@@ -51,6 +51,10 @@ public class BankAccountService {
         log.info("BankAccountService::countAllBankAccounts");
         BankAccountSearchCriteria searchCriteria = searchRequest.getBankAccountDetails();
         Pagination pagination = searchRequest.getPagination();
+        if (pagination == null) {
+            pagination = new Pagination();
+            searchRequest.setPagination(pagination);
+        }
 
         searchCriteria.setIsCountNeeded(Boolean.TRUE);
 
