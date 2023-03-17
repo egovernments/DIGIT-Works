@@ -83,6 +83,7 @@ class MusterIndividualAdditionalDetails
     String? fatherName,
     String? aadharNumber,
     String? bankDetails,
+    String? userId,
     String? skillCode,
     String? skillValue,
   }) = _MusterIndividualAdditionalDetails;

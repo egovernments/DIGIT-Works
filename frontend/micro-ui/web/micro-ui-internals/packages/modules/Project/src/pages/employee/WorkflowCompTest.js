@@ -20,6 +20,7 @@ const WorkflowCompTest = (props) => {
               applicationNo={undefined} 
               tenantId={"pg.citya"}
               saveAttendanceState={{ displaySave: false, updatePayload: [] }}
+              moduleCode="Estimate"
           />
       </>
   )

@@ -89,9 +89,10 @@ class ViewMusterRollsPage extends StatelessWidget {
                         ),
                         musterList.isEmpty
                             ? EmptyImage(
+                                align: Alignment.center,
                                 label: t.translate(
-                                i18.attendanceMgmt.noMusterRollsFound,
-                              ))
+                                  i18.attendanceMgmt.noMusterRollsFound,
+                                ))
                             : WorkDetailsCard(
                                 musterList,
                                 isSHGInbox: true,

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import _ from "lodash";
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
@@ -39,10 +40,38 @@ export const UICustomizations = {
         workflow,
       };
     }
+    if (businessService === businessServiceMap.contracts) {
+      const workflow = {
+        comment: data?.comments,
+        documents: data?.documents?.map((document) => {
+          return {
+            documentType: action?.action + " DOC",
+            fileName: document?.[1]?.file?.name,
+            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: document?.[1]?.fileStoreId?.tenantId,
+          };
+        }),
+        assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+        action: action.action,
+      };
+      //filtering out the data
+      Object.keys(workflow).forEach((key, index) => {
+        if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
+      });
+
+      return {
+        contract: applicationDetails,
+        workflow
+      };
+    }
   },
   enableHrmsSearch: (businessService, action) => {
     if (businessService === businessServiceMap.estimate) {
       return action.action.includes("TECHNICALSANCTION") || action.action.includes("VERIFYANDFORWARD");
+    }
+    if (businessService === businessServiceMap.contracts) {
+      return action.action.includes("VERIFY_AND_FORWARD");
     }
     return false;
   },
@@ -454,11 +483,18 @@ export const UICustomizations = {
   BillInboxConfig: {
     preProcess: (data) => {
       const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber;
+      let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state:[])
+      delete data.body.inbox.moduleSearchCriteria.state
+      states = Object.keys(states)?.filter(key=>states[key])
+      
+      let status;
+      if(states.length>0) status = states
+
       data.body.inbox = {
         ...data.body.inbox,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber, status }
       };
       return data;
     },

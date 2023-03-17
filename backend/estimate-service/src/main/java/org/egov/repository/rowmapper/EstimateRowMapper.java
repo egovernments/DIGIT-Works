@@ -104,7 +104,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                 .sorId(rs.getString("sor_id"))
                 .category(rs.getString("category"))
                 .name(rs.getString("name"))
-                .description(rs.getString("description"))
+                .description(rs.getString("estDetailDescription"))
                 .unitRate(rs.getDouble("unit_rate"))
                 .noOfunit(rs.getDouble("no_of_unit"))
                 //.totalAmount(rs.getDouble("total_amount"))

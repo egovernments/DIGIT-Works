@@ -131,7 +131,7 @@ public class EnrichmentService {
                                     if (node.findValue("code") != null  && StringUtils.isNotBlank(node.findValue("code").textValue())) {
                                         String skillCode = node.findValue("code").textValue();
                                         //Update the skill value based on the code from request
-                                        musterRollServiceUtil.populateAdditionalDetails(mdmsData,individualEntry,skillCode);
+                                        musterRollServiceUtil.updateAdditionalDetails(mdmsData,individualEntry,skillCode);
                                     }
                                 } catch (IOException e) {
                                     log.info("EnrichmentService::enrichMusterRollOnUpdate::Failed to parse additionalDetail object from request"+e);

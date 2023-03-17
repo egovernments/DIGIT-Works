@@ -38,6 +38,7 @@ class FilePickerDemoState extends State<FilePickerDemo> {
   List<dynamic> _selectedFiles = <dynamic>[];
   List<FileStoreModel> fileStoreList = <FileStoreModel>[];
   String? _directoryPath;
+  File? _imageFile;
   String? _extension;
   bool _loadingPath = false;
   bool multiPick = false;
@@ -68,11 +69,13 @@ class FilePickerDemoState extends State<FilePickerDemo> {
 
       if (paths != null) {
         var isNotValidSize = false;
+        setState(() {
+          _imageFile = File(paths.single.path!);
+        });
         for (var path in paths) {
           if (!(await CommonMethods.isValidFileSize(path.size))) {
             isNotValidSize = true;
           }
-          ;
         }
 
         if (isNotValidSize) {
@@ -189,7 +192,7 @@ class FilePickerDemoState extends State<FilePickerDemo> {
                                             padding: EdgeInsets.all(5),
                                             onPressed: () =>
                                                 onClickOfClear(index),
-                                            icon: Icon(Icons.cancel))
+                                            icon: const Icon(Icons.cancel))
                                       ],
                                     )).toList()),
                       ),
@@ -285,7 +288,7 @@ class FilePickerDemoState extends State<FilePickerDemo> {
                     child: Text(
                         AppLocalizations.of(context)
                             .translate(i18.common.chooseAnAction),
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                   Row(
