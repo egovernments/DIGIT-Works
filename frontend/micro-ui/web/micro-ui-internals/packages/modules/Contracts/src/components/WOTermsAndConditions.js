@@ -93,15 +93,11 @@ const WOTermsAndConditions = (props) => {
             <td style={getStyles(1)}>{i}</td>
 
             <td style={getStyles(2)} ><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.description`} inputRef={register({
-            required: false,
-            //Don't remove this whitespace in pattern, it is used for validation
-            pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
+            required: false
             })
             }
-            />{errors && errors?.[formFieldName]?.[row.key]?.description?.type === "pattern" && (
-                <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-            {errors && errors?.[formFieldName]?.[row.key]?.description?.type === "required" && (
-                <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+            />
+            </div></td>
             <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
         </tr>
         })

@@ -8,7 +8,7 @@ const OverheadsTable = ({control,watch,...props}) => {
     const [totalAmount,setTotalAmount] = useState(100)
     const formFieldName = "overheadDetails" // this will be the key under which the data for this table will be present on onFormSubmit
     
-    const errorCardStyle = {width:"100%"}
+    const errorCardStyle = {width:"100%",fontSize:"12px"}
 
     const initialState = [
         {
@@ -21,6 +21,7 @@ const OverheadsTable = ({control,watch,...props}) => {
     const { t, register, errors, setValue, getValues, formData } = props
 
     const setTotal = (formData) => {
+        
         const tableData = formData?.[formFieldName]
         setTotalAmount((prevState) => {
             return tableData?.filter((row, index) => row)?.filter((row, index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseInt(curr?.amount) || 0

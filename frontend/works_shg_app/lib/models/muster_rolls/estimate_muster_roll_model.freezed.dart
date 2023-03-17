@@ -929,6 +929,8 @@ mixin _$EstimateMusterIndividualAdditionalDetails {
   String? get bankDetails => throw _privateConstructorUsedError;
   String? get userId => throw _privateConstructorUsedError;
   List<String>? get skillCode => throw _privateConstructorUsedError;
+  String? get accountHolderName => throw _privateConstructorUsedError;
+  String? get accountType => throw _privateConstructorUsedError;
   String? get skillValue => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -953,6 +955,8 @@ abstract class $EstimateMusterIndividualAdditionalDetailsCopyWith<$Res> {
       String? bankDetails,
       String? userId,
       List<String>? skillCode,
+      String? accountHolderName,
+      String? accountType,
       String? skillValue});
 }
 
@@ -977,6 +981,8 @@ class _$EstimateMusterIndividualAdditionalDetailsCopyWithImpl<$Res,
     Object? bankDetails = freezed,
     Object? userId = freezed,
     Object? skillCode = freezed,
+    Object? accountHolderName = freezed,
+    Object? accountType = freezed,
     Object? skillValue = freezed,
   }) {
     return _then(_value.copyWith(
@@ -1004,6 +1010,14 @@ class _$EstimateMusterIndividualAdditionalDetailsCopyWithImpl<$Res,
           ? _value.skillCode
           : skillCode // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      accountHolderName: freezed == accountHolderName
+          ? _value.accountHolderName
+          : accountHolderName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountType: freezed == accountType
+          ? _value.accountType
+          : accountType // ignore: cast_nullable_to_non_nullable
+              as String?,
       skillValue: freezed == skillValue
           ? _value.skillValue
           : skillValue // ignore: cast_nullable_to_non_nullable
@@ -1028,6 +1042,8 @@ abstract class _$$_EstimateMusterIndividualAdditionalDetailsCopyWith<$Res>
       String? bankDetails,
       String? userId,
       List<String>? skillCode,
+      String? accountHolderName,
+      String? accountType,
       String? skillValue});
 }
 
@@ -1050,6 +1066,8 @@ class __$$_EstimateMusterIndividualAdditionalDetailsCopyWithImpl<$Res>
     Object? bankDetails = freezed,
     Object? userId = freezed,
     Object? skillCode = freezed,
+    Object? accountHolderName = freezed,
+    Object? accountType = freezed,
     Object? skillValue = freezed,
   }) {
     return _then(_$_EstimateMusterIndividualAdditionalDetails(
@@ -1077,6 +1095,14 @@ class __$$_EstimateMusterIndividualAdditionalDetailsCopyWithImpl<$Res>
           ? _value._skillCode
           : skillCode // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      accountHolderName: freezed == accountHolderName
+          ? _value.accountHolderName
+          : accountHolderName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountType: freezed == accountType
+          ? _value.accountType
+          : accountType // ignore: cast_nullable_to_non_nullable
+              as String?,
       skillValue: freezed == skillValue
           ? _value.skillValue
           : skillValue // ignore: cast_nullable_to_non_nullable
@@ -1096,6 +1122,8 @@ class _$_EstimateMusterIndividualAdditionalDetails
       this.bankDetails,
       this.userId,
       final List<String>? skillCode,
+      this.accountHolderName,
+      this.accountType,
       this.skillValue})
       : _skillCode = skillCode;
 
@@ -1123,11 +1151,15 @@ class _$_EstimateMusterIndividualAdditionalDetails
   }
 
   @override
+  final String? accountHolderName;
+  @override
+  final String? accountType;
+  @override
   final String? skillValue;
 
   @override
   String toString() {
-    return 'EstimateMusterIndividualAdditionalDetails(userName: $userName, fatherName: $fatherName, aadharNumber: $aadharNumber, bankDetails: $bankDetails, userId: $userId, skillCode: $skillCode, skillValue: $skillValue)';
+    return 'EstimateMusterIndividualAdditionalDetails(userName: $userName, fatherName: $fatherName, aadharNumber: $aadharNumber, bankDetails: $bankDetails, userId: $userId, skillCode: $skillCode, accountHolderName: $accountHolderName, accountType: $accountType, skillValue: $skillValue)';
   }
 
   @override
@@ -1146,6 +1178,10 @@ class _$_EstimateMusterIndividualAdditionalDetails
             (identical(other.userId, userId) || other.userId == userId) &&
             const DeepCollectionEquality()
                 .equals(other._skillCode, _skillCode) &&
+            (identical(other.accountHolderName, accountHolderName) ||
+                other.accountHolderName == accountHolderName) &&
+            (identical(other.accountType, accountType) ||
+                other.accountType == accountType) &&
             (identical(other.skillValue, skillValue) ||
                 other.skillValue == skillValue));
   }
@@ -1160,6 +1196,8 @@ class _$_EstimateMusterIndividualAdditionalDetails
       bankDetails,
       userId,
       const DeepCollectionEquality().hash(_skillCode),
+      accountHolderName,
+      accountType,
       skillValue);
 
   @JsonKey(ignore: true)
@@ -1188,6 +1226,8 @@ abstract class _EstimateMusterIndividualAdditionalDetails
       final String? bankDetails,
       final String? userId,
       final List<String>? skillCode,
+      final String? accountHolderName,
+      final String? accountType,
       final String? skillValue}) = _$_EstimateMusterIndividualAdditionalDetails;
 
   factory _EstimateMusterIndividualAdditionalDetails.fromJson(
@@ -1206,6 +1246,10 @@ abstract class _EstimateMusterIndividualAdditionalDetails
   String? get userId;
   @override
   List<String>? get skillCode;
+  @override
+  String? get accountHolderName;
+  @override
+  String? get accountType;
   @override
   String? get skillValue;
   @override

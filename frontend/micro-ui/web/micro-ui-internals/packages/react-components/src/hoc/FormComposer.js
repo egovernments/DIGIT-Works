@@ -502,6 +502,7 @@ export const FormComposer = (props) => {
                     }}
                   >
                     {t(field.label)}
+                    {field?.appendColon ? ' : ' : null}
                     {field.isMandatory ? " * " : null}
                   </CardLabel>
                 )}

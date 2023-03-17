@@ -2,6 +2,8 @@ package org.egov.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.config.Configuration;
+import org.egov.kafka.Producer;
 import org.egov.repository.BankAccountRepository;
 import org.egov.validator.BankAccountValidator;
 import org.egov.web.models.*;
@@ -25,8 +27,18 @@ public class BankAccountService {
     @Autowired
     private BankAccountRepository bankAccountRepository;
 
+    @Autowired
+    private Producer producer;
+
+    @Autowired
+    private Configuration configuration;
+
     public BankAccountRequest createBankAccount(BankAccountRequest bankAccountRequest) {
         log.info("BankAccountService::createBankAccount");
+        bankAccountValidator.validateBankAccountOnCreate(bankAccountRequest);
+        enrichmentService.enrichBankAccountOnCreate(bankAccountRequest);
+
+        producer.push(configuration.getSaveBankAccountTopic(),bankAccountRequest);
 
         return bankAccountRequest;
     }

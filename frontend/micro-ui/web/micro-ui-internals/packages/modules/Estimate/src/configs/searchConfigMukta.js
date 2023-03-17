@@ -43,7 +43,7 @@ const searchConfigMukta = () => {
                             populators: {
                                 name: "ward",
                                 type: "ward",
-                                optionsKey: "name",
+                                optionsKey: "i18nKey",
                                 defaultText: "COMMON_SELECT_WARD",
                                 selectedText: "COMMON_SELECTED",
                                 allowMultiSelect: false

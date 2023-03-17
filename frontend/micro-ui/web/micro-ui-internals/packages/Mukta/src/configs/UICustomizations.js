@@ -228,11 +228,11 @@ export const UICustomizations = {
                     </div>
                 );
             }
-
-            if (column.label === "PROJECT_ESTIMATED_COST") {
+            
+            if (column.label === "PROJECT_ESTIMATED_COST_IN_RS") {
                 if (value) {
                     return (
-                        <p>{`₹ ${value}`}</p>
+                        <p>{`${value}`}</p>
                     );
                 }
                 return <p>{"NA"}</p>
