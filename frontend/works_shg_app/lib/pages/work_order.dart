@@ -75,9 +75,13 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                     ? DateFormats.timeStampToDate(e.issueDate,
                                         format: "dd/MM/yyyy")
                                     : 'NA',
-                                i18.workOrder.dueDate: e.endDate != null
-                                    ? DateFormats.timeStampToDate(e.endDate,
-                                        format: "dd/MM/yyyy")
+                                i18.workOrder.dueDate: e.issueDate != null
+                                    ? DateFormats.getFilteredDate(
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                                e.issueDate ?? 0)
+                                            .add(const Duration(days: 7))
+                                            .toLocal()
+                                            .toString())
                                     : 'NA',
                                 i18.workOrder.contractAmount:
                                     '₹ ${e.totalContractedAmount ?? 0}',
