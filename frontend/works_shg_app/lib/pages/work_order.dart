@@ -67,6 +67,8 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                               'cardDetails': {
                                 i18.workOrder.workOrderNo:
                                     e.contractNumber ?? 'NA',
+                                i18.attendanceMgmt.projectDesc:
+                                    e.additionalDetails?.projectName ?? 'NA',
                                 i18.workOrder.roleOfCBO:
                                     AppLocalizations.of(context).translate(
                                         e.executingAuthority ?? 'NA'),
@@ -87,7 +89,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                             .toString())
                                     : 'NA',
                                 i18.workOrder.contractAmount:
-                                    '₹ ${NumberFormat('##,##,##,##,000').format(e.totalContractedAmount ?? 0)}',
+                                    '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
                                 i18.common.status: e.wfStatus,
                               },
                               'payload': e.toMap()

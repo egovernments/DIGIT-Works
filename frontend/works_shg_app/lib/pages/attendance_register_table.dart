@@ -77,6 +77,14 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
   @override
   void deactivate() {
+    existingAttendeeList.clear();
+    userList.clear();
+    filteredUserList.clear();
+    addToTableList.clear();
+    attendeeTableList.clear();
+    userTableList.clear();
+    createAttendeePayLoadList.clear();
+    deleteAttendeePayLoadList.clear();
     context.read<IndividualSearchBloc>().add(
           const DisposeSearchIndividualEvent(),
         );
@@ -582,7 +590,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
       TableData(
           label: tableDataModel.individualGaurdianName,
           apiKey: tableDataModel.individualGaurdianName),
-      TableData(label: tableDataModel.skill, apiKey: tableDataModel.skill),
+      TableData(
+          label: AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+              .translate(tableDataModel.skill.toString()),
+          apiKey: tableDataModel.skill),
       TableData(
           widget: DeleteButton(
               onTap: () => onDelete(tableDataModel.uuid.toString())))
