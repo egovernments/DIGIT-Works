@@ -58,13 +58,13 @@ export const mustorRollDetailsTableColumns = (t) => [
       return String(t(value));
     }
   },
-  {
-    Header: () => <p>{t("EXP_DAYS_WORKED")}</p>,
-    accessor: "actualWorkingDays",
-    Cell: ({ value, column, row }) => {
-      return String(t(value));
-    }
-  },
+  // {
+  //   Header: () => <p>{t("EXP_DAYS_WORKED")}</p>,
+  //   accessor: "actualWorkingDays",
+  //   Cell: ({ value, column, row }) => {
+  //     return String(t(value));
+  //   }
+  // },
   {
     Header: () => <p>{ t("EXP_DAYS_MEASURED")}</p>,
     accessor: "modifiedWorkingDays",
