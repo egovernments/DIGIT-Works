@@ -10,6 +10,7 @@ import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 import '../../widgets/Back.dart';
 import '../../widgets/SideBar.dart';
+import '../../widgets/atoms/empty_image.dart';
 import '../../widgets/drawer_wrapper.dart';
 import '../../widgets/loaders.dart';
 
@@ -87,8 +88,11 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                         ),
                       ),
                       projectList.isEmpty
-                          ? Text(AppLocalizations.of(context)
-                              .translate(i18.attendanceMgmt.noProjectsFound))
+                          ? EmptyImage(
+                              align: Alignment.center,
+                              label: AppLocalizations.of(context).translate(
+                                i18.attendanceMgmt.noRegistersFound,
+                              ))
                           : WorkDetailsCard(
                               projectList,
                               isTrackAttendance: true,

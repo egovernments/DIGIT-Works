@@ -151,6 +151,7 @@ class AttendanceMgmt {
   String get attendeeDeEnrollFailed => 'ATTENDEE_DE_ENROLL_FAILED';
   String get attendeeDeEnrollSuccess => 'ATTENDEE_DE_ENROLL_SUCCESS';
   String get noMusterRollsFound => 'NO_MUSTER_ROLLS_FOUND';
+  String get noRegistersFound => 'NO_REGISTERS_FOUND';
   String get skill => 'ATM_SKILLS';
   String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
 }

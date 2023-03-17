@@ -9,6 +9,7 @@ import '../blocs/localization/app_localization.dart';
 import '../models/attendance/attendance_registry_model.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/empty_image.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
 
@@ -71,8 +72,11 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
                         ),
                       ),
                       projectList.isEmpty
-                          ? Text(localization
-                              .translate(i18.attendanceMgmt.noProjectsFound))
+                          ? EmptyImage(
+                              align: Alignment.center,
+                              label: localization.translate(
+                                i18.attendanceMgmt.noRegistersFound,
+                              ))
                           : WorkDetailsCard(
                               projectList,
                               isManageAttendance: true,
