@@ -100,10 +100,14 @@ export const mustorRollDetailsTableColumns = (t) => [
       if (row.original.type === "total") {
         return String(t(value));
       }
-      if(value === 'PAYMENT_COMPLETED') {
-        return <span style={{"color":"#0B6623"}}>{t(`BILL_STATUS_${value}`)}</span>
-      } else {
-        return <span style={{"color":"#FF0000"}}>{t(`BILL_STATUS_${value}`)}</span>
+      if(value === 'PAYMENT_SUCCESS') {
+        return <span style={{ "color":"#00703C"}}>{t(`BILL_STATUS_${value}`)}</span>
+      } 
+      else if(value==="PAYMENT_PENDING"){
+        return <span style={{ "color": "#F47738" }}>{t(`BILL_STATUS_${value}`)}</span>
+      }
+      else {
+        return <span style={{ "color":"#ff0000"}}>{t(`BILL_STATUS_${value}`)}</span>
       }
     }
   },

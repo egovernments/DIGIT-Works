@@ -61,7 +61,7 @@ const ApplicationDetails = (props) => {
   const reqCriteria = {
     url: "/expensebilling/demand/v1/_create",
     params:{},
-    body: { musterRoll: billingCallData?.mustorObject?.musterRolls},
+    body: { "musterRolls": billingCallData?.mustorObject,"count":1},
     // body: {
     //   musterRoll: {
     //     "id": "d844b2d0-2998-4e3a-86f6-539b75935c27",
@@ -572,8 +572,9 @@ const ApplicationDetails = (props) => {
   }
 
   const { isLoading:isBillLoading, data:billData, revalidate, isFetching:isBillFetching } = Digit.Hooks.useCustomAPIHook(reqCriteria);
+
   useEffect(() => {
-    if (billData?.billNo){
+    if (billData?.BillDemands?.[0]?.billNumber ){
       history.push(`/${window.contextPath}/employee/attendencemgmt/response?musterRollNumber=${billingCallData?.mustorObject?.musterRolls?.[0]?.musterRollNumber}`, {...billingCallData?.responseScreenState,billNo:"BS/122-3123-13"})
     }
   }, [billData])
@@ -774,14 +775,22 @@ const ApplicationDetails = (props) => {
             const musterRoll = data?.musterRolls?.[0]
             const response = getAttendanceResponseHeaderAndMessage(performedAction)
             const state = {
+              performedAction,
               header: response?.header,
-              message: response?.message,
+              message: `${response?.message}`,
               info: t("ATM_MUSTER_ROLL_WEEK"),
               id: `${musterRoll.musterRollNumber} | ${format(new Date(musterRoll.startDate), "dd/MM/yyyy")} - ${format(new Date(musterRoll.endDate), "dd/MM/yyyy")}`,
             }
             if(performedAction==="APPROVE"){
+              
+              const individualEntriesResponse = data?.musterRolls?.[0]?.individualEntries
+              
+              individualEntriesResponse?.forEach(row=>{
+                row.additionalDetails = { ...row.additionalDetails, accountType: "SAVINGS", accountHolderName: row?.additionalDetails?.userName, bankDetails: "880182873839-SBIN0001237", skillCode: row.additionalDetails?.skillValue ? row.additionalDetails?.skillValue:"UNSKILLED.MALE_MULIA" }
+              })
+
             setBillingCallData({
-              mustorObject:data,
+              mustorObject: data?.musterRolls,
               responseScreenState: state
             })
           }
