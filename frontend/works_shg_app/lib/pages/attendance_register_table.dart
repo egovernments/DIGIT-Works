@@ -590,7 +590,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
       TableData(
           label: tableDataModel.individualGaurdianName,
           apiKey: tableDataModel.individualGaurdianName),
-      TableData(label: tableDataModel.skill, apiKey: tableDataModel.skill),
+      TableData(
+          label: AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+              .translate(tableDataModel.skill.toString()),
+          apiKey: tableDataModel.skill),
       TableData(
           widget: DeleteButton(
               onTap: () => onDelete(tableDataModel.uuid.toString())))
