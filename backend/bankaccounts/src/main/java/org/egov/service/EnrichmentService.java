@@ -60,7 +60,7 @@ public class EnrichmentService {
         RequestInfo requestInfo = bankAccountRequest.getRequestInfo();
         List<BankAccount> bankAccountList = bankAccountRequest.getBankAccounts();
 
-        String userUuid = null;
+        String userUuid = "dmgfUUId";//TODO-remove
         if (requestInfo != null
                 && requestInfo.getUserInfo() != null
                 && StringUtils.isNotBlank(requestInfo.getUserInfo().getUuid())) {
