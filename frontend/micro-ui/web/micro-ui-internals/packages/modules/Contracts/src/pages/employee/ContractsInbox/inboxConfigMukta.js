@@ -156,12 +156,12 @@ const inboxConfigMukta = () => {
                         {
                             text: "ACTION_TEST_CREATE_WO",
                             url: `/employee/estimate/search-estimate`,
-                            roles: ["WORK_ORDER_CREATOR",],
+                            roles: ["WORK_ORDER_CREATOR"],
                         },
                         {
                             text: "ACTION_TEST_SEARCH_WO",
                             url: `/employee/contracts/search-contract`,
-                            roles: [],
+                            roles: ["WORK_ORDER_CREATOR", "WORK_ORDER_VERIFIER","WORK_ORDER_APPROVER"],
                         },
                     ],
                     label: "MUKTA",
