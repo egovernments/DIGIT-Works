@@ -84,7 +84,7 @@ class _DropDownDialogState extends State<DropDownDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: widget.options.map((option) {
                   return RadioListTile(
-                    title: Text(option),
+                    title: Text(AppLocalizations.of(context).translate(option)),
                     value: option,
                     groupValue: widget.selectedOption,
                     onChanged: (value) {
