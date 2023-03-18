@@ -489,9 +489,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                       .isNotEmpty &&
                                                                   deleteAttendeePayLoadList
                                                                       .isEmpty) {
-                                                                print('create');
-                                                                print(
-                                                                    createAttendeePayLoadList);
                                                                 context
                                                                     .read<
                                                                         AttendeeCreateBloc>()
