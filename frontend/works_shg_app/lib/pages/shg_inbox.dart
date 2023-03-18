@@ -220,7 +220,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                     hintText: AppLocalizations
                                                             .of(context)
                                                         .translate(i18.common
-                                                            .searchByNameAadhaar),
+                                                            .searchByName),
                                                     border:
                                                         const OutlineInputBorder(
                                                       borderRadius:
@@ -951,6 +951,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           apiKey: tableDataModel.skill,
           widget: DropDownDialog(
             options: skillDropDown,
+            label: i18.common.selectSkill,
             selectedOption: tableDataModel.skill.toString(),
             onChanged: (val) {
               tableDataModel.skill = val;

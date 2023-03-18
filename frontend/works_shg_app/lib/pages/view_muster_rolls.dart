@@ -7,7 +7,6 @@ import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
 import '../blocs/localization/app_localization.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
-import '../utils/constants.dart';
 import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
@@ -53,6 +52,8 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                             a.musterAuditDetails!.lastModifiedTime!.toInt()));
                     musterList = musters
                         .map((e) => {
+                              i18.attendanceMgmt.musterRollId:
+                                  e.musterRollNumber,
                               i18.attendanceMgmt.nameOfWork: e
                                       .musterAdditionalDetails
                                       ?.attendanceRegisterName ??
@@ -61,14 +62,9 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                                       .musterAdditionalDetails
                                       ?.attendanceRegisterNo ??
                                   'NA',
-                              i18.attendanceMgmt.musterRollId:
-                                  e.musterRollNumber,
-                              i18.common.dates:
+                              i18.attendanceMgmt.musterRollPeriod:
                                   '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                              i18.common.status:
-                                  e.musterRollStatus == Constants.rejected
-                                      ? e.musterRollStatus
-                                      : Constants.active
+                              i18.common.status: e.musterRollStatus
                             })
                         .toList();
                   }
@@ -105,6 +101,8 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                                 musterList,
                                 isSHGInbox: true,
                                 musterRollsModel: musters,
+                                elevatedButtonLabel:
+                                    t.translate(i18.common.viewDetails),
                               )
                       ]);
                 },

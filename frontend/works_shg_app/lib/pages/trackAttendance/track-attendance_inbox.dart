@@ -53,7 +53,7 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                                       .attendanceRegisterAdditionalDetails
                                       ?.projectId ??
                                   'NA',
-                              i18.attendanceMgmt.projectId: e
+                              i18.attendanceMgmt.projectDesc: e
                                       .attendanceRegisterAdditionalDetails
                                       ?.projectName ??
                                   'NA',
