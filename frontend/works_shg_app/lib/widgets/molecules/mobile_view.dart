@@ -32,7 +32,7 @@ class MobileView extends StatelessWidget {
                       // still be at least as big as necessary to fit its contents.
                       child: Container(
                           color: Colors.blue,
-                          height: MediaQuery.of(context).size.height,
+                          // height: MediaQuery.of(context).size.height,
                           child: BackgroundContainer(
                               Stack(children: <Widget>[
                                 (Positioned(
