@@ -11,6 +11,7 @@ import '../utils/constants.dart';
 import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
 
@@ -31,7 +32,10 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
