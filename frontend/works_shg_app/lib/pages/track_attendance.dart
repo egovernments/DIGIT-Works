@@ -210,7 +210,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                         decoration: InputDecoration(
                                                           hintText: AppLocalizations.of(context)
                                                               .translate(
-                                                              i18.common.searchByNameAadhaar),
+                                                              i18.common.searchByName),
                                                           border: const OutlineInputBorder(
                                                             borderRadius: BorderRadius.zero,
                                                           ),
@@ -764,6 +764,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
           widget: DropDownDialog(
             isDisabled: skillsDisable,
             options: skillDropDown,
+            label: i18.common.selectSkill,
             selectedOption: tableDataModel.skill.toString(),
             onChanged: (val) {
               tableDataModel.skill = val;

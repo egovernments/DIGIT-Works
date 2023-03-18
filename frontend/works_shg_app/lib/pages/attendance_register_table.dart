@@ -59,7 +59,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   List<Map<String, dynamic>> deleteAttendeePayLoadList = [];
   bool searchUser = false;
   List<Map<String, dynamic>> existingAttendeeList = [];
-  var tableData;
+  List<TableDataRow> tableData = [];
 
   @override
   void initState() {
@@ -68,16 +68,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   }
 
   afterViewBuild() async {
-    context.read<AttendanceIndividualProjectSearchBloc>().add(
-          SearchIndividualAttendanceProjectEvent(
-              id: widget.registerId ?? '',
-              tenantId: widget.tenantId.toString()),
-        );
-    await Future.delayed(const Duration(seconds: 2));
-  }
-
-  @override
-  void deactivate() {
+    tableData.clear();
     existingAttendeeList.clear();
     userList.clear();
     filteredUserList.clear();
@@ -86,6 +77,20 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
     userTableList.clear();
     createAttendeePayLoadList.clear();
     deleteAttendeePayLoadList.clear();
+    searchUser = false;
+    context.read<AttendanceIndividualProjectSearchBloc>().add(
+          SearchIndividualAttendanceProjectEvent(
+              id: widget.registerId ?? '',
+              tenantId: widget.tenantId.toString()),
+        );
+    await Future.delayed(const Duration(seconds: 1));
+  }
+
+  @override
+  void deactivate() {
+    context.read<AttendanceIndividualProjectSearchBloc>().add(
+          const DisposeIndividualAttendanceRegisterEvent(),
+        );
     context.read<IndividualSearchBloc>().add(
           const DisposeSearchIndividualEvent(),
         );
@@ -100,9 +105,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
   @override
   Widget build(BuildContext context) {
-    // final List list = json.decode(fakeTableData);
-    // List<TableDataModel> tableList =
-    //     list.map((e) => TableDataModel.fromJson(e)).toList();
     return Scaffold(
         appBar: AppBar(
           titleSpacing: 0,
@@ -166,7 +168,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                             loaded: (AttendanceRegistersModel?
                                 individualAttendanceRegisterModel) {
                               if (individualAttendanceRegisterModel!
-                                  .attendanceRegister!.isNotEmpty) {
+                                          .attendanceRegister !=
+                                      null &&
+                                  individualAttendanceRegisterModel!
+                                      .attendanceRegister!.isNotEmpty) {
                                 individualAttendanceRegisterModel!
                                     .attendanceRegister!
                                     .map((e) => {
@@ -323,7 +328,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                 headerList: headerList,
                                                 tableData: tableData,
                                                 leftColumnWidth: width,
-                                                rightColumnWidth: width * 3,
+                                                rightColumnWidth: width * 4,
                                                 height: 58 +
                                                     (52.0 *
                                                         (tableData.length + 1)),
@@ -345,6 +350,19 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                 .attendanceMgmt
                                                                 .attendeeCreateSuccess),
                                                         'SUCCESS');
+                                                    context.router.popAndPush(
+                                                        AttendanceRegisterTableRoute(
+                                                            projectDetails: widget
+                                                                .projectDetails,
+                                                            attendanceRegister:
+                                                                widget
+                                                                    .attendanceRegister,
+                                                            registerId: widget
+                                                                .registerId
+                                                                .toString(),
+                                                            tenantId: widget!
+                                                                .tenantId
+                                                                .toString()));
                                                   },
                                                   error: (String? error) {
                                                     Notifiers.getToastMessage(
@@ -354,6 +372,19 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                             .translate(error
                                                                 .toString()),
                                                         'ERROR');
+                                                    context.router.popAndPush(
+                                                        AttendanceRegisterTableRoute(
+                                                            projectDetails: widget
+                                                                .projectDetails,
+                                                            attendanceRegister:
+                                                                widget
+                                                                    .attendanceRegister,
+                                                            registerId: widget
+                                                                .registerId
+                                                                .toString(),
+                                                            tenantId: widget!
+                                                                .tenantId
+                                                                .toString()));
                                                   },
                                                   orElse: () {});
                                             },
@@ -372,6 +403,23 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                   .attendanceMgmt
                                                                   .attendeeDeEnrollSuccess),
                                                           'SUCCESS');
+
+                                                      Future.delayed(
+                                                          const Duration(
+                                                              seconds: 3));
+                                                      context.router.popAndPush(
+                                                          AttendanceRegisterTableRoute(
+                                                              projectDetails: widget
+                                                                  .projectDetails,
+                                                              attendanceRegister:
+                                                                  widget
+                                                                      .attendanceRegister,
+                                                              registerId: widget
+                                                                  .registerId
+                                                                  .toString(),
+                                                              tenantId: widget!
+                                                                  .tenantId
+                                                                  .toString()));
                                                     },
                                                     error: (String? error) {
                                                       Notifiers.getToastMessage(
@@ -381,6 +429,19 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                               .translate(error
                                                                   .toString()),
                                                           'ERROR');
+                                                      context.router.popAndPush(
+                                                          AttendanceRegisterTableRoute(
+                                                              projectDetails: widget
+                                                                  .projectDetails,
+                                                              attendanceRegister:
+                                                                  widget
+                                                                      .attendanceRegister,
+                                                              registerId: widget
+                                                                  .registerId
+                                                                  .toString(),
+                                                              tenantId: widget!
+                                                                  .tenantId
+                                                                  .toString()));
                                                     },
                                                     orElse: () => Container());
                                               },
@@ -428,6 +489,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                       .isNotEmpty &&
                                                                   deleteAttendeePayLoadList
                                                                       .isEmpty) {
+                                                                print('create');
+                                                                print(
+                                                                    createAttendeePayLoadList);
                                                                 context
                                                                     .read<
                                                                         AttendeeCreateBloc>()
@@ -449,8 +513,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                               deleteAttendeePayLoadList),
                                                                     );
                                                               } else {}
-                                                              context.router.push(
-                                                                  const HomeRoute());
                                                             },
                                                   child: Text(
                                                       AppLocalizations.of(
@@ -496,6 +558,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           "individualCode": user["individualCode"],
           "individualGaurdianName": user["individualGaurdianName"],
           "skill": user["skill"],
+          "individualId": user["individualId"],
           "uuid": user["uuid"],
           "mobileNumber": user["mobileNumber"],
           "tenantId": user["tenantId"]
@@ -516,7 +579,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                     .isEmpty
             ? addToTableList
                 .map((e) => {
-                      "registerId": widget.attendanceRegister?.id.toString(),
+                      "registerId": widget.registerId?.toString(),
                       "individualId": e["uuid"],
                       "tenantId": e["tenantId"],
                       "additionalDetails": {
@@ -586,6 +649,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
             apiKey: 'skill'),
         TableHeader(
             AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+                .translate(i18.common.mobileNumber),
+            apiKey: 'mobileNumber'),
+        TableHeader(
+            AppLocalizations.of(scaffoldMessengerKey.currentContext!)
                 .translate(i18.common.action),
             apiKey: '')
       ];
@@ -600,6 +667,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           label: AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(tableDataModel.skill.toString()),
           apiKey: tableDataModel.skill),
+      TableData(
+          label: tableDataModel.mobileNumber,
+          apiKey: tableDataModel.mobileNumber),
       TableData(
           widget: DeleteButton(
               onTap: () => onDelete(tableDataModel.uuid.toString())))
