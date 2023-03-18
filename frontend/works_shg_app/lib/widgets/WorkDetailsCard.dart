@@ -166,8 +166,8 @@ class WorkDetailsCard extends StatelessWidget {
         ),
       ));
     } else if (isManageAttendance || isTrackAttendance) {
-      labelList.add(Container(
-        padding: const EdgeInsets.all(8.0),
+      labelList.add(Padding(
+        padding: const EdgeInsets.all(4.0),
         child: DigitElevatedButton(
           onPressed: () {
             if (isManageAttendance) {
@@ -184,13 +184,13 @@ class WorkDetailsCard extends StatelessWidget {
                   attendanceRegister: attendanceRegister));
             }
           },
-          child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(elevatedButtonLabel,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .apply(color: Colors.white))),
+          child: Center(
+            child: Text(elevatedButtonLabel,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .apply(color: Colors.white)),
+          ),
         ),
       ));
     }

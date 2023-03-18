@@ -130,6 +130,10 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
               ],
             ),
           ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: PoweredByDigit(),
+          )
         ]),
       ),
     );

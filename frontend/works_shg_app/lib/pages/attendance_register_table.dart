@@ -23,6 +23,7 @@ import '../router/app_router.dart';
 import '../utils/models.dart';
 import '../utils/notifiers.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/auto_complete_search_bar.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
@@ -103,7 +104,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
     // List<TableDataModel> tableList =
     //     list.map((e) => TableDataModel.fromJson(e)).toList();
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
@@ -112,7 +116,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           Container(
             color: const Color.fromRGBO(238, 238, 238, 1),
             padding: const EdgeInsets.only(left: 8, right: 8, bottom: 16),
-            height: MediaQuery.of(context).size.height - 100,
+            height: MediaQuery.of(context).size.height - 50,
             child: CustomScrollView(slivers: [
               SliverList(
                   delegate: SliverChildListDelegate([
@@ -127,11 +131,11 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     Container(
                         alignment: Alignment.centerLeft,
-                        margin: const EdgeInsets.all(8.0),
+                        margin: const EdgeInsets.all(4.0),
                         child: AutoCompleteSearchBar(
                           hintText: AppLocalizations.of(context)
                               .translate(i18.common.searchByMobileNumber),
@@ -142,14 +146,14 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                           minCharsForSuggestions: 10,
                           maxLength: 10,
                           listTile: buildTile,
+                          textInputType: TextInputType.phone,
                           inputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp("[a-zA-Z0-9]"))
+                            FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                           ],
                           labelText: '',
                         )),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     BlocListener<AttendanceIndividualProjectSearchBloc,
                         AttendanceIndividualProjectSearchState>(
@@ -323,6 +327,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                 height: 58 +
                                                     (52.0 *
                                                         (tableData.length + 1)),
+                                                scrollPhysics:
+                                                    const NeverScrollableScrollPhysics(),
                                               ),
                                             );
                                           }),
@@ -389,7 +395,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                 right: 8.0,
                                               ),
                                               child: SizedBox(
-                                                height: 50,
+                                                height: 35,
                                                 child: DigitElevatedButton(
                                                   onPressed:
                                                       createAttendeePayLoadList

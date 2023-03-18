@@ -16,6 +16,7 @@ import '../utils/date_formats.dart';
 import '../utils/notifiers.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/drawer_wrapper.dart';
 
 class WorkOrderPage extends StatefulWidget {
@@ -46,7 +47,10 @@ class _WorkOrderPage extends State<WorkOrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child:
                 SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
