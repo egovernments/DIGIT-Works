@@ -73,9 +73,9 @@ _Add this configuration to enable this module [MDMS Enableing Utilities Module](
 
 Sample URL
 
-\_Contract Module
+_Contract Module
 
-````bash
+```bash
       works-ui/employee/dss/workflow?tenantId=pg.citya&applicationNo=WO/2022-23/000375&businessService=contract-approval-mukta&moduleCode=contract
       ```
 
@@ -85,11 +85,11 @@ _Estimate Module
 
 works-ui/employee/dss/workflow?tenantId=pg.citya&applicationNo=ES/2022-23/000874&businessService=mukta-estimate&moduleCode=estimate
 
-````
+```
 
-\_Attendance Module
+_Attendance Module
 
-````bash
+```bash
 works-ui/employee/dss/workflow?tenantId=pg.citya&applicationNo=MR/2022-23/03/19/000631&businessService=muster-roll-approval&moduleCode=attendence
 
       ```
