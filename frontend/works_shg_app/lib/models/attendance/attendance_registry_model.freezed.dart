@@ -645,6 +645,7 @@ mixin _$AttendanceRegisterAdditionalDetails {
   String? get projectId => throw _privateConstructorUsedError;
   String? get projectName => throw _privateConstructorUsedError;
   String? get projectType => throw _privateConstructorUsedError;
+  int? get amount => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -668,7 +669,8 @@ abstract class $AttendanceRegisterAdditionalDetailsCopyWith<$Res> {
       String? executingAuthority,
       String? projectId,
       String? projectName,
-      String? projectType});
+      String? projectType,
+      int? amount});
 }
 
 /// @nodoc
@@ -692,6 +694,7 @@ class _$AttendanceRegisterAdditionalDetailsCopyWithImpl<$Res,
     Object? projectId = freezed,
     Object? projectName = freezed,
     Object? projectType = freezed,
+    Object? amount = freezed,
   }) {
     return _then(_value.copyWith(
       contractId: freezed == contractId
@@ -722,6 +725,10 @@ class _$AttendanceRegisterAdditionalDetailsCopyWithImpl<$Res,
           ? _value.projectType
           : projectType // ignore: cast_nullable_to_non_nullable
               as String?,
+      amount: freezed == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 }
@@ -742,7 +749,8 @@ abstract class _$$_AttendanceRegisterAdditionalDetailsCopyWith<$Res>
       String? executingAuthority,
       String? projectId,
       String? projectName,
-      String? projectType});
+      String? projectType,
+      int? amount});
 }
 
 /// @nodoc
@@ -765,6 +773,7 @@ class __$$_AttendanceRegisterAdditionalDetailsCopyWithImpl<$Res>
     Object? projectId = freezed,
     Object? projectName = freezed,
     Object? projectType = freezed,
+    Object? amount = freezed,
   }) {
     return _then(_$_AttendanceRegisterAdditionalDetails(
       contractId: freezed == contractId
@@ -795,6 +804,10 @@ class __$$_AttendanceRegisterAdditionalDetailsCopyWithImpl<$Res>
           ? _value.projectType
           : projectType // ignore: cast_nullable_to_non_nullable
               as String?,
+      amount: freezed == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -810,7 +823,8 @@ class _$_AttendanceRegisterAdditionalDetails
       this.executingAuthority,
       this.projectId,
       this.projectName,
-      this.projectType});
+      this.projectType,
+      this.amount});
 
   factory _$_AttendanceRegisterAdditionalDetails.fromJson(
           Map<String, dynamic> json) =>
@@ -830,10 +844,12 @@ class _$_AttendanceRegisterAdditionalDetails
   final String? projectName;
   @override
   final String? projectType;
+  @override
+  final int? amount;
 
   @override
   String toString() {
-    return 'AttendanceRegisterAdditionalDetails(contractId: $contractId, orgName: $orgName, officerInCharge: $officerInCharge, executingAuthority: $executingAuthority, projectId: $projectId, projectName: $projectName, projectType: $projectType)';
+    return 'AttendanceRegisterAdditionalDetails(contractId: $contractId, orgName: $orgName, officerInCharge: $officerInCharge, executingAuthority: $executingAuthority, projectId: $projectId, projectName: $projectName, projectType: $projectType, amount: $amount)';
   }
 
   @override
@@ -853,13 +869,22 @@ class _$_AttendanceRegisterAdditionalDetails
             (identical(other.projectName, projectName) ||
                 other.projectName == projectName) &&
             (identical(other.projectType, projectType) ||
-                other.projectType == projectType));
+                other.projectType == projectType) &&
+            (identical(other.amount, amount) || other.amount == amount));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, contractId, orgName,
-      officerInCharge, executingAuthority, projectId, projectName, projectType);
+  int get hashCode => Object.hash(
+      runtimeType,
+      contractId,
+      orgName,
+      officerInCharge,
+      executingAuthority,
+      projectId,
+      projectName,
+      projectType,
+      amount);
 
   @JsonKey(ignore: true)
   @override
@@ -886,7 +911,8 @@ abstract class _AttendanceRegisterAdditionalDetails
       final String? executingAuthority,
       final String? projectId,
       final String? projectName,
-      final String? projectType}) = _$_AttendanceRegisterAdditionalDetails;
+      final String? projectType,
+      final int? amount}) = _$_AttendanceRegisterAdditionalDetails;
 
   factory _AttendanceRegisterAdditionalDetails.fromJson(
           Map<String, dynamic> json) =
@@ -906,6 +932,8 @@ abstract class _AttendanceRegisterAdditionalDetails
   String? get projectName;
   @override
   String? get projectType;
+  @override
+  int? get amount;
   @override
   @JsonKey(ignore: true)
   _$$_AttendanceRegisterAdditionalDetailsCopyWith<
