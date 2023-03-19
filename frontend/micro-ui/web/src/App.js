@@ -12,6 +12,7 @@ import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { initProjectComponents } from "@egovernments/digit-ui-module-project";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
+import { initUtilitiesComponents } from  "@egovernments/digit-ui-module-utilities";
 import { initMuktaCustomisations } from "@egovernments/digit-ui-customisation-mukta";
 import { TLCustomisations } from "./Customisations/tl/TLCustomisation";
 import { UICustomizations } from "./Customisations/UICustomizations";
@@ -46,6 +47,7 @@ const enabledModules = [
   "Estimate",
   "Project",
   "Mukta",
+  "Utilities"
 ];
 
 const initDigitUI = () => {
@@ -61,7 +63,7 @@ const initDigitUI = () => {
   initExpenditureComponents();
   initMastersComponents();
   initProjectComponents();
-
+  initUtilitiesComponents();
  
   window.Digit.Customizations = {
     PGR: {},
