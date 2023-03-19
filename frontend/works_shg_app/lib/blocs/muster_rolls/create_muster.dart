@@ -43,7 +43,7 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
                 "attendanceRegisterNo": event.registerNo,
                 "attendanceRegisterName": event.registerName,
                 "projectName": event.projectName ?? "",
-                "amount": event.amount ?? 2000
+                "amount": event.amount ?? 14500
               },
               "individualEntries": event.skillsList ?? []
             },
