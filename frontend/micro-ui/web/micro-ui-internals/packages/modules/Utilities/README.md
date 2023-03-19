@@ -50,7 +50,7 @@ const initDigitUI = () => {
 
 In MDMS
 
-_Add this configuration to enable this module [MDMS Enableing Utilities Module](https://github.com/egovernments/works-mdms-data/blob/48461ecaf944ea243e24e1c1f9a5e2179d8091ac/data/pg/tenant/citymodule.json#L193)_
+_Add this configuration to enable this module [MDMS Enabling Utilities Module](https://github.com/egovernments/works-mdms-data/blob/48461ecaf944ea243e24e1c1f9a5e2179d8091ac/data/pg/tenant/citymodule.json#L193)_
 
 ## List of Screens available in this versions were as follows
 
