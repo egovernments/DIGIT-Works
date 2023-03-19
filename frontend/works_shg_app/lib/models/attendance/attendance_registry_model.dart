@@ -53,6 +53,7 @@ class AttendanceRegisterAdditionalDetails
     String? projectId,
     String? projectName,
     String? projectType,
+    int? amount
   }) = _AttendanceRegisterAdditionalDetails;
 
   factory AttendanceRegisterAdditionalDetails.fromJson(

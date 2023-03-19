@@ -73,6 +73,7 @@ _$_AttendanceRegisterAdditionalDetails
           projectId: json['projectId'] as String?,
           projectName: json['projectName'] as String?,
           projectType: json['projectType'] as String?,
+          amount: json['amount'] as int?,
         );
 
 Map<String, dynamic> _$$_AttendanceRegisterAdditionalDetailsToJson(
@@ -85,6 +86,7 @@ Map<String, dynamic> _$$_AttendanceRegisterAdditionalDetailsToJson(
       'projectId': instance.projectId,
       'projectName': instance.projectName,
       'projectType': instance.projectType,
+      'amount': instance.amount,
     };
 
 _$_RegisterAuditDetails _$$_RegisterAuditDetailsFromJson(

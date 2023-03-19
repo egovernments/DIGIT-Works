@@ -567,6 +567,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                       ?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA',
                                                                                                                   registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA',
                                                                                                                   registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
+                                                                                                                  projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '',
+                                                                                                                  amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500,
                                                                                                                   skillsList: skillsPayLoad));
                                                                                                             }} : null,
                                                                                                           child: Center(
