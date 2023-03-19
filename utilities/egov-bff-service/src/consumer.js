@@ -36,7 +36,7 @@ const listenConsumer = async()=>{
     try {
       var data = JSON.parse(message.value);
       //console.log(JSON.stringify(data));
-      if (data?.bussinessService == 'PT') {
+      if (data.bussinessService == 'PT') {
         create_bulk_pdf_pt(data).then(() => {
           logger.info("Record created for PT consumer request");
         }).catch(error => {

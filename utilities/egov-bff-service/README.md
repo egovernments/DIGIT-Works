@@ -1,4 +1,6 @@
-# egov-bff-service service
+# Backend For Frontend service
+
+# egov-bff-service
 
 egov-bff-service service work in between multiple microservices. Earlier client used to directly call multiple microservice, but with introduction of this new service one can provide just few parameters ex:- applicationnumber, tenantId to this new service to get a complete required details. 
 ### DB UML Diagram
@@ -51,3 +53,7 @@ NA
 
 ### Kafka Producers
 NA
+
+## License
+
+MIT © [jagankumar-egov](https://github.com/jagankumar-egov)

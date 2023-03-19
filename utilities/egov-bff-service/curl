@@ -1,0 +1,83 @@
+curl --location --request POST 'http://127.0.0.1:8080/egov-bff-service/muster/getMusterDetails?musterRollNumber=MR/2022-23/03/18/000630&tenantId=pg.citya' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "ver": ".01",
+        "action": "",
+        "did": "1",
+        "key": "",
+        "msgId": "20170310130900|en_IN",
+        "requesterId": "",
+        "authToken": "196f5664-9034-4308-9d3e-bd69ac6e5d28",
+        "userInfo": {
+            "id": 1427,
+            "userName": "8073460929",
+            "salutation": null,
+            "name": "Lata",
+            "gender": "FEMALE",
+            "mobileNumber": "7474747474",
+            "emailId": "lata.naik@egovernments.org",
+            "altContactNumber": "123456",
+            "pan": null,
+            "aadhaarNumber": null,
+            "permanentAddress": "test",
+            "permanentCity": "pb.amritsar",
+            "permanentPinCode": null,
+            "correspondenceAddress": "bb ",
+            "correspondenceCity": null,
+            "correspondencePinCode": null,
+            "addresses": [
+                {
+                    "pinCode": null,
+                    "city": "pb.amritsar",
+                    "address": "test",
+                    "type": "PERMANENT",
+                    "id": 5003,
+                    "tenantId": "pb",
+                    "userId": 1427,
+                    "addressType": "PERMANENT",
+                    "lastModifiedDate": null,
+                    "lastModifiedBy": null
+                },
+                {
+                    "pinCode": null,
+                    "city": null,
+                    "address": "bb ",
+                    "type": "CORRESPONDENCE",
+                    "id": 6241,
+                    "tenantId": "pb",
+                    "userId": 1427,
+                    "addressType": "CORRESPONDENCE",
+                    "lastModifiedDate": null,
+                    "lastModifiedBy": null
+                }
+            ],
+            "active": true,
+            "locale": null,
+            "type": "CITIZEN",
+            "accountLocked": false,
+            "accountLockedDate": 0,
+            "fatherOrHusbandName": "Ganesh",
+            "signature": null,
+            "bloodGroup": null,
+            "photo": null,
+            "identificationMark": null,
+            "createdBy": 256,
+            "lastModifiedBy": 1,
+            "tenantId": "pb",
+            "roles": [
+                {
+                    "code": "CITIZEN",
+                    "name": "Citizen",
+                    "tenantId": "pb"
+                }
+            ],
+            "uuid": "604a010d-2c7d-46c6-86cb-6bdb696c9929",
+            "createdDate": "31-05-2019 14:49:54",
+            "lastModifiedDate": "19-05-2020 11:54:59",
+            "dob": "20/2/1993",
+            "pwdExpiryDate": "17-09-2019 04:19:00"
+        }
+    }
+}'

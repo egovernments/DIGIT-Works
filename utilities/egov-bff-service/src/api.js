@@ -4,6 +4,7 @@ var url = require("url");
 var producer = require("./producer").producer;
 var logger = require("./logger").logger;
 const { Pool } = require("pg");
+const { throwError } = require("./utils");
 
 const pool = new Pool({
   user: config.DB_USER,
@@ -13,7 +14,7 @@ const pool = new Pool({
   port: config.DB_PORT,
 });
 
-auth_token = config.auth_token;
+var auth_token = config.auth_token;
 
 async function search_user(uuid, tenantId, requestinfo) {
   return await axios({
@@ -44,12 +45,20 @@ async function search_muster(musterRollNumber, tenantId, requestinfo) {
   //   var userName = requestinfo.RequestInfo.userInfo.userName;
   //   params["mobileNumber"] = mobileNumber || userName;
   // }
-  return await axios({
-    method: "post",
-    url: url.resolve(config.host.muster, config.paths.mus_search),
-    data: requestinfo,
-    params,
-  });
+  try {
+    return await axios({
+      method: "post",
+      url: url.resolve(config.host.muster, config.paths.mus_search),
+      data: requestinfo,
+      params,
+    });
+  } catch (ex) {
+    throwError(
+      ex.response.data.Errors[0].message,
+      ex.response.data.Errors[0].code,
+      ex.response.status
+    );
+  }
 }
 
 async function search_individual(individualIds, tenantId, requestinfo) {
@@ -57,21 +66,28 @@ async function search_individual(individualIds, tenantId, requestinfo) {
   // if (individualIds) {
   //   individualId = individualId.trim();
   // }
-  var params = {
-    tenantId: tenantId,
-    limit: 100,
-    offset: 0,
-  };
-  requestinfo.Individual = {
-    id: individualIds,
-  };
-  console.log(requestinfo, "requestinfo ind");
-  return await axios({
-    method: "post",
-    url: url.resolve(config.host.individual, config.paths.ind_search),
-    data: requestinfo,
-    params,
-  });
+  try {
+    var params = {
+      tenantId: tenantId,
+      limit: 100,
+      offset: 0,
+    };
+    requestinfo.Individual = {
+      id: individualIds,
+    };
+    return await axios({
+      method: "post",
+      url: url.resolve(config.host.individual, config.paths.ind_search),
+      data: requestinfo,
+      params,
+    });
+  } catch (ex) {
+    throwError(
+      ex.response.data.Errors[0].message,
+      ex.response.data.Errors[0].code,
+      ex.response.status
+    );
+  }
 }
 
 async function search_workflow(applicationNumber, tenantId, requestinfo) {
