@@ -73,7 +73,7 @@ const getAttendanceTableData = (data, skills, t) => {
 }
 
 const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills) => {
-  if(data.musterRolls.length === 0) return;
+  if(data?.musterRolls?.length === 0) throw new Error('No data found');
   
   const musterRoll = data.musterRolls[0]
   const attendanceTableData = getAttendanceTableData(musterRoll, skills, t)

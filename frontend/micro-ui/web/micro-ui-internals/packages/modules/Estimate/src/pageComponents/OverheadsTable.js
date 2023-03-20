@@ -214,10 +214,12 @@ const OverheadsTable = ({control,watch,...props}) => {
                     pattern: /^\d*\.?\d*$/
                 })}
                 disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
-                />{errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
+                />
+                {/* {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
                         <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)} */}
+                </div></td>
                 
                 <td style={getStyles(5)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
             </tr>
