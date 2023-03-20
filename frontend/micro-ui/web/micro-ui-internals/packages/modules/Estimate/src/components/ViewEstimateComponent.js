@@ -39,7 +39,7 @@ const ViewEstimateComponent = (props) => {
 
     useEffect(()=>{
         if(isError || (!isLoading && applicationDetails?.isNoDataFound)) {
-            setToast({show : true, label : "COMMON_ESTIMATE_NOT_FOUND", error : true});
+            setToast({show : true, label : t("COMMON_ESTIMATE_NOT_FOUND"), error : true});
         }
     },[isLoading, isError, applicationDetails])
     

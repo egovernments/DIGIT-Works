@@ -53,13 +53,13 @@ const ViewContractDetails = () => {
 
     useEffect(()=>{
         if(isContractError || (!isContractLoading && data?.isNoDataFound)) {
-            setToast({show : true, label : "COMMON_WO_NOT_FOUND", error : true});
+            setToast({show : true, label : t("COMMON_WO_NOT_FOUND"), error : true});
         }
     },[isContractError, data, isContractLoading]);
 
     useEffect(()=>{
         if(isProjectError) {
-            setToast({show : true, label : "COMMON_PROJECT_NOT_FOUND", error : true});
+            setToast({show : true, label : t("COMMON_PROJECT_NOT_FOUND"), error : true});
         }
     },[isProjectError]);
 

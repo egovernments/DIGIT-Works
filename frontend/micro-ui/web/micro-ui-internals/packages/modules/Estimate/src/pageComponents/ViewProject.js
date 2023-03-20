@@ -43,7 +43,7 @@ const ViewProject = ({fromUrl=true,...props}) => {
 
   useEffect(()=>{
     if( isError || (!isError && data?.isNoDataFound)) {
-      setToast({show : true, label : "COMMON_PROJECT_NOT_FOUND", error : true});
+      setToast({show : true, label : t("COMMON_PROJECT_NOT_FOUND"), error : true});
     }
   },[isError, data]);
 
