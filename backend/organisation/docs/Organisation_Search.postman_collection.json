@@ -1,0 +1,84 @@
+{
+	"info": {
+		"_postman_id": "814f07d3-8c0e-4268-85ed-cca79dfeb594",
+		"name": "Organisation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Organisation Search",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"SearchCriteria\": {\n        \"id\": [],\n        \"tenantId\": \"pg.citya\",\n        \"name\": null,\n        \"functions\": {\n            \"type\": \"\",\n            \"category\": null,\n            \"class\": null,\n            \"validFrom\": 0,\n            \"validTo\": 0,\n            \"wfStatus\": null,\n            \"isActive\": true\n        },\n        \"identifierType\": null,\n        \"identifierValue\": null,\n        \"includeDeleted\": false\n    },\n    \"Pagination\": {\n        \"offset\": 0,\n        \"limit\": 2\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_search",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"if (pm.environment.get(\"base_url\").includes(\"localhost\")) {",
+					"",
+					"    var tenantId = \"pb.amritsar\";",
+					"    var id = 1;",
+					"    var uuid = \"11b0e02b-0145-4de2-bc42-c97b96264807\";",
+					"",
+					"    var roles = [{",
+					"                    \"code\": \"SUPERUSER\",",
+					"                    \"name\": \"SUPER USER\",",
+					"                    \"tenantId\": tenantId",
+					"                }];",
+					"",
+					"    var userInfo = {",
+					"        \"id\": id,",
+					"        \"uuid\": uuid,",
+					"        \"userName\": \"\",",
+					"        \"name\": \"\",",
+					"        \"mobileNumber\": \"\",",
+					"        \"emailId\": \"\",",
+					"        \"type\": \"\",",
+					"        \"roles\": roles,",
+					"        \"active\": true,",
+					"        \"tenantId\": \"pb.amritsar\"",
+					"    };",
+					"",
+					"    pm.request.body.raw = pm.request.body.raw.replace('\"{{token}}\"', '\"\", \\n \"userInfo\":  ' + JSON.stringify(userInfo));",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

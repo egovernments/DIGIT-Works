@@ -270,7 +270,8 @@ public class MusterRollService {
         uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
                 .queryParam("tenantId",searchCriteria.getTenantId())
-                .queryParam("status", Status.ACTIVE);
+                .queryParam("status", Status.ACTIVE)
+                .queryParam("limit", config.getAttendanceRegisterSearchLimit());
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
         AttendanceRegisterResponse attendanceRegisterResponse = null;
