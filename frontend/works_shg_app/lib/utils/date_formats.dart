@@ -79,13 +79,36 @@ class DateFormats {
     DateTime start = DateTime.fromMillisecondsSinceEpoch(selectedStartDate);
     DateTime end = DateTime.fromMillisecondsSinceEpoch(selectedEndDate);
     DaysInRange daysInRange = DaysInRange();
+    int registerStartTime =
+        registerStartDate - (registerStartDate % (24 * 60 * 60 * 1000));
+
+    ///Issue with register Start Date, Need to check
+    ///
+    int registerEndTime = DateTime(
+            DateTime.fromMillisecondsSinceEpoch(registerEndDate).year,
+            DateTime.fromMillisecondsSinceEpoch(registerEndDate).month,
+            DateTime.fromMillisecondsSinceEpoch(registerEndDate).day + 1)
+        .subtract(const Duration(milliseconds: 1))
+        .millisecondsSinceEpoch;
 
     while (start.isBefore(end) || start.isAtSameMomentAs(end)) {
-      DateTime currentDay = DateTime(start.year, start.month, start.day);
+      DateTime currentDay =
+          DateTime(start.year, start.month, start.day, 5, 30, 0);
       int currentDayTimestamp = currentDay.millisecondsSinceEpoch;
+      String currentDayString = timeStampToDate(currentDayTimestamp);
+      String registerStartDateString = timeStampToDate(registerStartDate);
+      String registerEndDateString = timeStampToDate(registerEndDate);
+      String nowDateString =
+          timeStampToDate(DateTime.now().millisecondsSinceEpoch);
+      int nowTimeStamp = DateTime.now().millisecondsSinceEpoch;
+      print('current');
+      print(currentDayTimestamp);
+      print(registerStartTime);
+      print(registerEndTime);
+      print('now');
       switch (start.weekday) {
         case 1:
-          daysInRange.monday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.monday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndDate &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
