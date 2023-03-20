@@ -27,7 +27,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 { title: "PROJECT_LOR", value: currentProject?.referenceID || "NA" },
                 { title: "WORKS_PROJECT_TYPE", value: currentProject?.projectType ? t(`COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(currentProject?.projectType)}`) : "NA" },
                 { title: "PROJECT_TARGET_DEMOGRAPHY", value: currentProject?.additionalDetails?.targetDemography ? t(`COMMON_MASTERS_${currentProject?.additionalDetails?.targetDemography }`) : "NA" },
-                { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs ? `₹ ${currentProject?.additionalDetails?.estimatedCostInRs}` : "NA" },
+                { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs ? `₹ ${Digit.Utils.dss.formatterWithoutRound(currentProject?.additionalDetails?.estimatedCostInRs, 'number')}` : "NA" },
             ]
         };
 
