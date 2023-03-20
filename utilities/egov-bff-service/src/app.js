@@ -2,6 +2,9 @@ var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 const requestMiddleware = require("./utils/validateRequestMiddleware");
+const cacheMiddleware = require("./utils/cacheMiddleware");
+const NodeCache = require("node-cache");
+
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var config = require("./config");
@@ -29,6 +32,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 /* Middleware to Validate Request info */
 app.use(requestMiddleware);
+
+/* Middleware to cache response */
+app.use(cacheMiddleware);
 app.use(config.app.contextPath + "/muster", musterRouter);
 
 // Attach the first Error handling Middleware

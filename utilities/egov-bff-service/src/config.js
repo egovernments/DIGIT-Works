@@ -33,8 +33,8 @@ module.exports = {
     pdf: process.env.EGOV_PDF_HOST || HOST || "http://localhost:8087/",
     user: process.env.EGOV_USER_HOST || HOST || "http://localhost:8089/",
     workflow: process.env.EGOV_WORKFLOW_HOST || HOST || "http://localhost:8091/",
-    muster: process.env.WORKS_MUSTER_HOST || HOST || "http://localhost:8070/",
-    individual: process.env.WORKS_INDIVIDUAL_HOST || HOST || "http://localhost:8071/"
+    muster: process.env.WORKS_MUSTER_HOST  || "http://localhost:8078/",
+    individual: process.env.WORKS_INDIVIDUAL_HOST  || "http://localhost:8074/"
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",

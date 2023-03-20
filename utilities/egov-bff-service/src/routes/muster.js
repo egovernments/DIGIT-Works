@@ -31,7 +31,6 @@ router.post(
         tenantId,
         requestinfo
       );
-
       var musterRolls = resProperty.data.musterRolls;
       if (musterRolls && musterRolls.length > 0) {
         var musterObj = musterRolls[0] || {};
@@ -45,7 +44,6 @@ router.post(
           tenantId,
           requestinfo
         );
-
         var payments = paymentresponse.data;
         if (payments && payments.Individual && payments.Individual.length > 0) {
           var Individual = {};
@@ -59,7 +57,7 @@ router.post(
             };
           });
 
-          sendResponse(res, { musterRolls, individual: Individual });
+          sendResponse(res, { musterRolls, individual: Individual },req);
         } else {
           throwError("individuals not exists", "INDIVIDUAL_NOT_FOUND", 400);
         }
