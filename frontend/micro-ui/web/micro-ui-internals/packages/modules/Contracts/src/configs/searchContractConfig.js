@@ -1,14 +1,39 @@
 const contractStatus = [
   {
-      name: 'ACTIVE',
-      code: 'ACTIVE',
-      i18nKey: 'ACTIVE'
-  },
-  {
-      name: 'INACTIVE',
-      code: 'INACTIVE',
-      i18nKey: 'INACTIVE'
-  }
+    name: 'Submitted',
+    code: 'SUBMITTED',
+    i18nKey: 'SUBMITTED'
+},
+{
+    name: 'Approved',
+    code: 'APPROVED',
+    i18nKey: 'APPROVED'
+},
+{
+    name: 'Rejected',
+    code: 'REJECTED',
+    i18nKey: 'REJECTED'
+},
+{
+    name: 'Verified',
+    code: 'VERIFIED',
+    i18nKey: 'VERIFIED'
+},
+{
+  name: 'Declined',
+  code: 'DECLINED',
+  i18nKey: 'DECLINED'
+},
+{
+  name: 'Created',
+  code: 'CREATED',
+  i18nKey: 'CREATED'
+},
+{
+  name: 'Accepted',
+  code: 'ACCEPTED',
+  i18nKey: 'ACCEPTED'
+}
 ]
 
 
@@ -176,31 +201,32 @@ return {
             jsonPath: "businessObject.additionalDetails.projectName",
           },
           {
-            label: "NAME_OF_CBO",
+            label: "COMMON_NAME_OF_CBO",
             jsonPath: "businessObject.additionalDetails.orgName",
           },
           {
-            label: "ROLE_OF_CBO",
+            label: "COMMON_ROLE_OF_CBO",
             jsonPath: "businessObject.executingAuthority",
-            //additionalCustomization: true,
+            additionalCustomization: true,
           },
           {
             label: "WORKS_LOCATION",
-            jsonPath: "businessObject.additionalDetails.officerInChargeName.serviceHistory.location",
+            jsonPath: "businessObject.additionalDetails.ward",
+            additionalCustomization: true,
           },
           {
             label: "ES_COMMON_STATUS",
-            jsonPath: "businessObject.lineItems.status",
+            jsonPath: "businessObject.contractStatus",
           },
           {
-            label: "WORKS_ORDER_AMOUNT",
+            label: "ES_COMMON_AMOUNT",
             jsonPath: "businessObject.totalContractedAmount",
             additionalCustomization: true,
           },
         ],
         enableGlobalSearch: false,
         enableColumnSort: true,
-        resultsJsonPath: "contracts",
+        resultsJsonPath: "items",
       },
       children: {},
       show: true,

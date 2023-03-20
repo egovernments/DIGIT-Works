@@ -330,28 +330,19 @@ export const UICustomizations = {
     SearchContractConfig: {
         
         preProcess: (data) => {
-            // const convertedStartDate = Digit.DateUtils.ConvertTimestampToDate(
-            //   data.body.inbox?.moduleSearchCriteria?.createdFrom,
-            //   "yyyy-MM-dd"
-            // );
-            // const convertedEndDate = Digit.DateUtils.ConvertTimestampToDate(
-            //   data.body.inbox?.moduleSearchCriteria?.createdTo,
-            //   "yyyy-MM-dd"
-            // );
-            // const startDate = Digit.Utils.pt.convertDateToEpoch(convertedStartDate, "dayStart");
-            // const endDate = Digit.Utils.pt.convertDateToEpoch(convertedEndDate, "dayStart");
-            // const workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber;
-            // const contractStatus = data.body.inbox?.moduleSearchCriteria?.contractStatus;
-            // const projectType = data.body.inbox?.moduleSearchCriteria?.projectType;
-            // const projectName = data.body.inbox?.moduleSearchCriteria?.projectName;
-            // const ward = data.body.inbox?.moduleSearchCriteria?.ward;
+            const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom);
+            const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo);
+            const workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber;
+            const status = data.body.inbox?.moduleSearchCriteria?.contractStatus?.code;
+            const projectType = data.body.inbox?.moduleSearchCriteria?.projectType?.code;
+            const projectName = data.body.inbox?.moduleSearchCriteria?.projectName;
+            const ward = data.body.inbox?.moduleSearchCriteria?.ward;
             data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId()
             data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId()
             data.body.inbox = {
               ...data.body.inbox,
               tenantId: Digit.ULBService.getCurrentTenantId(),
-              //moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), ward, workOrderNumber, contractStatus, projectType, projectName, startDate, endDate },
-              moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId()},
+              moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), ward, workOrderNumber, status, projectType, projectName, startDate, endDate },
             };
             console.log("inside scs");
             return data;
@@ -372,9 +363,6 @@ export const UICustomizations = {
             //like if a cell is link then we return link
             //first we can identify which column it belongs to then we can return relevant result
     
-            const getAmount = (item) => {
-                return item.amountDetail.reduce((acc, row) => acc + row.amount, 0);
-            };
             if (column.label === "WORKS_ORDER_ID") {
                 return (
                     <span className="link">
@@ -387,9 +375,22 @@ export const UICustomizations = {
                     </span>
                 );
             }
-            if (column.label === "WORKS_ORDER_AMOUNT") {
-                return `₹ ${row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0)}`;
+            if (column.label === "ES_COMMON_AMOUNT") {
+                   return Digit.Utils.dss.formatterWithoutRound(value, 'number');
             }
+            if (column.label === "COMMON_ROLE_OF_CBO") {
+                return <span>{t(value)}</span>;
+            }
+            if (column.label === "WORKS_LOCATION") {
+                return value ? (
+                  <span style={{ whiteSpace: "nowrap" }}>
+                    {String(`${t(Digit.Utils.locale.getCityLocale(row?.businessObject?.tenantId))} ${t(Digit.Utils.locale.getMohallaLocale(value, row?.businessObject?.tenantId))}`)}
+                  </span>
+                ) : (
+                  t("ES_COMMON_NA")
+                );
+              }
+            
         },
         additionalValidations: (type, data, keys) => {
           if (type === "date") {
