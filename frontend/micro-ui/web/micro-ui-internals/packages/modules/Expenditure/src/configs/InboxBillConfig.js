@@ -20,7 +20,8 @@ export const InboxBillConfig = {
                         moduleSearchCriteria: {}
                     }
                 },
-                minParametersForSearchForm:1,
+                minParametersForSearchForm: 1,
+                minParametersForFilterForm: 0,
                 masterName:"commonUiConfig",
                 moduleName:"BillInboxConfig",
                 tableFormJsonPath:"requestBody.inbox",
@@ -38,7 +39,7 @@ export const InboxBillConfig = {
                             billNumber: "",
                             projectNumber:"",
                             billType:  {
-                                name: "Work Order",
+                                name: "COMMON_MASTERS_BILL_WORK_ORDER",
                                 code: "WORK_ORDER",
                                 active: true
                             }
@@ -126,7 +127,10 @@ export const InboxBillConfig = {
                         minReqFields: 0,
                         secondaryLabel: '',
                         defaultValues : {
-                            assignee: "",
+                            assignee: {
+                                code :"ASSIGNED_TO_ALL",
+                                name :"COMMON_INBOX_ASSIGNED_TO_ALL"
+                            },
                             state: ""
                         },
                         fields : [

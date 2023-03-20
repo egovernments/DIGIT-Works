@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
@@ -15,6 +16,7 @@ import '../utils/date_formats.dart';
 import '../utils/notifiers.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/drawer_wrapper.dart';
 
 class WorkOrderPage extends StatefulWidget {
@@ -45,7 +47,10 @@ class _WorkOrderPage extends State<WorkOrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child:
                 SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
@@ -59,11 +64,15 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                       context, error.toString(), 'ERROR'),
                   loaded: (ContractsModel? contracts) {
                     workOrderList = contracts!.contracts!
-                        .where((e) => e.wfStatus == 'APPROVED')
+                        .where((e) =>
+                            e.wfStatus == 'APPROVED' ||
+                            e.wfStatus == 'ACCEPTED')
                         .map((e) => {
                               'cardDetails': {
                                 i18.workOrder.workOrderNo:
                                     e.contractNumber ?? 'NA',
+                                i18.attendanceMgmt.projectDesc:
+                                    e.additionalDetails?.projectName ?? 'NA',
                                 i18.workOrder.roleOfCBO:
                                     AppLocalizations.of(context).translate(
                                         e.executingAuthority ?? 'NA'),
@@ -75,12 +84,16 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                     ? DateFormats.timeStampToDate(e.issueDate,
                                         format: "dd/MM/yyyy")
                                     : 'NA',
-                                i18.workOrder.dueDate: e.endDate != null
-                                    ? DateFormats.timeStampToDate(e.endDate,
-                                        format: "dd/MM/yyyy")
+                                i18.workOrder.dueDate: e.issueDate != null
+                                    ? DateFormats.getFilteredDate(
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                                e.issueDate ?? 0)
+                                            .add(const Duration(days: 7))
+                                            .toLocal()
+                                            .toString())
                                     : 'NA',
                                 i18.workOrder.contractAmount:
-                                    '₹ ${e.totalContractedAmount ?? 0}',
+                                    '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
                                 i18.common.status: e.wfStatus,
                               },
                               'payload': e.toMap()
@@ -183,7 +196,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                       if (!hasLoaded) {
                                         Notifiers.getToastMessage(
                                             context,
-                                            '${contractsModel?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}. ${contractsModel?.contracts?.first.additionalDetails?.attendanceRegisterNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceCreateSuccess)}',
+                                            '${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}. ${contractsModel?.contracts?.first.additionalDetails?.attendanceRegisterNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceCreateSuccess)}',
                                             'SUCCESS');
                                         context.read<SearchMyWorksBloc>().add(
                                               const MyWorksSearchEvent(),

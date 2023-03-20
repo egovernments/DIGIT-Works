@@ -110,11 +110,11 @@ const inboxConfigMukta = () => {
                         },
                         {
                             label: "WORKS_PROJECT_NAME",
-                            jsonPath: "businessObject.additionalDetails.orgName"
+                            jsonPath: "businessObject.additionalDetails.projectName"
                         },
                         {
                             label: "ES_COMMON_CBO_NAME",
-                            jsonPath: "businessObject.additionalDetails.cboName",
+                            jsonPath: "businessObject.additionalDetails.orgName",
                             //translate: true,
                             //prefix: "COMMON_MASTERS_DEPARTMENT_",
                         },
@@ -156,12 +156,12 @@ const inboxConfigMukta = () => {
                         {
                             text: "ACTION_TEST_CREATE_WO",
                             url: `/employee/estimate/search-estimate`,
-                            roles: ["WORK_ORDER_CREATOR",],
+                            roles: ["WORK_ORDER_CREATOR"],
                         },
                         {
                             text: "ACTION_TEST_SEARCH_WO",
                             url: `/employee/contracts/search-contract`,
-                            roles: [],
+                            roles: ["WORK_ORDER_CREATOR", "WORK_ORDER_VERIFIER","WORK_ORDER_APPROVER"],
                         },
                     ],
                     label: "MUKTA",
@@ -217,7 +217,7 @@ const inboxConfigMukta = () => {
                             populators: {
                                 name: "ward",
                                 type: "ward",
-                                optionsKey: "name",
+                                optionsKey: "i18nKey",
                                 defaultText: "COMMON_SELECT_WARD",
                                 selectedText: "COMMON_SELECTED",
                                 allowMultiSelect: true
@@ -231,7 +231,7 @@ const inboxConfigMukta = () => {
                             populators: {
                                 name: "locality",
                                 type: "locality",
-                                optionsKey: "name",
+                                optionsKey: "i18nKey",
                                 defaultText: "COMMON_SELECT_LOCALITY",
                                 selectedText: "COMMON_SELECTED",
                                 allowMultiSelect: true

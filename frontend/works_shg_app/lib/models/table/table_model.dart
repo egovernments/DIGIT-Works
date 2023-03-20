@@ -10,6 +10,7 @@ class TableDataModel with _$TableDataModel {
     required String? name,
     String? aadhaar,
     String? individualGaurdianName,
+    String? mobileNumber,
     String? skill,
     String? uuid,
     String? individualId,

@@ -30,7 +30,8 @@ module.exports = function (app) {
     "/inbox/v2/_search",
     "/individual/v1/_search",
     "/org-services",
-    "/wms/contract/_search"
+    "/wms/contract/_search",
+    "/expensebilling"
   ].forEach((location) =>
     app.use(location, createProxy)
   );

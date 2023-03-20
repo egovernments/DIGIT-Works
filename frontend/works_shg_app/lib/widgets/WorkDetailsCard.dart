@@ -58,37 +58,22 @@ class WorkDetailsCard extends StatelessWidget {
         list.add(GestureDetector(
           child: DigitCard(
               child: getCardDetails(context, detailsList[i]['cardDetails'],
-                  payload: detailsList[i]['payload'])),
+                  payload: detailsList[i]['payload'],
+                  isAccept: detailsList[i]['cardDetails'][i18.common.status] ==
+                      'ACCEPTED')),
+        ));
+      }
+    } else if (isSHGInbox) {
+      for (int i = 0; i < detailsList.length; i++) {
+        list.add(GestureDetector(
+          child: DigitCard(
+              child: getCardDetails(context, detailsList[i],
+                  musterRoll: musterRollsModel![i])),
         ));
       }
     } else {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
-          onTap: isSHGInbox
-              ? () {
-                  context.read<IndividualMusterRollSearchBloc>().add(
-                        SearchIndividualMusterRollEvent(
-                            id: musterRollsModel![i].id ?? '',
-                            tenantId: musterRollsModel![i].tenantId.toString()),
-                      );
-                  context.router.push(SHGInboxRoute(
-                      projectDetails: [
-                        detailsList[i],
-                      ],
-                      tenantId: musterRollsModel![i].tenantId.toString(),
-                      musterRollNo:
-                          musterRollsModel![i].musterRollNumber.toString()));
-                  context.read<MusterRollEstimateBloc>().add(
-                        ViewEstimateMusterRollEvent(
-                          tenantId: musterRollsModel![i].tenantId.toString(),
-                          registerId:
-                              musterRollsModel![i].registerId.toString(),
-                          startDate: musterRollsModel![i].startDate ?? 0,
-                          endDate: musterRollsModel![i].endDate ?? 0,
-                        ),
-                      );
-                }
-              : null,
           child: DigitCard(child: getCardDetails(context, detailsList[i])),
         ));
       }
@@ -98,11 +83,16 @@ class WorkDetailsCard extends StatelessWidget {
     );
   }
 
-  Widget getCardDetails(BuildContext context, Map<String, dynamic> cardDetails,
-      {List<String>? userList,
-      AttendanceRegister? attendanceRegister,
-      String? attendanceRegisterId,
-      Map<String, dynamic>? payload}) {
+  Widget getCardDetails(
+    BuildContext context,
+    Map<String, dynamic> cardDetails, {
+    List<String>? userList,
+    AttendanceRegister? attendanceRegister,
+    String? attendanceRegisterId,
+    Map<String, dynamic>? payload,
+    bool? isAccept,
+    MusterRoll? musterRoll,
+  }) {
     var labelList = <Widget>[];
     for (int j = 0; j < cardDetails.length; j++) {
       labelList.add(getItemWidget(context,
@@ -119,7 +109,7 @@ class WorkDetailsCard extends StatelessWidget {
           isRejectStatus: cardDetails.values.elementAt(j).toString() ==
               Constants.rejected));
     }
-    if (isWorkOrderInbox) {
+    if (isWorkOrderInbox && !isAccept!) {
       labelList.add(Container(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -143,6 +133,7 @@ class WorkDetailsCard extends StatelessWidget {
                             action: 'DECLINE',
                             comments: 'DECLINE contract'),
                       );
+                  Navigator.of(context, rootNavigator: true).pop();
                 },
                 secondaryActionLabel:
                     AppLocalizations.of(context).translate(i18.common.back),
@@ -162,8 +153,8 @@ class WorkDetailsCard extends StatelessWidget {
         ),
       ));
     } else if (isManageAttendance || isTrackAttendance) {
-      labelList.add(Container(
-        padding: const EdgeInsets.all(8.0),
+      labelList.add(Padding(
+        padding: const EdgeInsets.all(4.0),
         child: DigitElevatedButton(
           onPressed: () {
             if (isManageAttendance) {
@@ -180,13 +171,45 @@ class WorkDetailsCard extends StatelessWidget {
                   attendanceRegister: attendanceRegister));
             }
           },
-          child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(elevatedButtonLabel,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .apply(color: Colors.white))),
+          child: Center(
+            child: Text(elevatedButtonLabel,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .apply(color: Colors.white)),
+          ),
+        ),
+      ));
+    } else if (isSHGInbox) {
+      labelList.add(Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: DigitElevatedButton(
+          onPressed: () {
+            context.read<IndividualMusterRollSearchBloc>().add(
+                  SearchIndividualMusterRollEvent(
+                      id: musterRoll?.id ?? '',
+                      tenantId: musterRoll!.tenantId.toString()),
+                );
+            context.router.push(SHGInboxRoute(
+                projectDetails: [cardDetails],
+                tenantId: musterRoll.tenantId.toString(),
+                musterRollNo: musterRoll.musterRollNumber.toString()));
+            context.read<MusterRollEstimateBloc>().add(
+                  ViewEstimateMusterRollEvent(
+                    tenantId: musterRoll.tenantId.toString(),
+                    registerId: musterRoll.registerId.toString(),
+                    startDate: musterRoll.startDate ?? 0,
+                    endDate: musterRoll.endDate ?? 0,
+                  ),
+                );
+          },
+          child: Center(
+            child: Text(elevatedButtonLabel,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .apply(color: Colors.white)),
+          ),
         ),
       ));
     }

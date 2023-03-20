@@ -10,6 +10,8 @@ import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 import '../../widgets/Back.dart';
 import '../../widgets/SideBar.dart';
+import '../../widgets/atoms/app_bar_logo.dart';
+import '../../widgets/atoms/empty_image.dart';
 import '../../widgets/drawer_wrapper.dart';
 import '../../widgets/loaders.dart';
 
@@ -19,7 +21,10 @@ class TrackAttendanceInboxPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
@@ -48,7 +53,7 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                                       .attendanceRegisterAdditionalDetails
                                       ?.projectId ??
                                   'NA',
-                              i18.attendanceMgmt.projectId: e
+                              i18.attendanceMgmt.projectDesc: e
                                       .attendanceRegisterAdditionalDetails
                                       ?.projectName ??
                                   'NA',
@@ -87,8 +92,11 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                         ),
                       ),
                       projectList.isEmpty
-                          ? Text(AppLocalizations.of(context)
-                              .translate(i18.attendanceMgmt.noProjectsFound))
+                          ? EmptyImage(
+                              align: Alignment.center,
+                              label: AppLocalizations.of(context).translate(
+                                i18.attendanceMgmt.noRegistersFound,
+                              ))
                           : WorkDetailsCard(
                               projectList,
                               isTrackAttendance: true,

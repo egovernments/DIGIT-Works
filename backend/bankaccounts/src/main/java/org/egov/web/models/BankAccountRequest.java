@@ -9,6 +9,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * BankAccountRequest
@@ -27,7 +28,7 @@ public class BankAccountRequest {
 
     @JsonProperty("bankAccounts")
     @Valid
-    private BankAccount bankAccounts = null;
+    private List<BankAccount> bankAccounts = null;
 
 
 }

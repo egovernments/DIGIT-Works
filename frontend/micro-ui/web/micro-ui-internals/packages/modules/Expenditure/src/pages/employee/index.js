@@ -44,6 +44,18 @@ const ExpenditureBreadCrumbs = ({ location }) => {
             content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_BILLING_MGMT")}` : t("WORKS_BILLING_MGMT"),
             show: location.pathname.includes("/expenditure/inbox") ? true : false,
             isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/expenditure/search-bill`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_SEARCH_BILL")}` : t("EXP_SEARCH_BILL"),
+            show: location.pathname.includes("/expenditure/search-bill") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/expenditure/view-bill`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILL")}` : t("EXP_VIEW_BILL"),
+            show: location.pathname.includes("/expenditure/view-bill") ? true : false,
+            isBack: fromScreen && true,
         }
     ];
     return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;

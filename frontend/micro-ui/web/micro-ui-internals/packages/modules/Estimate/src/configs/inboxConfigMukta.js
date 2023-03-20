@@ -83,7 +83,10 @@ const inboxConfigMukta = () => {
                             "disable": false,
                             "populators": {
                                 "name": "projectType",
-                                "optionsKey": "code",
+                                "optionsKey": "name",
+                                "optionsCustomStyle" : {
+                                    "top" : "2.3rem"
+                                },
                                 "mdmsConfig": {
                                     "masterName": "ProjectType",
                                     "moduleName": "works",
@@ -229,7 +232,7 @@ const inboxConfigMukta = () => {
                             "populators": {
                                 "name": "ward",
                                 "type": "ward",
-                                "optionsKey": "name",
+                                "optionsKey": "i18nKey",
                                 "defaultText": "COMMON_SELECT_WARD",
                                 "selectedText": "COMMON_SELECTED",
                                 "allowMultiSelect": true
@@ -243,7 +246,7 @@ const inboxConfigMukta = () => {
                             "populators": {
                                 "name": "locality",
                                 "type": "locality",
-                                "optionsKey": "name",
+                                "optionsKey": "i18nKey",
                                 "defaultText": "COMMON_SELECT_LOCALITY",
                                 "selectedText": "COMMON_SELECTED",
                                 "allowMultiSelect": true

@@ -73,6 +73,8 @@ class EstimateMusterIndividualAdditionalDetails
     String? bankDetails,
     String? userId,
     List<String>? skillCode,
+    String? accountHolderName,
+    String? accountType,
     String? skillValue,
   }) = _EstimateMusterIndividualAdditionalDetails;
 

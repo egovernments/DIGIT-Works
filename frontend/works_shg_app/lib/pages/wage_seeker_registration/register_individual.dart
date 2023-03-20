@@ -8,6 +8,7 @@ import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/molecules/digit_stepper.dart';
 
 import '../../widgets/SideBar.dart';
+import '../../widgets/atoms/app_bar_logo.dart';
 import '../../widgets/drawer_wrapper.dart';
 
 class RegisterIndividualPage extends StatefulWidget {
@@ -45,7 +46,10 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
   Widget build(BuildContext context) {
     var genderController = TextEditingController();
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',

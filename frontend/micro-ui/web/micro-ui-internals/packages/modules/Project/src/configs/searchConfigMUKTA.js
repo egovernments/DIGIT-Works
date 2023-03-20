@@ -5,7 +5,7 @@ const searchConfigMUKTA = {
         {
             label : "WORKS_SEARCH_PROJECTS",
             type: 'search',
-            "actionLabel": "WORKS_CREATE_PROJECT",
+            "actionLabel": "WORKS_CREATE_NEW_PROJECT",
             "actionRole": "EMPLOYEE",
             "actionLink": "project/create-project",
             apiDetails: {
@@ -53,7 +53,7 @@ const searchConfigMUKTA = {
                                 populators: {
                                     name: "ward",
                                     type: "ward",
-                                    optionsKey: "name",
+                                    optionsKey: "i18nKey",
                                     allowMultiSelect: false,
                                     optionsCustomStyle : {
                                         top : "2.3rem"
@@ -152,7 +152,7 @@ const searchConfigMUKTA = {
                                 additionalCustomization:true
                             },
                             {
-                                label: "PROJECT_ESTIMATED_COST",
+                                label: "PROJECT_ESTIMATED_COST_IN_RS",
                                 jsonPath: "additionalDetails.estimatedCostInRs",
                                 additionalCustomization:true
                             }
