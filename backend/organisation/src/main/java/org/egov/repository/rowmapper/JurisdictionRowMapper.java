@@ -13,6 +13,7 @@ import java.util.*;
 public class JurisdictionRowMapper implements ResultSetExtractor<Map<String, List<String>>> {
     @Override
     public Map<String, List<String>> extractData(ResultSet rs) throws SQLException, DataAccessException {
+        //Create jurisdictionMap with key jurisdiction_Id and value as a Map with key OrgId and values as list of jurisdiction_code
         Map<String, Map<String, List<String>>> jurisdictionMap = new LinkedHashMap<>();
         Map<String, List<String>> jurisdictionOrgCodeMap = new HashMap<>();
 
@@ -34,12 +35,8 @@ public class JurisdictionRowMapper implements ResultSetExtractor<Map<String, Lis
                 jurisdictionMap.put(jurisdiction_Id, jurisdictionOrgCodeMap);
             }
         }
-//        if(jurisdictionMap.values() instanceof Map) {
-//            return (Map<String, List<String>>) jurisdictionMap.values();
-//        }
 
         return jurisdictionOrgCodeMap;
-        //return new ArrayList<>(jurisdictionMap.values());
     }
 
 }

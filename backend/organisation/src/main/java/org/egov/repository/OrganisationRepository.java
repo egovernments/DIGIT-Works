@@ -73,10 +73,14 @@ public class OrganisationRepository {
         //Fetch identifiers based on organisation Ids
         List<Identifier> identifiers = getIdentifiersBasedOnOrganisationIds(organisationIds);
 
+        /* TODO:  Search based on identifier type and identifier value in search request */
+
+        log.info("Fetched organisation details for search request");
         //Construct Organisation Objects with fetched organisations, addresses, contactDetails, jurisdictions, identifiers and documents using Organisation id
         return buildOrganisationSearchResult(organisations, addresses, contactDetails, documents, jurisdictions, identifiers);
     }
 
+    /* Get organisations list based on search request */
     private List<Organisation> getOrganisationsBasedOnSearchCriteria(OrgSearchRequest orgSearchRequest) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = organisationFunctionQueryBuilder.getOrganisationSearchQuery(orgSearchRequest, preparedStmtList, false);
@@ -86,6 +90,7 @@ public class OrganisationRepository {
         return organisations;
     }
 
+    /* Get addresses list based on organisation Ids */
     private List<Address> getAddressBasedOnOrganisationIds(Set<String> organisationIds) {
         List<Object> preparedStmtListTarget = new ArrayList<>();
         String queryAddress = addressQueryBuilder.getAddressSearchQuery(organisationIds, preparedStmtListTarget);
@@ -94,6 +99,7 @@ public class OrganisationRepository {
         return addresses;
     }
 
+    /* Get documents list based on organisation Ids */
     private List<Document> getDocumentsBasedOnOrganisationIds(Set<String> organisationIds, Set<String> functionIds) {
         List<Object> preparedStmtListTarget = new ArrayList<>();
         String queryDocument = documentQueryBuilder.getDocumentsSearchQuery(organisationIds, functionIds, preparedStmtListTarget);
@@ -102,6 +108,7 @@ public class OrganisationRepository {
         return documents;
     }
 
+    /* Get contact details list based on organisation Ids */
     private List<ContactDetails> getContactDetailsBasedOnOrganisationIds(Set<String> organisationIds) {
         List<Object> preparedStmtListTarget = new ArrayList<>();
         String queryContactDetails = contactDetailsQueryBuilder.getContactDetailsSearchQuery(organisationIds, preparedStmtListTarget);
@@ -110,6 +117,7 @@ public class OrganisationRepository {
         return contactDetails;
     }
 
+    /* Get identifiers list based on organisation Ids */
     private List<Identifier> getIdentifiersBasedOnOrganisationIds(Set<String> organisationIds) {
         List<Object> preparedStmtListTarget = new ArrayList<>();
         String queryIdentifier = taxIdentifierQueryBuilder.getTaxIdentifierSearchQuery(organisationIds, preparedStmtListTarget);
@@ -118,6 +126,7 @@ public class OrganisationRepository {
         return identifiers;
     }
 
+    /* Get jurisdictions list based on organisation Ids */
     private Map<String, List<String>> getJurisdictionsBasedOnOrganisationIds(Set<String> organisationIds) {
         List<Object> preparedStmtListTarget = new ArrayList<>();
         String queryJurisdictions = jurisdictionQueryBuilder.getJurisdictionSearchQuery(organisationIds, preparedStmtListTarget);
@@ -126,6 +135,7 @@ public class OrganisationRepository {
         return jurisdictions;
     }
 
+    /* Construct organisation search results based on organisations, addresses, contact details, documents, jurisdictions and identifiers*/
     private List<Organisation> buildOrganisationSearchResult(List<Organisation> organisations, List<Address> addresses, List<ContactDetails> contactDetails, List<Document> documents, Map<String, List<String>> jurisdictionsMap, List<Identifier> identifiers) {
         for (Organisation organisation: organisations) {
             log.info("Constructing organisation object for organisation " + organisation.getId());
