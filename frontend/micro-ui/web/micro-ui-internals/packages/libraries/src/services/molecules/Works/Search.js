@@ -204,24 +204,24 @@ export const WorksSearch = {
                 index+1,
                 row?.description,
                 row?.uom,
-                row?.unitRate,
+                Digit.Utils.dss.formatterWithoutRound(row?.unitRate, 'number'),
                 row?.noOfunit,
-                row?.amountDetail[0]?.amount?.toFixed(2)
+                Digit.Utils.dss.formatterWithoutRound(row?.amountDetail[0]?.amount?.toFixed(2), 'number')
             ]
         })
         const totalAmountNonSor = nonSOR?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0).toFixed(2)
-        tableRowsNonSor?.push(["","","","" ,t("RT_TOTAL"), totalAmountNonSor])
+        tableRowsNonSor?.push(["","","","" ,t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalAmountNonSor, 'number')])
         
         const tableRowsOverheads = overheads?.map((row, index) => {
             return [
                 index + 1,
                 row?.additionalDetails?.row?.name?.description,
                 row?.additionalDetails?.row?.name?.type?.includes("percent") ? `${row?.additionalDetails?.row?.name?.value}%`:t("WORKS_LUMPSUM"),
-                row?.amountDetail?.[0]?.amount?.toFixed(2)
+                Digit.Utils.dss.formatterWithoutRound(row?.amountDetail?.[0]?.amount?.toFixed(2), 'number')
             ]
         })
         const totalAmountOverheads = overheads?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0).toFixed(2)
-        tableRowsOverheads?.push(["","", t("RT_TOTAL"), totalAmountOverheads])
+        tableRowsOverheads?.push(["","", t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalAmountOverheads, 'number')])
         const nonSorItems = {
             title: "WORKS_NON_SOR",
             asSectionHeader: true,
@@ -272,7 +272,7 @@ export const WorksSearch = {
             "title": " ",
             "asSectionHeader": true,
             "Component": Digit.ComponentRegistryService.getComponent("ViewTotalEstAmount"),
-            "value": estimate?.additionalDetails?.totalEstimatedAmount || t("NA")
+            "value": Digit.Utils.dss.formatterWithoutRound(estimate?.additionalDetails?.totalEstimatedAmount, 'number')|| t("NA")
         }
 
         const labourDetails = {

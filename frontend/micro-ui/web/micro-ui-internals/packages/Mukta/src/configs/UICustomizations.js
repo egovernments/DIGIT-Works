@@ -232,7 +232,7 @@ export const UICustomizations = {
             if (column.label === "PROJECT_ESTIMATED_COST_IN_RS") {
                 if (value) {
                     return (
-                        <p>{`${value}`}</p>
+                        <p>{`${Digit.Utils.dss.formatterWithoutRound(value, 'number')}`}</p>
                     );
                 }
                 return <p>{"NA"}</p>
