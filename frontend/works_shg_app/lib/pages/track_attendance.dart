@@ -260,8 +260,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                     AttendeesTrackList(name: e.additionalDetails?.individualName, aadhaar: e.additionalDetails?.identifierId, individualId: e.individualId,
                                                                         individualGaurdianName: e.additionalDetails?.individualGaurdianName)).toList();
                                                               if (attendeeList != null && attendeeList.isNotEmpty) {
-                                                                print('muster');
-                                                                print(musterRollsModel);
                                                                 if (musterRollsModel?.musterRoll != null && musterRollsModel!.musterRoll!.isNotEmpty && musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty) {
                                                                   attendeeList = musterRollsModel!.musterRoll!.first.individualEntries!.map((e) =>
                                                                       AttendeesTrackList(

@@ -2,6 +2,8 @@ import 'package:digit_components/widgets/digit_card.dart';
 import 'package:digit_components/widgets/digit_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:works_shg_app/blocs/localization/app_localization.dart';
+import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 
 import '../../models/file_store/file_store_model.dart';
 import '../../widgets/atoms/digit_text_form_field.dart';
@@ -13,6 +15,7 @@ class IndividualDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return ReactiveFormBuilder(
       form: buildForm,
       builder: (context, form, child) {
@@ -26,17 +29,17 @@ class IndividualDetails extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Individual Details',
+                    t.translate(i18.attendanceMgmt.individualDetails),
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
                   Column(children: [
-                    const DigitTextFormField(
+                    DigitTextFormField(
                       formControlName: 'administrationArea',
-                      label: 'Administration Area',
+                      label: t.translate(i18.common.aadhaarNumber),
                     ),
-                    const DigitTextFormField(
+                    DigitTextFormField(
                       formControlName: 'housholdNo',
-                      label: 'Household Location',
+                      label: t.translate(i18.common.fatherName),
                     ),
                     const DigitTextFormField(
                       formControlName: 'locality',
