@@ -282,11 +282,11 @@ export const WorksSearch = {
             "value": [
                 {
                     "title": "ESTIMATE_LABOUR_COST",
-                    "value": estimate?.additionalDetails?.labourMaterialAnalysis?.labour || t("NA")
+                    "value": Digit.Utils.dss.formatterWithoutRound(estimate?.additionalDetails?.labourMaterialAnalysis?.labour, 'number') || t("NA")
                 },
                 {
                     "title": "ESTIMATE_MATERIAL_COST",
-                    "value": estimate?.additionalDetails?.labourMaterialAnalysis?.material || t("NA")
+                    "value": Digit.Utils.dss.formatterWithoutRound(estimate?.additionalDetails?.labourMaterialAnalysis?.material, 'number') || t("NA")
                 },
             ]
         }
