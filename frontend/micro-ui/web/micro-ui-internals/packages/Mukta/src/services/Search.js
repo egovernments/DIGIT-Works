@@ -7,8 +7,8 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
     };
     let basicDetails = {};
     let totalProjectsLength = project.length;
-    for(let projectIndex = 0; projectIndex < totalProjectsLength; projectIndex++) {
-        let currentProject = project[projectIndex];
+    // for(let projectIndex = 0; projectIndex < totalProjectsLength; projectIndex++) {
+        let currentProject = project[0];
         const headerDetails = {
             title: " ",
             asSectionHeader: true,
@@ -70,7 +70,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             }
         }
 
-        if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
+        // if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
             basicDetails = {
                 projectID : currentProject?.projectNumber,
                 projectProposalDate : Digit.Utils.pt.convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA",
@@ -90,15 +90,15 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 financialDetails,
                 documentDetails
             }
-        }
-    }
+        // }
+    // }
     return totalProjects;
 }
 
 export const Search = {
     viewProjectDetailsScreen: async(t,tenantId, searchParams, filters = {limit : 10, offset : 0, includeAncestors : true, includeDescendants : true}, headerLocale)=> {
         const response = await Digit.WorksService?.searchProject(tenantId, searchParams, filters);
-       
+        
         let projectDetails = {
             searchedProject : {
                 basicDetails : {},
@@ -108,17 +108,22 @@ export const Search = {
             },
         }
 
-        let projects = createProjectsArray(t, response?.Projects, searchParams, headerLocale);
-        //searched Project details
-        projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
-        projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails,projects?.searchedProject?.financialDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
+        if(response?.Projects) {
+            let projects = createProjectsArray(t, response?.Projects, searchParams, headerLocale);
+        
+            //searched Project details
+            projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
+            projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails,projects?.searchedProject?.financialDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
+    
+        }
 
         return {
-            projectDetails : projectDetails,
+            projectDetails : response?.Projects ? projectDetails : [],
             processInstancesDetails: [],
             applicationData: {},
             workflowDetails: [],
-            applicationData:{}
+            applicationData:{},
+            isNoDataFound : response?.Projects?.length === 0
         }
     },
     searchEstimate : async(tenantId, filters) => {
