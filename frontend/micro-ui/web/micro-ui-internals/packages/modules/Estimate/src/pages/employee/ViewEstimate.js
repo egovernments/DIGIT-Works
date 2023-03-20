@@ -70,7 +70,7 @@ const ViewEstimate = (props) => {
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
                 <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("ESTIMATE_VIEW_ESTIMATE")}</Header>
             </div>
-            <ViewDetailsCard cardState={cardState} t={t}/>
+            {(project || estimate) && <ViewDetailsCard cardState={cardState} t={t}/>}
             <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
                 {
                     (activeLink === "Project_Details") && (

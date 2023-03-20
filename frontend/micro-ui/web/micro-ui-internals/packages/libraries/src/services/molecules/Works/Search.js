@@ -99,7 +99,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             }else {
                 //sub projects dont have financial details
                 //these keys are mapped to the view table
-                totalProjects.subProjects.push({
+                totalProjects.subProjects?.push({
                     name :  currentProject?.name || "NA",
                     estimatedAmount : currentProject?.additionalDetails?.estimatedCostInRs || "NA",
                     type : currentProject?.projectType || "NA",
@@ -176,7 +176,7 @@ export const WorksSearch = {
         if(response?.Projects?.[0]?.descendants) {
             projects = createProjectsArray(t, response?.Projects?.[0]?.descendants, searchParams, headerLocale);
             //all details of searched project will come here
-            projectDetails.subProjects.push(projects?.subProjects);
+            projectDetails.subProjects?.push(projects?.subProjects);
         }
         return {
             projectDetails : projectDetails,
@@ -209,8 +209,8 @@ export const WorksSearch = {
                 row?.amountDetail[0]?.amount?.toFixed(2)
             ]
         })
-        const totalAmountNonSor = nonSOR.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0).toFixed(2)
-        tableRowsNonSor.push(["","","","" ,t("RT_TOTAL"), totalAmountNonSor])
+        const totalAmountNonSor = nonSOR?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0).toFixed(2)
+        tableRowsNonSor?.push(["","","","" ,t("RT_TOTAL"), totalAmountNonSor])
         
         const tableRowsOverheads = overheads?.map((row, index) => {
             return [
@@ -220,8 +220,8 @@ export const WorksSearch = {
                 row?.amountDetail?.[0]?.amount?.toFixed(2)
             ]
         })
-        const totalAmountOverheads = overheads.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0).toFixed(2)
-        tableRowsOverheads.push(["","", t("RT_TOTAL"), totalAmountOverheads])
+        const totalAmountOverheads = overheads?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0).toFixed(2)
+        tableRowsOverheads?.push(["","", t("RT_TOTAL"), totalAmountOverheads])
         const nonSorItems = {
             title: "WORKS_NON_SOR",
             asSectionHeader: true,
@@ -291,9 +291,11 @@ export const WorksSearch = {
             ]
         }
         const details = [nonSorItems, overheadItems,totalEstAmt,labourDetails,documentDetails]
+
         return {
             applicationDetails: details,
             applicationData:estimate,
+            isNoDataFound : estimateArr.length === 0 ? true : false
         }
     },
     workflowDataDetails: async (tenantId, businessIds) => {
