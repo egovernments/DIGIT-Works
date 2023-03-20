@@ -8,12 +8,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:works_shg_app/blocs/attendance/attendance_user_search.dart';
+import 'package:works_shg_app/blocs/attendance/individual_search.dart';
 import 'package:works_shg_app/blocs/attendance/search_projects/search_projects.dart';
 import 'package:works_shg_app/blocs/attendance/skills/skills_bloc.dart';
 import 'package:works_shg_app/blocs/auth/otp_bloc.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
 import 'package:works_shg_app/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
+import 'package:works_shg_app/blocs/work_orders/decline_work_order.dart';
 import 'package:works_shg_app/data/repositories/attendance_mdms.dart';
 import 'package:works_shg_app/router/app_navigator_observer.dart';
 import 'package:works_shg_app/router/app_router.dart';
@@ -35,6 +37,8 @@ import 'blocs/muster_rolls/from_to_date_search_muster_roll.dart';
 import 'blocs/muster_rolls/get_muster_workflow.dart';
 import 'blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'blocs/user/user_search.dart';
+import 'blocs/work_orders/accept_work_order.dart';
+import 'blocs/work_orders/search_my_works.dart';
 import 'data/remote_client.dart';
 import 'data/repositories/remote/localization.dart';
 import 'data/repositories/remote/mdms.dart';
@@ -115,6 +119,12 @@ class MainApplication extends StatelessWidget {
         BlocProvider(create: (context) => AttendanceLogCreateBloc()),
         BlocProvider(create: (context) => MusterCreateBloc()),
         BlocProvider(create: (context) => MusterGetWorkflowBloc()),
+        BlocProvider(create: (context) => SearchMyWorksBloc()),
+        BlocProvider(create: (context) => AcceptWorkOrderBloc()),
+        BlocProvider(create: (context) => DeclineWorkOrderBloc()),
+        BlocProvider(
+            create: (context) =>
+                IndividualSearchBloc(const IndividualSearchState.initial())),
         BlocProvider(
             create: (context) => SkillsBloc(const SkillsBlocState.initial(),
                 AttendanceMDMSRepository(client.init()))),

@@ -1,6 +1,8 @@
 package org.egov.works.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 /**
@@ -36,8 +39,18 @@ public class Document {
     @Size(max = 64)
     private String documentUid = null;
 
+    @JsonProperty("status")
+    @Valid
+    private Status status = null;
+
+    @Size(max = 64)
+    private String contractId = null;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
+
+    @JsonIgnore
+    private AuditDetails auditDetails = null;
 
 
 }

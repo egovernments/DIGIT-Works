@@ -49,14 +49,15 @@ const fetchDocuments = (docs) => {
 
     const obj = Object.keys(docs).map(key=>{
         return {
-            fileName: docs?.[key]?.[0]?.[0],
+            fileName: key?.includes("OTHERS") ? docs?.["ESTIMATE_DOC_OTHERS_name"]: docs?.[key]?.[0]?.[0] ,
             fileStoreId: docs?.[key]?.[0]?.[1]?.fileStoreId?.fileStoreId,
             documentUid: docs?.[key]?.[0]?.[1]?.fileStoreId?.fileStoreId,
             tenantId: docs?.[key]?.[0]?.[1]?.fileStoreId?.tenantId,
-            fileType: `${key}`
+            fileType: key?.includes("OTHERS") ? docs?.["ESTIMATE_DOC_OTHERS_name"] :`${key}`
         }
         
     })
+    
     return obj
 }
 
@@ -77,6 +78,7 @@ export const createEstimatePayload = (data,projectData) => {
             // "projectId":"7c941228-6149-4adc-bdb9-8b77f6c3757d",//static for now
             "address": {
                 ...projectData?.projectDetails?.searchedProject?.basicDetails?.address,
+                tenantId//here added because in address tenantId is mandatory from BE side
             },//get from project search
             "estimateDetails": fetchEstimateDetails(filteredFormData),
             "additionalDetails": {
@@ -88,7 +90,9 @@ export const createEstimatePayload = (data,projectData) => {
                     ward: projectData?.projectDetails?.searchedProject?.basicDetails?.ward,
                     city: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.city
                 },
-                "totalEstimatedAmount": data?.totalEstimateAmount
+                "projectNumber": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID,
+                "totalEstimatedAmount": data?.totalEstimateAmount,
+                "tenantId": tenantId
             }
         },
         workflow:{

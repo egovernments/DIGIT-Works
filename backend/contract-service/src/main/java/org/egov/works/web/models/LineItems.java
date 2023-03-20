@@ -1,12 +1,10 @@
 package org.egov.works.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -28,10 +26,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class LineItems {
     @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("estimateId")
     @NotNull
@@ -49,11 +48,21 @@ public class LineItems {
 
     @JsonProperty("unitRate")
     @Valid
-    private BigDecimal unitRate = null;
+    private Double unitRate = null;
 
     @JsonProperty("noOfunit")
     @Valid
-    private BigDecimal noOfunit = null;
+    private Double noOfunit = null;
+
+    @JsonProperty("category")
+    private String category = null;
+
+    @JsonProperty("name")
+    private String name = null;
+
+    @JsonProperty("status")
+    @Valid
+    private Status status = null;
 
     @JsonProperty("amountBreakups")
     @Valid
@@ -65,6 +74,9 @@ public class LineItems {
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
+
+    @JsonIgnore
+    private String contractId;
 
 
     public LineItems addAmountBreakupsItem(AmountBreakup amountBreakupsItem) {

@@ -161,6 +161,7 @@ export const FormComposer = (props) => {
                   maxlength={populators?.validation?.maxlength}
                   minlength={populators?.validation?.minlength}
                   customIcon={populators?.customIcon}
+                  customClass={populators?.customClass}
                 />
               )}
               name={populators.name}
@@ -501,6 +502,7 @@ export const FormComposer = (props) => {
                     }}
                   >
                     {t(field.label)}
+                    {field?.appendColon ? ' : ' : null}
                     {field.isMandatory ? " * " : null}
                   </CardLabel>
                 )}

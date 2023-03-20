@@ -42,6 +42,14 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             ]
         };
 
+        const financialDetails = {
+            title: "WORKS_FINANCIAL_DETAILS",
+            asSectionHeader: false,
+            values: [
+                { title: "WORKS_HEAD_OF_ACCOUNTS", value: currentProject?.additionalDetails?.fund ? t(`COMMON_MASTERS_FUND_${currentProject?.additionalDetails?.fund}`) : "NA" },
+            ],
+          };
+
         const documentDetails = {
             title: "",
             asSectionHeader: true,
@@ -79,6 +87,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 headerDetails, 
                 projectDetails, 
                 locationDetails, 
+                financialDetails,
                 documentDetails
             }
         }
@@ -102,7 +111,7 @@ export const Search = {
         let projects = createProjectsArray(t, response?.Projects, searchParams, headerLocale);
         //searched Project details
         projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
-        projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
+        projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails,projects?.searchedProject?.financialDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
 
         return {
             projectDetails : projectDetails,

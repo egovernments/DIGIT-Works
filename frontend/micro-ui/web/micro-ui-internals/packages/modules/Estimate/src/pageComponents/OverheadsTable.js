@@ -8,7 +8,7 @@ const OverheadsTable = ({control,watch,...props}) => {
     const [totalAmount,setTotalAmount] = useState(100)
     const formFieldName = "overheadDetails" // this will be the key under which the data for this table will be present on onFormSubmit
     
-    const errorCardStyle = {width:"100%"}
+    const errorCardStyle = {width:"100%",fontSize:"12px"}
 
     const initialState = [
         {
@@ -21,6 +21,7 @@ const OverheadsTable = ({control,watch,...props}) => {
     const { t, register, errors, setValue, getValues, formData } = props
 
     const setTotal = (formData) => {
+        
         const tableData = formData?.[formFieldName]
         setTotalAmount((prevState) => {
             return tableData?.filter((row, index) => row)?.filter((row, index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseInt(curr?.amount) || 0
@@ -201,20 +202,24 @@ const OverheadsTable = ({control,watch,...props}) => {
                 })}
                 // disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
                 disable={true}
-                />{errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "pattern" && (
+                />
+                {/* {errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "pattern" && (
                         <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     {errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "required" && (
-                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)} */}
+                </div></td>
 
                 <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.amount`} inputRef={register({
                     required: true,
                     pattern: /^\d*\.?\d*$/
                 })}
                 disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
-                />{errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
+                />
+                {/* {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
                         <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                     {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)} */}
+                </div></td>
                 
                 <td style={getStyles(5)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
             </tr>
@@ -231,7 +236,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                 {renderBody()}
                 <tr>
                     <td colSpan={3} style={{textAlign:"right",fontWeight:"600"}}>{t("RT_TOTAL")}</td>
-                    <td colSpan={1}>{totalAmount}</td>
+                    <td colSpan={1}>{Digit.Utils.dss.formatterWithoutRound(totalAmount, 'number')}</td>
                     <td colSpan={1}></td>
                 </tr>
                 <tr>

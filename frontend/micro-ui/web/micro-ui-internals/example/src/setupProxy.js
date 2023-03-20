@@ -64,13 +64,17 @@ module.exports = function (app) {
     "/inbox/v1/dss/_search",
     "/loi-service",
     "/estimate-service",
+    "/contract-service",
     "/loi-service",
     "/works-inbox-service/v2/_search",
     "/egov-pdf/download/WORKSESTIMATE/estimatepdf",
     "/muster-roll",
     "/pms/project",
     "/inbox/v2/_search",
-    "/individual/v1/_search"
+    "/individual/v1/_search",
+    "/org-services",
+    "/org-services/organisation/v1/_search",
+    "/expensebilling"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

@@ -43,7 +43,7 @@ const InboxSearchComposer = (props) => {
         }
 
         if(configs?.type === 'inbox') setEnable(true)
-    }, [state])
+    },[state])
     
 
     let requestCriteria = {
@@ -54,7 +54,28 @@ const InboxSearchComposer = (props) => {
             enabled: enable,
         },
     };
+
+    //clear the reducer state when user moves away from inbox screen(it already resets when component unmounts)(keeping this code here for reference)
+    // useEffect(() => {
+    //     return () => {
+    //         if (!window.location.href.includes("/inbox")) {
+                
+    //             dispatch({
+    //                 type: "clearSearchForm",
+    //                 state:  configs?.sections?.search?.uiConfig?.defaultValues 
+    //                 //need to pass form with empty strings 
+    //             })
+    //             dispatch({
+    //                 type: "clearFilterForm",
+    //                 state: configs?.sections?.filter?.uiConfig?.defaultValues 
+    //                 //need to pass form with empty strings 
+    //             })
+    //         }
+    //     };
+    // }, [location]);
     
+
+
     const updatedReqCriteria = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess(requestCriteria) : requestCriteria 
 
     

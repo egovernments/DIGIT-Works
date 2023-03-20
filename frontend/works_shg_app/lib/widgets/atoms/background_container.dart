@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class BackgroundContainer extends StatelessWidget {
   final Widget widget;
   final String bannerURL;
-  BackgroundContainer(this.widget, this.bannerURL);
+  const BackgroundContainer(this.widget, this.bannerURL, {super.key});
   @override
   Widget build(BuildContext context) {
     return Container(
