@@ -2,19 +2,19 @@ import { ContractService } from "../../elements/Contracts";
 
 const combine = (docs, estimateDocs) => {
     let allDocuments = [];
-    for(let i=0; i<docs.length; i++) {
-        if(docs[i].fileStoreId !== undefined||  docs[i].fileStore !== undefined)
+    for(let i=0; i<docs?.length; i++) {
+        if(docs[i]?.fileStoreId !== undefined||  docs[i]?.fileStore !== undefined)
          {     allDocuments.push(docs[i]); }
     }
-    for(let i=0; i<estimateDocs.length; i++) {
-        if(estimateDocs[i].fileStoreId !== undefined||  estimateDocs[i].fileStore !== undefined)
+    for(let i=0; i<estimateDocs?.length; i++) {
+        if(estimateDocs?.[i]?.fileStoreId !== undefined||  estimateDocs?.[i]?.fileStore !== undefined)
          {     allDocuments.push(estimateDocs[i]); }
     }
     return allDocuments;
 }
 
 const transformViewDataToApplicationDetails = async (t, data, workflowDetails, tenantId) => {
-    if(data?.contracts?.length === 0) return;
+
     const contract = data.contracts?.[0]
     const contractDetails = {
         title: " ",
@@ -29,7 +29,6 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
             { title: "COMMON_WORK_ORDER_AMT_RS", value: contract?.totalContractedAmount || t("NA")},
         ]
     }
-
     const allDocuments = combine(contract?.documents, contract?.additionalDetails?.estimateDocs);
     const documentDetails = {
         title: "",
@@ -38,7 +37,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
             documents: [{
                 title: "WORKS_RELEVANT_DOCUMENTS",
                 BS : 'Works',
-                values: allDocuments.map((document) => {
+                values: allDocuments?.map((document) => {
                     if(document?.fileStoreId != null){
                         return {
                             title: document?.fileType,
@@ -58,15 +57,14 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
             ]
         }
     }
-
-
-    const applicationDetails = { applicationDetails: [contractDetails, documentDetails] };
+    const applicationDetails = { applicationDetails: [contractDetails, documentDetails] };    
 
   return {
     applicationDetails,
     applicationData: contract,
     processInstancesDetails: workflowDetails?.ProcessInstances,
-    workflowDetails
+    workflowDetails,
+    isNoDataFound : data?.contracts?.length === 0 ? true : false
   }
 } 
 
