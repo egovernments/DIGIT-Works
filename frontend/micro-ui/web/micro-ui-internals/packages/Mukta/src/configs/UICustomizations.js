@@ -315,7 +315,7 @@ export const UICustomizations = {
             }
 
             else if (column.key === "estimatedAmount") {
-                return <span>{`₹ ${value}`}</span>
+                return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
             }
 
             else if (column.key === "sla") {
