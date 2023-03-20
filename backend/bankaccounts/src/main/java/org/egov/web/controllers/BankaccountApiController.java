@@ -47,11 +47,6 @@ public class BankaccountApiController {
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<BankAccountResponse> bankaccountV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody BankAccountRequest body) {
-        //TODO: remove it -start
-        log.info("search request : {}",body);
-        log.info("search criteria : {}",body.getBankAccounts());
-        log.info("search request info : {}",body.getRequestInfo());
-        //TODO: remove it -end
         BankAccountRequest bankAccountRequest = bankAccountService.createBankAccount(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         BankAccountResponse bankAccountResponse = BankAccountResponse.builder().responseInfo(responseInfo).bankAccounts(bankAccountRequest.getBankAccounts()).build();
