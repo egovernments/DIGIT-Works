@@ -311,11 +311,12 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
       }
     ]
     let colsToReturn = [];
-    if(showFullTableReadOnly || editable) {
-      colsToReturn = [...colsReadOnly, ...colsOthers]
-    } else {
-      colsToReturn = [...colsReadOnly]
-    }
+    // if(showFullTableReadOnly || editable) {
+    //   colsToReturn = [...colsReadOnly, ...colsOthers]
+    // } else {
+    //   colsToReturn = [...colsReadOnly]
+    // }
+    colsToReturn = [...colsReadOnly, ...colsOthers]
     return colsToReturn
   }, [state, editable, showFullTableReadOnly]);
 
