@@ -40,7 +40,8 @@ class _LanguageSelectionPage extends State<LanguageSelectionPage> {
     final theme = Theme.of(context);
     return BlocBuilder<AppInitializationBloc, AppInitializationState>(
       builder: (context, state) {
-        return state.isInitializationCompleted == false
+        return state.isInitializationCompleted == false &&
+                state.stateInfoListModel == null
             ? Loaders.circularLoader(context)
             : Column(
                 children: [
@@ -48,15 +49,10 @@ class _LanguageSelectionPage extends State<LanguageSelectionPage> {
                           state.isInitializationCompleted
                       ? DigitLanguageCard(
                           appLogo: AppLogo(),
-                          digitRowCardItems: digitRowCardItems != null
-                              ? digitRowCardItems!
-                                  .map((e) =>
-                                      DigitRowCardModel.fromJson(e.toJson()))
-                                  .toList()
-                              : state.digitRowCardItems
-                                  ?.map((e) =>
-                                      DigitRowCardModel.fromJson(e.toJson()))
-                                  .toList() as List<DigitRowCardModel>,
+                          digitRowCardItems: state.digitRowCardItems
+                              ?.map(
+                                  (e) => DigitRowCardModel.fromJson(e.toJson()))
+                              .toList() as List<DigitRowCardModel>,
                           onLanguageSubmit: () async {
                             context.router.push(const LoginRoute());
                           },

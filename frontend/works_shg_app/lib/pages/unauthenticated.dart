@@ -35,10 +35,8 @@ class UnauthenticatedPageWrapper extends StatelessWidget {
                         localeState.localization != null
                     ? const AutoRouter()
                     : Loaders.circularLoader(context);
-                ;
               })
             : Loaders.circularLoader(context);
-        ;
       }),
     ));
   }

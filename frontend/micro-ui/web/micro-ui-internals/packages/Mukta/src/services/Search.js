@@ -46,11 +46,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             title: "WORKS_FINANCIAL_DETAILS",
             asSectionHeader: false,
             values: [
-              { title: "WORKS_FUND", value: currentProject?.additionalDetails?.fund ? t(`ES_COMMON_FIN_${currentProject?.additionalDetails?.fund}`) : "NA" },
-              { title: "WORKS_FUNCTION", value: currentProject?.additionalDetails?.function ? t(`ES_COMMON_${currentProject?.additionalDetails?.function}`) : "NA" },
-              { title: "WORKS_BUDGET_HEAD", value: currentProject?.additionalDetails?.budgetHead ? t(`ES_COMMON_FIN_${currentProject?.additionalDetails?.budgetHead}`)  : "NA"},
-              { title: "WORKS_SCHEME", value: currentProject?.additionalDetails?.scheme ? t(`ES_COMMON_${currentProject?.additionalDetails?.scheme}`) : "NA"},
-              { title: "WORKS_SUB_SCHEME", value: currentProject?.additionalDetails?.subScheme ? t(`ES_COMMON_${currentProject?.additionalDetails?.subScheme}`) : "NA"}
+                { title: "WORKS_HEAD_OF_ACCOUNTS", value: currentProject?.additionalDetails?.fund ? t(`COMMON_MASTERS_FUND_${currentProject?.additionalDetails?.fund}`) : "NA" },
             ],
           };
 

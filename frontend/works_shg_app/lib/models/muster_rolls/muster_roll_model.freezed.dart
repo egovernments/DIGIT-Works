@@ -1119,6 +1119,9 @@ mixin _$MusterIndividualAdditionalDetails {
   String? get fatherName => throw _privateConstructorUsedError;
   String? get aadharNumber => throw _privateConstructorUsedError;
   String? get bankDetails => throw _privateConstructorUsedError;
+  String? get userId => throw _privateConstructorUsedError;
+  String? get accountHolderName => throw _privateConstructorUsedError;
+  String? get accountType => throw _privateConstructorUsedError;
   String? get skillCode => throw _privateConstructorUsedError;
   String? get skillValue => throw _privateConstructorUsedError;
 
@@ -1141,6 +1144,9 @@ abstract class $MusterIndividualAdditionalDetailsCopyWith<$Res> {
       String? fatherName,
       String? aadharNumber,
       String? bankDetails,
+      String? userId,
+      String? accountHolderName,
+      String? accountType,
       String? skillCode,
       String? skillValue});
 }
@@ -1163,6 +1169,9 @@ class _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
     Object? fatherName = freezed,
     Object? aadharNumber = freezed,
     Object? bankDetails = freezed,
+    Object? userId = freezed,
+    Object? accountHolderName = freezed,
+    Object? accountType = freezed,
     Object? skillCode = freezed,
     Object? skillValue = freezed,
   }) {
@@ -1182,6 +1191,18 @@ class _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
       bankDetails: freezed == bankDetails
           ? _value.bankDetails
           : bankDetails // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountHolderName: freezed == accountHolderName
+          ? _value.accountHolderName
+          : accountHolderName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountType: freezed == accountType
+          ? _value.accountType
+          : accountType // ignore: cast_nullable_to_non_nullable
               as String?,
       skillCode: freezed == skillCode
           ? _value.skillCode
@@ -1209,6 +1230,9 @@ abstract class _$$_MusterIndividualAdditionalDetailsCopyWith<$Res>
       String? fatherName,
       String? aadharNumber,
       String? bankDetails,
+      String? userId,
+      String? accountHolderName,
+      String? accountType,
       String? skillCode,
       String? skillValue});
 }
@@ -1230,6 +1254,9 @@ class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
     Object? fatherName = freezed,
     Object? aadharNumber = freezed,
     Object? bankDetails = freezed,
+    Object? userId = freezed,
+    Object? accountHolderName = freezed,
+    Object? accountType = freezed,
     Object? skillCode = freezed,
     Object? skillValue = freezed,
   }) {
@@ -1249,6 +1276,18 @@ class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
       bankDetails: freezed == bankDetails
           ? _value.bankDetails
           : bankDetails // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountHolderName: freezed == accountHolderName
+          ? _value.accountHolderName
+          : accountHolderName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountType: freezed == accountType
+          ? _value.accountType
+          : accountType // ignore: cast_nullable_to_non_nullable
               as String?,
       skillCode: freezed == skillCode
           ? _value.skillCode
@@ -1271,6 +1310,9 @@ class _$_MusterIndividualAdditionalDetails
       this.fatherName,
       this.aadharNumber,
       this.bankDetails,
+      this.userId,
+      this.accountHolderName,
+      this.accountType,
       this.skillCode,
       this.skillValue});
 
@@ -1287,13 +1329,19 @@ class _$_MusterIndividualAdditionalDetails
   @override
   final String? bankDetails;
   @override
+  final String? userId;
+  @override
+  final String? accountHolderName;
+  @override
+  final String? accountType;
+  @override
   final String? skillCode;
   @override
   final String? skillValue;
 
   @override
   String toString() {
-    return 'MusterIndividualAdditionalDetails(userName: $userName, fatherName: $fatherName, aadharNumber: $aadharNumber, bankDetails: $bankDetails, skillCode: $skillCode, skillValue: $skillValue)';
+    return 'MusterIndividualAdditionalDetails(userName: $userName, fatherName: $fatherName, aadharNumber: $aadharNumber, bankDetails: $bankDetails, userId: $userId, accountHolderName: $accountHolderName, accountType: $accountType, skillCode: $skillCode, skillValue: $skillValue)';
   }
 
   @override
@@ -1309,6 +1357,11 @@ class _$_MusterIndividualAdditionalDetails
                 other.aadharNumber == aadharNumber) &&
             (identical(other.bankDetails, bankDetails) ||
                 other.bankDetails == bankDetails) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.accountHolderName, accountHolderName) ||
+                other.accountHolderName == accountHolderName) &&
+            (identical(other.accountType, accountType) ||
+                other.accountType == accountType) &&
             (identical(other.skillCode, skillCode) ||
                 other.skillCode == skillCode) &&
             (identical(other.skillValue, skillValue) ||
@@ -1317,8 +1370,17 @@ class _$_MusterIndividualAdditionalDetails
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, userName, fatherName,
-      aadharNumber, bankDetails, skillCode, skillValue);
+  int get hashCode => Object.hash(
+      runtimeType,
+      userName,
+      fatherName,
+      aadharNumber,
+      bankDetails,
+      userId,
+      accountHolderName,
+      accountType,
+      skillCode,
+      skillValue);
 
   @JsonKey(ignore: true)
   @override
@@ -1343,6 +1405,9 @@ abstract class _MusterIndividualAdditionalDetails
       final String? fatherName,
       final String? aadharNumber,
       final String? bankDetails,
+      final String? userId,
+      final String? accountHolderName,
+      final String? accountType,
       final String? skillCode,
       final String? skillValue}) = _$_MusterIndividualAdditionalDetails;
 
@@ -1358,6 +1423,12 @@ abstract class _MusterIndividualAdditionalDetails
   String? get aadharNumber;
   @override
   String? get bankDetails;
+  @override
+  String? get userId;
+  @override
+  String? get accountHolderName;
+  @override
+  String? get accountType;
   @override
   String? get skillCode;
   @override

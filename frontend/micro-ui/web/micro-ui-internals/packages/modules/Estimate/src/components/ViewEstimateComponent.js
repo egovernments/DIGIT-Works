@@ -1,17 +1,49 @@
-import React, { Fragment } from 'react'
-import { Loader, WorkflowActions, WorkflowTimeline } from '@egovernments/digit-ui-react-components';
+import React, { Fragment, useState, useEffect, useRef, } from 'react'
+import { Loader, WorkflowActions, WorkflowTimeline,ActionBar,Menu,SubmitBar } from '@egovernments/digit-ui-react-components';
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from '../../../templates/ApplicationDetails';
-
+import { useHistory } from 'react-router-dom';
 const ViewEstimateComponent = (props) => {
+    const history = useHistory();
+    const [showActions, setShowActions] = useState(false);
+    const menuRef = useRef();
+    const [actionsMenu, setActionsMenu] = useState([
+        
+    ]);
+    const [isStateChanged, setStateChanged] = useState(``)
+    
+    const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
 
     const { t } = useTranslation()
 
     const { tenantId, estimateNumber } = Digit.Hooks.useQueryParams();
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
 
+    const closeMenu = () => {
+        setShowActions(false);
+    }
+    Digit.Hooks.useClickOutside(menuRef, closeMenu, showActions);
 
-    const { isLoading, data: applicationDetails } = Digit.Hooks.estimates.useEstimateDetailsScreen(t, tenantId, estimateNumber)
+    const { isLoading, data: applicationDetails } = Digit.Hooks.estimates.useEstimateDetailsScreen(t, tenantId, estimateNumber,{}, isStateChanged)
+    
+
+    useEffect(() => {
+        let isUserContractCreator = loggedInUserRoles?.includes("WORK_ORDER_CREATOR");
+        if (applicationDetails?.applicationData?.wfStatus === "APPROVED" && isUserContractCreator){
+            setActionsMenu((prevState => [...prevState,{
+                name:"CREATE_CONTRACT"
+            }]))
+        }
+    }, [applicationDetails, isStateChanged])
+    
+
+    
+
+    const handleActionBar = (option) => {
+        if (option?.name === "CREATE_CONTRACT") {
+            history.push(`/${window.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&estimateNumber=${estimateNumber}`);
+        }
+    }
 
     if (isLoading) return <Loader />
 
@@ -37,7 +69,24 @@ const ViewEstimateComponent = (props) => {
                 tenantId={tenantId}
                 applicationDetails={applicationDetails?.applicationData}
                 url={Digit.Utils.Urls.works.updateEstimate}
+                setStateChanged={setStateChanged}
+                moduleCode="Estimate"
             />
+
+            {/* Adding another action bar to show Create Contract Option */}
+            {applicationDetails?.applicationData?.wfStatus === "APPROVED" ? 
+                <ActionBar>
+
+                    {showActions ? <Menu
+                        localeKeyPrefix={`EST_VIEW_ACTIONS`}
+                        options={actionsMenu}
+                        optionKey={"name"}
+                        t={t}
+                        onSelect={handleActionBar}
+                    />:null} 
+                    <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)} />
+                </ActionBar>
+                : null}
         </>
     )
 }

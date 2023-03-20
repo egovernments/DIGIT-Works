@@ -10,14 +10,14 @@ const searchOrganisationConfig = () => {
       requestParam: {},
       requestBody: {
         apiOperation: "SEARCH",
-        Organisation: {},
+        SearchCriteria: {},
       },
       minParametersForSearchForm: 1,
       masterName: "commonUiConfig",
       moduleName: "SearchOrganisationConfig",
       tableFormJsonPath: "requestParam",
-      filterFormJsonPath: "requestBody.Organisation",
-      searchFormJsonPath: "requestBody.Organisation",
+      filterFormJsonPath: "requestBody.SearchCriteria",
+      searchFormJsonPath: "requestBody.SearchCriteria",
     },
     sections: {
       search: {
@@ -44,7 +44,7 @@ const searchOrganisationConfig = () => {
               "populators": {
                   "name": "boundaryCode",
                   "type": "ward",
-                  "optionsKey": "name",
+                "optionsKey": "i18nKey",
                   "defaultText": "COMMON_SELECT_WARD",
                   "selectedText": "COMMON_SELECTED",
                   "allowMultiSelect": false
@@ -145,7 +145,7 @@ const searchOrganisationConfig = () => {
             },
             {
               label: "MASTERS_NAME_OF_ORGN",
-              jsonPath: "name.givenName",
+              jsonPath: "name",
             },
             {
               label: "MASTERS_ORGANISATION_TYPE",
@@ -154,17 +154,17 @@ const searchOrganisationConfig = () => {
             },
             {
               label: "MASTERS_ORGANISATION_SUB_TYPE",
-              jsonPath: "functions[0].type",
+              jsonPath: "functions[0].category",
               additionalCustomization: true,
             },
             {
               label: "MASTERS_LOCATION",
-              jsonPath: "address[0].tenantId",
+              jsonPath: "orgAddress[0].boundaryCode",
               additionalCustomization: true,
             },
             {
               label: "MASTERS_STATUS",
-              jsonPath: "address[0].ward",
+              jsonPath: "applicationStatus",
               additionalCustomization: true,
             },
           ],
