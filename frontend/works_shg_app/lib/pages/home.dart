@@ -1,14 +1,17 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:works_shg_app/blocs/localization/localization.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
+import 'package:works_shg_app/widgets/atoms/app_bar_logo.dart';
 
 import '../blocs/attendance/search_projects/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/search_muster_roll.dart';
+import '../utils/constants.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
@@ -22,13 +25,19 @@ class HomePage extends StatelessWidget {
         builder: (context, state) {
       return state.isLocalizationLoadCompleted
           ? Scaffold(
-              appBar: AppBar(),
+              appBar: AppBar(
+                titleSpacing: 0,
+                title: const AppBarLogo(),
+              ),
               drawer: DrawerWrapper(const Drawer(
                   child: SideBar(
                 module: 'rainmaker-common,rainmaker-attendencemgmt',
               ))),
               body: ScrollableContent(
-                footer: const PoweredByDigit(),
+                footer: const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: PoweredByDigit(),
+                ),
                 children: [
                   DigitCard(
                     onPressed: null,
@@ -40,68 +49,58 @@ class HomePage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          LabeledField(
-                            label: AppLocalizations.of(context)
-                                .translate(i18.home.worksMgmt),
-                            child: ButtonLink(
-                                AppLocalizations.of(context)
-                                    .translate(i18.home.workOrder),
-                                () => context.router
-                                    .push(const WorkOrderRoute())),
-                          )
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              LabeledField(
+                                label: AppLocalizations.of(context)
+                                    .translate(i18.home.mukta),
+                                child: Column(
+                                  children: [
+                                    ButtonLink(
+                                        AppLocalizations.of(context)
+                                            .translate(i18.home.myWorks),
+                                        () => context.router
+                                            .push(const WorkOrderRoute())),
+                                  ],
+                                ),
+                              ),
+                              SvgPicture.asset(Constants.muktaIcon)
+                            ],
+                          ),
+                          ButtonLink(
+                              AppLocalizations.of(context)
+                                  .translate(i18.home.manageWageSeekers), () {
+                            context.read<AttendanceProjectsSearchBloc>().add(
+                                  const SearchAttendanceProjectsEvent(),
+                                );
+                            context.router
+                                .push(const ManageAttendanceRegisterRoute());
+                          }),
+                          ButtonLink(
+                              AppLocalizations.of(context)
+                                  .translate(i18.home.trackAttendance), () {
+                            context.read<AttendanceProjectsSearchBloc>().add(
+                                  const SearchAttendanceProjectsEvent(),
+                                );
+                            context.router
+                                .push(const TrackAttendanceInboxRoute());
+                          }),
+                          ButtonLink(
+                              AppLocalizations.of(context)
+                                  .translate(i18.home.musterRolls), () {
+                            context.read<MusterRollSearchBloc>().add(
+                                  const SearchMusterRollEvent(),
+                                );
+                            context.router.push(const ViewMusterRollsRoute());
+                          }),
+                          ButtonLink(
+                              AppLocalizations.of(context)
+                                  .translate(i18.home.registerWageSeeker),
+                              () => context.router
+                                  .push(const RegisterIndividualRoute())),
                         ],
                       ),
-                    ),
-                  ),
-                  DigitCard(
-                    onPressed: null,
-                    padding: const EdgeInsets.fromLTRB(16, 30, 16, 16),
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: LabeledField(
-                          label: AppLocalizations.of(context)
-                              .translate(i18.home.attendanceMgmt),
-                          child: Column(
-                            children: [
-                              ButtonLink(
-                                  AppLocalizations.of(context)
-                                      .translate(i18.home.manageWageSeekers),
-                                  () {
-                                context
-                                    .read<AttendanceProjectsSearchBloc>()
-                                    .add(
-                                      const SearchAttendanceProjectsEvent(),
-                                    );
-                                context.router.push(
-                                    const ManageAttendanceRegisterRoute());
-                              }),
-                              ButtonLink(
-                                  AppLocalizations.of(context)
-                                      .translate(i18.home.trackAttendance), () {
-                                context
-                                    .read<AttendanceProjectsSearchBloc>()
-                                    .add(
-                                      const SearchAttendanceProjectsEvent(),
-                                    );
-                                context.router
-                                    .push(const TrackAttendanceInboxRoute());
-                              }),
-                              ButtonLink(
-                                  AppLocalizations.of(context)
-                                      .translate(i18.home.registerIndividual),
-                                  () => context.router
-                                      .push(const RegisterIndividualRoute())),
-                              ButtonLink(
-                                  AppLocalizations.of(context)
-                                      .translate(i18.home.inbox), () {
-                                context.read<MusterRollSearchBloc>().add(
-                                      const SearchMusterRollEvent(),
-                                    );
-                                context.router
-                                    .push(const ViewMusterRollsRoute());
-                              }),
-                            ],
-                          )),
                     ),
                   )
                 ],

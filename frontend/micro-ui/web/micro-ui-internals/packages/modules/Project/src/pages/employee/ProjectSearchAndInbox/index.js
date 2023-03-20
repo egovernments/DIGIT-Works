@@ -10,15 +10,15 @@ const ProjectSearchAndInboxComponent = () => {
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
         tenant,
-        "commonUiConfig",
+        Digit.Utils.getConfigModuleName(),
         [
             {
-                "name": "projectInboxConfig"
+                "name": "InboxProjectConfig"
             }
         ]
     );
    
-    const configs = data?.commonUiConfig?.projectInboxConfig?.[0]
+    const configs = data?.[Digit.Utils.getConfigModuleName()]?.InboxProjectConfig?.[0]
 
     if(isLoading) return <Loader />
     return (

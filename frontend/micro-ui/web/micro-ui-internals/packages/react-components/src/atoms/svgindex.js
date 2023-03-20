@@ -20,9 +20,9 @@ const ArrowLeft = ({ className }) => (
   </svg>
 );
 
-const ArrowLeftWhite = ({ className }) => (
-  <svg width="16" height="16" viewBox="0 0 16 16" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z" fill="white" />
+const ArrowLeftWhite = ({ className, fill="white", style={} }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" className={className} fill="none" style={style} xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z" fill={fill} />
   </svg>
 );
 const PrivacyMaskIcon = ({ className, style = {} }) => (
@@ -1107,8 +1107,8 @@ const ArrowCollapseDown = () => (
   </svg>
 )
 
-const AddFilled = () => (
-  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+const AddFilled = ({style={}}) => (
+  <svg width="15" height="15" style={style} viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M12.8828 2.98323C10.1643 0.227501 5.7393 0.19747 2.98357 2.91604C0.227848 5.63461 0.197817 10.0596 2.91639 12.8153C5.63496 15.571 10.0599 15.6011 12.8157 12.8825C15.5714 10.1639 15.6014 5.73895 12.8828 2.98323ZM8.56866 12.1557L7.17286 12.1463L7.19698 8.59243L3.64314 8.56831L3.65261 7.17251L7.20645 7.19663L7.23057 3.6428L8.62637 3.65227L8.60225 7.20611L12.1561 7.23022L12.1466 8.62602L8.59278 8.6019L8.56866 12.1557Z" fill="#F47738"/>
   </svg>
 )
@@ -1244,6 +1244,18 @@ const BioMetricIcon = ({fill="#F47738"})=>(
 
 )
 
+const AddFileFilled = ({className="", fill="", style={}}) => (
+  <svg width="19" className={className} height="18" style={style} viewBox="0 0 19 18" fill={fill} xmlns="http://www.w3.org/2000/svg">
+    <path d="M14.6016 8.75C15.2141 8.75 15.8003 8.86375 16.3516 9.05625V5.25L11.1016 0H2.35156C1.38031 0 0.601562 0.77875 0.601562 1.75V14C0.601562 14.9712 1.38906 15.75 2.35156 15.75H9.65781C9.46531 15.1987 9.35156 14.6125 9.35156 14C9.35156 11.1037 11.7053 8.75 14.6016 8.75ZM10.2266 1.3125L15.0391 6.125H10.2266V1.3125ZM18.1016 13.125V14.875H15.4766V17.5H13.7266V14.875H11.1016V13.125H13.7266V10.5H15.4766V13.125H18.1016Z" fill="#F47738"/>
+  </svg>
+)
+
+const LocateIcon = ({className=""}) => (
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M11 7C8.79 7 7 8.79 7 11C7 13.21 8.79 15 11 15C13.21 15 15 13.21 15 11C15 8.79 13.21 7 11 7ZM19.94 10C19.48 5.83 16.17 2.52 12 2.06V0H10V2.06C5.83 2.52 2.52 5.83 2.06 10H0V12H2.06C2.52 16.17 5.83 19.48 10 19.94V22H12V19.94C16.17 19.48 19.48 16.17 19.94 12H22V10H19.94ZM11 18C7.13 18 4 14.87 4 11C4 7.13 7.13 4 11 4C14.87 4 18 7.13 18 11C18 14.87 14.87 18 11 18Z" fill="#505A5F"/>
+  </svg>
+)
+
 export {
   AnnouncementIcon,
   ReceiptIcon,
@@ -1372,7 +1384,9 @@ export {
   ArrowCollapseUp,
   ArrowCollapseDown,
   AddFilled,
-
+  AddFileFilled,
+  LocateIcon,
+  
   /* Works Management  */
   NoResultsFoundIcon,
   WorksMgmtIcon,

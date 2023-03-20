@@ -1,11 +1,13 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:works_shg_app/blocs/auth/otp_bloc.dart';
+import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/global_variables.dart';
+import 'package:works_shg_app/widgets/atoms/app_logo.dart';
 
-import '../blocs/auth/auth.dart';
 import '../blocs/localization/app_localization.dart';
 import '../utils/notifiers.dart';
 import '../widgets/molecules/desktop_view.dart';
@@ -22,92 +24,128 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPage extends State<LoginPage> {
   var userIdController = TextEditingController();
-  var passwordController = TextEditingController();
-  var passwordVisible = false;
+  bool canContinue = false;
+  final formKey = GlobalKey<FormState>();
+  bool autoValidation = false;
+  bool phoneNumberAutoValidation = false;
+  final FocusNode _numberFocus = FocusNode();
 
-  Widget getLoginCard(BuildContext loginContext) {
-    return DigitCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            AppLocalizations.of(loginContext).translate(i18.login.loginLabel),
-            style: Theme.of(loginContext).textTheme.displayMedium,
-          ),
-          DigitTextField(
-            label: AppLocalizations.of(loginContext)
-                .translate(i18.login.loginUserName),
-            controller: userIdController,
-            maxLength: 10,
-          ),
-          DigitTextField(
-            label: AppLocalizations.of(loginContext)
-                .translate(i18.login.loginPassword),
-            controller: passwordController,
-            obscureText: !passwordVisible,
-            suffixIcon: buildPasswordVisibility(),
-            maxLines: 1,
-          ),
-          const SizedBox(height: 16),
-          DigitElevatedButton(
-            onPressed: () async {
-              loginContext.read<AuthBloc>().add(
-                    AuthLoginEvent(
-                      userId: userIdController.text,
-                      password: passwordController.text,
-                    ),
-                  );
-            },
-            child: Center(
-              child: Text(AppLocalizations.of(loginContext)
-                  .translate(i18.login.loginLabel)),
-            ),
-          ),
-          BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-            SchedulerBinding.instance.addPostFrameCallback((_) {
-              state.maybeWhen(
-                  error: () => Notifiers.getToastMessage(
-                      context,
-                      AppLocalizations.of(context)
-                          .translate(i18.common.invalidCredentials),
-                      'ERROR'),
-                  orElse: () => Container());
-            });
-            return Container();
-          }),
-          TextButton(
-            onPressed: () => DigitDialog.show(
-              context,
-              title: AppLocalizations.of(context)
-                  .translate(i18.login.forgotPassword),
-              content: AppLocalizations.of(context)
-                  .translate(i18.login.contactAdministrator),
-              primaryActionLabel:
-                  AppLocalizations.of(context).translate(i18.common.oK),
-              primaryAction: () =>
-                  Navigator.of(context, rootNavigator: true).pop(),
-            ),
-            child: Center(
-                child: Text(AppLocalizations.of(context)
-                    .translate(i18.login.forgotPassword))),
-          ),
-        ],
-      ),
-    );
+  @override
+  void initState() {
+    _numberFocus.addListener(_onFocusChange);
+    super.initState();
   }
 
-  Widget buildPasswordVisibility() {
-    return IconButton(
-      icon: Icon(
-        passwordVisible ? Icons.visibility : Icons.visibility_off,
-        color: Theme.of(context).primaryColorLight,
+  @override
+  dispose() {
+    _numberFocus.removeListener(_onFocusChange);
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    context.read<OTPBloc>().add(
+          const DisposeOTPEvent(),
+        );
+    super.deactivate();
+  }
+
+  void _onFocusChange() {
+    if (!_numberFocus.hasFocus) {
+      setState(() {
+        phoneNumberAutoValidation = true;
+      });
+    }
+  }
+
+  Widget getLoginCard(BuildContext loginContext) {
+    return Form(
+      key: formKey,
+      autovalidateMode:
+          autoValidation ? AutovalidateMode.always : AutovalidateMode.disabled,
+      child: DigitCard(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const AppLogo(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                  AppLocalizations.of(loginContext)
+                      .translate(i18.login.loginLabel),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w700)),
+            ),
+            DigitTextField(
+              label:
+                  '${AppLocalizations.of(loginContext).translate(i18.common.mobileNumber)}*',
+              controller: userIdController,
+              isRequired: true,
+              prefixText: '+91 - ',
+              focusNode: _numberFocus,
+              autoValidation: phoneNumberAutoValidation
+                  ? AutovalidateMode.always
+                  : AutovalidateMode.disabled,
+              textInputType: TextInputType.number,
+              inputFormatter: [
+                FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+              ],
+              validator: (val) {
+                if (val!.trim().isEmpty || val!.trim().length != 10) {
+                  return '${AppLocalizations.of(context).translate(i18.login.pleaseEnterMobile)}';
+                }
+                return null;
+              },
+              onChange: (value) {
+                setState(() {
+                  canContinue = value.length == 10;
+                });
+                if (value.length == 10) {
+                  _numberFocus.unfocus();
+                }
+              },
+              maxLength: 10,
+            ),
+            const SizedBox(height: 16),
+            BlocListener<OTPBloc, OTPBlocState>(
+              listener: (context, state) {
+                state.maybeWhen(
+                    orElse: () => Container(),
+                    loaded: () {
+                      context.router.push(OTPVerificationRoute(
+                          mobileNumber: userIdController.text));
+                    },
+                    error: () => Notifiers.getToastMessage(
+                        context,
+                        AppLocalizations.of(context)
+                            .translate(i18.login.enteredMobileNotRegistered),
+                        'ERROR'));
+              },
+              child: DigitElevatedButton(
+                onPressed: canContinue
+                    ? () {
+                        if (formKey.currentState!.validate()) {
+                          loginContext.read<OTPBloc>().add(
+                                OTPSendEvent(
+                                  mobileNumber: userIdController.text,
+                                ),
+                              );
+                        } else {
+                          setState(() {
+                            autoValidation = true;
+                          });
+                        }
+                      }
+                    : null,
+                child: Center(
+                  child: Text(AppLocalizations.of(loginContext)
+                      .translate(i18.common.continueLabel)),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-      onPressed: () {
-        setState(() {
-          passwordVisible = !passwordVisible;
-        });
-      },
     );
   }
 
@@ -116,9 +154,13 @@ class _LoginPage extends State<LoginPage> {
     return Scaffold(
         appBar: AppBar(),
         body: LayoutBuilder(builder: (context, constraints) {
-          if (constraints.maxWidth < 760) {
-            return MobileView(getLoginCard(context),
-                GlobalVariables.stateInfoListModel!.bannerUrl.toString());
+          if (constraints.maxWidth < 720) {
+            return MobileView(
+              getLoginCard(context),
+              GlobalVariables.stateInfoListModel!.bannerUrl.toString(),
+              logoBottomPosition: constraints.maxWidth / 3,
+              cardBottomPosition: constraints.maxWidth / 1.5,
+            );
           } else {
             return DesktopView(getLoginCard(context),
                 GlobalVariables.stateInfoListModel!.bannerUrl.toString());

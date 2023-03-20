@@ -11,7 +11,7 @@ import {
   Row,
   StatusTable,
   Table,
-  WorkflowTimeline,
+  WorkflowTimeline
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
 import React, { Fragment, useCallback, useReducer, useState } from "react";
@@ -43,6 +43,8 @@ import AttendanceDateRange from "../../../AttendenceMgmt/src/pageComponents/Atte
 import MustorRollDetailsTable from "../../../Expenditure/src/components/ViewBill/MustorRollDetailsTable";
 import StatusTableWithRadio from "../../../Expenditure/src/components/ViewBill/StatusTableWithRadio";
 import ShowTotalValue from "../../../Expenditure/src/components/ViewBill/ShowTotalValue";
+import SkillDetails from "./SkillDetails";
+import Photos from "./Photos";
 
 
 function ApplicationDetailsContent({
@@ -62,12 +64,13 @@ function ApplicationDetailsContent({
   setSaveAttendanceState,
   applicationNo,
   tenantId,
-  businessService
+  businessService,
+  customClass
 }) {
   const { t } = useTranslation();
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
   
-  const attendanceData = applicationDetails?.applicationDetails[0].additionalDetails?.table?.weekTable?.tableData
+  const attendanceData = applicationDetails?.applicationDetails[0]?.additionalDetails?.table?.weekTable?.tableData
   const [state, dispatch] = useReducer(reducer, attendanceData);
 
   const handleDateRangeChange = useCallback((data) => {
@@ -202,7 +205,10 @@ function ApplicationDetailsContent({
       window.location.href.includes("employee/noc") ||
       window.location.href.includes("employee/ws") ||
       window.location.href.includes("employee/works") ||
-      window.location.href.includes("employee/contracts")
+      window.location.href.includes("employee/contracts") || 
+      window.location.href.includes("employee/masters") ||
+      window.location.href.includes("employee/project") ||
+      window.location.href.includes("employee/contracts") 
     ) {
       return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
     } else if (checkLocation) {
@@ -258,7 +264,7 @@ function ApplicationDetailsContent({
       {applicationDetails?.applicationDetails?.map((detail, index) => (
         <CollapseAndExpandGroups groupElements={detail?.expandAndCollapse?.groupComponents} groupHeader={detail?.expandAndCollapse?.groupHeader} headerLabel={detail?.expandAndCollapse?.headerLabel} headerValue={detail?.expandAndCollapse?.headerValue} customClass={detail?.expandAndCollapse?.customClass}>
           <React.Fragment key={index}>
-          <div style={getMainDivStyles()}>
+          <div style={getMainDivStyles()} className={customClass}>
             {index === 0 && !detail.asSectionHeader ? (
               <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
             ) : (
@@ -271,7 +277,8 @@ function ApplicationDetailsContent({
                   }
                 >
                   {isNocLocation ? `${t(detail.title)}` : t(detail.title)}
-                  {detail?.Component ? <detail.Component /> : null}
+                  
+                  {detail?.Component ? <detail.Component detail={detail} /> : null}
                 </CardSectionHeader>
               </React.Fragment>
             )}
@@ -390,7 +397,7 @@ function ApplicationDetailsContent({
             : null}
             {detail?.additionalDetails?.table
               ? detail?.additionalDetails?.table?.mustorRollTable && (
-                <MustorRollDetailsTable></MustorRollDetailsTable>
+                <MustorRollDetailsTable musterData={detail?.additionalDetails?.table?.tableData}></MustorRollDetailsTable>
                 )
             : null}
             {detail?.additionalDetails?.showTotal && <ShowTotalValue topBreakLine={detail?.additionalDetails?.showTotal?.topBreakLine} bottomBreakLine={detail?.additionalDetails?.showTotal?.bottomBreakLine} label={detail?.additionalDetails?.showTotal?.label} value={detail?.additionalDetails?.showTotal?.value}></ShowTotalValue>}
@@ -459,6 +466,8 @@ function ApplicationDetailsContent({
           )}
           {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
           {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
+          {detail?.additionalDetails?.skills  &&  <SkillDetails data={detail?.additionalDetails?.skills} />}
+          {detail?.additionalDetails?.photo  &&  <Photos data={detail?.additionalDetails?.photo} OpenImage={OpenImage}/>}
         </React.Fragment>
         </CollapseAndExpandGroups>
       ))}

@@ -155,6 +155,7 @@ const DateRangeNew = ({ values, onFilterChange, t, labelClass, label, customStyl
                             showSelectionPreview={true}
                             staticRanges={staticRanges}
                             inputRanges={[]}
+                            weekStartsOn={1}
                         />
                     </div>
                 )}

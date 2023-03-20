@@ -129,6 +129,14 @@ import useProjectSearch from "./project/useProjectSearch";
 import useViewFinancialDetails from "./project/useViewFinancialDetails";
 
 import useUpdateCustom from "./useUpdateCustom";
+
+import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
+import useCreateWO from "./works/useCreateWO";
+import useSearchOrg from "./works/useSearchOrg";
+
+
+import useViewBill from "./bills/useViewBill";
+
 const works = {
   useViewEstimateDetails,
   useViewProjectDetails,
@@ -155,8 +163,13 @@ const works = {
 
 const contracts = {
   useViewContractDetails,
-  useViewContractDetailsClosureScreen
+  useViewContractDetailsClosureScreen,
+  useCreateWO
 };
+
+const organisation = {
+  useSearchOrg
+}
 
 const estimates = {
   useEstimateSearch,
@@ -233,7 +246,8 @@ const attendance = {
 };
 
 const bills = {
-  useViewBills
+  useViewBills,
+  useViewBill
 }
 const masters = {
   useViewOrg
@@ -242,6 +256,10 @@ const masters = {
 const project = {
   useViewFinancialDetails,
   useProjectSearch
+}
+
+const wageSeeker = {
+  useViewWageSeeker
 }
 
 const Hooks = {
@@ -299,14 +317,15 @@ const Hooks = {
   useDynamicData,
   useBulkPdfDetails,
   useBillAmendmentInbox,
-  works,
   contracts,
   estimates,
   attendance,
   useLocation,
   bills,
   masters,
-  project
+  project,
+  wageSeeker,
+  organisation
 };
 
 export default Hooks;

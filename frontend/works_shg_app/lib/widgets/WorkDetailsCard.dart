@@ -6,11 +6,13 @@ import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/atoms/button_group.dart';
 
-import '../blocs/attendance/create_attendance_register.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/muster_roll_estimate.dart';
+import '../blocs/work_orders/accept_work_order.dart';
+import '../blocs/work_orders/decline_work_order.dart';
 import '../models/attendance/attendance_registry_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
+import '../models/works/contracts_model.dart';
 import '../utils/constants.dart';
 
 class WorkDetailsCard extends StatelessWidget {
@@ -23,7 +25,8 @@ class WorkDetailsCard extends StatelessWidget {
   final bool isSHGInbox;
   final bool isTrackAttendance;
   final List<AttendanceRegister>? attendanceRegistersModel;
-  final MusterRollsModel? musterRollsModel;
+  final List<MusterRoll>? musterRollsModel;
+  final ContractsModel? contractModel;
 
   const WorkDetailsCard(this.detailsList,
       {this.isAttendanceInbox = false,
@@ -35,6 +38,7 @@ class WorkDetailsCard extends StatelessWidget {
       this.outlinedButtonLabel = '',
       this.attendanceRegistersModel,
       this.musterRollsModel,
+      this.contractModel,
       super.key});
 
   @override
@@ -54,44 +58,22 @@ class WorkDetailsCard extends StatelessWidget {
         list.add(GestureDetector(
           child: DigitCard(
               child: getCardDetails(context, detailsList[i]['cardDetails'],
-                  payload: detailsList[i]['payload'])),
+                  payload: detailsList[i]['payload'],
+                  isAccept: detailsList[i]['cardDetails'][i18.common.status] ==
+                      'ACCEPTED')),
+        ));
+      }
+    } else if (isSHGInbox) {
+      for (int i = 0; i < detailsList.length; i++) {
+        list.add(GestureDetector(
+          child: DigitCard(
+              child: getCardDetails(context, detailsList[i],
+                  musterRoll: musterRollsModel![i])),
         ));
       }
     } else {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
-          onTap: isSHGInbox
-              ? () {
-                  context.read<IndividualMusterRollSearchBloc>().add(
-                        SearchIndividualMusterRollEvent(
-                            id: musterRollsModel!.musterRoll![i].id ?? '',
-                            tenantId: musterRollsModel!.musterRoll![i].tenantId
-                                .toString()),
-                      );
-                  context.router.push(SHGInboxRoute(
-                      projectDetails: [
-                        detailsList[i],
-                      ],
-                      tenantId:
-                          musterRollsModel!.musterRoll![i].tenantId.toString(),
-                      musterRollNo: musterRollsModel!
-                          .musterRoll![i].musterRollNumber
-                          .toString()));
-                  context.read<MusterRollEstimateBloc>().add(
-                        ViewEstimateMusterRollEvent(
-                          tenantId: musterRollsModel!.musterRoll![i].tenantId
-                              .toString(),
-                          registerId: musterRollsModel!
-                              .musterRoll![i].registerId
-                              .toString(),
-                          startDate:
-                              musterRollsModel!.musterRoll![i].startDate ?? 0,
-                          endDate:
-                              musterRollsModel!.musterRoll![i].endDate ?? 0,
-                        ),
-                      );
-                }
-              : null,
           child: DigitCard(child: getCardDetails(context, detailsList[i])),
         ));
       }
@@ -101,11 +83,16 @@ class WorkDetailsCard extends StatelessWidget {
     );
   }
 
-  Widget getCardDetails(BuildContext context, Map<String, dynamic> cardDetails,
-      {List<String>? userList,
-      AttendanceRegister? attendanceRegister,
-      String? attendanceRegisterId,
-      Map<String, dynamic>? payload}) {
+  Widget getCardDetails(
+    BuildContext context,
+    Map<String, dynamic> cardDetails, {
+    List<String>? userList,
+    AttendanceRegister? attendanceRegister,
+    String? attendanceRegisterId,
+    Map<String, dynamic>? payload,
+    bool? isAccept,
+    MusterRoll? musterRoll,
+  }) {
     var labelList = <Widget>[];
     for (int j = 0; j < cardDetails.length; j++) {
       labelList.add(getItemWidget(context,
@@ -116,12 +103,13 @@ class WorkDetailsCard extends StatelessWidget {
                   ? AppLocalizations.of(context)
                       .translate(cardDetails.values.elementAt(j).toString())
                   : cardDetails.values.elementAt(j).toString(),
-          isActiveStatus:
-              cardDetails.values.elementAt(j).toString() == Constants.active,
+          isActiveStatus: cardDetails.keys.elementAt(j).toString() ==
+                  i18.common.status &&
+              cardDetails.values.elementAt(j).toString() != Constants.rejected,
           isRejectStatus: cardDetails.values.elementAt(j).toString() ==
               Constants.rejected));
     }
-    if (isWorkOrderInbox) {
+    if (isWorkOrderInbox && !isAccept!) {
       labelList.add(Container(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -138,27 +126,26 @@ class WorkDetailsCard extends StatelessWidget {
                     .translate(i18.workOrder.warningMsg),
                 primaryActionLabel:
                     AppLocalizations.of(context).translate(i18.common.confirm),
-                primaryAction: () =>
-                    Navigator.of(context, rootNavigator: true).pop(),
+                primaryAction: () {
+                  context.read<DeclineWorkOrderBloc>().add(
+                        WorkOrderDeclineEvent(
+                            contractsModel: payload,
+                            action: 'DECLINE',
+                            comments: 'DECLINE contract'),
+                      );
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
                 secondaryActionLabel:
                     AppLocalizations.of(context).translate(i18.common.back),
                 secondaryAction: () =>
                     Navigator.of(context, rootNavigator: true).pop(),
               ),
               elevatedCallBack: () {
-                context.read<AttendanceRegisterCreateBloc>().add(
-                      CreateAttendanceRegisterEvent(
-                        tenantId: payload!['tenantId'],
-                        registerNumber: "",
-                        name: cardDetails.values.elementAt(1).toString(),
-                        contractCreated: payload['contractCreated'],
-                        contractId: cardDetails.values.elementAt(0).toString(),
-                        orgName: payload['orgName'],
-                        startDate: DateTime.now().millisecondsSinceEpoch,
-                        endDate: DateTime.now()
-                            .add(const Duration(days: 7))
-                            .millisecondsSinceEpoch,
-                      ),
+                context.read<AcceptWorkOrderBloc>().add(
+                      WorkOrderAcceptEvent(
+                          contractsModel: payload,
+                          action: 'ACCEPT',
+                          comments: 'Accept contract'),
                     );
               },
             ),
@@ -166,8 +153,8 @@ class WorkDetailsCard extends StatelessWidget {
         ),
       ));
     } else if (isManageAttendance || isTrackAttendance) {
-      labelList.add(Container(
-        padding: const EdgeInsets.all(8.0),
+      labelList.add(Padding(
+        padding: const EdgeInsets.all(4.0),
         child: DigitElevatedButton(
           onPressed: () {
             if (isManageAttendance) {
@@ -184,13 +171,45 @@ class WorkDetailsCard extends StatelessWidget {
                   attendanceRegister: attendanceRegister));
             }
           },
-          child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(elevatedButtonLabel,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .apply(color: Colors.white))),
+          child: Center(
+            child: Text(elevatedButtonLabel,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .apply(color: Colors.white)),
+          ),
+        ),
+      ));
+    } else if (isSHGInbox) {
+      labelList.add(Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: DigitElevatedButton(
+          onPressed: () {
+            context.read<IndividualMusterRollSearchBloc>().add(
+                  SearchIndividualMusterRollEvent(
+                      id: musterRoll?.id ?? '',
+                      tenantId: musterRoll!.tenantId.toString()),
+                );
+            context.router.push(SHGInboxRoute(
+                projectDetails: [cardDetails],
+                tenantId: musterRoll.tenantId.toString(),
+                musterRollNo: musterRoll.musterRollNumber.toString()));
+            context.read<MusterRollEstimateBloc>().add(
+                  ViewEstimateMusterRollEvent(
+                    tenantId: musterRoll.tenantId.toString(),
+                    registerId: musterRoll.registerId.toString(),
+                    startDate: musterRoll.startDate ?? 0,
+                    endDate: musterRoll.endDate ?? 0,
+                  ),
+                );
+          },
+          child: Center(
+            child: Text(elevatedButtonLabel,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .apply(color: Colors.white)),
+          ),
         ),
       ));
     }

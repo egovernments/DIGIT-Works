@@ -210,6 +210,8 @@ mixin _$MusterRoll {
   @JsonKey(name: 'additionalDetails')
   MusterAdditionalDetails? get musterAdditionalDetails =>
       throw _privateConstructorUsedError;
+  @JsonKey(name: 'auditDetails')
+  AuditDetails? get musterAuditDetails => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -235,9 +237,12 @@ abstract class $MusterRollCopyWith<$Res> {
       @JsonKey(name: 'individualEntries')
           List<IndividualEntries>? individualEntries,
       @JsonKey(name: 'additionalDetails')
-          MusterAdditionalDetails? musterAdditionalDetails});
+          MusterAdditionalDetails? musterAdditionalDetails,
+      @JsonKey(name: 'auditDetails')
+          AuditDetails? musterAuditDetails});
 
   $MusterAdditionalDetailsCopyWith<$Res>? get musterAdditionalDetails;
+  $AuditDetailsCopyWith<$Res>? get musterAuditDetails;
 }
 
 /// @nodoc
@@ -263,6 +268,7 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
     Object? endDate = freezed,
     Object? individualEntries = freezed,
     Object? musterAdditionalDetails = freezed,
+    Object? musterAuditDetails = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -305,6 +311,10 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
           ? _value.musterAdditionalDetails
           : musterAdditionalDetails // ignore: cast_nullable_to_non_nullable
               as MusterAdditionalDetails?,
+      musterAuditDetails: freezed == musterAuditDetails
+          ? _value.musterAuditDetails
+          : musterAuditDetails // ignore: cast_nullable_to_non_nullable
+              as AuditDetails?,
     ) as $Val);
   }
 
@@ -318,6 +328,18 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
     return $MusterAdditionalDetailsCopyWith<$Res>(
         _value.musterAdditionalDetails!, (value) {
       return _then(_value.copyWith(musterAdditionalDetails: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $AuditDetailsCopyWith<$Res>? get musterAuditDetails {
+    if (_value.musterAuditDetails == null) {
+      return null;
+    }
+
+    return $AuditDetailsCopyWith<$Res>(_value.musterAuditDetails!, (value) {
+      return _then(_value.copyWith(musterAuditDetails: value) as $Val);
     });
   }
 }
@@ -342,10 +364,14 @@ abstract class _$$_MusterRollCopyWith<$Res>
       @JsonKey(name: 'individualEntries')
           List<IndividualEntries>? individualEntries,
       @JsonKey(name: 'additionalDetails')
-          MusterAdditionalDetails? musterAdditionalDetails});
+          MusterAdditionalDetails? musterAdditionalDetails,
+      @JsonKey(name: 'auditDetails')
+          AuditDetails? musterAuditDetails});
 
   @override
   $MusterAdditionalDetailsCopyWith<$Res>? get musterAdditionalDetails;
+  @override
+  $AuditDetailsCopyWith<$Res>? get musterAuditDetails;
 }
 
 /// @nodoc
@@ -369,6 +395,7 @@ class __$$_MusterRollCopyWithImpl<$Res>
     Object? endDate = freezed,
     Object? individualEntries = freezed,
     Object? musterAdditionalDetails = freezed,
+    Object? musterAuditDetails = freezed,
   }) {
     return _then(_$_MusterRoll(
       id: freezed == id
@@ -411,6 +438,10 @@ class __$$_MusterRollCopyWithImpl<$Res>
           ? _value.musterAdditionalDetails
           : musterAdditionalDetails // ignore: cast_nullable_to_non_nullable
               as MusterAdditionalDetails?,
+      musterAuditDetails: freezed == musterAuditDetails
+          ? _value.musterAuditDetails
+          : musterAuditDetails // ignore: cast_nullable_to_non_nullable
+              as AuditDetails?,
     ));
   }
 }
@@ -430,7 +461,9 @@ class _$_MusterRoll implements _MusterRoll {
       @JsonKey(name: 'individualEntries')
           final List<IndividualEntries>? individualEntries,
       @JsonKey(name: 'additionalDetails')
-          this.musterAdditionalDetails})
+          this.musterAdditionalDetails,
+      @JsonKey(name: 'auditDetails')
+          this.musterAuditDetails})
       : _individualEntries = individualEntries;
 
   factory _$_MusterRoll.fromJson(Map<String, dynamic> json) =>
@@ -465,10 +498,13 @@ class _$_MusterRoll implements _MusterRoll {
   @override
   @JsonKey(name: 'additionalDetails')
   final MusterAdditionalDetails? musterAdditionalDetails;
+  @override
+  @JsonKey(name: 'auditDetails')
+  final AuditDetails? musterAuditDetails;
 
   @override
   String toString() {
-    return 'MusterRoll(id: $id, tenantId: $tenantId, musterRollNumber: $musterRollNumber, registerId: $registerId, status: $status, musterRollStatus: $musterRollStatus, startDate: $startDate, endDate: $endDate, individualEntries: $individualEntries, musterAdditionalDetails: $musterAdditionalDetails)';
+    return 'MusterRoll(id: $id, tenantId: $tenantId, musterRollNumber: $musterRollNumber, registerId: $registerId, status: $status, musterRollStatus: $musterRollStatus, startDate: $startDate, endDate: $endDate, individualEntries: $individualEntries, musterAdditionalDetails: $musterAdditionalDetails, musterAuditDetails: $musterAuditDetails)';
   }
 
   @override
@@ -493,7 +529,9 @@ class _$_MusterRoll implements _MusterRoll {
                 .equals(other._individualEntries, _individualEntries) &&
             (identical(
                     other.musterAdditionalDetails, musterAdditionalDetails) ||
-                other.musterAdditionalDetails == musterAdditionalDetails));
+                other.musterAdditionalDetails == musterAdditionalDetails) &&
+            (identical(other.musterAuditDetails, musterAuditDetails) ||
+                other.musterAuditDetails == musterAuditDetails));
   }
 
   @JsonKey(ignore: true)
@@ -509,7 +547,8 @@ class _$_MusterRoll implements _MusterRoll {
       startDate,
       endDate,
       const DeepCollectionEquality().hash(_individualEntries),
-      musterAdditionalDetails);
+      musterAdditionalDetails,
+      musterAuditDetails);
 
   @JsonKey(ignore: true)
   @override
@@ -527,19 +566,20 @@ class _$_MusterRoll implements _MusterRoll {
 
 abstract class _MusterRoll implements MusterRoll {
   const factory _MusterRoll(
-          {final String? id,
-          final String? tenantId,
-          final String? musterRollNumber,
-          final String? registerId,
-          final String? status,
-          final String? musterRollStatus,
-          final int? startDate,
-          final int? endDate,
-          @JsonKey(name: 'individualEntries')
-              final List<IndividualEntries>? individualEntries,
-          @JsonKey(name: 'additionalDetails')
-              final MusterAdditionalDetails? musterAdditionalDetails}) =
-      _$_MusterRoll;
+      {final String? id,
+      final String? tenantId,
+      final String? musterRollNumber,
+      final String? registerId,
+      final String? status,
+      final String? musterRollStatus,
+      final int? startDate,
+      final int? endDate,
+      @JsonKey(name: 'individualEntries')
+          final List<IndividualEntries>? individualEntries,
+      @JsonKey(name: 'additionalDetails')
+          final MusterAdditionalDetails? musterAdditionalDetails,
+      @JsonKey(name: 'auditDetails')
+          final AuditDetails? musterAuditDetails}) = _$_MusterRoll;
 
   factory _MusterRoll.fromJson(Map<String, dynamic> json) =
       _$_MusterRoll.fromJson;
@@ -566,6 +606,9 @@ abstract class _MusterRoll implements MusterRoll {
   @override
   @JsonKey(name: 'additionalDetails')
   MusterAdditionalDetails? get musterAdditionalDetails;
+  @override
+  @JsonKey(name: 'auditDetails')
+  AuditDetails? get musterAuditDetails;
   @override
   @JsonKey(ignore: true)
   _$$_MusterRollCopyWith<_$_MusterRoll> get copyWith =>
@@ -866,6 +909,11 @@ mixin _$MusterAdditionalDetails {
   String? get attendanceRegisterName => throw _privateConstructorUsedError;
   String? get attendanceRegisterNo => throw _privateConstructorUsedError;
   String? get orgName => throw _privateConstructorUsedError;
+  int? get amount => throw _privateConstructorUsedError;
+  String? get assignee => throw _privateConstructorUsedError;
+  String? get billType => throw _privateConstructorUsedError;
+  String? get projectId => throw _privateConstructorUsedError;
+  String? get projectName => throw _privateConstructorUsedError;
   String? get contractId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -884,6 +932,11 @@ abstract class $MusterAdditionalDetailsCopyWith<$Res> {
       {String? attendanceRegisterName,
       String? attendanceRegisterNo,
       String? orgName,
+      int? amount,
+      String? assignee,
+      String? billType,
+      String? projectId,
+      String? projectName,
       String? contractId});
 }
 
@@ -904,6 +957,11 @@ class _$MusterAdditionalDetailsCopyWithImpl<$Res,
     Object? attendanceRegisterName = freezed,
     Object? attendanceRegisterNo = freezed,
     Object? orgName = freezed,
+    Object? amount = freezed,
+    Object? assignee = freezed,
+    Object? billType = freezed,
+    Object? projectId = freezed,
+    Object? projectName = freezed,
     Object? contractId = freezed,
   }) {
     return _then(_value.copyWith(
@@ -918,6 +976,26 @@ class _$MusterAdditionalDetailsCopyWithImpl<$Res,
       orgName: freezed == orgName
           ? _value.orgName
           : orgName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      amount: freezed == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      assignee: freezed == assignee
+          ? _value.assignee
+          : assignee // ignore: cast_nullable_to_non_nullable
+              as String?,
+      billType: freezed == billType
+          ? _value.billType
+          : billType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      projectId: freezed == projectId
+          ? _value.projectId
+          : projectId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      projectName: freezed == projectName
+          ? _value.projectName
+          : projectName // ignore: cast_nullable_to_non_nullable
               as String?,
       contractId: freezed == contractId
           ? _value.contractId
@@ -939,6 +1017,11 @@ abstract class _$$_MusterAdditionalDetailsCopyWith<$Res>
       {String? attendanceRegisterName,
       String? attendanceRegisterNo,
       String? orgName,
+      int? amount,
+      String? assignee,
+      String? billType,
+      String? projectId,
+      String? projectName,
       String? contractId});
 }
 
@@ -957,6 +1040,11 @@ class __$$_MusterAdditionalDetailsCopyWithImpl<$Res>
     Object? attendanceRegisterName = freezed,
     Object? attendanceRegisterNo = freezed,
     Object? orgName = freezed,
+    Object? amount = freezed,
+    Object? assignee = freezed,
+    Object? billType = freezed,
+    Object? projectId = freezed,
+    Object? projectName = freezed,
     Object? contractId = freezed,
   }) {
     return _then(_$_MusterAdditionalDetails(
@@ -971,6 +1059,26 @@ class __$$_MusterAdditionalDetailsCopyWithImpl<$Res>
       orgName: freezed == orgName
           ? _value.orgName
           : orgName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      amount: freezed == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      assignee: freezed == assignee
+          ? _value.assignee
+          : assignee // ignore: cast_nullable_to_non_nullable
+              as String?,
+      billType: freezed == billType
+          ? _value.billType
+          : billType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      projectId: freezed == projectId
+          ? _value.projectId
+          : projectId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      projectName: freezed == projectName
+          ? _value.projectName
+          : projectName // ignore: cast_nullable_to_non_nullable
               as String?,
       contractId: freezed == contractId
           ? _value.contractId
@@ -987,6 +1095,11 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
       {this.attendanceRegisterName,
       this.attendanceRegisterNo,
       this.orgName,
+      this.amount,
+      this.assignee,
+      this.billType,
+      this.projectId,
+      this.projectName,
       this.contractId});
 
   factory _$_MusterAdditionalDetails.fromJson(Map<String, dynamic> json) =>
@@ -999,11 +1112,21 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
   @override
   final String? orgName;
   @override
+  final int? amount;
+  @override
+  final String? assignee;
+  @override
+  final String? billType;
+  @override
+  final String? projectId;
+  @override
+  final String? projectName;
+  @override
   final String? contractId;
 
   @override
   String toString() {
-    return 'MusterAdditionalDetails(attendanceRegisterName: $attendanceRegisterName, attendanceRegisterNo: $attendanceRegisterNo, orgName: $orgName, contractId: $contractId)';
+    return 'MusterAdditionalDetails(attendanceRegisterName: $attendanceRegisterName, attendanceRegisterNo: $attendanceRegisterNo, orgName: $orgName, amount: $amount, assignee: $assignee, billType: $billType, projectId: $projectId, projectName: $projectName, contractId: $contractId)';
   }
 
   @override
@@ -1016,14 +1139,32 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
             (identical(other.attendanceRegisterNo, attendanceRegisterNo) ||
                 other.attendanceRegisterNo == attendanceRegisterNo) &&
             (identical(other.orgName, orgName) || other.orgName == orgName) &&
+            (identical(other.amount, amount) || other.amount == amount) &&
+            (identical(other.assignee, assignee) ||
+                other.assignee == assignee) &&
+            (identical(other.billType, billType) ||
+                other.billType == billType) &&
+            (identical(other.projectId, projectId) ||
+                other.projectId == projectId) &&
+            (identical(other.projectName, projectName) ||
+                other.projectName == projectName) &&
             (identical(other.contractId, contractId) ||
                 other.contractId == contractId));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, attendanceRegisterName,
-      attendanceRegisterNo, orgName, contractId);
+  int get hashCode => Object.hash(
+      runtimeType,
+      attendanceRegisterName,
+      attendanceRegisterNo,
+      orgName,
+      amount,
+      assignee,
+      billType,
+      projectId,
+      projectName,
+      contractId);
 
   @JsonKey(ignore: true)
   @override
@@ -1046,6 +1187,11 @@ abstract class _MusterAdditionalDetails implements MusterAdditionalDetails {
       {final String? attendanceRegisterName,
       final String? attendanceRegisterNo,
       final String? orgName,
+      final int? amount,
+      final String? assignee,
+      final String? billType,
+      final String? projectId,
+      final String? projectName,
       final String? contractId}) = _$_MusterAdditionalDetails;
 
   factory _MusterAdditionalDetails.fromJson(Map<String, dynamic> json) =
@@ -1057,6 +1203,16 @@ abstract class _MusterAdditionalDetails implements MusterAdditionalDetails {
   String? get attendanceRegisterNo;
   @override
   String? get orgName;
+  @override
+  int? get amount;
+  @override
+  String? get assignee;
+  @override
+  String? get billType;
+  @override
+  String? get projectId;
+  @override
+  String? get projectName;
   @override
   String? get contractId;
   @override
@@ -1076,6 +1232,9 @@ mixin _$MusterIndividualAdditionalDetails {
   String? get fatherName => throw _privateConstructorUsedError;
   String? get aadharNumber => throw _privateConstructorUsedError;
   String? get bankDetails => throw _privateConstructorUsedError;
+  String? get userId => throw _privateConstructorUsedError;
+  String? get accountHolderName => throw _privateConstructorUsedError;
+  String? get accountType => throw _privateConstructorUsedError;
   String? get skillCode => throw _privateConstructorUsedError;
   String? get skillValue => throw _privateConstructorUsedError;
 
@@ -1098,6 +1257,9 @@ abstract class $MusterIndividualAdditionalDetailsCopyWith<$Res> {
       String? fatherName,
       String? aadharNumber,
       String? bankDetails,
+      String? userId,
+      String? accountHolderName,
+      String? accountType,
       String? skillCode,
       String? skillValue});
 }
@@ -1120,6 +1282,9 @@ class _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
     Object? fatherName = freezed,
     Object? aadharNumber = freezed,
     Object? bankDetails = freezed,
+    Object? userId = freezed,
+    Object? accountHolderName = freezed,
+    Object? accountType = freezed,
     Object? skillCode = freezed,
     Object? skillValue = freezed,
   }) {
@@ -1139,6 +1304,18 @@ class _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
       bankDetails: freezed == bankDetails
           ? _value.bankDetails
           : bankDetails // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountHolderName: freezed == accountHolderName
+          ? _value.accountHolderName
+          : accountHolderName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountType: freezed == accountType
+          ? _value.accountType
+          : accountType // ignore: cast_nullable_to_non_nullable
               as String?,
       skillCode: freezed == skillCode
           ? _value.skillCode
@@ -1166,6 +1343,9 @@ abstract class _$$_MusterIndividualAdditionalDetailsCopyWith<$Res>
       String? fatherName,
       String? aadharNumber,
       String? bankDetails,
+      String? userId,
+      String? accountHolderName,
+      String? accountType,
       String? skillCode,
       String? skillValue});
 }
@@ -1187,6 +1367,9 @@ class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
     Object? fatherName = freezed,
     Object? aadharNumber = freezed,
     Object? bankDetails = freezed,
+    Object? userId = freezed,
+    Object? accountHolderName = freezed,
+    Object? accountType = freezed,
     Object? skillCode = freezed,
     Object? skillValue = freezed,
   }) {
@@ -1206,6 +1389,18 @@ class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
       bankDetails: freezed == bankDetails
           ? _value.bankDetails
           : bankDetails // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountHolderName: freezed == accountHolderName
+          ? _value.accountHolderName
+          : accountHolderName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountType: freezed == accountType
+          ? _value.accountType
+          : accountType // ignore: cast_nullable_to_non_nullable
               as String?,
       skillCode: freezed == skillCode
           ? _value.skillCode
@@ -1228,6 +1423,9 @@ class _$_MusterIndividualAdditionalDetails
       this.fatherName,
       this.aadharNumber,
       this.bankDetails,
+      this.userId,
+      this.accountHolderName,
+      this.accountType,
       this.skillCode,
       this.skillValue});
 
@@ -1244,13 +1442,19 @@ class _$_MusterIndividualAdditionalDetails
   @override
   final String? bankDetails;
   @override
+  final String? userId;
+  @override
+  final String? accountHolderName;
+  @override
+  final String? accountType;
+  @override
   final String? skillCode;
   @override
   final String? skillValue;
 
   @override
   String toString() {
-    return 'MusterIndividualAdditionalDetails(userName: $userName, fatherName: $fatherName, aadharNumber: $aadharNumber, bankDetails: $bankDetails, skillCode: $skillCode, skillValue: $skillValue)';
+    return 'MusterIndividualAdditionalDetails(userName: $userName, fatherName: $fatherName, aadharNumber: $aadharNumber, bankDetails: $bankDetails, userId: $userId, accountHolderName: $accountHolderName, accountType: $accountType, skillCode: $skillCode, skillValue: $skillValue)';
   }
 
   @override
@@ -1266,6 +1470,11 @@ class _$_MusterIndividualAdditionalDetails
                 other.aadharNumber == aadharNumber) &&
             (identical(other.bankDetails, bankDetails) ||
                 other.bankDetails == bankDetails) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.accountHolderName, accountHolderName) ||
+                other.accountHolderName == accountHolderName) &&
+            (identical(other.accountType, accountType) ||
+                other.accountType == accountType) &&
             (identical(other.skillCode, skillCode) ||
                 other.skillCode == skillCode) &&
             (identical(other.skillValue, skillValue) ||
@@ -1274,8 +1483,17 @@ class _$_MusterIndividualAdditionalDetails
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, userName, fatherName,
-      aadharNumber, bankDetails, skillCode, skillValue);
+  int get hashCode => Object.hash(
+      runtimeType,
+      userName,
+      fatherName,
+      aadharNumber,
+      bankDetails,
+      userId,
+      accountHolderName,
+      accountType,
+      skillCode,
+      skillValue);
 
   @JsonKey(ignore: true)
   @override
@@ -1300,6 +1518,9 @@ abstract class _MusterIndividualAdditionalDetails
       final String? fatherName,
       final String? aadharNumber,
       final String? bankDetails,
+      final String? userId,
+      final String? accountHolderName,
+      final String? accountType,
       final String? skillCode,
       final String? skillValue}) = _$_MusterIndividualAdditionalDetails;
 
@@ -1315,6 +1536,12 @@ abstract class _MusterIndividualAdditionalDetails
   String? get aadharNumber;
   @override
   String? get bankDetails;
+  @override
+  String? get userId;
+  @override
+  String? get accountHolderName;
+  @override
+  String? get accountType;
   @override
   String? get skillCode;
   @override

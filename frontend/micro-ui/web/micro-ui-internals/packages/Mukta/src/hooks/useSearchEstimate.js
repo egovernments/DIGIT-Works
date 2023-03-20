@@ -5,7 +5,10 @@ const useSearchEstimate = (tenantId, filters, config={cacheTime : 0} ) => {
     return useQuery(
         ["SEARCH_ESTIMATE", tenantId, filters?.projectId],
         ()=> Search.searchEstimate(tenantId, filters),
-        config
+        {
+            ...config,
+            enabled : !!filters?.projectId
+        }
     );
 }
 

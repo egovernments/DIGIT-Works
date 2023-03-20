@@ -4,11 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:works_shg_app/data/repositories/muster_roll_repository/muster_roll.dart';
-import 'package:works_shg_app/models/muster_rolls/muster_roll_model.dart';
 import 'package:works_shg_app/services/urls.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/remote_client.dart';
+import '../../models/muster_rolls/estimate_muster_roll_model.dart';
 
 part 'muster_roll_estimate.freezed.dart';
 
@@ -28,8 +28,8 @@ class MusterRollEstimateBloc
     try {
       emit(const MusterRollEstimateState.loading());
 
-      MusterRollsModel musterRollsModel =
-          await MusterRollRepository(client.init()).searchMusterRolls(
+      EstimateMusterRollsModel musterRollsModel =
+          await MusterRollRepository(client.init()).estimateMusterRolls(
               url: Urls.musterRollServices.musterRollsEstimate,
               body: {
                 "musterRoll": {
@@ -47,8 +47,7 @@ class MusterRollEstimateBloc
       await Future.delayed(const Duration(seconds: 1));
       emit(MusterRollEstimateState.loaded(musterRollsModel));
     } on DioError catch (e) {
-      emit(
-          MusterRollEstimateState.error(e.response?.data['Errors'][0]['code']));
+      emit(const MusterRollEstimateState.loaded(EstimateMusterRollsModel()));
     }
   }
 
@@ -62,8 +61,8 @@ class MusterRollEstimateBloc
     Client client = Client();
     try {
       emit(const MusterRollEstimateState.loading());
-      MusterRollsModel musterRollsModel =
-          await MusterRollRepository(client.init()).searchMusterRolls(
+      EstimateMusterRollsModel musterRollsModel =
+          await MusterRollRepository(client.init()).estimateMusterRolls(
               url: Urls.musterRollServices.musterRollsEstimate,
               body: {
                 "musterRoll": {
@@ -81,8 +80,8 @@ class MusterRollEstimateBloc
       await Future.delayed(const Duration(seconds: 1));
       emit(MusterRollEstimateState.loaded(musterRollsModel));
     } on DioError catch (e) {
-      emit(
-          MusterRollEstimateState.error(e.response?.data['Errors'][0]['code']));
+
+      emit(const MusterRollEstimateState.loaded(EstimateMusterRollsModel()));
     }
   }
 }
@@ -111,11 +110,5 @@ class MusterRollEstimateState with _$MusterRollEstimateState {
   const factory MusterRollEstimateState.initial() = _Initial;
   const factory MusterRollEstimateState.loading() = _Loading;
   const factory MusterRollEstimateState.loaded(
-      MusterRollsModel? musterRollsModel) = _Loaded;
-  const factory MusterRollEstimateState.error(String? error) = _Error;
-  // const factory MusterRollEstimateState({
-  //   @Default(false) bool loading,
-  //   MusterRollsModel? musterRollsModel,
-  //   MusterRollsModel? viewMusterRollsModel,
-  // }) = _MusterRollEstimateState;
+      EstimateMusterRollsModel? musterRollsModel) = _Loaded;
 }

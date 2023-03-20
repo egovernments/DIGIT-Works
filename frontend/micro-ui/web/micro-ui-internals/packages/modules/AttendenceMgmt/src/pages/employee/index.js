@@ -7,12 +7,12 @@ import SearchAttendance from "./SearchAttendance";
 
 const AttendanceBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
-  const search = useLocation().search;
-  const fromScreen = new URLSearchParams(search).get("from") || null;
+  const loc = useLocation();
+  const fromScreen = new URLSearchParams(loc?.search).get("from") || null;
   const crumbs = [
     {
-      path: "/works-ui/employee",
-      content: t("ATM_AMP"),
+      path: `/${window?.contextPath}/employee`,
+      content: t("WORKS_WMS"),
       show: true,
     },
     {
@@ -20,17 +20,24 @@ const AttendanceBreadCrumbs = ({ location }) => {
       content: fromScreen ? `${t(fromScreen)} / ${t("ATM_AM")}` : t("ATM_AM"),
       show: location.pathname.includes("/attendencemgmt/inbox") ? true : false,
       isBack: fromScreen && true,
-    },
-    {
-      path: `/${window.contextPath}/employee/attendencemgmt/view-attendance`,
-      content: fromScreen ? `${t(fromScreen)} / / ${t("ATM_VIEW_ATTENDENCE")}` : t("ATM_VIEW_ATTENDENCE"),
-      show: location.pathname.includes("/attendencemgmt/view-attendance") ? true : false,
-      isBack: fromScreen && true,
+      count: location?.state?.count
     },
     {
       path: `/${window.contextPath}/employee/attendencemgmt/response`,
-      content: fromScreen ? `${t(fromScreen)} / / ${t("ATM_VIEW_ATTENDENCE")}` : t("ATM_VIEW_ATTENDENCE"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("ATM_VIEW_ATTENDENCE")}` : t("ATM_VIEW_ATTENDENCE"),
       show: location.pathname.includes("/attendencemgmt/response") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/attendencemgmt/search-attendance`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("ATM_SEARCH_ATTENDANCE")}` : t("ATM_SEARCH_ATTENDANCE"),
+      show: location.pathname.includes("/attendencemgmt/search-attendance") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/attendencemgmt/view-attendance`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("ATM_VIEW_ATTENDENCE")}` : t("ATM_VIEW_ATTENDENCE"),
+      show: location.pathname.includes("/attendencemgmt/view-attendance") ? true : false,
       isBack: fromScreen && true,
     }
   ];

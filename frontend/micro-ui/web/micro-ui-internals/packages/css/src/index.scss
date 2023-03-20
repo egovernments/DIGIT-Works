@@ -15,6 +15,7 @@
 @import "./components/datatable.scss";
 @import "./components/table.scss";
 @import "./components/filters.scss";
+@import "./components/button.scss";
 @import "./components/attendencetable.scss";
 @import "./pages/works/horizontalNav.scss";
 
@@ -805,6 +806,7 @@ input[type="number"] {
 }
 
 .info-banner-wrap {
+  margin: 0;
   &.project-banner {
     background: #FFE2B5;
     p{
@@ -814,6 +816,20 @@ input[type="number"] {
     h2{
       font-size: 18px;
       color: #CC7B2F;
+    }
+  }
+
+  &.doc-banner {
+    max-width: 1286px;
+    margin-bottom: 24px;
+    p{
+      font-size: 16px;
+      font-weight: 400;
+      color: #505A5F;
+    } 
+    h2{
+      font-size: 18px;
+      color: #0B0C0C;
     }
   }
 }
@@ -852,4 +868,61 @@ input[type="number"] {
 .sla-cell-error {
   padding: 8px 16px;
   border-radius: 16px;
+}
+
+.mukta-header-card {
+  margin-bottom: 3rem !important;
+}
+
+.text-input-customIcon {
+  position: absolute;
+  top: 10px;
+  right : 8px;
+}
+
+.emp-error-wrap {
+  min-height: 15rem;
+}
+
+.search-instruction-header {
+  margin-bottom: 1rem;
+}
+
+.skill-details-wrapper {
+  max-width: 950px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+
+    .skill-details {
+      width: 50%;
+    }
+}
+
+@screen sm {
+  .skill-details-wrapper {
+    display: block;
+
+    .skill-details {
+      width: 100%;
+    }
+  }
+}
+
+.fc-header-texts {
+  height: 32px;
+  color: #000 !important;
+  border: none;
+  display: flex;
+  padding-top: 10px;
+}
+
+.disabled-text-field {
+  color: #000 !important;
+  background-color: #FAFAFA;
+}
+
+.status-table-custom-class {
+  line-height: 19px;
+  max-width: 950px;
 }

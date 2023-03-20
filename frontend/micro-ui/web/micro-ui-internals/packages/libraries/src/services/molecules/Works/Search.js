@@ -86,6 +86,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                     projectParentProjectID : currentProject?.ancestors?.[0]?.projectNumber || "NA",
                     uuid:currentProject?.id,
                     address:currentProject?.address,
+                    ward: currentProject?.additionalDetails?.ward
                 }
                 totalProjects.searchedProject = {
                     basicDetails : basicDetails,
@@ -98,7 +99,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             }else {
                 //sub projects dont have financial details
                 //these keys are mapped to the view table
-                totalProjects.subProjects.push({
+                totalProjects.subProjects?.push({
                     name :  currentProject?.name || "NA",
                     estimatedAmount : currentProject?.additionalDetails?.estimatedCostInRs || "NA",
                     type : currentProject?.projectType || "NA",
@@ -175,7 +176,7 @@ export const WorksSearch = {
         if(response?.Projects?.[0]?.descendants) {
             projects = createProjectsArray(t, response?.Projects?.[0]?.descendants, searchParams, headerLocale);
             //all details of searched project will come here
-            projectDetails.subProjects.push(projects?.subProjects);
+            projectDetails.subProjects?.push(projects?.subProjects);
         }
         return {
             projectDetails : projectDetails,
@@ -195,8 +196,8 @@ export const WorksSearch = {
         const overheads = estimate?.estimateDetails?.filter(row => row?.category?.includes("OVERHEAD"))
         
 
-        const tableHeaderNonSor = [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")] 
-        const tableHeaderOverheads = [t("WORKS_SNO"), t("PROJECT_DESC"), t("WORKS_PERCENTAGE"), t("WORKS_AMOUNT")]
+        const tableHeaderNonSor = [t("WORKS_SNO"), t("EVENTS_DESCRIPTION"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")] 
+        const tableHeaderOverheads = [t("WORKS_SNO"), t("WORKS_OVERHEAD"), t("WORKS_PERCENTAGE"), t("WORKS_AMOUNT")]
         
         const tableRowsNonSor = nonSOR?.map((row,index)=>{
             return [
@@ -208,8 +209,8 @@ export const WorksSearch = {
                 row?.amountDetail[0]?.amount?.toFixed(2)
             ]
         })
-        const totalAmountNonSor = nonSOR.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0).toFixed(2)
-        tableRowsNonSor.push(["","","","" ,t("WORKS_TOTAL_AMT"), totalAmountNonSor])
+        const totalAmountNonSor = nonSOR?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0).toFixed(2)
+        tableRowsNonSor?.push(["","","","" ,t("RT_TOTAL"), totalAmountNonSor])
         
         const tableRowsOverheads = overheads?.map((row, index) => {
             return [
@@ -219,10 +220,10 @@ export const WorksSearch = {
                 row?.amountDetail?.[0]?.amount?.toFixed(2)
             ]
         })
-        const totalAmountOverheads = overheads.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0).toFixed(2)
-        tableRowsOverheads.push(["","", t("WORKS_TOTAL_AMT"), totalAmountOverheads])
+        const totalAmountOverheads = overheads?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0).toFixed(2)
+        tableRowsOverheads?.push(["","", t("RT_TOTAL"), totalAmountOverheads])
         const nonSorItems = {
-            title: "ESTIMATE_LINE_ITEMS",
+            title: "WORKS_NON_SOR",
             asSectionHeader: true,
             isTable: true,
             headers: tableHeaderNonSor,
@@ -234,7 +235,7 @@ export const WorksSearch = {
             }
         }
         const overheadItems = {
-            title: "ESTIMATE_OVERHEADS",
+            title: "WORKS_OVERHEADS",
             asSectionHeader: true,
             isTable: true,
             headers: tableHeaderOverheads,
@@ -254,9 +255,9 @@ export const WorksSearch = {
                 documents: [{
                     title: "WORKS_RELEVANT_DOCS",
                     BS: 'Works',
-                    values: files?.map((document) => {
+                    values: files?.filter(doc=>doc?.fileStoreId)?.map((document) => {
                         return {
-                            title: document?.fileName,
+                            title: document?.fileType,
                             documentType: document?.documentType,
                             documentUid: document?.fileStoreId,
                             fileStoreId: document?.fileStoreId,
@@ -266,10 +267,35 @@ export const WorksSearch = {
                 ]
             }
         }
-        const details = [nonSorItems,overheadItems,documentDetails]
+
+        const totalEstAmt = {
+            "title": " ",
+            "asSectionHeader": true,
+            "Component": Digit.ComponentRegistryService.getComponent("ViewTotalEstAmount"),
+            "value": estimate?.additionalDetails?.totalEstimatedAmount || t("NA")
+        }
+
+        const labourDetails = {
+            "title": "ESTIMATE_LABOUR_ANALYSIS",
+            "asSectionHeader": true,
+            "Component": Digit.ComponentRegistryService.getComponent("ViewLabourAnalysis"),
+            "value": [
+                {
+                    "title": "ESTIMATE_LABOUR_COST",
+                    "value": estimate?.additionalDetails?.labourMaterialAnalysis?.labour || t("NA")
+                },
+                {
+                    "title": "ESTIMATE_MATERIAL_COST",
+                    "value": estimate?.additionalDetails?.labourMaterialAnalysis?.material || t("NA")
+                },
+            ]
+        }
+        const details = [nonSorItems, overheadItems,totalEstAmt,labourDetails,documentDetails]
+
         return {
             applicationDetails: details,
             applicationData:estimate,
+            isNoDataFound : estimateArr.length === 0 ? true : false
         }
     },
     workflowDataDetails: async (tenantId, businessIds) => {

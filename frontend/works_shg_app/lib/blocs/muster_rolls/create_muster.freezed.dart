@@ -33,6 +33,8 @@ mixin _$MusterCreateEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? projectName,
+            int? amount,
             List<Map<String, dynamic>>? skillsList)
         create,
     required TResult Function(
@@ -56,6 +58,8 @@ mixin _$MusterCreateEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? projectName,
+            int? amount,
             List<Map<String, dynamic>>? skillsList)?
         create,
     TResult? Function(
@@ -79,6 +83,8 @@ mixin _$MusterCreateEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? projectName,
+            int? amount,
             List<Map<String, dynamic>>? skillsList)?
         create,
     TResult Function(
@@ -198,6 +204,8 @@ abstract class _$$CreateMusterEventCopyWith<$Res>
       String registerNo,
       String registerName,
       int startDate,
+      String? projectName,
+      int? amount,
       List<Map<String, dynamic>>? skillsList});
 }
 
@@ -219,6 +227,8 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
     Object? registerNo = null,
     Object? registerName = null,
     Object? startDate = null,
+    Object? projectName = freezed,
+    Object? amount = freezed,
     Object? skillsList = freezed,
   }) {
     return _then(_$CreateMusterEvent(
@@ -250,6 +260,14 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
               as int,
+      projectName: freezed == projectName
+          ? _value.projectName
+          : projectName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      amount: freezed == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as int?,
       skillsList: freezed == skillsList
           ? _value._skillsList
           : skillsList // ignore: cast_nullable_to_non_nullable
@@ -269,6 +287,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
       required this.registerNo,
       required this.registerName,
       required this.startDate,
+      this.projectName,
+      this.amount,
       final List<Map<String, dynamic>>? skillsList})
       : _skillsList = skillsList;
 
@@ -286,6 +306,10 @@ class _$CreateMusterEvent implements CreateMusterEvent {
   final String registerName;
   @override
   final int startDate;
+  @override
+  final String? projectName;
+  @override
+  final int? amount;
   final List<Map<String, dynamic>>? _skillsList;
   @override
   List<Map<String, dynamic>>? get skillsList {
@@ -297,7 +321,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
 
   @override
   String toString() {
-    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, contractId: $contractId, orgName: $orgName, registerNo: $registerNo, registerName: $registerName, startDate: $startDate, skillsList: $skillsList)';
+    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, contractId: $contractId, orgName: $orgName, registerNo: $registerNo, registerName: $registerName, startDate: $startDate, projectName: $projectName, amount: $amount, skillsList: $skillsList)';
   }
 
   @override
@@ -318,6 +342,9 @@ class _$CreateMusterEvent implements CreateMusterEvent {
                 other.registerName == registerName) &&
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate) &&
+            (identical(other.projectName, projectName) ||
+                other.projectName == projectName) &&
+            (identical(other.amount, amount) || other.amount == amount) &&
             const DeepCollectionEquality()
                 .equals(other._skillsList, _skillsList));
   }
@@ -332,6 +359,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
       registerNo,
       registerName,
       startDate,
+      projectName,
+      amount,
       const DeepCollectionEquality().hash(_skillsList));
 
   @JsonKey(ignore: true)
@@ -351,6 +380,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? projectName,
+            int? amount,
             List<Map<String, dynamic>>? skillsList)
         create,
     required TResult Function(
@@ -364,7 +395,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
         update,
   }) {
     return create(tenantId, registerId, contractId, orgName, registerNo,
-        registerName, startDate, skillsList);
+        registerName, startDate, projectName, amount, skillsList);
   }
 
   @override
@@ -378,6 +409,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? projectName,
+            int? amount,
             List<Map<String, dynamic>>? skillsList)?
         create,
     TResult? Function(
@@ -391,7 +424,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
         update,
   }) {
     return create?.call(tenantId, registerId, contractId, orgName, registerNo,
-        registerName, startDate, skillsList);
+        registerName, startDate, projectName, amount, skillsList);
   }
 
   @override
@@ -405,6 +438,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? projectName,
+            int? amount,
             List<Map<String, dynamic>>? skillsList)?
         create,
     TResult Function(
@@ -420,7 +455,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
   }) {
     if (create != null) {
       return create(tenantId, registerId, contractId, orgName, registerNo,
-          registerName, startDate, skillsList);
+          registerName, startDate, projectName, amount, skillsList);
     }
     return orElse();
   }
@@ -466,6 +501,8 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
       required final String registerNo,
       required final String registerName,
       required final int startDate,
+      final String? projectName,
+      final int? amount,
       final List<Map<String, dynamic>>? skillsList}) = _$CreateMusterEvent;
 
   @override
@@ -480,6 +517,8 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
   @override
   String get registerName;
   int get startDate;
+  String? get projectName;
+  int? get amount;
   @override
   List<Map<String, dynamic>>? get skillsList;
   @override
@@ -644,6 +683,8 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? projectName,
+            int? amount,
             List<Map<String, dynamic>>? skillsList)
         create,
     required TResult Function(
@@ -671,6 +712,8 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? projectName,
+            int? amount,
             List<Map<String, dynamic>>? skillsList)?
         create,
     TResult? Function(
@@ -698,6 +741,8 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? projectName,
+            int? amount,
             List<Map<String, dynamic>>? skillsList)?
         create,
     TResult Function(

@@ -19,6 +19,7 @@ import '../blocs/muster_rolls/muster_roll_estimate.dart';
 import '../blocs/muster_rolls/search_individual_muster_roll.dart';
 import '../models/attendance/attendee_model.dart';
 import '../models/mdms/attendance_hours.dart';
+import '../models/muster_rolls/estimate_muster_roll_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
 import '../models/muster_rolls/muster_workflow_model.dart';
 import '../models/skills/skills.dart';
@@ -31,6 +32,7 @@ import '../utils/notifiers.dart';
 import '../widgets/ButtonLink.dart';
 import '../widgets/CircularButton.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/table_dropdown.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
@@ -108,7 +110,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         ? 150.0
         : (MediaQuery.of(context).size.width / 7.5);
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
@@ -215,7 +220,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                     hintText: AppLocalizations
                                                             .of(context)
                                                         .translate(i18.common
-                                                            .searchByNameAadhaar),
+                                                            .searchByName),
                                                     border:
                                                         const OutlineInputBorder(
                                                       borderRadius:
@@ -262,7 +267,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                             loading: () => Loaders
                                                                 .circularLoader(
                                                                     context),
-                                                            loaded: (MusterRollsModel?
+                                                            loaded: (EstimateMusterRollsModel?
                                                                 viewMusterRollsModel) {
                                                               List<AttendeesTrackList>
                                                                   attendeeList =
@@ -286,6 +291,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 .individualId,
                                                                         individualId: e
                                                                             .individualId,
+                                                                        individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName,
+                                                                        id: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? e.id ?? '',
                                                                         skill: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
                                                                             '',
                                                                         monEntryId: e
@@ -339,6 +346,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                     data.individualId =
                                                                         item1.individualId ??
                                                                             '';
+                                                                    data.id = item1.id ?? '';
                                                                     data.skill =
                                                                         item1
                                                                             .skill;
@@ -436,6 +444,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                     data.individualId =
                                                                         item1.individualId ??
                                                                             '';
+                                                                    data.id = item1.id ?? '';
                                                                     data.skill =
                                                                         item1
                                                                             .skill;
@@ -492,7 +501,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                             width,
                                                                         rightColumnWidth:
                                                                             width *
-                                                                                9,
+                                                                                10,
                                                                         height: 58 +
                                                                             (52.0 *
                                                                                 (tableData.length + 1)),
@@ -567,14 +576,22 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                           if (individualMusterRollModel
                                                               .musterRoll!
                                                               .isNotEmpty) {
-                                                            Notifiers.getToastMessage(
-                                                                context,
-                                                                AppLocalizations.of(
-                                                                        context)
-                                                                    .translate(i18
-                                                                        .attendanceMgmt
-                                                                        .applicationInWorkFlow),
-                                                                'ERROR');
+                                                            if(individualMusterRollModel.musterRoll!.first.musterRollStatus == 'APPROVED'){
+                                                              Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.notModifyApprovedApplication), 'ERROR');
+                                                            }
+                                                            else{
+                                                              Notifiers
+                                                                  .getToastMessage(
+                                                                  context,
+                                                                  AppLocalizations
+                                                                      .of(
+                                                                      context)
+                                                                      .translate(
+                                                                      i18
+                                                                          .attendanceMgmt
+                                                                          .applicationInWorkFlow),
+                                                                  'ERROR');
+                                                            }
 
                                                             inWorkFlow = true;
                                                           }
@@ -646,7 +663,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                         .instance
                                                                         .colorScheme
                                                                         .secondary)),
-                                                            onPressed: () {
+                                                            onPressed: inWorkFlow ? null : () {
                                                               if (selectedDateRange ==
                                                                   null) {
                                                                 Notifiers.getToastMessage(
@@ -755,9 +772,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                               'SUCCESS');
                                                                           updateLoaded =
                                                                               true;
-                                                                          context
-                                                                              .router
-                                                                              .push(const HomeRoute());
+                                                                          onSubmit(registerId.toString());
                                                                         }
                                                                       },
                                                                       orElse: () =>
@@ -845,7 +860,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
     if (searchController.text.isNotEmpty) {
       setState(() {
         newList.retainWhere((e) =>
-            e.individualId!.toLowerCase().contains(searchController.text));
+            e.name!.toLowerCase().contains(searchController.text.toLowerCase()));
       });
     } else {
       onSubmit(registerId.toString());
@@ -890,9 +905,9 @@ class _SHGInboxPage extends State<SHGInboxPage> {
               .translate(i18.common.aadhaarNumber),
           apiKey: 'aadhaarNumber',
         ),
-        TableHeader(
-          AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-              .translate(i18.attendanceMgmt.skill),
+    TableHeader(
+      '${AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+          .translate(i18.attendanceMgmt.skill)}*',
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
@@ -922,6 +937,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.sun),
         ),
+        TableHeader(
+          AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+              .translate(i18.common.total),
+        )
       ];
 
   TableDataRow getAttendanceRow(TrackAttendanceTableData tableDataModel) {
@@ -932,6 +951,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           apiKey: tableDataModel.skill,
           widget: DropDownDialog(
             options: skillDropDown,
+            label: i18.common.selectSkill,
             selectedOption: tableDataModel.skill.toString(),
             onChanged: (val) {
               tableDataModel.skill = val;
@@ -941,15 +961,39 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                   .isNotEmpty) {
                 skillsPayLoad.removeWhere((elem) =>
                     elem["individualId"] == tableDataModel.individualId);
-                skillsPayLoad.add({
-                  "individualId": tableDataModel.individualId,
-                  "additionalDetails": {"code": val}
-                });
+                if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
+                  skillsPayLoad.add({
+                    "id": tableDataModel.id,
+                    "additionalDetails": {
+                      "code": val
+                    }
+                  });
+                }
+                else {
+                  skillsPayLoad.add({
+                    "individualId": tableDataModel.individualId,
+                    "additionalDetails": {
+                      "code": val
+                    }
+                  });
+                }
               } else {
-                skillsPayLoad.add({
-                  "individualId": tableDataModel.individualId,
-                  "additionalDetails": {"code": val}
-                });
+                if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
+                  skillsPayLoad.add({
+                    "id": tableDataModel.id,
+                    "additionalDetails": {
+                      "code": val
+                    }
+                  });
+                }
+                else {
+                  skillsPayLoad.add({
+                    "individualId": tableDataModel.individualId,
+                    "additionalDetails": {
+                      "code": val
+                    }
+                  });
+                }
               }
             },
           )),
@@ -1115,12 +1159,24 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     tableDataModel.sunEntryId,
                     tableDataModel.sunExitId,
                     tableDataModel.auditDetails),
-      ))
+      )),
+      TableData(label: (convertedValue(tableDataModel.monIndex!.toDouble()) + convertedValue(tableDataModel.tueIndex!.toDouble())
+          + convertedValue(tableDataModel.wedIndex!.toDouble()) + convertedValue(tableDataModel.thuIndex!.toDouble())
+          + convertedValue(tableDataModel.friIndex!.toDouble()) + convertedValue(tableDataModel.satIndex!.toDouble())
+          + convertedValue(tableDataModel.sunIndex!.toDouble())).toString(),)
     ]);
   }
 
   List<TableDataRow> getAttendanceData(List<TrackAttendanceTableData> list) {
     return list.map((e) => getAttendanceRow(e)).toList();
+  }
+  double convertedValue(double tableVal){
+    if(tableVal < 0){
+      return 0;
+    }
+    else{
+      return tableVal;
+    }
   }
 
   void onTapButton(individualId, day, entryID, exitId, auditDetails) {
@@ -1136,54 +1192,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
       setState(() {
         if (newList[index].getProperty(day) == 0.0 ||
             newList[index].getProperty(day) == -1) {
-          newList[index].setProperty(day, 0.5);
-          if (entryID != null && exitId != null) {
-            updateAttendeePayload.removeWhere((e) =>
-                e['individualId'] == individualId &&
-                DateFormats.getDay(e['time']).toLowerCase() == day);
-            updateAttendeePayload.addAll(updateAttendanceLogPayload(
-                newList[index],
-                registerId ?? '',
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    morning),
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    afternoon),
-                entryID,
-                exitId,
-                widget.tenantId,
-                auditDetails,
-                true,
-                true));
-          } else {
-            createAttendeePayload.removeWhere((e) =>
-                e['individualId'] == individualId &&
-                DateFormats.getDay(e['time']).toLowerCase() == day);
-            createAttendeePayload.addAll(createAttendanceLogPayload(
-                newList[index],
-                registerId ?? '',
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    morning),
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    afternoon),
-                widget.tenantId));
-          }
-        } else if (newList[index].getProperty(day) == 0.5) {
           newList[index].setProperty(day, 1.0);
           if (entryID != null && exitId != null) {
             updateAttendeePayload.removeWhere((e) =>
-                e['individualId'] == individualId &&
+            e['individualId'] == individualId &&
                 DateFormats.getDay(e['time']).toLowerCase() == day);
             updateAttendeePayload.addAll(updateAttendanceLogPayload(
                 newList[index],
@@ -1206,7 +1218,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                 true));
           } else {
             createAttendeePayload.removeWhere((e) =>
-                e['individualId'] == individualId &&
+            e['individualId'] == individualId &&
                 DateFormats.getDay(e['time']).toLowerCase() == day);
             createAttendeePayload.addAll(createAttendanceLogPayload(
                 newList[index],
@@ -1223,11 +1235,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     evening),
                 widget.tenantId));
           }
-        } else {
+        } else if (newList[index].getProperty(day) == 0.5) {
           newList[index].setProperty(day, 0.0);
           if (entryID != null && exitId != null) {
             updateAttendeePayload.removeWhere((e) =>
-                e['individualId'] == individualId &&
+            e['individualId'] == individualId &&
                 DateFormats.getDay(e['time']).toLowerCase() == day);
             updateAttendeePayload.addAll(updateAttendanceLogPayload(
                 newList[index],
@@ -1250,8 +1262,52 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                 false));
           } else {
             createAttendeePayload.removeWhere((e) =>
-                e['individualId'] == individualId &&
+            e['individualId'] == individualId &&
                 DateFormats.getDay(e['time']).toLowerCase() == day);
+          }
+        } else {
+          newList[index].setProperty(day, 0.5);
+          if (entryID != null && exitId != null) {
+            updateAttendeePayload.removeWhere((e) =>
+            e['individualId'] == individualId &&
+                DateFormats.getDay(e['time']).toLowerCase() == day);
+            updateAttendeePayload.addAll(updateAttendanceLogPayload(
+                newList[index],
+                registerId ?? '',
+                DateFormats.getTimestampFromWeekDay(
+                    DateFormats.getDateFromTimestamp(
+                        selectedDateRange!.startDate),
+                    day,
+                    morning),
+                DateFormats.getTimestampFromWeekDay(
+                    DateFormats.getDateFromTimestamp(
+                        selectedDateRange!.startDate),
+                    day,
+                    afternoon),
+                entryID,
+                exitId,
+                widget.tenantId,
+                auditDetails,
+                true,
+                true));
+          } else {
+            createAttendeePayload.removeWhere((e) =>
+            e['individualId'] == individualId &&
+                DateFormats.getDay(e['time']).toLowerCase() == day);
+            createAttendeePayload.addAll(createAttendanceLogPayload(
+                newList[index],
+                registerId ?? '',
+                DateFormats.getTimestampFromWeekDay(
+                    DateFormats.getDateFromTimestamp(
+                        selectedDateRange!.startDate),
+                    day,
+                    morning),
+                DateFormats.getTimestampFromWeekDay(
+                    DateFormats.getDateFromTimestamp(
+                        selectedDateRange!.startDate),
+                    day,
+                    afternoon),
+                widget.tenantId));
           }
         }
       });
@@ -1270,54 +1326,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
       setState(() {
         if (newList[index].getProperty(day) == 0.0 ||
             newList[index].getProperty(day) == -1) {
-          newList[index].setProperty(day, 1.0);
-          if (entryID != null && exitId != null) {
-            updateAttendeePayload.removeWhere((e) =>
-                e['individualId'] == individualId &&
-                DateFormats.getDay(e['time']).toLowerCase() == day);
-            updateAttendeePayload.addAll(updateAttendanceLogPayload(
-                newList[index],
-                registerId ?? '',
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    morning),
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    evening),
-                entryID,
-                exitId,
-                widget.tenantId,
-                auditDetails,
-                true,
-                true));
-          } else {
-            createAttendeePayload.removeWhere((e) =>
-                e['individualId'] == individualId &&
-                DateFormats.getDay(e['time']).toLowerCase() == day);
-            createAttendeePayload.addAll(createAttendanceLogPayload(
-                newList[index],
-                registerId ?? '',
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    morning),
-                DateFormats.getTimestampFromWeekDay(
-                    DateFormats.getDateFromTimestamp(
-                        selectedDateRange!.startDate),
-                    day,
-                    evening),
-                widget.tenantId));
-          }
-        } else {
           newList[index].setProperty(day, 0.0);
           if (entryID != null && exitId != null) {
             updateAttendeePayload.removeWhere((e) =>
-                e['individualId'] == individualId &&
+            e['individualId'] == individualId &&
                 DateFormats.getDay(e['time']).toLowerCase() == day);
             updateAttendeePayload.addAll(updateAttendanceLogPayload(
                 newList[index],
@@ -1340,8 +1352,52 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                 false));
           } else {
             createAttendeePayload.removeWhere((e) =>
-                e['individualId'] == individualId &&
+            e['individualId'] == individualId &&
                 DateFormats.getDay(e['time']).toLowerCase() == day);
+          }
+        } else {
+          newList[index].setProperty(day, 1.0);
+          if (entryID != null && exitId != null) {
+            updateAttendeePayload.removeWhere((e) =>
+            e['individualId'] == individualId &&
+                DateFormats.getDay(e['time']).toLowerCase() == day);
+            updateAttendeePayload.addAll(updateAttendanceLogPayload(
+                newList[index],
+                registerId ?? '',
+                DateFormats.getTimestampFromWeekDay(
+                    DateFormats.getDateFromTimestamp(
+                        selectedDateRange!.startDate),
+                    day,
+                    morning),
+                DateFormats.getTimestampFromWeekDay(
+                    DateFormats.getDateFromTimestamp(
+                        selectedDateRange!.startDate),
+                    day,
+                    evening),
+                entryID,
+                exitId,
+                widget.tenantId,
+                auditDetails,
+                true,
+                true));
+          } else {
+            createAttendeePayload.removeWhere((e) =>
+            e['individualId'] == individualId &&
+                DateFormats.getDay(e['time']).toLowerCase() == day);
+            createAttendeePayload.addAll(createAttendanceLogPayload(
+                newList[index],
+                registerId ?? '',
+                DateFormats.getTimestampFromWeekDay(
+                    DateFormats.getDateFromTimestamp(
+                        selectedDateRange!.startDate),
+                    day,
+                    morning),
+                DateFormats.getTimestampFromWeekDay(
+                    DateFormats.getDateFromTimestamp(
+                        selectedDateRange!.startDate),
+                    day,
+                    evening),
+                widget.tenantId));
           }
         }
       });

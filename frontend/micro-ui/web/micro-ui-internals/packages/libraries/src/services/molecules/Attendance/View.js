@@ -8,7 +8,7 @@ const attendanceTypes = {
 
 const getWeekDates = (data) => {
   let weekDates = {}
-  if(data?.individualEntries.length > 0) {
+  if(data?.individualEntries?.length > 0) {
     const attendanceEntry = data?.individualEntries[0]?.attendanceEntries
     attendanceEntry.forEach(item => {
       weekDates[`${Digit.DateUtils.getDayfromTimeStamp(item?.time)}`] = Digit.DateUtils.ConvertTimestampToDate(item?.time, 'MMM d')
@@ -27,26 +27,26 @@ const getWeekAttendance = (data) => {
   return weekAttendance
 }
 
-const getAttendanceTableData = (data, skills) => {
+const getAttendanceTableData = (data, skills, t) => {
   let tableData = {}
-  if(data?.individualEntries.length > 0) {
+  if(data?.individualEntries?.length > 0) {
     data?.individualEntries.forEach((item, index) => {
       let tableRow = {}
       tableRow.id = item.id
       tableRow.sno = index + 1
-      tableRow.registerId = data?.registerId
-      tableRow.actualWorkingDays = item?.actualTotalAttendance
-      tableRow.nameOfIndividual = item?.additionalDetails?.userName || 'Piyush HarjitPal'
-      tableRow.guardianName = item?.additionalDetails?.fatherName  || 'HarjitPal'
-      tableRow.skill = skills[item?.additionalDetails?.skillCode]?.name || skills['SKILL_1'].name
-      tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount * item?.actualTotalAttendance || skills['SKILL_1'].amount * item?.actualTotalAttendance 
-      tableRow.modifiedAmount = tableRow.amount 
+      tableRow.registerId = item?.additionalDetails?.userId || t("NA")
+      tableRow.actualWorkingDays = item?.actualTotalAttendance || 0
+      tableRow.nameOfIndividual = item?.additionalDetails?.userName || t("NA")
+      tableRow.guardianName = item?.additionalDetails?.fatherName  || t("NA")
+      tableRow.skill = skills[item?.additionalDetails?.skillCode]?.name || t("NA")
+      tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount * item?.actualTotalAttendance || 0
+      tableRow.modifiedAmount = (item?.modifiedTotalAttendance ? (skills[item?.additionalDetails?.skillCode]?.amount * item?.modifiedTotalAttendance) : tableRow?.amount) || 0
       tableRow.modifiedWorkingDays = item?.modifiedTotalAttendance ? item?.modifiedTotalAttendance : item?.actualTotalAttendance
       tableRow.bankAccountDetails = {
-        accountNo : item?.additionalDetails?.bankDetails || '880182873839-SBIN0001237',
+        accountNo : item?.additionalDetails?.bankDetails || t("NA"),
         ifscCode : null
       }
-      tableRow.aadharNumber = item?.additionalDetails?.aadharNumber || '9099-1234-1234' 
+      tableRow.aadharNumber = item?.additionalDetails?.aadharNumber || t("NA")
       tableRow.attendence = getWeekAttendance(item?.attendanceEntries)
       tableData[item.id] = tableRow
     });
@@ -73,10 +73,10 @@ const getAttendanceTableData = (data, skills) => {
 }
 
 const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills) => {
-  if(data.musterRolls.length === 0) return;
+  if(data?.musterRolls?.length === 0) throw new Error('No data found');
   
   const musterRoll = data.musterRolls[0]
-  const attendanceTableData = getAttendanceTableData(musterRoll, skills)
+  const attendanceTableData = getAttendanceTableData(musterRoll, skills, t)
   const weekDates = getWeekDates(musterRoll)
   const registrationDetails = {
     title: "ATM_REGISTRATION_DETAILS",
@@ -86,22 +86,17 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills)
       { title: "ES_COMMON_ORG_NAME", value: musterRoll?.additionalDetails?.orgName || t("NA") },
       { title: "ATM_REGISTER_ID", value: musterRoll?.additionalDetails?.attendanceRegisterNo || t("NA")},
       { title: "ATM_REGISTER_NAME", value: musterRoll?.additionalDetails?.attendanceRegisterName || t("NA") },
+      { title: "ATM_ATTENDENCE_FOR_WEEK", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("NA") },
     ],
     additionalDetails: {
       table: {
         weekTable: {
-          tableHeader: "ATM_ENROLLED_USERS",
+          tableHeader: "ATM_ATTENDANCE_DETAILS",
           renderTable: true,
           tableData: attendanceTableData,
           weekDates: weekDates
         },
-      },
-      dateRange: {
-        title: "ATM_ATTENDENCE_FOR_WEEK",
-        epochStartDate: musterRoll?.startDate,
-        epochEndDate: musterRoll?.endDate,
-        disabled: true
-      },
+      }
     },
   };
   const applicationDetails = { applicationDetails: [registrationDetails] };
