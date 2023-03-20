@@ -480,56 +480,6 @@ export const UICustomizations = {
     },
   },
   EstimateInboxConfig:{},
-  SearchContractConfig: {
-    customValidationCheck:(data)=> {
-        
-        //checking both to and from date are present
-        const { createdFrom, createdTo } = data
-        if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === "") )
-            return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" }
-        
-           
-        return false
-    },
-    preProcess: (data) => {
-        const createdTo = Digit.Utils.pt.convertDateToEpoch(data?.params?.createdTo);
-        const createdFrom = Digit.Utils.pt.convertDateToEpoch(data?.params?.createdFrom);
-        const projectType = data?.params?.projectType?.code;
-        data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), createdFrom, createdTo,projectType };
-        //deleting ward data since this is a static field for now
-        delete data?.params?.ward
-        return data;
-    },
-    additionalCustomizations: (row, column, columnConfig, value, t, searchResult, headerLocale) => {
-        //here we can add multiple conditions
-        //like if a cell is link then we return link
-        //first we can identify which column it belongs to then we can return relevant result
-
-        const getAmount = (item) => {
-            return item.amountDetail.reduce((acc, row) => acc + row.amount, 0);
-        };
-        if (column.label === "WORKS_ORDER_ID") {
-            return (
-                <span className="link">
-                    <Link
-                        to={`/${window.contextPath
-                            }/employee/contracts/view-contracts?tenantId=${Digit.ULBService.getCurrentTenantId()}&contractNumber=${value}`}
-                    >
-                        {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-                    </Link>
-                </span>
-            );
-        }
-        if (column.label === "WORKS_ORDER_AMOUNT") {
-            return `₹ ${row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0)}`;
-        }
-    },
-    additionalValidations: (type, data, keys) => {
-      if (type === "date") {
-          return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
-      }
-  },
-},
   BillInboxConfig: {
     preProcess: (data) => {
       const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber;

@@ -20,15 +20,16 @@ return {
     serviceName: "/wms/contract/_search",
     requestParam: {},
     requestBody: {
+      inbox: {
+          moduleSearchCriteria: {}
+      }
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
     moduleName: "SearchContractConfig",
-    tableFormJsonPath: "requestParam",
-    // filterFormJsonPath: "requestBody.contracts",
-    // searchFormJsonPath: "requestBody.contracts",
-    filterFormJsonPath: "requestParam",
-    searchFormJsonPath: "requestParam",
+    tableFormJsonPath: "requestBody.inbox",
+    filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
   },
   sections: {
     search: {
@@ -42,7 +43,7 @@ return {
           ward: "",
           projectType: "",
           projectName: "",
-          contractNumber: "",
+          workOrderNumber: "",
           contractStatus:"",
           createdFrom: "",
           createdTo: "",
@@ -110,7 +111,7 @@ return {
                 ]
               },
               populators: {
-                name: "contractNumber",
+                name: "workOrderNumber",
                 error: "CONTRACT_PATTERN_ERR_MSG",
                 validation: {
                     pattern: "WO\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
@@ -167,33 +168,33 @@ return {
         columns: [
           {
             label: "WORKS_ORDER_ID",
-            jsonPath: "contractNumber",
+            jsonPath: "businessObject.contractNumber",
             additionalCustomization: true,
           },
           {
             label: "WORKS_PROJECT_NAME",
-            jsonPath: "additionalDetails.projectName",
+            jsonPath: "businessObject.additionalDetails.projectName",
           },
           {
             label: "NAME_OF_CBO",
-            jsonPath: "additionalDetails?.orgName",
+            jsonPath: "businessObject.additionalDetails.orgName",
           },
           {
             label: "ROLE_OF_CBO",
-            jsonPath: "executingAuthority",
+            jsonPath: "businessObject.executingAuthority",
             //additionalCustomization: true,
           },
           {
             label: "WORKS_LOCATION",
-            jsonPath: "",
+            jsonPath: "businessObject.additionalDetails.officerInChargeName.serviceHistory.location",
           },
           {
             label: "ES_COMMON_STATUS",
-            jsonPath: "status",
+            jsonPath: "businessObject.lineItems.status",
           },
           {
             label: "WORKS_ORDER_AMOUNT",
-            jsonPath: "totalContractedAmount",
+            jsonPath: "businessObject.totalContractedAmount",
             additionalCustomization: true,
           },
         ],
