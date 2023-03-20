@@ -33,17 +33,27 @@ const ViewBill = () => {
 
   const { isLoading: isBillLoading, data: billData, revalidate, isFetching: isBillFetching } = Digit.Hooks.useCustomAPIHook(reqCriteria);
 
-  const tableEntriesMustor = data?.applicationData.individualEntries
+  const tableEntriesMustor = data?.applicationDetails?.applicationDetails?.[1]?.additionalDetails?.table?.tableData
+  
   const benficiaries = billData?.BillDemands[0]?.beneficiaries
 
   //mapping mustor roll table entries with bill search response beneficiery ids and updating status
-  tableEntriesMustor?.forEach((entry,idx) => {
-    benficiaries?.forEach((row)=>{
-      if(row?.id === entry?.id) {
-        entry.paymentStatus = `PAYMENT_${row?.status}`
-      }
-    })
+
+  benficiaries?.forEach(row=>{
+    
+    tableEntriesMustor[row.id].paymentStatus = `PAYMENT_${row?.status}`
   })
+
+  // Object.keys(tableEntriesMustor).map((key,idx)=> {
+  //   tableEntriesMustor[key].paymentStatus = `PAYMENT_${row?.status}`
+  // })
+  // tableEntriesMustor?.forEach((entry,idx) => {
+  //   benficiaries?.forEach((row)=>{
+  //     if (row?.id === entry?.individualId) {
+  //       entry.paymentStatus = `PAYMENT_${row?.status}`
+  //     }
+  //   })
+  // })
 
   return (
     <React.Fragment>

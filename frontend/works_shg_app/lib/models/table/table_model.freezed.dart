@@ -23,6 +23,7 @@ mixin _$TableDataModel {
   String? get name => throw _privateConstructorUsedError;
   String? get aadhaar => throw _privateConstructorUsedError;
   String? get individualGaurdianName => throw _privateConstructorUsedError;
+  String? get mobileNumber => throw _privateConstructorUsedError;
   String? get skill => throw _privateConstructorUsedError;
   String? get uuid => throw _privateConstructorUsedError;
   String? get individualId => throw _privateConstructorUsedError;
@@ -50,6 +51,7 @@ abstract class $TableDataModelCopyWith<$Res> {
       {String? name,
       String? aadhaar,
       String? individualGaurdianName,
+      String? mobileNumber,
       String? skill,
       String? uuid,
       String? individualId,
@@ -78,6 +80,7 @@ class _$TableDataModelCopyWithImpl<$Res, $Val extends TableDataModel>
     Object? name = freezed,
     Object? aadhaar = freezed,
     Object? individualGaurdianName = freezed,
+    Object? mobileNumber = freezed,
     Object? skill = freezed,
     Object? uuid = freezed,
     Object? individualId = freezed,
@@ -101,6 +104,10 @@ class _$TableDataModelCopyWithImpl<$Res, $Val extends TableDataModel>
       individualGaurdianName: freezed == individualGaurdianName
           ? _value.individualGaurdianName
           : individualGaurdianName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mobileNumber: freezed == mobileNumber
+          ? _value.mobileNumber
+          : mobileNumber // ignore: cast_nullable_to_non_nullable
               as String?,
       skill: freezed == skill
           ? _value.skill
@@ -158,6 +165,7 @@ abstract class _$$_TableDataModelCopyWith<$Res>
       {String? name,
       String? aadhaar,
       String? individualGaurdianName,
+      String? mobileNumber,
       String? skill,
       String? uuid,
       String? individualId,
@@ -184,6 +192,7 @@ class __$$_TableDataModelCopyWithImpl<$Res>
     Object? name = freezed,
     Object? aadhaar = freezed,
     Object? individualGaurdianName = freezed,
+    Object? mobileNumber = freezed,
     Object? skill = freezed,
     Object? uuid = freezed,
     Object? individualId = freezed,
@@ -207,6 +216,10 @@ class __$$_TableDataModelCopyWithImpl<$Res>
       individualGaurdianName: freezed == individualGaurdianName
           ? _value.individualGaurdianName
           : individualGaurdianName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mobileNumber: freezed == mobileNumber
+          ? _value.mobileNumber
+          : mobileNumber // ignore: cast_nullable_to_non_nullable
               as String?,
       skill: freezed == skill
           ? _value.skill
@@ -260,6 +273,7 @@ class _$_TableDataModel implements _TableDataModel {
       {required this.name,
       this.aadhaar,
       this.individualGaurdianName,
+      this.mobileNumber,
       this.skill,
       this.uuid,
       this.individualId,
@@ -280,6 +294,8 @@ class _$_TableDataModel implements _TableDataModel {
   final String? aadhaar;
   @override
   final String? individualGaurdianName;
+  @override
+  final String? mobileNumber;
   @override
   final String? skill;
   @override
@@ -303,7 +319,7 @@ class _$_TableDataModel implements _TableDataModel {
 
   @override
   String toString() {
-    return 'TableDataModel(name: $name, aadhaar: $aadhaar, individualGaurdianName: $individualGaurdianName, skill: $skill, uuid: $uuid, individualId: $individualId, bankNumber: $bankNumber, monIndex: $monIndex, tueIndex: $tueIndex, wedIndex: $wedIndex, thursIndex: $thursIndex, friIndex: $friIndex, satIndex: $satIndex)';
+    return 'TableDataModel(name: $name, aadhaar: $aadhaar, individualGaurdianName: $individualGaurdianName, mobileNumber: $mobileNumber, skill: $skill, uuid: $uuid, individualId: $individualId, bankNumber: $bankNumber, monIndex: $monIndex, tueIndex: $tueIndex, wedIndex: $wedIndex, thursIndex: $thursIndex, friIndex: $friIndex, satIndex: $satIndex)';
   }
 
   @override
@@ -315,6 +331,8 @@ class _$_TableDataModel implements _TableDataModel {
             (identical(other.aadhaar, aadhaar) || other.aadhaar == aadhaar) &&
             (identical(other.individualGaurdianName, individualGaurdianName) ||
                 other.individualGaurdianName == individualGaurdianName) &&
+            (identical(other.mobileNumber, mobileNumber) ||
+                other.mobileNumber == mobileNumber) &&
             (identical(other.skill, skill) || other.skill == skill) &&
             (identical(other.uuid, uuid) || other.uuid == uuid) &&
             (identical(other.individualId, individualId) ||
@@ -342,6 +360,7 @@ class _$_TableDataModel implements _TableDataModel {
       name,
       aadhaar,
       individualGaurdianName,
+      mobileNumber,
       skill,
       uuid,
       individualId,
@@ -372,6 +391,7 @@ abstract class _TableDataModel implements TableDataModel {
       {required final String? name,
       final String? aadhaar,
       final String? individualGaurdianName,
+      final String? mobileNumber,
       final String? skill,
       final String? uuid,
       final String? individualId,
@@ -392,6 +412,8 @@ abstract class _TableDataModel implements TableDataModel {
   String? get aadhaar;
   @override
   String? get individualGaurdianName;
+  @override
+  String? get mobileNumber;
   @override
   String? get skill;
   @override

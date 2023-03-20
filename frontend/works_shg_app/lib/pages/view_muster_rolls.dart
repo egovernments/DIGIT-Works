@@ -7,10 +7,10 @@ import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
 import '../blocs/localization/app_localization.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
-import '../utils/constants.dart';
 import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
 
@@ -31,7 +31,10 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
@@ -41,21 +44,16 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
           listener: (context, state) {
             state.maybeWhen(
                 loading: () => Loaders.circularLoader(context),
-                orElse: () => Container());
-          },
-          child: BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
-              builder: (context, state) {
-            return state.maybeWhen(
-                loading: () => Loaders.circularLoader(context),
-                loaded: (MusterRollsModel? musterRollsModel) {
-                  if (musterRollsModel?.musterRoll != null) {
-                    musters =
-                        List<MusterRoll>.from(musterRollsModel!.musterRoll!);
+                loaded: (MusterRollsModel? musterRoll) {
+                  if (musterRoll?.musterRoll != null) {
+                    musters = List<MusterRoll>.from(musterRoll!.musterRoll!);
                     musters.sort((a, b) =>
                         b.musterAuditDetails!.lastModifiedTime!.compareTo(
                             a.musterAuditDetails!.lastModifiedTime!.toInt()));
                     musterList = musters
                         .map((e) => {
+                              i18.attendanceMgmt.musterRollId:
+                                  e.musterRollNumber,
                               i18.attendanceMgmt.nameOfWork: e
                                       .musterAdditionalDetails
                                       ?.attendanceRegisterName ??
@@ -64,17 +62,20 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                                       .musterAdditionalDetails
                                       ?.attendanceRegisterNo ??
                                   'NA',
-                              i18.attendanceMgmt.musterRollId:
-                                  e.musterRollNumber,
-                              i18.common.dates:
+                              i18.attendanceMgmt.musterRollPeriod:
                                   '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                              i18.common.status:
-                                  e.musterRollStatus == Constants.rejected
-                                      ? e.musterRollStatus
-                                      : Constants.active
+                              i18.common.status: e.musterRollStatus
                             })
                         .toList();
                   }
+                },
+                orElse: () => Container());
+          },
+          child: BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
+              builder: (context, state) {
+            return state.maybeWhen(
+                loading: () => Loaders.circularLoader(context),
+                loaded: (MusterRollsModel? musterRollsModel) {
                   return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -85,7 +86,7 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            '${t.translate(i18.attendanceMgmt.musterRolls)}(${musterRollsModel!.musterRoll!.length})',
+                            '${t.translate(i18.attendanceMgmt.musterRolls)}(${musterList.length})',
                             style: Theme.of(context).textTheme.displayMedium,
                             textAlign: TextAlign.left,
                           ),
@@ -100,6 +101,8 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                                 musterList,
                                 isSHGInbox: true,
                                 musterRollsModel: musters,
+                                elevatedButtonLabel:
+                                    t.translate(i18.common.viewDetails),
                               )
                       ]);
                 },

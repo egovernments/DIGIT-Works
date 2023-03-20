@@ -23,6 +23,7 @@ import '../router/app_router.dart';
 import '../utils/models.dart';
 import '../utils/notifiers.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/auto_complete_search_bar.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
@@ -58,7 +59,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   List<Map<String, dynamic>> deleteAttendeePayLoadList = [];
   bool searchUser = false;
   List<Map<String, dynamic>> existingAttendeeList = [];
-  var tableData;
+  List<TableDataRow> tableData = [];
 
   @override
   void initState() {
@@ -67,16 +68,29 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   }
 
   afterViewBuild() async {
+    tableData.clear();
+    existingAttendeeList.clear();
+    userList.clear();
+    filteredUserList.clear();
+    addToTableList.clear();
+    attendeeTableList.clear();
+    userTableList.clear();
+    createAttendeePayLoadList.clear();
+    deleteAttendeePayLoadList.clear();
+    searchUser = false;
     context.read<AttendanceIndividualProjectSearchBloc>().add(
           SearchIndividualAttendanceProjectEvent(
               id: widget.registerId ?? '',
               tenantId: widget.tenantId.toString()),
         );
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
   }
 
   @override
   void deactivate() {
+    context.read<AttendanceIndividualProjectSearchBloc>().add(
+          const DisposeIndividualAttendanceRegisterEvent(),
+        );
     context.read<IndividualSearchBloc>().add(
           const DisposeSearchIndividualEvent(),
         );
@@ -91,11 +105,11 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
   @override
   Widget build(BuildContext context) {
-    // final List list = json.decode(fakeTableData);
-    // List<TableDataModel> tableList =
-    //     list.map((e) => TableDataModel.fromJson(e)).toList();
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
@@ -104,7 +118,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           Container(
             color: const Color.fromRGBO(238, 238, 238, 1),
             padding: const EdgeInsets.only(left: 8, right: 8, bottom: 16),
-            height: MediaQuery.of(context).size.height - 100,
+            height: MediaQuery.of(context).size.height - 50,
             child: CustomScrollView(slivers: [
               SliverList(
                   delegate: SliverChildListDelegate([
@@ -119,11 +133,11 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     Container(
                         alignment: Alignment.centerLeft,
-                        margin: const EdgeInsets.all(8.0),
+                        margin: const EdgeInsets.all(4.0),
                         child: AutoCompleteSearchBar(
                           hintText: AppLocalizations.of(context)
                               .translate(i18.common.searchByMobileNumber),
@@ -134,14 +148,14 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                           minCharsForSuggestions: 10,
                           maxLength: 10,
                           listTile: buildTile,
+                          textInputType: TextInputType.phone,
                           inputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp("[a-zA-Z0-9]"))
+                            FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                           ],
                           labelText: '',
                         )),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     BlocListener<AttendanceIndividualProjectSearchBloc,
                         AttendanceIndividualProjectSearchState>(
@@ -154,7 +168,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                             loaded: (AttendanceRegistersModel?
                                 individualAttendanceRegisterModel) {
                               if (individualAttendanceRegisterModel!
-                                  .attendanceRegister!.isNotEmpty) {
+                                          .attendanceRegister !=
+                                      null &&
+                                  individualAttendanceRegisterModel!
+                                      .attendanceRegister!.isNotEmpty) {
                                 individualAttendanceRegisterModel!
                                     .attendanceRegister!
                                     .map((e) => {
@@ -311,10 +328,12 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                 headerList: headerList,
                                                 tableData: tableData,
                                                 leftColumnWidth: width,
-                                                rightColumnWidth: width * 3,
+                                                rightColumnWidth: width * 4,
                                                 height: 58 +
                                                     (52.0 *
                                                         (tableData.length + 1)),
+                                                scrollPhysics:
+                                                    const NeverScrollableScrollPhysics(),
                                               ),
                                             );
                                           }),
@@ -331,6 +350,19 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                 .attendanceMgmt
                                                                 .attendeeCreateSuccess),
                                                         'SUCCESS');
+                                                    context.router.popAndPush(
+                                                        AttendanceRegisterTableRoute(
+                                                            projectDetails: widget
+                                                                .projectDetails,
+                                                            attendanceRegister:
+                                                                widget
+                                                                    .attendanceRegister,
+                                                            registerId: widget
+                                                                .registerId
+                                                                .toString(),
+                                                            tenantId: widget!
+                                                                .tenantId
+                                                                .toString()));
                                                   },
                                                   error: (String? error) {
                                                     Notifiers.getToastMessage(
@@ -340,6 +372,19 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                             .translate(error
                                                                 .toString()),
                                                         'ERROR');
+                                                    context.router.popAndPush(
+                                                        AttendanceRegisterTableRoute(
+                                                            projectDetails: widget
+                                                                .projectDetails,
+                                                            attendanceRegister:
+                                                                widget
+                                                                    .attendanceRegister,
+                                                            registerId: widget
+                                                                .registerId
+                                                                .toString(),
+                                                            tenantId: widget!
+                                                                .tenantId
+                                                                .toString()));
                                                   },
                                                   orElse: () {});
                                             },
@@ -358,6 +403,23 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                   .attendanceMgmt
                                                                   .attendeeDeEnrollSuccess),
                                                           'SUCCESS');
+
+                                                      Future.delayed(
+                                                          const Duration(
+                                                              seconds: 3));
+                                                      context.router.popAndPush(
+                                                          AttendanceRegisterTableRoute(
+                                                              projectDetails: widget
+                                                                  .projectDetails,
+                                                              attendanceRegister:
+                                                                  widget
+                                                                      .attendanceRegister,
+                                                              registerId: widget
+                                                                  .registerId
+                                                                  .toString(),
+                                                              tenantId: widget!
+                                                                  .tenantId
+                                                                  .toString()));
                                                     },
                                                     error: (String? error) {
                                                       Notifiers.getToastMessage(
@@ -367,6 +429,19 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                               .translate(error
                                                                   .toString()),
                                                           'ERROR');
+                                                      context.router.popAndPush(
+                                                          AttendanceRegisterTableRoute(
+                                                              projectDetails: widget
+                                                                  .projectDetails,
+                                                              attendanceRegister:
+                                                                  widget
+                                                                      .attendanceRegister,
+                                                              registerId: widget
+                                                                  .registerId
+                                                                  .toString(),
+                                                              tenantId: widget!
+                                                                  .tenantId
+                                                                  .toString()));
                                                     },
                                                     orElse: () => Container());
                                               },
@@ -381,7 +456,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                 right: 8.0,
                                               ),
                                               child: SizedBox(
-                                                height: 50,
+                                                height: 35,
                                                 child: DigitElevatedButton(
                                                   onPressed:
                                                       createAttendeePayLoadList
@@ -435,8 +510,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                               deleteAttendeePayLoadList),
                                                                     );
                                                               } else {}
-                                                              context.router.push(
-                                                                  const HomeRoute());
                                                             },
                                                   child: Text(
                                                       AppLocalizations.of(
@@ -482,6 +555,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           "individualCode": user["individualCode"],
           "individualGaurdianName": user["individualGaurdianName"],
           "skill": user["skill"],
+          "individualId": user["individualId"],
           "uuid": user["uuid"],
           "mobileNumber": user["mobileNumber"],
           "tenantId": user["tenantId"]
@@ -502,7 +576,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                     .isEmpty
             ? addToTableList
                 .map((e) => {
-                      "registerId": widget.attendanceRegister?.id.toString(),
+                      "registerId": widget.registerId?.toString(),
                       "individualId": e["uuid"],
                       "tenantId": e["tenantId"],
                       "additionalDetails": {
@@ -572,6 +646,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
             apiKey: 'skill'),
         TableHeader(
             AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+                .translate(i18.common.mobileNumber),
+            apiKey: 'mobileNumber'),
+        TableHeader(
+            AppLocalizations.of(scaffoldMessengerKey.currentContext!)
                 .translate(i18.common.action),
             apiKey: '')
       ];
@@ -582,7 +660,13 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
       TableData(
           label: tableDataModel.individualGaurdianName,
           apiKey: tableDataModel.individualGaurdianName),
-      TableData(label: tableDataModel.skill, apiKey: tableDataModel.skill),
+      TableData(
+          label: AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+              .translate(tableDataModel.skill.toString()),
+          apiKey: tableDataModel.skill),
+      TableData(
+          label: tableDataModel.mobileNumber,
+          apiKey: tableDataModel.mobileNumber),
       TableData(
           widget: DeleteButton(
               onTap: () => onDelete(tableDataModel.uuid.toString())))

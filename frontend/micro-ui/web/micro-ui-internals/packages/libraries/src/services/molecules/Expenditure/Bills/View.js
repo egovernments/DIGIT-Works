@@ -21,7 +21,7 @@ const getAttendanceTableData = (data, skills, t) => {
       }
       tableRow.paymentStatus = 'PAYMENT_PENDING'
       //tableRow.aadharNumber = item?.additionalDetails?.aadharNumber || t("NA")
-      tableData[item.id] = tableRow
+      tableData[item.individualId] = tableRow
     });
 
     //Add row to show Total data

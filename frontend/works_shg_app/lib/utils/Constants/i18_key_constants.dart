@@ -56,6 +56,7 @@ class Common {
   String get aadhaarNumber => 'CORE_COMMON_AADHAAR';
   String get bankAccountNumber => 'CORE_COMMON_BANK_ACCOUNT_NO';
   String get searchByNameAadhaar => 'CORE_SEARCH_BY_NAME_AADHAAR';
+  String get searchByName => 'CORE_SEARCH_BY_NAME';
   String get searchByMobileNumber => 'CORE_SEARCH_BY_MOBILE';
   String get mon => 'CORE_MON';
   String get tue => 'CORE_TUE';
@@ -72,6 +73,8 @@ class Common {
   String get endDate => 'EVENTS_END_DATE_LABEL';
   String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
   String get selectAnOption => 'ES_SELECT_AN_OPTION';
+  String get selectSkill => 'ATM_SELECT_SKILL';
+  String get viewDetails => 'ACTION_VIEW_DETAILS';
   String get action => 'CS_COMMON_ACTION';
   String get next => 'CS_COMMON_NEXT';
   String get fileSize => 'FILE_SIZE';
@@ -123,6 +126,7 @@ class AttendanceMgmt {
   String get projectId => 'WORKS_PROJECT_ID';
   String get projectDesc => 'WORKS_PROJECT_DESCRIPTION';
   String get musterRolls => 'ATM_MUSTER_ROLLS';
+  String get musterRollPeriod => 'MUSTER_ROLL_PERIOD';
   String get enrollWageSeeker => 'WORKS_ENROLL_WAGE_SEEKER';
   String get updateAttendance => 'UPDATE_ATTENDANCE';
   String get nameOfWork => 'WORKS_NAME_OF_WORK';
@@ -151,6 +155,7 @@ class AttendanceMgmt {
   String get attendeeDeEnrollFailed => 'ATTENDEE_DE_ENROLL_FAILED';
   String get attendeeDeEnrollSuccess => 'ATTENDEE_DE_ENROLL_SUCCESS';
   String get noMusterRollsFound => 'NO_MUSTER_ROLLS_FOUND';
+  String get noRegistersFound => 'NO_REGISTERS_FOUND';
   String get skill => 'ATM_SKILLS';
   String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
 }

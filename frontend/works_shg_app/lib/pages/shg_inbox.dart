@@ -32,6 +32,7 @@ import '../utils/notifiers.dart';
 import '../widgets/ButtonLink.dart';
 import '../widgets/CircularButton.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/table_dropdown.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
@@ -109,7 +110,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         ? 150.0
         : (MediaQuery.of(context).size.width / 7.5);
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
@@ -216,7 +220,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                     hintText: AppLocalizations
                                                             .of(context)
                                                         .translate(i18.common
-                                                            .searchByNameAadhaar),
+                                                            .searchByName),
                                                     border:
                                                         const OutlineInputBorder(
                                                       borderRadius:
@@ -947,6 +951,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           apiKey: tableDataModel.skill,
           widget: DropDownDialog(
             options: skillDropDown,
+            label: i18.common.selectSkill,
             selectedOption: tableDataModel.skill.toString(),
             onChanged: (val) {
               tableDataModel.skill = val;

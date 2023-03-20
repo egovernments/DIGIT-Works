@@ -6,7 +6,12 @@ import '../atoms/background_container.dart';
 class MobileView extends StatelessWidget {
   final Widget widget;
   final String bannerURL;
-  const MobileView(this.widget, this.bannerURL);
+  final double? logoBottomPosition;
+  final double? cardBottomPosition;
+  const MobileView(this.widget, this.bannerURL,
+      {this.logoBottomPosition = 8.0,
+      this.cardBottomPosition = 30.0,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +32,11 @@ class MobileView extends StatelessWidget {
                       // still be at least as big as necessary to fit its contents.
                       child: Container(
                           color: Colors.blue,
-                          //height: 120.0,
+                          // height: MediaQuery.of(context).size.height,
                           child: BackgroundContainer(
                               Stack(children: <Widget>[
                                 (Positioned(
-                                    bottom: 30.0,
+                                    bottom: cardBottomPosition,
                                     child: Container(
                                         margin:
                                             const EdgeInsets.only(bottom: 24),
@@ -41,7 +46,7 @@ class MobileView extends StatelessWidget {
                                         padding: const EdgeInsets.all(8),
                                         child: widget))),
                                 (Positioned(
-                                    bottom: 8.0,
+                                    bottom: logoBottomPosition,
                                     left: MediaQuery.of(context).size.width / 4,
                                     right:
                                         MediaQuery.of(context).size.width / 4,

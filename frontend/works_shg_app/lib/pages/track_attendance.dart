@@ -36,6 +36,7 @@ import '../utils/notifiers.dart';
 import '../widgets/ButtonLink.dart';
 import '../widgets/CircularButton.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/table_dropdown.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
@@ -129,7 +130,10 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
         ? 150.0
         : (MediaQuery.of(context).size.width / 7.5);
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
@@ -206,7 +210,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                         decoration: InputDecoration(
                                                           hintText: AppLocalizations.of(context)
                                                               .translate(
-                                                              i18.common.searchByNameAadhaar),
+                                                              i18.common.searchByName),
                                                           border: const OutlineInputBorder(
                                                             borderRadius: BorderRadius.zero,
                                                           ),
@@ -563,6 +567,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                       ?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA',
                                                                                                                   registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA',
                                                                                                                   registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
+                                                                                                                  projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '',
+                                                                                                                  amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500,
                                                                                                                   skillsList: skillsPayLoad));
                                                                                                             }} : null,
                                                                                                           child: Center(
@@ -760,6 +766,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
           widget: DropDownDialog(
             isDisabled: skillsDisable,
             options: skillDropDown,
+            label: i18.common.selectSkill,
             selectedOption: tableDataModel.skill.toString(),
             onChanged: (val) {
               tableDataModel.skill = val;
