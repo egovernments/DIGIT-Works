@@ -77,6 +77,7 @@ public class MusterRollServiceConfiguration {
     @Value("${works.attendance.register.search.limit}")
     private String attendanceRegisterSearchLimit;
 
+
     //Individual service
     @Value("${works.individual.host}")
     private String individualHost;
