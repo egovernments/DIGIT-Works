@@ -4,7 +4,7 @@ import {StatusTable,Row} from './StatusTable'
 const ViewDetailsCard = ({cardState,t,...props}) => {
   return (
     <Card className={"employeeCard-override"} >
-        <StatusTable>
+        <StatusTable customClass="status-table-custom-row">
             {Object.keys(cardState)?.map((key,idx)=>{
                 return (<Row className="border-none" label={`${t(key)}:`} text={cardState?.[key]} textStyle={{ whiteSpace: "pre" }} />)
             })}
