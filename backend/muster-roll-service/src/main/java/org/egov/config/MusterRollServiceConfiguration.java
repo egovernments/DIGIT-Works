@@ -89,20 +89,6 @@ public class MusterRollServiceConfiguration {
     @Value("${works.bankaccounts.search.endpoint}")
     private String bankaccountsSearchEndpoint;
 
-
-    //Individual service
-    @Value("${works.individual.host}")
-    private String individualHost;
-    @Value("${works.individual.search.endpoint}")
-    private String individualSearchEndpoint;
-
-    //Bankaccounts service
-    @Value("${works.bankaccounts.host}")
-    private String bankaccountsHost;
-    @Value("${works.bankaccounts.search.endpoint}")
-    private String bankaccountsSearchEndpoint;
-
-
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
