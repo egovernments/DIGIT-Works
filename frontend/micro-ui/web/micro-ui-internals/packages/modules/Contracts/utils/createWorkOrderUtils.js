@@ -75,7 +75,7 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, data}) => {
         },
         workflow : {
             "action": "CREATE",
-            "comment": "CREATE WO",
+            "comment": "",
             "assignees": [
             ]
         }
