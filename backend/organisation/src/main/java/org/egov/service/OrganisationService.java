@@ -51,6 +51,7 @@ public class OrganisationService {
     }
 
     public List<Organisation> searchOrganisation(OrgSearchRequest orgSearchRequest) {
+        log.info("OrganisationService::searchOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateSearchOrganisationRequest(orgSearchRequest);
         List<Organisation> organisations = organisationRepository.getOrganisations(orgSearchRequest);
         return organisations;

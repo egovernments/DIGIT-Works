@@ -140,10 +140,11 @@ public class OrganisationServiceValidator {
     public void validateSearchOrganisationRequest(OrgSearchRequest orgSearchRequest) {
         Map<String, String> errorMap = new HashMap<>();
         //Verify if RequestInfo and UserInfo is present
+        log.info("Organisation search request Info data validation");
         validateRequestInfo(orgSearchRequest.getRequestInfo(), errorMap);
         //Verify the search criteria
+        log.info("Organisation search criteria validation");
         validateSearchCriteria(orgSearchRequest.getSearchCriteria());
-
     }
 
     private void validateSearchCriteria(OrgSearchCriteria searchCriteria) {
