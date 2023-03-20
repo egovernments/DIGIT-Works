@@ -1,9 +1,9 @@
-var logger = require("../logger").logger;
+const logger = require("../logger").logger;
 
 /* 
 Send The Error Response back to client with proper response code 
 */
-export const throwError = (
+const throwError = (
   message = "",
   code = "INTERNAL_SERVER_ERROR",
   status = 500
@@ -17,7 +17,10 @@ export const throwError = (
 /* 
 Error Object
 */
-export const getErrorResponse = (code = "", message = "") => ({
+const getErrorResponse = (
+  code = "INTERNAL_SERVER_ERROR",
+  message = "Some Error Occured!!"
+) => ({
   ResponseInfo: null,
   Errors: [
     {
@@ -32,7 +35,7 @@ export const getErrorResponse = (code = "", message = "") => ({
 /* 
 Send The Response back to client with proper response code and response info
 */
-export const sendResponse = (res, response, code = 200) => {
+const sendResponse = (res, response, code = 200) => {
   res.status(code).send({
     ...getResponseInfo(),
     ...response,
@@ -42,7 +45,7 @@ export const sendResponse = (res, response, code = 200) => {
 /* 
 Response Object
 */
-export const getResponseInfo = () => ({
+const getResponseInfo = () => ({
   ResponseInfo: {
     apiId: "bff-0.0.1",
     ver: "1",
@@ -54,7 +57,7 @@ export const getResponseInfo = () => ({
 /* 
 Fallback Middleware function for returning 404 error for undefined paths
 */
-export const invalidPathHandler = (request, response, next) => {
+const invalidPathHandler = (request, response, next) => {
   response.status(404);
   response.send(getErrorResponse("INVALID_PATH", "invalid path"));
 };
@@ -62,7 +65,7 @@ export const invalidPathHandler = (request, response, next) => {
 /*
 Error handling Middleware function for logging the error message
 */
-export const errorLogger = (error, request, response, next) => {
+const errorLogger = (error, request, response, next) => {
   logger.error(`error ${error.message}`);
   next(error); // calling next middleware
 };
@@ -70,8 +73,17 @@ export const errorLogger = (error, request, response, next) => {
 /*
 Error handling Middleware function reads the error message and sends back a response in JSON format
 */
-export const errorResponder = (error, request, response, next) => {
+const errorResponder = (error, request, response, next) => {
   response.header("Content-Type", "application/json");
   const status = error.status || 500;
   response.status(status).send(getErrorResponse(error.code, error.message));
+};
+
+module.exports = {
+  errorResponder,
+  errorLogger,
+  invalidPathHandler,
+  getResponseInfo,
+  throwError,
+  sendResponse,
 };

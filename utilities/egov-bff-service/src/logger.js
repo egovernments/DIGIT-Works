@@ -5,8 +5,8 @@ const logger = createLogger({
     format.timestamp({ format: "    YYYY-MM-DD HH:mm:ss.SSSZZ" }),
     format.simple()
   ),
-  transports: [new transports.Console()]
+  transports: [new transports.Console()],
 });
 
 //export default logger;
-module.exports = { logger};
+module.exports = { logger };

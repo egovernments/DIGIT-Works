@@ -1,6 +1,7 @@
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
+const requestMiddleware = require("./utils/validateRequestMiddleware");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var config = require("./config");
@@ -26,7 +27,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
+/* Middleware to Validate Request info */
+app.use(requestMiddleware);
 app.use(config.app.contextPath + "/muster", musterRouter);
 
 // Attach the first Error handling Middleware
