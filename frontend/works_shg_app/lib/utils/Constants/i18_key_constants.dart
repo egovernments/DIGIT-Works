@@ -102,6 +102,7 @@ class Common {
   String get accountType => 'CORE_COMMON_ACCOUNT_TYPE';
   String get ifscCode => 'COMMON_IFSC_CODE';
   String get bankHint => 'HINT_BANK_DETAILS';
+  String get photoGraph => 'COMMON_PHOTOGRAPH';
 }
 
 class Home {
