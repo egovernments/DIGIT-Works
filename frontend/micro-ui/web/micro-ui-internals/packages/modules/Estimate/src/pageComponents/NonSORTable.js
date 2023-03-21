@@ -154,7 +154,7 @@ const NonSORTable = ({control,watch,...props}) => {
         <td style={getStyles(2)} ><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.description`} inputRef={register({
           required: true,
           //@Burhan-j Don't remove this whitespace in pattern, it is used for validation
-          pattern: /^[a-zA-Z0-9_ .$@#{}:;()\/ ]*$/
+          pattern: /^[a-zA-Z0-9_ .$@#{}:;&()\/ ]*$/
         })
         }
         />{errors && errors?.[formFieldName]?.[row.key]?.description?.type === "pattern" && (
@@ -190,7 +190,7 @@ const NonSORTable = ({control,watch,...props}) => {
 
         <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.rate`} inputRef={register({
           required: true,
-          pattern: /^[0-9]*$/
+          pattern: /^\d*\.?\d*$/
         })}
         onChange={(e) => setAmountField(e, row)}
         />{errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "pattern" && (

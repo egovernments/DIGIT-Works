@@ -136,6 +136,8 @@ import useSearchOrg from "./works/useSearchOrg";
 
 
 import useViewBill from "./bills/useViewBill";
+import useContractSearch from "./contracts/useContractSearch";
+
 
 const works = {
   useViewEstimateDetails,
@@ -164,7 +166,8 @@ const works = {
 const contracts = {
   useViewContractDetails,
   useViewContractDetailsClosureScreen,
-  useCreateWO
+  useCreateWO,
+  useContractSearch
 };
 
 const organisation = {

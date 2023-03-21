@@ -231,7 +231,7 @@ export const WorksSearch = {
             state: estimate,
             tableStyles:{
                 rowStyle:{},
-                cellStyle:[{},{"width":"40vw"},{},{},{},{"textAlign":"right"}]
+                cellStyle: [{}, { "width": "40vw" }, {}, {}, {  },{"textAlign":"right"}]
             }
         }
         const overheadItems = {
@@ -243,7 +243,7 @@ export const WorksSearch = {
             state: estimate,
             tableStyles: {
                 rowStyle: {},
-                cellStyle: [{}, { "width": "50vw" }, {}, { "textAlign": "right" }]
+                cellStyle: [{}, { "width": "50vw" }, {  }, { "textAlign": "right" }]
             }
         }
         

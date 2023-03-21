@@ -57,17 +57,29 @@ const ApplicationDetails = (props) => {
   } = props;
   
   const [billingCallData,setBillingCallData] = useState(null)
-  
+  // const [dataExist,setDataExist] = useState(false)
+
   const reqCriteria = {
     url: "/expensebilling/demand/v1/_create",
     params:{},
     body: { "musterRolls": billingCallData?.mustorObject,"count":1},
     config: {
       enabled: billingCallData ? true : false,
+      // skip: dataExist
     },
   }
 
+  
+
   const { isLoading:isBillLoading, data:billData, revalidate, isFetching:isBillFetching } = Digit.Hooks.useCustomAPIHook(reqCriteria);
+
+  // useEffect(() => {
+    
+  //     if(billData?.BillDemands?.length > 0 ){
+  //       setDataExist(true)
+  //     }
+  // }, [billData])
+
 
   useEffect(() => {
     if (billData?.BillDemands?.[0]?.billNumber ){

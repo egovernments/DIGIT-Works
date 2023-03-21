@@ -140,5 +140,17 @@ export const WorksService = {
             method: "POST",
             params: {},
             auth: true,
+        }),
+    contractSearch: ({ tenantId, filters }) => {
+        
+       return  Request({
+            url: Urls.contracts.search,
+            useCache: false,
+            data:filters,
+            method: "POST",
+            auth: true,
+            userService: false,
+            params: { tenantId },
         })
+    },
 }

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
 
 const SubWorkTableDetails = ({data}) => {
-    
+
     const tableStyles = data?.tableStyles
     const {rowStyle,cellStyle} = tableStyles
     const { t } = useTranslation();
@@ -19,7 +19,9 @@ const SubWorkTableDetails = ({data}) => {
         return (
             <tr style={rowStyle}>
                 {row?.map((lineItem,idx)=>{
-                    return <td style={cellStyle?.[idx]}>{lineItem}</td>
+                    let extraStyles = {}
+                    if (lineItem === "Total") extraStyles = { "fontWeight": "bold" }
+                    return <td style={{ ...cellStyle?.[idx], ...extraStyles }}>{lineItem}</td>
                 })}
             </tr>
         )
