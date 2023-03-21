@@ -109,7 +109,6 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     setModalSubmit(formData?.acceptTerms)
-
   }
 
   const cardStyle = () => {
@@ -131,7 +130,7 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={() => {}}
       formId="modal-action"
-      isDisabled = {!modalSubmit}
+      isDisabled = { action?.action === 'APPROVE' ? !modalSubmit : false }
     >
       <FormComposer
         config={config.form}
