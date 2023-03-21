@@ -2,7 +2,7 @@ const searchOrganisationConfig = () => {
   return {
     label: "WORKS_SEARCH_ORGANISATION",
     type: "search",
-    actionLabel: "WORKS_ADD_ORGANISATION",
+    actionLabel: "MASTERS_ADD_NEW_ORGANISATION",
     actionRole: "MUKTA_ADMIN",
     actionLink: "masters/create-organization",
     apiDetails: {
@@ -88,7 +88,7 @@ const searchOrganisationConfig = () => {
               },
             },
             {
-              label: "MASTERS_STATUS",
+              label: "CORE_COMMON_STATUS",
               type: "dropdown",
               isMandatory: false,
               disable: false,
@@ -163,7 +163,7 @@ const searchOrganisationConfig = () => {
               additionalCustomization: true,
             },
             {
-              label: "MASTERS_STATUS",
+              label: "CORE_COMMON_STATUS",
               jsonPath: "applicationStatus",
               additionalCustomization: true,
             },

@@ -87,6 +87,11 @@ _$_MusterAdditionalDetails _$$_MusterAdditionalDetailsFromJson(
       attendanceRegisterName: json['attendanceRegisterName'] as String?,
       attendanceRegisterNo: json['attendanceRegisterNo'] as String?,
       orgName: json['orgName'] as String?,
+      amount: json['amount'] as int?,
+      assignee: json['assignee'] as String?,
+      billType: json['billType'] as String?,
+      projectId: json['projectId'] as String?,
+      projectName: json['projectName'] as String?,
       contractId: json['contractId'] as String?,
     );
 
@@ -96,6 +101,11 @@ Map<String, dynamic> _$$_MusterAdditionalDetailsToJson(
       'attendanceRegisterName': instance.attendanceRegisterName,
       'attendanceRegisterNo': instance.attendanceRegisterNo,
       'orgName': instance.orgName,
+      'amount': instance.amount,
+      'assignee': instance.assignee,
+      'billType': instance.billType,
+      'projectId': instance.projectId,
+      'projectName': instance.projectName,
       'contractId': instance.contractId,
     };
 

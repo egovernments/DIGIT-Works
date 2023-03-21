@@ -1,21 +1,39 @@
 package org.egov.validator;
 
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.IndividualUtil;
+import org.egov.util.OrganisationUtil;
 import org.egov.web.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.egov.util.BankAccountConstant.IND;
+import static org.egov.util.BankAccountConstant.ORG;
 
 @Component
 @Slf4j
 public class BankAccountValidator {
 
+    @Autowired
+    private IndividualUtil individualUtil;
+
+    @Autowired
+    private OrganisationUtil organisationUtil;
+
+    public static final String jsonPathForInds = "$.Individual.*.id";
+
+    public static final String jsonPathForOrgs = "$.organisations.*.id";
 
     /**
      * validate the search bank account
@@ -49,11 +67,86 @@ public class BankAccountValidator {
         List<BankAccount> bankAccountList = bankAccountRequest.getBankAccounts();
         RequestInfo requestInfo = bankAccountRequest.getRequestInfo();
 
-        //validateRequestInfo(requestInfo, errorMap);
+        validateRequestInfo(requestInfo, errorMap);
         validateBankAccount(bankAccountList, errorMap);
+
+        validateOrgIdAndIndId(bankAccountRequest, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
+    }
+
+    /**
+     * Validate the individual and organisation ids from the individual and organisation service respectively
+     *
+     * @param bankAccountRequest
+     * @param errorMap
+     */
+    private void validateOrgIdAndIndId(BankAccountRequest bankAccountRequest, Map<String, String> errorMap) {
+        log.info("BankAccountValidator::validateOrgIdAndIndId");
+        RequestInfo requestInfo = bankAccountRequest.getRequestInfo();
+        String tenantId = bankAccountRequest.getBankAccounts().get(0).getTenantId();
+        List<BankAccount> bankAccounts = bankAccountRequest.getBankAccounts();
+
+        Map<String, List<String>> serviceCodeIdsMap = new HashMap<>();
+
+        for (BankAccount bankAccount : bankAccounts) {
+            // If the service code already exists in the map, add the reference id to the existing list
+            if (serviceCodeIdsMap.containsKey(bankAccount.getServiceCode())) {
+                serviceCodeIdsMap.get(bankAccount.getServiceCode()).add(bankAccount.getReferenceId());
+            }
+            // If the service code does not exist in the map, create a new list and add the reference id to it
+            else {
+                List<String> refIds = new ArrayList<>();
+                refIds.add(bankAccount.getReferenceId());
+                serviceCodeIdsMap.put(bankAccount.getServiceCode(), refIds);
+            }
+        }
+
+
+        if (serviceCodeIdsMap.containsKey(ORG)) {
+            List<String> refOrgIds = serviceCodeIdsMap.get(ORG);
+            Object orgRes = organisationUtil.fetchOrganisationDetails(refOrgIds, requestInfo, tenantId);
+            if (ObjectUtils.isEmpty(orgRes)) {
+                throw new CustomException("REFERENCE.ORGANISATION_IDS", "Organisation reference ids are invalid");
+            }
+
+            List<Object> orgJsonRes = null;
+            try {
+                orgJsonRes = JsonPath.read(orgRes, jsonPathForOrgs);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                throw new CustomException("JSONPATH_ERROR", "Failed to parse Organisation response");
+            }
+
+            for (String id : refOrgIds) {
+                if (!orgJsonRes.contains(id)) {
+                    errorMap.put("REFERENCE.ORGANISATION_IDS", "Reference -organisation with id(s) : " + refOrgIds + " doesn't exist");
+                }
+            }
+        }
+        if (serviceCodeIdsMap.containsKey(IND)) {
+            List<String> refIndividualIds = serviceCodeIdsMap.get(IND);
+            Object individualRes = individualUtil.fetchIndividualDetails(refIndividualIds, requestInfo, tenantId);
+            if (ObjectUtils.isEmpty(individualRes)) {
+                throw new CustomException("REFERENCE.INDIVIDUAL_IDS", "Individual reference ids are invalid");
+            }
+
+            List<Object> indRes = null;
+            try {
+                indRes = JsonPath.read(individualRes, jsonPathForInds);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                throw new CustomException("JSONPATH_ERROR", "Failed to parse individual response");
+            }
+
+            for (String refIndId : refIndividualIds) {
+                if (!indRes.contains(refIndId)) {
+                    errorMap.put("REFERENCE.INDIVIDUAL_IDS", "Reference -individual with id(s) : " + refIndId + " doesn't exist");
+                }
+            }
+        }
+
     }
 
     private void validateBankAccount(List<BankAccount> bankAccountList, Map<String, String> errorMap) {

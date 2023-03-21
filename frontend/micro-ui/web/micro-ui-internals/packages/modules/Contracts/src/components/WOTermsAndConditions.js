@@ -52,7 +52,7 @@ const WOTermsAndConditions = (props) => {
 
     const showDelete = () => {
         let countIsShow = 0
-        rows.map(row => row.isShow && countIsShow++)
+        rows?.map(row => row.isShow && countIsShow++)
         if (countIsShow === 1) {
         return false
         }
@@ -63,7 +63,7 @@ const WOTermsAndConditions = (props) => {
 
     const removeRow = (row) => {
         //make a new state here which doesn't have this key
-        const updatedState = rows.map(e => {
+        const updatedState = rows?.map(e => {
         if (e.key === row.key) {
             return {
             key: e.key,
@@ -87,7 +87,7 @@ const WOTermsAndConditions = (props) => {
 
     const renderBody = () => {
         let i = 0
-        return rows.map((row, index) => {
+        return rows?.map((row, index) => {
         if (row.isShow) i++
         return row.isShow && <tr key={index} style={{ "height": "50%" }}>
             <td style={getStyles(1)}>{i}</td>

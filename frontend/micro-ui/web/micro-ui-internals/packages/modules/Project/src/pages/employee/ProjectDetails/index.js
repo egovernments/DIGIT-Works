@@ -93,6 +93,7 @@ const ProjectDetails = () => {
     useEffect(()=>{
         let isUserEstimateCreator = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
         if(isEstimateSearchError) {
+            setToast({show : true, label : t("COMMON_ERROR_FETCHING_ESTIMATE_DETAILS"), error : true});
             setActionsMenu([]);
             setHideActionBar(true);
         }else {

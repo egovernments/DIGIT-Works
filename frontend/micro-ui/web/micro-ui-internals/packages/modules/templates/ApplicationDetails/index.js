@@ -53,7 +53,8 @@ const ApplicationDetails = (props) => {
     noBoxShadow,
     sectionHeadStyle,
     showActionBar = true,
-    setshowEditTitle = () => {}
+    setshowEditTitle = () => {},
+    customClass
   } = props;
   
   const [billingCallData,setBillingCallData] = useState(null)
@@ -346,6 +347,7 @@ const ApplicationDetails = (props) => {
             applicationNo={props.applicationNo}
             tenantId={props.tenantId}
             businessService={businessService}
+            customClass={customClass}
           />
           {showModal ? (
             <ActionModal

@@ -24,7 +24,7 @@ import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
 import HorizontalNav  from "../atoms/HorizontalNav"
 import Toast from "../atoms/Toast";
 import UploadFileComposer from "./UploadFileComposer";
-
+import CheckBox from "../atoms/CheckBox";
 const wrapperStyles = {
   // "display":"flex",
   // "flexDirection":"column",
@@ -221,6 +221,39 @@ export const FormComposer = (props) => {
             defaultValue={populators.defaultValue}
             name={populators?.name}
             control={control}
+          />
+        );
+
+      case "checkbox":
+        return (
+          <Controller
+            name={`${populators.name}`}
+            control={control}
+            defaultValue={formData?.[populators.name]}
+            rules={{ required: populators?.isMandatory }}
+            render={(props) => {
+              
+              return (
+                <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                  <CheckBox
+                    onChange={(e) => {
+                      // const obj = {
+                      //   ...props.value,
+                      //   [e.target.value]: e.target.checked
+                      // }
+                      
+                      props.onChange(e.target.checked)
+                    }}
+                    value={formData?.[populators.name] }
+                    checked={formData?.[populators.name]}
+                    label={t(`${populators?.title}`)}
+                    styles = {populators?.styles}
+                    style={populators?.labelStyles}
+                    customLabelMarkup={populators?.customLabelMarkup}
+                  />
+                </div>
+              );
+            }}
           />
         );
       case "multiupload":

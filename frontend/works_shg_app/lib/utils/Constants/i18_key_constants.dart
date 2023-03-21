@@ -158,4 +158,5 @@ class AttendanceMgmt {
   String get noRegistersFound => 'NO_REGISTERS_FOUND';
   String get skill => 'ATM_SKILLS';
   String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
+  String get individualDetails => 'ATM_INDIVIDUAL_DETAILS';
 }

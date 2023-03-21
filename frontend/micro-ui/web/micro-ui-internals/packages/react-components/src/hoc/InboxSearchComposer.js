@@ -125,7 +125,7 @@ const InboxSearchComposer = (props) => {
                     }
                 {   
                     configs?.sections?.searchResult?.show &&  
-                        <div className="" style={data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length > 0 ? (!(isLoading || isFetching) ?{ overflowX: "scroll" }: {}) : {  }} >
+                        <div style={data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length > 0 ? (!(isLoading || isFetching) ?{ overflowX: "scroll", borderRadius : "4px" }: {}) : {  }} >
                             <ResultsTable 
                                 config={configs?.sections?.searchResult?.uiConfig} 
                                 data={data} 
