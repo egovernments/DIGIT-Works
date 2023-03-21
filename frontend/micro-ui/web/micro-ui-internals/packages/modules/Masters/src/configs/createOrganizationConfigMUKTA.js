@@ -1,28 +1,4 @@
-//Civil Works, Electrical Works, Not applicable.
-const FunctionalCategory = [
-    {
-        code: "CIVIL_WORKS",
-        name: "Civil Works"
-    },
-    {
-        code: "ELECTRICAL_WORKS",
-        name: "Electrical Works"
-    },
-    {
-        code: "NOT_APPLICABLE",
-        name: "Not Applicable"
-    }
-]
-
-const Rank = [
-    { code: "A", name: "A" },
-    { code: "B", name: "B" },
-    { code: "C", name: "C"},
-    { code: "D", name: "D"},
-    { code: "NOT_APPLICABLE", name: "Not Applicable"}
-]
-
-export const createOrganizationConfigMUKTA = ({defaultValues, orgType, orgSubType, ULBOptions, wards, localities}) => {
+export const createOrganizationConfigMUKTA = ({defaultValues, orgType, orgSubType, ULBOptions, wards, localities, funCategories}) => {
     return {
         tenantId: "pg",
         moduleName: "commonMuktaUiConfig",
@@ -139,7 +115,7 @@ export const createOrganizationConfigMUKTA = ({defaultValues, orgType, orgSubTyp
                                 optionsCustomStyle: {
                                     top: "2.3rem",
                                 },
-                                options: FunctionalCategory
+                                options: funCategories
                             }
                         },
                         {
@@ -156,7 +132,11 @@ export const createOrganizationConfigMUKTA = ({defaultValues, orgType, orgSubTyp
                                 optionsCustomStyle: {
                                     top: "2.3rem",
                                 },
-                                options: Rank
+                                mdmsConfig: {
+                                    masterName: "OrgFunctionClass",
+                                    moduleName: "common-masters",
+                                    localePrefix: "COMMON_MASTERS_CLASS",
+                                }
                             }
                         },
                         {

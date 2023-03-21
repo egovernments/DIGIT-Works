@@ -48,35 +48,42 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
       });
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
 
-    //org data
+    //org data 
     const {isLoading: orgDataFetching, data: orgData } = Digit.Hooks.useCustomMDMS(
         stateTenant,
         "common-masters",
-        [ { "name": "OrgType" }],
+        [ { "name": "OrgType" }, { name: "OrgFunctionCategory" }],
         {
           select: (data) => {
             let orgTypes = []
             let orgSubTypes = {}
+            let orgFunCategories = {}
             data?.["common-masters"]?.OrgType?.forEach(item => {
               if(!item?.active) return
               orgSubTypes[item?.code] = item?.subType.map(item => ({ ...item, code: item?.code, name: `COMMON_MASTERS_SUBORG_${item?.code}` }))
               orgTypes.push({...item, code: item?.code, name: `COMMON_MASTERS_ORG_${item?.code}`})
             })
+            data?.["common-masters"]?.OrgFunctionCategory?.forEach(item => {
+                if(!item?.active) return
+                orgFunCategories[item?.code] = item?.subType.map(item => ({ ...item, code: item?.code, name: `COMMON_MASTERS_FUNCATEGORY_${item?.code}` }))
+              })
             return {
                 orgTypes,
-                orgSubTypes
+                orgSubTypes,
+                orgFunCategories
             }
           },
         }
       );
     const filteredOrgSubTypes = orgData?.orgSubTypes[selectedOrg]
+    const filteredOrgFunCategories = orgData?.orgFunCategories[selectedOrg]
 
     const config = useMemo(
         () => {
             const defaultValues = {
                 'locDetails_city': ULBOptions[0],
             }
-            const conf = createOrganizationConfig({defaultValues, orgType:orgData, orgSubType:filteredOrgSubTypes, ULBOptions, wards:wardsAndLocalities, localities: filteredLocalities})
+            const conf = createOrganizationConfig({defaultValues, orgType:orgData, orgSubType:filteredOrgSubTypes, ULBOptions, wards:wardsAndLocalities, localities: filteredLocalities, funCategories: filteredOrgFunCategories})
             return conf?.CreateOrganisationConfig?.[0]
         },
         [wardsAndLocalities, filteredLocalities, ULBOptions, orgData, filteredOrgSubTypes ]);
@@ -96,6 +103,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             }
             if (difference?.funDetails_orgType) {
                 setValue("funDetails_orgSubType", '');
+                setValue("funDetails_category", '');
             }
             setSessionFormData({ ...sessionFormData, ...formData });
           }
