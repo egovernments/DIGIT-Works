@@ -87,3 +87,10 @@ class SkillCategory {
 
   SkillCategory({required this.code});
 }
+
+class SelectSkill {
+  final String code;
+  final String label;
+
+  SelectSkill(this.code, this.label);
+}
