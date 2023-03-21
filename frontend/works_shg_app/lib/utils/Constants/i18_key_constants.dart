@@ -95,6 +95,7 @@ class Common {
   String get fileManager => 'FILE_MANAGER';
   String get chooseAnAction => 'CHOOSE_AN_ACTION';
   String get fatherName => 'FATHER_NAME';
+  String get guardianName => 'COMMON_GUARDIAN_NAME';
   String get accountHolderName => 'ACCOUNT_HOLDER_NAME';
   String get accountNo => 'CORE_COMMON_ACCOUNT_NO';
   String get reEnterAccountNo => 'COMMON_RE_ENTER_ACCOUNT_NO';

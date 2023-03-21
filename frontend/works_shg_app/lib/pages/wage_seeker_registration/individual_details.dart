@@ -28,10 +28,12 @@ class IndividualDetailsState extends State<IndividualDetails> {
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
     List<MenuItemModel> relationship = [
-      MenuItemModel('Father',
-          AppLocalizations.of(context).translate('CORE_COMMON_FATHER')),
-      MenuItemModel('Husband',
-          AppLocalizations.of(context).translate('CORE_COMMON_HUSBAND'))
+      MenuItemModel(
+          AppLocalizations.of(context).translate('CORE_COMMON_FATHER'),
+          'FATHER'),
+      MenuItemModel(
+          AppLocalizations.of(context).translate('CORE_COMMON_HUSBAND'),
+          'HUSBAND')
     ];
     List<MenuItemModel> socialCategory = [
       MenuItemModel(
@@ -67,7 +69,7 @@ class IndividualDetailsState extends State<IndividualDetails> {
                     ),
                     DigitTextFormField(
                       formControlName: 'fatherName',
-                      label: t.translate(i18.common.fatherName),
+                      label: t.translate(i18.common.guardianName),
                     ),
                     DigitDropdown(
                       label: t.translate(i18.common.relationship),
