@@ -20,7 +20,7 @@ const NonSORTable = ({control,watch,...props}) => {
     const tableData = formData?.[formFieldName]
    
     setTotalAmount((prevState)=> {
-      return tableData?.filter((row, index) => row)?.filter((row,index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseInt(curr?.estimatedAmount) || 0
+      return tableData?.filter((row, index) => row)?.filter((row,index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseFloat(curr?.estimatedAmount) || 0
         ,0)
     })
 

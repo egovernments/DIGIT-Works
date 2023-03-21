@@ -24,7 +24,7 @@ const OverheadsTable = ({control,watch,...props}) => {
         
         const tableData = formData?.[formFieldName]
         setTotalAmount((prevState) => {
-            return tableData?.filter((row, index) => row)?.filter((row, index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseInt(curr?.amount) || 0
+            return tableData?.filter((row, index) => row)?.filter((row, index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseFloat(curr?.amount) || 0
                 , 0)
         })
 
