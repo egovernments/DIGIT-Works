@@ -54,6 +54,17 @@ class Common {
   String get dates => 'CORE_COMMON_DATES';
   String get status => 'CORE_COMMON_STATUS';
   String get aadhaarNumber => 'CORE_COMMON_AADHAAR';
+  String get relationship => 'CORE_COMMON_RELATIONSHIP';
+  String get socialCategory => 'COMMON_SOCIAL_CATEGORY';
+  String get dateOfBirth => 'CORE_DOB';
+  String get locationDetails => 'COMMON_LOCATION_DETAILS';
+  String get pinCode => 'CORE_COMMON_PINCODE';
+  String get financialDetails => 'COMMON_FINANCIAL_DETAILS';
+  String get city => 'CORE_COMMON_CITY';
+  String get ward => 'CORE_COMMON_WARD';
+  String get locality => 'CORE_COMMON_LOCALITY';
+  String get streetName => 'CORE_STREET_NAME';
+  String get doorNo => 'CORE_DOOR_NO';
   String get bankAccountNumber => 'CORE_COMMON_BANK_ACCOUNT_NO';
   String get searchByNameAadhaar => 'CORE_SEARCH_BY_NAME_AADHAAR';
   String get searchByName => 'CORE_SEARCH_BY_NAME';
@@ -84,6 +95,13 @@ class Common {
   String get fileManager => 'FILE_MANAGER';
   String get chooseAnAction => 'CHOOSE_AN_ACTION';
   String get fatherName => 'FATHER_NAME';
+  String get guardianName => 'COMMON_GUARDIAN_NAME';
+  String get accountHolderName => 'ACCOUNT_HOLDER_NAME';
+  String get accountNo => 'CORE_COMMON_ACCOUNT_NO';
+  String get reEnterAccountNo => 'COMMON_RE_ENTER_ACCOUNT_NO';
+  String get accountType => 'CORE_COMMON_ACCOUNT_TYPE';
+  String get ifscCode => 'COMMON_IFSC_CODE';
+  String get bankHint => 'HINT_BANK_DETAILS';
 }
 
 class Home {
@@ -157,6 +175,7 @@ class AttendanceMgmt {
   String get noMusterRollsFound => 'NO_MUSTER_ROLLS_FOUND';
   String get noRegistersFound => 'NO_REGISTERS_FOUND';
   String get skill => 'ATM_SKILLS';
+  String get skillDetails => 'ATM_SKILLS_DETAILS';
   String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
   String get individualDetails => 'ATM_INDIVIDUAL_DETAILS';
 }

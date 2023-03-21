@@ -326,5 +326,75 @@ export const UICustomizations = {
                 return <div>{t("NA")}</div>
             }
         }
+    },
+    SearchContractConfig: {
+        
+        preProcess: (data) => {
+            const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom);
+            const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo);
+            const workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber;
+            const status = data.body.inbox?.moduleSearchCriteria?.contractStatus?.code;
+            const projectType = data.body.inbox?.moduleSearchCriteria?.projectType?.code;
+            const projectName = data.body.inbox?.moduleSearchCriteria?.projectName;
+            const ward = data.body.inbox?.moduleSearchCriteria?.ward;
+            data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId()
+            data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId()
+            data.body.inbox = {
+              ...data.body.inbox,
+              tenantId: Digit.ULBService.getCurrentTenantId(),
+              moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), ward, workOrderNumber, status, projectType, projectName, startDate, endDate },
+            };
+            return data;
+          },
+
+        customValidationCheck:(data)=> {
+        
+            //checking both to and from date are present
+            const { createdFrom, createdTo } = data
+            if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === "") )
+                return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" }
+            
+               
+            return false
+        },
+        additionalCustomizations: (row, column, columnConfig, value, t, searchResult, headerLocale) => {
+            //here we can add multiple conditions
+            //like if a cell is link then we return link
+            //first we can identify which column it belongs to then we can return relevant result
+    
+            if (column.label === "WORKS_ORDER_ID") {
+                return (
+                    <span className="link">
+                        <Link
+                            to={`/${window.contextPath
+                                }/employee/contracts/contract-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&workOrderNumber=${value}`}
+                        >
+                            {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+                        </Link>
+                    </span>
+                );
+            }
+            if (column.label === "ES_COMMON_AMOUNT") {
+                   return Digit.Utils.dss.formatterWithoutRound(value, 'number');
+            }
+            if (column.label === "COMMON_ROLE_OF_CBO") {
+                return <span>{t(`COMMON_MASTERS_${value}`)}</span>;
+            }
+            if (column.label === "ES_COMMON_LOCATION") {
+                return value ? (
+                  <span style={{ whiteSpace: "nowrap" }}>
+                    {String(`${t(Digit.Utils.locale.getCityLocale(row?.businessObject?.tenantId))}, ${t(Digit.Utils.locale.getMohallaLocale(value, row?.businessObject?.tenantId))}`)}
+                  </span>
+                ) : (
+                  t("ES_COMMON_NA")
+                );
+              }
+            
+        },
+        additionalValidations: (type, data, keys) => {
+          if (type === "date") {
+              return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
+          }
+      },
     }
 }

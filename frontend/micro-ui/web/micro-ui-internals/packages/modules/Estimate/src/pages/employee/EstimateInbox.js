@@ -8,6 +8,7 @@ import { useLocation } from "react-router-dom";
 const EstimateInbox = () => {
     const { t } = useTranslation();
     const location = useLocation()
+    
     //fetch this config from mdms and pass it to the preProcess fn
     // let configs = inboxConfigMukta(t);
     const [pageConfig,setPageConfig] = useState(null)
@@ -38,7 +39,7 @@ const EstimateInbox = () => {
     if(isLoading || !pageConfig) return <Loader />
     return (
         <React.Fragment>
-            <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}</Header>
+            <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
             <div className="inbox-search-wrapper">
                 {/* <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer> */}
                 <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer>

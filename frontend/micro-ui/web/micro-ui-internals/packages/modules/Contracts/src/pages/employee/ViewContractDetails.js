@@ -2,7 +2,6 @@ import React, { useState, useEffect, Fragment }from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
 import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast } from '@egovernments/digit-ui-react-components';
-import ApplicationDetails from '../../../../templates/ApplicationDetails';
 
 
 const ViewContractDetails = () => {
@@ -34,6 +33,7 @@ const ViewContractDetails = () => {
     const ContractDetails = Digit.ComponentRegistryService.getComponent("ContractDetails");
     const TermsAndConditions = Digit.ComponentRegistryService.getComponent("TermsAndConditions");
     const {isLoading : isContractLoading, data, isError : isContractError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
+    //const {isLoading : isContractLoading, data } = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
 
     //fetching project data
     const { isLoading: isProjectLoading, data: project, isError : isProjectError } = Digit.Hooks.project.useProjectSearch({

@@ -75,7 +75,7 @@ const updateDependent = (target, dependencyConfig, inputKey) => {
     for(let toUpdate = 0; toUpdate<target?.preProcess?.updateDependent?.length; toUpdate++) {
         let keyToUpdate = target?.preProcess?.updateDependent[toUpdate];
         let dependentObject = ((dependencyConfig?.updateDependent?.filter(dependent=>dependent?.key === inputKey)?.[0]?.value));
-        console.log(dependentObject);
+        
         _.set(target, keyToUpdate, dependentObject);    
     }
     return target;
