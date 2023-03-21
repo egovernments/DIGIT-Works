@@ -73,25 +73,22 @@ class FinancialDetailsState extends State<FinancialDetails> {
                         hint: t.translate(i18.common.bankHint)),
                   ]),
                   const SizedBox(height: 16),
-                  SizedBox(
-                      height: 60,
-                      child: DigitCard(
-                          margin: const EdgeInsets.all(0.0),
-                          child: SizedBox(
-                            height: 30,
-                            child: DigitElevatedButton(
-                                onPressed: () {
-                                  if (form.valid) {
-                                    print(form.value);
-                                  } else {
-                                    form.markAllAsTouched();
-                                  }
-                                  context.router.push(const HomeRoute());
-                                },
-                                child: Center(
-                                  child: Text(t.translate(i18.common.submit)),
-                                )),
-                          )))
+                  DigitCard(
+                      child: Center(
+                    child: DigitElevatedButton(
+                        onPressed: () {
+                          widget.onPressed();
+                          if (form.valid) {
+                            print(form.value);
+                          } else {
+                            form.markAllAsTouched();
+                          }
+                          context.router.push(const HomeRoute());
+                        },
+                        child: Center(
+                          child: Text(t.translate(i18.common.submit)),
+                        )),
+                  ))
                 ],
               ),
             ),
