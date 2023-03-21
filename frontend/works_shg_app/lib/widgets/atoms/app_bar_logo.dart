@@ -17,7 +17,7 @@ class AppBarLogo extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.only(right: 16.0),
           child: Icon(
-            Icons.notifications_active,
+            Icons.notifications,
             size: 30,
           ),
         ),
