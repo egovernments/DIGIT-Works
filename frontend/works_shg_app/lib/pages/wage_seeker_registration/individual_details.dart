@@ -68,6 +68,10 @@ class IndividualDetailsState extends State<IndividualDetails> {
                       label: t.translate(i18.common.aadhaarNumber),
                     ),
                     DigitTextFormField(
+                      formControlName: 'name',
+                      label: t.translate(i18.common.nameLabel),
+                    ),
+                    DigitTextFormField(
                       formControlName: 'fatherName',
                       label: t.translate(i18.common.guardianName),
                     ),
@@ -111,7 +115,7 @@ class IndividualDetailsState extends State<IndividualDetails> {
                       callBack: (List<FileStoreModel>? filestore) {},
                       extensions: const ['jpg', 'pdf', 'png'],
                       moduleName: 'works',
-                      label: 'File Pick',
+                      label: t.translate(i18.common.photoGraph),
                     )
                   ]),
                   const SizedBox(height: 16),
@@ -141,6 +145,7 @@ class IndividualDetailsState extends State<IndividualDetails> {
 
   FormGroup buildForm() => fb.group(<String, Object>{
         'aadhaarNo': FormControl<String>(value: ''),
+        'name': FormControl<String>(value: ''),
         'fatherName': FormControl<String>(value: ''),
         'relationship': FormControl<String>(value: ''),
         'dob': FormControl<String>(value: ''),
