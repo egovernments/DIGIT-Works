@@ -54,14 +54,13 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                         .map((e) => {
                               i18.attendanceMgmt.musterRollId:
                                   e.musterRollNumber,
-                              i18.attendanceMgmt.nameOfWork: e
-                                      .musterAdditionalDetails
-                                      ?.attendanceRegisterName ??
-                                  'NA',
-                              i18.attendanceMgmt.winCode: e
-                                      .musterAdditionalDetails
-                                      ?.attendanceRegisterNo ??
-                                  'NA',
+                              i18.workOrder.workOrderNo:
+                                  e.musterAdditionalDetails?.contractId ?? 'NA',
+                              i18.attendanceMgmt.projectId:
+                                  e.musterAdditionalDetails?.projectId ?? 'NA',
+                              i18.attendanceMgmt.projectDesc:
+                                  e.musterAdditionalDetails?.projectName ??
+                                      'NA',
                               i18.attendanceMgmt.musterRollPeriod:
                                   '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
                               i18.common.status: e.musterRollStatus

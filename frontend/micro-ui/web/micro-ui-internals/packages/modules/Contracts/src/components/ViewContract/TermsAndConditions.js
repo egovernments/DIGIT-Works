@@ -42,7 +42,7 @@ const TermsAndConditions = (props) => {
         i++;
         return <tr key={index} style={{ "height": "50%" }}>
               <td style={getStyles(1)}>{i}</td>
-              <td style={getStyles(2)}><p>{row?.description}</p></td>
+              <td style={getStyles(2)}><p>{row?.description ? row?.description : "NA"}</p></td>
           </tr>
         })
   }

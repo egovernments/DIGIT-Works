@@ -1,7 +1,7 @@
-import React, { useState, useEffect }from 'react';
+import React, { useState, useEffect, Fragment }from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
-import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions } from '@egovernments/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast } from '@egovernments/digit-ui-react-components';
 import ApplicationDetails from '../../../../templates/ApplicationDetails';
 
 
@@ -11,6 +11,7 @@ const ViewContractDetails = () => {
     const queryStrings = Digit.Hooks.useQueryParams();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts")
+    const [toast, setToast] = useState({show : false, label : "", error : false});
 
     const payload = {
         tenantId : queryStrings?.tenantId || tenantId,
@@ -32,10 +33,10 @@ const ViewContractDetails = () => {
     ]
     const ContractDetails = Digit.ComponentRegistryService.getComponent("ContractDetails");
     const TermsAndConditions = Digit.ComponentRegistryService.getComponent("TermsAndConditions");
-    const {isLoading : isContractLoading, data, isError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
+    const {isLoading : isContractLoading, data, isError : isContractError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
 
     //fetching project data
-    const { isLoading: isProjectLoading, data: project } = Digit.Hooks.project.useProjectSearch({
+    const { isLoading: isProjectLoading, data: project, isError : isProjectError } = Digit.Hooks.project.useProjectSearch({
         tenantId,
         searchParams: {
             Projects: [
@@ -49,6 +50,22 @@ const ViewContractDetails = () => {
             enabled: !!(data?.applicationData?.additionalDetails?.projectId) 
         }
     })
+
+    useEffect(()=>{
+        if(isContractError || (!isContractLoading && data?.isNoDataFound)) {
+            setToast({show : true, label : t("COMMON_WO_NOT_FOUND"), error : true});
+        }
+    },[isContractError, data, isContractLoading]);
+
+    useEffect(()=>{
+        if(isProjectError) {
+            setToast({show : true, label : t("COMMON_PROJECT_NOT_FOUND"), error : true});
+        }
+    },[isProjectError]);
+
+    const handleToastClose = () => {
+        setToast({show : false, label : "", error : false});
+    }
 
     useEffect(() => {
         //here set cardstate when contract and project is available
@@ -70,21 +87,27 @@ const ViewContractDetails = () => {
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
             <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_VIEW_WORK_ORDER")}</Header>
           </div>
-          <ViewDetailsCard cardState={cardState} t={t} />
-          <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
-            {activeLink === "Work_Order" && <ContractDetails fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} data={data} isLoading={isContractLoading}/>}
-            {activeLink === "Terms_and_Conditions" && <TermsAndConditions data={data?.applicationData?.additionalDetails?.termsAndConditions}/>}
-          </HorizontalNav>
-          <WorkflowActions
-              forcedActionPrefix={"WF_CONTRACT_ACTION"}
-              businessService={businessService}
-              applicationNo={payload?.contractNumber}
-              tenantId={tenantId}
-              applicationDetails={data?.applicationData}
-              url={Digit.Utils.Urls.contracts.update}
-              moduleCode="Contract"
-          />
+          {project && <ViewDetailsCard cardState={cardState} t={t} />}
+          {
+            !data?.isNoDataFound && 
+                <>
+                    <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
+                        {activeLink === "Work_Order" && <ContractDetails fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} data={data} isLoading={isContractLoading}/>}
+                        {activeLink === "Terms_and_Conditions" && <TermsAndConditions data={data?.applicationData?.additionalDetails?.termsAndConditions}/>}
+                    </HorizontalNav>
+                    <WorkflowActions
+                        forcedActionPrefix={"WF_CONTRACT_ACTION"}
+                        businessService={businessService}
+                        applicationNo={payload?.contractNumber}
+                        tenantId={tenantId}
+                        applicationDetails={data?.applicationData}
+                        url={Digit.Utils.Urls.contracts.update}
+                        moduleCode="Contract"
+                    />
+                </>
+          }
         </div>
+        {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
       </React.Fragment>
     );
 }

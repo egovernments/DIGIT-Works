@@ -64,7 +64,8 @@ function ApplicationDetailsContent({
   setSaveAttendanceState,
   applicationNo,
   tenantId,
-  businessService
+  businessService,
+  customClass
 }) {
   const { t } = useTranslation();
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
@@ -205,7 +206,9 @@ function ApplicationDetailsContent({
       window.location.href.includes("employee/ws") ||
       window.location.href.includes("employee/works") ||
       window.location.href.includes("employee/contracts") || 
-      window.location.href.includes("employee/masters")
+      window.location.href.includes("employee/masters") ||
+      window.location.href.includes("employee/project") ||
+      window.location.href.includes("employee/contracts") 
     ) {
       return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
     } else if (checkLocation) {
@@ -261,7 +264,7 @@ function ApplicationDetailsContent({
       {applicationDetails?.applicationDetails?.map((detail, index) => (
         <CollapseAndExpandGroups groupElements={detail?.expandAndCollapse?.groupComponents} groupHeader={detail?.expandAndCollapse?.groupHeader} headerLabel={detail?.expandAndCollapse?.headerLabel} headerValue={detail?.expandAndCollapse?.headerValue} customClass={detail?.expandAndCollapse?.customClass}>
           <React.Fragment key={index}>
-          <div style={getMainDivStyles()}>
+          <div style={getMainDivStyles()} className={customClass}>
             {index === 0 && !detail.asSectionHeader ? (
               <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
             ) : (

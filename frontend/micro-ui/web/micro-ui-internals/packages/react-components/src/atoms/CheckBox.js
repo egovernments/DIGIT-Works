@@ -1,15 +1,17 @@
-import React from "react";
+import React ,{Fragment}from "react";
 import { CheckSvg } from "./svgindex";
 import PropTypes from "prop-types";
+import BreakLine from "./BreakLine";
 
-const CheckBox = ({ onChange, label, value, disable, ref, checked, inputRef, pageType, style, index, isLabelFirst,  ...props }) => {
+const CheckBox = ({ onChange, label, value, disable, ref, checked, inputRef, pageType, style, index, isLabelFirst, customLabelMarkup,  ...props }) => {
+  
   const userType = pageType || Digit.SessionStorage.get("userType");
   let wrkflwStyle = props.styles;
   if (isLabelFirst) {
     return (
       <div className="checkbox-wrap" style={wrkflwStyle ? wrkflwStyle : {}}>
         <p style={style ? style : null}> {index+1}.</p>
-        <p className="label" style={{maxWidth: "80%", marginLeft: "10px"}}>
+        <p className="label" style={{ maxWidth: "80%", marginLeft: "10px" }}>
           {label}
         </p>
         <div>
@@ -51,8 +53,16 @@ const CheckBox = ({ onChange, label, value, disable, ref, checked, inputRef, pag
             <CheckSvg />
           </p>
         </div>
-        <p className="label" style={style ? style : null}>
-          {label}
+        <p className="label" style={style ? style : {}}>
+          
+          {customLabelMarkup ? 
+          <>
+            <p>I certify that appropriate amount of work has been completed. Muster roll has been verified against Measurement Book.</p>
+            <br />
+            <p>
+            <b> Note</b>: Once approved Payment Advice will be generated and send to JIT-FS for payment processing.
+            </p>
+            </> : label}
         </p>
       </div>
     );
