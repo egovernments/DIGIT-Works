@@ -1,4 +1,4 @@
-import { PersonIcon, EmployeeModuleCard } from "@egovernments/digit-ui-react-components";
+import { HRIcon, EmployeeModuleCard } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -12,7 +12,7 @@ const HRMSCard = () => {
   // const { isLoading, isError, error, data, ...rest } = Digit.Hooks.hrms.useHRMSCount(tenantId);
 
   const propsForModuleCard = {
-    Icon: <PersonIcon />,
+    Icon: <HRIcon />,
     moduleName: t("ACTION_TEST_HRMS"),
     kpis: [
       // {

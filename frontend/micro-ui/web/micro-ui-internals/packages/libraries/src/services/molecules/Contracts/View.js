@@ -26,7 +26,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
             { title: "COMMON_DESGN_OF_OFFICER_IN_CHARGE",  value : contract?.additionalDetails?.officerInChargeDesgn || "NA"},
             { title: "COMMON_NAME_OF_OFFICER_IN_CHARGE",value: contract?.additionalDetails?.officerInChargeName?.name || "NA"},
             { title: "COMMON_PROJECT_COMP_PERIOD_DAYS", value: contract?.completionPeriod || t("NA")},
-            { title: "COMMON_WORK_ORDER_AMT_RS", value: contract?.totalContractedAmount || t("NA")},
+            { title: "COMMON_WORK_ORDER_AMT_RS", value: `₹ ${Digit.Utils.dss.formatterWithoutRound(contract?.totalContractedAmount, 'number')}` || t("NA")},
         ]
     }
     const allDocuments = combine(contract?.documents, contract?.additionalDetails?.estimateDocs);

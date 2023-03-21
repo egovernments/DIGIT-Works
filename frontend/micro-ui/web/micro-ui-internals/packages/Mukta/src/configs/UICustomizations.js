@@ -232,7 +232,7 @@ export const UICustomizations = {
             if (column.label === "PROJECT_ESTIMATED_COST_IN_RS") {
                 if (value) {
                     return (
-                        <p>{`${value}`}</p>
+                        <p>{`${Digit.Utils.dss.formatterWithoutRound(value, 'number')}`}</p>
                     );
                 }
                 return <p>{"NA"}</p>
@@ -315,7 +315,7 @@ export const UICustomizations = {
             }
 
             else if (column.key === "estimatedAmount") {
-                return <span>{`₹ ${value}`}</span>
+                return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
             }
 
             else if (column.key === "sla") {
