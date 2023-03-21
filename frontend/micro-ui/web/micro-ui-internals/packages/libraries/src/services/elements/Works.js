@@ -42,7 +42,7 @@ export const WorksService = {
             // params:{},
             auth:true,
 
-        }),
+        }), 
     approvedEstimateSearch:({ tenantId, filters })=>
          Request({
             //update URL for Approved Estimate Search
@@ -151,6 +151,17 @@ export const WorksService = {
             auth: true,
             userService: false,
             params: { tenantId },
+        })
+    },
+    createBill: (body) => {
+        return Request({
+            url: "/expensebilling/demand/v1/_create",
+            useCache: false,
+            data: body,
+            method: "POST",
+            auth: true,
+            userService: false,
+            params: {  },
         })
     },
 }
