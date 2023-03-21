@@ -54,7 +54,7 @@ const getAttendanceTableData = (data, skills, t) => {
     //Add row to show Total data
     let totalRow = {}
     totalRow.type = "total"
-    totalRow.sno = "ES_COMMON_TOTAL_AMOUNT"
+    totalRow.sno = "RT_TOTAL"
     totalRow.registerId = "DNR"
     totalRow.nameOfIndividual = "DNR"
     totalRow.guardianName = "DNR"
