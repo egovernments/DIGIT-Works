@@ -15,7 +15,8 @@ class DropDownDialog extends StatefulWidget {
       required this.options,
       required this.onChanged,
       required this.selectedOption,
-      this.isDisabled = false, this.label});
+      this.isDisabled = false,
+      this.label});
 
   @override
   State<StatefulWidget> createState() {
@@ -75,17 +76,22 @@ class _DropDownDialogState extends State<DropDownDialog> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)
-              .translate(widget.label ?? i18.common.selectAnOption)),
+          title: Text(
+            AppLocalizations.of(context)
+                .translate(widget.label ?? i18.common.selectAnOption),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+          ),
           content: SizedBox(
-            height: 100,
+            height: 180,
             width: 200,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: widget.options.map((option) {
                   return RadioListTile(
-                    title: Text(AppLocalizations.of(context).translate(option)),
+                    title: Text(AppLocalizations.of(context).translate(option),
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w400)),
                     value: option,
                     groupValue: widget.selectedOption,
                     onChanged: (value) {

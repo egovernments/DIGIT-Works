@@ -2,15 +2,30 @@ import 'package:digit_components/widgets/digit_card.dart';
 import 'package:digit_components/widgets/digit_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:works_shg_app/router/app_router.dart';
+import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 
+import '../../blocs/localization/app_localization.dart';
+import '../../utils/constants.dart';
 import '../../widgets/atoms/digit_text_form_field.dart';
+import '../../widgets/atoms/radio_button_list.dart';
 
-class FinancialDetails extends StatelessWidget {
+class FinancialDetails extends StatefulWidget {
   final void Function() onPressed;
   const FinancialDetails({required this.onPressed, super.key});
 
   @override
+  FinancialDetailsState createState() {
+    return FinancialDetailsState();
+  }
+}
+
+class FinancialDetailsState extends State<FinancialDetails> {
+  String accountType = '';
+
+  @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return ReactiveFormBuilder(
       form: buildForm,
       builder: (context, form, child) {
@@ -24,48 +39,59 @@ class FinancialDetails extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Financial Details',
+                    t.translate(i18.common.financialDetails),
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
-                  Column(children: const [
+                  Column(children: [
                     DigitTextFormField(
-                      formControlName: 'administrationArea',
-                      label: 'Administration Area',
+                      formControlName: 'accountHolderName',
+                      label: t.translate(i18.common.accountHolderName),
                     ),
                     DigitTextFormField(
-                      formControlName: 'housholdNo',
-                      label: 'Household Location',
+                      formControlName: 'accountNo',
+                      label: t.translate(i18.common.accountNo),
                     ),
                     DigitTextFormField(
-                      formControlName: 'locality',
-                      label: 'LOCALITY',
+                      formControlName: 'reAccountNo',
+                      label: t.translate(i18.common.reEnterAccountNo),
                     ),
+                    DigitRadioButtonList(
+                        context,
+                        t.translate(i18.common.accountType),
+                        accountType,
+                        '',
+                        '',
+                        true,
+                        Constants.accountType, (value) {
+                      setState(() {
+                        accountType = value;
+                      });
+                    }),
                     DigitTextFormField(
-                      formControlName: 'state',
-                      label: 'State',
-                    ),
-                    DigitTextFormField(
-                      formControlName: 'postalCode',
-                      label: 'PIN',
-                    ),
+                        formControlName: 'ifsc',
+                        label: t.translate(i18.common.ifscCode),
+                        hint: t.translate(i18.common.bankHint)),
                   ]),
                   const SizedBox(height: 16),
                   SizedBox(
-                      height: 90,
+                      height: 60,
                       child: DigitCard(
-                          margin: EdgeInsets.all(0.0),
-                          child: DigitElevatedButton(
-                              onPressed: () {
-                                onPressed();
-                                if (form.valid) {
-                                  print(form.value);
-                                } else {
-                                  form.markAllAsTouched();
-                                }
-                              },
-                              child: const Center(
-                                child: Text('Action'),
-                              ))))
+                          margin: const EdgeInsets.all(0.0),
+                          child: SizedBox(
+                            height: 30,
+                            child: DigitElevatedButton(
+                                onPressed: () {
+                                  if (form.valid) {
+                                    print(form.value);
+                                  } else {
+                                    form.markAllAsTouched();
+                                  }
+                                  context.router.push(const HomeRoute());
+                                },
+                                child: Center(
+                                  child: Text(t.translate(i18.common.submit)),
+                                )),
+                          )))
                 ],
               ),
             ),
@@ -76,10 +102,9 @@ class FinancialDetails extends StatelessWidget {
   }
 
   FormGroup buildForm() => fb.group(<String, Object>{
-        'administrationArea': FormControl<String>(value: ''),
-        'housholdNo': FormControl<String>(value: ''),
-        'locality': FormControl<String>(value: ''),
-        'state': FormControl<String>(value: ''),
-        'postalCode': FormControl<String>(value: ''),
+        'accountHolderName': FormControl<String>(value: ''),
+        'accountNo': FormControl<String>(value: ''),
+        'reAccountNo': FormControl<String>(value: ''),
+        'ifsc': FormControl<String>(value: ''),
       });
 }
