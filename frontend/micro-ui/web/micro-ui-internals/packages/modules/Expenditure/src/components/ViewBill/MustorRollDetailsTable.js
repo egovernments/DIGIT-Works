@@ -67,7 +67,7 @@ const MustorRollDetailsTable = ({ musterData }) => {
                   if(cellInfo?.row?.original?.type === "total") {
                     tableProp["data-last-row-cell"] = "last-row";
                   }
-                  if (cellInfo.value === "ES_COMMON_TOTAL_AMOUNT") {
+                  if (cellInfo.value === "RT_TOTAL") {
                     tableProp["colSpan"] = 4;
                   }
                   if(cellInfo.value === "DNR") {
