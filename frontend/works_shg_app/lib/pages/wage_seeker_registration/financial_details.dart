@@ -74,21 +74,24 @@ class FinancialDetailsState extends State<FinancialDetails> {
                   ]),
                   const SizedBox(height: 16),
                   SizedBox(
-                      height: 90,
+                      height: 60,
                       child: DigitCard(
                           margin: const EdgeInsets.all(0.0),
-                          child: DigitElevatedButton(
-                              onPressed: () {
-                                if (form.valid) {
-                                  print(form.value);
-                                } else {
-                                  form.markAllAsTouched();
-                                }
-                                context.router.push(const HomeRoute());
-                              },
-                              child: Center(
-                                child: Text(t.translate(i18.common.submit)),
-                              ))))
+                          child: SizedBox(
+                            height: 30,
+                            child: DigitElevatedButton(
+                                onPressed: () {
+                                  if (form.valid) {
+                                    print(form.value);
+                                  } else {
+                                    form.markAllAsTouched();
+                                  }
+                                  context.router.push(const HomeRoute());
+                                },
+                                child: Center(
+                                  child: Text(t.translate(i18.common.submit)),
+                                )),
+                          )))
                 ],
               ),
             ),

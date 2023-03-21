@@ -144,21 +144,24 @@ class LocationDetailsState extends State<LocationDetails> {
                   ]),
                   const SizedBox(height: 16),
                   SizedBox(
-                      height: 90,
+                      height: 60,
                       child: DigitCard(
                           margin: const EdgeInsets.all(0.0),
-                          child: DigitElevatedButton(
-                              onPressed: () {
-                                widget.onPressed();
-                                if (form.valid) {
-                                  print(form.value);
-                                } else {
-                                  form.markAllAsTouched();
-                                }
-                              },
-                              child: Center(
-                                child: Text(t.translate(i18.common.next)),
-                              ))))
+                          child: SizedBox(
+                            height: 30,
+                            child: DigitElevatedButton(
+                                onPressed: () {
+                                  widget.onPressed();
+                                  if (form.valid) {
+                                    print(form.value);
+                                  } else {
+                                    form.markAllAsTouched();
+                                  }
+                                },
+                                child: Center(
+                                  child: Text(t.translate(i18.common.next)),
+                                )),
+                          )))
                 ],
               ),
             ),
