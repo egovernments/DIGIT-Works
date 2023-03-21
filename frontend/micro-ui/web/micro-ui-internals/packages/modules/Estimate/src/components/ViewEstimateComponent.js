@@ -101,7 +101,7 @@ const ViewEstimateComponent = (props) => {
                         moduleCode="Estimate"
                     />
                     {/* Adding another action bar to show Create Contract Option */}
-                    {applicationDetails?.applicationData?.wfStatus === "APPROVED" && !isLoadingContracts ? ? 
+                    {applicationDetails?.applicationData?.wfStatus === "APPROVED" && !isLoadingContracts ?
                         <ActionBar>
 
                             {showActions ? <Menu
@@ -116,7 +116,7 @@ const ViewEstimateComponent = (props) => {
                         : null
                     }
                 </>
-                )
+                
             }
             {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
         </>
