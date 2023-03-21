@@ -4,8 +4,7 @@ import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-component
 import { Switch, useLocation } from "react-router-dom";
 import CreateContract from "./CreateContract";
 import Inbox from "./ContractsInbox/Inbox.js"
-import SearchContracts from "./SearchContract";
-//import ViewContract from "./ViewContract";
+import SearchContractDetails from "./SearchContractDetails";
 import ViewContractDetails from "./ViewContractDetails";
 
 const ContractsBreadCrumbs = ({ location }) => {
@@ -89,8 +88,10 @@ const App = ({ path }) => {
           <div style={getBreadCrumbStyles(window.location.href)}>
             <ContractsBreadCrumbs location={location} />
           </div>
+
+
+          <PrivateRoute path={`${path}/search-contract`} component={() => <SearchContractDetails />} />
           <PrivateRoute path={`${path}/contract-details`} component={() => <ViewContractDetails />} />
-          <PrivateRoute path={`${path}/search-contract`} component={() => <SearchContracts />} />
           <PrivateRoute path={`${path}/create-contract`} component={() => <CreateWorkOrderComponent parentRoute={path}/>} />
           <PrivateRoute path={`${path}/create-contract-response`} component={() => <CreateWOResponseComponent />} />
           <PrivateRoute

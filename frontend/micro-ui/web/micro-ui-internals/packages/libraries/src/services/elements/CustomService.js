@@ -1,7 +1,6 @@
 import { Request } from "../atoms/Utils/Request";
 
 export const CustomService = {
-
   getResponse: ({ url, params, body, plainAccessRequest,useCache=true,userService=true,setTimeParam=true }) =>
     Request({
       url: url,
@@ -13,7 +12,7 @@ export const CustomService = {
       params: params,
       plainAccessRequest: plainAccessRequest,
       setTimeParam
-    }),
+    })
 };
 
 

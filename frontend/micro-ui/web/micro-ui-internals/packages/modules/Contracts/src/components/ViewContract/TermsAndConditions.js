@@ -38,7 +38,7 @@ const TermsAndConditions = (props) => {
 
   const renderBody = () => {
       let i = 0
-      return rows.map((row, index) => {
+      return rows?.map((row, index) => {
         i++;
         return <tr key={index} style={{ "height": "50%" }}>
               <td style={getStyles(1)}>{i}</td>

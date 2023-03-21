@@ -12,7 +12,6 @@ import NoResultsFound from '../atoms/NoResultsFound';
 
 
 const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate }) => {
-    
     const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
