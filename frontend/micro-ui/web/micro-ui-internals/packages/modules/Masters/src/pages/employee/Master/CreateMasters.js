@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import CreateOrganizationForm from '../../../components/CreateOrganization/CreateOrganizationForm'
 import CreateOrganizationSuccess from '../../../components/CreateOrganization/CreateOrganizationSuccess'
 
-const CreateOrganization = ({parentRoute}) => {
+const CreateMasters = ({parentRoute}) => {
   const { t } = useTranslation()
   const [createOrgStatus, setCreateOrgStatus] = useState(null)
 
@@ -26,4 +26,4 @@ const CreateOrganization = ({parentRoute}) => {
   )
 }
 
-export default CreateOrganization;
+export default CreateMasters;

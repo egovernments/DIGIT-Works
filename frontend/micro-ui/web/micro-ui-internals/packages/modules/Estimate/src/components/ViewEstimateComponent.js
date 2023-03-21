@@ -28,6 +28,14 @@ const ViewEstimateComponent = (props) => {
 
     const { isLoading, data: applicationDetails, isError } = Digit.Hooks.estimates.useEstimateDetailsScreen(t, tenantId, estimateNumber,{}, isStateChanged)
     
+
+    //here make a contract search based on the estimateNumber
+    const { isLoading: isLoadingContracts, data: contract } = Digit.Hooks.contracts.useContractSearch({
+        tenantId, filters: { tenantId, estimateIds: [applicationDetails?.applicationData?.id] },config:{
+        enabled: (!isLoading &&  applicationDetails?.applicationData?.wfStatus === "APPROVED") ? true : false
+    }})
+    
+
     useEffect(() => {
         let isUserContractCreator = loggedInUserRoles?.includes("WORK_ORDER_CREATOR");
         if (applicationDetails?.applicationData?.wfStatus === "APPROVED" && isUserContractCreator){
@@ -35,7 +43,14 @@ const ViewEstimateComponent = (props) => {
                 name:"CREATE_CONTRACT"
             }]))
         }
-    }, [applicationDetails, isStateChanged])
+        
+        //if contract is already there just remove the prevState and push View contract state
+        if(contract?.contractNumber) {
+            setActionsMenu((prevState => [, {
+                name: "VIEW_CONTRACT"
+            }]))
+        }
+    }, [applicationDetails, isStateChanged,contract])
 
     useEffect(()=>{
         if(isError || (!isLoading && applicationDetails?.isNoDataFound)) {
@@ -46,6 +61,9 @@ const ViewEstimateComponent = (props) => {
     const handleActionBar = (option) => {
         if (option?.name === "CREATE_CONTRACT") {
             history.push(`/${window.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&estimateNumber=${estimateNumber}`);
+        }
+        if (option?.name === "VIEW_CONTRACT") {
+            history.push(`/${window.contextPath}/employee/contracts/contract-details?tenantId=${tenantId}&workOrderNumber=${contract?.contractNumber}`);
         }
     }
 
@@ -83,7 +101,7 @@ const ViewEstimateComponent = (props) => {
                         moduleCode="Estimate"
                     />
                     {/* Adding another action bar to show Create Contract Option */}
-                    {applicationDetails?.applicationData?.wfStatus === "APPROVED" ? 
+                    {applicationDetails?.applicationData?.wfStatus === "APPROVED" && !isLoadingContracts ?
                         <ActionBar>
 
                             {showActions ? <Menu
@@ -98,6 +116,7 @@ const ViewEstimateComponent = (props) => {
                         : null
                     }
                 </>
+                
             }
             {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
         </>

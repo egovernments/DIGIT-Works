@@ -16,7 +16,7 @@ const ViewBill = () => {
     body: {
       "SearchCriteria": {
         "tenantId": tenantId,
-        "billNumber": data?.applicationData?.musterRollNumber,
+        "billNumbers": [data?.applicationData?.musterRollNumber],
         // "billNumber": "MR/2022-23/01/001",
         // "tenantId": "pg.citya",
       },

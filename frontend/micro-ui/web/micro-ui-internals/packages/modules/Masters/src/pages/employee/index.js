@@ -53,13 +53,14 @@ const App = ({ path }) => {
   const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
 
   const SearchMasters = Digit?.ComponentRegistryService?.getComponent("SearchMasters");
-  const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganization");
+  const CreateMasters = Digit?.ComponentRegistryService?.getComponent("CreateMasters");
   const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWageSeeker");
   const RegisterWageSeekerComponent = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
   const ViewOrganisationComponent = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
   const SearchOrganisation =  Digit?.ComponentRegistryService?.getComponent("SearchOrganisation");
   const ViewWageSeeker = Digit?.ComponentRegistryService?.getComponent("ViewWageSeeker");
   const ModifyWageSeeker = Digit?.ComponentRegistryService?.getComponent("ModifyWageSeeker");
+  const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganisation");
   useEffect(() => {
     return () => {
       if (!window.location.href.includes("create-organization") && Object.keys(sessionFormData) != 0) {
@@ -75,6 +76,7 @@ const App = ({ path }) => {
           <MastersBreadCrumb location={location} />
         </React.Fragment>
         <PrivateRoute path={`${path}/search-masters`} component={() => <SearchMasters parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/create-masters`} component={() => <CreateMasters parentRoute={path}/>} />
         
          {/* Organisation Masters  */}
         <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganization parentRoute={path}/>} />
