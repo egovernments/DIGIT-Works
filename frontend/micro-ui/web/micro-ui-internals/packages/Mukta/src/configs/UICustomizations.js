@@ -344,7 +344,6 @@ export const UICustomizations = {
               tenantId: Digit.ULBService.getCurrentTenantId(),
               moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), ward, workOrderNumber, status, projectType, projectName, startDate, endDate },
             };
-            console.log("inside scs");
             return data;
           },
 
@@ -379,12 +378,12 @@ export const UICustomizations = {
                    return Digit.Utils.dss.formatterWithoutRound(value, 'number');
             }
             if (column.label === "COMMON_ROLE_OF_CBO") {
-                return <span>{t(value)}</span>;
+                return <span>{t(`COMMON_MASTERS_${value}`)}</span>;
             }
-            if (column.label === "WORKS_LOCATION") {
+            if (column.label === "ES_COMMON_LOCATION") {
                 return value ? (
                   <span style={{ whiteSpace: "nowrap" }}>
-                    {String(`${t(Digit.Utils.locale.getCityLocale(row?.businessObject?.tenantId))} ${t(Digit.Utils.locale.getMohallaLocale(value, row?.businessObject?.tenantId))}`)}
+                    {String(`${t(Digit.Utils.locale.getCityLocale(row?.businessObject?.tenantId))}, ${t(Digit.Utils.locale.getMohallaLocale(value, row?.businessObject?.tenantId))}`)}
                   </span>
                 ) : (
                   t("ES_COMMON_NA")

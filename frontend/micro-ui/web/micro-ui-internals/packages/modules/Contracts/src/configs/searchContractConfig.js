@@ -210,7 +210,7 @@ return {
             additionalCustomization: true,
           },
           {
-            label: "WORKS_LOCATION",
+            label: "ES_COMMON_LOCATION",
             jsonPath: "businessObject.additionalDetails.ward",
             additionalCustomization: true,
           },

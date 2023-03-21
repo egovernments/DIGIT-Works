@@ -2,11 +2,11 @@ import React, { useState, useEffect, Fragment }from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
 import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast } from '@egovernments/digit-ui-react-components';
-import ApplicationDetails from '../../../../templates/ApplicationDetails';
 
 
 const ViewContractDetails = () => {
     const { t } = useTranslation();
+    const [showToast, setShowToast] = useState(null);
     const queryStrings = Digit.Hooks.useQueryParams();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts")
