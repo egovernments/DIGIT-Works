@@ -137,7 +137,7 @@ import useSearchOrg from "./works/useSearchOrg";
 
 import useViewBill from "./bills/useViewBill";
 import useContractSearch from "./contracts/useContractSearch";
-
+import useBillCreate from "./bills/useBillCreate";
 
 const works = {
   useViewEstimateDetails,
@@ -250,7 +250,8 @@ const attendance = {
 
 const bills = {
   useViewBills,
-  useViewBill
+  useViewBill,
+  useBillCreate
 }
 const masters = {
   useViewOrg
