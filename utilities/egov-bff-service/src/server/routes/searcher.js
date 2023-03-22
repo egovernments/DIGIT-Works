@@ -8,7 +8,7 @@ var url = require("url");
 var config = require("../config");
 var fs  = require("fs");
 var { logger } = require( "../logger");
-
+import get from "lodash.get";
 
 const { asyncMiddleware } = require("../middlewares/asyncMiddleware");
 const { throwError, sendResponse } = require("../utils");
@@ -102,13 +102,13 @@ router.post(
 
      console.log(dataconfig,dataConfigMap,dataConfigUrls,'dataconfig');
 
-     return await prepareBulk(
-        key,
-        dataconfig,
-        req,
-        baseKeyPath,
-        requestInfo
-      );
+    //  return await prepareBulk(
+    //     key,
+    //     dataconfig,
+    //     req,
+    //     baseKeyPath,
+    //     requestInfo
+    //   );
         sendResponse(res,{success:"sssss",config},req,200);
     } catch (ex) {
       throwError(ex.message, ex.code, ex.status);

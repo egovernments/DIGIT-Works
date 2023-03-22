@@ -1,23 +1,23 @@
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
-const requestMiddleware = require("./server/middlewares/validateRequestMiddleware");
-const cacheMiddleware = require("./server/middlewares/cacheMiddleware");
+const requestMiddleware = require("./middlewares/validateRequestMiddleware");
+const cacheMiddleware = require("./middlewares/cacheMiddleware");
 const NodeCache = require("node-cache");
 
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-var config = require("./server/config");
-var musterRouter = require("./server/routes/muster");
-var searcherRouter = require("./server/routes/searcher");
-var { listenConsumer } = require("./server/kafka/consumer");
+var config = require("./config");
+var musterRouter = require("./routes/muster");
+var searcherRouter = require("./routes/searcher");
+var { listenConsumer } = require("./kafka/consumer");
 const {
   getErrorResponse,
   invalidPathHandler,
   errorLogger,
   errorResponder,
   throwError,
-} = require("./server/utils");
+} = require("./utils");
 let dataConfigUrls = config.configs.DATA_CONFIG_URLS;
 let formatConfigUrls = config.configs.DATA_CONFIG_URLS;
 
@@ -34,13 +34,13 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../public")));
 /* Middleware to Validate Request info */
 app.use(requestMiddleware);
 
 /* Middleware to cache response */
 app.use(cacheMiddleware);
-app.use(config.app.contextPath + "/muster", musterRouter);
+app.use(config.app?.contextPath + "/muster", musterRouter);
 
 app.use(config.app.contextPath + "/searcher", searcherRouter);
 
