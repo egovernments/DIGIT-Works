@@ -31,7 +31,7 @@ router.post(
         tenantId,
         requestinfo
       );
-      var musterRolls = resProperty.data.musterRolls;
+      var musterRolls = resProperty.musterRolls;
       if (musterRolls && musterRolls.length > 0) {
         var musterObj = musterRolls[0] || {};
         var individualIds = musterObj.individualEntries.map(
@@ -44,7 +44,7 @@ router.post(
           tenantId,
           requestinfo
         );
-        var payments = paymentresponse.data;
+        var payments = paymentresponse;
         if (payments && payments.Individual && payments.Individual.length > 0) {
           var Individual = {};
           payments.Individual.map((ind) => {

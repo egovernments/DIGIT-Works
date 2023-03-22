@@ -1,10 +1,7 @@
 var config = require("./config");
-var axios = require("axios").default;
 var url = require("url");
-var producer = require("./producer").producer;
-var logger = require("./logger").logger;
 const { Pool } = require("pg");
-const { throwError } = require("./utils");
+const {httpRequest} = require("./utils/request");
 
 const pool = new Pool({
   user: config.DB_USER,
@@ -17,19 +14,17 @@ const pool = new Pool({
 var auth_token = config.auth_token;
 
 async function search_user(uuid, tenantId, requestinfo) {
-  return await axios({
-    method: "post",
-    url: url.resolve(config.host.user, config.paths.user_search),
-    data: {
+  return await httpRequest(
+    url.resolve(config.host.user, config.paths.user_search),
+    {
       RequestInfo: requestinfo.RequestInfo,
       uuid: [uuid],
       tenantId: tenantId,
-    },
-  });
+    }
+  );
 }
 
 async function search_muster(musterRollNumber, tenantId, requestinfo) {
-  // currently single property pdfs supported
   if (musterRollNumber) {
     musterRollNumber = musterRollNumber.trim();
   }
@@ -37,28 +32,12 @@ async function search_muster(musterRollNumber, tenantId, requestinfo) {
     tenantId: tenantId,
     musterRollNumber: musterRollNumber,
   };
-  // if (
-  //   checkIfCitizen(requestinfo) &&
-  //   allowCitizenTOSearchOthersRecords != true
-  // ) {
-  //   var mobileNumber = requestinfo.RequestInfo.userInfo.mobileNumber;
-  //   var userName = requestinfo.RequestInfo.userInfo.userName;
-  //   params["mobileNumber"] = mobileNumber || userName;
-  // }
-  try {
-    return await axios({
-      method: "post",
-      url: url.resolve(config.host.muster, config.paths.mus_search),
-      data: requestinfo,
-      params,
-    });
-  } catch (ex) {
-    throwError(
-      ex.response.data.Errors[0].message,
-      ex.response.data.Errors[0].code,
-      ex.response.status
-    );
-  }
+  console.log(httpRequest,'httpRequest');
+  return await httpRequest(
+    url.resolve(config.host.muster, config.paths.mus_search),
+    requestinfo,
+    params
+  );
 }
 
 async function search_individual(individualIds, tenantId, requestinfo) {
@@ -66,28 +45,20 @@ async function search_individual(individualIds, tenantId, requestinfo) {
   // if (individualIds) {
   //   individualId = individualId.trim();
   // }
-  try {
-    var params = {
-      tenantId: tenantId,
-      limit: 100,
-      offset: 0,
-    };
-    requestinfo.Individual = {
-      id: individualIds,
-    };
-    return await axios({
-      method: "post",
-      url: url.resolve(config.host.individual, config.paths.ind_search),
-      data: requestinfo,
-      params,
-    });
-  } catch (ex) {
-    throwError(
-      ex.response.data.Errors[0].message,
-      ex.response.data.Errors[0].code,
-      ex.response.status
-    );
-  }
+  var params = {
+    tenantId: tenantId,
+    limit: 100,
+    offset: 0,
+  };
+  requestinfo.Individual = {
+    id: individualIds,
+  };
+
+  return await httpRequest(
+    url.resolve(config.host.individual, config.paths.ind_search),
+    requestinfo,
+    params
+  );
 }
 
 async function search_workflow(applicationNumber, tenantId, requestinfo) {
@@ -95,50 +66,46 @@ async function search_workflow(applicationNumber, tenantId, requestinfo) {
     tenantId: tenantId,
     businessIds: applicationNumber,
   };
-  return await axios({
-    method: "post",
-    url: url.resolve(config.host.workflow, config.paths.workflow_search),
-    data: requestinfo,
-    params,
-  });
+  return await httpRequest(
+    url.resolve(config.host.workflow, config.paths.workflow_search),
+    requestinfo,
+    params
+  );
 }
 
 async function search_mdms(tenantId, module, master, requestinfo) {
-  return await axios({
-    method: "post",
-    url: url.resolve(config.host.mdms, config.paths.mdms_search),
-    data: requestinfo,
-    params: {
+  return await httpRequest(
+    url.resolve(config.host.mdms, config.paths.mdms_search),
+    requestinfo,
+    {
       tenantId: tenantId,
       ids: uuid,
-    },
-  });
+    }
+  );
 }
 
 async function create_pdf(tenantId, key, data, requestinfo) {
-  return await axios({
-    responseType: "stream",
-    method: "post",
-    url: url.resolve(config.host.pdf, config.paths.pdf_create),
-    data: Object.assign(requestinfo, data),
-    params: {
+  return await httpRequest(
+    url.resolve(config.host.pdf, config.paths.pdf_create),
+    Object.assign(requestinfo, data),
+    {
       tenantId: tenantId,
       key: key,
     },
-  });
+    "post",
+    "stream"
+  );
 }
 
 async function create_pdf_and_upload(tenantId, key, data, requestinfo) {
-  return await axios({
-    //responseType: "stream",
-    method: "post",
-    url: url.resolve(config.host.pdf, config.paths.pdf_create_upload),
-    data: Object.assign(requestinfo, data),
-    params: {
+  return await httpRequest(
+    url.resolve(config.host.pdf, config.paths.pdf_create_upload),
+    Object.assign(requestinfo, data),
+    {
       tenantId: tenantId,
       key: key,
-    },
-  });
+    }
+  );
 }
 
 function checkIfCitizen(requestinfo) {
