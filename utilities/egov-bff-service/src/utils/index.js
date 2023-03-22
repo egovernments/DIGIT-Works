@@ -15,7 +15,7 @@ const appCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 Send The Error Response back to client with proper response code 
 */
 const throwError = (
-  message = "",
+  message = "Internal Server Error",
   code = "INTERNAL_SERVER_ERROR",
   status = 500
 ) => {

@@ -1,10 +1,21 @@
-import Axios from "axios";
-import { throwError } from "..";
-import { logger } from "../../logger";
+var Axios = require("axios").default;
+var get = require("lodash/get");
+var { logger } = require("../../logger");
+var { throwError } = require("..");
 
 Axios.interceptors.response.use(
   (res) => res,
   (err) => {
+    if (err && !err.response) {
+      err.response = {
+        status: 400,
+      };
+    }
+    if (err && err.response && !err.response.data) {
+      err.response.data = {
+        Errors: [{ code: err.message }],
+      };
+    }
     throw err;
   }
 );
@@ -44,7 +55,7 @@ const httpRequest = async (
       headers,
       responseType,
     });
-    const responseStatus = parseInt(response.status, 10);
+    const responseStatus = parseInt(get(response, "status"), 10);
     logger.info(
       "BFF-SERVICE :: API SUCCESS :: " +
         _url +
@@ -68,7 +79,7 @@ const httpRequest = async (
     throwError(
       "error occured while making request to " +
         _url +
-        ": response returned by call :" +
+        ": error response :" +
         (errorResponse ? parseInt(errorResponse.status, 10) : error.message),
       errorResponse.data.Errors[0].code,
       errorResponse.status

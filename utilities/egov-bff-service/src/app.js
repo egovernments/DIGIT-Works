@@ -17,7 +17,11 @@ const {
   errorResponder,
   throwError,
 } = require("./utils");
+let dataConfigUrls = config.configs.DATA_CONFIG_URLS;
+let formatConfigUrls = config.configs.DATA_CONFIG_URLS;
 
+let dataConfigMap = {};
+let formatConfigMap = {};
 var app = express();
 app.disable("x-powered-by");
 
@@ -48,6 +52,52 @@ app.use(errorResponder);
 // Attach the fallback Middleware
 // function which sends back the response for invalid paths)
 app.use(invalidPathHandler);
+
+var i = 0;
+dataConfigUrls &&
+  dataConfigUrls.split(",").map((item) => {
+    item = item.trim();
+    if (item.includes("file://")) {
+      item = item.replace("file://", "");
+      fs.readFile(item, "utf8", function (err, data) {
+        try {
+          if (err) {
+            logger.error(
+              "error when reading file for dataconfig: file:///" + item
+            );
+            logger.error(err.stack);
+          } else {
+            data = JSON.parse(data);
+            dataConfigMap[data.key] = data;
+            /*if (data.fromTopic != null) {
+              topicKeyMap[data.fromTopic] = data.key;
+              topic.push(data.fromTopic);
+            }*/
+            i++;
+            // if (i == datafileLength) {
+            //   topic.push(envVariables.KAFKA_RECEIVE_CREATE_JOB_TOPIC)
+            //   listenConsumer(topic);
+            // }
+            logger.info("loaded dataconfig: file:///" + item);
+          }
+        } catch (error) {
+          logger.error("error in loading dataconfig: file:///" + item);
+          logger.error(error.stack);
+        }
+      });
+    } else {
+      (async () => {
+        try {
+          var response = await axios.get(item);
+          dataConfigMap[response.data.key] = response.data;
+          logger.info("loaded dataconfig: " + item);
+        } catch (error) {
+          logger.error("error in loading dataconfig: " + item);
+          logger.error(error.stack);
+        }
+      })();
+    }
+  });
 
 listenConsumer();
 module.exports = app;
