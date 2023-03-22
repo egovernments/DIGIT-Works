@@ -1,23 +1,23 @@
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
-const requestMiddleware = require("./utils/validateRequestMiddleware");
-const cacheMiddleware = require("./utils/cacheMiddleware");
+const requestMiddleware = require("./server/utils/validateRequestMiddleware");
+const cacheMiddleware = require("./server/utils/cacheMiddleware");
 const NodeCache = require("node-cache");
 
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-var config = require("./config");
-var musterRouter = require("./routes/muster");
-var searcherRouter = require("./routes/searcher");
-var { listenConsumer } = require("./consumer");
+var config = require("./server/config");
+var musterRouter = require("./server/routes/muster");
+var searcherRouter = require("./server/routes/searcher");
+var { listenConsumer } = require("./server/kafka/consumer");
 const {
   getErrorResponse,
   invalidPathHandler,
   errorLogger,
   errorResponder,
   throwError,
-} = require("./utils");
+} = require("./server/utils");
 let dataConfigUrls = config.configs.DATA_CONFIG_URLS;
 let formatConfigUrls = config.configs.DATA_CONFIG_URLS;
 

@@ -1,7 +1,7 @@
-var config = require("./config");
+var config = require("../config");
 var url = require("url");
 const { Pool } = require("pg");
-const { httpRequest } = require("./utils/request");
+const { httpRequest } = require("./request");
 
 const pool = new Pool({
   user: config.DB_USER,

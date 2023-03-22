@@ -18,13 +18,12 @@ let dataConfigMap = {};
 
 
 
-const initialise=()=>{
+const initialise=async ()=>{
     var i = 0;
-    console.log("dataConfigUrls",dataConfigUrls,dataConfigUrls);
+    
 dataConfigUrls &&
 dataConfigUrls.split&&
   dataConfigUrls.split(",").map((item) => {
-    console.log(item);
     item = item.trim();
     if (item.includes("file://")) {
       item = item.replace("file://", "");
@@ -48,6 +47,7 @@ dataConfigUrls.split&&
             //   listenConsumer(topic);
             // }
             logger.info("loaded dataconfig: file:///" + item);
+            return dataConfigMap;
           }
         } catch (error) {
           logger.error("error in loading dataconfig: file:///" + item);
@@ -68,11 +68,11 @@ dataConfigUrls.split&&
     }
   });
 }
-
+initialise();
 router.post(
   "/getMusterDetails",
   asyncMiddleware(async function (req, res, next) {
-    initialise();
+     
     var tenantId = req.query.tenantId;
     var musterRollNumber = req.query.musterRollNumber;
     var requestinfo = req.body;
@@ -90,10 +90,25 @@ router.post(
     try {
         var key=req.query.key||"consolidatedreceipt";
         var dataconfig = dataConfigMap[key];
-
+        var baseKeyPath = get(dataconfig, "DataConfigs.baseKeyPath");
+        var entityIdPath = get(dataconfig, "DataConfigs.entityIdPath");
+        if (baseKeyPath == null) {
+          logger.error("baseKeyPath is absent in config");
+          throw {
+            message: `baseKeyPath is absent in config`
+          };
+        }
 
 
      console.log(dataconfig,dataConfigMap,dataConfigUrls,'dataconfig');
+
+     return await prepareBulk(
+        key,
+        dataconfig,
+        req,
+        baseKeyPath,
+        requestInfo
+      );
         sendResponse(res,{success:"sssss",config},req,200);
     } catch (ex) {
       throwError(ex.message, ex.code, ex.status);

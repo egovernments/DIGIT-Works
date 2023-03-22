@@ -1,6 +1,6 @@
-var config = require("./config");
+var config = require("../config");
 var kafka = require("kafka-node");
-const logger = require("./logger").logger;
+const logger = require("../logger").logger;
 
 
 const Producer = kafka.Producer;

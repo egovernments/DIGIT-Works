@@ -1,7 +1,7 @@
 var Axios = require("axios").default;
 var get = require("lodash/get");
 var { logger } = require("../../logger");
-var { throwError } = require("..");
+const { throwError } = require("../../utils");
 
 Axios.interceptors.response.use(
   (res) => res,
