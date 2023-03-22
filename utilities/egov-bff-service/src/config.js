@@ -27,7 +27,7 @@ module.exports = {
     contextPath: process.env.CONTEXT_PATH || "/egov-bff-service",
   },
   configs:{
-    DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS,
+    DATA_CONFIG_URLS:  'file:///Users/klrao/Documents/pdf-config/data-config/consolidatedreceipt.json',
     FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS
   },
   host: {
@@ -40,8 +40,8 @@ module.exports = {
     user: process.env.EGOV_USER_HOST || HOST || "http://localhost:8089/",
     workflow:
       process.env.EGOV_WORKFLOW_HOST || HOST || "http://localhost:8091/",
-    muster: process.env.WORKS_MUSTER_HOST || HOST || "http://localhost:8070/",
-    individual: process.env.WORKS_INDIVIDUAL_HOST || HOST || "http://localhost:8071/",
+    muster: process.env.WORKS_MUSTER_HOST  || "http://localhost:8070/",
+    individual: process.env.WORKS_INDIVIDUAL_HOST  || "http://localhost:8071/",
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",

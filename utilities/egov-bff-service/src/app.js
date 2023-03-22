@@ -9,6 +9,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var config = require("./config");
 var musterRouter = require("./routes/muster");
+var searcherRouter = require("./routes/searcher");
 var { listenConsumer } = require("./consumer");
 const {
   getErrorResponse,
@@ -41,6 +42,8 @@ app.use(requestMiddleware);
 app.use(cacheMiddleware);
 app.use(config.app.contextPath + "/muster", musterRouter);
 
+app.use(config.app.contextPath + "/searcher", searcherRouter);
+
 // Attach the first Error handling Middleware
 // function defined above (which logs the error)
 app.use(errorLogger);
@@ -53,51 +56,7 @@ app.use(errorResponder);
 // function which sends back the response for invalid paths)
 app.use(invalidPathHandler);
 
-var i = 0;
-dataConfigUrls &&
-  dataConfigUrls.split(",").map((item) => {
-    item = item.trim();
-    if (item.includes("file://")) {
-      item = item.replace("file://", "");
-      fs.readFile(item, "utf8", function (err, data) {
-        try {
-          if (err) {
-            logger.error(
-              "error when reading file for dataconfig: file:///" + item
-            );
-            logger.error(err.stack);
-          } else {
-            data = JSON.parse(data);
-            dataConfigMap[data.key] = data;
-            /*if (data.fromTopic != null) {
-              topicKeyMap[data.fromTopic] = data.key;
-              topic.push(data.fromTopic);
-            }*/
-            i++;
-            // if (i == datafileLength) {
-            //   topic.push(envVariables.KAFKA_RECEIVE_CREATE_JOB_TOPIC)
-            //   listenConsumer(topic);
-            // }
-            logger.info("loaded dataconfig: file:///" + item);
-          }
-        } catch (error) {
-          logger.error("error in loading dataconfig: file:///" + item);
-          logger.error(error.stack);
-        }
-      });
-    } else {
-      (async () => {
-        try {
-          var response = await axios.get(item);
-          dataConfigMap[response.data.key] = response.data;
-          logger.info("loaded dataconfig: " + item);
-        } catch (error) {
-          logger.error("error in loading dataconfig: " + item);
-          logger.error(error.stack);
-        }
-      })();
-    }
-  });
+
 
 listenConsumer();
 module.exports = app;
