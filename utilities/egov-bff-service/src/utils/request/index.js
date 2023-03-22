@@ -25,8 +25,7 @@ const defaultheader = {
   accept: "application/json, text/plain, */*",
 };
 
-const getServiceName = (url = "") =>
-  url && url.slice && url.slice(url.indexOf(url.split("/")[3]));
+const getServiceName = (url = "") => url && url.slice && url.slice(url.lastIndexOf(url.split("/")[3]));
 
 /*
  
