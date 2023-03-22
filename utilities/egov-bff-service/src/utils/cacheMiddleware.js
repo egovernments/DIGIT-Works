@@ -2,7 +2,6 @@ const { sendResponse, appCache } = require(".");
 
 module.exports = (req, res, next) => {
   try {
-    console.log(req,"req");
     const cacheData = appCache.get(req.originalUrl);
     if (cacheData) {
       sendResponse(res, cacheData, req, 304);

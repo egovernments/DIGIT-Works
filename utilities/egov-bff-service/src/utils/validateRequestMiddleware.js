@@ -5,12 +5,12 @@ const requestSchema = object({
   apiId: string().nullable(),
   action: string().nullable(),
   msgId: string().required(),
-  authToken: string().required(),
+  authToken: string().nullable(),
+  userInfo: object().nonNullable()
 });
 
 module.exports = (req, res, next) => {
   try {
-    console.log(req,"req req");
     requestSchema.validateSync(req.body.RequestInfo);
     next();
   } catch (error) {
