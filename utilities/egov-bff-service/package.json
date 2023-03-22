@@ -5,9 +5,12 @@
   "description": "Backend For Frontend service",
   "main": "index.js",
   "scripts": {
+    "start": "node ./bin/www",
     "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
-    "build": "babel src -s -D -d dist --presets es2015,stage-0",
-    "start": "node --max-old-space-size=8192 dist",
+    "sprint": "yarn dev && yarn dev:start",
+    "dev:start": "node ./src/bin/www",
+    "prod:build": "babel src -s -D -d dist --presets es2015,stage-0",
+    "prod:start": "node --max-old-space-size=8192 dist",
     "prestart": "npm run -s build",
     "test": "eslint src"
   },

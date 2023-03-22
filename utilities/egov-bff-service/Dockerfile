@@ -4,14 +4,10 @@ ARG WORK_DIR
 ENV npm_config_cache=/tmp
 WORKDIR /app
 
-COPY ${WORK_DIR} .
+COPY ${WORK_DIR}/package.json ${WORK_DIR}/yarn.lock .
 
-RUN yarn install
+RUN yarn
 
-# set your port
-ENV PORT 8080
-# expose the port to outside world
-#EXPOSE  8080
+COPY ${WORK_DIR}/src .
 
-# start command as per package.json
 CMD ["yarn", "start"]
