@@ -196,10 +196,10 @@ public class NotificationService {
      * @return
      */
     public String getMessage(ContractRequest request, String msgCode) {
-        String tenantId = request.getContract().getTenantId().split("\\.")[0];
-        Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(request.getRequestInfo(), tenantId,
+        String rootTenantId = request.getContract().getTenantId().split("\\.")[0];
+        Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(request.getRequestInfo(), rootTenantId,
                 ContractServiceConstants.CONTRACTS_NOTIFICATION_ENG_LOCALE_CODE, ContractServiceConstants.CONTRACTS_MODULE_CODE);
-        return localizedMessageMap.get(ContractServiceConstants.CONTRACTS_NOTIFICATION_ENG_LOCALE_CODE + "|" + tenantId).get(msgCode);
+        return localizedMessageMap.get(ContractServiceConstants.CONTRACTS_NOTIFICATION_ENG_LOCALE_CODE + "|" + rootTenantId).get(msgCode);
     }
 
     /**
@@ -253,20 +253,19 @@ public class NotificationService {
      * Creates a cache for localization that gets refreshed at every call.
      *
      * @param requestInfo
-     * @param tenantId
+     * @param rootTenantId
      * @param locale
      * @param module
      * @return
      */
-    public Map<String, Map<String, String>> getLocalisedMessages(RequestInfo requestInfo, String tenantId, String locale, String module) {
+    public Map<String, Map<String, String>> getLocalisedMessages(RequestInfo requestInfo, String rootTenantId, String locale, String module) {
         Map<String, Map<String, String>> localizedMessageMap = new HashMap<>();
         Map<String, String> mapOfCodesAndMessages = new HashMap<>();
         StringBuilder uri = new StringBuilder();
         RequestInfoWrapper requestInfoWrapper = new RequestInfoWrapper();
         requestInfoWrapper.setRequestInfo(requestInfo);
-        tenantId = tenantId.split("\\.")[0];
         uri.append(config.getLocalizationHost()).append(config.getLocalizationContextPath())
-                .append(config.getLocalizationSearchEndpoint()).append("?tenantId=" + tenantId)
+                .append(config.getLocalizationSearchEndpoint()).append("?tenantId=" + rootTenantId)
                 .append("&module=" + module).append("&locale=" + locale);
         List<String> codes = null;
         List<String> messages = null;
@@ -282,7 +281,7 @@ public class NotificationService {
             for (int i = 0; i < codes.size(); i++) {
                 mapOfCodesAndMessages.put(codes.get(i), messages.get(i));
             }
-            localizedMessageMap.put(locale + "|" + tenantId, mapOfCodesAndMessages);
+            localizedMessageMap.put(locale + "|" + rootTenantId, mapOfCodesAndMessages);
         }
 
         return localizedMessageMap;
