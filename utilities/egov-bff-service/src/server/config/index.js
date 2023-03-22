@@ -34,6 +34,7 @@ module.exports = {
     mdms: process.env.EGOV_MDMS_HOST || HOST,
     pdf: process.env.EGOV_PDF_HOST || HOST,
     user: process.env.EGOV_USER_HOST || HOST,
+    localization:process.env.EGOV_LOCALIZATION_HOST || HOST,
     workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
     mdms: process.env.EGOV_MDMS_HOST || HOST || "http://localhost:8085/",
     pdf: process.env.EGOV_PDF_HOST || HOST || "http://localhost:8087/",
@@ -50,5 +51,6 @@ module.exports = {
     workflow_search: "/egov-workflow-v2/egov-wf/process/_search",
     ind_search: "/individual/v1/_search",
     mus_search: "/muster-roll/v1/_search",
+    localization_search : "/localization/messages/v1/_search"
   },
 };

@@ -71,6 +71,17 @@ async function search_workflow(applicationNumber, tenantId, requestinfo) {
     params
   );
 }
+async function search_localization(tenantId="", module="rainmaker-common", locale="en_IN", requestinfo) {
+  return await httpRequest(
+    url.resolve(config.host.localization, config.paths.localization_search),
+    requestinfo,
+    {
+      tenantId: tenantId,
+      module: module,
+      locale:locale
+    }
+  );
+}
 
 async function search_mdms(tenantId, module, master, requestinfo) {
   return await httpRequest(
@@ -123,4 +134,5 @@ module.exports = {
   search_workflow,
   search_muster,
   search_individual,
+  search_localization
 };

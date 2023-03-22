@@ -3,7 +3,7 @@ var router = express.Router();
 var url = require("url");
 var config = require("../config");
 
-var { search_muster, search_individual } = require("../api");
+var { search_muster, search_individual, search_localization } = require("../api");
 
 const { asyncMiddleware } = require("../middlewares/asyncMiddleware");
 const { throwError, sendResponse } = require("../utils");
@@ -69,5 +69,25 @@ router.post(
     }
   })
 );
+
+router.post(
+  "/getLocalization",
+  asyncMiddleware(async function (req, res, next) {
+    var tenantId = req.query.tenantId;
+    var module = req.query.module;
+    var locale = req.query.locale;
+    const locResponse = await search_localization(
+      tenantId,
+      module,
+      locale,
+      req.body
+    );
+    if(!locResponse|| !locResponse?.messages || locResponse?.messages?.length==0){
+      throwError("LOCALISATION NOT FOUND","LOCALISATION NOT FOUND",400)
+    }
+    let messages=locResponse.messages.map(message=>({code:message.code,message:message.message}))
+    sendResponse(res,{messages},req);
+  })
+)
 
 module.exports = router;
