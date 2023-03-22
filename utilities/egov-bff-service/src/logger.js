@@ -10,6 +10,7 @@ const logger = createLogger({
     format.label({ label: 'BFF' }),
     format.timestamp({ format: " YYYY-MM-DD HH:mm:ss.SSSZZ " }),
     format.simple(),
+    format.colorize(),
     myFormat
   ),
   transports: [new transports.Console()],
