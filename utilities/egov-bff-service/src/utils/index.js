@@ -49,6 +49,8 @@ Send The Response back to client with proper response code and response info
 const sendResponse = (res, response, req, code = 200) => {
   if (code != 304) {
     appCache.set(req.originalUrl, { ...response });
+  } else {
+    logger.info("CACHED RESPONSE FOR :: " + req.originalUrl);
   }
   res.status(code != 304 ? code : 200).send({
     ...getResponseInfo(code),
