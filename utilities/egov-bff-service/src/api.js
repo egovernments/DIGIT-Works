@@ -1,7 +1,7 @@
 var config = require("./config");
 var url = require("url");
 const { Pool } = require("pg");
-const {httpRequest} = require("./utils/request");
+const { httpRequest } = require("./utils/request");
 
 const pool = new Pool({
   user: config.DB_USER,
@@ -32,7 +32,6 @@ async function search_muster(musterRollNumber, tenantId, requestinfo) {
     tenantId: tenantId,
     musterRollNumber: musterRollNumber,
   };
-  console.log(httpRequest,'httpRequest');
   return await httpRequest(
     url.resolve(config.host.muster, config.paths.mus_search),
     requestinfo,

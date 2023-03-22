@@ -37,7 +37,7 @@ const httpRequest = async (
 ) => {
   try {
     const response = await Axios({
-      method:_method,
+      method: _method,
       url: _url,
       data: _requestBody,
       params: _params,
@@ -45,24 +45,35 @@ const httpRequest = async (
       responseType,
     });
     const responseStatus = parseInt(response.status, 10);
-    logger.info("BFF-SERVICE :: API SUCCESS :: " + _url + ":: RESPONSE CODE AS :: " + responseStatus)
+    logger.info(
+      "BFF-SERVICE :: API SUCCESS :: " +
+        _url +
+        ":: RESPONSE CODE AS :: " +
+        responseStatus
+    );
     if (responseStatus === 200 || responseStatus === 201) {
       return response.data;
     }
   } catch (error) {
     var errorResponse = error.response;
-    logger.error("BFF-SERVICE :: API FAILURE :: "+_url+ ":: RESPONSE CODE AS :: " +errorResponse.status + ":: ERROR STACK :: " +error.stack || error);
+    logger.error(
+      "BFF-SERVICE :: API FAILURE :: " +
+        _url +
+        ":: RESPONSE CODE AS :: " +
+        errorResponse.status +
+        ":: ERROR STACK :: " +
+        error.stack || error
+    );
 
     throwError(
-        "error occured while making request to " +
+      "error occured while making request to " +
         _url +
         ": response returned by call :" +
         (errorResponse ? parseInt(errorResponse.status, 10) : error.message),
-        errorResponse.data.Errors[0].code,
-        errorResponse.status
-      );
+      errorResponse.data.Errors[0].code,
+      errorResponse.status
+    );
   }
 };
 
-module.exports = {httpRequest};
-
+module.exports = { httpRequest };
