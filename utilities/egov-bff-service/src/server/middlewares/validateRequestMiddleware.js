@@ -1,5 +1,5 @@
-const { errorResponder } = require(".");
 const { object, string } = require("yup");
+const { errorResponder } = require("../utils");
 
 const requestSchema = object({
   apiId: string().nullable(),

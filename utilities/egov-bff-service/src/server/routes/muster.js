@@ -5,7 +5,7 @@ var config = require("../config");
 
 var { search_muster, search_individual } = require("../api");
 
-const { asyncMiddleware } = require("../utils/asyncMiddleware");
+const { asyncMiddleware } = require("../middlewares/asyncMiddleware");
 const { throwError, sendResponse } = require("../utils");
 
 router.post(

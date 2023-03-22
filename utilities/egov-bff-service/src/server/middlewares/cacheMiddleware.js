@@ -1,8 +1,8 @@
-const { sendResponse, appCache } = require(".");
+const { errorResponder, sendResponse, appCache } = require("../utils");
 
 module.exports = (req, res, next) => {
   try {
-    const cacheData = appCache.get(req.originalUrl+"3");
+    const cacheData = appCache.get(req.originalUrl);
     if (cacheData) {
       sendResponse(res, cacheData, req, 304);
     } else {

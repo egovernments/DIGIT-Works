@@ -1,8 +1,8 @@
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
-const requestMiddleware = require("./server/utils/validateRequestMiddleware");
-const cacheMiddleware = require("./server/utils/cacheMiddleware");
+const requestMiddleware = require("./server/middlewares/validateRequestMiddleware");
+const cacheMiddleware = require("./server/middlewares/cacheMiddleware");
 const NodeCache = require("node-cache");
 
 var cookieParser = require("cookie-parser");

@@ -10,7 +10,7 @@ var fs  = require("fs");
 var { logger } = require( "../logger");
 
 
-const { asyncMiddleware } = require("../utils/asyncMiddleware");
+const { asyncMiddleware } = require("../middlewares/asyncMiddleware");
 const { throwError, sendResponse } = require("../utils");
 
 let dataConfigUrls = config.configs.DATA_CONFIG_URLS || [];
