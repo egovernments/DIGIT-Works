@@ -11,7 +11,7 @@
     "dev:start": "node ./src/bin/www",
     "prod:build": "babel src -s -D -d dist --presets es2015,stage-0",
     "prod:start": "node --max-old-space-size=8192 dist",
-    "prestart": "npm run -s build",
+    "prod:prestart": "npm run -s build",
     "test": "eslint src"
   },
   "dependencies": {
