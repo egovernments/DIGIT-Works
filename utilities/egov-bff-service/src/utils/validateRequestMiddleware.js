@@ -10,6 +10,7 @@ const requestSchema = object({
 
 module.exports = (req, res, next) => {
   try {
+    console.log(req,"req req");
     requestSchema.validateSync(req.body.RequestInfo);
     next();
   } catch (error) {
