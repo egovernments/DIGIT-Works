@@ -17,6 +17,26 @@ export const createProjectConfigMUKTA = {
           subHead: "",
           body: [
               {
+                inline: true,
+                label: "WORKS_PROJECT_ID",
+                isMandatory: false,
+                key: "basicDetails_projectID",
+                type: "text",
+                disable: true,
+                preProcess : {
+                  updateDependent : ["populators.hideInForm"]
+                },
+                populators: { 
+                  name: "basicDetails_projectID", 
+                  hideInForm : true,
+                  customStyle : {
+                    border: "none",
+                    padding: "0",
+                    color: "black !important",
+                  }
+                },
+              },
+              {
                   inline: true,
                   label: "ES_COMMON_PROPOSAL_DATE",
                   isMandatory: false,
