@@ -85,6 +85,10 @@ router.post(
     if(!locResponse|| !locResponse?.messages || locResponse?.messages?.length==0){
       throwError("LOCALISATION NOT FOUND","LOCALISATION NOT FOUND",400)
     }
+
+    // let messages={}
+    // locResponse.messages.map(message=>{messages[message.code]=message.message})
+  
     let messages=locResponse.messages.map(message=>({code:message.code,message:message.message}))
     sendResponse(res,{messages},req);
   })

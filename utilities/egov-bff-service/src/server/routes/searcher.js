@@ -32,10 +32,10 @@ dataConfigUrls.split&&
       fs.readFile(item, "utf8", function (err, data) {
         try {
           if (err) {
-            logger.error(
-              "error when reading file for dataconfig: file:///" + item
-            );
-            logger.error(err.stack);
+            // logger.error(
+            //   "error when reading file for dataconfig: file:///" + item
+            // );
+            // logger.error(err.stack);
           } else {
             data = JSON.parse(data);
             dataConfigMap[data.key] = data;
@@ -48,12 +48,12 @@ dataConfigUrls.split&&
             //   topic.push(envVariables.KAFKA_RECEIVE_CREATE_JOB_TOPIC)
             //   listenConsumer(topic);
             // }
-            logger.info("loaded dataconfig: file:///" + item);
+            // logger.info("loaded dataconfig: file:///" + item);
             return dataConfigMap;
           }
         } catch (error) {
-          logger.error("error in loading dataconfig: file:///" + item);
-          logger.error(error.stack);
+          // logger.error("error in loading dataconfig: file:///" + item);
+          // logger.error(error.stack);
         }
       });
     } else {
@@ -61,10 +61,10 @@ dataConfigUrls.split&&
         try {
           var response = await axios.get(item);
           dataConfigMap[response.data.key] = response.data;
-          logger.info("loaded dataconfig: " + item);
+          // logger.info("loaded dataconfig: " + item);
         } catch (error) {
-          logger.error("error in loading dataconfig: " + item);
-          logger.error(error.stack);
+          // logger.error("error in loading dataconfig: " + item);
+          // logger.error(error.stack);
         }
       })();
     }
@@ -195,7 +195,7 @@ router.post(
         }
 
 
-     console.log(dataconfig,dataConfigMap,dataConfigUrls,'dataconfig');
+    //  console.log(dataconfig,dataConfigMap,dataConfigUrls,'dataconfig');
 
      return await prepareBulk(
         key,
