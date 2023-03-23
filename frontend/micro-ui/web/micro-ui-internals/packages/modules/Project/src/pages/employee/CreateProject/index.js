@@ -6,7 +6,8 @@ import CreateProjectForm from "./CreateProjectForm";
 import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMUKTA";
 
 const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, state}) => {
-    const projectDetails = state?.project?.basicDetails; //TODO:
+    let projectDetails = state?.project?.basicDetails; //TODO:
+    console.log("UPDATING DEFAULTS,.....", sessionFormData, projectDetails);
     if(!isModify) {
       //clear defaultValues from config
       let validDefaultValues = ["basicDetails_dateOfProposal", "noSubProject_ulb"];
@@ -18,15 +19,17 @@ const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionForm
     }
     //update default Values
     if(!sessionFormData?.basicDetails_dateOfProposal || !sessionFormData.noSubProject_ulb) {
-      console.log(projectDetails);
+      console.log("SETTING UP DEFAULTS-SESSION", sessionFormData);
       if(isModify) {
         configs.defaultValues.basicDetails_projectID = projectDetails?.projectID ? projectDetails?.projectID  : "";
+      }else{
+        projectDetails = {};
       }
       configs.defaultValues.basicDetails_dateOfProposal = projectDetails?.projectProposalDate ? "2020-01-01" : findCurrentDate();
       configs.defaultValues.noSubProject_ulb = ULBOptions[0];
       configs.defaultValues.basicDetails_projectName = projectDetails?.projectName ? projectDetails?.projectName  : "";
       configs.defaultValues.basicDetails_projectDesc = projectDetails?.projectDesc ? projectDetails?.projectDesc  : "";
-      console.log(configs);
+      console.log("DEFAULT SETTED",configs);
       setSessionFormData({...configs?.defaultValues});
     }
 }
@@ -71,7 +74,7 @@ const CreateProject = () => {
     const configs = createProjectConfigMUKTA?.CreateProjectConfig[0];
 
     const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", 
-      configs?.defaultValues
+      {}
     );
 
     const [sessionFormData, setSessionFormData, clearSessionFormData] = projectSession;

@@ -105,7 +105,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
           },
           {
             key : "basicDetails_projectID",
-            value : [!isModify]
+            value : [!isModify ? "none" : "flex"]
           }
         ]
       }),
@@ -307,7 +307,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
 
     return (
         <React.Fragment>
-            <Header styles={{fontSize: "32px"}}>{t("WORKS_CREATE_PROJECT")}</Header>
+            <Header styles={{fontSize: "32px"}}>{isModify ? t("COMMON_MODIFY_PROJECT") : t("WORKS_CREATE_PROJECT")}</Header>
           {
             createProjectConfig && (
               <FormComposer

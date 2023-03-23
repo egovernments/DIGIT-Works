@@ -1,7 +1,7 @@
 import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav, Menu, Toast } from '@egovernments/digit-ui-react-components'
 import React, { Fragment,useEffect,useRef,useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import ProjectDetailsNavDetails from './ProjectDetailsNavDetails'
 
 const ProjectDetails = () => {
@@ -17,6 +17,9 @@ const ProjectDetails = () => {
     const [showActions, setShowActions] = useState(false);
     const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
     const [hideActionBar, setHideActionBar] = useState(true);
+    const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
+    const [sessionFormData, clearSessionFormData] = projectSession;
+    const location = useLocation();
     const [actionsMenu, setActionsMenu] = useState([ 
         {
             name : "MODIFY_PROJECT"
@@ -155,6 +158,14 @@ const ProjectDetails = () => {
         let filterdNavConfig = navConfigs.filter((config)=>config.active === true);
         setNavTypeConfig(filterdNavConfig);
     },[data]);
+
+    //remove session form data if user navigates away from the project create screen
+    useEffect(()=>{
+        if (!window.location.href.includes("create-project") && sessionFormData && Object.keys(sessionFormData) != 0) {
+            console.log("SESSION CLEARING IN VIEW");
+            clearSessionFormData();
+        }
+    },[location]);
 
     return (
         <div className={"employee-main-application-details"}>

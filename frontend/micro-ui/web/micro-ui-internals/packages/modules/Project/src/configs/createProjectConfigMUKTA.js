@@ -3,10 +3,7 @@ export const createProjectConfigMUKTA = {
     "moduleName" : "commonUiConfig",
     "CreateProjectConfig" : [
       {
-        "defaultValues" : {
-          basicDetails_dateOfProposal : "",
-          noSubProject_ulb : ""
-        },
+        "defaultValues" : {},
         "metaData" : {
           showNavs : false,
           currentFormCategory : false,
@@ -24,15 +21,12 @@ export const createProjectConfigMUKTA = {
                 type: "text",
                 disable: true,
                 preProcess : {
-                  updateDependent : ["populators.hideInForm"]
+                  updateDependent : ["populators.customStyle.display"]
                 },
                 populators: { 
                   name: "basicDetails_projectID", 
-                  hideInForm : true,
                   customStyle : {
-                    border: "none",
-                    padding: "0",
-                    color: "black !important",
+                    display : "none"
                   }
                 },
               },
@@ -140,13 +134,11 @@ export const createProjectConfigMUKTA = {
                 type: "number",
                 disable: false,
                 preProcess: {
-                  convertStringToRegEx: [
-                    populators.validation.pattern
-                  ]
+                  convertStringToRegEx: ["populators.validation.pattern"]
                 },
                 populators: {
-                    name: noSubProject_estimatedCostInRs,
-                    error: PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST,
+                    name: "noSubProject_estimatedCostInRs",
+                    error: "PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST",
                     validation: {
                       pattern: /^(?:0|[1-9]\d*)(?:\.(?!.*000)\d+)?$/,
                       maxlength : 32,
@@ -269,7 +261,7 @@ export const createProjectConfigMUKTA = {
                     error: "WORKS_REQUIRED_ERR",
                     name: "noSubProject_docs",
                     customClass: "",
-                    localePrefix: "PROJECT"
+                    localePrefix: "PROJECT",
                 }
             ]
           }
