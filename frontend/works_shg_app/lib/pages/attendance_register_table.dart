@@ -406,7 +406,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
                                                       Future.delayed(
                                                           const Duration(
-                                                              seconds: 3));
+                                                              seconds: 1));
                                                       context.router.popAndPush(
                                                           AttendanceRegisterTableRoute(
                                                               projectDetails: widget

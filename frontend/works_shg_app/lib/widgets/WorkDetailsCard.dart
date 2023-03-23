@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/atoms/button_group.dart';
 
 import '../blocs/localization/app_localization.dart';
@@ -110,47 +111,59 @@ class WorkDetailsCard extends StatelessWidget {
               Constants.rejected));
     }
     if (isWorkOrderInbox && !isAccept!) {
-      labelList.add(Container(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            ButtonGroup(
-              outlinedButtonLabel,
-              elevatedButtonLabel,
-              outLinedCallBack: () => DigitDialog.show(
-                context,
-                title:
-                    AppLocalizations.of(context).translate(i18.common.warning),
-                content: AppLocalizations.of(context)
-                    .translate(i18.workOrder.warningMsg),
-                primaryActionLabel:
-                    AppLocalizations.of(context).translate(i18.common.confirm),
-                primaryAction: () {
-                  context.read<DeclineWorkOrderBloc>().add(
-                        WorkOrderDeclineEvent(
-                            contractsModel: payload,
-                            action: 'DECLINE',
-                            comments: 'DECLINE contract'),
-                      );
-                  Navigator.of(context, rootNavigator: true).pop();
-                },
-                secondaryActionLabel:
-                    AppLocalizations.of(context).translate(i18.common.back),
-                secondaryAction: () =>
-                    Navigator.of(context, rootNavigator: true).pop(),
-              ),
-              elevatedCallBack: () {
-                context.read<AcceptWorkOrderBloc>().add(
-                      WorkOrderAcceptEvent(
-                          contractsModel: payload,
-                          action: 'ACCEPT',
-                          comments: 'Accept contract'),
-                    );
-              },
+      labelList.add(Column(
+        children: [
+          ButtonLink(
+            AppLocalizations.of(context).translate(i18.common.viewDetails),
+            () {},
+            style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+                color: DigitTheme.instance.colorScheme.primary),
+          ),
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ButtonGroup(
+                  outlinedButtonLabel,
+                  elevatedButtonLabel,
+                  outLinedCallBack: () => DigitDialog.show(
+                    context,
+                    title: AppLocalizations.of(context)
+                        .translate(i18.common.warning),
+                    content: AppLocalizations.of(context)
+                        .translate(i18.workOrder.warningMsg),
+                    primaryActionLabel: AppLocalizations.of(context)
+                        .translate(i18.common.confirm),
+                    primaryAction: () {
+                      context.read<DeclineWorkOrderBloc>().add(
+                            WorkOrderDeclineEvent(
+                                contractsModel: payload,
+                                action: 'DECLINE',
+                                comments: 'DECLINE contract'),
+                          );
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    secondaryActionLabel:
+                        AppLocalizations.of(context).translate(i18.common.back),
+                    secondaryAction: () =>
+                        Navigator.of(context, rootNavigator: true).pop(),
+                  ),
+                  elevatedCallBack: () {
+                    context.read<AcceptWorkOrderBloc>().add(
+                          WorkOrderAcceptEvent(
+                              contractsModel: payload,
+                              action: 'ACCEPT',
+                              comments: 'Accept contract'),
+                        );
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ));
     } else if (isManageAttendance || isTrackAttendance) {
       labelList.add(Padding(
