@@ -73,10 +73,17 @@ const ProjectDetails = () => {
             history.push(`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&estimateNumber=${estimates?.[0]?.estimateNumber}`);
         }
         if(option?.name === "MODIFY_PROJECT"){
-            if((estimates?.length !==0 && estimates?.[0]?.wfStatus !== "") && ( estimates?.length !==0 && estimates?.[0]?.wfStatus !== "REJECTED")) {
+            if(estimates?.length !==0 && estimates?.[0]?.wfStatus !== "" &&  estimates?.[0]?.wfStatus !== "REJECTED") {
                 setToast({show : true, label : t("COMMON_CANNOT_MODIFY_PROJECT_EST_CREATED"), error : true});
             }else {
-                history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
+                // history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
+                history.push({
+                    pathname : `/${window.contextPath}/employee/project/create-project`,
+                    search : `?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}&isModify=true`,
+                    state : {
+                        project : data?.projectDetails?.searchedProject
+                    }
+                })
             }
         }
     }
@@ -103,16 +110,25 @@ const ProjectDetails = () => {
                     setActionsMenu([
                         {
                             name : "CREATE_ESTIMATE"
+                        },
+                        {
+                            name : "MODIFY_PROJECT"
                         }
                     ])
                 }else {
-                    setHideActionBar(true);
-                    setActionsMenu([])
+                    setActionsMenu([
+                        {
+                            name : "MODIFY_PROJECT"
+                        }
+                    ])
                 }
             }else{
                 setActionsMenu([
                     {
                         name : "VIEW_ESTIMATE"
+                    },
+                    {
+                        name : "MODIFY_PROJECT"
                     }
                 ])
             }
