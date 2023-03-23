@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
 import { Header, ActionBar, SubmitBar, Toast } from '@egovernments/digit-ui-react-components';
-import ApplicationDetails from '../../../../templates/ApplicationDetails';
+import ApplicationDetails from '../../../../../templates/ApplicationDetails';
 
 const ViewWageSeeker = () => {
   const { t } = useTranslation();
