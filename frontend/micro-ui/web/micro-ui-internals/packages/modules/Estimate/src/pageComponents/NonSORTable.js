@@ -1,4 +1,4 @@
-import React, { Fragment, useState ,useEffect} from 'react'
+import React, { Fragment, useState ,useEffect,useMemo} from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError,Dropdown,Loader } from '@egovernments/digit-ui-react-components'
 import { Controller } from 'react-hook-form';
 import _ from "lodash"
@@ -19,8 +19,9 @@ const NonSORTable = ({control,watch,...props}) => {
   const setTotal = (formData) => {
     const tableData = formData?.[formFieldName]
    
-    setTotalAmount((prevState)=> {
-      return tableData?.filter((row, index) => row)?.filter((row,index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseFloat(curr?.estimatedAmount) || 0
+    const filteredRows = rows?.filter(row=> row?.isShow)
+    setTotalAmount((prevState)=> {        
+      return tableData?.filter((row, index) => row)?.filter((row, index) => filteredRows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseFloat(curr?.estimatedAmount || 0) 
         ,0)
     })
 
