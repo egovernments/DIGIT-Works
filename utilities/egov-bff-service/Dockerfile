@@ -8,6 +8,8 @@ COPY ${WORK_DIR}/package.json ${WORK_DIR}/yarn.lock .
 
 RUN yarn
 
+RUN ls -lah
+
 COPY ${WORK_DIR}/src .
 
 CMD ["yarn", "start"]
