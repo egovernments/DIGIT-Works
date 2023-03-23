@@ -95,7 +95,8 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "recommendedModeOfEntrustment" : project_details?.recommendedModeOfEntrustment?.code,
             "ward" : project_details?.ward?.code,
             "creator": Digit.UserService.getUser()?.info?.name,
-            "targetDemography" : project_details?.targetDemography?.code
+            "targetDemography" : project_details?.targetDemography?.code,
+            "projectFiles" : project_details?.docs
           },
           "rowVersion": 0
       }

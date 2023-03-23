@@ -119,6 +119,7 @@ export const Search = {
 
         return {
             projectDetails : response?.Projects ? projectDetails : [],
+            response : response?.Projects,
             processInstancesDetails: [],
             applicationData: {},
             workflowDetails: [],

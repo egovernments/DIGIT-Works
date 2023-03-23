@@ -5,8 +5,9 @@ import { useLocation } from "react-router-dom";
 import CreateProjectForm from "./CreateProjectForm";
 import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMUKTA";
 
-const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, state}) => {
-    let projectDetails = state?.project?.basicDetails; //TODO:
+const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, state, headerLocale}) => {
+    console.log(state?.project?.[0]);
+    let projectDetails = state?.project?.[0]; 
     console.log("UPDATING DEFAULTS,.....", sessionFormData, projectDetails);
     if(!isModify) {
       //clear defaultValues from config
@@ -21,14 +22,23 @@ const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionForm
     if(!sessionFormData?.basicDetails_dateOfProposal || !sessionFormData.noSubProject_ulb) {
       console.log("SETTING UP DEFAULTS-SESSION", sessionFormData);
       if(isModify) {
-        configs.defaultValues.basicDetails_projectID = projectDetails?.projectID ? projectDetails?.projectID  : "";
+        configs.defaultValues.basicDetails_projectID = projectDetails?.projectNumber ? projectDetails?.projectNumber  : "";
       }else{
         projectDetails = {};
       }
-      configs.defaultValues.basicDetails_dateOfProposal = projectDetails?.projectProposalDate ? "2020-01-01" : findCurrentDate();
+      configs.defaultValues.basicDetails_dateOfProposal = projectDetails?.projectProposalDate ? "2020-01-01" : findCurrentDate(); //TODO:
       configs.defaultValues.noSubProject_ulb = ULBOptions[0];
-      configs.defaultValues.basicDetails_projectName = projectDetails?.projectName ? projectDetails?.projectName  : "";
-      configs.defaultValues.basicDetails_projectDesc = projectDetails?.projectDesc ? projectDetails?.projectDesc  : "";
+      configs.defaultValues.basicDetails_projectName = projectDetails?.name ? projectDetails?.name  : "";
+      configs.defaultValues.basicDetails_projectDesc = projectDetails?.description ? projectDetails?.description  : "";
+      configs.defaultValues.noSubProject_letterRefNoOrReqNo = projectDetails?.referenceID ? projectDetails?.referenceID  : "";
+      configs.defaultValues.noSubProject_typeOfProject = projectDetails?.projectType ? { code : projectDetails?.projectType, name : `COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(projectDetails?.projectType)}`, projectSubType : []}  : "";
+      configs.defaultValues.noSubProject_targetDemography = projectDetails?.additionalDetails?.targetDemography ? { code : projectDetails?.additionalDetails?.targetDemography, name : `COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(projectDetails?.additionalDetails?.targetDemography)}`}  : "";
+      configs.defaultValues.noSubProject_estimatedCostInRs = projectDetails?.additionalDetails?.estimatedCostInRs ? projectDetails?.additionalDetails?.estimatedCostInRs  : "";
+      configs.defaultValues.noSubProject_geoLocation = projectDetails?.address?.addressLine1 ? projectDetails?.address?.addressLine1  : "";
+      configs.defaultValues.noSubProject_ward = projectDetails?.additionalDetails?.ward ?  { code : projectDetails?.additionalDetails?.ward, name : projectDetails?.additionalDetails?.ward, i18nKey: `${headerLocale}_ADMIN_${projectDetails?.additionalDetails?.ward}`}  : "";
+      configs.defaultValues.noSubProject_locality = projectDetails?.address?.boundary ? { code : projectDetails?.address?.boundary, name : projectDetails?.address?.boundary, i18nKey: `${headerLocale}_ADMIN_${projectDetails?.address?.boundary}`}  : "";
+      configs.defaultValues.noSubProject_fund = projectDetails?.additionalDetails?.fund ? { code : projectDetails?.additionalDetails?.fund, name : `COMMON_MASTERS_FUND_${Digit.Utils.locale.getTransformedLocale(projectDetails?.additionalDetails?.fund)}`}  : "";
+      configs.defaultValues.noSubProject_docs = projectDetails?.additionalDetails?.projectFiles ? projectDetails?.additionalDetails?.projectFiles : "";
       console.log("DEFAULT SETTED",configs);
       setSessionFormData({...configs?.defaultValues});
     }
@@ -44,6 +54,7 @@ const CreateProject = () => {
     const queryStrings = Digit.Hooks.useQueryParams();
     const isModify = queryStrings?.isModify === "true";
     const {state} = useLocation();
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
 
@@ -81,7 +92,7 @@ const CreateProject = () => {
 
     useEffect(()=>{
       if(configs) {
-        updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, state })
+        updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, state, headerLocale })
         setIsFormReady(true);
       }
     },[configs]);

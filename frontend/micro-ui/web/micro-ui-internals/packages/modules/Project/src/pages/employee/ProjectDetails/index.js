@@ -84,7 +84,7 @@ const ProjectDetails = () => {
                     pathname : `/${window.contextPath}/employee/project/create-project`,
                     search : `?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}&isModify=true`,
                     state : {
-                        project : data?.projectDetails?.searchedProject
+                        project : data?.response
                     }
                 })
             }
