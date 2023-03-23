@@ -4,9 +4,12 @@ import { useTranslation } from "react-i18next";
 import { ActionBar, Banner, Card, CardText, SubmitBar } from "@egovernments/digit-ui-react-components";
 
 const Response = () => {
+    
     const { t } = useTranslation()
     const { state }  = useLocation()
-    
+    if (state?.performedAction === "APPROVE"){
+    state.message = `${state?.message} ${t("BILL_CREATED")}`
+    }
     return (
         <Card>
             <Banner 

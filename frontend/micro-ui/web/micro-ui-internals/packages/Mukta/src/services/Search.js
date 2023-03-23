@@ -7,8 +7,8 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
     };
     let basicDetails = {};
     let totalProjectsLength = project.length;
-    for(let projectIndex = 0; projectIndex < totalProjectsLength; projectIndex++) {
-        let currentProject = project[projectIndex];
+    // for(let projectIndex = 0; projectIndex < totalProjectsLength; projectIndex++) {
+        let currentProject = project[0];
         const headerDetails = {
             title: " ",
             asSectionHeader: true,
@@ -27,7 +27,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 { title: "PROJECT_LOR", value: currentProject?.referenceID || "NA" },
                 { title: "WORKS_PROJECT_TYPE", value: currentProject?.projectType ? t(`COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(currentProject?.projectType)}`) : "NA" },
                 { title: "PROJECT_TARGET_DEMOGRAPHY", value: currentProject?.additionalDetails?.targetDemography ? t(`COMMON_MASTERS_${currentProject?.additionalDetails?.targetDemography }`) : "NA" },
-                { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs ? `₹ ${currentProject?.additionalDetails?.estimatedCostInRs}` : "NA" },
+                { title: "PROJECT_ESTIMATED_COST", value: currentProject?.additionalDetails?.estimatedCostInRs ? `₹ ${Digit.Utils.dss.formatterWithoutRound(currentProject?.additionalDetails?.estimatedCostInRs, 'number')}` : "NA" },
             ]
         };
 
@@ -41,6 +41,14 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 { title: "WORKS_LOCALITY",value: currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "NA" },
             ]
         };
+
+        const financialDetails = {
+            title: "WORKS_FINANCIAL_DETAILS",
+            asSectionHeader: false,
+            values: [
+                { title: "WORKS_HEAD_OF_ACCOUNTS", value: currentProject?.additionalDetails?.fund ? t(`COMMON_MASTERS_FUND_${currentProject?.additionalDetails?.fund}`) : "NA" },
+            ],
+          };
 
         const documentDetails = {
             title: "",
@@ -62,7 +70,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             }
         }
 
-        if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
+        // if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
             basicDetails = {
                 projectID : currentProject?.projectNumber,
                 projectProposalDate : Digit.Utils.pt.convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA",
@@ -79,17 +87,18 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 headerDetails, 
                 projectDetails, 
                 locationDetails, 
+                financialDetails,
                 documentDetails
             }
-        }
-    }
+        // }
+    // }
     return totalProjects;
 }
 
 export const Search = {
     viewProjectDetailsScreen: async(t,tenantId, searchParams, filters = {limit : 10, offset : 0, includeAncestors : true, includeDescendants : true}, headerLocale)=> {
         const response = await Digit.WorksService?.searchProject(tenantId, searchParams, filters);
-       
+        
         let projectDetails = {
             searchedProject : {
                 basicDetails : {},
@@ -99,17 +108,22 @@ export const Search = {
             },
         }
 
-        let projects = createProjectsArray(t, response?.Projects, searchParams, headerLocale);
-        //searched Project details
-        projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
-        projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
+        if(response?.Projects) {
+            let projects = createProjectsArray(t, response?.Projects, searchParams, headerLocale);
+        
+            //searched Project details
+            projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
+            projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails,projects?.searchedProject?.financialDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
+    
+        }
 
         return {
-            projectDetails : projectDetails,
+            projectDetails : response?.Projects ? projectDetails : [],
             processInstancesDetails: [],
             applicationData: {},
             workflowDetails: [],
-            applicationData:{}
+            applicationData:{},
+            isNoDataFound : response?.Projects?.length === 0
         }
     },
     searchEstimate : async(tenantId, filters) => {

@@ -27,6 +27,8 @@ class AttendanceIndividualProjectSearchBloc extends Bloc<
   FutureOr<void> _onDispose(DisposeIndividualAttendanceRegisterEvent event,
       AttendanceIndividualProjectSearchEmitter emit) async {
     emit(const AttendanceIndividualProjectSearchState.initial());
+    emit(const AttendanceIndividualProjectSearchState.loaded(
+        AttendanceRegistersModel()));
   }
 
   FutureOr<void> _onIndividualSearch(
@@ -37,6 +39,7 @@ class AttendanceIndividualProjectSearchBloc extends Bloc<
       if (event.id.trim().isEmpty || event.tenantId.trim().isEmpty) {
         emit(const AttendanceIndividualProjectSearchState.initial());
       } else {
+        emit(const AttendanceIndividualProjectSearchState.initial());
         emit(const AttendanceIndividualProjectSearchState.loading());
         AttendanceRegistersModel attendanceRegistersModel =
             await AttendanceRegisterRepository(client.init())

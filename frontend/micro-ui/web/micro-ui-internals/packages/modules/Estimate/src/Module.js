@@ -11,6 +11,9 @@ import OverheadsTable from "./pageComponents/OverheadsTable";
 import ViewEstimateComponent from "./components/ViewEstimateComponent";
 import TotalEstAmount from "./pageComponents/TotalEstAmount";
 import LabourAnalysis from "./pageComponents/LabourAnalysis";
+import ViewTotalEstAmount from "./components/ViewTotalEstAmount";
+import ViewLabourAnalysis from "./components/ViewLabourAnalysis"
+
 const EstimateModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
@@ -39,7 +42,9 @@ const componentsToRegister = {
     OverheadsTable,
     ViewEstimatePage: ViewEstimateComponent,
     TotalEstAmount,
-    LabourAnalysis
+    LabourAnalysis,
+    ViewTotalEstAmount,
+    ViewLabourAnalysis
 };
 
 export const initEstimateComponents = () => {

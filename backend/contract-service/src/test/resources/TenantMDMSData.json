@@ -1,0 +1,17 @@
+{
+  "ResponseInfo": null,
+  "MdmsRes": {
+    "works": {
+      "ContractType": ["some-contractType"],
+      "DocumentType": ["some-documentType"],
+      "ExecutingAuthority": ["some-executingAuthority"]
+    },
+    "tenant": {
+      "tenants": [
+        "pb.amritsar"
+      ]
+    }
+  }
+}
+
+

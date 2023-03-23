@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment,useState,useEffect } from 'react'
 import { Loader } from "./Loader"
 import CardSectionHeader from './CardSectionHeader';
 import { CheckPoint, ConnectingCheckPoints } from './ConnectingCheckPoints';
@@ -11,7 +11,7 @@ function OpenImage(imageSource, index, thumbnailsToShow) {
 }
 
 const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineStatusPrefix="ESTIMATE_" ,statusAttribute="status", ...props}) => {
-    
+    const [additionalComment,setAdditionalComment] = useState(false)
     //for testing from url these 2 lines of code are kept here
     // const { estimateNumber } = Digit.Hooks.useQueryParams();
     // applicationNo = applicationNo? applicationNo : estimateNumber 
@@ -25,6 +25,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
             name: checkpoint?.assignes?.[0]?.name,
             mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
             wfComment: checkpoint?.comment ? [checkpoint?.comment] :[],
+            additionalComment: additionalComment && checkpoint?.performedAction === "APPROVE",
             thumbnailsToShow: checkpoint?.thumbnailsToShow,
         };
 
@@ -43,6 +44,14 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
             }
         }
     );
+
+    useEffect(() => {
+        if (workflowDetails?.data?.applicationBusinessService === "muster-roll-approval" && workflowDetails?.data?.actionState?.applicationStatus === "APPROVED") {
+            setAdditionalComment(true)
+        }
+    }, [workflowDetails])
+    
+
     
     return (
         <Fragment>
@@ -53,12 +62,12 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                     {!workflowDetails?.isLoading && (
                         <Fragment>
                             <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
-                                {t("WORKS_WORKFLOW_HISTORY")}
+                                {t("WORKS_WORKFLOW_TIMELINE")}
                             </CardSectionHeader>
                             {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
                                 <CheckPoint
                                     isCompleted={true}
-                                    label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.state}`)}
+                                    label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.[statusAttribute]}`)}
                                     customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0])}
                                 />
                             ) : (

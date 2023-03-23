@@ -131,6 +131,13 @@ import useViewFinancialDetails from "./project/useViewFinancialDetails";
 import useUpdateCustom from "./useUpdateCustom";
 
 import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
+import useCreateWO from "./works/useCreateWO";
+import useSearchOrg from "./works/useSearchOrg";
+
+
+import useViewBill from "./bills/useViewBill";
+import useContractSearch from "./contracts/useContractSearch";
+import useBillCreate from "./bills/useBillCreate";
 
 const works = {
   useViewEstimateDetails,
@@ -158,8 +165,14 @@ const works = {
 
 const contracts = {
   useViewContractDetails,
-  useViewContractDetailsClosureScreen
+  useViewContractDetailsClosureScreen,
+  useCreateWO,
+  useContractSearch
 };
+
+const organisation = {
+  useSearchOrg
+}
 
 const estimates = {
   useEstimateSearch,
@@ -236,7 +249,9 @@ const attendance = {
 };
 
 const bills = {
-  useViewBills
+  useViewBills,
+  useViewBill,
+  useBillCreate
 }
 const masters = {
   useViewOrg
@@ -313,7 +328,8 @@ const Hooks = {
   bills,
   masters,
   project,
-  wageSeeker
+  wageSeeker,
+  organisation
 };
 
 export default Hooks;

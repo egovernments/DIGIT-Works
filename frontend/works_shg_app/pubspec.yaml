@@ -70,7 +70,8 @@ dependencies:
   path_provider: ^2.0.13
   charset_converter: ^2.1.1
   path: ^1.8.2
-  flutter_countdown_timer: ^4.1.0
+  flutter_svg: ^2.0.3
+  multi_select_flutter: ^4.1.3
   flutter_localizations:
     sdk: flutter
 
@@ -111,6 +112,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/png/
+    - assets/svg/
   fonts:
     - family: Roboto
       fonts:

@@ -99,7 +99,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             }else {
                 //sub projects dont have financial details
                 //these keys are mapped to the view table
-                totalProjects.subProjects.push({
+                totalProjects.subProjects?.push({
                     name :  currentProject?.name || "NA",
                     estimatedAmount : currentProject?.additionalDetails?.estimatedCostInRs || "NA",
                     type : currentProject?.projectType || "NA",
@@ -176,7 +176,7 @@ export const WorksSearch = {
         if(response?.Projects?.[0]?.descendants) {
             projects = createProjectsArray(t, response?.Projects?.[0]?.descendants, searchParams, headerLocale);
             //all details of searched project will come here
-            projectDetails.subProjects.push(projects?.subProjects);
+            projectDetails.subProjects?.push(projects?.subProjects);
         }
         return {
             projectDetails : projectDetails,
@@ -196,34 +196,34 @@ export const WorksSearch = {
         const overheads = estimate?.estimateDetails?.filter(row => row?.category?.includes("OVERHEAD"))
         
 
-        const tableHeaderNonSor = [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")] 
-        const tableHeaderOverheads = [t("WORKS_SNO"), t("PROJECT_DESC"), t("WORKS_PERCENTAGE"), t("WORKS_AMOUNT")]
+        const tableHeaderNonSor = [t("WORKS_SNO"), t("EVENTS_DESCRIPTION"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")] 
+        const tableHeaderOverheads = [t("WORKS_SNO"), t("WORKS_OVERHEAD"), t("WORKS_PERCENTAGE"), t("WORKS_AMOUNT")]
         
         const tableRowsNonSor = nonSOR?.map((row,index)=>{
             return [
                 index+1,
                 row?.description,
                 row?.uom,
-                row?.unitRate,
+                Digit.Utils.dss.formatterWithoutRound(row?.unitRate, 'number'),
                 row?.noOfunit,
-                row?.amountDetail[0]?.amount?.toFixed(2)
+                Digit.Utils.dss.formatterWithoutRound(row?.amountDetail[0]?.amount?.toFixed(2), 'number')
             ]
         })
-        const totalAmountNonSor = nonSOR.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0).toFixed(2)
-        tableRowsNonSor.push(["","","","" ,t("WORKS_TOTAL_AMT"), totalAmountNonSor])
+        const totalAmountNonSor = nonSOR?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0).toFixed(2)
+        tableRowsNonSor?.push(["","","","" ,t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalAmountNonSor, 'number')])
         
         const tableRowsOverheads = overheads?.map((row, index) => {
             return [
                 index + 1,
                 row?.additionalDetails?.row?.name?.description,
                 row?.additionalDetails?.row?.name?.type?.includes("percent") ? `${row?.additionalDetails?.row?.name?.value}%`:t("WORKS_LUMPSUM"),
-                row?.amountDetail?.[0]?.amount?.toFixed(2)
+                Digit.Utils.dss.formatterWithoutRound(row?.amountDetail?.[0]?.amount?.toFixed(2), 'number')
             ]
         })
-        const totalAmountOverheads = overheads.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0).toFixed(2)
-        tableRowsOverheads.push(["","", t("WORKS_TOTAL_AMT"), totalAmountOverheads])
+        const totalAmountOverheads = overheads?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0).toFixed(2)
+        tableRowsOverheads?.push(["","", t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalAmountOverheads, 'number')])
         const nonSorItems = {
-            title: "ESTIMATE_LINE_ITEMS",
+            title: "WORKS_NON_SOR",
             asSectionHeader: true,
             isTable: true,
             headers: tableHeaderNonSor,
@@ -231,11 +231,11 @@ export const WorksSearch = {
             state: estimate,
             tableStyles:{
                 rowStyle:{},
-                cellStyle:[{},{"width":"40vw"},{},{},{},{"textAlign":"right"}]
+                cellStyle: [{}, { "width": "40vw" }, {}, {}, {  },{"textAlign":"right"}]
             }
         }
         const overheadItems = {
-            title: "ESTIMATE_OVERHEADS",
+            title: "WORKS_OVERHEADS",
             asSectionHeader: true,
             isTable: true,
             headers: tableHeaderOverheads,
@@ -243,7 +243,7 @@ export const WorksSearch = {
             state: estimate,
             tableStyles: {
                 rowStyle: {},
-                cellStyle: [{}, { "width": "50vw" }, {}, { "textAlign": "right" }]
+                cellStyle: [{}, { "width": "50vw" }, {  }, { "textAlign": "right" }]
             }
         }
         
@@ -255,9 +255,9 @@ export const WorksSearch = {
                 documents: [{
                     title: "WORKS_RELEVANT_DOCS",
                     BS: 'Works',
-                    values: files?.map((document) => {
+                    values: files?.filter(doc=>doc?.fileStoreId)?.map((document) => {
                         return {
-                            title: document?.fileName,
+                            title: document?.fileType,
                             documentType: document?.documentType,
                             documentUid: document?.fileStoreId,
                             fileStoreId: document?.fileStoreId,
@@ -267,10 +267,35 @@ export const WorksSearch = {
                 ]
             }
         }
-        const details = [nonSorItems,overheadItems,documentDetails]
+
+        const totalEstAmt = {
+            "title": " ",
+            "asSectionHeader": true,
+            "Component": Digit.ComponentRegistryService.getComponent("ViewTotalEstAmount"),
+            "value": Digit.Utils.dss.formatterWithoutRound(estimate?.additionalDetails?.totalEstimatedAmount, 'number')|| t("NA")
+        }
+
+        const labourDetails = {
+            "title": "ESTIMATE_LABOUR_ANALYSIS",
+            "asSectionHeader": true,
+            "Component": Digit.ComponentRegistryService.getComponent("ViewLabourAnalysis"),
+            "value": [
+                {
+                    "title": "ESTIMATE_LABOUR_COST",
+                    "value": Digit.Utils.dss.formatterWithoutRound(estimate?.additionalDetails?.labourMaterialAnalysis?.labour, 'number') || t("NA")
+                },
+                {
+                    "title": "ESTIMATE_MATERIAL_COST",
+                    "value": Digit.Utils.dss.formatterWithoutRound(estimate?.additionalDetails?.labourMaterialAnalysis?.material, 'number') || t("NA")
+                },
+            ]
+        }
+        const details = [nonSorItems, overheadItems,totalEstAmt,labourDetails,documentDetails]
+
         return {
             applicationDetails: details,
             applicationData:estimate,
+            isNoDataFound : estimateArr.length === 0 ? true : false
         }
     },
     workflowDataDetails: async (tenantId, businessIds) => {
