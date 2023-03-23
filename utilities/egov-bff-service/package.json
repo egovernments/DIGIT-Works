@@ -18,13 +18,14 @@
     ]
   },
   "scripts": {
+    "ls":"ls",
     "old:start": "node ./server/bin/www",
     "test": "eslint src",
     "start": "npm run prod",
     "build": "npm-run-all clean transpile",
     "server": "node ./dist/bin/www",
     "dev": "NODE_ENV=development npm-run-all build server",
-    "prod": "NODE_ENV=production npm-run-all build server",
+    "prod": "NODE_ENV=production npm-run-all ls build server",
     "transpile": "babel ./src/server --out-dir dist",
     "watch:dev": "nodemon && yarn dev",
     "clean": "rimraf dist"
