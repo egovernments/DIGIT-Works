@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import CreateProjectForm from "./CreateProjectForm";
+import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMUKTA";
 
 const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, state}) => {
     const projectDetails = state?.project?.basicDetails; //TODO:
@@ -17,11 +18,15 @@ const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionForm
     }
     //update default Values
     if(!sessionFormData?.basicDetails_dateOfProposal || !sessionFormData.noSubProject_ulb) {
+      console.log(projectDetails);
+      if(isModify) {
+        configs.defaultValues.basicDetails_projectID = projectDetails?.projectID ? projectDetails?.projectID  : "";
+      }
       configs.defaultValues.basicDetails_dateOfProposal = projectDetails?.projectProposalDate ? "2020-01-01" : findCurrentDate();
       configs.defaultValues.noSubProject_ulb = ULBOptions[0];
-      // configs.defaultValues.basicDetails_projectID = projectDetails?.projectID ? projectDetails?.projectID  : "";
       configs.defaultValues.basicDetails_projectName = projectDetails?.projectName ? projectDetails?.projectName  : "";
       configs.defaultValues.basicDetails_projectDesc = projectDetails?.projectDesc ? projectDetails?.projectDesc  : "";
+      console.log(configs);
       setSessionFormData({...configs?.defaultValues});
     }
 }
@@ -48,20 +53,22 @@ const CreateProject = () => {
       return dateString;
     } 
 
-    const { isLoading, data : configs} = Digit.Hooks.useCustomMDMS( //change to data
-      stateTenant,
-      Digit.Utils.getConfigModuleName(),
-      [
-          {
-              "name": "CreateProjectConfig"
-          }
-      ],
-      {
-        select: (data) => {
-            return data?.[Digit.Utils.getConfigModuleName()]?.CreateProjectConfig[0];
-        },
-      }
-    );
+    // const { isLoading, data : configs} = Digit.Hooks.useCustomMDMS( //change to data
+    //   stateTenant,
+    //   Digit.Utils.getConfigModuleName(),
+    //   [
+    //       {
+    //           "name": "CreateProjectConfig"
+    //       }
+    //   ],
+    //   {
+    //     select: (data) => {
+    //         return data?.[Digit.Utils.getConfigModuleName()]?.CreateProjectConfig[0];
+    //     },
+    //   }
+    // );
+
+    const configs = createProjectConfigMUKTA?.CreateProjectConfig[0];
 
     const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", 
       configs?.defaultValues
@@ -76,11 +83,11 @@ const CreateProject = () => {
       }
     },[configs]);
 
-    if(isLoading) return <Loader />
+    // if(isLoading) return <Loader />
     return (
       <React.Fragment>
         {isFormReady && 
-          <CreateProjectForm t={t} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} createProjectConfig={configs}></CreateProjectForm>
+          <CreateProjectForm t={t} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} createProjectConfig={configs} isModify={isModify}></CreateProjectForm>
         }
         </React.Fragment>
     )
