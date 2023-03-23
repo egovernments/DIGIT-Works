@@ -17,6 +17,7 @@ import '../utils/notifiers.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/atoms/app_bar_logo.dart';
+import '../widgets/atoms/tabs_button.dart';
 import '../widgets/drawer_wrapper.dart';
 
 class WorkOrderPage extends StatefulWidget {
@@ -30,7 +31,10 @@ class WorkOrderPage extends StatefulWidget {
 
 class _WorkOrderPage extends State<WorkOrderPage> {
   bool hasLoaded = true;
+  bool inProgress = true;
   List<Map<String, dynamic>> workOrderList = [];
+  List<Map<String, dynamic>> inProgressWorkOrderList = [];
+  List<Map<String, dynamic>> completedWorkOrderList = [];
 
   @override
   void initState() {
@@ -46,6 +50,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return Scaffold(
         appBar: AppBar(
           titleSpacing: 0,
@@ -64,9 +69,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                       context, error.toString(), 'ERROR'),
                   loaded: (ContractsModel? contracts) {
                     workOrderList = contracts!.contracts!
-                        .where((e) =>
-                            e.wfStatus == 'APPROVED' ||
-                            e.wfStatus == 'ACCEPTED')
+                        .where((e) => e.wfStatus == 'APPROVED')
                         .map((e) => {
                               'cardDetails': {
                                 i18.workOrder.workOrderNo:
@@ -126,6 +129,149 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                           .displayMedium,
                                       textAlign: TextAlign.left,
                                     ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      TabButton(
+                                        t.translate(i18.common.inProgress),
+                                        isMainTab: true,
+                                        isSelected: inProgress,
+                                        onPressed: () {
+                                          setState(() {
+                                            inProgress = true;
+                                            workOrderList = contractsModel!
+                                                .contracts!
+                                                .where((e) =>
+                                                    e.wfStatus == 'APPROVED')
+                                                .map((e) => {
+                                                      'cardDetails': {
+                                                        i18.workOrder
+                                                                .workOrderNo:
+                                                            e.contractNumber ??
+                                                                'NA',
+                                                        i18.attendanceMgmt
+                                                            .projectDesc: e
+                                                                .additionalDetails
+                                                                ?.projectName ??
+                                                            'NA',
+                                                        i18.workOrder.roleOfCBO:
+                                                            AppLocalizations.of(
+                                                                    context)
+                                                                .translate(
+                                                                    e.executingAuthority ??
+                                                                        'NA'),
+                                                        i18.attendanceMgmt
+                                                            .engineerInCharge: e
+                                                                .additionalDetails
+                                                                ?.officerInChargeId ??
+                                                            'NA',
+                                                        i18.workOrder
+                                                            .contractIssueDate: e
+                                                                    .issueDate !=
+                                                                null
+                                                            ? DateFormats
+                                                                .timeStampToDate(
+                                                                    e.issueDate,
+                                                                    format:
+                                                                        "dd/MM/yyyy")
+                                                            : 'NA',
+                                                        i18.workOrder.dueDate: e
+                                                                    .issueDate !=
+                                                                null
+                                                            ? DateFormats.getFilteredDate(DateTime
+                                                                    .fromMillisecondsSinceEpoch(
+                                                                        e.issueDate ??
+                                                                            0)
+                                                                .add(
+                                                                    const Duration(
+                                                                        days:
+                                                                            7))
+                                                                .toLocal()
+                                                                .toString())
+                                                            : 'NA',
+                                                        i18.workOrder
+                                                                .contractAmount:
+                                                            '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
+                                                        i18.common.status:
+                                                            e.wfStatus,
+                                                      },
+                                                      'payload': e.toMap()
+                                                    })
+                                                .toList();
+                                          });
+                                        },
+                                      ),
+                                      TabButton(
+                                        t.translate(i18.common.completed),
+                                        isMainTab: true,
+                                        isSelected: !inProgress,
+                                        onPressed: () {
+                                          setState(() {
+                                            inProgress = false;
+                                            workOrderList = contractsModel!
+                                                .contracts!
+                                                .where((e) =>
+                                                    e.wfStatus == 'ACCEPTED')
+                                                .map((e) => {
+                                                      'cardDetails': {
+                                                        i18.workOrder
+                                                                .workOrderNo:
+                                                            e.contractNumber ??
+                                                                'NA',
+                                                        i18.attendanceMgmt
+                                                            .projectDesc: e
+                                                                .additionalDetails
+                                                                ?.projectName ??
+                                                            'NA',
+                                                        i18.workOrder.roleOfCBO:
+                                                            AppLocalizations.of(
+                                                                    context)
+                                                                .translate(
+                                                                    e.executingAuthority ??
+                                                                        'NA'),
+                                                        i18.attendanceMgmt
+                                                            .engineerInCharge: e
+                                                                .additionalDetails
+                                                                ?.officerInChargeId ??
+                                                            'NA',
+                                                        i18.workOrder
+                                                            .contractIssueDate: e
+                                                                    .issueDate !=
+                                                                null
+                                                            ? DateFormats
+                                                                .timeStampToDate(
+                                                                    e.issueDate,
+                                                                    format:
+                                                                        "dd/MM/yyyy")
+                                                            : 'NA',
+                                                        i18.workOrder.dueDate: e
+                                                                    .issueDate !=
+                                                                null
+                                                            ? DateFormats.getFilteredDate(DateTime
+                                                                    .fromMillisecondsSinceEpoch(
+                                                                        e.issueDate ??
+                                                                            0)
+                                                                .add(
+                                                                    const Duration(
+                                                                        days:
+                                                                            7))
+                                                                .toLocal()
+                                                                .toString())
+                                                            : 'NA',
+                                                        i18.workOrder
+                                                                .contractAmount:
+                                                            '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
+                                                        i18.common.status:
+                                                            e.wfStatus,
+                                                      },
+                                                      'payload': e.toMap()
+                                                    })
+                                                .toList();
+                                          });
+                                        },
+                                      )
+                                    ],
                                   ),
                                   workOrderList.isNotEmpty
                                       ? WorkDetailsCard(
