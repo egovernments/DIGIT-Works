@@ -199,7 +199,7 @@ export const externalAPIMapping = async function (
         "NA",
         externalAPIArray[i].jPath[j].value
       );
-      let loc = externalAPIArray[i].jPath[j].localisation;
+      let loc = externalAPIArray[i].jPath[j].localisation||{};
       console.log(externalAPIArray[i].jPath[j].type,'externalAPIArray[i].jPath[j].type');
       if (externalAPIArray[i].jPath[j].type == "image") {
         // default empty image
@@ -272,9 +272,9 @@ export const externalAPIMapping = async function (
                 scema[k].localisation &&
                 scema[k].localisation.required
               ) {
-                let loc = scema[k].localisation;
+                let loc = scema[k].localisation||{};
               fieldValue = await getLocalisationkey(
-                loc.prefix,
+                loc&&loc.prefix,
                 fieldValue,
                 loc.isCategoryRequired,
                 loc.isMainTypeRequired,
@@ -316,7 +316,7 @@ export const externalAPIMapping = async function (
           externalAPIArray[i].jPath[j].localisation.prefix
         ){
           let currentValue= await getLocalisationkey(
-            loc.prefix,
+            loc && loc.prefix,
             replaceValue,
             loc.isCategoryRequired,
             loc.isMainTypeRequired,

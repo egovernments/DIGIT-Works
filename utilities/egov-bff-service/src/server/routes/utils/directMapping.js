@@ -140,11 +140,11 @@ console.log(directArr,'directArr');
               scema[k].localisation &&
               scema[k].localisation.required
             ) {
-              let loc = scema[k].localisation;
+              let loc = scema[k].localisation||{};
               console.log(fieldValue,'fieldValue');
 
               fieldValue = await getLocalisationkey(
-                loc.prefix,
+                loc&& loc.prefix,
                 fieldValue,
                 loc.isCategoryRequired,
                 loc.isMainTypeRequired,
@@ -221,10 +221,10 @@ console.log(directArr,'directArr');
               scema[k].localisation &&
               scema[k].localisation.required
             ) {
-              let loc = scema[k].localisation;
+              let loc = scema[k].localisation||{};
               console.log(fieldValue,'getLocalisationkey');
               fieldValue = await getLocalisationkey(
-                loc.prefix,
+                loc&&loc.prefix,
                 fieldValue,
                 loc.isCategoryRequired,
                 loc.isMainTypeRequired,
@@ -260,7 +260,7 @@ console.log(directArr,'directArr');
     //setting value in pdf for no type direct mapping
     else if (directArr[i].type == "label") {
       let code = await getLocalisationkey(
-        directArr[i].localisation.prefix,
+        directArr[i].localisation&&directArr[i].localisation.prefix,
         directArr[i].valJsonPath,
         directArr[i].localisation.isCategoryRequired,
         directArr[i].localisation.isMainTypeRequired,
@@ -301,7 +301,7 @@ console.log(directArr,'directArr');
       ){
 
         let code = await getLocalisationkey(
-          directArr[i].localisation.prefix,
+          directArr[i].localisation&& directArr[i].localisation.prefix,
           directArr[i].val,
           directArr[i].localisation.isCategoryRequired,
           directArr[i].localisation.isMainTypeRequired,
