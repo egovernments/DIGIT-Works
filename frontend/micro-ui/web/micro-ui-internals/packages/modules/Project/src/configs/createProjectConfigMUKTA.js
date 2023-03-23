@@ -246,12 +246,10 @@ export const createProjectConfigMUKTA = {
                     type: "documentUpload",
                     withoutLabel: true,
                     module: "Project",
-                    populators:{
-                        error: "WORKS_REQUIRED_ERR",
-                        name: "noSubProject_docs",
-                        customClass: "",
-                        localePrefix: "PROJECT",
-                    }
+                    error: "WORKS_REQUIRED_ERR",
+                    name: "noSubProject_docs",
+                    customClass: "",
+                    localePrefix: "PROJECT"
                 }
             ]
           }

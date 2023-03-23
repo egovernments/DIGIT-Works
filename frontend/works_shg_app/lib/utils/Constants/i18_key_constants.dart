@@ -103,6 +103,8 @@ class Common {
   String get ifscCode => 'COMMON_IFSC_CODE';
   String get bankHint => 'HINT_BANK_DETAILS';
   String get photoGraph => 'COMMON_PHOTOGRAPH';
+  String get inProgress => 'IN_PROGRESS_LABEL';
+  String get completed => 'COMPLETED_LABEL';
 }
 
 class Home {

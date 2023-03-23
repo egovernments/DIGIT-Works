@@ -213,12 +213,10 @@ const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge, 
                 type: "documentUpload",
                 withoutLabel: true,
                 module: "Work Order",
-                populators: {
-                  error: "WORKS_REQUIRED_ERR",
-                  name: "documents",
-                  customClass: "",
-                  localePrefix: "WO"
-                }
+                error: "WORKS_REQUIRED_ERR",
+                name: "documents",
+                customClass: "",
+                localePrefix: "WO"
               }
             ]
           },
