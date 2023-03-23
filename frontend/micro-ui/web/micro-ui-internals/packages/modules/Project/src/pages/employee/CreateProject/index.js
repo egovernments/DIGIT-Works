@@ -4,10 +4,11 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import CreateProjectForm from "./CreateProjectForm";
 import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMUKTA";
+import { ConvertEpochToDate } from "../../../../../../libraries/src/services/atoms/Utils/Date";
 
 const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, state, headerLocale}) => {
     let projectDetails = state?.project?.[0]; 
-    console.log(projectDetails);
+
     if(!isModify) {
       //clear defaultValues from 'config' ( this case can come when user navigates from Create Screen to Modify Screen )
       let validDefaultValues = ["basicDetails_dateOfProposal", "noSubProject_ulb"];
@@ -29,7 +30,7 @@ const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionForm
         projectDetails = {};
       }
 
-      configs.defaultValues.basicDetails_dateOfProposal = projectDetails?.additionalDetails?.dateOfProposal ? "2020-01-01" : findCurrentDate(); //TODO:
+      configs.defaultValues.basicDetails_dateOfProposal = projectDetails?.additionalDetails?.dateOfProposal ? ConvertEpochToDate(projectDetails?.additionalDetails?.dateOfProposal, "yyyy-mm-dd")  : findCurrentDate(); //TODO:
       configs.defaultValues.noSubProject_ulb = ULBOptions[0];
       configs.defaultValues.basicDetails_projectName = projectDetails?.name ? projectDetails?.name  : "";
       configs.defaultValues.basicDetails_projectDesc = projectDetails?.description ? projectDetails?.description  : "";
