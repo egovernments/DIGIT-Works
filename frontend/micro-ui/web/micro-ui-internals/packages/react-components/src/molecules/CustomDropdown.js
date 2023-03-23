@@ -108,7 +108,7 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
           ) : (
             <Dropdown
               inputRef={inputRef}
-              style={{ display: "flex", justifyContent: "space-between" }}
+              style={{ display: "flex", justifyContent: "space-between", ...config.styles }}
               option={data || config?.options || []}
               key={config.name}
               optionKey={config?.optionsKey}

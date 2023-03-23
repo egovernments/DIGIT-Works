@@ -51,6 +51,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   }, [formState])
 
   const onSubmit = (data) => {
+    
     //here -> added a custom validator function, if required add in UICustomizations
     const isAnyError = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck(data) : false 
     if(isAnyError) {
@@ -119,7 +120,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
           <div>
             {uiConfig?.showFormInstruction && <p className="search-instruction-header">{t(uiConfig?.showFormInstruction)}</p>}
-            <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`}>
+            <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`} style={{"gap":"1rem"}}>
               <RenderFormFields 
                 fields={uiConfig?.fields} 
                 control={control} 

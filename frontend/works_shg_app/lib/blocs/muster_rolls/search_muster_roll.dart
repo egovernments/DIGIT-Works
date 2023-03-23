@@ -44,7 +44,7 @@ class MusterRollSearchBloc
       await Future.delayed(const Duration(seconds: 1));
       emit(MusterRollSearchState.loaded(musterRollsModel));
     } on DioError catch (e) {
-      emit(MusterRollSearchState.error(e.response?.data['Errors'][0]['code']));
+      emit(const MusterRollSearchState.loaded(MusterRollsModel()));
     }
   }
 }

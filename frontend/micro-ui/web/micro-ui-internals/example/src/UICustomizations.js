@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import _ from "lodash";
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
@@ -6,10 +7,13 @@ import { Link } from "react-router-dom";
 var Digit = window.Digit || {};
 
 const businessServiceMap = {
-  estimate: "estimate-approval-2",
+  estimate: "mukta-estimate",
+  contracts: "contract-approval-mukta",
+  attendencemgmt: "muster-roll-approval",
 };
 
 export const UICustomizations = {
+  businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
     if (businessService === businessServiceMap.estimate) {
       const workflow = {
@@ -36,24 +40,51 @@ export const UICustomizations = {
         workflow,
       };
     }
+    if (businessService === businessServiceMap.contracts) {
+      const workflow = {
+        comment: data?.comments,
+        documents: data?.documents?.map((document) => {
+          return {
+            documentType: action?.action + " DOC",
+            fileName: document?.[1]?.file?.name,
+            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: document?.[1]?.fileStoreId?.tenantId,
+          };
+        }),
+        assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+        action: action.action,
+      };
+      //filtering out the data
+      Object.keys(workflow).forEach((key, index) => {
+        if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
+      });
+
+      return {
+        contract: applicationDetails,
+        workflow
+      };
+    }
   },
   enableHrmsSearch: (businessService, action) => {
     if (businessService === businessServiceMap.estimate) {
-      return (
-        action.action.includes("CHECK") ||
-        action.action.includes("ADMIN") ||
-        action.action.includes("APPROVE") ||
-        action.action.includes("VERIFYANDFORWARD")
-      );
+      return action.action.includes("TECHNICALSANCTION") || action.action.includes("VERIFYANDFORWARD");
+    }
+    if (businessService === businessServiceMap.contracts) {
+      return action.action.includes("VERIFY_AND_FORWARD");
     }
     return false;
   },
   getBusinessService: (moduleCode) => {
-    if (moduleCode.includes("estimate")) {
+    if (moduleCode?.includes("estimate")) {
       return businessServiceMap?.estimate;
+    } else if (moduleCode?.includes("contract")) {
+      return businessServiceMap?.contracts;
+    } else if (moduleCode?.includes("attendence")) {
+      return businessServiceMap?.attendencemgmt;
+    } else {
+      return businessServiceMap;
     }
-
-    return null;
   },
   SearchProjectConfig: {
     preProcess: (data) => {
@@ -163,11 +194,12 @@ export const UICustomizations = {
       const endDate = Digit.Utils.pt.convertDateToEpoch(convertedEndDate, "dayStart");
       const attendanceRegisterName = data.body.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim();
       const musterRollStatus = data.body.inbox?.moduleSearchCriteria?.musterRollStatus?.code;
+      const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.musterRollNumber;
       data.body.inbox = {
         ...data.body.inbox,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName, musterRollNumber },
       };
       return data;
     },
@@ -354,16 +386,22 @@ export const UICustomizations = {
     },
   },
   SearchWageSeekerConfig: {
+    preProcess: (data) => {
+      // const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
+      // const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
+      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
+      // data.body.Individual = { ...data.body.Individual, tenantId: Digit.ULBService.getCurrentTenantId() };
+      return data;
+    },
     additionalCustomizations: (row, column, columnConfig, value, t) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
-
       if (column.label === "MASTERS_WAGESEEKER_ID") {
         return (
           <span className="link">
-            <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row.tenantId}&wageseekerId=${value?.[0]}`}>
-              {value?.[0] && t("ES_COMMON_NA")}
+            <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row.tenantId}&wageseekerId=${value}`}>
+              {value ? value : t("ES_COMMON_NA")}
             </Link>
           </span>
         );
@@ -381,6 +419,13 @@ export const UICustomizations = {
           t("ES_COMMON_NA")
         );
       }
+      if (column.label === "MASTERS_LOCALITY") {
+        return value ? (
+          <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+        ) : (
+          t("ES_COMMON_NA")
+        );
+      }
     },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
@@ -389,16 +434,22 @@ export const UICustomizations = {
     },
   },
   SearchOrganisationConfig: {
+    preProcess: (data) => {
+      // const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
+      // const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
+      // data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
+      data.body.SearchCriteria = { ...data.body.SearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() };
+      return data;
+    },
     additionalCustomizations: (row, column, columnConfig, value, t) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
-
       if (column.label === "MASTERS_ORGANISATION_ID") {
         return (
           <span className="link">
-            <Link to={`/${window.contextPath}/employee/masters/view-organisation?tenantId=${row.tenantId}&orgId=${value?.[0]}`}>
-              {value?.[0] && t("ES_COMMON_NA")}
+            <Link to={`/${window.contextPath}/employee/masters/view-organisation?tenantId=${row.tenantId}&orgId=${value}`}>
+              {value ? value : t("ES_COMMON_NA")}
             </Link>
           </span>
         );
@@ -415,7 +466,7 @@ export const UICustomizations = {
       if (column.label === "MASTERS_LOCATION") {
         return value ? (
           <span style={{ whiteSpace: "nowrap" }}>
-            {String(`${t(Digit.Utils.locale.getCityLocale(value))} ${t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId))}`)}
+            {String(`${t(Digit.Utils.locale.getCityLocale(row?.tenantId))} ${t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId))}`)}
           </span>
         ) : (
           t("ES_COMMON_NA")
@@ -428,4 +479,93 @@ export const UICustomizations = {
       }
     },
   },
+  EstimateInboxConfig:{},
+  BillInboxConfig: {
+    preProcess: (data) => {
+      const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber;
+      let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state:[])
+      delete data.body.inbox.moduleSearchCriteria.state
+      states = Object.keys(states)?.filter(key=>states[key])
+      
+      let status;
+      if(states.length>0) status = states
+
+      data.body.inbox = {
+        ...data.body.inbox,
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+        processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber, status }
+      };
+      return data;
+    },
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      if (column.label === "WORKS_BILL_NUMBER") {
+        return (
+          <span className="link">
+            <Link
+              to={`/works-ui/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}
+            >
+              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+
+      if (column.label === "ES_COMMON_AMOUNT") {
+        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+      }
+
+      if (column.label === "COMMON_SLA_DAYS") {
+        return value ? (parseInt(value) > 0 ? (
+          <span className="sla-cell-success">{t(value) || ""}</span>
+        ) : (
+          <span className="sla-cell-error">{t(value) || ""}</span>
+        )) : t("ES_COMMON_NA")
+      }
+
+      if (column.label === "COMMON_WORKFLOW_STATES") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      }
+    }
+  },
+  SearchBillConfig: {
+    preProcess: (data) => {
+      const fromDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromDate);
+      const toDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toDate);
+      const musterRollStatus = data?.params?.musterRollStatus?.code;
+      delete data.params.billType;
+      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus };
+      return data;
+    },
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      if (column.label === "WORKS_BILL_NUMBER") {
+        return (
+          <span className="link">
+            <Link
+              to={`/${
+                window.contextPath
+              }/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}
+            >
+              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if (column.label === "EXP_BILL_AMOUNT") {
+        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+      }
+      if(column.label === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      }
+      if(column.label === "ES_COMMON_LOCATION") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+        return t(`TENANT_TENANTS_${headerLocale}`)
+      }
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
+      }
+    }
+  }
 };

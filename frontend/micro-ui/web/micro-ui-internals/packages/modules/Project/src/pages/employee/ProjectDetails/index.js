@@ -16,6 +16,7 @@ const ProjectDetails = () => {
     const menuRef = useRef();
     const [showActions, setShowActions] = useState(false);
     const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
+    const [hideActionBar, setHideActionBar] = useState(true);
     const [actionsMenu, setActionsMenu] = useState([ 
         {
             name : "MODIFY_PROJECT"
@@ -72,7 +73,7 @@ const ProjectDetails = () => {
             history.push(`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&estimateNumber=${estimates?.[0]?.estimateNumber}`);
         }
         if(option?.name === "MODIFY_PROJECT"){
-            if(estimates?.length !==0 && estimates?.[0]?.wfStatus !== "" && estimates?.[0]?.wfStatus !== "REJECTED") {
+            if((estimates?.length !==0 && estimates?.[0]?.wfStatus !== "") && ( estimates?.length !==0 && estimates?.[0]?.wfStatus !== "REJECTED")) {
                 setToast({show : true, label : t("COMMON_CANNOT_MODIFY_PROJECT_EST_CREATED"), error : true});
             }else {
                 history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
@@ -87,30 +88,36 @@ const ProjectDetails = () => {
     const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
 
     //fetch estimate details
-    const { data : estimates } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
+    const { data : estimates, isError : isEstimateSearchError } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
 
     useEffect(()=>{
-        let isUserEstimateCreator = loggedInUserRoles?.includes("EST_CREATOR");
-        if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED") && isUserEstimateCreator) {
-            setActionsMenu([
-                {
-                    name : "CREATE_ESTIMATE"
-                },
-                {
-                    name : "MODIFY_PROJECT"
-                }
-            ])
+        let isUserEstimateCreator = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
+        if(isEstimateSearchError) {
+            setToast({show : true, label : t("COMMON_ERROR_FETCHING_ESTIMATE_DETAILS"), error : true});
+            setActionsMenu([]);
+            setHideActionBar(true);
         }else {
-            setActionsMenu([
-                {
-                    name : "VIEW_ESTIMATE"
-                },
-                {
-                    name : "MODIFY_PROJECT"
+            setHideActionBar(false);
+            if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED")) {
+                if(isUserEstimateCreator) {
+                    setActionsMenu([
+                        {
+                            name : "CREATE_ESTIMATE"
+                        }
+                    ])
+                }else {
+                    setHideActionBar(true);
+                    setActionsMenu([])
                 }
-            ])
+            }else{
+                setActionsMenu([
+                    {
+                        name : "VIEW_ESTIMATE"
+                    }
+                ])
+            }
         }
-    },[estimates]);
+    },[estimates, isEstimateSearchError]);
 
      //remove Toast after 3s
      useEffect(()=>{
@@ -157,7 +164,9 @@ const ProjectDetails = () => {
                 filters={filters}
               />
             </HorizontalNav>
-            <ActionBar>
+            {
+                !hideActionBar &&
+                <ActionBar>
                     {showActions ? 
                         <Menu
                             localeKeyPrefix={`COMMON`}
@@ -165,9 +174,11 @@ const ProjectDetails = () => {
                             optionKey={"name"}
                             t={t}
                             onSelect={handleActionBar}
-                        /> : null}
-                <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)}/>
-        </ActionBar>
+                        /> : null
+                    }
+                    <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)}/>
+                </ActionBar>
+            }
         {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
         </div>
     )

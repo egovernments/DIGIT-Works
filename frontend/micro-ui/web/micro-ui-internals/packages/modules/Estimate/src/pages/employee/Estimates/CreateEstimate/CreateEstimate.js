@@ -274,7 +274,7 @@ const CreateEstimate = ({ EstimateSession }) => {
             <StatusTable>
                 {cardState.values.map((value)=>{
                     return (
-                        <Row key={t(value.title)} label={t(value.title)} text={value.value} />
+                        <Row key={t(value.title)} label={`${t(value.title)}:`} text={value.value} />
                     )
                 })}
             </StatusTable>

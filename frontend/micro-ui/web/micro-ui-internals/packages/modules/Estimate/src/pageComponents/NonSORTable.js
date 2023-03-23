@@ -1,4 +1,4 @@
-import React, { Fragment, useState ,useEffect} from 'react'
+import React, { Fragment, useState ,useEffect,useMemo} from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError,Dropdown,Loader } from '@egovernments/digit-ui-react-components'
 import { Controller } from 'react-hook-form';
 import _ from "lodash"
@@ -19,8 +19,9 @@ const NonSORTable = ({control,watch,...props}) => {
   const setTotal = (formData) => {
     const tableData = formData?.[formFieldName]
    
-    setTotalAmount((prevState)=> {
-      return tableData?.filter((row, index) => row)?.filter((row,index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseInt(curr?.estimatedAmount) || 0
+    const filteredRows = rows?.filter(row=> row?.isShow)
+    setTotalAmount((prevState)=> {        
+      return tableData?.filter((row, index) => row)?.filter((row, index) => filteredRows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseFloat(curr?.estimatedAmount || 0) 
         ,0)
     })
 
@@ -79,7 +80,7 @@ const NonSORTable = ({control,watch,...props}) => {
     }
     return true
   }
-  const errorCardStyle = {width:"100%"}
+  const errorCardStyle = { width: "100%","fontSize": "12px" }
   const removeRow = (row) => {
     //make a new state here which doesn't have this key
     const updatedState = rows.map(e => {
@@ -154,7 +155,7 @@ const NonSORTable = ({control,watch,...props}) => {
         <td style={getStyles(2)} ><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.description`} inputRef={register({
           required: true,
           //@Burhan-j Don't remove this whitespace in pattern, it is used for validation
-          pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
+          pattern: /^[a-zA-Z0-9_ .$@#{}:;&()\/ ]*$/
         })
         }
         />{errors && errors?.[formFieldName]?.[row.key]?.description?.type === "pattern" && (
@@ -190,7 +191,7 @@ const NonSORTable = ({control,watch,...props}) => {
 
         <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.rate`} inputRef={register({
           required: true,
-          pattern: /^[0-9]*$/
+          pattern: /^\d*\.?\d*$/
         })}
         onChange={(e) => setAmountField(e, row)}
         />{errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "pattern" && (
@@ -213,10 +214,12 @@ const NonSORTable = ({control,watch,...props}) => {
           pattern: /^\d*\.?\d*$/
         })}
         disable={true}
-        />{errors && errors?.[formFieldName]?.[row.key]?.estimatedAmount?.type === "pattern" && (
+        />
+        {/* {errors && errors?.[formFieldName]?.[row.key]?.estimatedAmount?.type === "pattern" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
           {errors && errors?.[formFieldName]?.[row.key]?.estimatedAmount?.type === "required" && (
-            <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)} */}
+          </div></td>
 
         <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
       </tr>
@@ -234,7 +237,7 @@ const NonSORTable = ({control,watch,...props}) => {
         <tr>
           <td colSpan={1}></td>
           <td colSpan={4} style={{ textAlign: "right", fontWeight: "600" }}>{t("RT_TOTAL")}</td>
-          <td colSpan={1}>{totalAmount}</td>
+          <td colSpan={1}>{Digit.Utils.dss.formatterWithoutRound(totalAmount, 'number')}</td>
           <td colSpan={1}></td>
         </tr>
         
