@@ -5,17 +5,16 @@ import { Header, ActionBar, SubmitBar, Toast } from '@egovernments/digit-ui-reac
 import ApplicationDetails from '../../../../../templates/ApplicationDetails';
 
 const ViewWageSeeker = () => {
-  const { t } = useTranslation();
-  const history = useHistory();
+  const { t } = useTranslation()
+  const history = useHistory()
   const [showDataError, setShowDataError] = useState(null)
 
-  //const { tenantId, individualId } = Digit.Hooks.useQueryParams();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const individualId = "IND-2023-03-17-001342"
-
+  const tenantId = Digit.ULBService.getCurrentTenantId()
+  const queryParams = Digit.Hooks.useQueryParams()
+  
   const payload = {
     Individual: {
-      individualId
+      individualId: queryParams?.individualId
     }
   }
   const searchParams = {
