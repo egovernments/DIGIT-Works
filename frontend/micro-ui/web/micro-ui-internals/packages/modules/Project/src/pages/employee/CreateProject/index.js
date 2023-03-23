@@ -1,4 +1,4 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader, ProjectIcon } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
@@ -6,11 +6,10 @@ import CreateProjectForm from "./CreateProjectForm";
 import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMUKTA";
 
 const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, state, headerLocale}) => {
-    console.log(state?.project?.[0]);
     let projectDetails = state?.project?.[0]; 
-    console.log("UPDATING DEFAULTS,.....", sessionFormData, projectDetails);
+    console.log(projectDetails);
     if(!isModify) {
-      //clear defaultValues from config
+      //clear defaultValues from 'config' ( this case can come when user navigates from Create Screen to Modify Screen )
       let validDefaultValues = ["basicDetails_dateOfProposal", "noSubProject_ulb"];
       configs.defaultValues = Object.keys(configs?.defaultValues)
                             .filter(key=> validDefaultValues.includes(key))
@@ -18,15 +17,19 @@ const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionForm
                               [key] : configs.defaultValues[key]
                             }), {});
     }
+
     //update default Values
+    //Only update the default values when date of proposal or ULB is not present in Session form Data.
+    //If we update evertytime, we would overwrite the Session data, on every refresh
     if(!sessionFormData?.basicDetails_dateOfProposal || !sessionFormData.noSubProject_ulb) {
-      console.log("SETTING UP DEFAULTS-SESSION", sessionFormData);
       if(isModify) {
+        //this field is only for Modify flow
         configs.defaultValues.basicDetails_projectID = projectDetails?.projectNumber ? projectDetails?.projectNumber  : "";
       }else{
         projectDetails = {};
       }
-      configs.defaultValues.basicDetails_dateOfProposal = projectDetails?.projectProposalDate ? "2020-01-01" : findCurrentDate(); //TODO:
+
+      configs.defaultValues.basicDetails_dateOfProposal = projectDetails?.additionalDetails?.dateOfProposal ? "2020-01-01" : findCurrentDate(); //TODO:
       configs.defaultValues.noSubProject_ulb = ULBOptions[0];
       configs.defaultValues.basicDetails_projectName = projectDetails?.name ? projectDetails?.name  : "";
       configs.defaultValues.basicDetails_projectDesc = projectDetails?.description ? projectDetails?.description  : "";
@@ -39,7 +42,7 @@ const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionForm
       configs.defaultValues.noSubProject_locality = projectDetails?.address?.boundary ? { code : projectDetails?.address?.boundary, name : projectDetails?.address?.boundary, i18nKey: `${headerLocale}_ADMIN_${projectDetails?.address?.boundary}`}  : "";
       configs.defaultValues.noSubProject_fund = projectDetails?.additionalDetails?.fund ? { code : projectDetails?.additionalDetails?.fund, name : `COMMON_MASTERS_FUND_${Digit.Utils.locale.getTransformedLocale(projectDetails?.additionalDetails?.fund)}`}  : "";
       configs.defaultValues.noSubProject_docs = projectDetails?.additionalDetails?.projectFiles ? projectDetails?.additionalDetails?.projectFiles : "";
-      console.log("DEFAULT SETTED",configs);
+    
       setSessionFormData({...configs?.defaultValues});
     }
 }
@@ -59,7 +62,6 @@ const CreateProject = () => {
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
 
     const findCurrentDate = () => {
-      //return new Date().toJSON().slice(0, 10);
       var date = new Date();
       var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
                     .toISOString()
