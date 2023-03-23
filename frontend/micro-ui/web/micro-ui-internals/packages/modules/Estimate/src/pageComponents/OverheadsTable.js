@@ -1,11 +1,12 @@
-import React, { Fragment, useState,useEffect } from 'react'
+import React, { Fragment, useState,useEffect,useMemo } from 'react'
 import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError,Loader,Dropdown } from '@egovernments/digit-ui-react-components'
 import { Controller } from 'react-hook-form';
 import _ from "lodash"
 
 const OverheadsTable = ({control,watch,...props}) => {
     
-    const [totalAmount,setTotalAmount] = useState(100)
+    const [totalAmount,setTotalAmount] = useState(0)
+    const [sorTotal, setSorTotal] = useState(0)
     const formFieldName = "overheadDetails" // this will be the key under which the data for this table will be present on onFormSubmit
     
     const errorCardStyle = {width:"100%",fontSize:"12px"}
@@ -21,10 +22,11 @@ const OverheadsTable = ({control,watch,...props}) => {
     const { t, register, errors, setValue, getValues, formData } = props
 
     const setTotal = (formData) => {
-        
         const tableData = formData?.[formFieldName]
+
+        const filteredRows = rows.filter(row=>row?.isShow)
         setTotalAmount((prevState) => {
-            return tableData?.filter((row, index) => row)?.filter((row, index) => rows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseFloat(curr?.amount) || 0
+            return tableData?.filter((row, index) => row)?.filter((row, index) => filteredRows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseFloat(curr?.amount || 0) 
                 , 0)
         })
 
@@ -33,6 +35,26 @@ const OverheadsTable = ({control,watch,...props}) => {
     useEffect(() => {
         setTotal(formData)
     }, [formData,rows]);
+
+    useEffect(() => {
+        setSorTotal(formData?.nonSORTablev1?.reduce((acc, row) => row?.estimatedAmount ? parseFloat(row?.estimatedAmount) + acc : acc, 0))
+    }, [formData]);
+
+    
+    useEffect(() => {
+        //we have to iterate over all the existing overheads and change them
+        //get the filtered rows , match the index and change the amount if amount is there in formData.overheads.row
+        
+        formData?.[formFieldName]?.map((row,index)=> {
+            if(row?.amount){
+                //find corresponding row from rows
+                const correspondingRow = rows?.filter(r=>r.key === index)?.[0]
+                handleDropdownChange(row?.name, undefined, correspondingRow,undefined)
+            }
+        })
+       
+        
+    }, [sorTotal]);
 
     const getStyles = (index) => {
         let obj = {}
@@ -131,7 +153,7 @@ const OverheadsTable = ({control,watch,...props}) => {
     }
 
     const handleDropdownChange = (e, props, row, inputName) => {
-        const sorTotal = formData?.nonSORTablev1?.reduce((acc, row) => row?.estimatedAmount ? parseFloat(row?.estimatedAmount) + acc:acc,0)
+        // const sorTotal = formData?.nonSORTablev1?.reduce((acc, row) => row?.estimatedAmount ? parseFloat(row?.estimatedAmount) + acc:acc,0)
 
         //here there are multiple cases that we need to handle
         //1-> if autoCalculated field is true, populate the percentage/lumpsum(type field) , amount field and disable both of them
