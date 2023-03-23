@@ -31,6 +31,7 @@ module.exports = {
     FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS
   },
   host: {
+    serverHost:HOST,
     mdms: process.env.EGOV_MDMS_HOST || HOST,
     pdf: process.env.EGOV_PDF_HOST || HOST,
     user: process.env.EGOV_USER_HOST || HOST,

@@ -1,16 +1,17 @@
+import envVariables from "./EnvironmentVariables";
+
 var axios = require("axios");
-// var envVariables = require("../EnvironmentVariables");
 var get = require("lodash/get");
 const NodeCache = require("node-cache");
 var moment = require("moment-timezone");
 
 const cache = new NodeCache({ stdTTL: 300 });
 
-let datetimezone = "" // envVariables.DATE_TIMEZONE;
-let egovLocHost = "" // envVariables.EGOV_LOCALISATION_HOST;
-let egovLocSearchCall = ""// envVariables.EGOV_LOCALISATION_SEARCH;
-let defaultLocale = "" //envVariables.DEFAULT_LOCALISATION_LOCALE;
-let defaultTenant =  ""// envVariables.DEFAULT_LOCALISATION_TENANT;
+let datetimezone =  envVariables.DATE_TIMEZONE;
+let egovLocHost = envVariables.EGOV_LOCALISATION_HOST;
+let egovLocSearchCall = envVariables.EGOV_LOCALISATION_SEARCH;
+let defaultLocale = envVariables.DEFAULT_LOCALISATION_LOCALE;
+let defaultTenant =   envVariables.DEFAULT_LOCALISATION_TENANT;
 export const getTransformedLocale = (label) => {
   return label.toUpperCase().replace(/[.:-\s\/]/g, "_");
 };
@@ -60,7 +61,7 @@ export const getTransformedLocale = (label) => {
   
   
     let url = egovLocHost + egovLocSearchCall;
-  
+  console.log(url,'uuuu');
     let request = {
       RequestInfo: requestInfo,
       messageSearchCriteria:{
@@ -79,9 +80,10 @@ export const getTransformedLocale = (label) => {
         accept: "application/json, text/plain, */*"
       }
     };
-  
+  console.log(request,'requestrequestrequest');
     let responseBody = await axios.post(url,request,headers)
     .then(function (response) {
+      console.log(response,'rresss');
       return response;
     })
     .catch((error) => {

@@ -3,7 +3,7 @@ import fs from "fs";
 import get from "lodash/get";
 import axios, { post } from "axios";
 var FormData = require("form-data");
-import envVariables from "../EnvironmentVariables";
+import envVariables from "./EnvironmentVariables";
 
 let egovFileHost = envVariables.EGOV_FILESTORE_SERVICE_HOST;
 let externalHost = envVariables.EGOV_EXTERNAL_HOST;

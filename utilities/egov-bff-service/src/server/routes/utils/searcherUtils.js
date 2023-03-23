@@ -103,8 +103,8 @@ const handleDerivedMapping = (dataconfig, variableTovalueMap) => {
     variableTovalueMap[mapping.variable] = variableValue;
   }
 };
-
-const handlelogic = async (
+const unregisteredLocalisationCodes=[];
+export const handlelogic = async (
   key,
   formatObject,
   moduleObject,
@@ -135,6 +135,7 @@ const handlelogic = async (
   ]);
   // await generateQRCodes(moduleObject, dataconfig, variableTovalueMap);
   handleDerivedMapping(dataconfig, variableTovalueMap);
+  console.log(variableTovalueMap,'variableTovalueMap');
   formatObject = fillValues(variableTovalueMap, formatObject);
   if (isCommonTableBorderRequired === true)
     formatObject = updateBorderlayout(formatObject);

@@ -1,7 +1,7 @@
 import get from "lodash/get";
-import logger from "../config/logger";
+import {logger} from "../../logger";
 import axios from "axios";
-import envVariables from "../EnvironmentVariables";
+import envVariables from "./EnvironmentVariables";
 import {
   getLocalisationkey,
   findLocalisation,
@@ -41,6 +41,7 @@ export const directMapping = async (
   var localisationModules = [];
   var variableToModuleMap = {};
   // using jp-jsonpath because loadash can not handele '*'
+  console.log('directMapping');
   var objectOfDirectMapping = jp.query(
     dataconfig,
     "$.DataConfigs.mappings.*.mappings.*.direct.*"
@@ -64,7 +65,7 @@ export const directMapping = async (
       uCaseNeeded: item.isUpperCaseRequired
     };
   });
-
+console.log(directArr,'directArr');
   for (var i = 0; i < directArr.length; i++) {
     //for array type direct mapping
     if (directArr[i].type == "citizen-employee-title") {
@@ -94,6 +95,7 @@ export const directMapping = async (
       variableTovalueMap[directArr[i].jPath] = fun(directArr[i].val[0]);
     } else if (directArr[i].type == "image") {
       try {
+        console.log(directArr[i].url,'directArr[i].url');
         var response = await axios.get(directArr[i].url, {
           responseType: "arraybuffer"
         });
@@ -139,6 +141,8 @@ export const directMapping = async (
               scema[k].localisation.required
             ) {
               let loc = scema[k].localisation;
+              console.log(fieldValue,'fieldValue');
+
               fieldValue = await getLocalisationkey(
                 loc.prefix,
                 fieldValue,
@@ -218,6 +222,7 @@ export const directMapping = async (
               scema[k].localisation.required
             ) {
               let loc = scema[k].localisation;
+              console.log(fieldValue,'getLocalisationkey');
               fieldValue = await getLocalisationkey(
                 loc.prefix,
                 fieldValue,

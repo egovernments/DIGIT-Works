@@ -6,7 +6,7 @@ import {
   getDateInRequiredFormat,
   getValue
 } from "./commons";
-import logger from "../config/logger";
+import {logger} from "../../logger";
 /**
  *
  * @param {*} key -name of the key used to identify module configs. Provided request URL
@@ -38,6 +38,7 @@ export const externalAPIMapping = async function (
     [],
     "$.DataConfigs.mappings.*.mappings.*.externalAPI.*"
   );
+  console.log(objectOfExternalAPI,'objectOfExternalAPI');
   var externalAPIArray = objectOfExternalAPI.map(item => {
     return {
       uri: item.path,
@@ -188,6 +189,7 @@ export const externalAPIMapping = async function (
   responses = await Promise.all(responsePromises)
   for (let i = 0; i < externalAPIArray.length; i++) {
     var res = responses[i].data
+    console.log(res,'responses');
 
     //putting required data from external API call in format config
 
@@ -198,23 +200,25 @@ export const externalAPIMapping = async function (
         externalAPIArray[i].jPath[j].value
       );
       let loc = externalAPIArray[i].jPath[j].localisation;
+      console.log(externalAPIArray[i].jPath[j].type,'externalAPIArray[i].jPath[j].type');
       if (externalAPIArray[i].jPath[j].type == "image") {
         // default empty image
         var imageData =
           "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAoMBgDTD2qgAAAAASUVORK5CYII=";
         if (replaceValue != "NA") {
           try {
+            console.log(replaceValue,'replaceValue');
             var len = replaceValue[0].split(",").length;
-            var response = await axios.get(
-              replaceValue[0].split(",")[len - 1], {
-                responseType: "arraybuffer"
-              }
-            );
-            imageData =
-              "data:" +
-              response.headers["content-type"] +
-              ";base64," +
-              Buffer.from(response.data).toString("base64");
+            // var response = await axios.get(
+            //   replaceValue[0].split(",")[len - 1], {
+            //     responseType: "arraybuffer"
+            //   }
+            // );
+            // imageData =
+            //   "data:" +
+            //   response.headers["content-type"] +
+            //   ";base64," +
+            //   Buffer.from(response.data).toString("base64");
           } catch (error) {
             logger.error(error.stack || error);
             throw {
@@ -366,15 +370,15 @@ export const externalAPIMapping = async function (
 
   let localisationMap = [];
   try{
-    let resposnseMap = await findLocalisation(
-      requestInfo,
-      localisationModules,
-      localisationCodes,
-      pdfKey+'-externalMapping'
-    );
-    resposnseMap.messages.map((item) => {
-      localisationMap[item.code + "_" + item.module] = item.message;
-    });
+    // let resposnseMap = await findLocalisation(
+    //   requestInfo,
+    //   localisationModules,
+    //   localisationCodes,
+    //   pdfKey+'-externalMapping'
+    // );
+    // resposnseMap.messages.map((item) => {
+    //   localisationMap[item.code + "_" + item.module] = item.message;
+    // });
   }
   catch (error) {
     logger.error(error.stack || error);

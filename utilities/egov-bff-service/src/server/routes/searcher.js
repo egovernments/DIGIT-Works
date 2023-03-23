@@ -9,9 +9,11 @@ var config = require("../config");
 var fs  = require("fs");
 var { logger } = require( "../logger");
 import get from "lodash.get";
-
+import { getValue } from "./utils/commons";
+import { handlelogic } from "./utils/searcherUtils";
 const { asyncMiddleware } = require("../middlewares/asyncMiddleware");
 const { throwError, sendResponse } = require("../utils");
+var jp = require("jsonpath");
 
 let dataConfigUrls = config.configs.DATA_CONFIG_URLS || [];
 let dataConfigMap = {};
@@ -69,6 +71,99 @@ dataConfigUrls.split&&
   });
 }
 initialise();
+
+
+
+const prepareBulk = async (
+  key,
+  dataconfig,
+  // formatconfig,
+  req,
+  baseKeyPath,
+  requestInfo,
+  returnFileInResponse,
+  entityIdPath
+) => {
+  console.log('peee');
+  let isCommonTableBorderRequired = get(
+    dataconfig,
+    "DataConfigs.isCommonTableBorderRequired"
+  );
+  let formatObjectArrayObject = [];
+  let formatConfigByFile = [];
+  let totalobjectcount = 0;
+  let entityIds = [];
+  let countOfObjectsInCurrentFile = 0;
+  let moduleObjectsArray = getValue(
+    jp.query(req.body || req, baseKeyPath),
+    [],
+    baseKeyPath
+  );
+  if (Array.isArray(moduleObjectsArray) && moduleObjectsArray.length > 0) {
+    totalobjectcount = moduleObjectsArray.length;
+    for (var i = 0, len = moduleObjectsArray.length; i < len; i++) {
+      let moduleObject = moduleObjectsArray[i];
+      let entityKey = getValue(
+
+        jp.query(moduleObject, entityIdPath),
+        [null],
+        entityIdPath
+      );
+      entityIds.push(entityKey[0]);
+
+      // let formatObject = JSON.parse(JSON.stringify(formatconfig));
+
+      // // Multipage pdf, each pdf from new page
+      // if (
+      //   formatObjectArrayObject.length != 0 &&
+      //   formatObject["content"][0] !== undefined
+      // ) {
+      //   formatObject["content"][0]["pageBreak"] = "before";
+      // }
+      /////////////////////////////
+      let  formatObject={};
+      formatObject = await handlelogic(
+        key,
+        formatObject,
+        moduleObject,
+        dataconfig,
+        isCommonTableBorderRequired,
+        requestInfo
+      );
+      console.log(formatObject,'formatObject');
+
+      formatObjectArrayObject.push(formatObject["content"]);
+      countOfObjectsInCurrentFile++;
+      if (
+        (!returnFileInResponse &&
+          countOfObjectsInCurrentFile == maxPagesAllowed) ||
+        i + 1 == len
+      ) {
+        let formatconfigCopy = JSON.parse(JSON.stringify(formatconfig));
+        
+        let locale = requestInfo.msgId.split('|')[1];
+        if(!locale)
+          locale = envVariables.DEFAULT_LOCALISATION_LOCALE;
+
+        if(defaultFontMapping[locale] != 'default')
+         formatconfigCopy.defaultStyle.font = defaultFontMapping[locale];
+
+        formatconfigCopy["content"] = formatObjectArrayObject;
+        formatConfigByFile.push(formatconfigCopy);
+        formatObjectArrayObject = [];
+        countOfObjectsInCurrentFile = 0;
+      }
+    }
+    return [formatConfigByFile, totalobjectcount, entityIds];
+  } else {
+    logger.error(
+      `could not find property of type array in request body with name ${baseKeyPath}`
+    );
+    throw {
+      message: `could not find property of type array in request body with name ${baseKeyPath}`,
+    };
+  }
+};
 router.post(
   "/getMusterDetails",
   asyncMiddleware(async function (req, res, next) {
@@ -102,13 +197,15 @@ router.post(
 
      console.log(dataconfig,dataConfigMap,dataConfigUrls,'dataconfig');
 
-    //  return await prepareBulk(
-    //     key,
-    //     dataconfig,
-    //     req,
-    //     baseKeyPath,
-    //     requestInfo
-    //   );
+     return await prepareBulk(
+        key,
+        dataconfig,
+        req,
+        baseKeyPath,
+         req.body.RequestInfo,
+         true,
+         entityIdPath
+      );
         sendResponse(res,{success:"sssss",config},req,200);
     } catch (ex) {
       throwError(ex.message, ex.code, ex.status);
