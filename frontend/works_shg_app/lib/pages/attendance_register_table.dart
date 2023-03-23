@@ -13,16 +13,17 @@ import 'package:works_shg_app/widgets/atoms/delete_button.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 import 'package:works_shg_app/widgets/molecules/digit_table.dart' as shg_app;
 
-import '../blocs/attendance/attendance_user_search.dart';
 import '../blocs/attendance/create_attendee.dart';
 import '../blocs/attendance/de_enroll_attendee.dart';
+import '../blocs/attendance/individual_search.dart';
 import '../blocs/attendance/search_projects/search_individual_project.dart';
 import '../blocs/localization/app_localization.dart';
-import '../models/user_search/user_search_model.dart';
+import '../models/attendance/individual_list_model.dart';
 import '../router/app_router.dart';
 import '../utils/models.dart';
 import '../utils/notifiers.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/auto_complete_search_bar.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
@@ -58,7 +59,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   List<Map<String, dynamic>> deleteAttendeePayLoadList = [];
   bool searchUser = false;
   List<Map<String, dynamic>> existingAttendeeList = [];
-  var tableData;
+  List<TableDataRow> tableData = [];
 
   @override
   void initState() {
@@ -67,13 +68,31 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   }
 
   afterViewBuild() async {
+    tableData.clear();
+    existingAttendeeList.clear();
+    userList.clear();
+    filteredUserList.clear();
+    addToTableList.clear();
+    attendeeTableList.clear();
+    userTableList.clear();
+    createAttendeePayLoadList.clear();
+    deleteAttendeePayLoadList.clear();
+    searchUser = false;
     context.read<AttendanceIndividualProjectSearchBloc>().add(
           SearchIndividualAttendanceProjectEvent(
               id: widget.registerId ?? '',
               tenantId: widget.tenantId.toString()),
         );
-    context.read<AttendanceUserSearchBloc>().add(
-          const DisposeSearchAttendanceUserEvent(),
+    await Future.delayed(const Duration(seconds: 1));
+  }
+
+  @override
+  void deactivate() {
+    context.read<AttendanceIndividualProjectSearchBloc>().add(
+          const DisposeIndividualAttendanceRegisterEvent(),
+        );
+    context.read<IndividualSearchBloc>().add(
+          const DisposeSearchIndividualEvent(),
         );
     context.read<AttendeeCreateBloc>().add(
           const CreateAttendeeDisposeEvent(),
@@ -81,16 +100,16 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
     context.read<AttendeeDeEnrollBloc>().add(
           const DeEnrollAttendeeDisposeEvent(),
         );
-    await Future.delayed(const Duration(seconds: 2));
+    super.deactivate();
   }
 
   @override
   Widget build(BuildContext context) {
-    // final List list = json.decode(fakeTableData);
-    // List<TableDataModel> tableList =
-    //     list.map((e) => TableDataModel.fromJson(e)).toList();
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
@@ -99,7 +118,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           Container(
             color: const Color.fromRGBO(238, 238, 238, 1),
             padding: const EdgeInsets.only(left: 8, right: 8, bottom: 16),
-            height: MediaQuery.of(context).size.height - 100,
+            height: MediaQuery.of(context).size.height - 50,
             child: CustomScrollView(slivers: [
               SliverList(
                   delegate: SliverChildListDelegate([
@@ -114,14 +133,14 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     Container(
                         alignment: Alignment.centerLeft,
-                        margin: const EdgeInsets.all(8.0),
+                        margin: const EdgeInsets.all(4.0),
                         child: AutoCompleteSearchBar(
                           hintText: AppLocalizations.of(context)
-                              .translate(i18.common.searchByNameAadhaar),
+                              .translate(i18.common.searchByMobileNumber),
                           controller: searchController,
                           suggestionsBoxController: suggestionsBoxController,
                           onSuggestionSelected: onSuggestionSelected,
@@ -129,14 +148,14 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                           minCharsForSuggestions: 10,
                           maxLength: 10,
                           listTile: buildTile,
+                          textInputType: TextInputType.phone,
                           inputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp("[a-zA-Z0-9]"))
+                            FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                           ],
                           labelText: '',
                         )),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     BlocListener<AttendanceIndividualProjectSearchBloc,
                         AttendanceIndividualProjectSearchState>(
@@ -149,7 +168,29 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                             loaded: (AttendanceRegistersModel?
                                 individualAttendanceRegisterModel) {
                               if (individualAttendanceRegisterModel!
-                                  .attendanceRegister!.isNotEmpty) {
+                                          .attendanceRegister !=
+                                      null &&
+                                  individualAttendanceRegisterModel!
+                                      .attendanceRegister!.isNotEmpty) {
+                                individualAttendanceRegisterModel!
+                                    .attendanceRegister!
+                                    .map((e) => {
+                                          i18.workOrder.workOrderNo:
+                                              e.attendanceRegisterAdditionalDetails
+                                                      ?.contractId ??
+                                                  'NA',
+                                          i18.attendanceMgmt.registerId:
+                                              e.registerNumber,
+                                          i18.attendanceMgmt.projectId:
+                                              e.attendanceRegisterAdditionalDetails
+                                                      ?.projectId ??
+                                                  'NA',
+                                          i18.attendanceMgmt.projectDesc:
+                                              e.attendanceRegisterAdditionalDetails
+                                                      ?.projectName ??
+                                                  'NA'
+                                        })
+                                    .toList();
                                 if (individualAttendanceRegisterModel
                                             .attendanceRegister!
                                             .first
@@ -181,9 +222,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                     e.individualId.toString()
                                               })
                                           .toList();
-                                  context.read<AttendanceUserSearchBloc>().add(
-                                        SearchAttendanceUserUuidEvent(
-                                            uuids: individualAttendanceRegisterModel!
+                                  context.read<IndividualSearchBloc>().add(
+                                        SearchIndividualIdEvent(
+                                            ids: individualAttendanceRegisterModel!
                                                 .attendanceRegister!
                                                 .first
                                                 .attendeesEntries
@@ -195,7 +236,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                             .millisecondsSinceEpoch))
                                                 .map((e) =>
                                                     e.individualId.toString())
-                                                .toList()),
+                                                .toList(),
+                                            tenant: widget.tenantId),
                                       );
                                 }
                               }
@@ -204,40 +246,56 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                 context, error.toString(), 'ERROR'),
                             orElse: () => Container());
                       },
-                      child: BlocBuilder<AttendanceUserSearchBloc,
-                              AttendanceUserSearchState>(
-                          builder: (context, userState) {
+                      child: BlocBuilder<IndividualSearchBloc,
+                          IndividualSearchState>(builder: (context, userState) {
                         return userState.maybeWhen(
                             loading: () => Loaders.circularLoader(context),
                             initial: () {
                               existingAttendeeList.clear();
                               return const EmptyImage(align: Alignment.center);
                             },
-                            loaded: (UserSearchModel? userSearchModel) {
-                              userList = userSearchModel!.user!.isNotEmpty
-                                  ? userSearchModel!.user!
-                                      .map((e) => {
-                                            "name": e.name,
-                                            "aadhaar": e.uuid,
-                                            "bankNumber": e.mobileNumber,
-                                            "uuid": e.uuid,
-                                            "mobileNumber": e.mobileNumber,
-                                            "tenantId": e.tenantId
-                                          })
-                                      .toList()
-                                  : [];
+                            loaded: (IndividualListModel? individualListModel) {
+                              userList =
+                                  individualListModel!.Individual!.isNotEmpty
+                                      ? individualListModel!.Individual!
+                                          .map((e) => {
+                                                "name": e.name?.givenName,
+                                                "aadhaar": e.identifiers?.first
+                                                        .identifierId ??
+                                                    e.individualId,
+                                                "individualCode":
+                                                    e.individualId,
+                                                "skill": AppLocalizations.of(
+                                                        context)
+                                                    .translate(
+                                                        '${e.skills!.first.level?.toUpperCase()}_${e.skills!.first.type?.toUpperCase()}'),
+                                                "individualId": e.id,
+                                                "uuid": e.id,
+                                                "individualGaurdianName":
+                                                    e.fatherName,
+                                                "mobileNumber": e.mobileNumber,
+                                                "tenantId": e.tenantId
+                                              })
+                                          .toList()
+                                      : [];
                               if (userList.isNotEmpty) {
                                 for (var user in userList) {
                                   var userToAdd = {
                                     "name": user["name"],
                                     "aadhaar": user["aadhaar"],
-                                    "bankNumber": user["bankNumber"],
+                                    "individualCode": user["individualCode"],
                                     "uuid": user["uuid"],
+                                    "skill": user["skill"],
+                                    "individualGaurdianName":
+                                        user["individualGaurdianName"],
+                                    "individualId": user["individualId"],
                                     "mobileNumber": user["mobileNumber"],
                                     "tenantId": user["tenantId"]
                                   };
                                   bool hasDuplicate = attendeeTableList
-                                      .where((e) => e["uuid"] == user["uuid"])
+                                      .where((e) =>
+                                          e["individualId"] ==
+                                          user["individualId"])
                                       .isNotEmpty;
 
                                   if (!hasDuplicate && !searchUser) {
@@ -270,10 +328,12 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                 headerList: headerList,
                                                 tableData: tableData,
                                                 leftColumnWidth: width,
-                                                rightColumnWidth: width * 3,
+                                                rightColumnWidth: width * 4,
                                                 height: 58 +
                                                     (52.0 *
                                                         (tableData.length + 1)),
+                                                scrollPhysics:
+                                                    const NeverScrollableScrollPhysics(),
                                               ),
                                             );
                                           }),
@@ -290,6 +350,19 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                 .attendanceMgmt
                                                                 .attendeeCreateSuccess),
                                                         'SUCCESS');
+                                                    context.router.popAndPush(
+                                                        AttendanceRegisterTableRoute(
+                                                            projectDetails: widget
+                                                                .projectDetails,
+                                                            attendanceRegister:
+                                                                widget
+                                                                    .attendanceRegister,
+                                                            registerId: widget
+                                                                .registerId
+                                                                .toString(),
+                                                            tenantId: widget!
+                                                                .tenantId
+                                                                .toString()));
                                                   },
                                                   error: (String? error) {
                                                     Notifiers.getToastMessage(
@@ -299,6 +372,19 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                             .translate(error
                                                                 .toString()),
                                                         'ERROR');
+                                                    context.router.popAndPush(
+                                                        AttendanceRegisterTableRoute(
+                                                            projectDetails: widget
+                                                                .projectDetails,
+                                                            attendanceRegister:
+                                                                widget
+                                                                    .attendanceRegister,
+                                                            registerId: widget
+                                                                .registerId
+                                                                .toString(),
+                                                            tenantId: widget!
+                                                                .tenantId
+                                                                .toString()));
                                                   },
                                                   orElse: () {});
                                             },
@@ -317,6 +403,23 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                   .attendanceMgmt
                                                                   .attendeeDeEnrollSuccess),
                                                           'SUCCESS');
+
+                                                      Future.delayed(
+                                                          const Duration(
+                                                              seconds: 1));
+                                                      context.router.popAndPush(
+                                                          AttendanceRegisterTableRoute(
+                                                              projectDetails: widget
+                                                                  .projectDetails,
+                                                              attendanceRegister:
+                                                                  widget
+                                                                      .attendanceRegister,
+                                                              registerId: widget
+                                                                  .registerId
+                                                                  .toString(),
+                                                              tenantId: widget!
+                                                                  .tenantId
+                                                                  .toString()));
                                                     },
                                                     error: (String? error) {
                                                       Notifiers.getToastMessage(
@@ -326,6 +429,19 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                               .translate(error
                                                                   .toString()),
                                                           'ERROR');
+                                                      context.router.popAndPush(
+                                                          AttendanceRegisterTableRoute(
+                                                              projectDetails: widget
+                                                                  .projectDetails,
+                                                              attendanceRegister:
+                                                                  widget
+                                                                      .attendanceRegister,
+                                                              registerId: widget
+                                                                  .registerId
+                                                                  .toString(),
+                                                              tenantId: widget!
+                                                                  .tenantId
+                                                                  .toString()));
                                                     },
                                                     orElse: () => Container());
                                               },
@@ -340,7 +456,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                 right: 8.0,
                                               ),
                                               child: SizedBox(
-                                                height: 50,
+                                                height: 35,
                                                 child: DigitElevatedButton(
                                                   onPressed:
                                                       createAttendeePayLoadList
@@ -394,8 +510,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                               deleteAttendeePayLoadList),
                                                                     );
                                                               } else {}
-                                                              context.router.push(
-                                                                  const HomeRoute());
                                                             },
                                                   child: Text(
                                                       AppLocalizations.of(
@@ -438,7 +552,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
         addToTableList.add({
           "name": user["name"],
           "aadhaar": user["aadhaar"],
-          "bankNumber": user["bankNumber"],
+          "individualCode": user["individualCode"],
+          "individualGaurdianName": user["individualGaurdianName"],
+          "skill": user["skill"],
+          "individualId": user["individualId"],
           "uuid": user["uuid"],
           "mobileNumber": user["mobileNumber"],
           "tenantId": user["tenantId"]
@@ -459,10 +576,15 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                     .isEmpty
             ? addToTableList
                 .map((e) => {
-                      "registerId": widget.attendanceRegister?.id.toString(),
+                      "registerId": widget.registerId?.toString(),
                       "individualId": e["uuid"],
                       "tenantId": e["tenantId"],
-                      "additionalDetails": {"name": e["name"]}
+                      "additionalDetails": {
+                        "individualName": e["name"],
+                        "individualID": e["individualCode"],
+                        "individualGaurdianName": e["individualGaurdianName"],
+                        "identifierId": e["aadhaar"]
+                      }
                     })
                 .toList()
             : [];
@@ -482,15 +604,16 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('${user["name"]}', style: style),
-            Text('${user["aadhaar"]}', style: style.apply(fontSizeDelta: -2))
+            Text('${user["individualCode"]}',
+                style: style.apply(fontSizeDelta: -2))
           ],
         ));
   }
 
   Future<List<dynamic>> onSearchVendorList(pattern) async {
     searchUser = true;
-    context.read<AttendanceUserSearchBloc>().add(
-          SearchAttendanceUserEvent(mobileNumber: pattern),
+    context.read<IndividualSearchBloc>().add(
+          SearchIndividualEvent(mobileNumber: pattern, tenant: widget.tenantId),
         );
     await Future.delayed(const Duration(seconds: 2));
     setState(() {
@@ -514,13 +637,17 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-              .translate(i18.common.aadhaarNumber),
-          apiKey: 'aadhaarNumber',
+              .translate(i18.common.fatherName),
+          apiKey: 'individualGaurdianName',
         ),
         TableHeader(
             AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-                .translate(i18.common.bankAccountNumber),
-            apiKey: 'bankNumber'),
+                .translate(i18.attendanceMgmt.skill),
+            apiKey: 'skill'),
+        TableHeader(
+            AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+                .translate(i18.common.mobileNumber),
+            apiKey: 'mobileNumber'),
         TableHeader(
             AppLocalizations.of(scaffoldMessengerKey.currentContext!)
                 .translate(i18.common.action),
@@ -530,9 +657,16 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   TableDataRow getAttendanceRow(TableDataModel tableDataModel) {
     return TableDataRow([
       TableData(label: tableDataModel.name, apiKey: tableDataModel.name),
-      TableData(label: tableDataModel.aadhaar, apiKey: tableDataModel.aadhaar),
       TableData(
-          label: tableDataModel.bankNumber, apiKey: tableDataModel.bankNumber),
+          label: tableDataModel.individualGaurdianName,
+          apiKey: tableDataModel.individualGaurdianName),
+      TableData(
+          label: AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+              .translate(tableDataModel.skill.toString()),
+          apiKey: tableDataModel.skill),
+      TableData(
+          label: tableDataModel.mobileNumber,
+          apiKey: tableDataModel.mobileNumber),
       TableData(
           widget: DeleteButton(
               onTap: () => onDelete(tableDataModel.uuid.toString())))

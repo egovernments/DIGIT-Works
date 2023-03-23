@@ -189,7 +189,18 @@ import {
 
   NoResultsFoundIcon,
   WorksMgmtIcon,
-  BioMetricIcon
+  BioMetricIcon,
+  MuktaHomeIcon,
+  HRIcon,
+  ProjectIcon,
+  EstimateIcon,
+  ContractIcon,
+  AttendanceIcon,
+  WageseekerIcon,
+  OrganisationIcon,
+  HelperIcon,
+  DashboardIcon,
+  ExpenditureIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -514,5 +525,16 @@ export {
 
   NoResultsFoundIcon,
   WorksMgmtIcon,
-  BioMetricIcon
+  BioMetricIcon,
+  MuktaHomeIcon,
+  HRIcon,
+  ProjectIcon,
+  EstimateIcon,
+  ContractIcon,
+  AttendanceIcon,
+  WageseekerIcon,
+  OrganisationIcon,
+  HelperIcon,
+  DashboardIcon,
+  ExpenditureIcon
 };

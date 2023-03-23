@@ -3,7 +3,8 @@ import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
 const documentType = {
   "feasibility_analysis" : "Feasiblity Analysis",
   "finalized_worklist" : "Finalized Worklist",
-  "project_proposal" : "Project Proposal"
+  "project_proposal" : "Project Proposal",
+  "others" : "Other"
 }
 
 const createDocumentsPayload = (documents, otherDocFileName) => {

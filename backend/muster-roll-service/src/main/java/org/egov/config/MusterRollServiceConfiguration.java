@@ -74,6 +74,21 @@ public class MusterRollServiceConfiguration {
     private String attendanceLogEndpoint;
     @Value("${works.attendance.register.search.endpoint}")
     private String attendanceRegisterEndpoint;
+    @Value("${works.attendance.register.search.limit}")
+    private String attendanceRegisterSearchLimit;
+
+
+    //Individual service
+    @Value("${works.individual.host}")
+    private String individualHost;
+    @Value("${works.individual.search.endpoint}")
+    private String individualSearchEndpoint;
+
+    //Bankaccounts service
+    @Value("${works.bankaccounts.host}")
+    private String bankaccountsHost;
+    @Value("${works.bankaccounts.search.endpoint}")
+    private String bankaccountsSearchEndpoint;
 
     @PostConstruct
     public void initialize() {

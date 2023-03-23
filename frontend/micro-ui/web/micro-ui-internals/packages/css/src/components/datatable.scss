@@ -94,6 +94,13 @@
       }
     }
   }
+
+  &.view-header {
+   .row {
+    display: grid;
+    grid-template-columns: 1fr 68%;
+   }
+  }
 }
 
 .pt-citizen {

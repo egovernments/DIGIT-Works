@@ -94,12 +94,10 @@ export const createEstimateConfig = () => {
                         "type": "documentUpload",
                         "withoutLabel": true,
                         "module": "Estimate",
-                        "populators": {
-                            "error": "WORKS_REQUIRED_ERR",
-                            "name": "uploadedDocs",
-                            "customClass": "",
-                            "localePrefix": "ESTIMATE_DOC"
-                        }
+                        "error": "WORKS_REQUIRED_ERR",
+                        "name": "uploadedDocs",
+                        "customClass": "",
+                        "localePrefix": "ESTIMATE_DOC"
                     }
                 ]
             }

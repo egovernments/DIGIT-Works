@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState,useEffect,useMemo} from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
 import inboxConfig from "../../../config/inboxConfig";
@@ -6,9 +6,10 @@ import { useLocation } from 'react-router-dom';
 
 const Inbox = () => {
     const { t } = useTranslation();
-    const { state } = useLocation()
-
+    const location = useLocation()
+    
     //const configs = inboxConfig();
+    const [pageConfig, setPageConfig] = useState(null)
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
         tenant,
@@ -28,12 +29,18 @@ const Inbox = () => {
 
     const [sessionFormData, setSessionFormData, clearSessionFormData] = musterSession;
    
-    if(isLoading) return <Loader />
+    useEffect(() => {
+        setPageConfig(_.cloneDeep(data?.[Digit.Utils.getConfigModuleName()]?.InboxMusterConfig?.[0]))
+
+    }, [data, location])
+
+    if(isLoading || !pageConfig)  return <Loader />
     return (
         <React.Fragment>
-            <Header styles={{ fontSize: "32px" }}>{`${t(configs?.label)} (${state?.count})`}</Header>
+            <Header styles={{ fontSize: "32px" }}>{t(pageConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
             <div className="inbox-search-wrapper">
-                <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={configs}></InboxSearchComposer>
+                {/* <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={configs}></InboxSearchComposer> */}
+                <InboxSearchComposer configs={pageConfig}></InboxSearchComposer>
             </div>
         </React.Fragment>
     )

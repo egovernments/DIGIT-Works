@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/financial_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/individual_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/location_details.dart';
-import 'package:works_shg_app/pages/wage_seeker_registration/organization_details.dart';
+import 'package:works_shg_app/pages/wage_seeker_registration/skills.dart';
+import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/molecules/digit_stepper.dart';
 
+import '../../blocs/localization/app_localization.dart';
 import '../../widgets/SideBar.dart';
+import '../../widgets/atoms/app_bar_logo.dart';
 import '../../widgets/drawer_wrapper.dart';
 
 class RegisterIndividualPage extends StatefulWidget {
@@ -23,18 +27,22 @@ class RegisterIndividualPage extends StatefulWidget {
 }
 
 class RegisterIndividualPageState extends State<RegisterIndividualPage> {
+  var t = AppLocalizations.of(scaffoldMessengerKey.currentContext!);
   int currentStep = 0;
-  List<int> stepNumbers = [1, 2, 3, 4, 5];
+  List<int> stepNumbers = [1, 2, 3, 4];
   List<String> stepHeaders = [
-    'Individual Details',
-    'LocationDetails',
-    'Organization Details',
-    'Financial Details',
-    'Summary Details'
+    AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+        .translate(i18.attendanceMgmt.individualDetails),
+    AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+        .translate(i18.attendanceMgmt.skillDetails),
+    AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+        .translate(i18.common.locationDetails),
+    AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+        .translate(i18.common.financialDetails)
   ];
 
   void updateCurrentStep() {
-    if (currentStep == stepNumbers.length - 1) {
+    if (currentStep <= stepNumbers.length - 1) {
       setState(() {
         currentStep += 1;
       });
@@ -45,7 +53,10 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
   Widget build(BuildContext context) {
     var genderController = TextEditingController();
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
@@ -89,11 +100,11 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
           onPressed: updateCurrentStep,
         );
       case 1:
-        return LocationDetails(
+        return SkillDetails(
           onPressed: updateCurrentStep,
         );
       case 2:
-        return OrganizationDetails(
+        return LocationDetails(
           onPressed: updateCurrentStep,
         );
       case 3:
