@@ -11,7 +11,6 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "IND", referenceId: [individual?.id] } }
     const bankDetails = await BankAccountService.search(bankDetailPayload, {});
     const bankAccount = bankDetails?.bankAccounts?.[0]?.bankAccountDetails?.[0]
-    console.log('bankDetails', bankAccount)
 
     const thumbnails = await getThumbnails([individual?.photo], tenantId)
     const socialCategory = individual?.additionalFields?.fields?.find(item => item?.key === "SOCIAL_CATEGORY")
@@ -60,7 +59,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
             { title: "ES_COMMON_ACCOUNT_HOLDER_NAME", value: bankAccount?.accountHolderName || t("NA")},
             { title: "MASTERS_ACC_NO", value: bankAccount?.accountNumber || t("NA")},
             { title: "MASTERS_IFSC", value: bankAccount?.bankBranchIdentifier?.code || t("NA")},
-            { title: "ES_COMMON_BRANCH", value: 'Block 1, Kormangala, Bangalore' || t("NA")},
+            { title: "ES_COMMON_BRANCH", value: bankAccount?.bankBranchIdentifier?.additionalDetails?.ifsccode || t("NA")},
             { title: "MASTERS_EFFECTIVE_FROM", value: '01/04/2022' || t("NA")},
             { title: "MASTERS_EFFECTIVE_TO", value: 'NA' || t("NA")},
         ]
