@@ -64,7 +64,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
         { title: "MASTERS_IFSC", value: item?.bankBranchIdentifier?.code || t("NA")},
         { title: "ES_COMMON_BRANCH", value: item?.bankBranchIdentifier?.additionalDetails?.ifsccode || t("NA")},
         { title: "MASTERS_EFFECTIVE_FROM", value: Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.createdTime, 'dd/MM/yyyy') || t("NA")},
-        { title: "MASTERS_EFFECTIVE_TO", value: item?.isActive ? t("NA") : Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy')}
+        { title: "MASTERS_EFFECTIVE_TO", value: item?.isActive && item?.isPrimary ? t("NA") : Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy')}
       ]
       financialDetails.push(bankDetails)
     })
