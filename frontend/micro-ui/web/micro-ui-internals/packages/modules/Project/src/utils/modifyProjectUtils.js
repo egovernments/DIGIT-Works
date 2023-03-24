@@ -1,8 +1,7 @@
 import { ConvertEpochToDate } from "../../../../libraries/src/services/atoms/Utils/Date";
 
 export const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, project, headerLocale}) => {
-    let projectDetails = project?.response?.[0]; 
-
+    
     if(!isModify) {
       //clear defaultValues from 'config' ( this case can come when user navigates from Create Screen to Modify Screen )
       let validDefaultValues = ["basicDetails_dateOfProposal", "noSubProject_ulb"];
@@ -19,24 +18,24 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
     if(!sessionFormData?.basicDetails_dateOfProposal || !sessionFormData.noSubProject_ulb) {
       if(isModify) {
         //this field is only for Modify flow
-        configs.defaultValues.basicDetails_projectID = projectDetails?.projectNumber ? projectDetails?.projectNumber  : "";
+        configs.defaultValues.basicDetails_projectID = project?.projectNumber ? project?.projectNumber  : "";
       }else{
-        projectDetails = {};
+        project = {};
       }
 
-      configs.defaultValues.basicDetails_dateOfProposal = projectDetails?.additionalDetails?.dateOfProposal ? ConvertEpochToDate(projectDetails?.additionalDetails?.dateOfProposal, "yyyy-mm-dd")  : findCurrentDate(); //TODO:
+      configs.defaultValues.basicDetails_dateOfProposal = project?.additionalDetails?.dateOfProposal ? ConvertEpochToDate(project?.additionalDetails?.dateOfProposal, "yyyy-mm-dd")  : findCurrentDate(); //TODO:
       configs.defaultValues.noSubProject_ulb = ULBOptions[0];
-      configs.defaultValues.basicDetails_projectName = projectDetails?.name ? projectDetails?.name  : "";
-      configs.defaultValues.basicDetails_projectDesc = projectDetails?.description ? projectDetails?.description  : "";
-      configs.defaultValues.noSubProject_letterRefNoOrReqNo = projectDetails?.referenceID ? projectDetails?.referenceID  : "";
-      configs.defaultValues.noSubProject_typeOfProject = projectDetails?.projectType ? { code : projectDetails?.projectType, name : `COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(projectDetails?.projectType)}`, projectSubType : []}  : "";
-      configs.defaultValues.noSubProject_targetDemography = projectDetails?.additionalDetails?.targetDemography ? { code : projectDetails?.additionalDetails?.targetDemography, name : `COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(projectDetails?.additionalDetails?.targetDemography)}`}  : "";
-      configs.defaultValues.noSubProject_estimatedCostInRs = projectDetails?.additionalDetails?.estimatedCostInRs ? projectDetails?.additionalDetails?.estimatedCostInRs  : "";
-      configs.defaultValues.noSubProject_geoLocation = projectDetails?.address?.addressLine1 ? projectDetails?.address?.addressLine1  : "";
-      configs.defaultValues.noSubProject_ward = projectDetails?.additionalDetails?.ward ?  { code : projectDetails?.additionalDetails?.ward, name : projectDetails?.additionalDetails?.ward, i18nKey: `${headerLocale}_ADMIN_${projectDetails?.additionalDetails?.ward}`}  : "";
-      configs.defaultValues.noSubProject_locality = projectDetails?.address?.boundary ? { code : projectDetails?.address?.boundary, name : projectDetails?.address?.boundary, i18nKey: `${headerLocale}_ADMIN_${projectDetails?.address?.boundary}`}  : "";
-      configs.defaultValues.noSubProject_fund = projectDetails?.additionalDetails?.fund ? { code : projectDetails?.additionalDetails?.fund, name : `COMMON_MASTERS_FUND_${Digit.Utils.locale.getTransformedLocale(projectDetails?.additionalDetails?.fund)}`}  : "";
-      configs.defaultValues.noSubProject_docs = projectDetails?.additionalDetails?.projectFiles ? projectDetails?.additionalDetails?.projectFiles : "";
+      configs.defaultValues.basicDetails_projectName = project?.name ? project?.name  : "";
+      configs.defaultValues.basicDetails_projectDesc = project?.description ? project?.description  : "";
+      configs.defaultValues.noSubProject_letterRefNoOrReqNo = project?.referenceID ? project?.referenceID  : "";
+      configs.defaultValues.noSubProject_typeOfProject = project?.projectType ? { code : project?.projectType, name : `COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(project?.projectType)}`, projectSubType : []}  : "";
+      configs.defaultValues.noSubProject_targetDemography = project?.additionalDetails?.targetDemography ? { code : project?.additionalDetails?.targetDemography, name : `COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(project?.additionalDetails?.targetDemography)}`}  : "";
+      configs.defaultValues.noSubProject_estimatedCostInRs = project?.additionalDetails?.estimatedCostInRs ? project?.additionalDetails?.estimatedCostInRs  : "";
+      configs.defaultValues.noSubProject_geoLocation = project?.address?.addressLine1 ? project?.address?.addressLine1  : "";
+      configs.defaultValues.noSubProject_ward = project?.additionalDetails?.ward ?  { code : project?.additionalDetails?.ward, name : project?.additionalDetails?.ward, i18nKey: `${headerLocale}_ADMIN_${project?.additionalDetails?.ward}`}  : "";
+      configs.defaultValues.noSubProject_locality = project?.address?.boundary ? { code : project?.address?.boundary, name : project?.address?.boundary, i18nKey: `${headerLocale}_ADMIN_${project?.address?.boundary}`}  : "";
+      configs.defaultValues.noSubProject_fund = project?.additionalDetails?.fund ? { code : project?.additionalDetails?.fund, name : `COMMON_MASTERS_FUND_${Digit.Utils.locale.getTransformedLocale(project?.additionalDetails?.fund)}`}  : "";
+      configs.defaultValues.noSubProject_docs = project?.additionalDetails?.projectFiles ? project?.additionalDetails?.projectFiles : "";
     
       setSessionFormData({...configs?.defaultValues});
     }

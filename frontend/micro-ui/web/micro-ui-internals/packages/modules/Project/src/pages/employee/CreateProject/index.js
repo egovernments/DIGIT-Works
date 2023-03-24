@@ -44,8 +44,20 @@ const CreateProject = () => {
     } 
 
     //Fetch Project details for modify flow
-    const { data : project, isLoading : isProjectLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
-
+    const { isLoading: isProjectLoading, data: project } = Digit.Hooks.project.useProjectSearch({
+      tenantId,
+      searchParams: {
+        Projects : [
+            {
+                tenantId : queryStrings?.tenantId || tenantId,
+                projectNumber : queryStrings?.projectNumber
+            }
+        ]
+      },
+      config:{
+          enabled: isModify 
+      }
+  })
     // const { isLoading, data : configs} = Digit.Hooks.useCustomMDMS( //change to data
     //   stateTenant,
     //   Digit.Utils.getConfigModuleName(),
@@ -78,7 +90,6 @@ const CreateProject = () => {
 
     useEffect(()=>{
       if(configs && !isProjectLoading) {
-        console.log("PROJECT -- ",project);
         updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, project, headerLocale })
         setIsFormReady(true);
       }
