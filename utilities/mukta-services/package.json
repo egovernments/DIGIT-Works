@@ -1,7 +1,7 @@
 {
   "name": "mukta-services",
   "version": "0.0.1",
-  "main": "src/server.ts",
+  "main": "src/server/index.ts",
   "author": "Jagankumar <jagan.kumar@egov.org.in>",
   "description": "Backend For Frontend service",
   "license": "MIT",
@@ -10,10 +10,10 @@
     "build": "yarn run build-ts",
     "build-ts": "tsc",
     "clean": "rm -rf ./dist",
-    "serve": "node dist/server.js",
+    "serve": "node dist/server/index.js",
     "start": "yarn run serve",
     "test": "jest",
-    "dev": "ts-node-dev --respawn src/server.ts",
+    "dev": "ts-node-dev --respawn src/server/index.ts",
     "watch-ts": "tsc --watch"
   },
   "repository": {
