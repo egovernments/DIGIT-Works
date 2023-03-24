@@ -16,12 +16,10 @@ export default server;
 **/
 
 import App from './app';
-import PostsController from './controllers/posts/posts.controller';
+import controllers from './controllers';
  
 const app = new App(
-  [
-    new PostsController(),
-  ],
+    controllers,
   8080,
 );
  
