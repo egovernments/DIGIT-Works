@@ -62,7 +62,7 @@ export const UICustomizations = {
 
       return {
         contract: applicationDetails,
-        workflow
+        workflow,
       };
     }
   },
@@ -199,7 +199,14 @@ export const UICustomizations = {
         ...data.body.inbox,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), startDate, endDate, musterRollStatus, attendanceRegisterName, musterRollNumber },
+        moduleSearchCriteria: {
+          tenantId: Digit.ULBService.getCurrentTenantId(),
+          startDate,
+          endDate,
+          musterRollStatus,
+          attendanceRegisterName,
+          musterRollNumber,
+        },
       };
       return data;
     },
@@ -397,34 +404,37 @@ export const UICustomizations = {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
-      if (column.label === "MASTERS_WAGESEEKER_ID") {
-        return (
-          <span className="link">
-            <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row.tenantId}&wageseekerId=${value}`}>
-              {value ? value : t("ES_COMMON_NA")}
-            </Link>
-          </span>
-        );
-      }
-      if (column.label === "MASTERS_SOCIAL_CATEGORY") {
-        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
-      }
-      if (column.label === "MASTERS_ULB") {
-        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
-      }
-      if (column.label === "MASTERS_WARD") {
-        return value ? (
-          <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
-        ) : (
-          t("ES_COMMON_NA")
-        );
-      }
-      if (column.label === "MASTERS_LOCALITY") {
-        return value ? (
-          <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
-        ) : (
-          t("ES_COMMON_NA")
-        );
+      switch (column.label) {
+        case "MASTERS_WAGESEEKER_ID":
+          return (
+            <span className="link">
+              <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row.tenantId}&wageseekerId=${value}`}>
+                {value ? value : t("ES_COMMON_NA")}
+              </Link>
+            </span>
+          );
+
+        case "MASTERS_SOCIAL_CATEGORY":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+
+        case "MASTERS_ULB":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
+
+        case "MASTERS_WARD":
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+
+        case "MASTERS_LOCALITY":
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+        default:
+          return t("ES_COMMON_NA");
       }
     },
     additionalValidations: (type, data, keys) => {
@@ -445,32 +455,33 @@ export const UICustomizations = {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
-      if (column.label === "MASTERS_ORGANISATION_ID") {
-        return (
-          <span className="link">
-            <Link to={`/${window.contextPath}/employee/masters/view-organisation?tenantId=${row.tenantId}&orgId=${value}`}>
-              {value ? value : t("ES_COMMON_NA")}
-            </Link>
-          </span>
-        );
-      }
-      if (column.label === "MASTERS_STATUS") {
-        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
-      }
-      if (column.label === "MASTERS_ORGANISATION_TYPE") {
-        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
-      }
-      if (column.label === "MASTERS_ORGANISATION_SUB_TYPE") {
-        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
-      }
-      if (column.label === "MASTERS_LOCATION") {
-        return value ? (
-          <span style={{ whiteSpace: "nowrap" }}>
-            {String(`${t(Digit.Utils.locale.getCityLocale(row?.tenantId))} ${t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId))}`)}
-          </span>
-        ) : (
-          t("ES_COMMON_NA")
-        );
+      switch (column.label) {
+        case "MASTERS_ORGANISATION_ID":
+          return (
+            <span className="link">
+              <Link to={`/${window.contextPath}/employee/masters/view-organisation?tenantId=${row.tenantId}&orgId=${value}`}>
+                {value ? value : t("ES_COMMON_NA")}
+              </Link>
+            </span>
+          );
+        case "MASTERS_LOCATION":
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>
+              {String(`${t(Digit.Utils.locale.getCityLocale(row?.tenantId))} ${t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId))}`)}
+            </span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+        case "MASTERS_STATUS":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+
+        case "MASTERS_ORGANISATION_TYPE":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+
+        case "MASTERS_ORGANISATION_SUB_TYPE":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+        default:
+          return t("ES_COMMON_NA");
       }
     },
     additionalValidations: (type, data, keys) => {
@@ -479,22 +490,22 @@ export const UICustomizations = {
       }
     },
   },
-  EstimateInboxConfig:{},
+  EstimateInboxConfig: {},
   BillInboxConfig: {
     preProcess: (data) => {
       const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber;
-      let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state:[])
-      delete data.body.inbox.moduleSearchCriteria.state
-      states = Object.keys(states)?.filter(key=>states[key])
-      
+      let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
+      delete data.body.inbox.moduleSearchCriteria.state;
+      states = Object.keys(states)?.filter((key) => states[key]);
+
       let status;
-      if(states.length>0) status = states
+      if (states.length > 0) status = states;
 
       data.body.inbox = {
         ...data.body.inbox,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber, status }
+        moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber, status },
       };
       return data;
     },
@@ -502,9 +513,7 @@ export const UICustomizations = {
       if (column.label === "WORKS_BILL_NUMBER") {
         return (
           <span className="link">
-            <Link
-              to={`/works-ui/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}
-            >
+            <Link to={`/works-ui/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}>
               {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
             </Link>
           </span>
@@ -512,21 +521,25 @@ export const UICustomizations = {
       }
 
       if (column.label === "ES_COMMON_AMOUNT") {
-        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+        return value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA");
       }
 
       if (column.label === "COMMON_SLA_DAYS") {
-        return value ? (parseInt(value) > 0 ? (
-          <span className="sla-cell-success">{t(value) || ""}</span>
+        return value ? (
+          parseInt(value) > 0 ? (
+            <span className="sla-cell-success">{t(value) || ""}</span>
+          ) : (
+            <span className="sla-cell-error">{t(value) || ""}</span>
+          )
         ) : (
-          <span className="sla-cell-error">{t(value) || ""}</span>
-        )) : t("ES_COMMON_NA")
+          t("ES_COMMON_NA")
+        );
       }
 
       if (column.label === "COMMON_WORKFLOW_STATES") {
-        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA");
       }
-    }
+    },
   },
   SearchBillConfig: {
     preProcess: (data) => {
@@ -541,31 +554,27 @@ export const UICustomizations = {
       if (column.label === "WORKS_BILL_NUMBER") {
         return (
           <span className="link">
-            <Link
-              to={`/${
-                window.contextPath
-              }/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}
-            >
+            <Link to={`/${window.contextPath}/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}>
               {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
             </Link>
           </span>
         );
       }
       if (column.label === "EXP_BILL_AMOUNT") {
-        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+        return value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA");
       }
-      if(column.label === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      if (column.label === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA");
       }
-      if(column.label === "ES_COMMON_LOCATION") {
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
-        return t(`TENANT_TENANTS_${headerLocale}`)
+      if (column.label === "ES_COMMON_LOCATION") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId());
+        return t(`TENANT_TENANTS_${headerLocale}`);
       }
     },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
       }
-    }
-  }
+    },
+  },
 };
