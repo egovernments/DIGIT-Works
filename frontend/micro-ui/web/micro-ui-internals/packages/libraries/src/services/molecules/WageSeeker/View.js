@@ -10,7 +10,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
 
     const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "IND", referenceId: [individual?.id] } }
     const bankDetails = await BankAccountService.search(bankDetailPayload, {});
-    const bankAccount = bankDetails?.bankAccounts?.[0]?.bankAccountDetails?.[0]
+    const bankAccounts = bankDetails?.bankAccounts?.[0]?.bankAccountDetails
 
     const thumbnails = await getThumbnails([individual?.photo], tenantId)
     const socialCategory = individual?.additionalFields?.fields?.find(item => item?.key === "SOCIAL_CATEGORY")
@@ -52,19 +52,24 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
             { title: "ES_COMMON_DOOR_NO", value: individual?.address?.[0]?.doorNo || t("NA")},
         ]
     }
-    const financialDetails = {
-        title: "WORKS_FINANCIAL_DETAILS",
-        asSectionHeader: true,
-        values: [
-            { title: "ES_COMMON_ACCOUNT_HOLDER_NAME", value: bankAccount?.accountHolderName || t("NA")},
-            { title: "MASTERS_ACC_NO", value: bankAccount?.accountNumber || t("NA")},
-            { title: "MASTERS_IFSC", value: bankAccount?.bankBranchIdentifier?.code || t("NA")},
-            { title: "ES_COMMON_BRANCH", value: bankAccount?.bankBranchIdentifier?.additionalDetails?.ifsccode || t("NA")},
-            { title: "MASTERS_EFFECTIVE_FROM", value: '01/04/2022' || t("NA")},
-            { title: "MASTERS_EFFECTIVE_TO", value: 'NA' || t("NA")},
-        ]
-    }
-    const applicationDetails = { applicationDetails: [headerDetails, locationDetails, financialDetails] };
+
+    let financialDetails = []
+    bankAccounts?.forEach((item, index) => {
+      let bankDetails = {}
+      bankDetails.title = index === 0 ?  "WORKS_FINANCIAL_DETAILS" : " "
+      bankDetails.asSectionHeader = true
+      bankDetails.values = [
+        { title: "ES_COMMON_ACCOUNT_HOLDER_NAME", value: item?.accountHolderName || t("NA")},
+        { title: "MASTERS_ACC_NO", value: item?.accountNumber || t("NA")},
+        { title: "MASTERS_IFSC", value: item?.bankBranchIdentifier?.code || t("NA")},
+        { title: "ES_COMMON_BRANCH", value: item?.bankBranchIdentifier?.additionalDetails?.ifsccode || t("NA")},
+        { title: "MASTERS_EFFECTIVE_FROM", value: Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.createdTime, 'dd/MM/yyyy') || t("NA")},
+        { title: "MASTERS_EFFECTIVE_TO", value: item?.isActive ? t("NA") : Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy')}
+      ]
+      financialDetails.push(bankDetails)
+    })
+
+    const applicationDetails = { applicationDetails: [headerDetails, locationDetails, ...financialDetails] };
 
   return {
     applicationDetails,
