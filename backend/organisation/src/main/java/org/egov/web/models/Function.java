@@ -57,8 +57,7 @@ public class Function {
     private Double validTo = null;
 
     @JsonProperty("applicationStatus")
-    @Size(min = 2, max = 64)
-    private String applicationStatus = null;
+    private ApplicationStatus applicationStatus = null;
 
     @JsonProperty("wfStatus")
     private String wfStatus = null;

@@ -51,8 +51,7 @@ public class Organisation {
     private String orgNumber = null;//idgen formatted number once workflow is 'APPROVED'
 
     @JsonProperty("applicationStatus")
-    @Size(min = 2, max = 64)
-    private String applicationStatus = null;//workflow status
+    private ApplicationStatus applicationStatus = null;
 
     @JsonProperty("externalRefNumber")
     @Size(min = 2, max = 64)
