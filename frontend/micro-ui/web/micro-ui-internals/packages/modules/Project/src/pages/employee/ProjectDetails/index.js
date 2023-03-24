@@ -82,10 +82,7 @@ const ProjectDetails = () => {
                 // history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
                 history.push({
                     pathname : `/${window.contextPath}/employee/project/create-project`,
-                    search : `?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}&isModify=true`,
-                    state : {
-                        project : data?.response
-                    }
+                    search : `?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`,
                 })
             }
         }
