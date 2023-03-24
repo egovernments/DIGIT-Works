@@ -156,21 +156,29 @@ public class ProjectEnrichment {
     /* Enrich last modified by and last modified time for address in update project request. If id is not present add address */
     private void enrichProjectAddressOnUpdate(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
         if (projectFromRequest.getAddress() != null) {
+            //Add address if not present already
             if (StringUtils.isBlank(projectFromRequest.getAddress().getId())) {
                 log.info("Adding address for project " + projectFromDB.getId());
                 enrichProjectAddressOnCreate(projectFromRequest, requestInfo);
-            } else {
+            }
+            //If addressId present in request, update existing address
+            else {
                 projectFromRequest.getAddress().setAuditDetails(projectFromDB.getAddress().getAuditDetails());
                 AuditDetails auditDetailsAddress = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), projectFromDB.getAddress().getAuditDetails(), false);
                 projectFromRequest.getAddress().setAuditDetails(auditDetailsAddress);
                 log.info("Enriched address audit details for project " + projectFromRequest.getId());
             }
-        } else {
+        }
+        //Address not present in request
+        else {
             log.info("Address not provided in project update request for project " + projectFromRequest.getId());
+            //Address not present in request but present in db, then enrich response with address
             if (projectFromDB.getAddress() != null && StringUtils.isNotBlank(projectFromDB.getAddress().getId())) {
                 projectFromRequest.setAddress(projectFromDB.getAddress());
                 log.info("Enriched address details from DB with id " + projectFromDB.getAddress().getId() + " in project response body " + projectFromRequest.getId());
-            } else {
+            }
+            //Address not present in request and also not present in db, then set address in response to null
+            else {
                 projectFromRequest.setAddress(null);
                 log.info("Address not found for project " + projectFromRequest.getId() + " in DB");
             }
@@ -193,12 +201,15 @@ public class ProjectEnrichment {
     private void enrichProjectTargetOnUpdate(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
         if (projectFromRequest.getTargets() != null) {
             for (Target target: projectFromRequest.getTargets()) {
+                //Add target, if id not provided in request
                 if (StringUtils.isBlank(target.getId())) {
                     target.setId(UUID.randomUUID().toString());
                     AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
                     target.setAuditDetails(auditDetailsForAdd);
                     log.info("Added target with id " + target.getId() + " for project " + projectFromRequest.getId());
-                } else {
+                }
+                //If id provided in request, update existing target
+                else {
                     String targetId = String.valueOf(target.getId());
                     if (projectFromDB.getTargets() != null) {
                         Target targetFromDB = projectFromDB.getTargets().stream().filter(t -> targetId.equals(String.valueOf(t.getId())) && !t.getIsDeleted()).findFirst().orElse(null);
@@ -211,12 +222,15 @@ public class ProjectEnrichment {
                     }
                 }
             }
+            //Add targets in search response, which are not present in request but present in db
             if (projectFromDB.getTargets() != null) {
                 Set<String> targetIdsInRequest = projectFromRequest.getTargets().stream().map(Target :: getId).collect(Collectors.toSet());
                 List<Target> filteredTargetsFromDB = projectFromDB.getTargets().stream().filter(t -> !targetIdsInRequest.contains(t.getId()) && !t.getIsDeleted()).collect(Collectors.toList());
                 projectFromRequest.getTargets().addAll(filteredTargetsFromDB);
             }
-        } else {
+        }
+        //If targets not present in request, but present in db, enrich them in response
+        else {
             if (projectFromDB.getTargets() != null) {
                 projectFromRequest.setTargets(projectFromDB.getTargets().stream().filter(t -> !t.getIsDeleted()).collect(Collectors.toList()));
             }
@@ -239,12 +253,15 @@ public class ProjectEnrichment {
     private void enrichProjectDocumentOnUpdate(Project projectFromRequest, Project projectFromDB, RequestInfo requestInfo) {
         if (projectFromRequest.getDocuments() != null) {
             for (Document document: projectFromRequest.getDocuments()) {
+                //Add new document
                 if (StringUtils.isBlank(document.getId())) {
                     document.setId(UUID.randomUUID().toString());
                     AuditDetails auditDetailsForAdd = projectServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), null, true);
                     document.setAuditDetails(auditDetailsForAdd);
                     log.info("Added document with id " + document.getId() + " for project " + projectFromRequest.getId());
-                } else {
+                }
+                //Update existing document
+                else {
                     String documentId = String.valueOf(document.getId());
                     if (projectFromDB.getDocuments() != null) {
                         Document documentFromDB = projectFromDB.getDocuments().stream().filter(d -> documentId.equals(String.valueOf(d.getId()))).findFirst().orElse(null);
@@ -257,12 +274,15 @@ public class ProjectEnrichment {
                     }
                 }
             }
+            //Add documents in search response, which are not present in request but present in db
             if (projectFromDB.getDocuments() != null) {
                 Set<String> documentIdsInRequest = projectFromRequest.getDocuments().stream().map(Document :: getId).collect(Collectors.toSet());
                 List<Document> filteredDocumentsFromDB = projectFromDB.getDocuments().stream().filter(d -> !documentIdsInRequest.contains(d.getId())).collect(Collectors.toList());
                 projectFromRequest.getDocuments().addAll(filteredDocumentsFromDB);
             }
-        } else {
+        }
+        //If documents not present in request, but present in db, enrich them in response
+        else {
             if (projectFromDB.getDocuments() != null) {
                 projectFromRequest.setDocuments(projectFromDB.getDocuments());
             }

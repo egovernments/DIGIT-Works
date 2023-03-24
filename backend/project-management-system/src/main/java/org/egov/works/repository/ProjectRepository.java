@@ -190,7 +190,10 @@ public class ProjectRepository {
     private void addDocumentToProject(Project project, List<Document> documents) {
         project.setDocuments(new ArrayList<>());
         for (Document document: documents) {
-            if (document.getProjectid().equals(project.getId()) && document.getStatus() != null && !document.getStatus().equals("INACTIVE") && project.getDocuments().stream().noneMatch(t -> t.getId().equals(document.getId()))) {
+            if (document.getStatus() == null || (document.getProjectid().equals(project.getId())
+                    && document.getStatus() != null
+                    && !document.getStatus().equals("INACTIVE")
+                    && project.getDocuments().stream().noneMatch(t -> t.getId().equals(document.getId())))) {
                 project.getDocuments().add(document);
             }
         }
