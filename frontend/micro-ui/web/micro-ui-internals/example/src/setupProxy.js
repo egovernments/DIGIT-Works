@@ -71,11 +71,12 @@ module.exports = function (app) {
     "/muster-roll",
     "/pms/project",
     "/inbox/v2/_search",
-    "/individual/v1/_search",
+    "/individual",
     "/org-services",
     "/wms/contract/_search",
     "/org-services/organisation/v1/_search",
-    "/expensebilling"
+    "/expensebilling",
+    "/bankaccount-service"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };
