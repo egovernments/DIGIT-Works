@@ -11,7 +11,7 @@ const SkillDetails = ({ data }) => {
                 <div className='skill-details'>
                     { data?.skillData?.length > 0 ? 
                         data?.skillData?.map((item, index) => (
-                            <div key={index}> {t(`COMMON_MASTERS_SKILL_LEVEL_${item?.level}`)} - {t(`COMMON_MASTERS_SKILL_TYPE_${item?.type}`)} </div>
+                            <div key={index}> {t(`COMMON_MASTERS_SKILLS_${item?.level}.${item?.type}`)} </div>
                         ))
                         : t('NA')
                     }
