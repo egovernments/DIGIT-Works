@@ -206,7 +206,8 @@ public class ProjectValidator {
                     && StringUtils.isBlank(project.getProjectSubType())
                     && (project.getStartDate() == null || project.getStartDate() == 0)
                     && (project.getEndDate() == null || project.getEndDate() == 0)
-                    && (createdFrom == null || createdFrom == 0)) {
+                    && (createdFrom == null || createdFrom == 0)
+                    && (project.getAddress() == null || StringUtils.isBlank(project.getAddress().getBoundary()))) {
                 log.error("Any one project search field is required for Project Search");
                 throw new CustomException("PROJECT_SEARCH_FIELDS", "Any one project search field is required");
             }
