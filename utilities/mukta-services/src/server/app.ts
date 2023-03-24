@@ -1,7 +1,41 @@
-import express, { Request, Response } from "express";
+import express from "express";
+import  logger from "morgan";
+import config from "./config";
+import { cacheMiddleware, requestMiddleware } from "./middlewares";
+import routeConfig from "./routes";
+import { errorLogger, errorResponder, invalidPathHandler } from "./utils";
+
 
 const app = express()
 
-app.get('/', (req: Request, res: Response) => res.send('Hello d W   orld from app.ts!'))
+app.use(logger("dev"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+/* Middleware to Validate Request info */
+app.use(requestMiddleware);
+
+/* Middleware to cache response */
+app.use(cacheMiddleware);
+
+
+
+// app.use(config.app?.contextPath + "/muster", musterRouter);
+
+routeConfig.map(route=>{
+    app.use(config.app?.contextPath +route.path, route.router)
+})
+
+// Attach the first Error handling Middleware
+// function defined above (which logs the error)
+app.use(errorLogger);
+
+// Attach the second Error handling Middleware
+// function defined above (which sends back the response)
+app.use(errorResponder);
+
+// Attach the fallback Middleware
+// function which sends back the response for invalid paths)
+app.use(invalidPathHandler);
 
 export default app;
