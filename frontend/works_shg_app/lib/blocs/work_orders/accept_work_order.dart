@@ -6,7 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../data/remote_client.dart';
+import '../../data/repositories/work_order_repository/my_works_repository.dart';
 import '../../models/works/contracts_model.dart';
+import '../../services/urls.dart';
+import '../../utils/global_variables.dart';
 
 part 'accept_work_order.freezed.dart';
 
@@ -26,22 +29,22 @@ class AcceptWorkOrderBloc
       emit(const AcceptWorkOrderState.loading());
 
       ContractsModel contractsModel = ContractsModel();
-      // await MyWorksRepository(client.init()).acceptOrDeclineWorkOrder(
-      //     url: Urls.workServices.updateWorkOrder,
-      //     body: {
-      //       "contract": event.contractsModel,
-      //       "workflow": {
-      //         "action": event.action,
-      //         "comment": event.comments,
-      //         "assignees": []
-      //       }
-      //     },
-      //     options: Options(extra: {
-      //       "userInfo": GlobalVariables.userRequestModel,
-      //       "accessToken": GlobalVariables.authToken,
-      //       "apiId": "mukta-services",
-      //       "msgId": "Create Contract"
-      //     }));
+      await MyWorksRepository(client.init()).acceptOrDeclineWorkOrder(
+          url: Urls.workServices.updateWorkOrder,
+          body: {
+            "contract": event.contractsModel,
+            "workflow": {
+              "action": event.action,
+              "comment": event.comments,
+              "assignees": []
+            }
+          },
+          options: Options(extra: {
+            "userInfo": GlobalVariables.userRequestModel,
+            "accessToken": GlobalVariables.authToken,
+            "apiId": "mukta-services",
+            "msgId": "Create Contract"
+          }));
       await Future.delayed(const Duration(seconds: 1));
       emit(AcceptWorkOrderState.loaded(contractsModel));
     } on DioError catch (e) {
