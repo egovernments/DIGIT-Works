@@ -39,8 +39,8 @@ const Inbox = () => {
         <React.Fragment>
             <Header styles={{ fontSize: "32px" }}>{t(pageConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
             <div className="inbox-search-wrapper">
-                {/* <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={configs}></InboxSearchComposer> */}
-                <InboxSearchComposer configs={pageConfig}></InboxSearchComposer>
+                <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={pageConfig}></InboxSearchComposer>
+                {/* <InboxSearchComposer configs={pageConfig}></InboxSearchComposer> */}
             </div>
         </React.Fragment>
     )

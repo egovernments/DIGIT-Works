@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import { Header } from '@egovernments/digit-ui-react-components';
-import { createOrganizationConfigMUKTA } from '../../../configs/createOrganizationConfigMUKTA';
+import { createOrganizationConfigMUKTA } from '../../../../configs/createOrganizationConfigMUKTA';
 import CreateOrganizationForm from './CreateOrganizationForm';
 
 const CreateOrganisation = () => {

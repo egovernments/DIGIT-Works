@@ -36,7 +36,7 @@ const EstimateInbox = () => {
     }, [data,location])
     
     const estimateSession = Digit.Hooks.useSessionStorage("SEARCH_AND_FILTER_ESTIMATE", 
-        configs?.defaultValues
+        updatedConfig?.defaultValues
     );
 
     const [sessionFormData, setSessionFormData, clearSessionFormData] = estimateSession;
@@ -46,9 +46,7 @@ const EstimateInbox = () => {
         <React.Fragment>
             <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
             <div className="inbox-search-wrapper">
-                {/* <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={updatedConfig}></InboxSearchComposer> */}
-                {/* <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer> */}
-                <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer>
+                <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={updatedConfig}></InboxSearchComposer>
             </div>
         </React.Fragment>
     )

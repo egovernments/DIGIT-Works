@@ -30,12 +30,19 @@ const Inbox = () => {
 
   }, [location])
 
+  const contractSession = Digit.Hooks.useSessionStorage("SEARCH_AND_FILTER_CONTRACT", 
+        updatedConfig?.defaultValues
+    );
+
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = contractSession;
+
   if (isLoading || !pageConfig) return <Loader />
   return (
     <React.Fragment>
       <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
       <div className="inbox-search-wrapper">
-        <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer>
+        {/* <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer> */}
+        <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={updatedConfig}></InboxSearchComposer>
       </div>
     </React.Fragment>
   )

@@ -32,12 +32,19 @@ const BillInbox = () => {
   //For local
   let configs = useMemo( () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, InboxBillConfig?.InboxBillConfig?.[0], "sections.search.uiConfig.fields",{}));
 
+  const billSession = Digit.Hooks.useSessionStorage("SEARCH_AND_FILTER_BILLS", 
+        configs?.defaultValues
+    );
+
+  const [sessionFormData, setSessionFormData, clearSessionFormData] = billSession;
+
   //if(isLoading) return <Loader />
   return (
       <React.Fragment>
           <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}{state?.count ? <span className="inbox-count">{state?.count}</span> : null}</Header>
           <div className="inbox-search-wrapper">
-              <InboxSearchComposer configs={configs}></InboxSearchComposer>
+              {/* <InboxSearchComposer configs={configs}></InboxSearchComposer> */}
+              <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={configs}></InboxSearchComposer>
           </div>
       </React.Fragment>
   )

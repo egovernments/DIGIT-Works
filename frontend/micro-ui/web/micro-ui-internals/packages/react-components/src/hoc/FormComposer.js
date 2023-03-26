@@ -364,9 +364,9 @@ export const FormComposer = (props) => {
             formData={formData}
             errors={errors}
             control={control}
-            customClass={populators?.customClass}
-            customErrorMsg={populators?.error}
-            localePrefix={populators?.localePrefix}
+            customClass={config?.customClass}
+            customErrorMsg={config?.error}
+            localePrefix={config?.localePrefix}
           />
         );
       case "form":
