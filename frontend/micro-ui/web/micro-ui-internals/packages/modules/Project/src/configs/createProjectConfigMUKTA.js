@@ -26,8 +26,9 @@ export const createProjectConfigMUKTA = {
                 populators: { 
                   name: "basicDetails_projectID", 
                   customStyle : {
-                    display : "none"
-                  }
+                    display : "none",
+                  },
+                  customClass : "field-value-no-border"
                 },
               },
               {
