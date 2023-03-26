@@ -29,7 +29,7 @@ const createDocObject = (document, docType, otherDocFileName="Others", isActive)
   if((otherDocFileName.trim()).length === 0) {
     otherDocFileName = "Others";
   }
-  
+
   let payload_modal = {};
   payload_modal.documentType = documentType?.[docType];
   payload_modal.fileStore = document?.[1]?.['fileStoreId']?.['fileStoreId'];
@@ -79,7 +79,7 @@ const createDocumentsPayload = (documents, otherDocFileName, configs) => {
     }
   }
 
-  console.log("FINAL DOCS LIST",documents_payload_list);
+
   return documents_payload_list;
 }
 

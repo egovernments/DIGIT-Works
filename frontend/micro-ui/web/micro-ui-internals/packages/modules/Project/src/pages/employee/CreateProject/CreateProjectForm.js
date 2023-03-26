@@ -152,7 +152,6 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     }
 
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-      console.log("FORMDATA", formData);
       if (!_.isEqual(sessionFormData, formData)) {
         const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
@@ -210,7 +209,6 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const { mutate: UpdateProjectMutation } = Digit.Hooks.works.useUpdateProject();
 
     const onSubmit = (data) => {
-      console.log(data, createProjectConfig);
       //Transforming Payload to categories of Basic Details, Projects and Sub-Projects
       const transformedPayload = CreateProjectUtils.payload.transform(data);
 
