@@ -4,9 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:works_shg_app/data/repositories/work_order_repository/my_works_repository.dart';
-import 'package:works_shg_app/services/urls.dart';
-import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/remote_client.dart';
 import '../../models/works/contracts_model.dart';
@@ -19,6 +16,7 @@ class AcceptWorkOrderBloc
     extends Bloc<AcceptWorkOrderEvent, AcceptWorkOrderState> {
   AcceptWorkOrderBloc() : super(const AcceptWorkOrderState.initial()) {
     on<WorkOrderAcceptEvent>(_onAccept);
+    on<WorkOrderDisposeEvent>(_onDispose);
   }
 
   FutureOr<void> _onAccept(
@@ -27,28 +25,33 @@ class AcceptWorkOrderBloc
     try {
       emit(const AcceptWorkOrderState.loading());
 
-      ContractsModel contractsModel =
-          await MyWorksRepository(client.init()).acceptOrDeclineWorkOrder(
-              url: Urls.workServices.updateWorkOrder,
-              body: {
-                "contract": event.contractsModel,
-                "workflow": {
-                  "action": event.action,
-                  "comment": event.comments,
-                  "assignees": []
-                }
-              },
-              options: Options(extra: {
-                "userInfo": GlobalVariables.userRequestModel,
-                "accessToken": GlobalVariables.authToken,
-                "apiId": "mukta-services",
-                "msgId": "Create Contract"
-              }));
+      ContractsModel contractsModel = ContractsModel();
+      // await MyWorksRepository(client.init()).acceptOrDeclineWorkOrder(
+      //     url: Urls.workServices.updateWorkOrder,
+      //     body: {
+      //       "contract": event.contractsModel,
+      //       "workflow": {
+      //         "action": event.action,
+      //         "comment": event.comments,
+      //         "assignees": []
+      //       }
+      //     },
+      //     options: Options(extra: {
+      //       "userInfo": GlobalVariables.userRequestModel,
+      //       "accessToken": GlobalVariables.authToken,
+      //       "apiId": "mukta-services",
+      //       "msgId": "Create Contract"
+      //     }));
       await Future.delayed(const Duration(seconds: 1));
       emit(AcceptWorkOrderState.loaded(contractsModel));
     } on DioError catch (e) {
       emit(AcceptWorkOrderState.error(e.response?.data['Errors'][0]['code']));
     }
+  }
+
+  FutureOr<void> _onDispose(
+      WorkOrderDisposeEvent event, AcceptWorkOrderEmitter emit) async {
+    emit(const AcceptWorkOrderState.initial());
   }
 }
 
@@ -58,6 +61,7 @@ class AcceptWorkOrderEvent with _$AcceptWorkOrderEvent {
       {required Map? contractsModel,
       required String action,
       @Default('') String comments}) = WorkOrderAcceptEvent;
+  const factory AcceptWorkOrderEvent.dispose() = WorkOrderDisposeEvent;
 }
 
 @freezed
