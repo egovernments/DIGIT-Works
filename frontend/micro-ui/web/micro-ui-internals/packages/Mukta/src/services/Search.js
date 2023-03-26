@@ -58,12 +58,15 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                     title: "WORKS_RELEVANT_DOCUMENTS",
                     BS : 'Works',
                     values: currentProject?.documents?.map((document) => {
-                        return {
-                            title: document?.documentType,
-                            documentType: document?.documentType,
-                            documentUid: document?.fileStore,
-                            fileStoreId: document?.fileStore,
-                        };
+                        if(document?.status === "ACTIVE") {
+                            return {
+                                title: document?.documentType,
+                                documentType: document?.documentType,
+                                documentUid: document?.fileStore,
+                                fileStoreId: document?.fileStore,
+                            };
+                        }
+                        return {};
                     }),
                 },
                 ]

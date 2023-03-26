@@ -7,26 +7,83 @@ const documentType = {
   "others" : "Other"
 }
 
-const createDocumentsPayload = (documents, otherDocFileName) => {
-  let documents_payload_list = [];
+const transformDefaultDocObject = (documentDefaultValue) => {
+  if(!documentDefaultValue) {
+    return false;
+  }
 
+  let trimmedObjectKeys = {};
+  for(let key of Object.keys(documentDefaultValue)) {
+    if(key.includes("noSubProject_doc_")) {
+      let croppedKey = key.replace("noSubProject_doc_","");
+      trimmedObjectKeys[croppedKey] = documentDefaultValue[key];
+    }
+  }
+
+  return trimmedObjectKeys;
+}
+
+const createDocObject = (document, docType, otherDocFileName="Others", isActive) =>{
+
+  //handle empty Category Name in File Type
+  if((otherDocFileName.trim()).length === 0) {
+    otherDocFileName = "Others";
+  }
+  
+  let payload_modal = {};
+  payload_modal.documentType = documentType?.[docType];
+  payload_modal.fileStore = document?.[1]?.['fileStoreId']?.['fileStoreId'];
+  payload_modal.documentUid = "";
+  payload_modal.status = isActive;
+  payload_modal.id = document?.[1]?.['file']?.['id'];
+  payload_modal.key = docType;
+  payload_modal.additionalDetails = {
+    fileName :  docType === "others" ? otherDocFileName : document?.[1]?.['file']?.['name'],
+  }
+  return payload_modal;
+}
+
+const createDocumentsPayload = (documents, otherDocFileName, configs) => {
+  let documents_payload_list = [];
+  let documentDefaultValue = transformDefaultDocObject(configs?.defaultValues?.noSubProject_docs);
+
+  //new uploaded docs
   for(let docType of Object.keys(documents)) {
     for(let document of documents[docType]) {
-      let payload_modal = {};
-      payload_modal.documentType = (docType === "others" && otherDocFileName) ? otherDocFileName : documentType[docType];
-      payload_modal.fileStore = document[1]['fileStoreId']['fileStoreId'];
-      payload_modal.documentUid = "";
-      payload_modal.status = "ACTIVE";
-      payload_modal.additionalDetails = {
-        fileName :  docType === "others" ? otherDocFileName : document[1]['file']['name']
-      }
+      let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE"); 
       documents_payload_list.push(payload_modal);
     }
   }
+
+  // compare with existing docs
+  // if existing docs exists
+  if(documentDefaultValue) {
+    for(let defaultDocKey of Object.keys(documentDefaultValue)) {
+      let isExist = false;
+      for(let uploadedDocObject of documents_payload_list) {
+        if(defaultDocKey === uploadedDocObject?.key && defaultDocKey !== "others_name") {
+          //new file being uploaded
+          if(!uploadedDocObject?.id) {
+            //if old file exists, make it inactive
+            let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
+            documents_payload_list.push(payload_modal);
+          }
+          isExist = true;
+        }
+      }
+      //if previous file does not exist in new formData, mark it as InActive
+      if(!isExist && defaultDocKey !== "others_name") {
+        let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
+        documents_payload_list.push(payload_modal);
+      }
+    }
+  }
+
+  console.log("FINAL DOCS LIST",documents_payload_list);
   return documents_payload_list;
 }
 
-function createProjectList(data, selectedProjectType, parentProjectID, tenantId, modifyParams) {
+function createProjectList(data, selectedProjectType, parentProjectID, tenantId, modifyParams, configs) {
   
     let projects_payload = [];
     let project_details;
@@ -65,7 +122,9 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
              others : project_details?.docs?.noSubProject_doc_others, 
              project_proposal : project_details?.docs?.noSubProject_doc_project_proposal
             },
-            project_details?.docs?.noSubProject_doc_others_name),
+            project_details?.docs?.noSubProject_doc_others_name,
+            configs
+            ),
           "natureOfWork" : project_details?.natureOfWork?.code,
           "address": {
             "id" : modifyParams?.addressID,
@@ -111,9 +170,9 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
 
 const CreateProjectUtils = {
     payload : {
-        create : (data, selectedProjectType, parentProjectID, tenantId, modifyParams ) => {
+        create : (data, selectedProjectType, parentProjectID, tenantId, modifyParams, configs) => {
             return {
-                Projects : createProjectList(data, selectedProjectType, parentProjectID, tenantId, modifyParams), //if there is a Parent Project, then create list of sub-projects array, or only create one object for Parent Project.
+                Projects : createProjectList(data, selectedProjectType, parentProjectID, tenantId, modifyParams, configs), //if there is a Parent Project, then create list of sub-projects array, or only create one object for Parent Project.
                 apiOperation : "CREATE"
             }
         },

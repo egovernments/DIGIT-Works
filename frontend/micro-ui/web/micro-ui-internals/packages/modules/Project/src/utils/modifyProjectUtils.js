@@ -1,7 +1,32 @@
 import { ConvertEpochToDate } from "../../../../libraries/src/services/atoms/Utils/Date";
 
+
+export const handleModifyProjectFiles = (uploadedDocs) => {
+  let fileKeyMappings = [
+    {key : "noSubProject_doc_feasibility_analysis", value : "Feasiblity Analysis"},
+    {key : "noSubProject_doc_finalized_worklist", value : "Finalized Worklist"},
+    {key : "noSubProject_doc_others", value : "Other"},
+    {key : "noSubProject_doc_project_proposal", value : "Project Proposal"},
+  ]
+
+  let documentObject = {};
+  fileKeyMappings?.map((fileKeyMapping)=>{
+    let currentDoc = uploadedDocs?.filter((doc)=>doc?.documentType === fileKeyMapping?.value)[0];
+
+    if(currentDoc?.fileStore && currentDoc?.status === "ACTIVE") {
+      if(fileKeyMapping?.value === "Other") {
+        documentObject["noSubProject_doc_others_name"] = currentDoc?.additionalDetails?.fileName;
+      }
+      documentObject[fileKeyMapping?.key] = [
+        [currentDoc?.additionalDetails?.fileName, {file : { name : currentDoc?.additionalDetails?.fileName, id : currentDoc?.id}, fileStoreId : { fileStoreId : currentDoc?.fileStore}}]
+      ] 
+    }
+  });
+  return documentObject;
+}
+
 export const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, project, headerLocale}) => {
-  console.log(project);
+
   if(!isModify) {
       //clear defaultValues from 'config' ( this case can come when user navigates from Create Screen to Modify Screen )
       let validDefaultValues = ["basicDetails_dateOfProposal", "noSubProject_ulb"];
@@ -35,8 +60,8 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
       configs.defaultValues.noSubProject_ward = project?.address?.boundary ?  { code : project?.address?.boundary, name : project?.address?.boundary, i18nKey: `${headerLocale}_ADMIN_${project?.address?.boundary}`}  : "";
       configs.defaultValues.noSubProject_locality = project?.additionalDetails?.locality ? { code : project?.additionalDetails?.locality?.code , name : project?.additionalDetails?.locality?.code, i18nKey: `${headerLocale}_ADMIN_${project?.additionalDetails?.locality?.code}`, label : project?.additionalDetails?.locality?.label}  : "";
       configs.defaultValues.noSubProject_fund = project?.additionalDetails?.fund ? { code : project?.additionalDetails?.fund, name : `COMMON_MASTERS_FUND_${Digit.Utils.locale.getTransformedLocale(project?.additionalDetails?.fund)}`}  : "";
-      // configs.defaultValues.noSubProject_docs = project?.additionalDetails?.projectFiles ? project?.additionalDetails?.projectFiles : "";
-    
+      configs.defaultValues.noSubProject_docs = project?.documents ? handleModifyProjectFiles(project?.documents) : "";
+   
       setSessionFormData({...configs?.defaultValues});
     }
 }
