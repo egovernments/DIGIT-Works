@@ -31,7 +31,7 @@ const whenHasSubProjectsHorizontalNavConfig =  [
   }
 ];
 
-const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig, isModify, projectIDToUpdate, projectNumberToUpdate, addressID}) => {
+const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig, isModify, modify_projectID, modify_projectNumber, modify_addressID}) => {
 
     const [selectedProjectType, setSelectedProjectType] = useState(createProjectConfig?.defaultValues?.basicDetails_hasSubProjects ? createProjectConfig?.defaultValues?.basicDetails_hasSubProjects : {name : "COMMON_NO", code : "COMMON_NO"});
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
@@ -111,6 +111,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
         ]
       }),
       [withSubProjectSubSchemeOptions, noSubProjectSubSchemeOptions, subTypeOfProjectOptions, ULBOptions, wardsAndLocalities, filteredLocalities, showInfoLabel, isEndDateValid]);
+      
       const createSubTypesMDMSObject = (subTypesData) => {
       let mdmsData = [];
       for(let subType of subTypesData?.projectSubType) {
@@ -213,9 +214,9 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
       const transformedPayload = CreateProjectUtils.payload.transform(data);
 
       const modifyParams = {
-        projectIDToUpdate,
-        projectNumberToUpdate,
-        addressID,
+        modify_projectID,
+        modify_projectNumber,
+        modify_addressID,
       }
 
       //Final Payload
@@ -231,11 +232,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const handleResponseForCreate = async (payload) => {
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
-          if(error?.response?.data?.Errors?.[0]?.code === "INVALID_DATE") {
             sendDataToResponsePage("", "", false);
-          }else {
-            sendDataToResponsePage("", "", false);
-          }
         },
         onSuccess: async (responseData, variables) => {
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
@@ -244,12 +241,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             let parentProjectNumber = responseData?.Projects[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
-                if(error?.response?.data?.Errors?.[0]?.code === "INVALID_DATE") {
-                  // setToast(()=>({show : true, label : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), error : true}));
                   sendDataToResponsePage("", "", false);
-                }else {
-                  sendDataToResponsePage("", "", false);
-                }
               },
               onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
@@ -279,11 +271,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const handleResponseForUpdate = async (payload) => {
       await UpdateProjectMutation(payload, {
         onError: async (error, variables) => {
-          if(error?.response?.data?.Errors?.[0]?.code === "INVALID_DATE") {
             sendDataToResponsePage("", "", false);
-          }else {
-            sendDataToResponsePage("", "", false);
-          }
         },
         onSuccess: async (responseData, variables) => {
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
@@ -292,12 +280,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             let parentProjectNumber = responseData?.Projects[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
-                if(error?.response?.data?.Errors?.[0]?.code === "INVALID_DATE") {
-                  // setToast(()=>({show : true, label : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), error : true}));
                   sendDataToResponsePage("", "", false);
-                }else {
-                  sendDataToResponsePage("", "", false);
-                }
               },
               onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {

@@ -1,7 +1,11 @@
 import { ConvertEpochToDate } from "../../../../libraries/src/services/atoms/Utils/Date";
 
-
+//This handler creates a FormData for Docs defaultValues
+//This will add 'id' for all the docs, as they are coming from response
+//These Ids will be used when user will modify or delete a doc of certain criteria
 export const handleModifyProjectFiles = (uploadedDocs) => {
+  
+  //form data inout name mapping with file category Name
   let fileKeyMappings = [
     {key : "noSubProject_doc_feasibility_analysis", value : "Feasiblity Analysis"},
     {key : "noSubProject_doc_finalized_worklist", value : "Finalized Worklist"},
@@ -15,7 +19,7 @@ export const handleModifyProjectFiles = (uploadedDocs) => {
 
     if(currentDoc?.fileStore && currentDoc?.status === "ACTIVE") {
       if(fileKeyMapping?.value === "Other") {
-        documentObject["noSubProject_doc_others_name"] = currentDoc?.additionalDetails?.fileName;
+        documentObject["noSubProject_doc_others_name"] = currentDoc?.additionalDetails?.otherCategoryName;
       }
       documentObject[fileKeyMapping?.key] = [
         [currentDoc?.additionalDetails?.fileName, {file : { name : currentDoc?.additionalDetails?.fileName, id : currentDoc?.id}, fileStoreId : { fileStoreId : currentDoc?.fileStore}}]

@@ -1,5 +1,6 @@
 import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
 
+//form data input name (with cropped prefix) mapping with file category Name
 const documentType = {
   "feasibility_analysis" : "Feasiblity Analysis",
   "finalized_worklist" : "Finalized Worklist",
@@ -7,6 +8,7 @@ const documentType = {
   "others" : "Other"
 }
 
+//This handler will trim all the doc keys to 'documentType' Keys -- check above object
 const transformDefaultDocObject = (documentDefaultValue) => {
   if(!documentDefaultValue) {
     return false;
@@ -14,6 +16,9 @@ const transformDefaultDocObject = (documentDefaultValue) => {
 
   let trimmedObjectKeys = {};
   for(let key of Object.keys(documentDefaultValue)) {
+
+    //only for one project -- MUKTA specific
+    //for more than one project, remove associated prefix, 'withSubProject_project_doc_'
     if(key.includes("noSubProject_doc_")) {
       let croppedKey = key.replace("noSubProject_doc_","");
       trimmedObjectKeys[croppedKey] = documentDefaultValue[key];
@@ -23,8 +28,10 @@ const transformDefaultDocObject = (documentDefaultValue) => {
   return trimmedObjectKeys;
 }
 
+//This handler will return the payload for doc according to API spec. 
+//This object will be later pushed to an array
 const createDocObject = (document, docType, otherDocFileName="Others", isActive) =>{
-
+ 
   //handle empty Category Name in File Type
   if((otherDocFileName.trim()).length === 0) {
     otherDocFileName = "Others";
@@ -38,7 +45,8 @@ const createDocObject = (document, docType, otherDocFileName="Others", isActive)
   payload_modal.id = document?.[1]?.['file']?.['id'];
   payload_modal.key = docType;
   payload_modal.additionalDetails = {
-    fileName :  docType === "others" ? otherDocFileName : document?.[1]?.['file']?.['name'],
+    fileName : document?.[1]?.['file']?.['name'],
+    otherCategoryName : otherDocFileName
   }
   return payload_modal;
 }
@@ -62,7 +70,8 @@ const createDocumentsPayload = (documents, otherDocFileName, configs) => {
       let isExist = false;
       for(let uploadedDocObject of documents_payload_list) {
         if(defaultDocKey === uploadedDocObject?.key && defaultDocKey !== "others_name") {
-          //new file being uploaded
+
+          //new file being uploaded, if ID is undefined ( Update Case )
           if(!uploadedDocObject?.id) {
             //if old file exists, make it inactive
             let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
@@ -71,7 +80,7 @@ const createDocumentsPayload = (documents, otherDocFileName, configs) => {
           isExist = true;
         }
       }
-      //if previous file does not exist in new formData, mark it as InActive
+      //if previous file does not exist in new formData ( Delete Case ), mark it as InActive
       if(!isExist && defaultDocKey !== "others_name") {
         let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
         documents_payload_list.push(payload_modal);
@@ -84,7 +93,7 @@ const createDocumentsPayload = (documents, otherDocFileName, configs) => {
 }
 
 function createProjectList(data, selectedProjectType, parentProjectID, tenantId, modifyParams, configs) {
-  
+    
     let projects_payload = [];
     let project_details;
     let basic_details = data?.basicDetails;
@@ -107,8 +116,8 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
         }
         let payload =   {
           "tenantId": tenantId,
-          "id" : modifyParams?.projectIDToUpdate,
-          "projectNumber" : modifyParams?.projectNumberToUpdate,
+          "id" : modifyParams?.modify_projectID,
+          "projectNumber" : modifyParams?.modify_projectNumber,
           "name": parentProjectID ? project_details?.projectName : basic_details?.projectName,
           "projectType": project_details?.typeOfProject?.code, 
           "projectSubType": project_details?.subTypeOfProject?.code , 
@@ -127,7 +136,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
             ),
           "natureOfWork" : project_details?.natureOfWork?.code,
           "address": {
-            "id" : modifyParams?.addressID,
+            "id" : modifyParams?.modify_addressID,
             "tenantId": tenantId,
             "doorNo": "1", //Not being captured on UI
             "latitude": 90, //Not being captured on UI
