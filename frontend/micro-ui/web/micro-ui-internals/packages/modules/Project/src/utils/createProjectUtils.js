@@ -34,7 +34,7 @@ const createDocObject = (document, docType, otherDocFileName="Others", isActive)
  
   //handle empty Category Name in File Type
   if((otherDocFileName.trim()).length === 0) {
-    otherDocFileName = "Others";
+    otherDocFileName = "";
   }
 
   let payload_modal = {};

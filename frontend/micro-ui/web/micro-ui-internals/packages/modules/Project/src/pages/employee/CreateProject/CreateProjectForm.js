@@ -232,22 +232,23 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const handleResponseForCreate = async (payload) => {
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
-            sendDataToResponsePage("", "", false);
+            sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
         },
         onSuccess: async (responseData, variables) => {
+          console.log("response data", responseData);
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
           if(selectedProjectType?.code === "COMMON_YES") {
             payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Projects[0]?.id, tenantId);
             let parentProjectNumber = responseData?.Projects[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
-                  sendDataToResponsePage("", "", false);
+                  sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
               },
               onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
                   setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors?.[0]?.message, error : true}));
                 }else if(responseData?.ResponseInfo?.status){
-                  sendDataToResponsePage(parentProjectNumber, responseData, true);
+                  sendDataToResponsePage(responseData?.Projects?.[0]?.projectNumber, true, "WORKS_PROJECT_CREATED", true);
                   clearSessionFormData();
                 }else{
                   setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
@@ -256,12 +257,12 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             })
           }else{
             if(responseData?.ResponseInfo?.Errors) {
-              sendDataToResponsePage("", "", false);
+              sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
             }else if(responseData?.ResponseInfo?.status){
-              sendDataToResponsePage("", responseData, true);
+              sendDataToResponsePage(responseData?.Projects?.[0]?.projectNumber, true, "WORKS_PROJECT_CREATED", true);
               clearSessionFormData();
             }else{
-              sendDataToResponsePage("", "", false);
+              sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
             }
           }
         },
@@ -271,7 +272,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const handleResponseForUpdate = async (payload) => {
       await UpdateProjectMutation(payload, {
         onError: async (error, variables) => {
-            sendDataToResponsePage("", "", false);
+            sendDataToResponsePage(modify_projectNumber, false, "WORKS_PROJECT_MODIFICATION_FAILURE", true);
         },
         onSuccess: async (responseData, variables) => {
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
@@ -280,13 +281,13 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             let parentProjectNumber = responseData?.Projects[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
-                  sendDataToResponsePage("", "", false);
+                  sendDataToResponsePage(modify_projectNumber, false, "WORKS_PROJECT_MODIFICATION_FAILURE", true);
               },
               onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
                   setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors?.[0]?.message, error : true}));
                 }else if(responseData?.ResponseInfo?.status){
-                  sendDataToResponsePage(parentProjectNumber, responseData, true);
+                  sendDataToResponsePage(modify_projectNumber, true, "WORKS_PROJECT_MODIFIED", true);
                   clearSessionFormData();
                 }else{
                   setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
@@ -295,33 +296,26 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             })
           }else{
             if(responseData?.ResponseInfo?.Errors) {
-              sendDataToResponsePage("", "", false);
+              sendDataToResponsePage(modify_projectNumber, false, "WORKS_PROJECT_MODIFICATION_FAILURE", true);
             }else if(responseData?.ResponseInfo?.status){
-              sendDataToResponsePage("", responseData, true);
+              sendDataToResponsePage(modify_projectNumber, true, "WORKS_PROJECT_MODIFIED", true);
               clearSessionFormData();
             }else{
-              sendDataToResponsePage("", "", false);
+              sendDataToResponsePage(modify_projectNumber, false, "WORKS_PROJECT_MODIFICATION_FAILURE", true);
             }
           }
         },
       });
     }
 
-    const sendDataToResponsePage = (parentProjectNumber, responseData, isSuccess) => {
-      let queryString = parentProjectNumber ? `${parentProjectNumber},` : "";
-      if(responseData) {
-        responseData?.Projects?.forEach((project, index ) => {
-          if(index === responseData?.Projects.length - 1){
-            queryString = queryString+project?.projectNumber;
-          }
-          else {
-            queryString = queryString+project?.projectNumber+",";
-          }
-        });
-      }
+    const sendDataToResponsePage = (projectNumber, isSuccess, message, showProjectID) => {
       history.push({
         pathname: `/${window?.contextPath}/employee/project/create-project-response`,
-        search: `?projectIDs=${queryString}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
+        search: `?projectIDs=${projectNumber}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
+        state : {
+          message : message,
+          showProjectID : showProjectID
+        }
       }); 
     }
 

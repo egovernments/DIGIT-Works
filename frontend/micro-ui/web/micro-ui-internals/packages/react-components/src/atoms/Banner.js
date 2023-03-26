@@ -43,6 +43,15 @@ const Error = (props) => {
       {/* <img src={error} alt="error while submition"/> */}
       <h2 style={props?.props?.infoStyles ? props?.props?.infoStyles : {}}>{props?.props?.complaintNumber ? t("CS_PGR_COMPLAINT_NUMBER") : props.props.info}</h2>
       <p style={props?.props?.applicationNumberStyles ? props?.props?.applicationNumberStyles : {}}>{props?.props?.complaintNumber ? props?.props?.complaintNumber : props?.props?.applicationNumber}</p>
+      {props?.props?.multipleResponseIDs && 
+          <div className="banner-multiple-ids-wrapper">
+            {
+              props?.props?.multipleResponseIDs.map(responseIDs=>(
+                <p>{responseIDs}</p>
+              ))
+            }
+          </div>
+      }
     </div>
   );
 };
