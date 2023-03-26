@@ -16,6 +16,7 @@ const createDocumentsPayload = (documents, otherDocFileName) => {
       payload_modal.documentType = (docType === "others" && otherDocFileName) ? otherDocFileName : documentType[docType];
       payload_modal.fileStore = document[1]['fileStoreId']['fileStoreId'];
       payload_modal.documentUid = "";
+      payload_modal.status = "ACTIVE";
       payload_modal.additionalDetails = {
         fileName :  docType === "others" ? otherDocFileName : document[1]['file']['name']
       }
@@ -25,7 +26,8 @@ const createDocumentsPayload = (documents, otherDocFileName) => {
   return documents_payload_list;
 }
 
-function createProjectList(data, selectedProjectType, parentProjectID, tenantId) {
+function createProjectList(data, selectedProjectType, parentProjectID, tenantId, modifyParams) {
+  
     let projects_payload = [];
     let project_details;
     let basic_details = data?.basicDetails;
@@ -48,6 +50,8 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
         }
         let payload =   {
           "tenantId": tenantId,
+          "id" : modifyParams?.projectIDToUpdate,
+          "projectNumber" : modifyParams?.projectNumberToUpdate,
           "name": parentProjectID ? project_details?.projectName : basic_details?.projectName,
           "projectType": project_details?.typeOfProject?.code, 
           "projectSubType": project_details?.subTypeOfProject?.code , 
@@ -64,6 +68,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             project_details?.docs?.noSubProject_doc_others_name),
           "natureOfWork" : project_details?.natureOfWork?.code,
           "address": {
+            "id" : modifyParams?.addressID,
             "tenantId": tenantId,
             "doorNo": "1", //Not being captured on UI
             "latitude": 90, //Not being captured on UI
@@ -77,8 +82,8 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "pincode": "999999", //Not being captured on UI
             "buildingName": "Test_Building", //Not being captured on UI
             "street": "Test_Street", //Not being captured on UI
-            "boundary": project_details?.locality?.code,
-            "boundaryType" : project_details?.locality?.label,
+            "boundary": project_details?.ward?.code, //ward code
+            "boundaryType" : "Ward"
           },
           "startDate": convertDateToEpoch(project_details?.startDate), 
           "endDate": convertDateToEpoch(project_details?.endDate), 
@@ -93,10 +98,9 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
             "subScheme" :  project_details?.subScheme?.code,  
             "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal),
             "recommendedModeOfEntrustment" : project_details?.recommendedModeOfEntrustment?.code,
-            "ward" : project_details?.ward?.code,
+            "locality" : project_details?.locality,
             "creator": Digit.UserService.getUser()?.info?.name,
             "targetDemography" : project_details?.targetDemography?.code,
-            "projectFiles" : project_details?.docs
           },
           "rowVersion": 0
       }
@@ -107,9 +111,9 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId)
 
 const CreateProjectUtils = {
     payload : {
-        create : (data, selectedProjectType, parentProjectID, tenantId) => {
+        create : (data, selectedProjectType, parentProjectID, tenantId, modifyParams ) => {
             return {
-                Projects : createProjectList(data, selectedProjectType, parentProjectID, tenantId), //if there is a Parent Project, then create list of sub-projects array, or only create one object for Parent Project.
+                Projects : createProjectList(data, selectedProjectType, parentProjectID, tenantId, modifyParams), //if there is a Parent Project, then create list of sub-projects array, or only create one object for Parent Project.
                 apiOperation : "CREATE"
             }
         },

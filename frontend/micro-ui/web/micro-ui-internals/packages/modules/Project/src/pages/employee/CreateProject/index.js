@@ -15,6 +15,7 @@ const CreateProject = () => {
     const [isFormReady, setIsFormReady] = useState(false);
     const queryStrings = Digit.Hooks.useQueryParams();
     const isModify = queryStrings?.projectNumber ? true : false;
+    console.log("isModify",isModify);
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
@@ -55,9 +56,14 @@ const CreateProject = () => {
         ]
       },
       config:{
-          enabled: isModify 
+          enabled: isModify,
+          cacheTime:0
       }
-  })
+    })
+
+    if(!isProjectLoading) {
+      console.log("latest project", project);
+    }
     // const { isLoading, data : configs} = Digit.Hooks.useCustomMDMS( //change to data
     //   stateTenant,
     //   Digit.Utils.getConfigModuleName(),
@@ -99,7 +105,7 @@ const CreateProject = () => {
     return (
       <React.Fragment>
         {isFormReady && 
-          <CreateProjectForm t={t} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} createProjectConfig={configs} isModify={isModify}></CreateProjectForm>
+          <CreateProjectForm t={t} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} createProjectConfig={configs} isModify={isModify} projectIDToUpdate={project?.id} projectNumberToUpdate={queryStrings?.projectNumber} addressID={project?.address?.id}></CreateProjectForm>
         }
         </React.Fragment>
     )

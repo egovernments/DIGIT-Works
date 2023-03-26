@@ -31,8 +31,8 @@ const whenHasSubProjectsHorizontalNavConfig =  [
   }
 ];
 
-const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig, isModify}) => {
-   
+const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig, isModify, projectIDToUpdate, projectNumberToUpdate, addressID}) => {
+
     const [selectedProjectType, setSelectedProjectType] = useState(createProjectConfig?.defaultValues?.basicDetails_hasSubProjects ? createProjectConfig?.defaultValues?.basicDetails_hasSubProjects : {name : "COMMON_NO", code : "COMMON_NO"});
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
     const [subTypeOfProjectOptions, setsubTypeOfProjectOptions] = useState([]);
@@ -206,17 +206,33 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     }
 
     const { mutate: CreateProjectMutation } = Digit.Hooks.works.useCreateProject();
+    const { mutate: UpdateProjectMutation } = Digit.Hooks.works.useUpdateProject();
 
-    const onSubmit = async(data) => {
+    const onSubmit = (data) => {
+      console.log(data);
       //Transforming Payload to categories of Basic Details, Projects and Sub-Projects
       const transformedPayload = CreateProjectUtils.payload.transform(data);
-      //Final Payload
-      let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId);
 
+      const modifyParams = {
+        projectIDToUpdate,
+        projectNumberToUpdate,
+        addressID
+      }
+
+      //Final Payload
+      let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId, modifyParams);
+
+      if(!isModify) {
+        handleResponseForCreate(payload);
+      }else {
+        handleResponseForUpdate(payload);
+      }
+    }
+
+    const handleResponseForCreate = async (payload) => {
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
           if(error?.response?.data?.Errors?.[0]?.code === "INVALID_DATE") {
-            // setToast(()=>({show : true, label : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), error : true}));
             sendDataToResponsePage("", "", false);
           }else {
             sendDataToResponsePage("", "", false);
@@ -258,7 +274,55 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             }
           }
         },
-    });
+      });
+    }
+
+    const handleResponseForUpdate = async (payload) => {
+      await UpdateProjectMutation(payload, {
+        onError: async (error, variables) => {
+          if(error?.response?.data?.Errors?.[0]?.code === "INVALID_DATE") {
+            sendDataToResponsePage("", "", false);
+          }else {
+            sendDataToResponsePage("", "", false);
+          }
+        },
+        onSuccess: async (responseData, variables) => {
+          //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
+          if(selectedProjectType?.code === "COMMON_YES") {
+            payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Projects[0]?.id, tenantId);
+            let parentProjectNumber = responseData?.Projects[0]?.projectNumber;
+            await CreateProjectMutation(payload, {
+              onError :  async (error, variables) => {
+                if(error?.response?.data?.Errors?.[0]?.code === "INVALID_DATE") {
+                  // setToast(()=>({show : true, label : t("COMMON_END_DATE_SHOULD_BE_GREATER_THAN_START_DATE"), error : true}));
+                  sendDataToResponsePage("", "", false);
+                }else {
+                  sendDataToResponsePage("", "", false);
+                }
+              },
+              onSuccess: async (responseData, variables) => {
+                if(responseData?.ResponseInfo?.Errors) {
+                  setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors?.[0]?.message, error : true}));
+                }else if(responseData?.ResponseInfo?.status){
+                  sendDataToResponsePage(parentProjectNumber, responseData, true);
+                  clearSessionFormData();
+                }else{
+                  setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
+                }
+              }
+            })
+          }else{
+            if(responseData?.ResponseInfo?.Errors) {
+              sendDataToResponsePage("", "", false);
+            }else if(responseData?.ResponseInfo?.status){
+              sendDataToResponsePage("", responseData, true);
+              clearSessionFormData();
+            }else{
+              sendDataToResponsePage("", "", false);
+            }
+          }
+        },
+      });
     }
 
     const sendDataToResponsePage = (parentProjectNumber, responseData, isSuccess) => {
