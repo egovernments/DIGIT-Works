@@ -351,7 +351,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
           {
             createProjectConfig && (
               <FormComposer
-                label={"WORKS_CREATE_PROJECT"}
+                label={!isModify ? "WORKS_CREATE_PROJECT" : "WORKS_MODIFY_PROJECT"}
                 config={config?.form?.map((config) => {
                   return {
                     ...config,
