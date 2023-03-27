@@ -8,9 +8,20 @@ const navConfig =  [{
 }]
 
 /*
-search Wageseeker, Inidvidual API to get existing data
+if search wage seeker fails -> Error failed to fetch details
+if search WS success, bank search fails -> show NA in bank acc details
+if both success -> show all
+
+2 hooks, for search WS, search Bank details -> create default data -> populate and show
+1 hook similar to useViewWS
+util function to convert API data to default formValues
+
+
+search Wageseeker, Individual API to get existing data
+Session storage enable
 populate existing data dynamically store it in session storage and clear it on update success/failure/home page
 Enable Save button if anything is updated
+if individual Id then create else update
 On click of save call Update WageSeeker and Update Bank account details API, if both success then redirect to Success Page else redorect to Error page
 */
 
@@ -22,7 +33,18 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
 
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedWard, setSelectedWard] = useState('')
-    
+
+    //const {individualId } = Digit.Hooks.useQueryParams()
+    const individualId = 'IND-2023-03-24-001438'
+
+    //Call Search Wage Seeker
+    const payload = {
+        Individual: { individualId }
+    }
+    const searchParams = { offset: 0, limit: 100 }
+      
+    const {isLoading, data: wageSeekerData, isError, isSuccess, error} = Digit.Hooks.wageSeeker.useWageSeekerDetails({tenantId, data: payload, searchParams})
+    console.log('wageSeekerData', wageSeekerData);
     //Skill data
     const {isLoading: skillDataFetching, data: skillData } = Digit.Hooks.useCustomMDMS(
         stateTenant,
@@ -57,7 +79,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
-    const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
+    const { data : wardsAndLocalities } = Digit.Hooks.useLocation(
       tenantId, 'Ward',
       {
           select: (data) => {
@@ -73,8 +95,6 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
           }
       });
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
-    console.log('wardsAndLocalities', wardsAndLocalities);
-    console.log('selectedWard', selectedWard);
 
     const config = useMemo(
     () => Digit.Utils.preProcessMDMSConfig(t, createWageSeekerConfig, {

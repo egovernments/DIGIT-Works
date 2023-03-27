@@ -131,6 +131,8 @@ import useViewFinancialDetails from "./project/useViewFinancialDetails";
 import useUpdateCustom from "./useUpdateCustom";
 
 import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
+import useWageSeekerDetails from "./wageSeeker/useWageSeekerDetails";
+
 import useCreateWO from "./works/useCreateWO";
 import useSearchOrg from "./works/useSearchOrg";
 
@@ -263,7 +265,8 @@ const project = {
 }
 
 const wageSeeker = {
-  useViewWageSeeker
+  useViewWageSeeker,
+  useWageSeekerDetails
 }
 
 const Hooks = {

@@ -54,8 +54,7 @@ export const CreateWageSeekerConfig = {
         financeDetails_branchName: 'Block1, Kormangala, Bangalore'
       },
       "metaData" : {
-        showNavs : false,
-        currentFormCategory : false,
+        showNavs : false
       },
       "form" : [
         {
@@ -63,7 +62,7 @@ export const CreateWageSeekerConfig = {
           subHead: "",
           body: [
             {
-              label: "Wage seeker ID",
+              label: "MASTERS_WAGESEEKER_ID",
               isMandatory: false,
               key: "basicDetails_wageSeekerId",
               type: "text",
@@ -71,7 +70,7 @@ export const CreateWageSeekerConfig = {
               populators: { name: "basicDetails_wageSeekerId" },
             },
             {
-              label: "Aadhar",
+              label: "ES_COMMON_AADHAR",
               isMandatory: false,
               key: "basicDetails_aadhar",
               type: "text",
@@ -79,7 +78,7 @@ export const CreateWageSeekerConfig = {
               populators: { name: "basicDetails_aadhar" }
             },
             {
-              label: "Name of wage seeker",
+              label: "MASTERS_NAME_OF_WAGE_SEEKER",
               isMandatory: true,
               key: "basicDetails_wageSeekerName",
               type: "text",
@@ -87,7 +86,7 @@ export const CreateWageSeekerConfig = {
               populators: { name: "basicDetails_wageSeekerName", validation: { minlength : 2 }}
             },
             {
-              label: "Father's/ Husband's name",
+              label: "MASTERS_FATHER_HUSBAND_NAME",
               isMandatory: true,
               key: "basicDetails_fatherHusbandName",
               type: "text",
@@ -95,7 +94,7 @@ export const CreateWageSeekerConfig = {
               populators: { name: "basicDetails_fatherHusbandName", validation: { minlength : 2 }}
             },
             {
-              label: "Relationship",
+              label: "ES_COMMON_RELATIONSHIP",
               isMandatory: true,
               key: "basicDetails_relationShip",
               type: "radioordropdown",
@@ -115,7 +114,7 @@ export const CreateWageSeekerConfig = {
               }
             },
             {
-              label: "Date of birth",
+              label: "ES_COMMON_BIRTHDATE",
               isMandatory: true,
               key: "basicDetails_dateOfBirth",
               type: "date",
@@ -129,7 +128,7 @@ export const CreateWageSeekerConfig = {
               }
             },
             {
-              label: "Gender",
+              label: "CORE_COMMON_GENDER",
               isMandatory: true,
               key: "basicDetails_gender",
               type: "radioordropdown",
@@ -149,7 +148,7 @@ export const CreateWageSeekerConfig = {
               }
             },
             {
-              label: "Mobile number",
+              label: "CORE_COMMON_MOBILE_NUMBER",
               isMandatory: true,
               key: "basicDetails_mobileNumber",
               type: "number",
@@ -161,7 +160,7 @@ export const CreateWageSeekerConfig = {
               }
             },
             {
-              label: "Social Category",
+              label: "COMMON_SOCIAL_CATEGORY",
               isMandatory: false,
               key: "basicDetails_socialCategory",
               type: "radioordropdown",
@@ -181,7 +180,7 @@ export const CreateWageSeekerConfig = {
               }
             },
             {
-              label: "Photograph",
+              label: "ES_COMMON_PHOTOGRAPH",
               isMandatory: false,
               key: "basicDetails_photograph",
               type:"multiupload",
@@ -196,10 +195,10 @@ export const CreateWageSeekerConfig = {
         },
         {
           navLink:"Wage_Seeker_Details",
-          head: "Skill Details",
+          head: "ATM_SKILLS_DETAILS",
           body: [
             {
-              label: "Skill Category",
+              label: "ES_COMMON_SKILL_CATEGORY",
               isMandatory: true,
               key: "skillDetails_skillCategory",
               type: "radioordropdown",
@@ -218,7 +217,7 @@ export const CreateWageSeekerConfig = {
               }
             },
             {
-              label: "Skill",
+              label: "ES_COMMON_SKILL",
               isMandatory: true,
               key: "skillDetails_skill",
               type: "radioordropdown",
@@ -240,10 +239,10 @@ export const CreateWageSeekerConfig = {
         },
         {
           navLink:"Wage_Seeker_Details",
-          head: "Location Details",
+          head: "ES_COMMON_LOCATION_DETAILS",
           body: [
             {
-              label: "City",
+              label: "CORE_COMMON_CITY",
               isMandatory: true,
               key: "locDetails_city",
               type: "radioordropdown",
@@ -262,7 +261,7 @@ export const CreateWageSeekerConfig = {
               }
             },
             {
-              label: "Ward",
+              label: "CORE_COMMON_WARD",
               isMandatory: true,
               key: "locDetails_ward",
               type: "radioordropdown",
@@ -281,7 +280,7 @@ export const CreateWageSeekerConfig = {
               }
             },
             {
-              label: "Locality",
+              label: "COMMON_LOCALITY",
               isMandatory: true,
               key: "locDetails_locality",
               type: "radioordropdown",
@@ -300,7 +299,7 @@ export const CreateWageSeekerConfig = {
               }
             },
             {
-              label: "Street name",
+              label: "ES_COMMON_STREET_NAME",
               isMandatory: false,
               key: "locDetails_streetName",
               type: "text",
@@ -308,7 +307,7 @@ export const CreateWageSeekerConfig = {
               populators: { name: "locDetails_streetName", validation: { minlength : 2 }}
             },
             {
-              label: "Door / House number",
+              label: "ES_COMMON_DOOR_NO",
               isMandatory: false,
               key: "locDetails_houseName",
               type: "text",
@@ -319,10 +318,10 @@ export const CreateWageSeekerConfig = {
         },
         {
           navLink:"Wage_Seeker_Details",
-          head: "Financial Details",
+          head: "WORKS_FINANCIAL_DETAILS",
           body: [
             {
-              label: "Account holder's name",
+              label: "ES_COMMON_ACCOUNT_HOLDER_NAME",
               isMandatory: true,
               key: "financeDetails_accountHolderName",
               type: "text",
@@ -330,7 +329,7 @@ export const CreateWageSeekerConfig = {
               populators: { name: "financeDetails_accountHolderName", validation: { minlength : 2 }}
             },
             {
-              label: "Account number",
+              label: "CORE_COMMON_ACCOUNT_NO",
               isMandatory: true,
               key: "financeDetails_accountNumber",
               type: "number",
@@ -338,7 +337,7 @@ export const CreateWageSeekerConfig = {
               populators: { name: "financeDetails_accountNumber" }
             },
             {
-              label: "Account Type",
+              label: "CORE_COMMON_ACCOUNT_TYPE",
               isMandatory: true,
               key: "financeDetails_accountType",
               type: "radioordropdown",
@@ -357,7 +356,7 @@ export const CreateWageSeekerConfig = {
               }
             },
             {
-              label:"IFSC",
+              label:"COMMON_IFSC_CODE",
               isMandatory: true,
               key: "financeDetails_ifsc",
               type: "text",
@@ -365,7 +364,7 @@ export const CreateWageSeekerConfig = {
               populators: { name: "financeDetails_ifsc", error: "WORKS_REQUIRED_ERR", validation: {minlength : 2} },
             },
             {
-              label: "Branch name",
+              label: "MASTERS_BRANCH_NAME",
               isMandatory: false,
               key: "financeDetails_branchName",
               type: "text",

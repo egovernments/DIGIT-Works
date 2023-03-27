@@ -79,6 +79,19 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   }
 }
 
+const fetchBankDetails = async (data, tenantId) => {
+  if(data?.Individual?.length === 0) throw new Error('No data found');
+
+  const individual = data.Individual[0]
+  const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "IND", referenceId: [individual?.id] } }
+  const bankDetails = await BankAccountService.search(bankDetailPayload, {});
+  
+  return {
+    individual,
+    bankDetails: bankDetails?.bankAccounts
+  }
+}
+
 export const View = {
     fetchWageSeekerDetails: async (t, tenantId, data, searchParams) => {
       try {
@@ -88,5 +101,15 @@ export const View = {
           console.log('error', error);
           throw new Error(error?.response?.data?.Errors[0].message);
       }  
+    },
+
+    fetchWageSeekerWithBankDetails : async (tenantId, data, searchParams) => {
+      try {
+        const response = await WageSeekerService.search(tenantId, data, searchParams);
+        return fetchBankDetails(response, tenantId)
+      } catch (error) {
+        console.log('error', error)
+        throw new Error(error?.response?.data?.Errors?.[0]?.message)
+      }
     }
 }
