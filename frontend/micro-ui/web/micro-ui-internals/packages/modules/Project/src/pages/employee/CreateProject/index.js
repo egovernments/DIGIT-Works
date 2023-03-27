@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import CreateProjectForm from "./CreateProjectForm";
-import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMUKTA";
+// import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMUKTA";
 import { updateDefaultValues } from "../../../utils/modifyProjectUtils";
 
 const CreateProject = () => {
@@ -60,23 +60,23 @@ const CreateProject = () => {
       }
     })
 
-    // const { isLoading, data : configs} = Digit.Hooks.useCustomMDMS( //change to data
-    //   stateTenant,
-    //   Digit.Utils.getConfigModuleName(),
-    //   [
-    //       {
-    //           "name": "CreateProjectConfig"
-    //       }
-    //   ],
-    //   {
-    //     select: (data) => {
-    //         return data?.[Digit.Utils.getConfigModuleName()]?.CreateProjectConfig[0];
-    //     },
-    //   }
-    // );
+    const { isLoading, data : configs} = Digit.Hooks.useCustomMDMS( //change to data
+      stateTenant,
+      Digit.Utils.getConfigModuleName(),
+      [
+          {
+              "name": "CreateProjectConfig"
+          }
+      ],
+      {
+        select: (data) => {
+            return data?.[Digit.Utils.getConfigModuleName()]?.CreateProjectConfig[0];
+        },
+      }
+    );
 
-    //TODO: Remove this
-    const configs = createProjectConfigMUKTA?.CreateProjectConfig[0];
+    // Use this only while Development - 
+    // const configs = createProjectConfigMUKTA?.CreateProjectConfig[0];
 
     const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", 
       {}
