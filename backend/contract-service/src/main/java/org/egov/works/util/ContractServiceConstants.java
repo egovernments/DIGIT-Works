@@ -31,4 +31,5 @@ public class ContractServiceConstants {
     public static final String PROJECT_TYPE_CONSTANT = "projectType";
     public static final String PROJECT_ID_CONSTANT = "projectId";
     public static final String ORG_NAME_CONSTANT = "orgName";
+    public static final String ORG_ORGANISATIONS_VALIDATION_PATH = "$.organisations.*";
 }
