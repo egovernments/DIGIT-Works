@@ -11,14 +11,7 @@ class ToastUtils {
 
   static void showCustomToast(
       BuildContext context, String message, String type) {
-    if (toastTimer != null) {
-      print(toastTimer!.isActive);
-    }
     if (toastTimer == null || toastTimer!.isActive == false) {
-      print(toastTimer);
-      if (toastTimer != null) {
-        print(toastTimer!.isActive);
-      }
       _overlayEntry = createOverlayEntry(context, message, type);
 
       Overlay.of(context)!.insert(_overlayEntry!);
@@ -48,7 +41,11 @@ class ToastUtils {
                   padding: const EdgeInsets.only(
                       left: 10, right: 10, top: 13, bottom: 10),
                   decoration: BoxDecoration(
-                      color: type == 'ERROR' ? Colors.red : type == 'INFO' ? Colors.orangeAccent :Colors.green[900]),
+                      color: type == 'ERROR'
+                          ? Colors.red
+                          : type == 'INFO'
+                              ? Colors.orangeAccent
+                              : Colors.green[900]),
                   child: Align(
                     alignment: Alignment.center,
                     child: SlideInToastMessageAnimation(Row(
