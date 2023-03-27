@@ -71,6 +71,86 @@ export const UICustomizations = {
       }
     },
   },
+  AttendanceInboxConfig: {
+    preProcess: (data) => {
+      
+      //set tenantId
+
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+
+      // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
+
+      const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
+      delete data.body.inbox.moduleSearchCriteria.assignee;
+      if (assignee?.code === "ASSIGNED_TO_ME") {
+        data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
+      }
+
+      delete data.body.inbox.moduleSearchCriteria.ward;
+
+      //cloning locality and workflow states to format them
+      let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
+      let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
+      delete data.body.inbox.moduleSearchCriteria.locality;
+      delete data.body.inbox.moduleSearchCriteria.state;
+      locality = locality?.map((row) => row?.code);
+      states = Object.keys(states)?.filter((key) => states[key]);
+
+      //adding formatted data to these keys
+      if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
+      if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
+
+      const projectType = _.clone(data.body.inbox.moduleSearchCriteria.projectType ? data.body.inbox.moduleSearchCriteria.projectType : {});
+      if (projectType?.code) data.body.inbox.moduleSearchCriteria.projectType = projectType.code;
+
+      //adding tenantId to moduleSearchCriteria
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return data;
+    },
+    postProcess: (responseArray, uiConfig) => {
+      const statusOptions = responseArray?.statusMap
+        ?.filter((item) => item.applicationstatus)
+        ?.map((item) => ({ code: item.applicationstatus, i18nKey: `COMMON_MASTERS_${item.applicationstatus}` }));
+      if (uiConfig?.type === "filter") {
+        let fieldConfig = uiConfig?.fields?.filter((item) => item.type === "dropdown" && item.populators.name === "musterRollStatus");
+        if (fieldConfig.length) {
+          fieldConfig[0].populators.options = statusOptions;
+        }
+      }
+    },
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      if (column.label === "ATM_MUSTER_ROLL_ID") {
+        return (
+          <span className="link">
+            <Link
+              to={`/works-ui/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
+            >
+              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if (column.label === "ATM_ATTENDANCE_WEEK") {
+        const week = `${Digit.DateUtils.ConvertTimestampToDate(value?.startDate, "dd/MM/yyyy")}-${Digit.DateUtils.ConvertTimestampToDate(
+          value?.endDate,
+          "dd/MM/yyyy"
+        )}`;
+        return <div>{week}</div>;
+      }
+      if (column.label === "ATM_NO_OF_INDIVIDUALS") {
+        return <div>{value?.length}</div>;
+      }
+      if (column.label === "ATM_SLA") {
+        return parseInt(value) > 0 ? (
+          <span className="sla-cell-success">{t(value) || ""}</span>
+        ) : (
+          <span className="sla-cell-error">{t(value) || ""}</span>
+        );
+      }
+    },
+  },
   SearchEstimateConfig: {
     customValidationCheck: (data) => {
       //checking both to and from date are present
