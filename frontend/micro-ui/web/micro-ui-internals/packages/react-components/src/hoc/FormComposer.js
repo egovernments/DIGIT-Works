@@ -522,8 +522,8 @@ export const FormComposer = (props) => {
                 key={index}
                 style={
                   props?.showWrapperContainers && !field.hideContainer
-                    ? { ...wrapperStyles }
-                    : {  border: "none", background: "white" }
+                    ? { ...wrapperStyles, ...field?.populators?.customStyle }
+                    : {  border: "none", background: "white", ...field?.populators?.customStyle }
                 }
               >
                 {!field.withoutLabel && (

@@ -45,6 +45,7 @@ const Urls = {
     download_pdf:"/egov-pdf/download/WORKSESTIMATE/estimatepdf",
     createProject : "/pms/project/v1/_create",
     searchProject : "/pms/project/v1/_search",
+    updateProject : "/pms/project/v1/_update",
   },
 
   contracts : {
