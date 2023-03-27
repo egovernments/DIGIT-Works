@@ -235,6 +235,13 @@ const Urls = {
   organisation : {
     search : "/org-services/organisation/v1/_search"
   },
+  
+  bankaccount : {
+    create: "/bankaccount-service/bankaccount/v1/_create",
+    search: "/bankaccount-service/bankaccount/v1/_search",
+    update: "/bankaccount-service/bankaccount/v1/_update"
+  },
+
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
 };

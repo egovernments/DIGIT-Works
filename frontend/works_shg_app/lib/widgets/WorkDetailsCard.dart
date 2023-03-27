@@ -23,7 +23,9 @@ class WorkDetailsCard extends StatelessWidget {
   final bool isAttendanceInbox;
   final bool isManageAttendance;
   final bool isWorkOrderInbox;
+  final bool viewWorkOrder;
   final bool isSHGInbox;
+  final String? cardTitle;
   final bool isTrackAttendance;
   final List<AttendanceRegister>? attendanceRegistersModel;
   final List<MusterRoll>? musterRollsModel;
@@ -35,8 +37,10 @@ class WorkDetailsCard extends StatelessWidget {
       this.isWorkOrderInbox = false,
       this.isTrackAttendance = false,
       this.isSHGInbox = false,
+      this.viewWorkOrder = false,
       this.elevatedButtonLabel = '',
       this.outlinedButtonLabel = '',
+      this.cardTitle,
       this.attendanceRegistersModel,
       this.musterRollsModel,
       this.contractModel,
@@ -54,14 +58,16 @@ class WorkDetailsCard extends StatelessWidget {
                   attendanceRegister: attendanceRegistersModel![i])),
         ));
       }
-    } else if (isWorkOrderInbox) {
+    } else if (isWorkOrderInbox || viewWorkOrder) {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
           child: DigitCard(
               child: getCardDetails(context, detailsList[i]['cardDetails'],
                   payload: detailsList[i]['payload'],
                   isAccept: detailsList[i]['cardDetails'][i18.common.status] ==
-                      'ACCEPTED')),
+                      'ACCEPTED',
+                  contractNumber: detailsList[i]['cardDetails']
+                      [i18.workOrder.workOrderNo])),
         ));
       }
     } else if (isSHGInbox) {
@@ -84,17 +90,26 @@ class WorkDetailsCard extends StatelessWidget {
     );
   }
 
-  Widget getCardDetails(
-    BuildContext context,
-    Map<String, dynamic> cardDetails, {
-    List<String>? userList,
-    AttendanceRegister? attendanceRegister,
-    String? attendanceRegisterId,
-    Map<String, dynamic>? payload,
-    bool? isAccept,
-    MusterRoll? musterRoll,
-  }) {
+  Widget getCardDetails(BuildContext context, Map<String, dynamic> cardDetails,
+      {List<String>? userList,
+      AttendanceRegister? attendanceRegister,
+      String? attendanceRegisterId,
+      Map<String, dynamic>? payload,
+      bool? isAccept,
+      MusterRoll? musterRoll,
+      String? contractNumber,
+      String? registerNumber}) {
     var labelList = <Widget>[];
+    if (viewWorkOrder && cardTitle != null) {
+      labelList.add(Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          cardTitle ?? '',
+          style: Theme.of(context).textTheme.displayMedium,
+          textAlign: TextAlign.left,
+        ),
+      ));
+    }
     for (int j = 0; j < cardDetails.length; j++) {
       labelList.add(getItemWidget(context,
           title: AppLocalizations.of(context)
@@ -115,7 +130,8 @@ class WorkDetailsCard extends StatelessWidget {
         children: [
           ButtonLink(
             AppLocalizations.of(context).translate(i18.common.viewDetails),
-            () {},
+            () => context.router.push(ViewWorkDetailsRoute(
+                contractNumber: contractNumber.toString())),
             style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
@@ -165,6 +181,41 @@ class WorkDetailsCard extends StatelessWidget {
           ),
         ],
       ));
+    } else if (isWorkOrderInbox && isAccept!) {
+      labelList.add(Column(
+        children: [
+          ButtonLink(
+            AppLocalizations.of(context).translate(i18.common.viewDetails),
+            () => context.router.push(ViewWorkDetailsRoute(
+                contractNumber: contractNumber.toString())),
+            style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+                color: DigitTheme.instance.colorScheme.primary),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: DigitElevatedButton(
+              onPressed: () {
+                context.router.push(AttendanceRegisterTableRoute(
+                    registerId: payload!['additionalDetails']
+                            ['attendanceRegisterNumber']
+                        .toString(),
+                    tenantId: payload!['tenantId'].toString()));
+              },
+              child: Center(
+                child: Text(
+                    AppLocalizations.of(context)
+                        .translate(i18.home.manageWageSeekers),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .apply(color: Colors.white)),
+              ),
+            ),
+          ),
+        ],
+      ));
     } else if (isManageAttendance || isTrackAttendance) {
       labelList.add(Padding(
         padding: const EdgeInsets.all(4.0),
@@ -172,8 +223,6 @@ class WorkDetailsCard extends StatelessWidget {
           onPressed: () {
             if (isManageAttendance) {
               context.router.push(AttendanceRegisterTableRoute(
-                  projectDetails: [cardDetails],
-                  attendanceRegister: attendanceRegister,
                   registerId: attendanceRegisterId.toString(),
                   tenantId: attendanceRegister!.tenantId.toString()));
             } else {
