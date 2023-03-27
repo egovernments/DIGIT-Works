@@ -115,6 +115,16 @@ public class EstimateQueryBuilder {
             preparedStmtList.add(searchCriteria.getProjectId());
         }
 
+        //added the default as active line item and amount detail
+        addClauseIfRequired(preparedStmtList, queryBuilder);
+        queryBuilder.append(" estDetail.is_active=? ");
+        preparedStmtList.add(Boolean.TRUE);
+
+        addClauseIfRequired(preparedStmtList, queryBuilder);
+        queryBuilder.append(" estAmtDetail.is_active=? ");
+        preparedStmtList.add(Boolean.TRUE);
+
+
         if (searchCriteria.getFromProposalDate() != null) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
 
