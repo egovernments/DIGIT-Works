@@ -110,9 +110,6 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                     'cardDetails': {
                                       i18.workOrder.workOrderNo:
                                           e.contractNumber ?? 'NA',
-                                      i18.attendanceMgmt.projectName:
-                                          e.additionalDetails?.projectName ??
-                                              'NA',
                                       i18.attendanceMgmt.projectId:
                                           e.additionalDetails?.projectId ??
                                               'NA',
@@ -120,6 +117,12 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                           '${e.additionalDetails?.locality}, ${e.additionalDetails?.ward}',
                                       i18.attendanceMgmt.projectType:
                                           e.additionalDetails?.projectType ??
+                                              'NA',
+                                      i18.attendanceMgmt.projectName:
+                                          e.additionalDetails?.projectName ??
+                                              'NA',
+                                      i18.attendanceMgmt.projectDesc:
+                                          e.additionalDetails?.projectName ??
                                               'NA',
                                     },
                                     'payload': e.toMap()
