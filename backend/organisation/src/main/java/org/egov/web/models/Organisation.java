@@ -79,7 +79,7 @@ public class Organisation {
     private List<Function> functions = null;
 
     @JsonProperty("jurisdiction")
-    private List<String> jurisdiction = null;
+    private List<Jurisdiction> jurisdiction = null;
 
     @JsonProperty("isActive")
     private Boolean isActive = null;
@@ -126,7 +126,7 @@ public class Organisation {
         return this;
     }
 
-    public Organisation addJurisdictionItem(String jurisdictionItem) {
+    public Organisation addJurisdictionItem(Jurisdiction jurisdictionItem) {
         if (this.jurisdiction == null) {
             this.jurisdiction = new ArrayList<>();
         }

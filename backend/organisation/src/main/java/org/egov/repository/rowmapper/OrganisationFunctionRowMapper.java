@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.egov.web.models.ApplicationStatus;
 import org.egov.web.models.Function;
 import org.egov.web.models.Organisation;
 import org.postgresql.util.PGobject;
@@ -73,7 +74,7 @@ public class OrganisationFunctionRowMapper implements ResultSetExtractor<List<Or
                 .orgNumber(organisation_orgNumber)
                 .externalRefNumber(organisation_externalRefNumber)
                 .dateOfIncorporation(organisation_dateOfIncorporation)
-                .applicationStatus(organisation_applicationStatus)
+                .applicationStatus(ApplicationStatus.fromValue(organisation_applicationStatus))
                 .isActive(organisation_isActive)
                 .functions(functions)
                 .additionalDetails(organisation_additionalDetails)
@@ -114,7 +115,7 @@ public class OrganisationFunctionRowMapper implements ResultSetExtractor<List<Or
                 .propertyClass(organisationFunction_class)
                 .validFrom(organisationFunction_valid_from)
                 .validTo(organisationFunction_validTo)
-                .applicationStatus(organisationFunction_applicationStatus)
+                .applicationStatus(ApplicationStatus.fromValue(organisationFunction_applicationStatus))
                 .wfStatus(organisationFunction_wfStatus)
                 .isActive(organisationFunction_isActive)
                 .additionalDetails(organisationFunction_additionalDetails)
