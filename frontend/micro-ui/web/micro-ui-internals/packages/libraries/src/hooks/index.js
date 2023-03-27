@@ -140,6 +140,7 @@ import useSearchOrg from "./works/useSearchOrg";
 import useViewBill from "./bills/useViewBill";
 import useContractSearch from "./contracts/useContractSearch";
 import useBillCreate from "./bills/useBillCreate";
+import useUpdateProject from "./works/useUpdateProject";
 
 const works = {
   useViewEstimateDetails,
@@ -162,6 +163,7 @@ const works = {
   useInbox: useWorksInbox,
   useKickoffInbox,
   useCreateProject,
+  useUpdateProject,
   useUpdateCustom
 };
 

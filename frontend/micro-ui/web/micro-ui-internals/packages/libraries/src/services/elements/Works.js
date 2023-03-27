@@ -107,7 +107,18 @@ export const WorksService = {
             method: "POST",
             params: {},
             auth: true,
-        }),
+    }),
+    updateProject: (details) =>
+        Request({
+            url: Urls?.works?.updateProject,
+            data: details,
+            useCache: false,
+            setTimeParam: false,
+            userService: true,
+            method: "POST",
+            params: {},
+            auth: true,
+    }),
     searchProject:(tenantId, details, filters)=>
         Request({
            url: Urls.works.searchProject,
