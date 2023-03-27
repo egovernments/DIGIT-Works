@@ -58,7 +58,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                     title: "WORKS_RELEVANT_DOCUMENTS",
                     BS : 'Works',
                     values: currentProject?.documents?.map((document) => {
-                        if(document?.status === "ACTIVE") {
+                        if(document?.status !== "INACTIVE") {
                             return {
                                 title: document?.documentType,
                                 documentType: document?.documentType,
