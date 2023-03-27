@@ -7,18 +7,18 @@ import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 import 'package:works_shg_app/widgets/loaders.dart';
 
-import '../blocs/localization/app_localization.dart';
-import '../blocs/work_orders/accept_work_order.dart';
-import '../blocs/work_orders/decline_work_order.dart';
-import '../blocs/work_orders/search_my_works.dart';
-import '../models/works/contracts_model.dart';
-import '../utils/date_formats.dart';
-import '../utils/notifiers.dart';
-import '../widgets/Back.dart';
-import '../widgets/SideBar.dart';
-import '../widgets/atoms/app_bar_logo.dart';
-import '../widgets/atoms/tabs_button.dart';
-import '../widgets/drawer_wrapper.dart';
+import '../../blocs/localization/app_localization.dart';
+import '../../blocs/work_orders/accept_work_order.dart';
+import '../../blocs/work_orders/decline_work_order.dart';
+import '../../blocs/work_orders/search_my_works.dart';
+import '../../models/works/contracts_model.dart';
+import '../../utils/date_formats.dart';
+import '../../utils/notifiers.dart';
+import '../../widgets/Back.dart';
+import '../../widgets/SideBar.dart';
+import '../../widgets/atoms/app_bar_logo.dart';
+import '../../widgets/atoms/tabs_button.dart';
+import '../../widgets/drawer_wrapper.dart';
 
 class WorkOrderPage extends StatefulWidget {
   const WorkOrderPage({Key? key}) : super(key: key);
@@ -49,6 +49,14 @@ class _WorkOrderPage extends State<WorkOrderPage> {
   }
 
   @override
+  void deactivate() {
+    context.read<AcceptWorkOrderBloc>().add(
+          const WorkOrderDisposeEvent(),
+        );
+    super.deactivate();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
     return Scaffold(
@@ -69,7 +77,9 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                       context, error.toString(), 'ERROR'),
                   loaded: (ContractsModel? contracts) {
                     workOrderList = contracts!.contracts!
-                        .where((e) => e.wfStatus == 'APPROVED')
+                        .where((e) =>
+                            e.wfStatus == 'APPROVED' ||
+                            e.wfStatus == 'ACCEPTED')
                         .map((e) => {
                               'cardDetails': {
                                 i18.workOrder.workOrderNo:
@@ -137,139 +147,13 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                         t.translate(i18.common.inProgress),
                                         isMainTab: true,
                                         isSelected: inProgress,
-                                        onPressed: () {
-                                          setState(() {
-                                            inProgress = true;
-                                            workOrderList = contractsModel!
-                                                .contracts!
-                                                .where((e) =>
-                                                    e.wfStatus == 'APPROVED')
-                                                .map((e) => {
-                                                      'cardDetails': {
-                                                        i18.workOrder
-                                                                .workOrderNo:
-                                                            e.contractNumber ??
-                                                                'NA',
-                                                        i18.attendanceMgmt
-                                                            .projectDesc: e
-                                                                .additionalDetails
-                                                                ?.projectName ??
-                                                            'NA',
-                                                        i18.workOrder.roleOfCBO:
-                                                            AppLocalizations.of(
-                                                                    context)
-                                                                .translate(
-                                                                    e.executingAuthority ??
-                                                                        'NA'),
-                                                        i18.attendanceMgmt
-                                                            .engineerInCharge: e
-                                                                .additionalDetails
-                                                                ?.officerInChargeId ??
-                                                            'NA',
-                                                        i18.workOrder
-                                                            .contractIssueDate: e
-                                                                    .issueDate !=
-                                                                null
-                                                            ? DateFormats
-                                                                .timeStampToDate(
-                                                                    e.issueDate,
-                                                                    format:
-                                                                        "dd/MM/yyyy")
-                                                            : 'NA',
-                                                        i18.workOrder.dueDate: e
-                                                                    .issueDate !=
-                                                                null
-                                                            ? DateFormats.getFilteredDate(DateTime
-                                                                    .fromMillisecondsSinceEpoch(
-                                                                        e.issueDate ??
-                                                                            0)
-                                                                .add(
-                                                                    const Duration(
-                                                                        days:
-                                                                            7))
-                                                                .toLocal()
-                                                                .toString())
-                                                            : 'NA',
-                                                        i18.workOrder
-                                                                .contractAmount:
-                                                            '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
-                                                        i18.common.status:
-                                                            e.wfStatus,
-                                                      },
-                                                      'payload': e.toMap()
-                                                    })
-                                                .toList();
-                                          });
-                                        },
+                                        onPressed: null,
                                       ),
                                       TabButton(
                                         t.translate(i18.common.completed),
                                         isMainTab: true,
                                         isSelected: !inProgress,
-                                        onPressed: () {
-                                          setState(() {
-                                            inProgress = false;
-                                            workOrderList = contractsModel!
-                                                .contracts!
-                                                .where((e) =>
-                                                    e.wfStatus == 'ACCEPTED')
-                                                .map((e) => {
-                                                      'cardDetails': {
-                                                        i18.workOrder
-                                                                .workOrderNo:
-                                                            e.contractNumber ??
-                                                                'NA',
-                                                        i18.attendanceMgmt
-                                                            .projectDesc: e
-                                                                .additionalDetails
-                                                                ?.projectName ??
-                                                            'NA',
-                                                        i18.workOrder.roleOfCBO:
-                                                            AppLocalizations.of(
-                                                                    context)
-                                                                .translate(
-                                                                    e.executingAuthority ??
-                                                                        'NA'),
-                                                        i18.attendanceMgmt
-                                                            .engineerInCharge: e
-                                                                .additionalDetails
-                                                                ?.officerInChargeId ??
-                                                            'NA',
-                                                        i18.workOrder
-                                                            .contractIssueDate: e
-                                                                    .issueDate !=
-                                                                null
-                                                            ? DateFormats
-                                                                .timeStampToDate(
-                                                                    e.issueDate,
-                                                                    format:
-                                                                        "dd/MM/yyyy")
-                                                            : 'NA',
-                                                        i18.workOrder.dueDate: e
-                                                                    .issueDate !=
-                                                                null
-                                                            ? DateFormats.getFilteredDate(DateTime
-                                                                    .fromMillisecondsSinceEpoch(
-                                                                        e.issueDate ??
-                                                                            0)
-                                                                .add(
-                                                                    const Duration(
-                                                                        days:
-                                                                            7))
-                                                                .toLocal()
-                                                                .toString())
-                                                            : 'NA',
-                                                        i18.workOrder
-                                                                .contractAmount:
-                                                            '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
-                                                        i18.common.status:
-                                                            e.wfStatus,
-                                                      },
-                                                      'payload': e.toMap()
-                                                    })
-                                                .toList();
-                                          });
-                                        },
+                                        onPressed: null,
                                       )
                                     ],
                                   ),

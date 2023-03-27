@@ -46,6 +46,7 @@ class Common {
   String get language => 'CS_HOME_HEADER_LANGUAGE';
   String get decline => 'CORE_BUTTON_DECLINE';
   String get accept => 'CORE_BUTTON_ACCEPT';
+  String get termsAndConditions => 'COMMON_TERMS_&_CONDITIONS';
   String get confirm => 'CORE_BUTTON_CONFIRM';
   String get back => 'CORE_BUTTON_BACK';
   String get sendForApproval => 'SEND_FOR_APPROVAL';
@@ -63,6 +64,7 @@ class Common {
   String get city => 'CORE_COMMON_CITY';
   String get ward => 'CORE_COMMON_WARD';
   String get locality => 'CORE_COMMON_LOCALITY';
+  String get location => 'ES_COMMON_LOCATION';
   String get streetName => 'CORE_STREET_NAME';
   String get doorNo => 'CORE_DOOR_NO';
   String get bankAccountNumber => 'CORE_COMMON_BANK_ACCOUNT_NO';
@@ -105,6 +107,9 @@ class Common {
   String get photoGraph => 'COMMON_PHOTOGRAPH';
   String get inProgress => 'IN_PROGRESS_LABEL';
   String get completed => 'COMPLETED_LABEL';
+  String get info => 'ES_COMMON_INFO';
+  String get workOrderInfo => 'WORK_ORDER_INFO';
+  String get days => 'COMMON_DAYS';
 }
 
 class Home {
@@ -129,13 +134,19 @@ class WorkOrder {
   String get projects => 'WORKS_PROJECT';
   String get contractID => 'WORKS_CONTRACT_ID';
   String get workOrderNo => 'WORKS_ORDER_NO';
+  String get nameOfCBO => 'COMMON_NAME_OF_CBO';
   String get roleOfCBO => 'WORKS_ROLE_CBO';
+  String get completionPeriod => 'WORKS_COMPLETION_PERIOD';
   String get contractIssueDate => 'WORKS_CONTRACT_ISSUE_DATE';
   String get contractAmount => 'WORKS_CONTRACT_AMOUNT';
   String get dueDate => 'WORKS_DUE_DATE';
   String get noWorkOrderAssigned => 'NO_WORK_ORDERS_ASSIGNED';
   String get workOrderAcceptSuccess => 'WORK_ORDER_ACCEPTED_SUCCESS';
   String get workOrderDeclineSuccess => 'WORK_ORDER_DECLINE_SUCCESS';
+  String get workOrderDetails => 'WORK_ORDER_DETAILS';
+  String get contractDetails => 'WORK_ORDER_CONTRACT_DETAILS';
+  String get timeLineDetails => 'WORK_ORDER_TIMELINE_DETAILS';
+  String get relevantDocuments => 'WORK_RELEVANT_DOCUMENTS';
 }
 
 class AttendanceMgmt {
@@ -145,7 +156,9 @@ class AttendanceMgmt {
   String get cboRole => 'CBO_ROLE';
   String get officeInCharge => 'OFFICER_IN_CHARGE';
   String get projectId => 'WORKS_PROJECT_ID';
+  String get projectType => 'WORKS_PROJECT_TYPE';
   String get projectDesc => 'WORKS_PROJECT_DESCRIPTION';
+  String get projectName => 'ES_COMMON_PROJECT_NAME';
   String get musterRolls => 'ATM_MUSTER_ROLLS';
   String get musterRollPeriod => 'MUSTER_ROLL_PERIOD';
   String get enrollWageSeeker => 'WORKS_ENROLL_WAGE_SEEKER';
