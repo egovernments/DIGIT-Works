@@ -235,7 +235,6 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
         },
         onSuccess: async (responseData, variables) => {
-          console.log("response data", responseData);
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
           if(selectedProjectType?.code === "COMMON_YES") {
             payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Projects[0]?.id, tenantId);
