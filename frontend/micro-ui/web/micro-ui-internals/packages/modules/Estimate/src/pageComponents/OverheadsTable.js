@@ -17,17 +17,41 @@ const OverheadsTable = ({control,watch,...props}) => {
             isShow: true,
         },
     ];
-    const [rows, setRows] = useState(initialState);
+    
 
     const { t, register, errors, setValue, getValues, formData } = props
+
+    // const [rows, setRows] = useState(initialState);
+
+   const [rows, setRows] = useState(
+    formData?.[formFieldName]?.length > 1
+      ? formData?.[formFieldName]
+          ?.map((row, index) => {
+            return row ?
+               {
+                  key: index,
+                  isShow: true,
+                }
+              : undefined;
+          })
+          ?.filter((row) => row)
+      : initialState
+  );
 
     const setTotal = (formData) => {
         const tableData = formData?.[formFieldName]
 
-        const filteredRows = rows.filter(row=>row?.isShow)
+
+        const result = tableData?.filter((tableRow, idx) => {
+        let include = false
+        rows?.map((row) => {
+          if (row.isShow && row.key === idx) include = true;
+        });
+        return include;
+      })?.reduce((acc, curr) => acc + parseFloat(curr?.amount || 0), 0);
+
         setTotalAmount((prevState) => {
-            return tableData?.filter((row, index) => row)?.filter((row, index) => filteredRows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseFloat(curr?.amount || 0) 
-                , 0)
+            return result
         })
 
     }
@@ -48,6 +72,7 @@ const OverheadsTable = ({control,watch,...props}) => {
         formData?.[formFieldName]?.map((row,index)=> {
             if(row?.amount){
                 //find corresponding row from rows
+                
                 const correspondingRow = rows?.filter(r=>r.key === index)?.[0]
                 handleDropdownChange(row?.name, undefined, correspondingRow,undefined)
             }

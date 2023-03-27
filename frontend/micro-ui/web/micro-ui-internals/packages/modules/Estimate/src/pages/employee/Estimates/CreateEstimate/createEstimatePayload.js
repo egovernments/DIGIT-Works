@@ -61,7 +61,7 @@ const fetchDocuments = (docs) => {
     return obj
 }
 
-export const createEstimatePayload = (data,projectData) => {
+export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
     
     let filteredFormData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
     const tenantId = Digit.ULBService.getCurrentTenantId()
@@ -96,12 +96,15 @@ export const createEstimatePayload = (data,projectData) => {
             }
         },
         workflow:{
-            "action": "SUBMIT",
+            "action":isEdit ? "RE-SUBMITTED" : "SUBMIT",
             "comment": filteredFormData?.comments,
             "assignees": [
                 filteredFormData?.selectedApprover?.uuid ? filteredFormData?.selectedApprover?.uuid: undefined 
             ]
         }
+    }
+    if(estimate && isEdit){
+        payload.estimate.id = estimate.id
     }
     if(!payload.workflow.assignees?.[0])
         delete payload.workflow.assignees
