@@ -20,11 +20,14 @@ const ProjectSearchAndInboxComponent = () => {
    
     const configs = data?.[Digit.Utils.getConfigModuleName()]?.InboxProjectConfig?.[0]
 
-    const projectSession = Digit.Hooks.useSessionStorage("SEARCH_AND_FILTER_PROJECT", 
-        configs?.defaultValues
-    );
+    const projectSearchSession = Digit.Hooks.useSessionStorage("MOBILE_SEARCH_PROJECT", configs?.sections.search.uiConfig.defaultValues);
 
-    const [sessionFormData, setSessionFormData, clearSessionFormData] = projectSession;
+    const [searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData] = projectSearchSession;
+
+    //for Filter Pop-up in Mobile View
+    const projectFilterSession = Digit.Hooks.useSessionStorage("MOBILE_FILTER_PROJECT", configs?.sections.filter.uiConfig.defaultValues);
+
+    const [filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData] = projectFilterSession;
 
     if(isLoading) return <Loader />
 
@@ -32,7 +35,11 @@ const ProjectSearchAndInboxComponent = () => {
            <React.Fragment>
               <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}</Header>
               <div className="inbox-search-wrapper">
-                 <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={configs}></InboxSearchComposer>
+              <InboxSearchComposer 
+                 searchSessionStorageProps={{searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData}} 
+                 filterSessionStorageProps={{filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData}}
+                 configs={configs}>
+             </InboxSearchComposer>
               </div>
           </React.Fragment>
       );

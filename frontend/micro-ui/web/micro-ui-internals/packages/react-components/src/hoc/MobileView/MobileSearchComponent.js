@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { InboxContext } from "../InboxSearchComposerContext";
-import { FilterIcon, SearchIcon, CloseSvg } from "../../atoms/svgindex";
+import { FilterIcon, SearchIcon, CloseSvg, RefreshIcon } from "../../atoms/svgindex";
 import ActionBar from "../../atoms/ActionBar";
 import ApplyFilterBar from "../../atoms/ApplyFilterBar";
 import RenderFormFields from "../../molecules/RenderFormFields";
 import Toast from "../../atoms/Toast"; 
 import _ from "lodash";
 
-const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data, onClose, sessionFormData, setSessionFormData, clearSessionFormData, defaultValues }) => {
+const MobileSearchComponent = ({ uiConfig, modalType, header = "", screenType = "search", fullConfig, data, onClose, sessionFormData, setSessionFormData, clearSessionFormData, defaultValues }) => {
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
   const [showToast,setShowToast] = useState(null)
@@ -50,17 +50,29 @@ const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", f
 
 
   useEffect(() => {
+    //console.log("session :", sessionFormData, "formdata : ", formData);
     if (!_.isEqual(sessionFormData, formData)) {
       setSessionFormData({ ...sessionFormData, ...formData });
   }
   }, [formData]);
+
+  // useEffect(() => {
+  //   //modalType of filter && sessionFormData exists && (session form data for search)
+  //   if(modalType === "FILTER" && sessionFormData?.estimateNumber){
+  //     clearSessionFormData();
+  //   }
+  //   //if - modalType of search && sessionFormData exists && (session form data for filter)
+  //   else if(modalType === "SEARCH" && sessionFormData?.estimateNumber){
+
+  //   }
+  // }, [modalType])
 
   const onSubmit = (data) => {
     onClose?.()
     if(updatedFields.length >= uiConfig?.minReqFields) {
      // here based on screenType call respective dispatch fn
       dispatch({
-        type: uiConfig?.type === "search" ? "searchForm" : "filterForm",
+        type: modalType === "SEARCH" ? "searchForm" : "filterForm",
         state: {
           ...data
         }
@@ -73,6 +85,7 @@ const MobileSearchComponent = ({ uiConfig, header = "", screenType = "search", f
 
   const clearSearch = () => {
     reset(uiConfig?.defaultValues)
+    clearSessionFormData();
     dispatch({
       type: "clearSearchForm",
       state: { ...uiConfig?.defaultValues }
@@ -91,6 +104,7 @@ const renderHeader = () => {
         <span className="header" style={{ display : "flex" }}>
           <span className="icon" style ={{ marginRight: "12px", marginTop: "5px",  paddingBottom: "3px" }}><FilterIcon/></span>
           <span style ={{ fontSize: "large" }}>{t("ES_COMMON_FILTER_BY")}:</span>
+          <span className="clear-search" onClick={clearSearch} style={{ marginRight: "12px", marginTop: "5px",  paddingBottom: "3px" }}><RefreshIcon/></span>
         </span>
       )
       }

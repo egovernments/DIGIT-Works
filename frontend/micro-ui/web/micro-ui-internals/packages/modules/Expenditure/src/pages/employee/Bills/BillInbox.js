@@ -32,11 +32,15 @@ const BillInbox = () => {
   //For local
   let configs = useMemo( () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, InboxBillConfig?.InboxBillConfig?.[0], "sections.search.uiConfig.fields",{}));
 
-  const billSession = Digit.Hooks.useSessionStorage("SEARCH_AND_FILTER_BILLS", 
-        configs?.defaultValues
-    );
+  //for Search Pop-up in Mobile View
+  const billSearchSession = Digit.Hooks.useSessionStorage("MOBILE_SEARCH_BILL", configs?.sections.search.uiConfig.defaultValues);
 
-  const [sessionFormData, setSessionFormData, clearSessionFormData] = billSession;
+  const [searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData] = billSearchSession;
+
+  //for Filter Pop-up in Mobile View
+  const billFilterSession = Digit.Hooks.useSessionStorage("MOBILE_FILTER_BILL", configs?.sections.filter.uiConfig.defaultValues);
+
+  const [filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData] = billFilterSession;
 
   //if(isLoading) return <Loader />
   return (
@@ -44,7 +48,11 @@ const BillInbox = () => {
           <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}{state?.count ? <span className="inbox-count">{state?.count}</span> : null}</Header>
           <div className="inbox-search-wrapper">
               {/* <InboxSearchComposer configs={configs}></InboxSearchComposer> */}
-              <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={configs}></InboxSearchComposer>
+              <InboxSearchComposer 
+               searchSessionStorageProps={{searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData}} 
+               filterSessionStorageProps={{filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData}}
+               configs={configs}>
+             </InboxSearchComposer>
           </div>
       </React.Fragment>
   )

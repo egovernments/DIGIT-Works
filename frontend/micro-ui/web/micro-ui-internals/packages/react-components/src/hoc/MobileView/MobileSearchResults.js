@@ -55,7 +55,6 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
         return <Link to={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.MobileDetailsOnClick(row, t, tenantId)}>
         <div className="details-container">
           {Object.keys(row).map(key => {
-            console.log("results :", row);
             let toRender;
             let mobileCustomization = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.MobileAdditionalCustomization(row, key, row[key], t, tenantId, searchResult, headerLocale);
               if(mobileCustomization){

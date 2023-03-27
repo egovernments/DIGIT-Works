@@ -86,7 +86,6 @@ export const UICustomizations = {
       return businessServiceMap;
     }
   },
-  //mukta
   SearchProjectConfig: {
     preProcess: (data) => {
       const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
@@ -291,8 +290,7 @@ export const UICustomizations = {
       }
     },
     },
-  //mukta
-    SearchEstimateConfig: {
+  SearchEstimateConfig: {
     preProcess: (data) => {
       const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromProposalDate);
       const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toProposalDate);

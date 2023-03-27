@@ -12,7 +12,7 @@ import MobileSearchResults from "./MobileView/MobileSearchResults";
 import MediaQuery from 'react-responsive';
 import _ from "lodash";
 
-const InboxSearchComposer = ({sessionFormData, setSessionFormData, clearSessionFormData, configs}) => {
+const InboxSearchComposer = ({searchSessionStorageProps, filterSessionStorageProps, configs}) => {
 
     const [enable, setEnable] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialInboxState);
@@ -233,14 +233,19 @@ const InboxSearchComposer = ({sessionFormData, setSessionFormData, clearSessionF
                     <MobileSearchComponent
                     uiConfig={ configs?.sections?.filter?.uiConfig} 
                     header={configs?.sections?.filter?.label} 
+                    modalType={type}
                     screenType={configs.type}
                     fullConfig={configs}
                     data={data}
                     onClose={handlePopupClose}
-                    sessionFormData={sessionFormData}
-                    setSessionFormData={setSessionFormData}
-                    clearSessionFormData={clearSessionFormData}
-                    defaultValues={sessionFormData}
+                    // sessionFormData={sessionFormData}
+                    // setSessionFormData={setSessionFormData}
+                    // clearSessionFormData={clearSessionFormData}
+                    // defaultValues={sessionFormData}
+                    sessionFormData={filterSessionStorageProps.filterSessionFormData}
+                    setSessionFormData={filterSessionStorageProps.setFilterSessionFormData}
+                    clearSessionFormData={filterSessionStorageProps.clearFilterSessionFormData}
+                    defaultValues={filterSessionStorageProps.filterSessionFormData}
                     />
                 </div>
               )}
@@ -254,14 +259,19 @@ const InboxSearchComposer = ({sessionFormData, setSessionFormData, clearSessionF
                     <MobileSearchComponent
                     uiConfig={ configs?.sections?.search?.uiConfig} 
                     header={configs?.sections?.search?.label} 
+                    modalType={type}
                     screenType={configs.type}
                     fullConfig={configs}
                     data={data}
                     onClose={handlePopupClose}
-                    sessionFormData={sessionFormData}
-                    setSessionFormData={setSessionFormData}
-                    clearSessionFormData={clearSessionFormData}
-                    defaultValues={sessionFormData}
+                    // sessionFormData={sessionFormData}
+                    // setSessionFormData={setSessionFormData}
+                    // clearSessionFormData={clearSessionFormData}
+                    // defaultValues={sessionFormData}
+                    sessionFormData={searchSessionStorageProps.searchSessionFormData}
+                    setSessionFormData={searchSessionStorageProps.setSearchSessionFormData}
+                    clearSessionFormData={searchSessionStorageProps.clearSearchSessionFormData}
+                    defaultValues={searchSessionStorageProps.searchSessionFormData}
                     />
                 </div>
               )}

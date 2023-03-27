@@ -23,23 +23,32 @@ const Inbox = () => {
    
     const configs = data?.[Digit.Utils.getConfigModuleName()]?.InboxMusterConfig?.[0]
 
-    const musterSession = Digit.Hooks.useSessionStorage("SEARCH_AND_FILTER_MUSTER", 
-        configs?.defaultValues
-    );
 
-    const [sessionFormData, setSessionFormData, clearSessionFormData] = musterSession;
    
     useEffect(() => {
         setPageConfig(_.cloneDeep(data?.[Digit.Utils.getConfigModuleName()]?.InboxMusterConfig?.[0]))
 
     }, [data, location])
+    //for Search Pop-up in Mobile View
+    const musterSearchSession = Digit.Hooks.useSessionStorage("MOBILE_SEARCH_MUSTER_ROLL", pageConfig?.sections.search.uiConfig.defaultValues);
+
+    const [searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData] = musterSearchSession;
+
+    //for Filter Pop-up in Mobile View
+    const musterFilterSession = Digit.Hooks.useSessionStorage("MOBILE_FILTER_MUSTER_ROLL", pageConfig?.sections.filter.uiConfig.defaultValues);
+
+    const [filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData] = musterFilterSession;
 
     if(isLoading || !pageConfig)  return <Loader />
     return (
         <React.Fragment>
             <Header styles={{ fontSize: "32px" }}>{t(pageConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
             <div className="inbox-search-wrapper">
-                <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={pageConfig}></InboxSearchComposer>
+            <InboxSearchComposer
+               searchSessionStorageProps={{ searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData }}
+               filterSessionStorageProps={{ filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData }}
+               configs={pageConfig}
+             ></InboxSearchComposer>;
                 {/* <InboxSearchComposer configs={pageConfig}></InboxSearchComposer> */}
             </div>
         </React.Fragment>

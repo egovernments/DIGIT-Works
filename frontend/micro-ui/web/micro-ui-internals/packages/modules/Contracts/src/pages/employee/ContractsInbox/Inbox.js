@@ -30,19 +30,27 @@ const Inbox = () => {
 
   }, [location])
 
-  const contractSession = Digit.Hooks.useSessionStorage("SEARCH_AND_FILTER_CONTRACT", 
-        updatedConfig?.defaultValues
-    );
+  //for Search Pop-up in Mobile View
+  const contractSearchSession = Digit.Hooks.useSessionStorage("MOBILE_SEARCH_CONTRACT", updatedConfig?.sections.search.uiConfig.defaultValues);
 
-    const [sessionFormData, setSessionFormData, clearSessionFormData] = contractSession;
+  const [searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData] = contractSearchSession;
+
+  //for Filter Pop-up in Mobile View
+  const contractFilterSession = Digit.Hooks.useSessionStorage("MOBILE_FILTER_CONTRACT", updatedConfig?.sections.filter.uiConfig.defaultValues);
+
+  const [filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData] = contractFilterSession;
+
 
   if (isLoading || !pageConfig) return <Loader />
   return (
     <React.Fragment>
       <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
       <div className="inbox-search-wrapper">
-        {/* <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer> */}
-        <InboxSearchComposer sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}  configs={updatedConfig}></InboxSearchComposer>
+        <InboxSearchComposer
+           searchSessionStorageProps={{ searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData }}
+           filterSessionStorageProps={{ filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData }}
+           configs={updatedConfig}
+        ></InboxSearchComposer>;
       </div>
     </React.Fragment>
   )
