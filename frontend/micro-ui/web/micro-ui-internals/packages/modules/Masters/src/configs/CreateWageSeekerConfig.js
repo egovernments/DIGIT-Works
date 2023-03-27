@@ -3,56 +3,7 @@ export const CreateWageSeekerConfig = {
   "moduleName" : "commonUiConfig",
   "CreateWageSeekerConfig" : [
     {
-      "defaultValues" : {
-        basicDetails_wageSeekerId: "123",
-        basicDetails_aadhar: "9099-1234-1234",
-        basicDetails_wageSeekerName: "Shivdayal Kishor",
-        basicDetails_fatherHusbandName: "Ramkripal Kishor",
-        basicDetails_relationShip: {
-          "code": "FATHER",
-          "active": true,
-          "name": "COMMON_MASTERS_RELATIONSHIP_FATHER"
-        },
-        basicDetails_dateOfBirth: "2023-03-09",
-        basicDetails_gender: {
-          "code": "MALE",
-          "active": true,
-          "name": "COMMON_MASTERS_GENDER_MALE"
-        },
-        basicDetails_mobileNumber: "9898989898",
-        basicDetails_socialCategory: {
-          "name": "COMMON_MASTERS_SOCIAL_SC",
-          "code": "SC",
-          "active": true
-        },
-        basicDetails_photograph: [[ 
-          "photo.jepg",
-          {
-            "file": {},
-            "fileStoreId": {
-              "fileStoreId": "859303bc-d889-4775-be36-1f2c23c88301",
-              "tenantId": "pg.citya"
-            }
-          }]],
-        skillDetails_skillCategory: {
-          "name": "COMMON_MASTERS_SKILL_LEVEL_UNSKILLED",
-          "code": "UNSKILLED",
-        },
-        skillDetails_skill: {
-          "name": "COMMON_MASTERS_SKILL_TYPE_MALE_MULIA",
-          "code": "MALE_MULIA",
-        },
-        locDetails_city: {code: "pg.citya", name: "TENANT_TENANTS_PG_CITYA",  i18nKey: "TENANT_TENANTS_PG_CITYA" },
-        financeDetails_accountHolderName: 'Asha Devi',
-        financeDetails_accountNumber: '10000213400421',
-        financeDetails_accountType: {
-          "name": "MASTERS_SAVINGS",
-          "code": "SAVINGS",
-          "active": true
-        },
-        financeDetails_ifsc: 'SBIN007123',
-        financeDetails_branchName: 'Block1, Kormangala, Bangalore'
-      },
+      "defaultValues" : {},
       "metaData" : {
         showNavs : false
       },
@@ -67,7 +18,16 @@ export const CreateWageSeekerConfig = {
               key: "basicDetails_wageSeekerId",
               type: "text",
               disable: true,
-              populators: { name: "basicDetails_wageSeekerId" },
+              preProcess : {
+                updateDependent : ["populators.customStyle.display"]
+              },
+              populators: { 
+                name: "basicDetails_wageSeekerId", 
+                customStyle : {
+                  display : "none"
+                },
+                customClass : "field-value-no-border"
+              }
             },
             {
               label: "ES_COMMON_AADHAR",
@@ -75,7 +35,10 @@ export const CreateWageSeekerConfig = {
               key: "basicDetails_aadhar",
               type: "text",
               disable: true,
-              populators: { name: "basicDetails_aadhar" }
+              populators: { 
+                name: "basicDetails_aadhar",
+                customClass : "field-value-no-border" 
+              }
             },
             {
               label: "MASTERS_NAME_OF_WAGE_SEEKER",

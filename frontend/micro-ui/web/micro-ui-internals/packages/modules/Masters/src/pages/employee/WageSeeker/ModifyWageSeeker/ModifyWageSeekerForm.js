@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
-import { Header, FormComposer } from '@egovernments/digit-ui-react-components';
+import { FormComposer } from '@egovernments/digit-ui-react-components';
 
 const navConfig =  [{
     name:"Wage_Seeker_Details",
@@ -25,26 +25,16 @@ if individual Id then create else update
 On click of save call Update WageSeeker and Update Bank account details API, if both success then redirect to Success Page else redorect to Error page
 */
 
-const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessionFormData, clearSessionFormData}) => {
-    const {t} = useTranslation();
+const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessionFormData, clearSessionFormData, isModify }) => {
+    const { t } = useTranslation();
+
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
 
     const [selectedCategory, setSelectedCategory] = useState('');
-    const [selectedWard, setSelectedWard] = useState('')
+    const [selectedWard, setSelectedWard] = useState(sessionFormData?.locDetails_ward?.code || '')
 
-    //const {individualId } = Digit.Hooks.useQueryParams()
-    const individualId = 'IND-2023-03-24-001438'
-
-    //Call Search Wage Seeker
-    const payload = {
-        Individual: { individualId }
-    }
-    const searchParams = { offset: 0, limit: 100 }
-      
-    const {isLoading, data: wageSeekerData, isError, isSuccess, error} = Digit.Hooks.wageSeeker.useWageSeekerDetails({tenantId, data: payload, searchParams})
-    console.log('wageSeekerData', wageSeekerData);
     //Skill data
     const {isLoading: skillDataFetching, data: skillData } = Digit.Hooks.useCustomMDMS(
         stateTenant,
@@ -96,6 +86,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
       });
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
 
+    //wage seeker form config
     const config = useMemo(
     () => Digit.Utils.preProcessMDMSConfig(t, createWageSeekerConfig, {
       updateDependent : [
@@ -122,6 +113,10 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         {
             key : 'locDetails_locality',
             value : [filteredLocalities]
+        },
+        {
+            key : "basicDetails_wageSeekerId",
+            value : [!isModify ? "none" : "flex"]
         }
       ]
     }),
@@ -154,7 +149,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
 
     return (
         <React.Fragment>
-            <FormComposer
+           <FormComposer
                 label={"Save"}
                 config={config?.form}
                 onSubmit={onSubmit}
@@ -162,7 +157,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                 fieldStyle={{ marginRight: 0 }}
                 inline={false}
                 className="form-no-margin"
-                defaultValues={config?.defaultValues}
+                defaultValues={sessionFormData}
                 showWrapperContainers={false}
                 isDescriptionBold={false}
                 showNavs={config?.metaData?.showNavs}

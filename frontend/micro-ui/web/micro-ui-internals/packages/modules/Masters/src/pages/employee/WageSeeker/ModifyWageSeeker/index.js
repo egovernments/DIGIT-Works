@@ -1,13 +1,20 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
-import { Header, Loader } from '@egovernments/digit-ui-react-components';
+import { Header, Loader, Toast } from '@egovernments/digit-ui-react-components';
 import { CreateWageSeekerConfig } from '../../../../configs/CreateWageSeekerConfig';
 import ModifyWageSeekerForm from './ModifyWageSeekerForm';
+import { updateWageSeekerFormDefaultValues } from '../../../../utils';
 
 const ModifyWageSeeker = () => {
     const {t} = useTranslation();
+    const [showDataError, setShowDataError] = useState(null)
+    const [isFormReady, setIsFormReady] = useState(false);
+
     const stateTenant = Digit.ULBService.getStateId();
-    const { isLoading, data } = Digit.Hooks.useCustomMDMS(
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
+    /*
+    const { isLoading, data: configs } = Digit.Hooks.useCustomMDMS(
         stateTenant,
         Digit.Utils.getConfigModuleName(),
         [
@@ -22,16 +29,63 @@ const ModifyWageSeeker = () => {
         }
     );
     console.log('MDMS Config', data, Digit.Utils.getConfigModuleName());
-    //const createConfig = CreateWageSeekerConfig?.CreateWageSeekerConfig?.[0]
+    */
+    const configs = CreateWageSeekerConfig?.CreateWageSeekerConfig?.[0]
+
+    const ULB = Digit.Utils.locale.getCityLocale(tenantId)
+    let ULBOptions = []
+    ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
+
+    //const { individualId } = Digit.Hooks.useQueryParams()
+    const individualId = 'IND-2023-03-24-001438'
+    const isModify = individualId ? true : false;
+
+    //Call Search Wage Seeker
+    const payload = {
+        Individual: { individualId }
+    }
+    const searchParams = { offset: 0, limit: 100 }
+      
+    const {isLoading: wageSeekerDataFetching, data: wageSeekerData, isError, isSuccess, error} = Digit.Hooks.wageSeeker.useWageSeekerDetails({tenantId, data: payload, searchParams, config:{
+        enabled: isModify,
+        cacheTime:0
+    }})
+    console.log('wageSeekerData', wageSeekerData, wageSeekerDataFetching);
+
+    useEffect(() => {
+        if(isError) {
+            setShowDataError(true)
+        }
+    }, [error])
     
     const wageSeekerSession = Digit.Hooks.useSessionStorage("WAGE_SEEKER_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = wageSeekerSession;
 
-    // if(isLoading) return <Loader />
+    useEffect(() => {
+        if(configs && !wageSeekerDataFetching) {
+            updateWageSeekerFormDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions})
+            setIsFormReady(true)
+        }
+      },[configs, wageSeekerDataFetching]);
+
+    //if(isLoading) return <Loader />
     return (
         <React.Fragment>
             <Header styles={{ fontSize: "32px" }}>{t("MASTERS_MODIFY_WAGESEEKER")}</Header>
-            <ModifyWageSeekerForm createWageSeekerConfig={data} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData}></ModifyWageSeekerForm>
+            {
+                showDataError === null && isFormReady && (
+                    <ModifyWageSeekerForm 
+                        createWageSeekerConfig={configs} 
+                        sessionFormData={sessionFormData} 
+                        setSessionFormData={setSessionFormData} 
+                        clearSessionFormData={clearSessionFormData}
+                        isModify={isModify}>  
+                    </ModifyWageSeekerForm>
+                )
+            }
+            {
+                showDataError && <Toast error={true} label={t("COMMON_ERROR_FETCHING_WAGE_SEEKER_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />
+            }
         </React.Fragment>
     )
 }

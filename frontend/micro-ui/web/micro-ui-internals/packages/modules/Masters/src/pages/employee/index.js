@@ -52,6 +52,9 @@ const App = ({ path }) => {
   const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
   const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
 
+  const wageSeekerSession = Digit.Hooks.useSessionStorage("WAGE_SEEKER_CREATE", {});
+  const [wsSesionFormData, setWsSessionFormData, clearWsSessionFormData] = wageSeekerSession;
+
   const SearchMasters = Digit?.ComponentRegistryService?.getComponent("SearchMasters");
   const CreateMasters = Digit?.ComponentRegistryService?.getComponent("CreateMasters");
   const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWageSeeker");
@@ -61,10 +64,14 @@ const App = ({ path }) => {
   const ViewWageSeeker = Digit?.ComponentRegistryService?.getComponent("ViewWageSeeker");
   const ModifyWageSeeker = Digit?.ComponentRegistryService?.getComponent("ModifyWageSeeker");
   const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganisation");
+
   useEffect(() => {
     return () => {
       if (!window.location.href.includes("create-organization") && Object.keys(sessionFormData) != 0) {
         clearSessionFormData();
+      }
+      if (!window.location.href.includes("modify-wageseeker") && wsSesionFormData && Object.keys(wsSesionFormData) != 0) {
+        clearWsSessionFormData();
       }
     };
   }, [location]);
