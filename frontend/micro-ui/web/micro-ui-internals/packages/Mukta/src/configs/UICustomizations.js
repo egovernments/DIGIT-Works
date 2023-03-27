@@ -131,12 +131,13 @@ export const UICustomizations = {
       const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
       const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
       const projectType = data.body.Projects[0]?.projectType?.code;
+      const ward = data.body.Projects[0]?.ward?.[0]?.code;
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors: true, createdFrom, createdTo };
       let name = data.body.Projects[0]?.name;
       name = name?.trim();
       delete data.body.Projects[0]?.createdFrom;
       delete data.body.Projects[0]?.createdTo;
-      data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(), projectType, name };
+      data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(), projectType, name, address : { boundary : ward}  };
 
       return data;
     },
