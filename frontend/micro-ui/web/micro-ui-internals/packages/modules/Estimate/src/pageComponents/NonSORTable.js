@@ -5,7 +5,7 @@ import _ from "lodash"
 
 const NonSORTable = ({control,watch,...props}) => {
   const [totalAmount, setTotalAmount] = useState(0)
-  debugger
+  
   const formFieldName = "nonSORTablev1" // this will be the key under which the data for this table will be present on onFormSubmit
   const initialState = [
     {
@@ -15,8 +15,8 @@ const NonSORTable = ({control,watch,...props}) => {
   ];
   
 
-  const { t, register, errors , setValue, getValues, formData} = props
-  
+  const { t, register, errors , setValue, getValues, formData,unregister} = props
+ 
   // const [rows, setRows] = useState(initialState);
   const [rows, setRows] = useState(
     formData?.[formFieldName]?.length > 1
@@ -25,7 +25,7 @@ const NonSORTable = ({control,watch,...props}) => {
             return row ?
                {
                   key: index,
-                  isShow: true,
+                  isShow: row?.isActive ? row?.isActive : false,
                 }
               : undefined;
           })
@@ -117,7 +117,7 @@ const NonSORTable = ({control,watch,...props}) => {
       }
       return e
     })
-
+    setValue(`${formFieldName}.${row.key}.estimatedAmount`,0)
     setRows(prev => updatedState)
   }
   const addRow = () => {

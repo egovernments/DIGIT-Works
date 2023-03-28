@@ -28,9 +28,9 @@ const OverheadsTable = ({control,watch,...props}) => {
       ? formData?.[formFieldName]
           ?.map((row, index) => {
             return row ?
-               {
+                {
                   key: index,
-                  isShow: true,
+                  isShow: row?.isActive ? row?.isActive : false,
                 }
               : undefined;
           })
@@ -132,6 +132,8 @@ const OverheadsTable = ({control,watch,...props}) => {
             return e
         })
 
+        setValue(`${formFieldName}.${row.key}.amount`,0)
+
         setRows(prev => updatedState)
     }
     const addRow = () => {
@@ -184,7 +186,7 @@ const OverheadsTable = ({control,watch,...props}) => {
         //1-> if autoCalculated field is true, populate the percentage/lumpsum(type field) , amount field and disable both of them
         //2-> if autocal is false,then let user enter the percentage/lumpsum(type field), amount field
 
-        if (e.isAutoCalculated) {
+        if (e?.isAutoCalculated) {
             if(e.type==="percentage"){
                 //set the percentage field
                 //set the amount field
@@ -198,6 +200,9 @@ const OverheadsTable = ({control,watch,...props}) => {
                 setValue(`overheadDetails.${row.key}.percentage`, `${t("WORKS_LUMPSUM")}`)
                 setValue(`overheadDetails.${row.key}.amount`, e.value)
             }
+        }
+        else if(!e){
+            return 
         }
         else {
             setValue(`overheadDetails.${row.key}.percentage`, `${t("WORKS_LUMPSUM")}`)

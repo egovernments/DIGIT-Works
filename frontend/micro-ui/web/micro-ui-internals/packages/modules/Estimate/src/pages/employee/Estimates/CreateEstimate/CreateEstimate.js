@@ -237,20 +237,20 @@ const CreateEstimate = ({ EstimateSession }) => {
         //make a util for updateEstimatePayload since there are some deviations 
         
         if(isEdit && estimateNumber){
-            debugger
+            
             await EstimateUpdateMutation(payload, {
             onError: async (error, variables) => {
-                debugger
+                
                 setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
                 setTimeout(() => {
                     setShowToast(false);
                 }, 5000);
             },
             onSuccess: async (responseData, variables) => {
-                debugger
+                
                 clearSessionFormData();
                 const state = {
-                    header: t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
+                    header: t("WORKS_ESTIMATE_RESPONSE_UPDATED_HEADER"),
                     id: responseData?.estimates[0]?.estimateNumber,
                     info: t("ESTIMATE_ESTIMATE_NO"),
                     // message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),

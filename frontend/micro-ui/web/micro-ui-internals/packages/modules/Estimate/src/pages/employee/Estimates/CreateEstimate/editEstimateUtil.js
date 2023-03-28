@@ -29,7 +29,7 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
                 ]
             ]
         }
-        if(!doc?.fileStoreId && doc?.fileName==="Others"){
+        if(!(doc?.fileStoreId) && doc?.fileName==="Others"){
             uploadedDocs["ESTIMATE_DOC_OTHERS_name"]="Others"
         }
     })
@@ -47,7 +47,8 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
             "uom":{
                 ...uom.filter(uomRow=>uomRow?.code === row?.uom)?.[0],
                 "name": `ES_COMMON_UOM_${row?.uom}`
-            }
+            },
+            "isActive":row?.isActive,
         })
     })
     formData["nonSORTablev1"] = LineItems
@@ -61,7 +62,8 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
             "name":{
                 ...overheads.filter(overheadRow=>overheadRow?.code === row?.amountDetail?.[0]?.type)?.[0],
                 "name": `ES_COMMON_OVERHEADS_${row?.amountDetail?.[0]?.type}`
-            }
+            },
+            "isActive":row?.isActive,
         })
     })
     formData["overheadDetails"] = overHeadItems
