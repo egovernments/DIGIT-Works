@@ -3,7 +3,7 @@ import { Loader, WorkflowActions, WorkflowTimeline,ActionBar,Menu,SubmitBar, Toa
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from '../../../templates/ApplicationDetails';
 import { useHistory } from 'react-router-dom';
-const ViewEstimateComponent = (props) => {
+const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
 
     const history = useHistory();
     const [showActions, setShowActions] = useState(false);
@@ -99,6 +99,7 @@ const ViewEstimateComponent = (props) => {
                         url={Digit.Utils.Urls.works.updateEstimate}
                         setStateChanged={setStateChanged}
                         moduleCode="Estimate"
+                        editApplicationNumber={editApplicationNumber}
                     />
                     {/* Adding another action bar to show Create Contract Option */}
                     {applicationDetails?.applicationData?.wfStatus === "APPROVED" && !isLoadingContracts ?
