@@ -53,6 +53,9 @@ public class ContractCriteria {
     @JsonProperty("contractType")
     private String contractType = null;
 
+    @JsonProperty("status")
+    private String status = null;
+
     @JsonProperty("orgIds")
     private List<String> orgIds = null;
 

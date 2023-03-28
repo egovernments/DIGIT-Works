@@ -240,6 +240,10 @@ definitions:
         type: string
         description: Contract Number
         example: WO/2022-23/000338
+      status:
+        type: string
+        description: Contract status
+        example: ACTIVE
       ids:
         type: array
         description: Search by contract ids
