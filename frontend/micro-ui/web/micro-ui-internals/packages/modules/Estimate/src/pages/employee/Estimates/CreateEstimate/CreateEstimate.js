@@ -37,15 +37,6 @@ const CreateEstimate = ({ EstimateSession }) => {
         }
     })
     
-    //after getting proper form data here, you can setIsFormReady => true
-    
-
-    // if isEdit is defined that means this page is an edit estmate page
-    // from searched estimate form a defaultValues object to render the form
-    // instead of calling the create api on onFormSubmit call the update api
-    //if isEdit is defined ("true") that means we need to form defaultValues from state.applicationDetails
-    //hence marking isFormReady to false
-    
     
     
     const searchParams = {
@@ -101,14 +92,7 @@ const CreateEstimate = ({ EstimateSession }) => {
             },...cardState?.values]
     }
     
-    // const cardState = {
-    //     "WORKS_ESTIMATE_TYPE": "Original Estimate",
-    //     "WORKS_PROJECT_ID": projectData?.projectDetails?.searchedProject?.basicDetails?.projectId,
-    //     "ESTIMATE_PROPOSAL_DATE": Digit.DateUtils.ConvertEpochToDate(projectData?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate),
-    //     "ESTIMATE_PROJECT_NAME": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
-    //     "PROJECT_DESC": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc
-    // }
-    
+   
     const history = useHistory()
 
     const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
