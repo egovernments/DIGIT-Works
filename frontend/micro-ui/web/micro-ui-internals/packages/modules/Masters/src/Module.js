@@ -18,6 +18,7 @@ import SearchOrganisation from "./pages/employee/Organisation/SearchOrganisation
 import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
 
 import TransferCodeTable from "./components/TransferCodeTable";
+import MastersResponse from "./components/MastersResponse";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
 
@@ -55,7 +56,8 @@ const componentsToRegister = {
   CreateOrganisation,
   SearchOrganisation,
   ViewOrganisation,
-  TransferCodeTable
+  TransferCodeTable,
+  MastersResponse
 };
 
 export const initMastersComponents = () => {

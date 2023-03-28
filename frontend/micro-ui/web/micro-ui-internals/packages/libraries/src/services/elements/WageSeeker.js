@@ -11,5 +11,15 @@ export const WageSeekerService = {
         userService: true,
         data: data,
         params: { tenantId, ...searchParams },
+      }),
+
+    update: (data) => 
+      Request({
+        url: Urls.wageseeker.update,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        data: data
       })
 };

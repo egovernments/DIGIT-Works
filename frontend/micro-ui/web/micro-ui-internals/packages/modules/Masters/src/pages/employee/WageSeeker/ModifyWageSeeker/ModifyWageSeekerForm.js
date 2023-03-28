@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
 import { FormComposer } from '@egovernments/digit-ui-react-components';
+import { getWageSeekerUpdatePayload, getBankAccountUpdatePayload } from '../../../../utils';
 
 const navConfig =  [{
     name:"Wage_Seeker_Details",
@@ -8,32 +9,38 @@ const navConfig =  [{
 }]
 
 /*
-if search wage seeker fails -> Error failed to fetch details
-if search WS success, bank search fails -> show NA in bank acc details
-if both success -> show all
 
-2 hooks, for search WS, search Bank details -> create default data -> populate and show
-1 hook similar to useViewWS
-util function to convert API data to default formValues
+find difference and check which data was updated
+if only WS data updated - call only WS update
+if only Bank data updated - call only bank update
+if both updated - call both
 
-
-search Wageseeker, Individual API to get existing data
-Session storage enable
-populate existing data dynamically store it in session storage and clear it on update success/failure/home page
 Enable Save button if anything is updated
 if individual Id then create else update
 On click of save call Update WageSeeker and Update Bank account details API, if both success then redirect to Success Page else redorect to Error page
+
+payload for WS update
+id, tenantId, name => givenName, dateOfBirth, gender, mobileNumber, address => id, individualId, tenantId, doorNo, type, street, locality => code, ward => code, 
+fatherName, relationship, skills => [{id,individualId, type, level, photo, additionalFields -> fields -> key, value, rowVersion  }]
+
+payload for create
+id, tenantId, name => givenName, dateOfBirth, gender, mobileNumber, address => id, individualId, tenantId, doorNo, type, street, locality => code, ward => code, 
+fatherName, relationship, skills => [{id,individualId, type, level, photo, additionalFields -> fields -> key, value, rowVersion, identifiers => id, individualId, identifierType, identifierId }]
 */
 
-const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessionFormData, clearSessionFormData, isModify }) => {
+const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessionFormData, clearSessionFormData, isModify, wageSeekerDataFromAPI }) => {
     const { t } = useTranslation();
 
+    const [financeDetailsUpdated, setFinanceDetailsUpdated] = useState(false)
+    const [individualDetailsUpdated, setIndividualDetailsUpdated] = useState(false)
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
 
-    const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedWard, setSelectedWard] = useState(sessionFormData?.locDetails_ward?.code || '')
+
+    const { mutate: UpdateWageSeekerMutation } = Digit.Hooks.wageSeeker.useUpdateWageSeeker();
+    const { mutate: UpdateBankAccountMutation } = Digit.Hooks.bankAccount.useUpdateBankAccount();
 
     //Skill data
     const {isLoading: skillDataFetching, data: skillData } = Digit.Hooks.useCustomMDMS(
@@ -42,28 +49,12 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         [ { "name": "WageSeekerSkills" }],
         {
             select: (data) => {
-                let skillCategories = []
-                let skills = {}
-                data?.["common-masters"]?.WageSeekerSkills?.forEach(item => {
-                if(!item?.active) return
-                const categoryCode = item?.code?.split('.')?.[0]
-                const skillCode = item?.code?.split('.')?.[1]
-                if(!skillCategories.includes(categoryCode)) skillCategories.push(categoryCode)
-                if(skills[categoryCode]) {
-                    skills[categoryCode].push({code: skillCode, name: `COMMON_MASTERS_SKILL_TYPE_${skillCode}`})
-                } else {
-                    skills[categoryCode] = [{code: skillCode, name: `COMMON_MASTERS_SKILL_TYPE_${skillCode}`}]
-                }
-                })
-                skillCategories = skillCategories.map(item => ({code: item, name: `COMMON_MASTERS_SKILL_LEVEL_${item}`}))
-                return {
-                    skillCategories,
-                    skills
-                }
+                return data?.["common-masters"]?.WageSeekerSkills?.filter(item => item?.active)?.map(skill => ({
+                    code: skill?.code, name: `COMMON_MASTERS_SKILLS_${skill?.code}`
+                }))  
             }
         }
     );
-    const filteredSkills = skillData?.skills[selectedCategory]
 
     //location data
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
@@ -95,12 +86,8 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
             value : [new Date().toISOString().split("T")[0]]
         },
         {
-            key : "skillDetails_skillCategory",
-            value : [skillData?.skillCategories]
-        },
-        {
             key : "skillDetails_skill",
-            value : [filteredSkills]
+            value : [skillData]
         },
         {
             key : 'locDetails_city',
@@ -120,19 +107,21 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         }
       ]
     }),
-    [skillData, filteredSkills, wardsAndLocalities, filteredLocalities, ULBOptions]);
-  
-    console.log('Converted config', config);
+    [skillData, wardsAndLocalities, filteredLocalities, ULBOptions]);
 
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
-            if(formData.skillDetails_skillCategory) {
-                setSelectedCategory(formData?.skillDetails_skillCategory?.code)
+
+            //check if wage seeker details are updated or bank details are udpated
+            let updatedKey = Object.keys(difference)?.[0]
+            if(updatedKey?.includes('basicDetails_') || updatedKey?.includes('skillDetails_') || updatedKey?.includes('locDetails_')) {
+                setIndividualDetailsUpdated(true)
             }
-            if (difference?.skillDetails_skillCategory) {
-                setValue("skillDetails_skill", '');
+            if(updatedKey?.includes('financeDetails_')) {
+                setFinanceDetailsUpdated(true)
             }
+
             if(formData.locDetails_ward) {
                 setSelectedWard(formData?.locDetails_ward?.code)
             }
@@ -143,14 +132,63 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         }
     }
 
+    const sendDataToResponsePage = (individualId, isSuccess, message, showWageSeekerID) => {
+        history.push({
+          pathname: `/${window?.contextPath}/employee/masters/response`,
+          search: `?individualId=${individualId}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
+          state : {
+            message,
+            showWageSeekerID
+          }
+        }); 
+      }
+
+    const handleResponseForUpdate = async (payload) => {
+        //individualDetailsUpdated , financeDetailsUpdated
+
+        await UpdateWageSeekerMutation(payload, {
+          onError: async (error, variables) => {
+                console.log('Error Update WS', error);
+                //sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, "WORKS_PROJECT_MODIFICATION_FAILURE", true);
+          },
+          onSuccess: async (responseData, variables) => {
+            //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
+            if(financeDetailsUpdated) {
+              payload = getBankAccountUpdatePayload({});
+              await UpdateBankAccountMutation(payload, {
+                onError :  async (error, variables) => {
+                    console.log('Error Update Bank', error);
+                    //sendDataToResponsePage(modify_projectNumber, false, "WORKS_PROJECT_MODIFICATION_FAILURE", true);
+                },
+                onSuccess: async (responseData, variables) => {
+                  console.log('Success Bank responseData', responseData);
+                }
+              })
+            }else{
+                console.log('Success WS responseData', responseData);
+            }
+          },
+        });
+    }
+
+    const handleResponseForCreate = async (payload) => {}
+
     const onSubmit = (data) => {
         console.log('DATA', data);
+        console.log('@@@@@@', financeDetailsUpdated, individualDetailsUpdated);
+        const wageSeekerPayload = getWageSeekerUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify})
+        console.log('wageSeekerPayload', wageSeekerPayload);
+        if(isModify) {
+            handleResponseForUpdate(wageSeekerPayload);
+        }else {
+            handleResponseForCreate(wageSeekerPayload);
+        }
     }
 
     return (
         <React.Fragment>
            <FormComposer
-                label={"Save"}
+                label={isModify ? "Save" : "Create Wage Seeker"}
                 config={config?.form}
                 onSubmit={onSubmit}
                 submitInForm={false}
@@ -167,6 +205,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                 showMultipleCardsWithoutNavs={false}
                 showMultipleCardsInNavs={false}
                 onFormValueChange={onFormValueChange}
+                isDisabled={isModify ? !(individualDetailsUpdated || financeDetailsUpdated) : false}
                 cardClassName = "mukta-header-card"
             />
         </React.Fragment>

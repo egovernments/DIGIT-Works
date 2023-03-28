@@ -219,7 +219,8 @@ const Urls = {
   },
 
   wageseeker: {
-    search: "/individual/v1/_search"
+    search: "/individual/v1/_search",
+    update: "/individual/v1/_update"
   },
 
   noc: {

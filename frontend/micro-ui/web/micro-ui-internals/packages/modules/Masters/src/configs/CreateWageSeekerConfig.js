@@ -161,29 +161,10 @@ export const CreateWageSeekerConfig = {
           head: "ATM_SKILLS_DETAILS",
           body: [
             {
-              label: "ES_COMMON_SKILL_CATEGORY",
-              isMandatory: true,
-              key: "skillDetails_skillCategory",
-              type: "radioordropdown",
-              disable: false,
-              preProcess : {
-                updateDependent : ["populators.options"]
-              },
-              populators: {
-                name: "skillDetails_skillCategory",
-                optionsKey: "name",
-                error: ("WORKS_REQUIRED_ERR"),
-                optionsCustomStyle : {
-                  top : "2.3rem"
-                },
-                options: []
-              }
-            },
-            {
               label: "ES_COMMON_SKILL",
               isMandatory: true,
               key: "skillDetails_skill",
-              type: "radioordropdown",
+              type: "multiselectdropdown",
               disable: false,
               preProcess : {
                 updateDependent : ["populators.options"]
@@ -192,9 +173,9 @@ export const CreateWageSeekerConfig = {
                 name: "skillDetails_skill",
                 optionsKey: "name",
                 error: ("WORKS_REQUIRED_ERR"),
-                optionsCustomStyle : {
-                  top : "2.3rem"
-                },
+                defaultText: 'COMMON_SELECT_SKILL',
+                selectedText: "COMMON_SELECTED",
+                allowMultiSelect: true,
                 options: []
               }
             }

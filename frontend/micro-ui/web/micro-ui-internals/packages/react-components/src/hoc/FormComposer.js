@@ -25,6 +25,8 @@ import HorizontalNav  from "../atoms/HorizontalNav"
 import Toast from "../atoms/Toast";
 import UploadFileComposer from "./UploadFileComposer";
 import CheckBox from "../atoms/CheckBox";
+import MultiSelectDropdown from '../atoms/MultiSelectDropdown';
+
 const wrapperStyles = {
   // "display":"flex",
   // "flexDirection":"column",
@@ -388,6 +390,34 @@ export const FormComposer = (props) => {
               control={control}
             />
           </form>
+        ); 
+      case "multiselectdropdown":
+        return (
+          <Controller
+            name={`${populators.name}`}
+            control={control}
+            defaultValue={formData?.[populators.name]}
+            rules={{ required: populators?.isMandatory }}
+            render={(props) => {
+              return (
+                <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                  <MultiSelectDropdown
+                    options={populators?.options}
+                    optionsKey={populators?.optionsKey}
+                    props={props}
+                    isPropsNeeded={true}
+                    onSelect={(e) => {
+                      props.onChange(e?.map(row=>{return row?.[1] ? row[1] : null}).filter(e=>e))
+                    }}
+                    selected={props?.value || []}
+                    defaultLabel={t(populators?.defaultText)}
+                    defaultUnit={t(populators?.selectedText)}
+                    config={populators}
+                  />
+                </div>
+              );
+            }}
+          />
         );
       default:
         return populators?.dependency !== false ? populators : null;

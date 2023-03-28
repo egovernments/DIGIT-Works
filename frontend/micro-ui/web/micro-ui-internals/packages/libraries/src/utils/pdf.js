@@ -1081,3 +1081,8 @@ export const downloadPDFFromLink = async (link, openIn = "_blank") => {
     window.URL.revokeObjectURL(url);
   }
 };
+
+export const getDocumentName = (documentLink = "", index = 0) => {
+  let documentName = decodeURIComponent(documentLink.split("?")[0].split("/").pop().slice(13)) || `Document - ${index + 1}`;
+  return documentName;
+};

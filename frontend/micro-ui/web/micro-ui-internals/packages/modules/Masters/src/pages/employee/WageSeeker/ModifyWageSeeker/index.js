@@ -37,8 +37,8 @@ const ModifyWageSeeker = () => {
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
     //const { individualId } = Digit.Hooks.useQueryParams()
-    const individualId = 'IND-2023-03-24-001438'
-    const isModify = individualId ? true : false;
+    const individualId = 'IND-2023-03-27-001462'//'IND-2023-03-27-001461'
+    const isModify = false //individualId ? true : false;
 
     //Call Search Wage Seeker
     const payload = {
@@ -50,7 +50,6 @@ const ModifyWageSeeker = () => {
         enabled: isModify,
         cacheTime:0
     }})
-    console.log('wageSeekerData', wageSeekerData, wageSeekerDataFetching);
 
     useEffect(() => {
         if(isError) {
@@ -79,7 +78,9 @@ const ModifyWageSeeker = () => {
                         sessionFormData={sessionFormData} 
                         setSessionFormData={setSessionFormData} 
                         clearSessionFormData={clearSessionFormData}
-                        isModify={isModify}>  
+                        isModify={isModify}
+                        wageSeekerDataFromAPI={wageSeekerData}
+                        >  
                     </ModifyWageSeekerForm>
                 )
             }
