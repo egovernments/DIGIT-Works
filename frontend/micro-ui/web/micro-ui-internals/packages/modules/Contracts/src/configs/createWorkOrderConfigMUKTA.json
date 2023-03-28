@@ -175,7 +175,7 @@
                     "name": "projectCompletionPeriodInDays",
                     "error": "COMMON_PATTERN_ERR_MSG_PROJECT_COMP_PERIOD",
                     "validation": {
-                      "pattern": {},
+                      "pattern": "^(?:0|[1-9]\\d*)(?:\\.(?!.*000)\\d+)?$",
                       "maxlength": 10
                     }
                   }
