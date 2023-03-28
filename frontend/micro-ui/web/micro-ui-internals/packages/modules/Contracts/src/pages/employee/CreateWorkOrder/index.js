@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA";
 import CreateWorkOrderForm from "./CreateWorkOrderForm";
+import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA.json";
+import { useTranslation } from "react-i18next";
 
 const CreateWorkOrder = () => {
-
+    const {t} = useTranslation();
     const queryStrings = Digit.Hooks.useQueryParams();
-    const estimateNumber = queryStrings?.estimateNumber;
-    const tenantId = queryStrings?.tenantId;
-    const [config, setConfig] = useState({});
+    const estimateNumber = queryStrings?.estimateNumber || "ES/2022-23/001060"; //TODO:
+    const tenantId = queryStrings?.tenantId || "pg.citya";  //TODO:
+    const [documents, setDocuments] = useState([]);
+    const [officerInCharge, setOfficerInCharge] = useState([]);
+    const [nameOfCBO, setNameOfCBO] = useState([]);
+    const [isFormReady, setIsFormReady] = useState(false);
 
      //fetching estimate data
      const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
@@ -89,22 +93,22 @@ const CreateWorkOrder = () => {
                 basicDetails_dateOfProposal : Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal),
                 basicDetails_projectName : project?.name,
                 basicDetails_projectDesc : project?.description,
-                workOrderAmountRs : estimate?.additionalDetails?.totalEstimatedAmount
+                workOrderAmountRs : estimate?.additionalDetails?.totalEstimatedAmount //TODO:
             };
 
             //set document object
-            let documents =  createDocumentObject(estimate?.additionalDetails?.documents);
-            let officerInCharge = createOfficerInChargeObject();
-            let nameOfCBO = createNameOfCBOObject();
+            setDocuments(createDocumentObject(estimate?.additionalDetails?.documents));
+            setOfficerInCharge(createOfficerInChargeObject());
+            setNameOfCBO(createNameOfCBOObject());
             setSessionFormData({...sessionFormData, ...defaultValues});
-            setConfig(createWorkOrderConfigMUKTA({defaultValues, documents, officerInCharge, nameOfCBO}));
+            setIsFormReady(true);
         }
-    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading])
+    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading]);
 
     return (
         <React.Fragment>
             {
-                config && <CreateWorkOrderForm createWorkOrderConfig={config?.CreateWorkOrderConfig?.[0]} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project}></CreateWorkOrderForm>
+                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={createWorkOrderConfigMUKTA?.CreateWorkOrderConfig?.[0]} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}}></CreateWorkOrderForm>
             }
         </React.Fragment>
     )
