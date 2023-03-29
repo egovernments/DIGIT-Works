@@ -192,8 +192,8 @@ export const WorksSearch = {
         const estimateArr = await WorksSearch?.searchEstimate(tenantId, { estimateNumber })
         const estimate = estimateArr?.[0]
         
-        const nonSOR = estimate?.estimateDetails?.filter(row=>row?.category?.includes("NON-SOR"))
-        const overheads = estimate?.estimateDetails?.filter(row => row?.category?.includes("OVERHEAD"))
+        const nonSOR = estimate?.estimateDetails?.filter(row=>row?.category?.includes("NON-SOR") && row?.isActive)
+        const overheads = estimate?.estimateDetails?.filter(row => row?.category?.includes("OVERHEAD") && row?.isActive)
         
 
         const tableHeaderNonSor = [t("WORKS_SNO"), t("EVENTS_DESCRIPTION"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")] 

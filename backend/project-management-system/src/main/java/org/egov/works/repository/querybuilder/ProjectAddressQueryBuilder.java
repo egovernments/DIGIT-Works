@@ -37,7 +37,9 @@ public class ProjectAddressQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
-    private static final String PROJECTS_COUNT_QUERY = "SELECT COUNT(*) FROM eg_pms_project prj ";
+    private static final String PROJECTS_COUNT_QUERY = "SELECT COUNT(*) FROM eg_pms_project prj " +
+            "left join eg_pms_address addr " +
+            "on prj.id = addr.project_id ";
 
     /* Constructs project search query based on conditions */
     public String getProjectSearchQuery(List<Project> projects, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, Long createdFrom, Long createdTo, List<Object> preparedStmtList, boolean isCountQuery) {
@@ -76,14 +78,20 @@ public class ProjectAddressQueryBuilder {
 
             if (StringUtils.isNotBlank(project.getName())) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" prj.name =? ");
-                preparedStmtList.add(project.getName());
+                queryBuilder.append(" prj.name LIKE ? ");
+                preparedStmtList.add('%' + project.getName() + '%');
             }
 
             if (StringUtils.isNotBlank(project.getProjectType())) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
                 queryBuilder.append(" prj.project_type=? ");
                 preparedStmtList.add(project.getProjectType());
+            }
+
+            if (project.getAddress() != null && StringUtils.isNotBlank(project.getAddress().getBoundary())) {
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" addr.boundary=? ");
+                preparedStmtList.add(project.getAddress().getBoundary());
             }
 
             if (StringUtils.isNotBlank(project.getProjectSubType())) {
