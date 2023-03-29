@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = process.env.EGOV_HOST;
+HOST = process.env.EGOV_HOST || 'https://works-dev.digit.org/';
 
 if (!HOST) {
   console.log("You need to set the HOST variable");
@@ -21,6 +21,8 @@ module.exports = {
   DB_PORT: process.env.DB_PORT || 5432,
   pdf: {
     epass_pdf_template: process.env.EPASS_TEMPLATE || "tlcertificate",
+    project_details_template:
+    process.env.PROJECT_DETAILS || "project-detail" 
   },
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,
@@ -28,11 +30,12 @@ module.exports = {
     contextPath: process.env.CONTEXT_PATH || "/egov-pdf",
   },
   host: {
-    mdms: process.env.EGOV_MDMS_HOST || HOST,
+    mdms: process.env.EGOV_MDMS_HOST || 'http://localhost:8083',
     epass: process.env.EGOV_TLSERVICES_HOST || HOST,
-    pdf: process.env.EGOV_PDF_HOST || HOST,
+    pdf: process.env.EGOV_PDF_HOST || 'http://localhost:8082',
     user: process.env.EGOV_USER_HOST || HOST,
-    workflow: process.env.EGOV_WORKFLOW_HOST || HOST
+    workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
+    projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8081/'
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -41,5 +44,6 @@ module.exports = {
     mdms_search: "/egov-mdms-service/v1/_search",
     download_url: "/download/epass",
     workflow_search: "/egov-workflow-v2/egov-wf/process/_search",
+    projectDetails_search:"/pms/project/v1/_search"
   },
 };

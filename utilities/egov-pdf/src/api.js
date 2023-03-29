@@ -15,6 +15,26 @@ const pool = new Pool({
 
 auth_token = config.auth_token;
 
+async function search_projectDetails(tenantId, requestinfo, projectId) {
+  var params = {
+    tenantId: tenantId,
+    limit:1,
+    offset:0
+  };
+
+  var searchEndpoint = config.paths.projectDetails_search;
+var data= {"Projects": [{
+  "tenantId":tenantId, 
+  "projectNumber": projectId
+  }]}
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.projectDetails, searchEndpoint),
+    data: Object.assign(requestinfo, data),
+    params,
+  });
+}
+
 async function search_user(uuid, tenantId, requestinfo) {
   return await axios({
     method: "post",
@@ -68,6 +88,8 @@ async function search_mdms(tenantId, module, master, requestinfo) {
 
 
 async function create_pdf(tenantId, key, data, requestinfo) {
+  var oj=Object.assign(requestinfo, data);
+  console.log(oj,'sasas');
   return await axios({
     responseType: "stream",
     method: "post",
@@ -227,5 +249,6 @@ module.exports = {
   search_epass,
   search_mdms,
   search_user,
-  search_workflow
+  search_workflow,
+  search_projectDetails
 };
