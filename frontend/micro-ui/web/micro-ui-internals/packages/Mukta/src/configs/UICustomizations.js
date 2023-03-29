@@ -11,7 +11,6 @@ export const UICustomizations = {
   EstimateInboxConfig: {
     preProcess: (data) => {
       //set tenantId
-
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
@@ -71,6 +70,116 @@ export const UICustomizations = {
       }
     },
   },
+  AttendanceInboxConfig: {
+    preProcess: (data) => {
+      
+      //set tenantId
+
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+
+      // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
+
+      const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
+      delete data.body.inbox.moduleSearchCriteria.assignee;
+      if (assignee?.code === "ASSIGNED_TO_ME") {
+        data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
+      }
+
+      delete data.body.inbox.moduleSearchCriteria.ward;
+
+      //cloning locality and workflow states to format them
+      // let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
+      
+      let selectedOrg =  _.clone(data.body.inbox.moduleSearchCriteria.orgId ? data.body.inbox.moduleSearchCriteria.orgId : null);
+      delete data.body.inbox.moduleSearchCriteria.orgId;
+      if(selectedOrg) {
+         data.body.inbox.moduleSearchCriteria.orgId = selectedOrg?.[0]?.applicationNumber;
+      }
+      let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
+      // delete data.body.inbox.moduleSearchCriteria.locality;
+      delete data.body.inbox.moduleSearchCriteria.state;
+      // locality = locality?.map((row) => row?.code);
+      states = Object.keys(states)?.filter((key) => states[key]);
+
+      // //adding formatted data to these keys
+      // if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
+      if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
+
+      const projectType = _.clone(data.body.inbox.moduleSearchCriteria.projectType ? data.body.inbox.moduleSearchCriteria.projectType : {});
+      if (projectType?.code) data.body.inbox.moduleSearchCriteria.projectType = projectType.code;
+
+      //adding tenantId to moduleSearchCriteria
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+
+      //setting limit and offset becoz somehow they are not getting set in muster inbox 
+      data.body.inbox .limit = data.state.tableForm.limit
+      data.body.inbox.offset = data.state.tableForm.offset
+      delete data.state
+      return data;
+    },
+    postProcess: (responseArray, uiConfig) => {
+      const statusOptions = responseArray?.statusMap
+        ?.filter((item) => item.applicationstatus)
+        ?.map((item) => ({ code: item.applicationstatus, i18nKey: `COMMON_MASTERS_${item.applicationstatus}` }));
+      if (uiConfig?.type === "filter") {
+        let fieldConfig = uiConfig?.fields?.filter((item) => item.type === "dropdown" && item.populators.name === "musterRollStatus");
+        if (fieldConfig.length) {
+          fieldConfig[0].populators.options = statusOptions;
+        }
+      }
+    },
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      if (column.label === "ATM_MUSTER_ROLL_ID") {
+        return (
+          <span className="link">
+            <Link
+              to={`/works-ui/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
+            >
+              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if (column.label === "ATM_ATTENDANCE_WEEK") {
+        const week = `${Digit.DateUtils.ConvertTimestampToDate(value?.startDate, "dd/MM/yyyy")}-${Digit.DateUtils.ConvertTimestampToDate(
+          value?.endDate,
+          "dd/MM/yyyy"
+        )}`;
+        return <div>{week}</div>;
+      }
+      if (column.label === "ATM_NO_OF_INDIVIDUALS") {
+        return <div>{value?.length}</div>;
+      }
+      if (column.label === "ATM_SLA") {
+        return parseInt(value) > 0 ? (
+          <span className="sla-cell-success">{t(value) || ""}</span>
+        ) : (
+          <span className="sla-cell-error">{t(value) || ""}</span>
+        );
+      }
+    },
+    populateReqCriteria: () => {
+      
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/org-services/organisation/v1/_search",
+        params: { limit: 50, offset: 0 },
+        body: {
+          SearchCriteria: {
+            tenantId: tenantId,
+          },
+        },
+        config: {
+          enabled: true,
+          select: (data) => {
+            return data?.organisations;
+          },
+        },
+      };
+    },
+  },
   SearchEstimateConfig: {
     customValidationCheck: (data) => {
       //checking both to and from date are present
@@ -81,7 +190,7 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
-      const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromProposalDate);
+      const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromProposalDate,"daystart");
       const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toProposalDate);
       const projectType = data?.params?.projectType?.code;
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromProposalDate, toProposalDate, projectType };
