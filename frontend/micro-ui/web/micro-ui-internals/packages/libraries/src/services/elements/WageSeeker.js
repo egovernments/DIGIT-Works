@@ -21,5 +21,15 @@ export const WageSeekerService = {
         auth: true,
         userService: true,
         data: data
+      }),
+    
+    create: (data) => 
+      Request({
+        url: Urls.wageseeker.create,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        data: data
       })
 };

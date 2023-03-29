@@ -133,6 +133,7 @@ import useUpdateCustom from "./useUpdateCustom";
 import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
 import useWageSeekerDetails from "./wageSeeker/useWageSeekerDetails";
 import useUpdateWageSeeker from "./wageSeeker/useUpdateWageSeeker";
+import useCreateWageSeeker from "./wageSeeker/useCreateWageSeeker";
 
 import useCreateWO from "./works/useCreateWO";
 import useSearchOrg from "./works/useSearchOrg";
@@ -144,6 +145,7 @@ import useBillCreate from "./bills/useBillCreate";
 import useUpdateProject from "./works/useUpdateProject";
 
 import useUpdateBankAccount from "./bankAccount/useUpdateBankAccount";
+import useCreateBankAccount from "./bankAccount/useCreateBankAccount";
 
 const works = {
   useViewEstimateDetails,
@@ -272,11 +274,13 @@ const project = {
 const wageSeeker = {
   useViewWageSeeker,
   useWageSeekerDetails,
-  useUpdateWageSeeker
+  useUpdateWageSeeker,
+  useCreateWageSeeker
 }
 
 const bankAccount = {
-  useUpdateBankAccount
+  useUpdateBankAccount,
+  useCreateBankAccount
 }
 
 const Hooks = {

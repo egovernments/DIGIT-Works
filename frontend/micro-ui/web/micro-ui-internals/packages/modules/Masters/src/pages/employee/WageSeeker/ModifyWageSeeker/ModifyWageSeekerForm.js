@@ -26,6 +26,9 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     const { mutate: UpdateWageSeekerMutation } = Digit.Hooks.wageSeeker.useUpdateWageSeeker();
     const { mutate: UpdateBankAccountMutation } = Digit.Hooks.bankAccount.useUpdateBankAccount();
 
+    const { mutate: CreateWageSeekerMutation } = Digit.Hooks.wageSeeker.useCreateWageSeeker();
+    const { mutate: CreateBankAccountMutation } = Digit.Hooks.bankAccount.useCreateBankAccount();
+
     //Skill data
     const {isLoading: skillDataFetching, data: skillData } = Digit.Hooks.useCustomMDMS(
         stateTenant,
@@ -135,15 +138,15 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
 
     const sendDataToResponsePage = (individualId, isSuccess, message, showWageSeekerID) => {
         history.push({
-          pathname: `/${window?.contextPath}/employee/masters/response`,
-          search: `?tenantId=${tenantId}&individualId=${individualId}`,
-          state : {
-            message,
-            showWageSeekerID,
-            isSuccess
-          }
+            pathname: `/${window?.contextPath}/employee/masters/response`,
+            search: individualId ? `?tenantId=${tenantId}&individualId=${individualId}` : '',
+            state : {
+                message,
+                showWageSeekerID,
+                isSuccess
+            }
         }); 
-      }
+    }
 
     const handleResponseForUpdate = async (wageSeekerPayload, bankAccountPayload) => {
         //individualDetailsUpdated , financeDetailsUpdated
@@ -154,34 +157,44 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
               });
         } else if(!individualDetailsUpdated && financeDetailsUpdated) {
             await UpdateBankAccountMutation(bankAccountPayload, {
-                onError :  async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, 'Wage Seeker Modification Failed!', true),
-                onSuccess: async (responseData) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, true, 'Wage Seeker modified Successfully', true)
+                onError :  async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
+                onSuccess: async (responseData) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
               })
         } else if(individualDetailsUpdated && financeDetailsUpdated) {
             await UpdateWageSeekerMutation(wageSeekerPayload, {
-                onError: async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, 'Wage Seeker Modification Failed!', true),
+                onError: async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
                 onSuccess: async (responseData) => {
                     //Update bank account details if wage seeker update success
                     await UpdateBankAccountMutation(bankAccountPayload, {
-                        onError :  async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, 'Wage Seeker Modification Failed!', true),
-                        onSuccess: async (responseData) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, true, 'Wage Seeker modified Successfully', true)
+                        onError :  async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
+                        onSuccess: async (responseData) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
                     })
                 },
             });
         }  
     }
 
-    const handleResponseForCreate = async (wageSeekerPayload, bankAccountPayload) => {}
+    const handleResponseForCreate = async (wageSeekerPayload, data) => {
+        await CreateWageSeekerMutation(wageSeekerPayload, {
+            onError: async (error) => sendDataToResponsePage('', false, "MASTERS_WAGE_SEEKER_CREATION_FAIL", false),
+            onSuccess: async (responseData) => {
+                //Update bank account details if wage seeker update success
+                const bankAccountPayload = getBankAccountUpdatePayload({formData: data, wageSeekerDataFromAPI: '', tenantId, isModify, referenceId: responseData?.Individual?.id});
+                await CreateBankAccountMutation(bankAccountPayload, {
+                    onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_WAGE_SEEKER_CREATION_FAIL", false),
+                    onSuccess: async (responseData) => sendDataToResponsePage(responseData?.Individual?.id, true, "MASTERS_WAGE_SEEKER_CREATION_SUCCESS", true)
+                })
+            },
+        });
+    }
 
     const onSubmit = (data) => {
-        console.log('DATA', data);
         const wageSeekerPayload = getWageSeekerUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify})
-        const bankAccountPayload = getBankAccountUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify});
-        console.log('wageSeekerPayload', {wageSeekerPayload, bankAccountPayload});
         if(isModify) {
+            const bankAccountPayload = getBankAccountUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify, referenceId: ''});
             handleResponseForUpdate(wageSeekerPayload, bankAccountPayload);
         }else {
-            handleResponseForCreate(wageSeekerPayload, bankAccountPayload);
+            handleResponseForCreate(wageSeekerPayload, data);
         }
     }
 

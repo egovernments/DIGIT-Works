@@ -21,5 +21,15 @@ export const BankAccountService = {
           auth: true,
           userService: true,
           data: data
+        }),
+
+    create: (data) => 
+        Request({
+          url: Urls.bankaccount.create,
+          useCache: false,
+          method: "POST",
+          auth: true,
+          userService: true,
+          data: data
         })
   };

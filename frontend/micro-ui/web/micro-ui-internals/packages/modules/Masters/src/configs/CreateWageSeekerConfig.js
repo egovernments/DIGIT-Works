@@ -31,7 +31,7 @@ export const CreateWageSeekerConfig = {
             },
             {
               label: "ES_COMMON_AADHAR",
-              isMandatory: false,
+              isMandatory: true,
               key: "basicDetails_aadhar",
               type: "text",
               disable: false,
@@ -40,6 +40,7 @@ export const CreateWageSeekerConfig = {
               },
               populators: { 
                 name: "basicDetails_aadhar",
+                error: "WORKS_REQUIRED_ERR",
                 customStyle : {
                   pointerEvents : "auto"
                 },
