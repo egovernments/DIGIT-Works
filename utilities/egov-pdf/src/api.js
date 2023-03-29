@@ -47,17 +47,6 @@ async function search_user(uuid, tenantId, requestinfo) {
   });
 }
 
-async function search_epass(uuid, tenantId, requestinfo) {
-  return await axios({
-    method: "post",
-    url: url.resolve(config.host.epass, config.paths.epass_search),
-    data: requestinfo,
-    params: {
-      tenantId: tenantId,
-      ids: uuid,
-    },
-  });
-}
 
 async function search_workflow(applicationNumber, tenantId, requestinfo) {
   var params = {
@@ -245,7 +234,6 @@ async function create_bulk_pdf_pt(kafkaData){
 module.exports = {
   create_pdf,
   create_pdf_and_upload,
-  search_epass,
   search_mdms,
   search_user,
   search_workflow,
