@@ -180,7 +180,7 @@ public class ProjectRepository {
     private void addTargetToProject(Project project, List<Target> targets) {
         project.setTargets(new ArrayList<>());
         for (Target target: targets) {
-            if (target.getProjectid().equals(project.getId()) && project.getTargets().stream().noneMatch(t -> t.getId().equals(target.getId()))) {
+            if (target.getProjectid().equals(project.getId()) && !target.getIsDeleted() && project.getTargets().stream().noneMatch(t -> t.getId().equals(target.getId()))) {
                 project.getTargets().add(target);
             }
         }
@@ -190,7 +190,9 @@ public class ProjectRepository {
     private void addDocumentToProject(Project project, List<Document> documents) {
         project.setDocuments(new ArrayList<>());
         for (Document document: documents) {
-            if (document.getProjectid().equals(project.getId()) && project.getDocuments().stream().noneMatch(t -> t.getId().equals(document.getId()))) {
+            if (document.getProjectid().equals(project.getId())
+                    && (document.getStatus() == null || document.getStatus() != null && !document.getStatus().equals("INACTIVE"))
+                    && project.getDocuments().stream().noneMatch(t -> t.getId().equals(document.getId()))) {
                 project.getDocuments().add(document);
             }
         }
