@@ -1,20 +1,16 @@
 package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.CreateUserRequest;
-import digit.models.coremodels.UserDetailResponse;
-import digit.models.coremodels.UserSearchRequest;
+import digit.models.coremodels.user.enums.UserType;
+import org.egov.common.contract.response.ResponseInfo;
+import org.egov.web.models.*;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.Role;
-import org.egov.common.contract.request.User;
+import digit.models.coremodels.user.Role;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.OrganisationConstant;
-import org.egov.web.models.ContactDetails;
-import org.egov.web.models.OrgRequest;
-import org.egov.web.models.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -23,7 +19,6 @@ import org.springframework.util.ObjectUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -60,10 +55,10 @@ public class UserService {
 
         for (ContactDetails contactDetails : contactDetailsList) {
 
-            User newUser = new User();
+            User newUser = User.builder().build();
             addUserDefaultFields(stateLevelTenantId, role, newUser, contactDetails);
             UserDetailResponse userDetailResponse = userExists(contactDetails, stateLevelTenantId, requestInfo, Boolean.TRUE);
-            List<User> existingUsersFromService = userDetailResponse.getUser();
+            List<UserRequest> existingUsersFromService = userDetailResponse.getUser();
 
             if (CollectionUtils.isEmpty(existingUsersFromService)) {
 
@@ -87,9 +82,10 @@ public class UserService {
                 .append(config.getUserContextPath())
                 .append(config.getUserCreateEndpoint());
 
-        CreateUserRequest userRequest = new CreateUserRequest(requestInfo, newUser);
+        UserRequest userRequest = new UserRequest(newUser);
+        CreateUserRequest createUserRequest = new CreateUserRequest(requestInfo, userRequest);
 
-        userDetailResponse = userCall(userRequest, uri);
+        userDetailResponse = userCall(createUserRequest, uri);
 
         if (ObjectUtils.isEmpty(userDetailResponse)) {
             throw new CustomException("INVALID USER RESPONSE",
@@ -113,8 +109,9 @@ public class UserService {
         user.setEmailId(contactDetails.getContactEmail());
         user.setName(contactDetails.getContactName());
         user.setTenantId(tenantId);
-        user.setType(OrganisationConstant.ORG_CITIZEN_TYPE);
-        user.setRoles(Collections.singletonList(role));
+        user.setType(UserType.CITIZEN);
+        user.setRoles(Collections.singleton(role));
+        user.setActive(Boolean.TRUE);
 
         contactDetails.setActive(true);
         contactDetails.setTenantId(tenantId);
@@ -178,7 +175,7 @@ public class UserService {
                 UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
                 return userDetailResponse;
             } else {
-                return new UserDetailResponse();
+                return new UserDetailResponse(ResponseInfo.builder().build(),new ArrayList<>());
             }
         }
         // Which Exception to throw?
@@ -273,7 +270,7 @@ public class UserService {
         }
         contactDetailsList.forEach(contactDetails -> {
 
-            User newUser = new User();
+            User newUser = User.builder().build();
             addUserDefaultFields(stateLevelTenantId, role, newUser, contactDetails);
 
             UserDetailResponse userDetailResponse = userExists(contactDetails, stateLevelTenantId, requestInfo, Boolean.FALSE);
@@ -283,7 +280,8 @@ public class UserService {
             if (!CollectionUtils.isEmpty(userDetailResponse.getUser())) {
                 newUser.setId(userDetailResponse.getUser().get(0).getId());
                 uri = uri.append(config.getUserContextPath()).append(contactDetails.getId()).append(config.getUserUpdateEndpoint());
-                userDetailResponse = userCall(new CreateUserRequest(requestInfo, newUser), uri);
+                UserRequest userRequest = new UserRequest(newUser);
+                userDetailResponse = userCall(new CreateUserRequest(requestInfo, userRequest), uri);
                 setContactFields(contactDetails, userDetailResponse, requestInfo);
             } else {
                 throw new CustomException("USER.UUID",

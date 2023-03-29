@@ -18,4 +18,14 @@ public class OrganisationConstant {
     public static final String ORG_CITIZEN_ROLE_CODE = "ORG_ADMIN";
     public static final String ORG_CITIZEN_ROLE_NAME = "Organization admin";
     public static final String ORG_CITIZEN_TYPE = "CITIZEN";
+
+
+    public static final String PATTERN_NAME = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]*$";
+
+
+    public static final String PATTERN_GENDER = "^[a-zA-Z ]*$";
+    public static final String PATTERN_MOBILE = "(^$|[0-9]{10})";
+    public static final String PATTERN_CITY = "^[a-zA-Z. ]*$";
+    public static final String PATTERN_TENANT = "^[a-zA-Z. ]*$";
+    public static final String PATTERN_PINCODE = "^[1-9][0-9]{5}$";
 }
