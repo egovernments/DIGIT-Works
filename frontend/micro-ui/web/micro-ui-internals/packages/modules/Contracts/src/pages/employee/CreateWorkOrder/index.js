@@ -1,17 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA";
 import CreateWorkOrderForm from "./CreateWorkOrderForm";
+// import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA.json";
+import { useTranslation } from "react-i18next";
+import { Loader } from "@egovernments/digit-ui-react-components";
 
 const CreateWorkOrder = () => {
-
+    const {t} = useTranslation();
     const queryStrings = Digit.Hooks.useQueryParams();
     const estimateNumber = queryStrings?.estimateNumber;
     const tenantId = queryStrings?.tenantId;
-    const [config, setConfig] = useState({});
+    const stateTenant = Digit.ULBService.getStateId();
+    const [documents, setDocuments] = useState([]);
+    const [officerInCharge, setOfficerInCharge] = useState([]);
+    const [nameOfCBO, setNameOfCBO] = useState([]);
+    const [isFormReady, setIsFormReady] = useState(false);
 
-     //fetching estimate data
-     const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
+    const { isLoading : isConfigLoading, data : createWorkOrderConfigMUKTA} = Digit.Hooks.useCustomMDMS( //change to data
+    stateTenant,
+    Digit.Utils.getConfigModuleName(),
+    [
+        {
+            "name": "CreateWorkOrderConfig"
+        }
+    ],
+    {
+      select: (data) => {
+          return data?.[Digit.Utils.getConfigModuleName()]?.CreateWorkOrderConfig[0];
+      },
+    }
+    );
+
+    //fetching estimate data
+    const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
         tenantId,
         filters: { estimateNumber }
     })
@@ -73,6 +94,13 @@ const CreateWorkOrder = () => {
     //organisation search
     const { isLoading : isOrgSearchLoading, data : organisationOptions } = Digit.Hooks.organisation.useSearchOrg(searchOrgPayload);
     
+    //Overheads Search
+    const { isLoading : isOverHeadsMasterDataLoading, data : overHeadMasterData } = Digit.Hooks.useCustomMDMS(
+        Digit.ULBService.getStateId(),
+        "works",
+        [{ "name": "Overheads" }]
+    );
+
     const createOfficerInChargeObject = () => {
         return assigneeOptions?.Employees?.filter(employees=>employees?.isActive).map((employee=>( { code : employee?.code, name : employee?.user?.name, data : employee} )))
     }
@@ -81,30 +109,50 @@ const CreateWorkOrder = () => {
         return organisationOptions?.organisations?.map(organisationOption => ( {code : organisationOption?.id, name : organisationOption?.name, applicationNumber : organisationOption?.applicationNumber } ))
     }
 
+    const handleWorkOrderAmount = (estimate, overHeadMasterData) => {
+        overHeadMasterData = overHeadMasterData?.works?.Overheads;
+        let totalAmount = estimate?.additionalDetails?.totalEstimatedAmount;
+
+        //loop through the estimate Details and filter with OVERHEAD
+        estimate?.estimateDetails?.forEach((estimateDetail)=>{
+            if(estimateDetail?.category !== "OVERHEAD") return;
+            let amountDetails = estimateDetail?.amountDetail?.[0];
+
+            let overHeadCode = amountDetails?.type;
+            let shouldSubtract = !((overHeadMasterData?.filter(overHead=>overHead?.code === overHeadCode)?.[0])?.isWorkOrderValue);
+
+            if(shouldSubtract) {
+                totalAmount -= amountDetails?.amount;
+            }
+        })
+        return totalAmount;
+    }
+
     useEffect(()=>{
-        if((!isEstimateLoading && !isProjectLoading && !isLoadingHrmsSearch && !isOrgSearchLoading)) {
+        if((!isEstimateLoading && !isProjectLoading && !isLoadingHrmsSearch && !isOrgSearchLoading && !isOverHeadsMasterDataLoading)) {
             //set default values
             let defaultValues = {
                 basicDetails_projectID :  project?.projectNumber,
                 basicDetails_dateOfProposal : Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal),
                 basicDetails_projectName : project?.name,
                 basicDetails_projectDesc : project?.description,
-                workOrderAmountRs : estimate?.additionalDetails?.totalEstimatedAmount
+                workOrderAmountRs : handleWorkOrderAmount(estimate, overHeadMasterData)
             };
 
             //set document object
-            let documents =  createDocumentObject(estimate?.additionalDetails?.documents);
-            let officerInCharge = createOfficerInChargeObject();
-            let nameOfCBO = createNameOfCBOObject();
+            setDocuments(createDocumentObject(estimate?.additionalDetails?.documents));
+            setOfficerInCharge(createOfficerInChargeObject());
+            setNameOfCBO(createNameOfCBOObject());
             setSessionFormData({...sessionFormData, ...defaultValues});
-            setConfig(createWorkOrderConfigMUKTA({defaultValues, documents, officerInCharge, nameOfCBO}));
+            setIsFormReady(true);
         }
-    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading])
+    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading, isOverHeadsMasterDataLoading]);
 
+    if(isConfigLoading) return <Loader></Loader>
     return (
         <React.Fragment>
             {
-                config && <CreateWorkOrderForm createWorkOrderConfig={config?.CreateWorkOrderConfig?.[0]} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project}></CreateWorkOrderForm>
+                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={createWorkOrderConfigMUKTA} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}}></CreateWorkOrderForm>
             }
         </React.Fragment>
     )
