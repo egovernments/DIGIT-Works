@@ -1,11 +1,14 @@
 package org.egov.validator;
 
 import com.jayway.jsonpath.JsonPath;
+import digit.models.coremodels.mdms.MdmsCriteriaReq;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.config.Configuration;
 import org.egov.repository.OrganisationRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.BoundaryUtil;
 import org.egov.util.MDMSUtil;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,12 @@ public class OrganisationServiceValidator {
     @Autowired
     private OrganisationRepository organisationRepository;
 
+    @Autowired
+    private BoundaryUtil boundaryUtil;
+
+    @Autowired
+    private Configuration config;
+
     /**
      * Validate the simple organisation registry (create) details
      *
@@ -41,21 +50,80 @@ public class OrganisationServiceValidator {
         validateRequestInfo(requestInfo, errorMap);
         validateOrganisationDetails(organisationList, errorMap);
 
-        String rootTenantId = organisationList.get(0).getTenantId();
-        rootTenantId = rootTenantId.split("\\.")[0];
-        //get the organisation related MDMS data
-        Object mdmsData = mdmsUtil.mDMSCall(orgRequest, rootTenantId);
-
         //validate organisation details against MDMS
-        validateMDMSData(organisationList, mdmsData, errorMap);
+        validateMDMSData(organisationList, requestInfo,organisationList.get(0).getTenantId(), errorMap);
+
+        //validate location - boundary code(s)
+        Map<String, List<String>> boundariesForValidation = getBoundaryForValidation(organisationList);
+        validateBoundary(boundariesForValidation, organisationList.get(0).getTenantId(), requestInfo, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
 
-    private void validateMDMSData(List<Organisation> organisationList, Object mdmsData, Map<String, String> errorMap) {
+    private void validateBoundary(Map<String, List<String>> boundaries, String tenantId, RequestInfo requestInfo, Map<String, String> errorMap) {
+        if (!boundaries.isEmpty()) {
+            boundaryUtil.validateBoundaryDetails(boundaries, tenantId, requestInfo, config.getLocationHierarchyType());
+        }
+    }
+
+    private Map<String, List<String>> getBoundaryForValidation(List<Organisation> organisationList) {
+        Map<String, List<String>> boundariesMap = new HashMap<>();
+        List<Address> orgAddressFinalList = new ArrayList<>();
+        for (Organisation organisation : organisationList) {
+            orgAddressFinalList.addAll(organisation.getOrgAddress());
+        }
+        if (!CollectionUtils.isEmpty(orgAddressFinalList)) {
+            for (Address orgAddress : orgAddressFinalList) {
+                if (orgAddress != null
+                        && StringUtils.isNotBlank(orgAddress.getBoundaryType())
+                        && StringUtils.isNotBlank(orgAddress.getBoundaryCode())) {
+
+                    String boundaryType = orgAddress.getBoundaryType();
+                    String boundaryCode = orgAddress.getBoundaryCode();
+
+                    // If the boundary type already exists in the map, add the boundary code to the existing list
+                    if (boundariesMap.containsKey(boundaryType)) {
+                        boundariesMap.get(boundaryType).add(boundaryCode);
+                    }
+                    // If the boundary type does not exist in the map, create a new list and add the boundary code to it
+                    else {
+                        List<String> boundaries = new ArrayList<>();
+                        boundaries.add(boundaryCode);
+                        boundariesMap.put(boundaryType, boundaries);
+                    }
+                }
+            }
+        }
+        return boundariesMap;
+    }
+
+    private void validateMDMSData(List<Organisation> organisationList, RequestInfo requestInfo, String tenantId, Map<String, String> errorMap) {
         log.info("OrganisationServiceValidator::validateMDMSData");
-        String tenantId = organisationList.get(0).getTenantId();
+        String rootTenantId = tenantId.split("\\.")[0];
+
+        //get the organisation related MDMS data
+        //tenant -MDMS data
+        MdmsCriteriaReq mdmsCriteriaReqForTenant = mdmsUtil.getTenantMDMSRequest(requestInfo,rootTenantId,organisationList);
+        Object tenantMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForTenant, rootTenantId);
+
+        //Org type -MDMS data
+        MdmsCriteriaReq mdmsCriteriaReqForOrgType = mdmsUtil.getOrgTypeMDMSRequest(requestInfo,rootTenantId,organisationList);
+        Object orgTypeMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgType, rootTenantId);
+
+        //Org Fun Category -MDMS data
+        MdmsCriteriaReq mdmsCriteriaReqForOrgFunCategory = mdmsUtil.getOrgFunCategoryMDMSRequest(requestInfo,rootTenantId,organisationList);
+        Object orgFunCategoryMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgFunCategory, rootTenantId);
+
+        //Org Tax Identifier -MDMS data
+        MdmsCriteriaReq mdmsCriteriaReqForOrgTaxIdentifier = mdmsUtil.getOrgTaxIdentifierMDMSRequest(requestInfo,rootTenantId,organisationList);
+        Object orgTaxIdentifierMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgTaxIdentifier, rootTenantId);
+
+
+        //Org Function Class -MDMS data
+        MdmsCriteriaReq mdmsCriteriaReqForOrgFunctionClass = mdmsUtil.getOrgFunctionMDMSRequest(requestInfo,rootTenantId,organisationList);
+        Object orgFunctionClassMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgFunctionClass, rootTenantId);
+
 
         Set<String> orgTypeReqSet = new HashSet<>();
         Set<String> orgFuncCategoryReqSet = new HashSet<>();
@@ -98,11 +166,11 @@ public class OrganisationServiceValidator {
         List<Object> orgFuncClassRes = null;
         List<Object> orgIdentifierRes = null;
         try {
-            tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
-            orgTypeRes = JsonPath.read(mdmsData, jsonPathForOrgType);
-            orgFuncCategoryRes = JsonPath.read(mdmsData, jsonPathForOrgFuncCategory);
-            orgFuncClassRes = JsonPath.read(mdmsData, jsonPathForOrgFuncClass);
-            orgIdentifierRes = JsonPath.read(mdmsData, jsonPathForOrgIdentifier);
+            tenantRes = JsonPath.read(tenantMdmsData, jsonPathForTenants);
+            orgTypeRes = JsonPath.read(orgTypeMdmsData, jsonPathForOrgType);
+            orgFuncCategoryRes = JsonPath.read(orgFunCategoryMdmsData, jsonPathForOrgFuncCategory);
+            orgFuncClassRes = JsonPath.read(orgFunctionClassMdmsData, jsonPathForOrgFuncClass);
+            orgIdentifierRes = JsonPath.read(orgTaxIdentifierMdmsData, jsonPathForOrgIdentifier);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
@@ -222,14 +290,12 @@ public class OrganisationServiceValidator {
 
         validateOrgIdsExistInSystem(requestInfo, organisationList);
 
-        String rootTenantId = organisationList.get(0).getTenantId();
-        rootTenantId = rootTenantId.split("\\.")[0];
-        //get the organisation related MDMS data
-        Object mdmsData = mdmsUtil.mDMSCall(orgRequest, rootTenantId);
-
         //validate organisation details against MDMS
-        validateMDMSData(organisationList, mdmsData, errorMap);
+        validateMDMSData(organisationList, requestInfo,organisationList.get(0).getTenantId(), errorMap);
 
+        //validate location - boundary code(s)
+        Map<String, List<String>> boundariesForValidation = getBoundaryForValidation(organisationList);
+        validateBoundary(boundariesForValidation, organisationList.get(0).getTenantId(), requestInfo, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);

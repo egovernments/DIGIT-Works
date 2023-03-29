@@ -35,41 +35,22 @@ public class MDMSUtil {
     /**
      * Calls MDMS service to fetch works master data
      *
-     * @param orgRequest
+     * @param mdmsCriteriaReq
      * @param tenantId
      * @return
      */
-    public Object mDMSCall(OrgRequest orgRequest, String tenantId) {
+    public Object mDMSCall(MdmsCriteriaReq mdmsCriteriaReq, String tenantId) {
         log.info("MDMSUtil::mDMSCall");
-        RequestInfo requestInfo = orgRequest.getRequestInfo();
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId, orgRequest.getOrganisations());
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
         return result;
     }
 
-    /**
-     * Returns mdms search criteria based on the tenantId
-     *
-     * @param requestInfo
-     * @param tenantId
-     * @param organisationList
-     * @return
-     */
-    public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId, List<Organisation> organisationList) {
-        log.info("MDMSUtil::getMDMSRequest");
-        ModuleDetail orgTenantModuleDetail = getTenantModuleRequestData(organisationList);
-        ModuleDetail orgTypeModuleDetail = getOrgTypeModuleRequestData(organisationList);
-        ModuleDetail orgFuncCategoryModuleDetail = getOrgFunCategoryModuleRequestData(organisationList);
-        //ModuleDetail orgTransferModuleDetail = getOrgTransferModuleRequestData(organisationList);
-        ModuleDetail orgTaxIdentifierModuleDetail = getOrgTaxIdentifierModuleRequestData(organisationList);
+
+    public MdmsCriteriaReq getOrgFunctionMDMSRequest(RequestInfo requestInfo, String tenantId, List<Organisation> organisationList) {
+        log.info("MDMSUtil::getOrgFunctionMDMSRequest");
         ModuleDetail orgFunctionModuleDetail = getOrgFunctionModuleRequestData(organisationList);
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
-        moduleDetails.add(orgTenantModuleDetail);
-        moduleDetails.add(orgTypeModuleDetail);
-        moduleDetails.add(orgFuncCategoryModuleDetail);
-        //moduleDetails.add(orgTransferModuleDetail);
-        moduleDetails.add(orgTaxIdentifierModuleDetail);
         moduleDetails.add(orgFunctionModuleDetail);
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
@@ -78,7 +59,75 @@ public class MDMSUtil {
         MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
                 .requestInfo(requestInfo).build();
 
-        log.info("MDMSUtil::search MDMS request -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
+        log.info("MDMSUtil::search Org Function MDMS request -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
+        return mdmsCriteriaReq;
+    }
+
+    public MdmsCriteriaReq getOrgTaxIdentifierMDMSRequest(RequestInfo requestInfo, String tenantId, List<Organisation> organisationList) {
+        log.info("MDMSUtil::getOrgTaxIdentifierMDMSRequest");
+        ModuleDetail orgTaxIdentifierModuleDetail = getOrgTaxIdentifierModuleRequestData(organisationList);
+
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(orgTaxIdentifierModuleDetail);
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
+                .build();
+
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+
+        log.info("MDMSUtil::search Org Tax Identifier MDMS request -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
+        return mdmsCriteriaReq;
+    }
+
+    public MdmsCriteriaReq getOrgFunCategoryMDMSRequest(RequestInfo requestInfo, String tenantId, List<Organisation> organisationList) {
+        log.info("MDMSUtil::getOrgFunCategoryMDMSRequest");
+        ModuleDetail orgFuncCategoryModuleDetail = getOrgFunCategoryModuleRequestData(organisationList);
+
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(orgFuncCategoryModuleDetail);
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
+                .build();
+
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+
+        log.info("MDMSUtil::search Org Function Category MDMSRequest MDMS request -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
+        return mdmsCriteriaReq;
+    }
+
+    public MdmsCriteriaReq getTenantMDMSRequest(RequestInfo requestInfo, String tenantId, List<Organisation> organisationList) {
+        log.info("MDMSUtil::getTenantMDMSRequest");
+        ModuleDetail orgTenantModuleDetail = getTenantModuleRequestData(organisationList);
+
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(orgTenantModuleDetail);
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
+                .build();
+
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+
+        log.info("MDMSUtil::search tenant MDMS request -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
+        return mdmsCriteriaReq;
+    }
+
+    public MdmsCriteriaReq getOrgTypeMDMSRequest(RequestInfo requestInfo, String tenantId, List<Organisation> organisationList) {
+        log.info("MDMSUtil::getOrgTypeMDMSRequest");
+        ModuleDetail orgTypeModuleDetail = getOrgTypeModuleRequestData(organisationList);
+
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(orgTypeModuleDetail);
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
+                .build();
+
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+
+        log.info("MDMSUtil::search OrgType MDMS request -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
         return mdmsCriteriaReq;
     }
 

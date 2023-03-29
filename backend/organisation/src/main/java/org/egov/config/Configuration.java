@@ -132,4 +132,17 @@ public class Configuration {
     @Value("${org.default.limit}")
     private Integer defaultLimit;
 
+    //Location
+    @Value("${egov.location.host}")
+    private String locationHost;
+
+    @Value("${egov.location.context.path}")
+    private String locationContextPath;
+
+    @Value("${egov.location.endpoint}")
+    private String locationEndpoint;
+
+    @Value("${egov.location.hierarchy.type}")
+    private String locationHierarchyType;
+
 }
