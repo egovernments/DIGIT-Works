@@ -21,7 +21,7 @@ To setup the egov-pdf service in your local system, clone the [works repository]
  function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
  kubectl port-forward -n egov $(kgpt egov-mdms-service) 8083:8080 &
  kubectl port-forward -n egov $(kgpt pdf-service) 8082:8080 &
- kubectl port-forward -n egov $(kgpt works-project_manageent_system) 8081:8080
+ kubectl port-forward -n egov $(kgpt works-project_management_system) 8081:8080
 ``` 
 
 - Update below listed properties in `config.js` before running the project:
