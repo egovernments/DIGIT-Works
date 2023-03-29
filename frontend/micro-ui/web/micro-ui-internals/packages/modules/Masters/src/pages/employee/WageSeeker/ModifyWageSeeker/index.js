@@ -13,7 +13,7 @@ const ModifyWageSeeker = () => {
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
-    /*
+    
     const { isLoading, data: configs } = Digit.Hooks.useCustomMDMS(
         stateTenant,
         Digit.Utils.getConfigModuleName(),
@@ -28,10 +28,9 @@ const ModifyWageSeeker = () => {
             },
         }
     );
-    */
 
     //For local config
-    const configs = CreateWageSeekerConfig?.CreateWageSeekerConfig?.[0]
+    //const configs = CreateWageSeekerConfig?.CreateWageSeekerConfig?.[0]
 
     const ULB = Digit.Utils.locale.getCityLocale(tenantId)
     let ULBOptions = []
@@ -62,15 +61,21 @@ const ModifyWageSeeker = () => {
     const [sessionFormData, setSessionFormData, clearSessionFormData] = wageSeekerSession;
 
     useEffect(() => {
+        if(sessionFormData?.basicDetails_wageSeekerId !== individualId) {
+          clearSessionFormData();
+        }
+    },[])
+
+    useEffect(() => {
         if(configs && !wageSeekerDataFetching) {
             updateWageSeekerFormDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady})
         }
       },[configs, wageSeekerDataFetching]);
 
-    //if(isLoading) return <Loader />
+    if(isLoading) return <Loader />
     return (
         <React.Fragment>
-            <Header styles={{ fontSize: "32px" }}>{t("MASTERS_MODIFY_WAGESEEKER")}</Header>
+            <Header styles={{ fontSize: "32px" }}>{isModify ? t("MASTERS_MODIFY_WAGESEEKER") : t("ACTION_TEST_MASTERS_CREATE_WAGESEEKER")}</Header>
             {
                 showDataError === null && isFormReady && (
                     <ModifyWageSeekerForm 

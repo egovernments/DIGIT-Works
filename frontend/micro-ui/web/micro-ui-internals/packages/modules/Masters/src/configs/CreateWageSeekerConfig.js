@@ -59,7 +59,7 @@ export const CreateWageSeekerConfig = {
               populators: { 
                 name: "basicDetails_wageSeekerName", 
                 error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
-                validation: { pattern: /^[a-zA-Z0-9\/{\/.\- _$@#\'}]*$/i, minlength : 2, maxlength: 128 }
+                validation: { pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 128 }
               }
             },
             {
@@ -74,7 +74,7 @@ export const CreateWageSeekerConfig = {
               populators: { 
                 name: "basicDetails_fatherHusbandName", 
                 error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
-                validation: { pattern: /^[a-zA-Z0-9\/{\/.\- _$@#\'}]*$/i, minlength : 2, maxlength: 128 }
+                validation: { pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 128 }
               }
             },
             {
@@ -171,11 +171,14 @@ export const CreateWageSeekerConfig = {
               isMandatory: false,
               key: "basicDetails_photograph",
               type:"multiupload",
+              preProcess : {
+                updateDependent : ["populators.allowedFileTypes"]
+              },
               populators:{
                   name: "basicDetails_photograph",
                   allowedMaxSizeInMB:2,
                   maxFilesAllowed:1,
-                  allowedFileTypes : /(.*?)(jpeg|jpg|png)$/i,
+                  allowedFileTypes : {},
               }
             }
           ]
@@ -272,10 +275,13 @@ export const CreateWageSeekerConfig = {
               key: "locDetails_streetName",
               type: "text",
               disable: false,
+              preProcess : {
+                convertStringToRegEx : ["populators.validation.pattern"]
+              },
               populators: { 
                 name: "locDetails_streetName", 
                 error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
-                validation: { pattern: /^[a-zA-Z0-9\/{\/.\- _$@#\'}]*$/i, minlength : 2, maxlength: 128 }
+                validation: { pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 128 }
               }
             },
             {
@@ -284,10 +290,13 @@ export const CreateWageSeekerConfig = {
               key: "locDetails_houseName",
               type: "text",
               disable: false,
+              preProcess : {
+                convertStringToRegEx : ["populators.validation.pattern"]
+              },
               populators: { 
                 name: "locDetails_houseName", 
                 error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
-                validation: { pattern: /^[a-zA-Z0-9\/{\/.\- _$@#\'}]*$/i, minlength : 2, maxlength: 8 }
+                validation: { pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 8 }
               }
             }
           ]
@@ -302,10 +311,13 @@ export const CreateWageSeekerConfig = {
               key: "financeDetails_accountHolderName",
               type: "text",
               disable: false,
+              preProcess : {
+                convertStringToRegEx : ["populators.validation.pattern"]
+              },
               populators: { 
                 name: "financeDetails_accountHolderName", 
-                error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
-                validation: { pattern: /^[a-zA-Z0-9\/{\/.\- _$@#\'}]*$/i, minlength : 2, maxlength: 64 }
+                error: "WORKS_REQUIRED_ERR",
+                validation: { pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 64 }
               }
             },
             {
@@ -314,10 +326,13 @@ export const CreateWageSeekerConfig = {
               key: "financeDetails_accountNumber",
               type: "number",
               disable: false,
+              preProcess : {
+                convertStringToRegEx : ["populators.validation.pattern"]
+              },
               populators: { 
                 name: "financeDetails_accountNumber",
                 error: "WORKS_REQUIRED_ERR",
-                validation: {pattern: /^\d{9,18}$/} 
+                validation: {pattern: "^[0-9]{9,18}$"} 
               }
             },
             {
@@ -345,10 +360,13 @@ export const CreateWageSeekerConfig = {
               key: "financeDetails_ifsc",
               type: "text",
               disable: false,
+              preProcess : {
+                convertStringToRegEx : ["populators.validation.pattern"]
+              },
               populators: { 
                 name: "financeDetails_ifsc", 
                 error: "WORKS_REQUIRED_ERR", 
-                validation: { pattern: /^[A-Z]{4}0[A-Z0-9]{6}$/ }
+                validation: { pattern: "^[A-Z]{4}0[A-Z0-9]{6}$" }
               }
             },
             {

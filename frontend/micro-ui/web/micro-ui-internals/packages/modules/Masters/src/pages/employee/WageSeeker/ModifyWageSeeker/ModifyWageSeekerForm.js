@@ -12,6 +12,7 @@ const navConfig =  [{
 const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessionFormData, clearSessionFormData, isModify, wageSeekerDataFromAPI }) => {
     const { t } = useTranslation();
     const history = useHistory()
+    const individualId = wageSeekerDataFromAPI?.individual?.individualId
 
     const [financeDetailsUpdated, setFinanceDetailsUpdated] = useState(false)
     const [individualDetailsUpdated, setIndividualDetailsUpdated] = useState(false)
@@ -152,22 +153,31 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         //individualDetailsUpdated , financeDetailsUpdated
         if(individualDetailsUpdated && !financeDetailsUpdated) {
             await UpdateWageSeekerMutation(wageSeekerPayload, {
-                onError: async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, 'Wage Seeker Modification Failed!', true),
-                onSuccess: async (responseData) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, true, 'Wage Seeker modified Successfully', true)
+                onError: async (error) => sendDataToResponsePage(individualId, false, 'Wage Seeker Modification Failed!', true),
+                onSuccess: async (responseData) => {
+                    sendDataToResponsePage(individualId, true, 'Wage Seeker modified Successfully', true)
+                    clearSessionFormData()
+                }
               });
         } else if(!individualDetailsUpdated && financeDetailsUpdated) {
             await UpdateBankAccountMutation(bankAccountPayload, {
-                onError :  async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
-                onSuccess: async (responseData) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
+                onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
+                onSuccess: async (responseData) => {
+                    sendDataToResponsePage(individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
+                    clearSessionFormData()
+                }
               })
         } else if(individualDetailsUpdated && financeDetailsUpdated) {
             await UpdateWageSeekerMutation(wageSeekerPayload, {
-                onError: async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
+                onError: async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
                 onSuccess: async (responseData) => {
                     //Update bank account details if wage seeker update success
                     await UpdateBankAccountMutation(bankAccountPayload, {
-                        onError :  async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
-                        onSuccess: async (responseData) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
+                        onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
+                        onSuccess: async (responseData) => {
+                            sendDataToResponsePage(individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
+                            clearSessionFormData()
+                        }
                     })
                 },
             });
@@ -182,7 +192,10 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                 const bankAccountPayload = getBankAccountUpdatePayload({formData: data, wageSeekerDataFromAPI: '', tenantId, isModify, referenceId: responseData?.Individual?.id});
                 await CreateBankAccountMutation(bankAccountPayload, {
                     onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_WAGE_SEEKER_CREATION_FAIL", false),
-                    onSuccess: async (responseData) => sendDataToResponsePage(responseData?.Individual?.id, true, "MASTERS_WAGE_SEEKER_CREATION_SUCCESS", true)
+                    onSuccess: async (bankResponseData) => {
+                        sendDataToResponsePage(responseData?.Individual?.individualId, true, "MASTERS_WAGE_SEEKER_CREATION_SUCCESS", true)
+                        clearSessionFormData()
+                    }
                 })
             },
         });
@@ -201,7 +214,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     return (
         <React.Fragment>
            <FormComposer
-                label={isModify ? "CORE_COMMON_SAVE" : "MASTERS_CREATE_WAGE_SEEKER"}
+                label={isModify ? "CORE_COMMON_SAVE" : "ACTION_TEST_MASTERS_CREATE_WAGESEEKER"}
                 config={config?.form}
                 onSubmit={onSubmit}
                 submitInForm={false}
