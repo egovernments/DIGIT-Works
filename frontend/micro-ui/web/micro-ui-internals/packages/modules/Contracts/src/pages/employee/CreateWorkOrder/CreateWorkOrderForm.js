@@ -117,7 +117,6 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     }
 
     const onModalSubmit = async (modalData) => {
-        console.log(inputFormdata);
         const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData});
         
         await CreateWOMutation(payload, {
