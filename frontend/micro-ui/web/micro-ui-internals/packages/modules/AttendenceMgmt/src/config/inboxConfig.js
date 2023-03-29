@@ -79,13 +79,16 @@ const inboxConfig = () => {
                             //here need to render a dropdown for org 
                             {
                             "label": "COMMON_ORG_NAME",
-                            "type": "orgdropdown",
+                            "type": "apidropdown",
                             "isMandatory": false,
                             "disable": false,
                             "populators": {
                                 "name": "orgId",
                                 "optionsKey": "name",
-                                "allowMultiSelect": false
+                                "allowMultiSelect": false,
+                                "masterName":"commonUiConfig",
+                                "moduleName": "AttendanceInboxConfig",
+                                "customfn": "populateReqCriteria"
                             }
                         },
                         

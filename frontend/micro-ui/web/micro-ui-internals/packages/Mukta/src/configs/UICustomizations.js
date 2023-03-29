@@ -159,6 +159,26 @@ export const UICustomizations = {
         );
       }
     },
+    populateReqCriteria: () => {
+      
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/org-services/organisation/v1/_search",
+        params: { limit: 50, offset: 0 },
+        body: {
+          SearchCriteria: {
+            tenantId: tenantId,
+          },
+        },
+        config: {
+          enabled: true,
+          select: (data) => {
+            return data?.organisations;
+          },
+        },
+      };
+    },
   },
   SearchEstimateConfig: {
     customValidationCheck: (data) => {
