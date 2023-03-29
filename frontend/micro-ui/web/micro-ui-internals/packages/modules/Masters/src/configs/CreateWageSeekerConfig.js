@@ -46,7 +46,14 @@ export const CreateWageSeekerConfig = {
               key: "basicDetails_wageSeekerName",
               type: "text",
               disable: false,
-              populators: { name: "basicDetails_wageSeekerName", validation: { minlength : 2 }}
+              preProcess : {
+                convertStringToRegEx : ["populators.validation.pattern"]
+              },
+              populators: { 
+                name: "basicDetails_wageSeekerName", 
+                error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
+                validation: { pattern: /^[a-zA-Z0-9\/{\/.\- _$@#\'}]*$/i, minlength : 2, maxlength: 128 }
+              }
             },
             {
               label: "MASTERS_FATHER_HUSBAND_NAME",
@@ -54,7 +61,14 @@ export const CreateWageSeekerConfig = {
               key: "basicDetails_fatherHusbandName",
               type: "text",
               disable: false,
-              populators: { name: "basicDetails_fatherHusbandName", validation: { minlength : 2 }}
+              preProcess : {
+                convertStringToRegEx : ["populators.validation.pattern"]
+              },
+              populators: { 
+                name: "basicDetails_fatherHusbandName", 
+                error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
+                validation: { pattern: /^[a-zA-Z0-9\/{\/.\- _$@#\'}]*$/i, minlength : 2, maxlength: 128 }
+              }
             },
             {
               label: "ES_COMMON_RELATIONSHIP",
@@ -87,6 +101,7 @@ export const CreateWageSeekerConfig = {
               },
               populators: { 
                   name: "basicDetails_dateOfBirth",
+                  error: ("WORKS_REQUIRED_ERR"),
                   max: "currentDate"
               }
             },
@@ -131,7 +146,6 @@ export const CreateWageSeekerConfig = {
               populators: {
                 name: "basicDetails_socialCategory",
                 optionsKey: "name",
-                error: ("WORKS_REQUIRED_ERR"),
                 optionsCustomStyle : {
                   top : "2.3rem"
                 },
@@ -150,8 +164,8 @@ export const CreateWageSeekerConfig = {
               populators:{
                   name: "basicDetails_photograph",
                   allowedMaxSizeInMB:2,
-                  maxFilesAllowed:2,
-                  allowedFileTypes : /(.*?)(jpeg|jpg|png|pdf|image)$/i,
+                  maxFilesAllowed:1,
+                  allowedFileTypes : /(.*?)(jpeg|jpg|png)$/i,
               }
             }
           ]
@@ -248,7 +262,11 @@ export const CreateWageSeekerConfig = {
               key: "locDetails_streetName",
               type: "text",
               disable: false,
-              populators: { name: "locDetails_streetName", validation: { minlength : 2 }}
+              populators: { 
+                name: "locDetails_streetName", 
+                error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
+                validation: { pattern: /^[a-zA-Z0-9\/{\/.\- _$@#\'}]*$/i, minlength : 2, maxlength: 128 }
+              }
             },
             {
               label: "ES_COMMON_DOOR_NO",
@@ -256,7 +274,11 @@ export const CreateWageSeekerConfig = {
               key: "locDetails_houseName",
               type: "text",
               disable: false,
-              populators: { name: "locDetails_houseName", validation: { minlength : 2 }}
+              populators: { 
+                name: "locDetails_houseName", 
+                error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
+                validation: { pattern: /^[a-zA-Z0-9\/{\/.\- _$@#\'}]*$/i, minlength : 2, maxlength: 8 }
+              }
             }
           ]
         },
@@ -270,7 +292,11 @@ export const CreateWageSeekerConfig = {
               key: "financeDetails_accountHolderName",
               type: "text",
               disable: false,
-              populators: { name: "financeDetails_accountHolderName", validation: { minlength : 2 }}
+              populators: { 
+                name: "financeDetails_accountHolderName", 
+                error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
+                validation: { pattern: /^[a-zA-Z0-9\/{\/.\- _$@#\'}]*$/i, minlength : 2, maxlength: 64 }
+              }
             },
             {
               label: "CORE_COMMON_ACCOUNT_NO",
@@ -278,7 +304,11 @@ export const CreateWageSeekerConfig = {
               key: "financeDetails_accountNumber",
               type: "number",
               disable: false,
-              populators: { name: "financeDetails_accountNumber" }
+              populators: { 
+                name: "financeDetails_accountNumber",
+                error: ("WORKS_REQUIRED_ERR"),
+                validation: {pattern: /^\d{9,18}$/} 
+              }
             },
             {
               label: "CORE_COMMON_ACCOUNT_TYPE",
@@ -305,7 +335,11 @@ export const CreateWageSeekerConfig = {
               key: "financeDetails_ifsc",
               type: "text",
               disable: false,
-              populators: { name: "financeDetails_ifsc", error: "WORKS_REQUIRED_ERR", validation: {minlength : 2} },
+              populators: { 
+                name: "financeDetails_ifsc", 
+                error: "WORKS_REQUIRED_ERR", 
+                validation: { pattern: /^[A-Z]{4}0[A-Z0-9]{6}$/ }
+              }
             },
             {
               label: "MASTERS_BRANCH_NAME",

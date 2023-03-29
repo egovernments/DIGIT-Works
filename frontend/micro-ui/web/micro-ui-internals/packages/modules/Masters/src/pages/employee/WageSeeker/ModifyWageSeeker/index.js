@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
 import { Header, Loader, Toast } from '@egovernments/digit-ui-react-components';
 import { CreateWageSeekerConfig } from '../../../../configs/CreateWageSeekerConfig';
@@ -28,8 +28,9 @@ const ModifyWageSeeker = () => {
             },
         }
     );
-    console.log('MDMS Config', data, Digit.Utils.getConfigModuleName());
     */
+
+    //For local config
     const configs = CreateWageSeekerConfig?.CreateWageSeekerConfig?.[0]
 
     const ULB = Digit.Utils.locale.getCityLocale(tenantId)
@@ -37,15 +38,14 @@ const ModifyWageSeeker = () => {
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
     //const { individualId } = Digit.Hooks.useQueryParams()
-    const individualId = 'IND-2023-03-27-001462'//'IND-2023-03-27-001461'
-    const isModify = false //individualId ? true : false;
+    const individualId = 'IND-2023-03-28-001477'//'IND-2023-03-27-001461'
+    const isModify = individualId ? true : false;
 
     //Call Search Wage Seeker
     const payload = {
         Individual: { individualId }
     }
     const searchParams = { offset: 0, limit: 100 }
-      
     const {isLoading: wageSeekerDataFetching, data: wageSeekerData, isError, isSuccess, error} = Digit.Hooks.wageSeeker.useWageSeekerDetails({tenantId, data: payload, searchParams, config:{
         enabled: isModify,
         cacheTime:0
@@ -57,13 +57,13 @@ const ModifyWageSeeker = () => {
         }
     }, [error])
     
+    //session for Wage Seeker data
     const wageSeekerSession = Digit.Hooks.useSessionStorage("WAGE_SEEKER_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = wageSeekerSession;
 
     useEffect(() => {
         if(configs && !wageSeekerDataFetching) {
-            updateWageSeekerFormDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions})
-            setIsFormReady(true)
+            updateWageSeekerFormDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady})
         }
       },[configs, wageSeekerDataFetching]);
 

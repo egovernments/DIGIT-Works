@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
+import { useHistory } from 'react-router-dom';
 import { FormComposer } from '@egovernments/digit-ui-react-components';
 import { getWageSeekerUpdatePayload, getBankAccountUpdatePayload } from '../../../../utils';
 
@@ -8,28 +9,9 @@ const navConfig =  [{
     code:"WAGE_SEEKER_DETAILS"
 }]
 
-/*
-
-find difference and check which data was updated
-if only WS data updated - call only WS update
-if only Bank data updated - call only bank update
-if both updated - call both
-
-Enable Save button if anything is updated
-if individual Id then create else update
-On click of save call Update WageSeeker and Update Bank account details API, if both success then redirect to Success Page else redorect to Error page
-
-payload for WS update
-id, tenantId, name => givenName, dateOfBirth, gender, mobileNumber, address => id, individualId, tenantId, doorNo, type, street, locality => code, ward => code, 
-fatherName, relationship, skills => [{id,individualId, type, level, photo, additionalFields -> fields -> key, value, rowVersion  }]
-
-payload for create
-id, tenantId, name => givenName, dateOfBirth, gender, mobileNumber, address => id, individualId, tenantId, doorNo, type, street, locality => code, ward => code, 
-fatherName, relationship, skills => [{id,individualId, type, level, photo, additionalFields -> fields -> key, value, rowVersion, identifiers => id, individualId, identifierType, identifierId }]
-*/
-
 const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessionFormData, clearSessionFormData, isModify, wageSeekerDataFromAPI }) => {
     const { t } = useTranslation();
+    const history = useHistory()
 
     const [financeDetailsUpdated, setFinanceDetailsUpdated] = useState(false)
     const [individualDetailsUpdated, setIndividualDetailsUpdated] = useState(false)
@@ -135,60 +117,59 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     const sendDataToResponsePage = (individualId, isSuccess, message, showWageSeekerID) => {
         history.push({
           pathname: `/${window?.contextPath}/employee/masters/response`,
-          search: `?individualId=${individualId}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
+          search: `?tenantId=${tenantId}&individualId=${individualId}`,
           state : {
             message,
-            showWageSeekerID
+            showWageSeekerID,
+            isSuccess
           }
         }); 
       }
 
-    const handleResponseForUpdate = async (payload) => {
+    const handleResponseForUpdate = async (wageSeekerPayload, bankAccountPayload) => {
         //individualDetailsUpdated , financeDetailsUpdated
-
-        await UpdateWageSeekerMutation(payload, {
-          onError: async (error, variables) => {
-                console.log('Error Update WS', error);
-                //sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, "WORKS_PROJECT_MODIFICATION_FAILURE", true);
-          },
-          onSuccess: async (responseData, variables) => {
-            //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
-            if(financeDetailsUpdated) {
-              payload = getBankAccountUpdatePayload({});
-              await UpdateBankAccountMutation(payload, {
-                onError :  async (error, variables) => {
-                    console.log('Error Update Bank', error);
-                    //sendDataToResponsePage(modify_projectNumber, false, "WORKS_PROJECT_MODIFICATION_FAILURE", true);
-                },
-                onSuccess: async (responseData, variables) => {
-                  console.log('Success Bank responseData', responseData);
-                }
+        if(individualDetailsUpdated && !financeDetailsUpdated) {
+            await UpdateWageSeekerMutation(wageSeekerPayload, {
+                onError: async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, 'Wage Seeker Modification Failed!', true),
+                onSuccess: async (responseData) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, true, 'Wage Seeker modified Successfully', true)
+              });
+        } else if(!individualDetailsUpdated && financeDetailsUpdated) {
+            await UpdateBankAccountMutation(bankAccountPayload, {
+                onError :  async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, 'Wage Seeker Modification Failed!', true),
+                onSuccess: async (responseData) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, true, 'Wage Seeker modified Successfully', true)
               })
-            }else{
-                console.log('Success WS responseData', responseData);
-            }
-          },
-        });
+        } else if(individualDetailsUpdated && financeDetailsUpdated) {
+            await UpdateWageSeekerMutation(wageSeekerPayload, {
+                onError: async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, 'Wage Seeker Modification Failed!', true),
+                onSuccess: async (responseData) => {
+                    //Update bank account details if wage seeker update success
+                    await UpdateBankAccountMutation(bankAccountPayload, {
+                        onError :  async (error) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, false, 'Wage Seeker Modification Failed!', true),
+                        onSuccess: async (responseData) => sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, true, 'Wage Seeker modified Successfully', true)
+                    })
+                },
+            });
+        }  
     }
 
-    const handleResponseForCreate = async (payload) => {}
+    const handleResponseForCreate = async (wageSeekerPayload, bankAccountPayload) => {}
 
     const onSubmit = (data) => {
         console.log('DATA', data);
-        console.log('@@@@@@', financeDetailsUpdated, individualDetailsUpdated);
         const wageSeekerPayload = getWageSeekerUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify})
-        console.log('wageSeekerPayload', wageSeekerPayload);
+        const bankAccountPayload = getBankAccountUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify});
+        console.log('wageSeekerPayload', {wageSeekerPayload, bankAccountPayload});
         if(isModify) {
-            handleResponseForUpdate(wageSeekerPayload);
+            handleResponseForUpdate(wageSeekerPayload, bankAccountPayload);
         }else {
-            handleResponseForCreate(wageSeekerPayload);
+            handleResponseForCreate(wageSeekerPayload, bankAccountPayload);
         }
     }
 
     return (
         <React.Fragment>
            <FormComposer
-                label={isModify ? "Save" : "Create Wage Seeker"}
+                label={isModify ? "CORE_COMMON_SAVE" : "MASTERS_CREATE_WAGE_SEEKER"}
                 config={config?.form}
                 onSubmit={onSubmit}
                 submitInForm={false}

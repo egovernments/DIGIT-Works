@@ -45,7 +45,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
         title: "ES_COMMON_LOCATION_DETAILS",
         asSectionHeader: true,
         values: [
-            { title: "CORE_COMMON_PROFILE_CITY", value: individual?.address?.[0]?.city || t("NA")},
+            { title: "CORE_COMMON_PROFILE_CITY", value: individual?.address?.[0]?.city ? Digit.Utils.locale.getCityLocale(individual?.address?.[0]?.city) : t("NA")},
             { title: "COMMON_WARD", value: individual?.address?.[0]?.ward?.code ? `${headerLocale}_ADMIN_${individual?.address?.[0]?.ward?.code }` : t("NA")},
             { title: "COMMON_LOCALITY", value: individual?.address?.[0]?.locality?.code ? `${headerLocale}_ADMIN_${individual?.address?.[0]?.locality?.code}` : t("NA")},
             { title: "ES_COMMON_STREET", value: individual?.address?.[0]?.street || t("NA")},
