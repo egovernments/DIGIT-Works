@@ -11,7 +11,6 @@ export const UICustomizations = {
   EstimateInboxConfig: {
     preProcess: (data) => {
       //set tenantId
-
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
@@ -90,15 +89,21 @@ export const UICustomizations = {
       delete data.body.inbox.moduleSearchCriteria.ward;
 
       //cloning locality and workflow states to format them
-      let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
+      // let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
+      
+      let selectedOrg =  _.clone(data.body.inbox.moduleSearchCriteria.orgId ? data.body.inbox.moduleSearchCriteria.orgId : null);
+      delete data.body.inbox.moduleSearchCriteria.orgId;
+      if(selectedOrg) {
+         data.body.inbox.moduleSearchCriteria.orgId = selectedOrg?.[0]?.orgNumber;
+      }
       let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
-      delete data.body.inbox.moduleSearchCriteria.locality;
+      // delete data.body.inbox.moduleSearchCriteria.locality;
       delete data.body.inbox.moduleSearchCriteria.state;
-      locality = locality?.map((row) => row?.code);
+      // locality = locality?.map((row) => row?.code);
       states = Object.keys(states)?.filter((key) => states[key]);
 
-      //adding formatted data to these keys
-      if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
+      // //adding formatted data to these keys
+      // if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
       if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
 
       const projectType = _.clone(data.body.inbox.moduleSearchCriteria.projectType ? data.body.inbox.moduleSearchCriteria.projectType : {});
@@ -107,6 +112,10 @@ export const UICustomizations = {
       //adding tenantId to moduleSearchCriteria
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
+      //setting limit and offset becoz somehow they are not getting set in muster inbox 
+      data.body.inbox .limit = data.state.tableForm.limit
+      data.body.inbox.offset = data.state.tableForm.offset
+      delete data.state
       return data;
     },
     postProcess: (responseArray, uiConfig) => {

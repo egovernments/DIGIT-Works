@@ -17,7 +17,8 @@ const inboxConfig = () => {
                         "moduleSearchCriteria": {}
                     }
                 },
-                "minParametersForSearchForm":1,
+                "minParametersForSearchForm": 0,
+                "minParametersForFilterForm": 0,
                 "masterName":"commonUiConfig",
                 "moduleName":"AttendanceInboxConfig",
                 "tableFormJsonPath":"requestBody.inbox",
@@ -32,9 +33,9 @@ const inboxConfig = () => {
                         "secondaryLabel": "ES_COMMON_CLEAR_SEARCH",
                         "minReqFields": 1,
                         "defaultValues" : {
-                            "projectId": "",
-                            "projectType":"",
-                            "mustorRollId":""
+                            "attendanceRegisterName": "",
+                            "orgId":"",
+                            "musterRollNumber":""
                         },
                         "fields" : [
                             {
@@ -48,7 +49,7 @@ const inboxConfig = () => {
                                     ]
                                 },
                                 "populators": {
-                                    "name": "mustorRollId",
+                                    "name": "musterRollNumber",
                                     "error": "PROJECT_PATTERN_ERR_MSG",
                                     "validation": {
                                         "pattern": "MR\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
@@ -57,42 +58,37 @@ const inboxConfig = () => {
                                 }
                             },
                             {
-                                "label": "WORKS_PROJECT_ID",
+                                "label": "ATM_REGISTER_NAME",
                                 "type": "text",
                                 "isMandatory": false,
                                 "disable": false,
-                                "preProcess": {
-                                    "convertStringToRegEx": [
-                                        "populators.validation.pattern"
-                                    ]
-                                },
+                                // "preProcess": {
+                                //     "convertStringToRegEx": [
+                                //         "populators.validation.pattern"
+                                //     ]
+                                // },
                                 "populators": {
-                                    "name": "projectId",
+                                    "name": "attendanceRegisterName",
                                     "error": "PROJECT_PATTERN_ERR_MSG",
-                                    "validation": {
-                                        "pattern": "PR\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
-                                        "minlength": 2
-                                    }
+                                    // "validation": {
+                                    //     "pattern": "PR\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
+                                    //     "minlength": 2
+                                    // }
                                 }
                             },
+                            //here need to render a dropdown for org 
                             {
-                                "label": "WORKS_PROJECT_TYPE",
-                                "type": "dropdown",
-                                "isMandatory": false,
-                                "disable": false,
-                                "populators": {
-                                    "name": "projectType",
-                                    "optionsKey": "name",
-                                    "optionsCustomStyle": {
-                                        "top": "2.3rem"
-                                    },
-                                    "mdmsConfig": {
-                                        "masterName": "ProjectType",
-                                        "moduleName": "works",
-                                        "localePrefix": "COMMON_MASTERS"
-                                    }
-                                }
+                            "label": "COMMON_ORG_NAME",
+                            "type": "orgdropdown",
+                            "isMandatory": false,
+                            "disable": false,
+                            "populators": {
+                                "name": "orgId",
+                                "optionsKey": "name",
+                                "allowMultiSelect": false
                             }
+                        },
+                        
                         ]
                     },
                     "label" : "",
@@ -159,34 +155,6 @@ const inboxConfig = () => {
                                         "innerStyles": {
                                             "display": "flex"
                                         }
-                                    }
-                                },
-                                {
-                                    "label": "COMMON_WARD",
-                                    "type": "locationdropdown",
-                                    "isMandatory": false,
-                                    "disable": false,
-                                    "populators": {
-                                        "name": "ward",
-                                        "type": "ward",
-                                        "optionsKey": "i18nKey",
-                                        "defaultText": "COMMON_SELECT_WARD",
-                                        "selectedText": "COMMON_SELECTED",
-                                        "allowMultiSelect": true
-                                    }
-                                },
-                                {
-                                    "label": "COMMON_LOCALITY",
-                                    "type": "locationdropdown",
-                                    "isMandatory": false,
-                                    "disable": false,
-                                    "populators": {
-                                        "name": "locality",
-                                        "type": "locality",
-                                        "optionsKey": "i18nKey",
-                                        "defaultText": "COMMON_SELECT_LOCALITY",
-                                        "selectedText": "COMMON_SELECTED",
-                                        "allowMultiSelect": true
                                     }
                                 },
                                 {

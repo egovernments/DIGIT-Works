@@ -12,6 +12,7 @@ import DateRangeNew from './DateRangeNew';
 import MultiUploadWrapper from "./MultiUploadWrapper";
 import MultiSelectDropdown from '../atoms/MultiSelectDropdown';
 import LocationDropdownWrapper from './LocationDropdownWrapper';
+import OrgDropdown from './OrgDropdown';
 import WorkflowStatusFilter from './WorkflowStatusFilter';
 const RenderFormFields = (props) => {
     const { t } = useTranslation();
@@ -218,6 +219,30 @@ const RenderFormFields = (props) => {
                 }}
               />
             );
+
+            case "orgdropdown":
+            return (
+              <Controller
+                name={`${populators.name}`}
+                control={control}
+                defaultValue={formData?.[populators.name]}
+                rules={{ required: populators?.isMandatory, ...populators.validation }}
+                render={(props) => {
+                  return (
+                    <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                      <OrgDropdown
+                        props={props}
+                        populators={populators}
+                        formData={formData}
+                        inputRef={props.ref}
+                        errors={errors}
+                      />
+                    </div>
+                  );
+                }}
+              />
+            );
+
 
             case "workflowstatesfilter":
             return (
