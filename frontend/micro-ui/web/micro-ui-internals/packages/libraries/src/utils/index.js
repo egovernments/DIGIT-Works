@@ -5,7 +5,7 @@ import * as locale from "./locale";
 import * as obps from "./obps";
 import * as pt from "./pt";
 import * as privacy from "./privacy";
-import PDFUtil, { downloadReceipt ,downloadPDFFromLink,downloadBill ,getFileUrl, getDocumentName} from "./pdf";
+import PDFUtil, { downloadReceipt ,downloadPDFFromLink,downloadBill ,getFileUrl ,downloadEgovPDF, getDocumentName} from "./pdf";
 import getFileTypeFromFileStoreURL from "./fileType";
 import preProcessMDMSConfig from "./preProcessMDMSConfig";
 import preProcessMDMSConfigInboxSearch from "./preProcessMDMSConfigInboxSearch";
@@ -296,6 +296,7 @@ export default {
   downloadBill,
   getFileUrl,
   getDocumentName,
+  downloadEgovPDF,
   getFileTypeFromFileStoreURL,
   browser: BrowserUtil,
   locale,

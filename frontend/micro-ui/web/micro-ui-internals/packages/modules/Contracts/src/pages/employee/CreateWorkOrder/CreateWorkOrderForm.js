@@ -16,7 +16,7 @@ const navConfig =  [
     }
 ];
 
-const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project}) => {
+const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData}) => {
     const {t} = useTranslation();
     const [selectedOfficerInCharge, setSelectedOfficerInCharge] = useState([]);
     const [toast, setToast] = useState({show : false, label : "", error : false});
@@ -25,6 +25,25 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     const fetchOfficerInChargeDesignation = (data) => {
         return data?.assignments?.filter(assignment=>assignment?.isCurrentAssignment)?.[0]?.designation;
     }
+
+    createWorkOrderConfig = useMemo(
+        () => Digit.Utils.preProcessMDMSConfig(t, createWorkOrderConfig, {
+          updateDependent : [
+            {
+                key : 'labourAndMaterialAnalysis',
+                value : [preProcessData?.documents]
+            },
+            {
+                key : 'nameOfOfficerInCharge',
+                value : [preProcessData?.officerInCharge]
+            },
+            {
+                key : 'nameOfCBO',
+                value : [preProcessData?.nameOfCBO]
+            },
+          ]
+        }),
+    [preProcessData?.documents, preProcessData?.officerInCharge, preProcessData?.nameOfCBO]);
 
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {

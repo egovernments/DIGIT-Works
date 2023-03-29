@@ -11,6 +11,7 @@ Egov-pdf service work in between pdf-service and client requesting pdfs. Earlier
 - Pdf-service
 - User-service
 - Workflow-service
+- Project-service
 
 
 ### Swagger API Contract
@@ -49,7 +50,7 @@ Currently below endpoints are in use for ‘CITIZEN' and 'EMPLOYEE’ roles
 
 | Endpoint | module | query parameter | Restrict Citizen to own records |
 | -------- | ------ | --------------- | ------------------------------- |
-|`/egov-pdf/download/PT/ptreceipt` | property-tax | `projectId, tenantId` | false |
+|`/egov-pdf/download/project/project-details` | project | `projectId, tenantId` | false |
 
 
 ### Kafka Consumers
