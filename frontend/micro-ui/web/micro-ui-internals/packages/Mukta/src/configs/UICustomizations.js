@@ -190,7 +190,7 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
-      const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromProposalDate);
+      const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromProposalDate,"daystart");
       const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toProposalDate);
       const projectType = data?.params?.projectType?.code;
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromProposalDate, toProposalDate, projectType };
