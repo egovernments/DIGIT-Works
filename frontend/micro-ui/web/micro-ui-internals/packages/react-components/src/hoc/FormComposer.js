@@ -350,6 +350,7 @@ export const FormComposer = (props) => {
                 selectedFormCategory={selectedFormCategory}
                 getValues={getValues}
                 watch={watch}
+                unregister={unregister}
               />
             )}
             name={config.key}
