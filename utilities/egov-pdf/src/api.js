@@ -15,6 +15,26 @@ const pool = new Pool({
 
 auth_token = config.auth_token;
 
+async function search_projectDetails(tenantId, requestinfo, projectId) {
+  var params = {
+    tenantId: tenantId,
+    limit:1,
+    offset:0
+  };
+
+  var searchEndpoint = config.paths.projectDetails_search;
+var data= {"Projects": [{
+  "tenantId":tenantId, 
+  "projectNumber": projectId
+  }]}
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.projectDetails, searchEndpoint),
+    data: Object.assign(requestinfo, data),
+    params,
+  });
+}
+
 async function search_user(uuid, tenantId, requestinfo) {
   return await axios({
     method: "post",
@@ -27,17 +47,6 @@ async function search_user(uuid, tenantId, requestinfo) {
   });
 }
 
-async function search_epass(uuid, tenantId, requestinfo) {
-  return await axios({
-    method: "post",
-    url: url.resolve(config.host.epass, config.paths.epass_search),
-    data: requestinfo,
-    params: {
-      tenantId: tenantId,
-      ids: uuid,
-    },
-  });
-}
 
 async function search_workflow(applicationNumber, tenantId, requestinfo) {
   var params = {
@@ -68,6 +77,7 @@ async function search_mdms(tenantId, module, master, requestinfo) {
 
 
 async function create_pdf(tenantId, key, data, requestinfo) {
+  var oj=Object.assign(requestinfo, data);
   return await axios({
     responseType: "stream",
     method: "post",
@@ -224,8 +234,8 @@ async function create_bulk_pdf_pt(kafkaData){
 module.exports = {
   create_pdf,
   create_pdf_and_upload,
-  search_epass,
   search_mdms,
   search_user,
-  search_workflow
+  search_workflow,
+  search_projectDetails
 };
