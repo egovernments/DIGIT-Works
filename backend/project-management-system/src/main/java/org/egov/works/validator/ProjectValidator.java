@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.print.Doc;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -170,6 +171,14 @@ public class ProjectValidator {
                 log.error("Boundary Type is mandatory if boundary is present  in Project request body");
                 errorMap.put("BOUNDARY", "Boundary Type is mandatory if boundary is present in Project request body");
             }
+            if (project.getDocuments() != null && !project.getDocuments().isEmpty()) {
+                for (Document document: project.getDocuments()) {
+                    if (StringUtils.isBlank(document.getFileStore())) {
+                        log.error("Filestore Id is mandatory for document");
+                        errorMap.put("FILESTORE_ID", "FileStore Id must be present for document");
+                    }
+                }
+            }
         }
 
         if (!errorMap.isEmpty())
@@ -197,7 +206,8 @@ public class ProjectValidator {
                     && StringUtils.isBlank(project.getProjectSubType())
                     && (project.getStartDate() == null || project.getStartDate() == 0)
                     && (project.getEndDate() == null || project.getEndDate() == 0)
-                    && (createdFrom == null || createdFrom == 0)) {
+                    && (createdFrom == null || createdFrom == 0)
+                    && (project.getAddress() == null || StringUtils.isBlank(project.getAddress().getBoundary()))) {
                 log.error("Any one project search field is required for Project Search");
                 throw new CustomException("PROJECT_SEARCH_FIELDS", "Any one project search field is required");
             }
@@ -276,7 +286,7 @@ public class ProjectValidator {
                 errorMap.put("INVALID_DEPARTMENT_CODE", "The department code: " + project.getDepartment() + " is not present in MDMS");
             }
             log.info("Validate Nature of Work with MDMS");
-            if (!StringUtils.isBlank(project.getNatureOfWork()) && !natureOfWorkRes.contains(project.getNatureOfWork())) {
+            if (!StringUtils.isBlank(project.getNatureOfWork()) && natureOfWorkRes != null && !natureOfWorkRes.contains(project.getNatureOfWork())) {
                 log.error("The nature of work: " + project.getNatureOfWork() + " is not present in MDMS");
                 errorMap.put("INVALID_NATURE_OF_WORK", "The nature of work: " + project.getNatureOfWork() + " is not present in MDMS");
             }
@@ -340,35 +350,62 @@ public class ProjectValidator {
                 throw new CustomException("INVALID_PROJECT_MODIFY", "The project id " + project.getId() + " that you are trying to update does not exists for the project");
             }
 
-            Set<String> targetIdsFromDB = projectFromDB.getTargets().stream().map(Target :: getId).collect(Collectors.toSet());
-            if (project.getTargets() != null) {
-                for (Target target: project.getTargets()) {
-                    if (StringUtils.isNotBlank(target.getId()) && !targetIdsFromDB.contains(target.getId())) {
-                        log.error("The target id " + target.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
-                        throw new CustomException("INVALID_PROJECT_MODIFY.TARGET", "The target id " + target.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
+            if (projectFromDB.getTargets() != null) {
+                Set<String> targetIdsFromDB = projectFromDB.getTargets().stream().filter(t -> !t.getIsDeleted()).map(Target :: getId).collect(Collectors.toSet());
+                if (project.getTargets() != null) {
+                    for (Target target: project.getTargets()) {
+                        if (StringUtils.isNotBlank(target.getId()) && !targetIdsFromDB.contains(target.getId())) {
+                            log.error("The target id " + target.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
+                            throw new CustomException("INVALID_PROJECT_MODIFY.TARGET", "The target id " + target.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
+                        }
+                    }
+                }
+            } else {
+                if (project.getTargets() != null && !project.getTargets().isEmpty()) {
+                    for (Target target: project.getTargets()) {
+                        if (StringUtils.isNotBlank(target.getId())) {
+                            log.error("The target id " + target.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
+                            throw new CustomException("INVALID_PROJECT_MODIFY.TARGET", "The target id " + target.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
+                        }
                     }
                 }
             }
 
-            Set<String> documentIdsFromDB = projectFromDB.getDocuments().stream().map(Document:: getId).collect(Collectors.toSet());
-            if (project.getDocuments() != null) {
-                for (Document document: project.getDocuments()) {
-                    if (StringUtils.isNotBlank(document.getId()) && !documentIdsFromDB.contains(document.getId())) {
-                        log.error("The document id " + document.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
-                        throw new CustomException("INVALID_PROJECT_MODIFY.DOCUMENT", "The document id " + document.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
+            if (projectFromDB.getDocuments() != null) {
+                Set<String> documentIdsFromDB = projectFromDB.getDocuments().stream().map(Document:: getId).collect(Collectors.toSet());
+                if (project.getDocuments() != null) {
+                    for (Document document: project.getDocuments()) {
+                        if (StringUtils.isNotBlank(document.getId()) && !documentIdsFromDB.contains(document.getId())) {
+                            log.error("The document id " + document.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
+                            throw new CustomException("INVALID_PROJECT_MODIFY.DOCUMENT", "The document id " + document.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
+                        }
+                    }
+                }
+            } else {
+                if (project.getDocuments() != null && project.getDocuments().size() > 0) {
+                    for (Document document: project.getDocuments()) {
+                        if (StringUtils.isNotBlank(document.getId())) {
+                            log.error("The document id " + document.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
+                            throw new CustomException("INVALID_PROJECT_MODIFY.DOCUMENT", "The document id " + document.getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
+                        }
                     }
                 }
             }
 
-            if (projectFromDB.getAddress() != null && StringUtils.isBlank(project.getAddress().getId())) {
+
+            //Checks for a project if address already present in DB
+            if ((projectFromDB.getAddress() != null && projectFromDB.getAddress().getId() != null) && project.getAddress() != null && StringUtils.isBlank(project.getAddress().getId())) {
                 log.error("The address with id " + projectFromDB.getAddress().getId() + " already exists for the project");
                 throw new CustomException("INVALID_PROJECT_MODIFY.ADDRESS", "The address with id " + projectFromDB.getAddress().getId() + " already exists for the project " + projectFromDB.getProjectNumber());
             }
 
-            if (projectFromDB.getAddress() != null && StringUtils.isNotBlank(project.getAddress().getId()) && !projectFromDB.getAddress().getId().equals(project.getAddress().getId())) {
+            if ( project.getAddress() != null
+                    && StringUtils.isNotBlank(project.getAddress().getId())
+                    && (projectFromDB.getAddress() == null || StringUtils.isBlank(projectFromDB.getAddress().getId()) || !projectFromDB.getAddress().getId().equals(project.getAddress().getId())) ) {
                 log.error("The address id " + project.getAddress().getId() + " that you are trying to update does not exists for the project");
                 throw new CustomException("INVALID_PROJECT_MODIFY.ADDRESS", "The address id " + project.getAddress().getId() + " that you are trying to update does not exists for the project " + projectFromDB.getProjectNumber());
             }
+
         }
 
     }
