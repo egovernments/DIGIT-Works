@@ -37,8 +37,8 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             values: [
                 { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" },
                 { title: "WORKS_CITY",value: currentProject?.address?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`) : "NA" }, //will check with Backend
-                { title: "WORKS_WARD", value: currentProject?.additionalDetails?.ward ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.ward}`) : "NA"  }, ///backend to update this
-                { title: "WORKS_LOCALITY",value: currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "NA" },
+                { title: "WORKS_WARD", value: currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "NA"  }, ///backend to update this
+                { title: "WORKS_LOCALITY",value: currentProject?.additionalDetails?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.locality?.code}`) : "NA" },
             ]
         };
 
@@ -58,12 +58,15 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                     title: "WORKS_RELEVANT_DOCUMENTS",
                     BS : 'Works',
                     values: currentProject?.documents?.map((document) => {
-                        return {
-                            title: document?.documentType,
-                            documentType: document?.documentType,
-                            documentUid: document?.fileStore,
-                            fileStoreId: document?.fileStore,
-                        };
+                        if(document?.status !== "INACTIVE") {
+                            return {
+                                title: document?.documentType,
+                                documentType: document?.documentType,
+                                documentUid: document?.fileStore,
+                                fileStoreId: document?.fileStore,
+                            };
+                        }
+                        return {};
                     }),
                 },
                 ]
@@ -119,6 +122,7 @@ export const Search = {
 
         return {
             projectDetails : response?.Projects ? projectDetails : [],
+            response : response?.Projects,
             processInstancesDetails: [],
             applicationData: {},
             workflowDetails: [],

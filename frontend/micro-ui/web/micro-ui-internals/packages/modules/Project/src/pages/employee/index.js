@@ -54,11 +54,9 @@ const App = ({ path }) => {
 
   //remove session form data if user navigates away from the project create screen
   useEffect(()=>{
-    return () => {
       if (!window.location.href.includes("create-project") && sessionFormData && Object.keys(sessionFormData) != 0) {
         clearSessionFormData();
       }
-    };
   },[location]);
 
   return (

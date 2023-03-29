@@ -4,7 +4,7 @@ export const ConvertTimestampToDate = (timestamp, dateFormat = "d-MMM-yyyy") => 
   return timestamp ? format(toDate(timestamp), dateFormat) : null;
 };
 
-export const ConvertEpochToDate = (dateEpoch) => {
+export const ConvertEpochToDate = (dateEpoch, format="dd/mm/yyyy") => {
   if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
     return "NA";
   }
@@ -14,7 +14,18 @@ export const ConvertEpochToDate = (dateEpoch) => {
   let year = dateFromApi.getFullYear();
   month = (month > 9 ? "" : "0") + month;
   day = (day > 9 ? "" : "0") + day;
-  return `${day}/${month}/${year}`;
+
+  switch(format) {
+    case "yyyy-mm-dd" : {
+      return `${year}-${month}-${day}`;
+    }
+    case "dd/mm/yyyy" : {
+      return `${day}/${month}/${year}`;
+    }
+    default : {
+      return `${day}/${month}/${year}`;
+    }
+  }
 };
 
 export const ConvertEpochToTimeInHours = (dateEpoch) => {

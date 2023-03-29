@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.UUID;
-
 /**
  * AmountDetail
  */
@@ -27,6 +25,9 @@ public class AmountDetail {
 
     @JsonProperty("amount")
     private Double amount = null;
+
+    @JsonProperty("isActive")
+    private boolean isActive = true;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;

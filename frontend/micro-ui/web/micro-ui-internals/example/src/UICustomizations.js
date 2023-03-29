@@ -505,38 +505,6 @@ export const UICustomizations = {
       });
       return link;
     },
-    MobileAdditionalCustomization: (row, key, value, t, tenantId, searchResult, headerLocale) => {
-      if (key === t("MASTERS_WAGESEEKER_ID")) {
-        return (
-          <span className="link">
-            <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${value}`}>
-              {String(value ? value : t("ES_COMMON_NA"))}
-            </Link>
-          </span>
-        );
-      }
-      if (key === t("MASTERS_SOCIAL_CATEGORY")) {
-        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
-      }
-      if (key === t("MASTERS_ULB")) {
-        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
-      }
-      if (key === t("MASTERS_WARD")) {
-        return value ? (
-          <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, tenantId)))}</span>
-        ) : (
-          t("ES_COMMON_NA")
-        );
-      }
-      if (key === t("MASTERS_LOCALITY")) {
-        return value ? (
-          <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, tenantId)))}</span>
-        ) : (
-          t("ES_COMMON_NA")
-        );
-      }
-      
-    },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
@@ -584,50 +552,13 @@ export const UICustomizations = {
           return t("ES_COMMON_NA");
       }
     },
-    MobileDetailsOnClick: (row, t, tenantId) => {
-      let link;
-      Object.keys(row).map((key) => {
-        if (key === t("MASTERS_ORGANISATION_ID"))
-          link = `/${window.contextPath}/employee/masters/view-organisation?tenantId=${tenantId}&orgId=${row[key]}`;
-      });
-      return link;
-    },
-    MobileAdditionalCustomization: (row, key, value, t, tenantId, searchResult, headerLocale) => {
-      if (key === t("MASTERS_ORGANISATION_ID")) {
-        return (
-          <span className="link">
-            <Link to={`/${window.contextPath}/employee/masters/view-organisation?tenantId=${tenantId}&orgId=${value}`}>
-            {String(value ? value : t("ES_COMMON_NA"))}
-            </Link>
-          </span>
-        );
-      }
-      if (key === t("MASTERS_STATUS")) {
-        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
-      }
-      if (key === t("MASTERS_ORGANISATION_TYPE")) {
-        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
-      }
-      if (key === t("MASTERS_ORGANISATION_SUB_TYPE")) {
-        return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
-      }
-      if (key === t("MASTERS_LOCATION")) {
-        return value ? (
-          <span style={{ whiteSpace: "nowrap" }}>
-            {String(`${t(Digit.Utils.locale.getCityLocale(tenantId))} ${t(Digit.Utils.locale.getMohallaLocale(value, tenantId))}`)}
-          </span>
-        ) : (
-          t("ES_COMMON_NA")
-        );
-      }
-    },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
       }
     },
   },
-  EstimateInboxConfig:{},
+  EstimateInboxConfig: {},
   BillInboxConfig: {
     preProcess: (data) => {
       const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber;
@@ -667,16 +598,20 @@ export const UICustomizations = {
         );
       }
 
-      if (key === t("ES_COMMON_AMOUNT")) {
-        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+      if (key === "ES_COMMON_AMOUNT") {
+        return value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA");
       }
 
-      if (key === t("COMMON_SLA_DAYS")) {
-        return value ? (parseInt(value) > 0 ? (
-          <span className="sla-cell-success">{t(value) || ""}</span>
+      if (key === "COMMON_SLA_DAYS") {
+        return value ? (
+          parseInt(value) > 0 ? (
+            <span className="sla-cell-success">{t(value) || ""}</span>
+          ) : (
+            <span className="sla-cell-error">{t(value) || ""}</span>
+          )
         ) : (
-          <span className="sla-cell-error">{t(value) || ""}</span>
-        )) : t("ES_COMMON_NA")
+          t("ES_COMMON_NA")
+        );
       }
 
       if (key === t("COMMON_WORKFLOW_STATES")) {
@@ -729,25 +664,21 @@ export const UICustomizations = {
       if (column.label === "WORKS_BILL_NUMBER") {
         return (
           <span className="link">
-            <Link
-              to={`/${
-                window.contextPath
-              }/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}
-            >
+            <Link to={`/${window.contextPath}/employee/expenditure/view-bill?tenantId=${Digit.ULBService.getCurrentTenantId()}&billNumber=${value}`}>
               {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
             </Link>
           </span>
         );
       }
       if (column.label === "EXP_BILL_AMOUNT") {
-        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+        return value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA");
       }
-      if(column.label === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      if (column.label === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA");
       }
-      if(column.label === "ES_COMMON_LOCATION") {
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
-        return t(`TENANT_TENANTS_${headerLocale}`)
+      if (column.label === "ES_COMMON_LOCATION") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId());
+        return t(`TENANT_TENANTS_${headerLocale}`);
       }
     },
     MobileDetailsOnClick: (row, t, tenantId) => {

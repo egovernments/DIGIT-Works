@@ -15,7 +15,8 @@ import '../pages/trackAttendance/track-attendance_inbox.dart';
 import '../pages/track_attendance.dart';
 import '../pages/unauthenticated.dart';
 import '../pages/view_muster_rolls.dart';
-import '../pages/work_order.dart';
+import '../pages/work_order/view_work_details.dart';
+import '../pages/work_order/work_order.dart';
 
 export 'package:auto_route/auto_route.dart';
 
@@ -55,7 +56,8 @@ part 'app_router.gr.dart';
             page: TrackAttendanceInboxPage, path: 'track-attendance-inbox'),
         AutoRoute(
             page: TrackAttendancePage, path: 'track-attendance/:id/:tenantId'),
-        AutoRoute(page: RegisterIndividualPage, path: 'register-individual')
+        AutoRoute(page: RegisterIndividualPage, path: 'register-individual'),
+        AutoRoute(page: ViewWorkDetailsPage, path: 'view-work-order')
       ],
     ),
   ],

@@ -25,31 +25,21 @@ const Inbox = () => {
 
 
    
+    const updatedConfig = useMemo(
+        () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, pageConfig,"sections.search.uiConfig.fields",{}),
+        [data,pageConfig]);
+
     useEffect(() => {
-        setPageConfig(_.cloneDeep(data?.[Digit.Utils.getConfigModuleName()]?.InboxMusterConfig?.[0]))
+        setPageConfig(_.cloneDeep(configs))
 
     }, [data, location])
-    //for Search Pop-up in Mobile View
-    const musterSearchSession = Digit.Hooks.useSessionStorage("MOBILE_SEARCH_MUSTER_ROLL", pageConfig?.sections.search.uiConfig.defaultValues);
-
-    const [searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData] = musterSearchSession;
-
-    //for Filter Pop-up in Mobile View
-    const musterFilterSession = Digit.Hooks.useSessionStorage("MOBILE_FILTER_MUSTER_ROLL", pageConfig?.sections.filter.uiConfig.defaultValues);
-
-    const [filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData] = musterFilterSession;
 
     if(isLoading || !pageConfig)  return <Loader />
     return (
         <React.Fragment>
-            <Header styles={{ fontSize: "32px" }}>{t(pageConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
+            <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
             <div className="inbox-search-wrapper">
-            <InboxSearchComposer
-               searchSessionStorageProps={{ searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData }}
-               filterSessionStorageProps={{ filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData }}
-               configs={pageConfig}
-             ></InboxSearchComposer>;
-                {/* <InboxSearchComposer configs={pageConfig}></InboxSearchComposer> */}
+                <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer>
             </div>
         </React.Fragment>
     )

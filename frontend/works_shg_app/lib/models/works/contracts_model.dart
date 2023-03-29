@@ -112,7 +112,13 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
   String? projectName;
   String? projectType;
   String? ward;
-
+  String? cboName;
+  String? cboCode;
+  String? estimateNumber;
+  String? locality;
+  double? totalEstimatedAmount;
+  List<EstimateDocs>? estimateDocs;
+  int? completionPeriod;
   ContractAdditionalDetails(
       {this.officerInChargeId,
       this.attendanceRegisterNumber,
@@ -120,7 +126,30 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
       this.projectType,
       this.orgName,
       this.projectName,
-      this.ward});
+      this.ward,
+      this.locality,
+      this.cboCode,
+      this.cboName,
+      this.estimateDocs,
+      this.estimateNumber,
+      this.totalEstimatedAmount,
+      this.completionPeriod});
+}
+
+@MappableClass()
+class EstimateDocs with EstimateDocsMappable {
+  String? documentUid;
+  String? fileName;
+  String? fileStoreId;
+  String? fileType;
+  String? tenantId;
+
+  EstimateDocs(
+      {this.tenantId,
+      this.documentUid,
+      this.fileStoreId,
+      this.fileName,
+      this.fileType});
 }
 
 @MappableClass()
@@ -139,6 +168,7 @@ class ContractAuditDetails with ContractAuditDetailsMappable {
 
 @MappableClass()
 class Documents with DocumentsMappable {
+  DocumentAdditionalDetails? additionalDetails;
   String? contractId;
   String? id;
   String? documentType;
@@ -147,12 +177,19 @@ class Documents with DocumentsMappable {
   String? status;
 
   Documents(
-      {this.contractId,
+      {this.additionalDetails,
+      this.contractId,
       this.id,
       this.documentType,
       this.status,
       this.documentUid,
       this.fileStore});
+}
+
+@MappableClass()
+class DocumentAdditionalDetails with DocumentAdditionalDetailsMappable {
+  String? fileName;
+  DocumentAdditionalDetails(this.fileName);
 }
 
 @MappableClass()
