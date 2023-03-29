@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next'
 import getModalConfig from './config'
 import { createEstimateConfig } from './createEstimateConfig'
 import { createEstimatePayload } from './createEstimatePayload'
-import { useHistory } from "react-router-dom";
-
+import { useHistory,useLocation } from "react-router-dom";
+import { editEstimateUtil } from './editEstimateUtil'
 
 
 const configNavItems = [
@@ -19,10 +19,26 @@ const configNavItems = [
     },
 ]
 const CreateEstimate = ({ EstimateSession }) => {
+    const tenant = Digit.ULBService.getStateId();
     const { t } = useTranslation()
-
     const [showToast, setShowToast] = useState(null)
-    const { tenantId, projectNumber } = Digit.Hooks.useQueryParams();
+    const { tenantId, projectNumber,isEdit,estimateNumber } = Digit.Hooks.useQueryParams();
+    // const [ isFormReady,setIsFormReady ] = useState(isEdit ? false : true) 
+    const [ isFormReady,setIsFormReady ] = useState(true) 
+    
+    // const { state } = useLocation()
+    //if estimateNumber is there and isEdit is true then search estimate
+    //fetching estimate data
+     const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
+        tenantId,
+        filters: { estimateNumber },
+        config:{
+            enabled: isEdit && estimateNumber ? true : false
+        }
+    })
+    
+    
+    
     const searchParams = {
         Projects: [
             {
@@ -68,20 +84,24 @@ const CreateEstimate = ({ EstimateSession }) => {
             },
         ]
     }
+
+    if(isEdit) {
+        cardState.values = [{
+                "title": "WORKS_ESTIMATE_ID",
+                "value": estimateNumber
+            },...cardState?.values]
+    }
     
-    // const cardState = {
-    //     "WORKS_ESTIMATE_TYPE": "Original Estimate",
-    //     "WORKS_PROJECT_ID": projectData?.projectDetails?.searchedProject?.basicDetails?.projectId,
-    //     "ESTIMATE_PROPOSAL_DATE": Digit.DateUtils.ConvertEpochToDate(projectData?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate),
-    //     "ESTIMATE_PROJECT_NAME": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
-    //     "PROJECT_DESC": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc
-    // }
-    
+   
     const history = useHistory()
 
     const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
 
+    //for creating estimates
     const { mutate: EstimateMutation } = Digit.Hooks.works.useCreateEstimateNew("WORKS");
+
+    //for updating estimate
+    const {mutate: EstimateUpdateMutation} = Digit.Hooks.works.useApplicationActionsEstimate();
 
 
     const [showModal, setShowModal] = useState(false);
@@ -99,10 +119,43 @@ const CreateEstimate = ({ EstimateSession }) => {
 
     const [inputFormData,setInputFormData] = useState(sessionFormData)
 
+
+    //getting uom and overheads masters from mdms
+    let { isLoading: isUomLoading, data: uom } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        "common-masters",
+        [
+            {
+                "name": "uom"
+            }
+        ],
+        {
+            select:(data)=> {
+                return data?.["common-masters"]?.uom
+            }
+        }
+    );
+
+    let { isLoading: isOverheadsLoading, data: overheads } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        "works",
+        [
+            {
+                "name": "Overheads"
+            }
+        ],
+        {
+            select:(data)=> {
+                return data?.["works"]?.Overheads
+            }
+        }
+    );
+
+    const initialDefaultValues = editEstimateUtil(estimate,uom,overheads)
+
     // const estimateFormConfig = createEstimateConfig()
-    const tenant = Digit.ULBService.getStateId();
     const moduleName = Digit.Utils.getConfigModuleName()
-    const { isLoading: isConfigLoading, data: estimateFormConfig } = Digit.Hooks.useCustomMDMS(
+    let { isLoading: isConfigLoading, data: estimateFormConfig } = Digit.Hooks.useCustomMDMS(
         tenant,
         moduleName,
         [
@@ -116,7 +169,7 @@ const CreateEstimate = ({ EstimateSession }) => {
             }
         }
     );
-
+    // estimateFormConfig = createEstimateConfig()
     const onFormSubmit = async (_data) => {
         
         //added this totalEst amount logic here because setValues in pageComponents don't work
@@ -162,12 +215,50 @@ const CreateEstimate = ({ EstimateSession }) => {
         // setSessionFormData(completeFormData)
         
 
-        const payload = createEstimatePayload(completeFormData, projectData)
+        const payload = createEstimatePayload(completeFormData, projectData,isEdit,estimate)
         setShowModal(false);
+
+        //make a util for updateEstimatePayload since there are some deviations 
         
+        if(isEdit && estimateNumber){
+            
+            await EstimateUpdateMutation(payload, {
+            onError: async (error, variables) => {
+                
+                setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+                setTimeout(() => {
+                    setShowToast(false);
+                }, 5000);
+            },
+            onSuccess: async (responseData, variables) => {
+                
+                clearSessionFormData();
+                const state = {
+                    header: t("WORKS_ESTIMATE_RESPONSE_UPDATED_HEADER"),
+                    id: responseData?.estimates[0]?.estimateNumber,
+                    info: t("ESTIMATE_ESTIMATE_NO"),
+                    // message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
+                    links: [
+                        {
+                            name: t("WORKS_GOTO_ESTIMATE_INBOX"),
+                            redirectUrl: `/${window.contextPath}/employee/estimate/inbox`,
+                            code: "",
+                            svg: "GotoInboxIcon",
+                            isVisible: true,
+                            type: "inbox",
+                        }
+                    ],
+                }
+                
+                history.push(`/${window?.contextPath}/employee/estimate/response`, state);
+                
+            },
+        });
+        }
         
 
-        await EstimateMutation(payload, {
+        else{
+            await EstimateMutation(payload, {
             onError: async (error, variables) => {
                 setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
                 setTimeout(() => {
@@ -197,6 +288,7 @@ const CreateEstimate = ({ EstimateSession }) => {
                 
             },
         });
+        }
     }
 
     // const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(
@@ -255,7 +347,7 @@ const CreateEstimate = ({ EstimateSession }) => {
     }, [approvers])
 
     
-    if(isConfigLoading){
+    if(isConfigLoading || isEstimateLoading || isUomLoading || isOverheadsLoading){
         return <Loader />
     }
   return (
@@ -268,7 +360,7 @@ const CreateEstimate = ({ EstimateSession }) => {
               setSessionFormData={setSessionFormData}
           />
           }
-        <Header styles={{ marginLeft: "14px" }}>{t("ACTION_TEST_CREATE_ESTIMATE")}</Header>
+        <Header styles={{ marginLeft: "14px" }}>{isEdit ? t("ACTION_TEST_EDIT_ESTIMATE") :t("ACTION_TEST_CREATE_ESTIMATE")}</Header>
         {/* Will fetch projectId from url params and do a search for project to show the below data in card while integrating with the API  */}
         {isLoading ?<Loader />:<Card styles={{ marginLeft: "14px" }}>
             <StatusTable>
@@ -280,8 +372,8 @@ const CreateEstimate = ({ EstimateSession }) => {
             </StatusTable>
         </Card>}
         {/* {isLoading? <Loader/>: <ViewDetailsCard cardState={cardState} t={t} />} */}
-        <FormComposer
-            label={"ACTION_TEST_CREATE_ESTIMATE"}
+        {isFormReady ? <FormComposer
+            label={isEdit ? "ACTION_TEST_EDIT_ESTIMATE" :"ACTION_TEST_CREATE_ESTIMATE"}
             config={estimateFormConfig?.form.map((config) => {
                 return {
                     ...config,
@@ -293,7 +385,7 @@ const CreateEstimate = ({ EstimateSession }) => {
             fieldStyle={{ marginRight: 0 }}
             inline={false}
             // className="card-no-margin"
-            defaultValues={estimateFormConfig?.defaultValues}
+            defaultValues={(isEdit && estimateNumber) ? initialDefaultValues : {}}
             // defaultValues = {tempDefault}
             showWrapperContainers={false}
             isDescriptionBold={false}
@@ -304,7 +396,7 @@ const CreateEstimate = ({ EstimateSession }) => {
             showFormInNav={true}  
             showNavs={true}
             sectionHeadStyle={{marginTop:"2rem"}}  
-        />
+        />:null}
           {showToast && (
               <Toast
                   error={showToast.error}

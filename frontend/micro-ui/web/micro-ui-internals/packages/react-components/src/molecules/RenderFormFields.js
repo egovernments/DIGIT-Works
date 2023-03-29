@@ -13,6 +13,7 @@ import MultiUploadWrapper from "./MultiUploadWrapper";
 import MultiSelectDropdown from '../atoms/MultiSelectDropdown';
 import LocationDropdownWrapper from './LocationDropdownWrapper';
 import WorkflowStatusFilter from './WorkflowStatusFilter';
+import ApiDropdown from './ApiDropdown';
 const RenderFormFields = (props) => {
     const { t } = useTranslation();
     const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors, apiDetails} = props
@@ -218,6 +219,30 @@ const RenderFormFields = (props) => {
                 }}
               />
             );
+
+            case "apidropdown":
+            return (
+              <Controller
+                name={`${populators.name}`}
+                control={control}
+                defaultValue={formData?.[populators.name]}
+                rules={{ required: populators?.isMandatory, ...populators.validation }}
+                render={(props) => {
+                  return (
+                    <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                      <ApiDropdown
+                        props={props}
+                        populators={populators}
+                        formData={formData}
+                        inputRef={props.ref}
+                        errors={errors}
+                      />
+                    </div>
+                  );
+                }}
+              />
+            );
+
 
             case "workflowstatesfilter":
             return (

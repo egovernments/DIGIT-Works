@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Banner, Card, LinkLabel, AddFileFilled, ArrowLeftWhite, ActionBar, SubmitBar} from "@egovernments/digit-ui-react-components";
 
@@ -9,6 +9,7 @@ const CreateProjectResponse = () => {
     const queryStrings = Digit.Hooks.useQueryParams();
     const [ projectIDsList, setProjectIDsList ] = useState(queryStrings?.projectIDs.split(','));
     const [ isResponseSuccess, setIsResponseSuccess ] = useState(queryStrings?.isSuccess === "true" ? true : queryStrings?.isSuccess === "false" ? false : true);
+    const {state} = useLocation();
 
     const navigate = (page) =>{
         switch(page){
@@ -31,8 +32,8 @@ const CreateProjectResponse = () => {
         <Card>
             <Banner 
                 successful={isResponseSuccess}
-                message={`${isResponseSuccess ? t("WORKS_PROJECT_CREATED") : t("WORKS_PROJECT_CREATE_FAILURE")}`}
-                info={`${isResponseSuccess ? t("WORKS_PROJECT_ID") : ""}`}
+                message={t(state?.message)}
+                info={`${state?.showProjectID ? t("WORKS_PROJECT_ID") : ""}`}
                 multipleResponseIDs={projectIDsList}
                 whichSvg={`${isResponseSuccess ? "tick" : null}`}
             />

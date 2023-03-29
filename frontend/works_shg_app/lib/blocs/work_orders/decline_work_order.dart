@@ -19,6 +19,12 @@ class DeclineWorkOrderBloc
     extends Bloc<DeclineWorkOrderEvent, DeclineWorkOrderState> {
   DeclineWorkOrderBloc() : super(const DeclineWorkOrderState.initial()) {
     on<WorkOrderDeclineEvent>(_onDecline);
+    on<DisposeDeclineEvent>(_onDisposeDecline);
+  }
+
+  FutureOr<void> _onDisposeDecline(
+      DisposeDeclineEvent event, DeclineWorkOrderEmitter emit) async {
+    emit(const DeclineWorkOrderState.initial());
   }
 
   FutureOr<void> _onDecline(
@@ -58,6 +64,7 @@ class DeclineWorkOrderEvent with _$DeclineWorkOrderEvent {
       {required Map<String, dynamic>? contractsModel,
       required String action,
       @Default('') String comments}) = WorkOrderDeclineEvent;
+  const factory DeclineWorkOrderEvent.dispose() = DisposeDeclineEvent;
 }
 
 @freezed

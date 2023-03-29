@@ -120,7 +120,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
           <div>
             {uiConfig?.showFormInstruction && <p className="search-instruction-header">{t(uiConfig?.showFormInstruction)}</p>}
-            <div className={`search-field-wrapper ${screenType} ${uiConfig?.type}`} style={{"gap":"1rem"}}>
+            <div className={`search-field-wrapper ${screenType} ${uiConfig?.type} ${uiConfig?.formClassName?uiConfig?.formClassName:""}`} style={{"gap":"1rem"}}>
               <RenderFormFields 
                 fields={uiConfig?.fields} 
                 control={control} 
