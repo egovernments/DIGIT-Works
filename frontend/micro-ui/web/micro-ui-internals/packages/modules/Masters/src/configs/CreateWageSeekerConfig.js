@@ -79,7 +79,7 @@ export const CreateWageSeekerConfig = {
               populators: {
                 name: "basicDetails_relationShip",
                 optionsKey: "name",
-                error: ("WORKS_REQUIRED_ERR"),
+                error: "WORKS_REQUIRED_ERR",
                 optionsCustomStyle : {
                   top : "2.3rem"
                 },
@@ -97,12 +97,15 @@ export const CreateWageSeekerConfig = {
               type: "date",
               disable: false,
               preProcess : {
-                updateDependent : ["populators.max"]
+                updateDependent : ["populators.max", "populators.validation.customValidation"]
               },
               populators: { 
                   name: "basicDetails_dateOfBirth",
-                  error: ("WORKS_REQUIRED_ERR"),
-                  max: "currentDate"
+                  error: "ES_COMMON_AGE_GREATER_THAN_18_ERROR",
+                  max: "currentDate",
+                  validation : {
+                    customValidation : true
+                  }
               }
             },
             {
@@ -114,7 +117,7 @@ export const CreateWageSeekerConfig = {
               populators: {
                 name: "basicDetails_gender",
                 optionsKey: "name",
-                error: ("WORKS_REQUIRED_ERR"),
+                error: "WORKS_REQUIRED_ERR",
                 optionsCustomStyle : {
                   top : "2.3rem"
                 },
@@ -186,7 +189,7 @@ export const CreateWageSeekerConfig = {
               populators: {
                 name: "skillDetails_skill",
                 optionsKey: "name",
-                error: ("WORKS_REQUIRED_ERR"),
+                error: "WORKS_REQUIRED_ERR",
                 defaultText: 'COMMON_SELECT_SKILL',
                 selectedText: "COMMON_SELECTED",
                 allowMultiSelect: true,
@@ -230,7 +233,7 @@ export const CreateWageSeekerConfig = {
               populators: {
                 name: "locDetails_ward",
                 optionsKey: "i18nKey",
-                error: ("WORKS_REQUIRED_ERR"),
+                error: "WORKS_REQUIRED_ERR",
                 optionsCustomStyle : {
                   top : "2.3rem"
                 },
@@ -249,7 +252,7 @@ export const CreateWageSeekerConfig = {
               populators: {
                 name: "locDetails_locality",
                 optionsKey: "i18nKey",
-                error: ("WORKS_REQUIRED_ERR"),
+                error: "WORKS_REQUIRED_ERR",
                 optionsCustomStyle : {
                   top : "2.3rem"
                 },
@@ -306,7 +309,7 @@ export const CreateWageSeekerConfig = {
               disable: false,
               populators: { 
                 name: "financeDetails_accountNumber",
-                error: ("WORKS_REQUIRED_ERR"),
+                error: "WORKS_REQUIRED_ERR",
                 validation: {pattern: /^\d{9,18}$/} 
               }
             },

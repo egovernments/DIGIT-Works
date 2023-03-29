@@ -15,6 +15,8 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
 
     const [financeDetailsUpdated, setFinanceDetailsUpdated] = useState(false)
     const [individualDetailsUpdated, setIndividualDetailsUpdated] = useState(false)
+    const [isBirthDateValid, setIsBirthDateValid] = useState(true);
+
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
@@ -65,7 +67,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
       updateDependent : [
         {
             key : "basicDetails_dateOfBirth",
-            value : [new Date().toISOString().split("T")[0]]
+            value : [new Date().toISOString().split("T")[0], !isBirthDateValid ? () => isBirthDateValid : true]
         },
         {
             key : "skillDetails_skill",
@@ -91,7 +93,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     }),
     [skillData, wardsAndLocalities, filteredLocalities, ULBOptions]);
 
-    const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    const onFormValueChange = async (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
@@ -109,6 +111,19 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
             }
             if (difference?.locDetails_ward) {
                 setValue("locDetails_locality", '');
+            }
+            if(formData.basicDetails_dateOfBirth) {
+                let ageInYear = Digit.DateUtils.getYearDifference(formData.basicDetails_dateOfBirth)
+                setIsBirthDateValid(!(ageInYear < 18));
+            }
+            if(formData.financeDetails_ifsc) {
+                if(formData.financeDetails_ifsc?.length > 10) {
+                    const res = await window.fetch(`https://ifsc.razorpay.com/${formData.financeDetails_ifsc}`);
+                    if (res.ok) {
+                        const { BANK, BRANCH } = await res.json();
+                        setValue('financeDetails_branchName', `${BANK}, ${BRANCH}`)
+                    }
+                }
             }
             setSessionFormData({ ...sessionFormData, ...formData });
         }
