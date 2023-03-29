@@ -6,10 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.request.Role;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 /**
  * Captures details of a contact person
@@ -45,5 +48,34 @@ public class ContactDetails {
     @JsonProperty("contactEmail")
     @Size(min = 5, max = 200)
     private String contactEmail = null;
+
+    @JsonProperty("active")
+    private Boolean active;
+
+    @JsonProperty("roles")
+    @Valid
+    private List<Role> roles;
+
+    @Size(max=50)
+    @JsonProperty("type")
+    private String type;
+
+    @Size(max=64)
+    //@DiffIgnore
+    @JsonProperty("createdBy")
+    private String createdBy;
+
+    //@DiffIgnore
+    @JsonProperty("createdDate")
+    private Long createdDate;
+
+    @Size(max=64)
+    //@DiffIgnore
+    @JsonProperty("lastModifiedBy")
+    private String lastModifiedBy;
+
+    //@DiffIgnore
+    @JsonProperty("lastModifiedDate")
+    private Long lastModifiedDate;
 
 }

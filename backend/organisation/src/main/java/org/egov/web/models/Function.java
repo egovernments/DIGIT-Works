@@ -67,7 +67,7 @@ public class Function {
 
     @JsonProperty("documents")
     @Valid
-    private List<Document> documents = null;
+    private List<Document> documents = null;//upsert
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;

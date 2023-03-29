@@ -23,9 +23,6 @@ import static org.egov.util.OrganisationConstant.*;
 @Component
 public class MDMSUtil {
 
-    public static final String PLACEHOLDER_CODE = "{code}";
-    public static final String tenantFilterCode = "$.[?(@.code =='{code}')].code";
-    public static final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
     public static final String codeFilter = "$.*.code";
     public static final String activeCodeFilter = "$.[?(@.active==true)].code";
 
@@ -50,23 +47,30 @@ public class MDMSUtil {
         return result;
     }
 
-	/**
-	 * Returns mdms search criteria based on the tenantId
-	 *
-	 * @param requestInfo
-	 * @param tenantId
-	 * @param organisationList
-	 * @return
-	 */
+    /**
+     * Returns mdms search criteria based on the tenantId
+     *
+     * @param requestInfo
+     * @param tenantId
+     * @param organisationList
+     * @return
+     */
     public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId, List<Organisation> organisationList) {
         log.info("MDMSUtil::getMDMSRequest");
-        //ModuleDetail estimateDepartmentModuleDetail = getDepartmentModuleRequestData(request);
-        ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(organisationList);
-        //ModuleDetail estimateSorIdModuleDetail = getSorIdModuleRequestData(request);
-        //ModuleDetail estimateCategoryModuleDetail = getCategoryModuleRequestData(request);
+        ModuleDetail orgTenantModuleDetail = getTenantModuleRequestData(organisationList);
+        ModuleDetail orgTypeModuleDetail = getOrgTypeModuleRequestData(organisationList);
+        ModuleDetail orgFuncCategoryModuleDetail = getOrgFunCategoryModuleRequestData(organisationList);
+        //ModuleDetail orgTransferModuleDetail = getOrgTransferModuleRequestData(organisationList);
+        ModuleDetail orgTaxIdentifierModuleDetail = getOrgTaxIdentifierModuleRequestData(organisationList);
+        ModuleDetail orgFunctionModuleDetail = getOrgFunctionModuleRequestData(organisationList);
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
-        moduleDetails.add(estimateTenantModuleDetail);
+        moduleDetails.add(orgTenantModuleDetail);
+        moduleDetails.add(orgTypeModuleDetail);
+        moduleDetails.add(orgFuncCategoryModuleDetail);
+        //moduleDetails.add(orgTransferModuleDetail);
+        moduleDetails.add(orgTaxIdentifierModuleDetail);
+        moduleDetails.add(orgFunctionModuleDetail);
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
@@ -78,36 +82,100 @@ public class MDMSUtil {
         return mdmsCriteriaReq;
     }
 
-//    private ModuleDetail getCategoryModuleRequestData(EstimateRequest request) {
-//        log.info("MDMSUtils::getCategoryModuleRequestData");
+    private ModuleDetail getOrgTypeModuleRequestData(List<Organisation> organisationList) {
+        log.info("MDMSUtils::getOrgTypeModuleRequestData");
+
+        List<MasterDetail> orgTypeMasterDetails = new ArrayList<>();
+
+        MasterDetail orgTypeMaster = MasterDetail.builder().name(MASTER_ORG_TYPE)
+                .filter(activeCodeFilter).build();
+
+        orgTypeMasterDetails.add(orgTypeMaster);
+
+        ModuleDetail orgTypeModuleDetail = ModuleDetail.builder().masterDetails(orgTypeMasterDetails)
+                .moduleName(MDMS_COMMON_MASTERS_MODULE_NAME).build();
+
+        return orgTypeModuleDetail;
+    }
+
+    private ModuleDetail getOrgFunCategoryModuleRequestData(List<Organisation> organisationList) {
+        log.info("MDMSUtils::getOrgFunCategoryModuleRequestData");
+
+        List<MasterDetail> orgFunCategoryMasterDetails = new ArrayList<>();
+
+        MasterDetail orgFunCategoryMaster = MasterDetail.builder().name(MASTER_ORG_FUNC_CATEGORY)
+                .filter(activeCodeFilter).build();
+
+        orgFunCategoryMasterDetails.add(orgFunCategoryMaster);
+
+        ModuleDetail orgFunCategoryModuleDetail = ModuleDetail.builder().masterDetails(orgFunCategoryMasterDetails)
+                .moduleName(MDMS_COMMON_MASTERS_MODULE_NAME).build();
+
+        return orgFunCategoryModuleDetail;
+    }
+
+//    private ModuleDetail getOrgTransferModuleRequestData(List<Organisation> organisationList) {
+//        log.info("MDMSUtils::getOrgTransferModuleRequestData");
 //
-//        List<MasterDetail> estimateCategoryMasterDetails = new ArrayList<>();
+//        List<MasterDetail> orgTransferMasterDetails = new ArrayList<>();
 //
-//        MasterDetail categoryMasterDetails = MasterDetail.builder().name(MASTER_CATEGORY)
+//        MasterDetail orgTransferMaster = MasterDetail.builder().name(MASTER_ORG_TRANSFER_CODE)
 //                .filter(activeCodeFilter).build();
 //
-//        estimateCategoryMasterDetails.add(categoryMasterDetails);
+//        orgTransferMasterDetails.add(orgTransferMaster);
 //
-//        ModuleDetail estimateCategoryModuleDetail = ModuleDetail.builder().masterDetails(estimateCategoryMasterDetails)
-//                .moduleName(MDMS_WORKS_MODULE_NAME).build();
+//        ModuleDetail orgTransferModuleDetail = ModuleDetail.builder().masterDetails(orgTransferMasterDetails)
+//                .moduleName(MDMS_COMMON_MASTERS_MODULE_NAME).build();
 //
-//        return estimateCategoryModuleDetail;
+//        return orgTransferModuleDetail;
 //    }
 
 
+    private ModuleDetail getOrgTaxIdentifierModuleRequestData(List<Organisation> organisationList) {
+        log.info("MDMSUtils::getOrgTaxIdentifierModuleRequestData");
+
+        List<MasterDetail> orgTaxIdentifierMasterDetails = new ArrayList<>();
+
+        MasterDetail orgTaxIdentifierMaster = MasterDetail.builder().name(MASTER_ORG_TAX_IDENTIFIER)
+                .filter(activeCodeFilter).build();
+
+        orgTaxIdentifierMasterDetails.add(orgTaxIdentifierMaster);
+
+        ModuleDetail orgTaxIdentifierModuleDetail = ModuleDetail.builder().masterDetails(orgTaxIdentifierMasterDetails)
+                .moduleName(MDMS_COMMON_MASTERS_MODULE_NAME).build();
+
+        return orgTaxIdentifierModuleDetail;
+    }
+
+    private ModuleDetail getOrgFunctionModuleRequestData(List<Organisation> organisationList) {
+        log.info("MDMSUtils::getOrgFunctionModuleRequestData");
+
+        List<MasterDetail> orgFuncMasterDetails = new ArrayList<>();
+
+        MasterDetail orgFuncMaster = MasterDetail.builder().name(MASTER_ORG_FUNC_CLASS)
+                .filter(activeCodeFilter).build();
+
+        orgFuncMasterDetails.add(orgFuncMaster);
+
+        ModuleDetail orgFuncModuleDetail = ModuleDetail.builder().masterDetails(orgFuncMasterDetails)
+                .moduleName(MDMS_COMMON_MASTERS_MODULE_NAME).build();
+
+        return orgFuncModuleDetail;
+    }
+
     private ModuleDetail getTenantModuleRequestData(List<Organisation> organisationList) {
         log.info("MDMSUtil::getTenantModuleRequestData");
-        List<MasterDetail> estimateTenantMasterDetails = new ArrayList<>();
+        List<MasterDetail> orgTenantMasterDetails = new ArrayList<>();
 
         MasterDetail tenantMasterDetails = MasterDetail.builder().name(MASTER_TENANTS)
                 .filter(codeFilter).build();
 
-        estimateTenantMasterDetails.add(tenantMasterDetails);
+        orgTenantMasterDetails.add(tenantMasterDetails);
 
-        ModuleDetail estimateTenantModuleDetail = ModuleDetail.builder().masterDetails(estimateTenantMasterDetails)
+        ModuleDetail orgTenantModuleDetail = ModuleDetail.builder().masterDetails(orgTenantMasterDetails)
                 .moduleName(MDMS_TENANT_MODULE_NAME).build();
 
-        return estimateTenantModuleDetail;
+        return orgTenantModuleDetail;
     }
 
     /**

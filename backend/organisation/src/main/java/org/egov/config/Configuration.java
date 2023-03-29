@@ -67,6 +67,12 @@ public class Configuration {
     @Value("${egov.idgen.organisation.application.number.format}")
     private String orgApplicationNumberFormat;
 
+    @Value("${egov.idgen.organisation.number.name}")
+    private String orgNumberName;
+
+    @Value("${egov.idgen.organisation.number.format}")
+    private String orgNumberFormat;
+
     @Value("${egov.idgen.function.application.number.name}")
     private String functionApplicationNumberName;
 
