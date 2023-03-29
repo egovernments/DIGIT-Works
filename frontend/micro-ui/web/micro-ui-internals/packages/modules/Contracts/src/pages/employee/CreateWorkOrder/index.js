@@ -1,21 +1,38 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import CreateWorkOrderForm from "./CreateWorkOrderForm";
-import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA.json";
+// import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA.json";
 import { useTranslation } from "react-i18next";
+import { Loader } from "@egovernments/digit-ui-react-components";
 
 const CreateWorkOrder = () => {
     const {t} = useTranslation();
     const queryStrings = Digit.Hooks.useQueryParams();
-    const estimateNumber = queryStrings?.estimateNumber || "ES/2022-23/001060"; //TODO:
-    const tenantId = queryStrings?.tenantId || "pg.citya";  //TODO:
+    const estimateNumber = queryStrings?.estimateNumber;
+    const tenantId = queryStrings?.tenantId;
+    const stateTenant = Digit.ULBService.getStateId();
     const [documents, setDocuments] = useState([]);
     const [officerInCharge, setOfficerInCharge] = useState([]);
     const [nameOfCBO, setNameOfCBO] = useState([]);
     const [isFormReady, setIsFormReady] = useState(false);
 
-     //fetching estimate data
-     const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
+    const { isLoading : isConfigLoading, data : createWorkOrderConfigMUKTA} = Digit.Hooks.useCustomMDMS( //change to data
+    stateTenant,
+    Digit.Utils.getConfigModuleName(),
+    [
+        {
+            "name": "CreateWorkOrderConfig"
+        }
+    ],
+    {
+      select: (data) => {
+          return data?.[Digit.Utils.getConfigModuleName()]?.CreateWorkOrderConfig[0];
+      },
+    }
+    );
+
+    //fetching estimate data
+    const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
         tenantId,
         filters: { estimateNumber }
     })
@@ -131,10 +148,11 @@ const CreateWorkOrder = () => {
         }
     },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading, isOverHeadsMasterDataLoading]);
 
+    if(isConfigLoading) return <Loader></Loader>
     return (
         <React.Fragment>
             {
-                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={createWorkOrderConfigMUKTA?.CreateWorkOrderConfig?.[0]} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}}></CreateWorkOrderForm>
+                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={createWorkOrderConfigMUKTA} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}}></CreateWorkOrderForm>
             }
         </React.Fragment>
     )
