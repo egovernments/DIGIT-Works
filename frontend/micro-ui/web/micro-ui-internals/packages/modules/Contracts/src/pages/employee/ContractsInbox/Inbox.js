@@ -30,15 +30,6 @@ const Inbox = () => {
 
   }, [location])
 
-  //for Search Pop-up in Mobile View
-  const contractSearchSession = Digit.Hooks.useSessionStorage("MOBILE_SEARCH_CONTRACT", updatedConfig?.sections.search.uiConfig.defaultValues);
-
-  const [searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData] = contractSearchSession;
-
-  //for Filter Pop-up in Mobile View
-  const contractFilterSession = Digit.Hooks.useSessionStorage("MOBILE_FILTER_CONTRACT", updatedConfig?.sections.filter.uiConfig.defaultValues);
-
-  const [filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData] = contractFilterSession;
 
 
   if (isLoading || !pageConfig) return <Loader />
@@ -47,8 +38,6 @@ const Inbox = () => {
       <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
       <div className="inbox-search-wrapper">
         <InboxSearchComposer
-           searchSessionStorageProps={{ searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData }}
-           filterSessionStorageProps={{ filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData }}
            configs={updatedConfig}
         ></InboxSearchComposer>;
       </div>

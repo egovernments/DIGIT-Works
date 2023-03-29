@@ -12,7 +12,7 @@ import MobileSearchResults from "./MobileView/MobileSearchResults";
 import MediaQuery from 'react-responsive';
 import _ from "lodash";
 
-const InboxSearchComposer = ({searchSessionStorageProps, filterSessionStorageProps, configs}) => {
+const InboxSearchComposer = ({configs}) => {
 
     const [enable, setEnable] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialInboxState);
@@ -23,10 +23,19 @@ const InboxSearchComposer = ({searchSessionStorageProps, filterSessionStoragePro
    
     const apiDetails = configs?.apiDetails
 
+    const mobileSearchSession = Digit.Hooks.useSessionStorage("MOBILE_SEARCH_MODAL_FORM", 
+        {}
+    );
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = mobileSearchSession;
+
     //for mobile view
     useEffect(() => {
         if (type) setPopup(true);
       }, [type]);
+    
+    useEffect(()=>{
+        clearSessionFormData();
+    },[]);
     
     useEffect(() => {
         //here if jsonpaths for search & table are same then searchform gets overridden
@@ -240,14 +249,7 @@ const InboxSearchComposer = ({searchSessionStorageProps, filterSessionStoragePro
                     fullConfig={configs}
                     data={data}
                     onClose={handlePopupClose}
-                    // sessionFormData={sessionFormData}
-                    // setSessionFormData={setSessionFormData}
-                    // clearSessionFormData={clearSessionFormData}
-                    // defaultValues={sessionFormData}
-                    sessionFormData={filterSessionStorageProps.filterSessionFormData}
-                    setSessionFormData={filterSessionStorageProps.setFilterSessionFormData}
-                    clearSessionFormData={filterSessionStorageProps.clearFilterSessionFormData}
-                    defaultValues={filterSessionStorageProps.filterSessionFormData}
+                    defaultValues={configs?.sections?.filter?.uiConfig?.defaultValues}
                     />
                 </div>
               )}
@@ -266,14 +268,7 @@ const InboxSearchComposer = ({searchSessionStorageProps, filterSessionStoragePro
                     fullConfig={configs}
                     data={data}
                     onClose={handlePopupClose}
-                    // sessionFormData={sessionFormData}
-                    // setSessionFormData={setSessionFormData}
-                    // clearSessionFormData={clearSessionFormData}
-                    // defaultValues={sessionFormData}
-                    sessionFormData={searchSessionStorageProps.searchSessionFormData}
-                    setSessionFormData={searchSessionStorageProps.setSearchSessionFormData}
-                    clearSessionFormData={searchSessionStorageProps.clearSearchSessionFormData}
-                    defaultValues={searchSessionStorageProps.searchSessionFormData}
+                    defaultValues={configs?.sections?.search?.uiConfig?.defaultValues}
                     />
                 </div>
               )}

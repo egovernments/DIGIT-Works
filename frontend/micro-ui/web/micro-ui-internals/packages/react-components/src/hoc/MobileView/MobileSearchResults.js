@@ -35,13 +35,15 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
       if (isLoading) {
         return [];
       }
-      let cardData =  searchResult.map((row) => {
+      let cardData =  searchResult.map((details) => {
           let mapping = {};
+          let additionalCustomization = {};
           let cols = config?.columns;
           for(let columnIndex = 0; columnIndex<cols?.length; columnIndex++) {
-              mapping[t(cols[columnIndex]?.label)] = _.get(row, cols[columnIndex]?.jsonPath, null)
+              mapping[cols[columnIndex]?.label] = _.get(details, cols[columnIndex]?.jsonPath, null)
+              additionalCustomization[cols[columnIndex]?.label] = cols[columnIndex]?.additionalCustomization || false;
             }
-          return mapping;
+          return {mapping, details, additionalCustomization};
       })
       return cardData;
     }, [data]);
@@ -52,17 +54,30 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
     } 
     return <div>
       {propsMobileInboxCards.map((row) => {
-        return <Link to={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.MobileDetailsOnClick(row, t, tenantId)}>
+        return <Link to={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.MobileDetailsOnClick(row.mapping, tenantId)}>
         <div className="details-container">
-          {Object.keys(row).map(key => {
+          {Object.keys(row.mapping).map(key => {
             let toRender;
-            let mobileCustomization = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.MobileAdditionalCustomization(row, key, row[key], t, tenantId, searchResult, headerLocale);
-              if(mobileCustomization){
-                toRender = (<Details label={key} name={mobileCustomization} onClick={() =>{}} row={row} />)
+              if(row.additionalCustomization[key]){
+                toRender = (
+                <Details label={key} 
+                  name={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row.details, key, {}, row.mapping[key], t, searchResult)} 
+                  onClick={() =>{}} 
+                  row={row.mapping} />)
               }
-              else
-              {
-                toRender = row[key]? ( <Details label={key} name={row[key]} onClick={() =>{}} row={row} /> ) : ( <Details label={key} name={t("NA")} onClick={() =>{}} row={row} /> )
+              else {
+                toRender = row.mapping[key]? ( 
+                <Details 
+                  label={key} 
+                  name={row.mapping[key]} 
+                  onClick={() =>{}} 
+                  row={row.mapping} /> 
+                ) : ( 
+                <Details 
+                  label={key} 
+                  name={t("NA")} 
+                  onClick={() =>{}} 
+                  row={row.mapping} /> )
               }
               return toRender
             })}

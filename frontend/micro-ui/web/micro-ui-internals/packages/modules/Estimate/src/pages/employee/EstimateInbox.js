@@ -23,40 +23,26 @@ const EstimateInbox = () => {
         ]);
         
     // let configs = data?.[moduleName]?.EstimateInboxConfig?.[0]
- 
+    let updatedConfig = inboxConfigMukta(t);
 
-    const updatedConfig = useMemo(
-        () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, pageConfig,"sections.search.uiConfig.fields",{}),
-        [data,pageConfig]);
+    // const updatedConfig = useMemo(
+    //     () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, pageConfig,"sections.search.uiConfig.fields",{}),
+    //     [data,pageConfig]);
 
     
-    useEffect(() => {
-        setPageConfig(_.cloneDeep(data?.[moduleName]?.EstimateInboxConfig?.[0]))
+    // useEffect(() => {
+    //     setPageConfig(_.cloneDeep(data?.[moduleName]?.EstimateInboxConfig?.[0]))
         
-    }, [data,location])
+    // }, [data,location])
 
-    //for Search Pop-up in Mobile View
-    const estimateSearchSession = Digit.Hooks.useSessionStorage("MOBILE_SEARCH_ESTIMATE", 
-        updatedConfig?.sections.search.uiConfig.defaultValues
-    );
-
-    const [searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData] = estimateSearchSession;
-
-    //for Filter Pop-up in Mobile View
-    const estimateFilterSession = Digit.Hooks.useSessionStorage("MOBILE_FILTER_ESTIMATE", 
-        updatedConfig?.sections.filter.uiConfig.defaultValues
-    );
-
-    const [filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData] = estimateFilterSession;
     
-    if(isLoading || !pageConfig) return <Loader />
+    
+    // if(isLoading || !pageConfig) return <Loader />
     return (
         <React.Fragment>
             <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
             <div className="inbox-search-wrapper">
             <InboxSearchComposer 
-               searchSessionStorageProps={{searchSessionFormData, setSearchSessionFormData, clearSearchSessionFormData}} 
-               filterSessionStorageProps={{filterSessionFormData, setFilterSessionFormData, clearFilterSessionFormData}}
                configs={updatedConfig}>
             </InboxSearchComposer>
             </div>
