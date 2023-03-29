@@ -50,6 +50,7 @@ Currently below endpoints are in use for ‘CITIZEN' and 'EMPLOYEE’ roles
 | Endpoint | module | query parameter | Restrict Citizen to own records |
 | -------- | ------ | --------------- | ------------------------------- |
 |`/egov-pdf/download/PT/ptreceipt` | property-tax | `projectId, tenantId` | false |
+|`/egov-pdf/download/PT/project` | project-details | `projectId, tenantId` | false |
 
 
 ### Kafka Consumers

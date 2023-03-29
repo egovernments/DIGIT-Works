@@ -29,7 +29,6 @@ router.post(
         try {
             try {
                 resProject = await search_projectDetails(tenantId, requestinfo, projectNum);
-console.log(resProject,'resProject');
             }
             catch (ex) {
                 if (ex.response && ex.response.data) console.log(ex.response.data);

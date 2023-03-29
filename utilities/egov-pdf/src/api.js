@@ -89,7 +89,6 @@ async function search_mdms(tenantId, module, master, requestinfo) {
 
 async function create_pdf(tenantId, key, data, requestinfo) {
   var oj=Object.assign(requestinfo, data);
-  console.log(oj,'sasas');
   return await axios({
     responseType: "stream",
     method: "post",

@@ -22,7 +22,7 @@ module.exports = {
   pdf: {
     epass_pdf_template: process.env.EPASS_TEMPLATE || "tlcertificate",
     project_details_template:
-    process.env.PROJECT_DETAILS || "project-detail" 
+    process.env.PROJECT_DETAILS_TEMPLATE || "project-detail" 
   },
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,
