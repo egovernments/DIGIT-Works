@@ -106,7 +106,7 @@ const renderHeader = () => {
             <span className="icon" style ={{ marginRight: "12px", marginTop: "5px",  paddingBottom: "3px" }}><FilterIcon/></span>
             <span style ={{ fontSize: "large" }}>{t("ES_COMMON_FILTER_BY")}:</span>
           </span>
-          <span className="clear-search" onClick={clearSearch} style={{ marginRight: "1px" }}><RefreshIcon/></span>
+          <span className="clear-search" onClick={clearSearch}><RefreshIcon/></span>
           <span onClick={onClose}>
             <CloseSvg />
           </span>       
