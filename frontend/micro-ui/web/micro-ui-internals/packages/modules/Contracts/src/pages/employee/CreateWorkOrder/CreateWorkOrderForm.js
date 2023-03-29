@@ -31,18 +31,19 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
 
     useEffect(() => {
-        // setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : [])
-        let refactoredAppoversNames = [];
-        if(employeeDatav1?.Employees?.length > 0) {
-            refactoredAppoversNames = employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA").map((emp=>{
-                let designation = t(`COMMON_MASTERS_DESIGNATION_${emp?.assignments?.[0]?.designation}`);
-                return {...emp, name_designation : `${emp?.nameOfEmp} - ${designation}`}
-            }))
-        }else {
-            refactoredAppoversNames = [];
-        }
+        setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : [])
+        //TODO: if name-designation is req
+        // let refactoredAppoversNames = [];
+        // if(employeeDatav1?.Employees?.length > 0) {
+        //     refactoredAppoversNames = employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA").map((emp=>{
+        //         let designation = t(`COMMON_MASTERS_DESIGNATION_${emp?.assignments?.[0]?.designation}`);
+        //         return {...emp, name_designation : `${emp?.nameOfEmp} - ${designation}`}
+        //     }))
+        // }else {
+        //     refactoredAppoversNames = [];
+        // }
 
-        setApprovers(refactoredAppoversNames);
+        // setApprovers(refactoredAppoversNames);
     }, [employeeDatav1])
 
     const fetchOfficerInChargeDesignation = (data) => {
