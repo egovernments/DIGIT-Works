@@ -88,6 +88,10 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         {
             key : "basicDetails_wageSeekerId",
             value : [!isModify ? "none" : "flex"]
+        },
+        {
+            key : "basicDetails_aadhar",
+            value : [!isModify ? "auto" : "none", !isModify ? "" : "field-value-no-border"]
         }
       ]
     }),

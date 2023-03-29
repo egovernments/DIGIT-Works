@@ -34,9 +34,15 @@ export const CreateWageSeekerConfig = {
               isMandatory: false,
               key: "basicDetails_aadhar",
               type: "text",
-              disable: true,
+              disable: false,
+              preProcess : {
+                updateDependent : ["populators.customStyle.pointerEvents", "populators.customClass"]
+              },
               populators: { 
                 name: "basicDetails_aadhar",
+                customStyle : {
+                  pointerEvents : "auto"
+                },
                 customClass : "field-value-no-border" 
               }
             },

@@ -37,8 +37,8 @@ const ModifyWageSeeker = () => {
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
-    //const { individualId } = Digit.Hooks.useQueryParams()
-    const individualId = 'IND-2023-03-28-001477'//'IND-2023-03-27-001461'
+    const { individualId } = Digit.Hooks.useQueryParams()
+    //const individualId = 'IND-2023-03-29-001482'//'IND-2023-03-27-001461'
     const isModify = individualId ? true : false;
 
     //Call Search Wage Seeker
@@ -56,7 +56,7 @@ const ModifyWageSeeker = () => {
             setShowDataError(true)
         }
     }, [error])
-    
+   
     //session for Wage Seeker data
     const wageSeekerSession = Digit.Hooks.useSessionStorage("WAGE_SEEKER_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = wageSeekerSession;
