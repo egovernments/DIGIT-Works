@@ -77,6 +77,13 @@ const CreateWorkOrder = () => {
     //organisation search
     const { isLoading : isOrgSearchLoading, data : organisationOptions } = Digit.Hooks.organisation.useSearchOrg(searchOrgPayload);
     
+    //Overheads Search
+    const { isLoading : isOverHeadsMasterDataLoading, data : overHeadMasterData } = Digit.Hooks.useCustomMDMS(
+        Digit.ULBService.getStateId(),
+        "works",
+        [{ "name": "Overheads" }]
+    );
+
     const createOfficerInChargeObject = () => {
         return assigneeOptions?.Employees?.filter(employees=>employees?.isActive).map((employee=>( { code : employee?.code, name : employee?.user?.name, data : employee} )))
     }
@@ -85,15 +92,34 @@ const CreateWorkOrder = () => {
         return organisationOptions?.organisations?.map(organisationOption => ( {code : organisationOption?.id, name : organisationOption?.name, applicationNumber : organisationOption?.applicationNumber } ))
     }
 
+    const handleWorkOrderAmount = (estimate, overHeadMasterData) => {
+        overHeadMasterData = overHeadMasterData?.works?.Overheads;
+        let totalAmount = estimate?.additionalDetails?.totalEstimatedAmount;
+
+        //loop through the estimate Details and filter with OVERHEAD
+        estimate?.estimateDetails?.forEach((estimateDetail)=>{
+            if(estimateDetail?.category !== "OVERHEAD") return;
+            let amountDetails = estimateDetail?.amountDetail?.[0];
+
+            let overHeadCode = amountDetails?.type;
+            let shouldSubtract = !((overHeadMasterData?.filter(overHead=>overHead?.code === overHeadCode)?.[0])?.isWorkOrderValue);
+
+            if(shouldSubtract) {
+                totalAmount -= amountDetails?.amount;
+            }
+        })
+        return totalAmount;
+    }
+
     useEffect(()=>{
-        if((!isEstimateLoading && !isProjectLoading && !isLoadingHrmsSearch && !isOrgSearchLoading)) {
+        if((!isEstimateLoading && !isProjectLoading && !isLoadingHrmsSearch && !isOrgSearchLoading && !isOverHeadsMasterDataLoading)) {
             //set default values
             let defaultValues = {
                 basicDetails_projectID :  project?.projectNumber,
                 basicDetails_dateOfProposal : Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal),
                 basicDetails_projectName : project?.name,
                 basicDetails_projectDesc : project?.description,
-                workOrderAmountRs : estimate?.additionalDetails?.totalEstimatedAmount //TODO:
+                workOrderAmountRs : handleWorkOrderAmount(estimate, overHeadMasterData)
             };
 
             //set document object
@@ -103,7 +129,7 @@ const CreateWorkOrder = () => {
             setSessionFormData({...sessionFormData, ...defaultValues});
             setIsFormReady(true);
         }
-    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading]);
+    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading, isOverHeadsMasterDataLoading]);
 
     return (
         <React.Fragment>
