@@ -8,7 +8,9 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 const CreateWorkOrder = () => {
     const {t} = useTranslation();
     const queryStrings = Digit.Hooks.useQueryParams();
-    const estimateNumber = queryStrings?.estimateNumber;
+    const isModify = queryStrings?.workOrderNumber ? true : false;
+    const [estimateNumber, setEsimateNumber] = useState(queryStrings?.estimateNumber ? queryStrings?.estimateNumber : "");
+    const contractNumber = queryStrings?.workOrderNumber;
     const tenantId = queryStrings?.tenantId;
     const stateTenant = Digit.ULBService.getStateId();
     const [documents, setDocuments] = useState([]);
@@ -31,11 +33,30 @@ const CreateWorkOrder = () => {
     }
     );
 
+    //fetching contract data -- modify
+    const { isLoading: isContractLoading,data:contract } = Digit.Hooks.contracts.useContractSearch({
+        tenantId,
+        filters: { contractNumber, tenantId },
+        config:{
+            enabled: isModify 
+        }
+    })
+
+    useEffect(()=>{
+        if(!isContractLoading && isModify) {
+            setEsimateNumber(contract?.additionalDetails?.estimateNumber)
+        }
+    },[contract])
+
     //fetching estimate data
     const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
         tenantId,
-        filters: { estimateNumber }
+        filters: { estimateNumber },
+        config:{
+            enabled: !!(estimateNumber)
+        }
     })
+
     //fetching project data
     const { isLoading: isProjectLoading, data: project } = Digit.Hooks.project.useProjectSearch({
         tenantId,
@@ -130,6 +151,7 @@ const CreateWorkOrder = () => {
 
     useEffect(()=>{
         if((!isEstimateLoading && !isProjectLoading && !isLoadingHrmsSearch && !isOrgSearchLoading && !isOverHeadsMasterDataLoading)) {
+            console.log(estimate,project, sessionFormData, createWorkOrderConfigMUKTA);
             //set default values
             let defaultValues = {
                 basicDetails_projectID :  project?.projectNumber,

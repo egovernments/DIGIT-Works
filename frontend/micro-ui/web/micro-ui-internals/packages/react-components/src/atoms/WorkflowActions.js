@@ -73,8 +73,8 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   };
 
   const onActionSelect = (action) => {
-    
-    const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
+    const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
+    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts");
 
     setDisplayMenu(false)
     setSelectedAction(action)
@@ -85,6 +85,11 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         history.push(`/${window?.contextPath}/employee/estimate/create-estimate?tenantId=${tenantId}&projectNumber=${editApplicationNumber}&estimateNumber=${applicationDetails?.estimateNumber}&isEdit=true`);
         return 
     }
+
+    if(bsContract === businessService && action?.action === "EDIT"){
+      history.push(`/${window?.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&workOrderNumber=${applicationDetails?.contractNumber}`);
+      return 
+  }
 
     //here we can add cases of toast messages,edit application and more...
     // the default result is setting the modal to show
