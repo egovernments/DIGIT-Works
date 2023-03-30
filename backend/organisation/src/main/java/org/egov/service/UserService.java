@@ -57,7 +57,7 @@ public class UserService {
         for (ContactDetails contactDetails : contactDetailsList) {
 
             User newUser = User.builder().build();
-            addUserDefaultFields(stateLevelTenantId, role, newUser, contactDetails);
+            addUserDefaultFields(stateLevelTenantId, role, newUser, contactDetails,true);
             UserDetailResponse userDetailResponse = userExists(contactDetails, stateLevelTenantId, requestInfo, Boolean.TRUE);
             List<UserRequest> existingUsersFromService = userDetailResponse.getUser();
 
@@ -104,7 +104,7 @@ public class UserService {
      * @param user
      * @param contactDetails
      */
-    private void addUserDefaultFields(String tenantId, Role role, User user, ContactDetails contactDetails) {
+    private void addUserDefaultFields(String tenantId, Role role, User user, ContactDetails contactDetails,boolean isCreate) {
         log.info("UserService::addUserDefaultFields");
         user.setMobileNumber(contactDetails.getContactMobileNumber());
         user.setEmailId(contactDetails.getContactEmail());
@@ -114,7 +114,7 @@ public class UserService {
         user.setRoles(Collections.singleton(role));
         user.setActive(Boolean.TRUE);
         user.setUsername(contactDetails.getContactMobileNumber());
-        if(StringUtils.isNotBlank(contactDetails.getId())){
+        if(!isCreate){
             user.setUuid(contactDetails.getId());
         }
 
@@ -276,7 +276,7 @@ public class UserService {
         contactDetailsList.forEach(contactDetails -> {
 
             User newUser = User.builder().build();
-            addUserDefaultFields(stateLevelTenantId, role, newUser, contactDetails);
+            addUserDefaultFields(stateLevelTenantId, role, newUser, contactDetails,false);
 
             UserDetailResponse userDetailResponse = userExists(contactDetails, stateLevelTenantId, requestInfo, Boolean.FALSE);
 
