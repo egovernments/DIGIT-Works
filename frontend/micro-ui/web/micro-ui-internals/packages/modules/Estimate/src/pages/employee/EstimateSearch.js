@@ -8,7 +8,7 @@ import searchConfigMuktaFuzzy from "../../configs/SearchConficMuktaFuzzy";
 const EstimateSearch = () => {
     const { t } = useTranslation();
 
-    const configs = searchConfigMuktaFuzzy();
+    // const configs = searchConfigMuktaFuzzy();
     const configModuleName = Digit.Utils.getConfigModuleName()
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
@@ -16,12 +16,12 @@ const EstimateSearch = () => {
         configModuleName,
         [
             {
-                "name": "SearchEstimateConfig"
+                "name": "SearchEstimateConfigFuzzy"
             }
         ]
     );
 
-    // const configs = data?.[configModuleName].SearchEstimateConfig?.[0]
+    const configs = data?.[configModuleName].SearchEstimateConfigFuzzy?.[0]
 
     if (isLoading) return <Loader />
     return (
