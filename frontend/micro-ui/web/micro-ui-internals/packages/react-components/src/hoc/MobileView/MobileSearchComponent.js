@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { InboxContext } from "../InboxSearchComposerContext";
 import { FilterIcon, SearchIcon, CloseSvg, RefreshIcon } from "../../atoms/svgindex";
 import ActionBar from "../../atoms/ActionBar";
+import SubmitBar from "../../atoms/SubmitBar";
+import LinkLabel from "../../atoms/LinkLabel";
 import ApplyFilterBar from "../../atoms/ApplyFilterBar";
 import RenderFormFields from "../../molecules/RenderFormFields";
 import Toast from "../../atoms/Toast"; 
@@ -84,8 +86,8 @@ const MobileSearchComponent = ({ uiConfig, modalType, header = "", screenType = 
   }
 
   const clearSearch = () => {
-    reset(uiConfig?.defaultValues)
     clearSessionFormData();
+    reset(uiConfig?.defaultValues)
     dispatch({
       type: "clearSearchForm",
       state: { ...uiConfig?.defaultValues }
@@ -162,13 +164,10 @@ const renderHeader = () => {
               apiDetails={apiDetails}
             />  
             <ActionBar className="clear-search-container">
-             <ApplyFilterBar
-               submit="submit"
-               labelLink={t(uiConfig?.secondaryLabel)}
-               buttonLink={t(uiConfig?.primaryLabel)}
-              onClear={clearSearch}
-              style={{ flex: 1 }}
-              />
+              <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
+                { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
+                { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
+              </div>
             </ActionBar>
           </div> 
         </form>

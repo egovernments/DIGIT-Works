@@ -228,7 +228,7 @@ export const UICustomizations = {
        { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${25}ch` }}> {/* column.maxlength -->25 */}          
+            <span class="textoverflow" style={{ "--max-width": `${columnConfig?.maxlength}ch` }}>         
               {String(t(value))}
             </span>
             {/* check condtion - if length greater than 20 */}
@@ -380,7 +380,6 @@ export const UICustomizations = {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
-      console.log("ROW :", row);
       switch (key) {
       case "WORKS_ORDER_ID": 
         return (

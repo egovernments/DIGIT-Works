@@ -162,7 +162,7 @@ export const UICustomizations = {
       if (key === "WORKS_PROJECT_NAME") {
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${25}ch` }}>
+            <span class="textoverflow" style={{ "--max-width": `${columnConfig?.maxlength}ch` }}>
               {String(t(value))}
             </span>
             {/* check condtion - if length greater than 20 */}
@@ -550,7 +550,6 @@ export const UICustomizations = {
             t("ES_COMMON_NA")
           );
         case "CORE_COMMON_STATUS":
-          console.log("state :", value);
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
 
         case "MASTERS_ORGANISATION_TYPE":
@@ -604,7 +603,6 @@ export const UICustomizations = {
       return link;
     },
     additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
-      console.log("row :", row);
       if (key === "WORKS_BILL_NUMBER") {
         return (
           <span className="link">
