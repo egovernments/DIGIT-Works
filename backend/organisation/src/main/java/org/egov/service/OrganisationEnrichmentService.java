@@ -237,8 +237,12 @@ public class OrganisationEnrichmentService {
             organisationUtil.setAuditDetailsForFunction(requestInfo.getUserInfo().getUuid(), createFunctionList, Boolean.TRUE);
 
             //get the application numbers for new function from Idgen service
-            List<String> orgFunctionApplicationNumbers = idgenUtil.getIdList(requestInfo, rootTenantId, config.getFunctionApplicationNumberName()
-                    , config.getFunctionApplicationNumberFormat(), createFunctionList.size());
+            List<String> orgFunctionApplicationNumbers = new ArrayList<>();
+            if (createFunctionList.size() > 0) {
+                orgFunctionApplicationNumbers = idgenUtil.getIdList(requestInfo, rootTenantId, config.getFunctionApplicationNumberName()
+                        , config.getFunctionApplicationNumberFormat(), createFunctionList.size());
+            }
+
             //set the application numbers to new function
             int index = 0;
             if (!CollectionUtils.isEmpty(orgFunctionApplicationNumbers)) {
