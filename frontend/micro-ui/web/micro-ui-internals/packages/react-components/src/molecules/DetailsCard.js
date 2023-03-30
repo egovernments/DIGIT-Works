@@ -4,13 +4,11 @@ import { Link } from "react-router-dom";
 import CitizenInfoLabel from "../atoms/CitizenInfoLabel";
 import  ActionBar from "../atoms/ActionBar";
 import SubmitBar from "../atoms/SubmitBar";
-import { useTranslation } from 'react-i18next';
 export const Details = ({ label, name, onClick}) => {
-  const { t } = useTranslation();
   return (
     <div className="detail" onClick={onClick}>
       <span className="label">
-        <h2>{t(label)}</h2>
+        <h2>{label}</h2>
       </span>
       <span className="name">{name}</span>
     </div>

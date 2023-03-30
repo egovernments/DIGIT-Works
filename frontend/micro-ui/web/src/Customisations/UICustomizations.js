@@ -177,9 +177,7 @@ export const UICustomizations = {
           return data;
         },
         postProcess: (responseArray, uiConfig) => {
-          const statusOptions = responseArray?.statusMap
-            ?.filter((item) => item.applicationstatus)
-            ?.map((item) => ({ code: item.applicationstatus, i18nKey: `COMMON_MASTERS_${item.applicationstatus}` }));
+          const statusOptions = responseArray?.statusMap?.filter((item) => item.applicationstatus)?.map((item) => ({ code: item.applicationstatus, i18nKey: `COMMON_MASTERS_${item.applicationstatus}` }));
           if (uiConfig?.type === "filter") {
             let fieldConfig = uiConfig?.fields?.filter((item) => item.type === "dropdown" && item.populators.name === "musterRollStatus");
             if (fieldConfig.length) {
@@ -245,9 +243,7 @@ export const UICustomizations = {
         },
         postProcess: (responseArray) => {
           const listOfUuids = responseArray?.map((row) => row.auditDetails.createdBy);
-          const uniqueUuids = listOfUuids?.filter(function (item, i, ar) {
-            return ar.indexOf(item) === i;
-          });
+          const uniqueUuids = listOfUuids?.filter(function (item, i, ar) { return ar.indexOf(item) === i; });
           const tenantId = Digit.ULBService.getCurrentTenantId();
           const reqCriteria = {
             url: "/user/_search",
@@ -266,9 +262,7 @@ export const UICustomizations = {
               },
             },
           };
-          const { isLoading: isPostProcessLoading, data: combinedResponse, isFetching: isPostProcessFetching } = Digit.Hooks.useCustomAPIHook(
-            reqCriteria
-          );
+          const { isLoading: isPostProcessLoading, data: combinedResponse, isFetching: isPostProcessFetching } = Digit.Hooks.useCustomAPIHook(reqCriteria);
           return {
             isPostProcessFetching,
             isPostProcessLoading,
@@ -314,19 +308,12 @@ export const UICustomizations = {
     },
     BillInboxConfig: {
         preProcess: (data) => {
-          const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber;
-          let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
-          delete data.body.inbox.moduleSearchCriteria.state;
-          states = Object.keys(states)?.filter((key) => states[key]);
-    
-          let status;
-          if (states.length > 0) status = states;
-    
+          const musterRollNumber = data.body.inbox?.moduleSearchCriteria?.billNumber
           data.body.inbox = {
             ...data.body.inbox,
             tenantId: Digit.ULBService.getCurrentTenantId(),
             processSearchCriteria: { ...data.body.inbox.processSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() },
-            moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber, status },
+            moduleSearchCriteria: { tenantId: Digit.ULBService.getCurrentTenantId(), musterRollNumber },
           };
           return data;
         },

@@ -41,9 +41,7 @@ const EstimateInbox = () => {
         <React.Fragment>
             <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
             <div className="inbox-search-wrapper">
-            <InboxSearchComposer 
-               configs={updatedConfig}>
-            </InboxSearchComposer>
+              <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer>
             </div>
         </React.Fragment>
     )

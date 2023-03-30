@@ -1,9 +1,10 @@
-import { FormComposer, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Toast, WorkflowModal } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { createWorkOrderUtils } from "../../../../utils/createWorkOrderUtils";
 import { useHistory } from "react-router-dom";
+import getWOModalConfig from "../../../configs/getWOModalConfig";
 
 const navConfig =  [
     {
@@ -18,9 +19,32 @@ const navConfig =  [
 
 const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData}) => {
     const {t} = useTranslation();
-    const [selectedOfficerInCharge, setSelectedOfficerInCharge] = useState([]);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
+    const [showModal, setShowModal] = useState(false);
+    const [createWOModalConfig, setCreateWOModalConfig] = useState({});
+    const rolesForThisAction = "WORK_ORDER_VERIFIER" //hardcoded for now
+    const [approvers, setApprovers] = useState([]);
+    const [selectedApprover, setSelectedApprover] = useState({});
+    const [inputFormdata, setInputFormData] = useState([]);
+    const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
+    employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
+
+    useEffect(() => {
+        setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : [])
+        //TODO: if name-designation is req
+        // let refactoredAppoversNames = [];
+        // if(employeeDatav1?.Employees?.length > 0) {
+        //     refactoredAppoversNames = employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA").map((emp=>{
+        //         let designation = t(`COMMON_MASTERS_DESIGNATION_${emp?.assignments?.[0]?.designation}`);
+        //         return {...emp, name_designation : `${emp?.nameOfEmp} - ${designation}`}
+        //     }))
+        // }else {
+        //     refactoredAppoversNames = [];
+        // }
+
+        // setApprovers(refactoredAppoversNames);
+    }, [employeeDatav1])
 
     const fetchOfficerInChargeDesignation = (data) => {
         return data?.assignments?.filter(assignment=>assignment?.isCurrentAssignment)?.[0]?.designation;
@@ -76,8 +100,25 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         }
     },[toast?.show]);
 
-    const onSubmit = async (data) => {
-        const payload = createWorkOrderUtils({tenantId, estimate, project, data});
+    useEffect(() => {
+        setCreateWOModalConfig(
+            getWOModalConfig({
+                t,
+                approvers,
+                selectedApprover,
+                setSelectedApprover,
+                approverLoading
+            })
+        )
+    }, [approvers]);
+
+    const onFormSubmit = (_data) => {
+        setInputFormData(_data);
+        setShowModal(true);
+    }
+
+    const onModalSubmit = async (modalData) => {
+        const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData});
         
         await CreateWOMutation(payload, {
             onError: async (error, variables) => {
@@ -113,6 +154,14 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
 
     return (
         <React.Fragment>
+            {
+                showModal && 
+                <WorkflowModal
+                    closeModal={() => setShowModal(false)}
+                    onSubmit={onModalSubmit}
+                    config={createWOModalConfig}
+                />
+            }
             <Header styles={{fontSize: "32px"}}>{t("ACTION_TEST_CREATE_WO")}</Header>
                 {
                     createWorkOrderConfig && (
@@ -124,7 +173,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                             body: config?.body.filter((a) => !a.hideInEmployee),
                         };
                         })}
-                        onSubmit={onSubmit}
+                        onSubmit={onFormSubmit}
                         submitInForm={false}
                         fieldStyle={{ marginRight: 0 }}
                         inline={false}

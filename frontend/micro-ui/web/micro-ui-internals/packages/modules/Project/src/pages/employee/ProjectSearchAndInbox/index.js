@@ -4,7 +4,7 @@ import { Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-reac
 import inboxConfig from "../../../configs/InboxConfig";
 
 const ProjectSearchAndInboxComponent = () => {
-   const { t } = useTranslation();
+    const { t } = useTranslation();
 
     //const configs = inboxConfig();
     const tenant = Digit.ULBService.getStateId();
@@ -21,14 +21,11 @@ const ProjectSearchAndInboxComponent = () => {
     const configs = data?.[Digit.Utils.getConfigModuleName()]?.InboxProjectConfig?.[0]
 
     if(isLoading) return <Loader />
-
       return (
            <React.Fragment>
               <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}</Header>
               <div className="inbox-search-wrapper">
-              <InboxSearchComposer 
-                 configs={configs}>
-             </InboxSearchComposer>
+                <InboxSearchComposer configs={configs}></InboxSearchComposer>
               </div>
           </React.Fragment>
       );

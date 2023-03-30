@@ -50,8 +50,7 @@ export const UICustomizations = {
           return (
            <span className="link">
             <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
-              {/* {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))} */}
-              {String(value ? value : t("ES_COMMON_NA"))}
+              {String(value ? (columnConfig.translate ? t(columnConfig.prefix ? `${columnConfig.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
             </Link>
            </span>
           );
@@ -82,6 +81,124 @@ export const UICustomizations = {
       return link;
     },
   },
+  AttendanceInboxConfig: {
+    preProcess: (data) => {
+      
+      //set tenantId
+
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+
+      // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
+
+      const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
+      delete data.body.inbox.moduleSearchCriteria.assignee;
+      if (assignee?.code === "ASSIGNED_TO_ME") {
+        data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
+      }
+
+      delete data.body.inbox.moduleSearchCriteria.ward;
+
+      //cloning locality and workflow states to format them
+      // let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
+      
+      let selectedOrg =  _.clone(data.body.inbox.moduleSearchCriteria.orgId ? data.body.inbox.moduleSearchCriteria.orgId : null);
+      delete data.body.inbox.moduleSearchCriteria.orgId;
+      if(selectedOrg) {
+         data.body.inbox.moduleSearchCriteria.orgId = selectedOrg?.[0]?.applicationNumber;
+      }
+      let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
+      // delete data.body.inbox.moduleSearchCriteria.locality;
+      delete data.body.inbox.moduleSearchCriteria.state;
+      // locality = locality?.map((row) => row?.code);
+      states = Object.keys(states)?.filter((key) => states[key]);
+
+      // //adding formatted data to these keys
+      // if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
+      if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
+
+      const projectType = _.clone(data.body.inbox.moduleSearchCriteria.projectType ? data.body.inbox.moduleSearchCriteria.projectType : {});
+      if (projectType?.code) data.body.inbox.moduleSearchCriteria.projectType = projectType.code;
+
+      //adding tenantId to moduleSearchCriteria
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+
+      //setting limit and offset becoz somehow they are not getting set in muster inbox 
+      data.body.inbox .limit = data.state.tableForm.limit
+      data.body.inbox.offset = data.state.tableForm.offset
+      delete data.state
+      return data;
+    },
+    postProcess: (responseArray, uiConfig) => {
+      const statusOptions = responseArray?.statusMap
+        ?.filter((item) => item.applicationstatus)
+        ?.map((item) => ({ code: item.applicationstatus, i18nKey: `COMMON_MASTERS_${item.applicationstatus}` }));
+      if (uiConfig?.type === "filter") {
+        let fieldConfig = uiConfig?.fields?.filter((item) => item.type === "dropdown" && item.populators.name === "musterRollStatus");
+        if (fieldConfig.length) {
+          fieldConfig[0].populators.options = statusOptions;
+        }
+      }
+    },
+    additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+      if (key === "ATM_MUSTER_ROLL_ID") {
+        return (
+          <span className="link">
+            <Link
+              to={`/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
+            >
+              {String(value ? (columnConfig.translate ? t(columnConfig.prefix ? `${columnConfig.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if (key === "ATM_ATTENDANCE_WEEK") {
+        const week = `${Digit.DateUtils.ConvertTimestampToDate(value?.startDate, "dd/MM/yyyy")}-${Digit.DateUtils.ConvertTimestampToDate(
+          value?.endDate,
+          "dd/MM/yyyy"
+        )}`;
+        return <div>{week}</div>;
+      }
+      if (key === "ATM_NO_OF_INDIVIDUALS") {
+        return <div>{value?.length}</div>;
+      }
+      if (key === "ATM_SLA") {
+        return parseInt(value) > 0 ? (
+          <span className="sla-cell-success">{t(value) || ""}</span>
+        ) : (
+          <span className="sla-cell-error">{t(value) || ""}</span>
+        );
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "ATM_MUSTER_ROLL_ID")
+          link = `/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${tenantId}&musterRollNumber=${row[key]}`;
+      });
+      return link;
+    },
+    populateReqCriteria: () => {
+      
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/org-services/organisation/v1/_search",
+        params: { limit: 50, offset: 0 },
+        body: {
+          SearchCriteria: {
+            tenantId: tenantId,
+          },
+        },
+        config: {
+          enabled: true,
+          select: (data) => {
+            return data?.organisations;
+          },
+        },
+      };
+    },
+  },
   SearchEstimateConfig: {
     customValidationCheck: (data) => {
       //checking both to and from date are present
@@ -92,12 +209,24 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
-      const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromProposalDate,"daystart");
-      const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toProposalDate);
-      const projectType = data?.params?.projectType?.code;
-      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromProposalDate, toProposalDate, projectType };
-      //deleting ward data since this is a static field for now
-      delete data?.params?.ward;
+      
+      //get data to set in api
+      const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.fromProposalDate,"daystart");
+      if(fromProposalDate) data.body.inbox.moduleSearchCriteria.fromProposalDate = fromProposalDate
+      const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.toProposalDate);
+      if(toProposalDate) data.body.inbox.moduleSearchCriteria.toProposalDate = toProposalDate
+      
+      const projectType = data?.body?.inbox?.moduleSearchCriteria?.typeOfWork?.code;
+      delete data.body.inbox.moduleSearchCriteria.typeOfWork
+      if(projectType) data.body.inbox.moduleSearchCriteria.typeOfWork = projectType
+
+      const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code
+      delete data.body.inbox.moduleSearchCriteria.ward
+      if(ward) data.body.inbox.moduleSearchCriteria.ward = ward
+    
+      //set tenantId 
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
       return data;
     },
     additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
@@ -122,22 +251,23 @@ export const UICustomizations = {
         );
 
        case "WORKS_ESTIMATED_AMOUNT":
-       { const amt = row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0);
-         return amt ? Digit.Utils.dss.formatterWithoutRound(amt, "number") : t("ES_COMMON_NA");
-       }
+         return value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA");
+
+       case "CORE_COMMON_STATUS":
+         return t(`WF_ESTIMATE_STATUS_${value}`)
 
        case "ES_COMMON_LOCATION":
-       { const location = searchResult?.filter((result) => result?.id === row?.id)[0].additionalDetails?.location;
-         const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.tenantId)
-         if (location) {
+        {
+          const location = value;
+          const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.tenantId);
+          if (location) {
           let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
           let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
           let city = location?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(location?.city)}`) : "";
           return <p>{`${locality ? locality + ", " : ""}${ward ? ward + ", " : ""}${city}`}</p>;
-         }
-         return <p>{"NA"}</p>;
-       }
-
+           }
+          return <p>{"NA"}</p>;
+        }
        default:
         return t("ES_COMMON_NA");
       }
@@ -495,7 +625,7 @@ export const UICustomizations = {
 
         case "MASTERS_LOCALITY":
           return value ? (
-            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+            <span style={{ whiteSpace: "break-spaces" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
           ) : (
             t("ES_COMMON_NA")
           );

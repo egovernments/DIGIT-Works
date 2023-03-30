@@ -11,6 +11,7 @@ const inboxConfig = () => {
                 apiOperation: "SEARCH",
                 Projects: [
                     {   
+
                     }
                 ]
             },
@@ -116,7 +117,7 @@ const inboxConfig = () => {
                     headerStyle : null,
                     primaryLabel: 'ES_COMMON_APPLY',
                     minReqFields: 0,
-                    secondaryLabel: 'ES_COMMON_CLEAR_ALL',
+                    secondaryLabel: '',
                     defaultValues : {
                         projectFromDate: "",
                         projectToDate: "",

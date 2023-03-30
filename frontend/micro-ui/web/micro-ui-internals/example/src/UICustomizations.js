@@ -431,42 +431,10 @@ export const UICustomizations = {
   },
   SearchWageSeekerConfig: {
     preProcess: (data) => {
+      // const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
+      // const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
-
-      let requestBody = { ...data.body.Individual };
-      const pathConfig = {
-        name: "name.givenName",
-      };
-      const dateConfig = {
-        createdFrom: "daystart",
-        createdTo: "dayend",
-      };
-      const selectConfig = {
-        wardCode: "wardCode[0].code",
-        socialCategory: "socialCategory.code",
-      };
-      let Individual = Object.keys(requestBody)
-        .map((key) => {
-          if (selectConfig[key]) {
-            requestBody[key] = _.get(requestBody, selectConfig[key], null);
-          } else if (typeof requestBody[key] == "object") {
-            requestBody[key] = requestBody[key]?.code;
-          }
-          return key;
-        })
-        .filter((key) => requestBody[key])
-        .reduce((acc, curr) => {
-          if (pathConfig[curr]) {
-            _.set(acc, pathConfig[curr], requestBody[curr]);
-          } else if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-            _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
-          } else {
-            _.set(acc, curr, requestBody[curr]);
-          }
-          return acc;
-        }, {});
-
-      data.body.Individual = { ...Individual };
+      // data.body.Individual = { ...data.body.Individual, tenantId: Digit.ULBService.getCurrentTenantId() };
       return data;
     },
     additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {

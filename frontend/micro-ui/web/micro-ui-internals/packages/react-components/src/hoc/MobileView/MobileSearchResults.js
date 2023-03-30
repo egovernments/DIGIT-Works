@@ -60,7 +60,7 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
             let toRender;
               if(row.additionalCustomization[key]){
                 toRender = (
-                <Details label={key} 
+                <Details label={t(key)} 
                   name={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row.details, key, {}, row.mapping[key], t, searchResult)} 
                   onClick={() =>{}} 
                   row={row.mapping} />)
@@ -68,13 +68,13 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
               else {
                 toRender = row.mapping[key]? ( 
                 <Details 
-                  label={key} 
+                  label={t(key)} 
                   name={row.mapping[key]} 
                   onClick={() =>{}} 
                   row={row.mapping} /> 
                 ) : ( 
                 <Details 
-                  label={key} 
+                  label={t(key)} 
                   name={t("NA")} 
                   onClick={() =>{}} 
                   row={row.mapping} /> )
