@@ -134,11 +134,12 @@ import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
 import useCreateWO from "./works/useCreateWO";
 import useSearchOrg from "./works/useSearchOrg";
 
-
 import useViewBill from "./bills/useViewBill";
 import useContractSearch from "./contracts/useContractSearch";
 import useBillCreate from "./bills/useBillCreate";
 import useUpdateProject from "./works/useUpdateProject";
+
+import useViewOrganisation from "./organisation/useViewOrganisation";
 
 const works = {
   useViewEstimateDetails,
@@ -173,7 +174,8 @@ const contracts = {
 };
 
 const organisation = {
-  useSearchOrg
+  useSearchOrg,
+  useViewOrganisation
 }
 
 const estimates = {

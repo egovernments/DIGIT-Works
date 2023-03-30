@@ -33,7 +33,7 @@ const MastersBreadCrumb = ({ location }) => {
     },
     {
       path: `/${window.contextPath}/employee/masters/view-organization`,
-      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_VIEW_COMMUNITY_ORG")}` : `${t("MASTERS_VIEW_COMMUNITY_ORG")}`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_MASTERS")}` : `${t("WORKS_MASTERS")}`,
       show: location.pathname.includes("/masters/view-organization") ? true : false,
       isBack: fromScreen && true,
     },
@@ -56,8 +56,7 @@ const App = ({ path }) => {
   const CreateMasters = Digit?.ComponentRegistryService?.getComponent("CreateMasters");
   const ViewMasters = Digit?.ComponentRegistryService?.getComponent("ViewMasters");
 
-  const RegisterWageSeekerComponent = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
-  const ViewOrganisationComponent = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
+  const CreateOrganisation = Digit?.ComponentRegistryService?.getComponent("CreateOrganisation");
   const SearchOrganisation =  Digit?.ComponentRegistryService?.getComponent("SearchOrganisation");
   const ViewOrganisation = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
   
@@ -65,7 +64,6 @@ const App = ({ path }) => {
   const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWageSeeker");
   const ViewWageSeeker = Digit?.ComponentRegistryService?.getComponent("ViewWageSeeker");
   const ModifyWageSeeker = Digit?.ComponentRegistryService?.getComponent("ModifyWageSeeker");
-  const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganisation");
   useEffect(() => {
     return () => {
       if (!window.location.href.includes("create-organization") && Object.keys(sessionFormData) != 0) {
@@ -82,9 +80,10 @@ const App = ({ path }) => {
         </React.Fragment>
         <PrivateRoute path={`${path}/search-masters`} component={() => <SearchMasters parentRoute={path}/>} />
         <PrivateRoute path={`${path}/create-masters`} component={() => <CreateMasters parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/view-masters`} component={() => <ViewMasters parentRoute={path}/>} />
         
          {/* Organisation Masters  */}
-        <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganization parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganisation parentRoute={path}/>} />
         <PrivateRoute path={`${path}/search-organization`} component={() => <SearchOrganisation parentRoute={path}/>} />
         <PrivateRoute path={`${path}/view-organization`} component={() => <ViewOrganisation  parentRoute={path}/>} />
        

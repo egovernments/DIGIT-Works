@@ -7,7 +7,6 @@ import { default as EmployeeApp } from "./pages/employee";
 import CreateMasters from "./pages/employee/Master/CreateMasters";
 import SearchMasters from "./pages/employee/Master/SearchMasters";
 import ViewMasters from "./pages/employee/Master/ViewMasters";
-import CreateMasters from "./pages/employee/Master/CreateMasters";
 import SearchMastersApplication from "./components/SearchMasters";
 
 import RegisterWageSeeker from "./pages/employee/WageSeeker/RegisterWageSeeker";
@@ -17,7 +16,7 @@ import ModifyWageSeeker from "./pages/employee/WageSeeker/ModifyWageSeeker";
 
 import CreateOrganisation from  "./pages/employee/Organisation/CreateOrganization/index";
 import SearchOrganisation from "./pages/employee/Organisation/SearchOrganisation";
-import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
+import ViewOrganisation from "./pages/employee/Organisation/ViewOrganisation";
 
 import TransferCodeTable from "./components/TransferCodeTable";
 
