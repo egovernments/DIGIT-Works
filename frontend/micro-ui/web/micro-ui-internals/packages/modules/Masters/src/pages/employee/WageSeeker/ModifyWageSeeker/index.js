@@ -37,7 +37,6 @@ const ModifyWageSeeker = () => {
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
     const { individualId } = Digit.Hooks.useQueryParams()
-    //const individualId = 'IND-2023-03-29-001482'//'IND-2023-03-27-001461'
     const isModify = individualId ? true : false;
 
     //Call Search Wage Seeker
@@ -72,7 +71,7 @@ const ModifyWageSeeker = () => {
         }
       },[configs, wageSeekerDataFetching]);
 
-    if(isLoading) return <Loader />
+    if(isLoading || wageSeekerDataFetching) return <Loader />
     return (
         <React.Fragment>
             <Header styles={{ fontSize: "32px" }}>{isModify ? t("MASTERS_MODIFY_WAGESEEKER") : t("ACTION_TEST_MASTERS_CREATE_WAGESEEKER")}</Header>

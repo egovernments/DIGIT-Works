@@ -12,7 +12,10 @@ export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sess
     const socialCategory = individual?.additionalFields?.fields?.find(item => item?.key === "SOCIAL_CATEGORY")
     const skills = individual?.skills?.length > 0 ? individual?.skills?.map(skill => ({code: `${skill?.level}.${skill?.type}`, name: `COMMON_MASTERS_SKILLS_${skill?.level}.${skill?.type}`})) : ""
     
-    const photo = individual?.photo && await Digit.UploadServices.Filefetch([individual?.photo], tenantId);
+    let photo = ''
+    try {
+        photo = individual?.photo && await Digit.UploadServices.Filefetch([individual?.photo], tenantId);
+    } catch (error) {}
     const imageLink = photo?.data?.fileStoreIds?.[0]?.url
     const imageName = Digit.Utils.getDocumentName(imageLink) || 'profile'
 

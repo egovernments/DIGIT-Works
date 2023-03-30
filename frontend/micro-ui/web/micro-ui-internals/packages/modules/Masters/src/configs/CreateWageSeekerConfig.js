@@ -167,18 +167,18 @@ export const CreateWageSeekerConfig = {
               }
             },
             {
-              label: "ES_COMMON_PHOTOGRAPH",
-              isMandatory: false,
-              key: "basicDetails_photograph",
-              type:"multiupload",
-              preProcess : {
-                updateDependent : ["populators.allowedFileTypes"]
+              "label": "ES_COMMON_PHOTOGRAPH",
+              "isMandatory": false,
+              "key": "basicDetails_photograph",
+              "type": "multiupload",
+              "preProcess" : {
+                "convertStringToRegEx" : ["populators.allowedFileTypes"]
               },
-              populators:{
-                  name: "basicDetails_photograph",
-                  allowedMaxSizeInMB:2,
-                  maxFilesAllowed:1,
-                  allowedFileTypes : {},
+              "populators": {
+                "name": "basicDetails_photograph",
+                "allowedMaxSizeInMB": 2,
+                "maxFilesAllowed": 1,
+                "allowedFileTypes": "(.*?)(jpg|jpeg|png)$",
               }
             }
           ]

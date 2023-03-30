@@ -12,7 +12,11 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     const bankDetails = await BankAccountService.search(bankDetailPayload, {});
     const bankAccounts = bankDetails?.bankAccounts?.[0]?.bankAccountDetails
 
-    const thumbnails = individual?.photo && await getThumbnails([individual?.photo], tenantId)
+    let thumbnails = ''
+    try {
+      thumbnails = individual?.photo && await getThumbnails([individual?.photo], tenantId)
+    } catch (error) {}
+    
     const socialCategory = individual?.additionalFields?.fields?.find(item => item?.key === "SOCIAL_CATEGORY")
     const adhaar = individual?.identifiers?.find(item => item?.identifierType === 'AADHAAR')
 
