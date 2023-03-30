@@ -316,6 +316,7 @@ public class OrganisationServiceValidator {
         OrgSearchCriteria searchCriteria = OrgSearchCriteria.builder()
                 .id(orgIds)
                 .tenantId(organisationList.get(0).getTenantId())
+                .includeDeleted(Boolean.FALSE)
                 .build();
 
         OrgSearchRequest orgSearchRequest = OrgSearchRequest.builder()
