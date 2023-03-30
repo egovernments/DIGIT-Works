@@ -112,6 +112,7 @@ public class UserService {
         user.setType(UserType.CITIZEN);
         user.setRoles(Collections.singleton(role));
         user.setActive(Boolean.TRUE);
+        user.setUsername(contactDetails.getContactMobileNumber());
 
         contactDetails.setActive(true);
         contactDetails.setTenantId(tenantId);
