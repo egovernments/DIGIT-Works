@@ -2,6 +2,7 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.user.enums.UserType;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.web.models.*;
 import lombok.extern.slf4j.Slf4j;
@@ -113,6 +114,9 @@ public class UserService {
         user.setRoles(Collections.singleton(role));
         user.setActive(Boolean.TRUE);
         user.setUsername(contactDetails.getContactMobileNumber());
+        if(StringUtils.isNotBlank(contactDetails.getId())){
+            user.setUuid(contactDetails.getId());
+        }
 
         contactDetails.setActive(true);
         contactDetails.setTenantId(tenantId);
