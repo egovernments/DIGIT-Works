@@ -71,6 +71,10 @@ dependencies:
   charset_converter: ^2.1.1
   path: ^1.8.2
   flutter_svg: ^2.0.3
+  multi_select_flutter: ^4.1.3
+  timelines: ^0.1.0
+  flutter_downloader: ^1.10.2
+  permission_handler: ^8.1.4+2
   flutter_localizations:
     sdk: flutter
 

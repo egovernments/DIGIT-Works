@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * EstimateDetail
@@ -52,6 +51,9 @@ public class EstimateDetail {
     @JsonProperty("amountDetail")
     @Valid
     private List<AmountDetail> amountDetail = null;
+
+    @JsonProperty("isActive")
+    private boolean isActive = true;
 
 //    @JsonProperty("totalAmount")
 //    private Double totalAmount = null;

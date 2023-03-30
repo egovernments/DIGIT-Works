@@ -31,10 +31,10 @@ const InboxSearchComposer = (props) => {
             });
             _.set(apiDetails, apiDetails?.filterFormJsonPath, result)
         }
+        
         if(Object.keys(state.tableForm)?.length >= 0) {
             _.set(apiDetails, apiDetails?.tableFormJsonPath, { ..._.get(apiDetails, apiDetails?.tableFormJsonPath, {}),...state.tableForm })  
         }
-
         const searchFormParamCount = Object.keys(state.searchForm).reduce((count,key)=>state.searchForm[key]===""?count:count+1,0)
         const filterFormParamCount = Object.keys(state.filterForm).reduce((count, key) => state.filterForm[key] === "" ? count : count + 1, 0)
         
@@ -43,7 +43,8 @@ const InboxSearchComposer = (props) => {
         }
 
         if(configs?.type === 'inbox') setEnable(true)
-    }, [state])
+
+    },[state])
     
 
     let requestCriteria = {
@@ -53,8 +54,30 @@ const InboxSearchComposer = (props) => {
         config: {
             enabled: enable,
         },
+        state
     };
+
+    //clear the reducer state when user moves away from inbox screen(it already resets when component unmounts)(keeping this code here for reference)
+    // useEffect(() => {
+    //     return () => {
+    //         if (!window.location.href.includes("/inbox")) {
+                
+    //             dispatch({
+    //                 type: "clearSearchForm",
+    //                 state:  configs?.sections?.search?.uiConfig?.defaultValues 
+    //                 //need to pass form with empty strings 
+    //             })
+    //             dispatch({
+    //                 type: "clearFilterForm",
+    //                 state: configs?.sections?.filter?.uiConfig?.defaultValues 
+    //                 //need to pass form with empty strings 
+    //             })
+    //         }
+    //     };
+    // }, [location]);
     
+
+
     const updatedReqCriteria = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess(requestCriteria) : requestCriteria 
 
     
@@ -104,7 +127,7 @@ const InboxSearchComposer = (props) => {
                     }
                 {   
                     configs?.sections?.searchResult?.show &&  
-                        <div className="" style={data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length > 0 ? (!(isLoading || isFetching) ?{ overflowX: "scroll" }: {}) : {  }} >
+                        <div style={data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length > 0 ? (!(isLoading || isFetching) ?{ overflowX: "scroll", borderRadius : "4px" }: {}) : {  }} >
                             <ResultsTable 
                                 config={configs?.sections?.searchResult?.uiConfig} 
                                 data={data} 

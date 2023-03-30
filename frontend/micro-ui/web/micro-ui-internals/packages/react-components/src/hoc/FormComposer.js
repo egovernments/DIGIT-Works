@@ -24,7 +24,7 @@ import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
 import HorizontalNav  from "../atoms/HorizontalNav"
 import Toast from "../atoms/Toast";
 import UploadFileComposer from "./UploadFileComposer";
-
+import CheckBox from "../atoms/CheckBox";
 const wrapperStyles = {
   // "display":"flex",
   // "flexDirection":"column",
@@ -161,6 +161,7 @@ export const FormComposer = (props) => {
                   maxlength={populators?.validation?.maxlength}
                   minlength={populators?.validation?.minlength}
                   customIcon={populators?.customIcon}
+                  customClass={populators?.customClass}
                 />
               )}
               name={populators.name}
@@ -220,6 +221,39 @@ export const FormComposer = (props) => {
             defaultValue={populators.defaultValue}
             name={populators?.name}
             control={control}
+          />
+        );
+
+      case "checkbox":
+        return (
+          <Controller
+            name={`${populators.name}`}
+            control={control}
+            defaultValue={formData?.[populators.name]}
+            rules={{ required: populators?.isMandatory }}
+            render={(props) => {
+              
+              return (
+                <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                  <CheckBox
+                    onChange={(e) => {
+                      // const obj = {
+                      //   ...props.value,
+                      //   [e.target.value]: e.target.checked
+                      // }
+                      
+                      props.onChange(e.target.checked)
+                    }}
+                    value={formData?.[populators.name] }
+                    checked={formData?.[populators.name]}
+                    label={t(`${populators?.title}`)}
+                    styles = {populators?.styles}
+                    style={populators?.labelStyles}
+                    customLabelMarkup={populators?.customLabelMarkup}
+                  />
+                </div>
+              );
+            }}
           />
         );
       case "multiupload":
@@ -314,6 +348,7 @@ export const FormComposer = (props) => {
                 selectedFormCategory={selectedFormCategory}
                 getValues={getValues}
                 watch={watch}
+                unregister={unregister}
               />
             )}
             name={config.key}
@@ -330,9 +365,9 @@ export const FormComposer = (props) => {
             formData={formData}
             errors={errors}
             control={control}
-            customClass={populators?.customClass}
-            customErrorMsg={populators?.error}
-            localePrefix={populators?.localePrefix}
+            customClass={config?.customClass}
+            customErrorMsg={config?.error}
+            localePrefix={config?.localePrefix}
           />
         );
       case "form":
@@ -488,8 +523,8 @@ export const FormComposer = (props) => {
                 key={index}
                 style={
                   props?.showWrapperContainers && !field.hideContainer
-                    ? { ...wrapperStyles }
-                    : {  border: "none", background: "white" }
+                    ? { ...wrapperStyles, ...field?.populators?.customStyle }
+                    : {  border: "none", background: "white", ...field?.populators?.customStyle }
                 }
               >
                 {!field.withoutLabel && (
@@ -501,6 +536,7 @@ export const FormComposer = (props) => {
                     }}
                   >
                     {t(field.label)}
+                    {field?.appendColon ? ' : ' : null}
                     {field.isMandatory ? " * " : null}
                   </CardLabel>
                 )}

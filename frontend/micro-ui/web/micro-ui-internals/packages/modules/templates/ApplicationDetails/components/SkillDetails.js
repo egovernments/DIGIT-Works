@@ -10,7 +10,9 @@ const SkillDetails = ({ data }) => {
                 <CardLabel style={{fontSize: "16px", fontWeight: "600", marginBottom: 0}}>{t(data?.title)}</CardLabel>
                 <div className='skill-details'>
                     { data?.skillData?.length > 0 ? 
-                        data?.skillData?.map((item, index) => (<div key={index}> {`${item?.level} - ${item?.type}`} </div>))
+                        data?.skillData?.map((item, index) => (
+                            <div key={index}> {t(`COMMON_MASTERS_SKILLS_${item?.level}.${item?.type}`)} </div>
+                        ))
                         : t('NA')
                     }
                 </div>

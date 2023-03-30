@@ -3,6 +3,7 @@ package org.egov.service;
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.config.EstimateServiceConfiguration;
@@ -143,22 +144,27 @@ public class EnrichmentService {
         //Existing estimate
         List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
 
-//        if (enrichEstimateBasedOnRole(requestInfo)) {
-//            //set the audit details from DB
-//            estimate.setAuditDetails(estimateList.get(0).getAuditDetails());
-//        } /*Roles apart from UPDATE_ROLES, will not be able to edit/modify the existing
-//            record apart from estimate status field */ else {
-//            estimate = estimateList.get(0);
-//            request.setEstimate(estimate);
-//        }
-
         estimate.setAuditDetails(estimateList.get(0).getAuditDetails());
 
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, false);
 
         estimate.setAuditDetails(auditDetails);
 
-        //enrichUpdateEstimateWorkFlowForActionReject(request);
+        //upsert line item and amount detail
+        List<EstimateDetail> lineItemsFromReq = estimate.getEstimateDetails();
+        //check ids are there in the request or not, if not then its a new record that has to be inserted
+        for (EstimateDetail lineItem : lineItemsFromReq) {
+            if (StringUtils.isBlank(lineItem.getId())) {
+                lineItem.setId(UUID.randomUUID().toString());
+            }
+            List<AmountDetail> amountDetails = lineItem.getAmountDetail();
+            for (AmountDetail amountDetail : amountDetails) {
+                if (StringUtils.isBlank(amountDetail.getId())) {
+                    amountDetail.setId(UUID.randomUUID().toString());
+                }
+            }
+        }
+
     }
 
     /**

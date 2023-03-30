@@ -3,10 +3,7 @@ export const createProjectConfigMUKTA = {
     "moduleName" : "commonUiConfig",
     "CreateProjectConfig" : [
       {
-        "defaultValues" : {
-          basicDetails_dateOfProposal : "",
-          noSubProject_ulb : ""
-        },
+        "defaultValues" : {},
         "metaData" : {
           showNavs : false,
           currentFormCategory : false,
@@ -16,6 +13,24 @@ export const createProjectConfigMUKTA = {
           head: "",
           subHead: "",
           body: [
+              {
+                inline: true,
+                label: "WORKS_PROJECT_ID",
+                isMandatory: false,
+                key: "basicDetails_projectID",
+                type: "text",
+                disable: true,
+                preProcess : {
+                  updateDependent : ["populators.customStyle.display"]
+                },
+                populators: { 
+                  name: "basicDetails_projectID", 
+                  customStyle : {
+                    display : "none",
+                  },
+                  customClass : "field-value-no-border"
+                },
+              },
               {
                   inline: true,
                   label: "ES_COMMON_PROPOSAL_DATE",
@@ -38,7 +53,7 @@ export const createProjectConfigMUKTA = {
                   preProcess : {
                     convertStringToRegEx : ["populators.validation.pattern"]
                   },
-                  populators: { name: "basicDetails_projectName", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_NAME", validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2, maxlength : 32 }}
+                  populators: { name: "basicDetails_projectName", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_NAME", validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\' } ]*$/i, minlength : 2, maxlength : 32 }}
               },
               {
                   inline: true,
@@ -50,7 +65,7 @@ export const createProjectConfigMUKTA = {
                   preProcess : {
                     convertStringToRegEx : ["populators.validation.pattern"]
                   },
-                  populators: { name: "basicDetails_projectDesc", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_DESC", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, minlength : 2, maxlength : 256 }}
+                  populators: { name: "basicDetails_projectDesc", error: "PROJECT_PATTERN_ERR_MSG_PROJECT_DESC", validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\'() } ]*$/i, minlength : 2, maxlength : 256 }}
               }
               ]
           },
@@ -68,7 +83,7 @@ export const createProjectConfigMUKTA = {
                 preProcess : {
                   convertStringToRegEx : ["populators.validation.pattern"]
                 },
-                populators: { name: "noSubProject_letterRefNoOrReqNo", error: ("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,50}$/i, minlength : 2, maxlength : 32 }}
+                populators: { name: "noSubProject_letterRefNoOrReqNo", error: ("PROJECT_PATTERN_ERR_MSG_PROJECT_LOR"), validation: { pattern: /^[a-zA-Z0-9\/{ \/ .\- _$@#\' } ]*$/i, minlength : 2, maxlength : 32 }}
               },
               {
                 isMandatory: true,
@@ -119,7 +134,18 @@ export const createProjectConfigMUKTA = {
                 key: "noSubProject_estimatedCostInRs",
                 type: "number",
                 disable: false,
-                populators: { name: "noSubProject_estimatedCostInRs" }
+                preProcess: {
+                  convertStringToRegEx: ["populators.validation.pattern"]
+                },
+                populators: {
+                    name: "noSubProject_estimatedCostInRs",
+                    error: "PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST",
+                    validation: {
+                      pattern: /^(?:0|[1-9]\d*)(?:\.(?!.*000)\d+)?$/,
+                      maxlength : 32,
+                      step : "0.01"
+                    }
+                  }
               },
             ]
           },
@@ -200,18 +226,43 @@ export const createProjectConfigMUKTA = {
           },
           {
             navLink : "Project_Details",
+            head: ("WORKS_FINANCIAL_DETAILS"),
+            body: [
+              {
+                isMandatory: false,
+                key: "noSubProject_fund",
+                type: "radioordropdown",
+                label: "WORKS_HEAD_OF_ACCOUNTS",
+                disable: false,
+                populators: {
+                  name: "noSubProject_fund",
+                  optionsKey: "name",
+                  error: ("WORKS_REQUIRED_ERR"),
+                  required: false,
+                  optionsCustomStyle : {
+                    top : "2.5rem"
+                  },
+                  mdmsConfig: {
+                    masterName: "Fund",
+                    moduleName: "finance",
+                    localePrefix: "COMMON_MASTERS_FUND",
+                  },
+                },
+              }
+            ]
+          },
+          {
+            navLink : "Project_Details",
             head: "",
             body: [
                 {
                     type: "documentUpload",
                     withoutLabel: true,
                     module: "Project",
-                    populators:{
-                        error: "WORKS_REQUIRED_ERR",
-                        name: "noSubProject_docs",
-                        customClass: "",
-                        localePrefix: "PROJECT",
-                    }
+                    error: "WORKS_REQUIRED_ERR",
+                    name: "noSubProject_docs",
+                    customClass: "",
+                    localePrefix: "PROJECT",
                 }
             ]
           }

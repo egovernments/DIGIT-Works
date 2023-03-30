@@ -1,0 +1,1338 @@
+{
+	"info": {
+		"_postman_id": "89612c8e-f1da-4b8b-9685-5fa2f03a1b5d",
+		"name": "Contract Service Postman Scripts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Contract",
+			"item": [
+				{
+					"name": "CreateContract - success",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"tenantId\",\"pg.citya\")"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"RequestInfo is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    pm.expect(req.RequestInfo).to.not.be.null;",
+									"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract Registers are required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    pm.expect(req.contract).to.not.be.undefined;",
+									"    pm.expect(req.contract).to.not.be.null;",
+									"}",
+									");",
+									"",
+									"pm.test(\"TenantId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract= req.contract;",
+									"    pm.expect(contract.tenantId).to.be.not.null;",
+									"    pm.expect(contract.tenantId).to.be.not.undefined;",
+									"    pm.expect(contract.tenantId).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract executingAuthority is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.executingAuthority).to.be.not.null;",
+									"    pm.expect(contract.executingAuthority).to.be.not.undefined;",
+									"    pm.expect(contract.executingAuthority).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract contractType is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.contractType).to.be.not.null;",
+									"    pm.expect(contract.contractType).to.be.not.undefined;",
+									"    pm.expect(contract.contractType).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract orgId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.orgId).to.be.not.null;",
+									"    pm.expect(contract.orgId).to.be.not.undefined;",
+									"    pm.expect(contract.orgId).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract completionPeriod is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.completionPeriod).to.be.not.null;",
+									"    pm.expect(contract.completionPeriod).to.be.not.undefined;",
+									"    pm.expect(contract.completionPeriod).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract lineItems is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems).to.be.not.null;",
+									"    pm.expect(contract.lineItems).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract estimateId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems[0].estimateId).to.be.not.null;",
+									"    pm.expect(contract.lineItems[0].estimateId).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems[0].estimateId).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  lisneItems tenantId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems[0].tenantId).to.be.not.null;",
+									"    pm.expect(contract.lineItems[0].tenantId).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems[0].tenantId).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  estimateAmountBreakupId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].estimateAmountBreakupId).to.be.not.null;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].estimateAmountBreakupId).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].estimateAmountBreakupId).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  amount is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).to.be.not.null;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  documents is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.documents).to.be.not.null;",
+									"    pm.expect(contract.documents).to.be.not.undefined;",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  amount is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).to.be.not.null;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  additionalDetails is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.additionalDetails).to.be.not.null;",
+									"    pm.expect(contract.additionalDetails).to.be.not.undefined;",
+									"    pm.expect(contract.additionalDetails).not.to.eql(\"\");",
+									"}",
+									");",
+									"pm.test(\"Contract  officerInChargeId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.additionalDetails.officerInChargeId).to.be.not.null;",
+									"    pm.expect(contract.additionalDetails.officerInChargeId).to.be.not.undefined;",
+									"    pm.expect(contract.additionalDetails.officerInChargeId).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"",
+									"",
+									" var req = JSON.parse(pm.request.body.raw);",
+									"console.log(req.contract.tenantId);",
+									"",
+									"let responseData = pm.response.json();",
+									"pm.collectionVariables.set(\"lineItemsId\", responseData.contracts[0].lineItems[0].id);",
+									"pm.collectionVariables.set(\"estimateId\",responseData.contracts[0].lineItems[0].estimateId);",
+									"pm.collectionVariables.set(\"contractId\", responseData.contracts[0].id);",
+									"pm.collectionVariables.set(\"completionPeriod\", responseData.contracts[0].completionPeriod);",
+									"pm.collectionVariables.set(\"executingAuthority\", responseData.contracts[0].executingAuthority);",
+									"pm.collectionVariables.set(\"executingAuthority\", responseData.contracts[0].executingAuthority);",
+									"pm.collectionVariables.set(\"contractType\",responseData.contracts[0].contractType);",
+									"pm.collectionVariables.set(\"amountBreakupsId\", responseData.contracts[0].lineItems[0].amountBreakups[0].id);",
+									"pm.collectionVariables.set(\"estimateAmountBreakupId\", responseData.contracts[0].lineItems[0].amountBreakups[0].estimateAmountBreakupId);",
+									"pm.collectionVariables.set(\"createdBy\", responseData.contracts[0].lineItems[0].auditDetails.createdBy);",
+									"pm.collectionVariables.set(\"createdTime\", responseData.contracts[0].lineItems[0].auditDetails.createdTime);",
+									"pm.collectionVariables.set(\"documentsId\", responseData.contracts[0].documents[0].id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": \n        {\n        \"tenantId\": \"pg.citya\",\n        \"executingAuthority\": \"IA\",\n        \"contractType\": \"CON-01\",\n        \"orgId\": \"string\",\n        \"completionPeriod\":5,\n        \"status\" : \"ACTIVE\",\n        \"lineItems\": [\n            {\n                \"estimateId\": \"a53bb314-6c48-485a-9772-792b95635012\",\n                \"estimateLineItemId\": \"bc4d07a2-270c-40c0-8976-0403749a72d8\",\n                \"tenantId\": \"pg.citya\",\n                \"status\" : \"ACTIVE\",\n                \"amountBreakups\": [\n                {\n                    \"estimateAmountBreakupId\": \"9be4a63e-925e-4833-bc9f-73bae5b059cc\",\n                    \"amount\": 9888.9845 ,  \n                    \"status\": \"ACTIVE\" \n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ],\n        \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateContract - Validation error - TenantId not provided",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is s\",() => {",
+									"    pm.expect(pm.response.to.have.status(s));",
+									"});",
+									"pm.test(\"Correct error with massage and code is received\", () => {",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"NotNull.contractRequest.contract.tenantId\");",
+									"    pm.expect(message).to.eql(\"must not be null\");",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": {\n        \"executingAuthority\": \"IA\",\n        \"contractType\": \"CON-01\",\n        \"orgId\": \"string\",\n        \"completionPeriod\":5,\n        \"lineItems\": [\n            {\n                \"estimateId\": \"a53bb314-6c48-485a-9772-792b95635012\",\n                \"estimateLineItemId\": \"bc4d07a2-270c-40c0-8976-0403749a72d8\",\n                \"tenantId\": \"pg.citya\",\n                \"amountBreakups\": [\n                {\n                    \"estimateAmountBreakupId\": \"9be4a63e-925e-4833-bc9f-73bae5b059cc\",\n                    \"amount\": 9888.9845    \n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ],\n        \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n \n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateContract-Validation error-executingAuthority not provided",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is s\",() => {",
+									"    pm.expect(pm.response.to.have.status(s));",
+									"});",
+									"pm.test(\"Correct error with massage and code is received\", () => {",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"NotNull.contractRequest.contract.executingAuthority\");",
+									"    pm.expect(message).to.eql(\"must not be null\");",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": \n        {\n        \"tenantId\": \"pg.citya\",\n        \"contractType\": \"CON-01\",\n        \"orgId\": \"string\",\n        \"completionPeriod\":5,\n        \"lineItems\": [\n            {\n                \"estimateId\": \"a53bb314-6c48-485a-9772-792b95635012\",\n                \"estimateLineItemId\": \"bc4d07a2-270c-40c0-8976-0403749a72d8\",\n                \"tenantId\": \"pg.citya\",\n                \"amountBreakups\": [\n                {\n                    \"estimateAmountBreakupId\": \"9be4a63e-925e-4833-bc9f-73bae5b059cc\",\n                    \"amount\": 9888.9845    \n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ],\n        \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateContract-Validation error-ContractType not provided",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is s\",() => {",
+									"    pm.expect(pm.response.to.have.status(s));",
+									"});",
+									"pm.test(\"Correct error with massage and code is received\", () => {",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"CONTRACT.CONTRACTTYPE\");",
+									"    pm.expect(message).to.eql(\"Contract Type is mandatory\");",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": \n        {\n        \"tenantId\": \"pg.citya\",\n        \"executingAuthority\": \"IA\",\n        \"orgId\": \"string\",\n        \"completionPeriod\":5,\n        \"lineItems\": [\n            {\n                \"estimateId\": \"a53bb314-6c48-485a-9772-792b95635012\",\n                \"estimateLineItemId\": \"bc4d07a2-270c-40c0-8976-0403749a72d8\",\n                \"tenantId\": \"pg.citya\",\n                \"amountBreakups\": [\n                {\n                    \"estimateAmountBreakupId\": \"9be4a63e-925e-4833-bc9f-73bae5b059cc\",\n                    \"amount\": 9888.9845    \n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ],\n        \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateContract-Validation error-OrgnisationId not provided",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is s\",() => {",
+									"    pm.expect(pm.response.to.have.status(s));",
+									"});",
+									"pm.test(\"Correct error with massage and code is received\", () => {",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"CONTRACT.ORGNISATIONID\");",
+									"    pm.expect(message).to.eql(\"OrgnisationId is mandatory\");",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": \n        {\n        \"tenantId\": \"pg.citya\",\n        \"executingAuthority\": \"IA\",\n        \"contractType\": \"CON-01\",\n        \"completionPeriod\":5,\n        \"lineItems\": [\n            {\n                \"estimateId\": \"a53bb314-6c48-485a-9772-792b95635012\",\n                \"estimateLineItemId\": \"bc4d07a2-270c-40c0-8976-0403749a72d8\",\n                \"tenantId\": \"pg.citya\",\n                \"amountBreakups\": [\n                {\n                    \"estimateAmountBreakupId\": \"9be4a63e-925e-4833-bc9f-73bae5b059cc\",\n                    \"amount\": 9888.9845    \n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ],\n        \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateContract-Validation error- completionPeriodnot provided",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is s\",() => {",
+									"    pm.expect(pm.response.to.have.status(s));",
+									"});",
+									"pm.test(\"Correct error with massage and code is received\", () => {",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"CONTRACT.COMPLETION_PERIOD\");",
+									"    pm.expect(message).to.eql(\"Completion Period is mandatory and its min value is one day\");",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": \n        {\n        \"tenantId\": \"pg.citya\",\n        \"executingAuthority\": \"IA\",\n        \"contractType\": \"CON-01\",\n        \"lineItems\": [\n            {\n                \"estimateId\": \"a53bb314-6c48-485a-9772-792b95635012\",\n                \"estimateLineItemId\": \"bc4d07a2-270c-40c0-8976-0403749a72d8\",\n                \"tenantId\": \"pg.citya\",\n                \"amountBreakups\": [\n                {\n                    \"estimateAmountBreakupId\": \"9be4a63e-925e-4833-bc9f-73bae5b059cc\",\n                    \"amount\": 9888.9845    \n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ],\n        \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateContract - Validation error-TenantId of LineItrems not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is s\",() => {",
+									"    pm.expect(pm.response.to.have.status(s));",
+									"});",
+									"pm.test(\"Correct error with massage and code is received\", () => {",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"NotNull.contractRequest.contract.lineItems[0].tenantId\");",
+									"    pm.expect(message).to.eql(\"must not be null\");",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": \n        {\n        \"tenantId\": \"pg.citya\",\n        \"executingAuthority\": \"IA\",\n        \"contractType\": \"CON-01\",\n        \"orgId\": \"string\",\n        \"completionPeriod\":5,\n        \"lineItems\": [\n            {\n                \"estimateId\": \"a53bb314-6c48-485a-9772-792b95635012\",\n                \"estimateLineItemId\": \"bc4d07a2-270c-40c0-8976-0403749a72d8\",\n                \"amountBreakups\": [\n                {\n                    \"estimateAmountBreakupId\": \"9be4a63e-925e-4833-bc9f-73bae5b059cc\",\n                    \"amount\": 9888.9845    \n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ],\n        \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateContract - Validation error-EstimationId of LineItrems not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is s\",() => {",
+									"    pm.expect(pm.response.to.have.status(s));",
+									"});",
+									"pm.test(\"Correct error with massage and code is received\", () => {",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"NotNull.contractRequest.contract.lineItems[0].estimateId\");",
+									"    pm.expect(message).to.eql(\"must not be null\");",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": \n        {\n        \"tenantId\": \"pg.citya\",\n        \"executingAuthority\": \"IA\",\n        \"contractType\": \"CON-01\",\n        \"orgId\": \"string\",\n        \"completionPeriod\":5,\n        \"lineItems\": [\n            {\n                \"estimateLineItemId\": \"bc4d07a2-270c-40c0-8976-0403749a72d8\",\n                \"tenantId\": \"pg.citya\",\n                \"amountBreakups\": [\n                {\n                    \"estimateAmountBreakupId\": \"9be4a63e-925e-4833-bc9f-73bae5b059cc\",\n                    \"amount\": 9888.9845    \n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ],\n        \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateContract - Validation error-estimateAmountBreakupId not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is s\",() => {",
+									"    pm.expect(pm.response.to.have.status(s));",
+									"});",
+									"pm.test(\"Correct error with massage and code is received\", () => {",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"NotNull.contractRequest.contract.lineItems[0].amountBreakups[0].estimateAmountBreakupId\");",
+									"    pm.expect(message).to.eql(\"must not be null\");",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": \n        {\n        \"tenantId\": \"pg.citya\",\n        \"executingAuthority\": \"IA\",\n        \"contractType\": \"CON-01\",\n        \"orgId\": \"string\",\n        \"completionPeriod\":5,\n        \"lineItems\": [\n            {\n                \"estimateId\": \"a53bb314-6c48-485a-9772-792b95635012\",\n                \"tenantId\": \"pg.citya\",\n                \"amountBreakups\": [\n                {\n                    \"amount\": 9888.9845    \n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ],\n        \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateContract - Validation error-amount not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is s\",() => {",
+									"    pm.expect(pm.response.to.have.status(s));",
+									"});",
+									"pm.test(\"Correct error with massage and code is received\", () => {",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"NotNull.contractRequest.contract.lineItems[0].amountBreakups[0].amount\");",
+									"    pm.expect(message).to.eql(\"must not be null\");",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": \n        {\n        \"tenantId\": \"pg.citya\",\n        \"executingAuthority\": \"IA\",\n        \"contractType\": \"CON-01\",\n        \"orgId\": \"string\",\n        \"completionPeriod\":5,\n        \"lineItems\": [\n            {\n                \"estimateId\": \"a53bb314-6c48-485a-9772-792b95635012\",\n                \"tenantId\": \"pg.citya\",\n                \"amountBreakups\": [\n                {\n                    \"estimateAmountBreakupId\": \"9be4a63e-925e-4833-bc9f-73bae5b059cc\",\n                    \"amount\":\"\"\n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ],\n        \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateContract - Validation error-officerInChargeId not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is s\",() => {",
+									"    pm.expect(pm.response.to.have.status(s));",
+									"});",
+									"pm.test(\"Correct error with massage and code is received\", () => {",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"OFFICER_INCHARGEID_NOT_FOUND\");",
+									"    pm.expect(message).to.eql(\"AdditionalDetails object with [officerInChargeId] field is mandatory\");",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": \n        {\n        \"tenantId\": \"pg.citya\",\n        \"executingAuthority\": \"IA\",\n        \"contractType\": \"CON-01\",\n        \"orgId\": \"string\",\n        \"completionPeriod\":5,\n        \"lineItems\": [\n            {\n                \"estimateId\": \"a53bb314-6c48-485a-9772-792b95635012\",\n                \"tenantId\": \"pg.citya\",\n                \"amountBreakups\": [\n                {\n                    \"estimateAmountBreakupId\": \"9be4a63e-925e-4833-bc9f-73bae5b059cc\",\n                    \"amount\":\"600\"\n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ]\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateContract - Validation error-Multiple TenantId  provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is s\",() => {",
+									"    pm.expect(pm.response.to.have.status(s));",
+									"});",
+									"pm.test(\"Correct error with massage and code is received\", () => {",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"MULTIPLE_TENANTIDS\");",
+									"    pm.expect(message).to.eql(\"Contract and corresponding lineItems should belong to same tenantId\");",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": \n        {\n        \"tenantId\": \"pg.citya\",\n        \"executingAuthority\": \"IA\",\n        \"contractType\": \"CON-01\",\n        \"orgId\": \"string\",\n        \"completionPeriod\":5,\n        \n        \"lineItems\": [\n            {\n                \"estimateId\": \"a53bb314-6c48-485a-9772-792b95635012\",\n                \"tenantId\": \"pg.amritsar\",\n                \"amountBreakups\": [\n                {\n                    \"estimateAmountBreakupId\": \"9be4a63e-925e-4833-bc9f-73bae5b059cc\",\n                    \"amount\":\"600\"\n                }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"documents\": [ {   } ],\n        \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update - Contract - Success",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"RequestInfo is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    pm.expect(req.RequestInfo).to.not.be.null;",
+									"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+									"}",
+									");",
+									"pm.test(\"UUID is required\",()=>{",
+									"    var req=JSON.parse(pm.request.body.raw);",
+									"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.null;",
+									"    pm.expect(req.RequestInfo.userInfo.uuid).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Contract Registers are required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    pm.expect(req.contract).to.not.be.undefined;",
+									"    pm.expect(req.contract).to.not.be.null;",
+									"}",
+									");",
+									"",
+									"",
+									"pm.test(\"TenantId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract= req.contract;",
+									"    pm.expect(contract.tenantId).to.be.not.null;",
+									"    pm.expect(contract.tenantId).to.be.not.undefined;",
+									"    pm.expect(contract.tenantId).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract executingAuthority is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.executingAuthority).to.be.not.null;",
+									"    pm.expect(contract.executingAuthority).to.be.not.undefined;",
+									"    pm.expect(contract.executingAuthority).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract contractType is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.contractType).to.be.not.null;",
+									"    pm.expect(contract.contractType).to.be.not.undefined;",
+									"    pm.expect(contract.contractType).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract orgId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.orgId).to.be.not.null;",
+									"    pm.expect(contract.orgId).to.be.not.undefined;",
+									"    pm.expect(contract.orgId).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract completionPeriod is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.completionPeriod).to.be.not.null;",
+									"    pm.expect(contract.completionPeriod).to.be.not.undefined;",
+									"    pm.expect(contract.completionPeriod).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract lineItems is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems).to.be.not.null;",
+									"    pm.expect(contract.lineItems).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract estimateId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems[0].estimateId).to.be.not.null;",
+									"    pm.expect(contract.lineItems[0].estimateId).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems[0].estimateId).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  lisneItems tenantId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems[0].tenantId).to.be.not.null;",
+									"    pm.expect(contract.lineItems[0].tenantId).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems[0].tenantId).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  estimateAmountBreakupId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].estimateAmountBreakupId).to.be.not.null;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].estimateAmountBreakupId).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].estimateAmountBreakupId).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  amount is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).to.be.not.null;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  documents is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.documents).to.be.not.null;",
+									"    pm.expect(contract.documents).to.be.not.undefined;",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  amount is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).to.be.not.null;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).to.be.not.undefined;",
+									"    pm.expect(contract.lineItems[0].amountBreakups[0].amount).not.to.eql(\"\");",
+									"}",
+									");",
+									"",
+									"pm.test(\"Contract  additionalDetails is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.additionalDetails).to.be.not.null;",
+									"    pm.expect(contract.additionalDetails).to.be.not.undefined;",
+									"    pm.expect(contract.additionalDetails).not.to.eql(\"\");",
+									"}",
+									");",
+									"pm.test(\"Contract  officerInChargeId is required\", function () {",
+									"    var req = JSON.parse(pm.request.body.raw);",
+									"    var contract = req.contract;",
+									"    pm.expect(contract.additionalDetails.officerInChargeId).to.be.not.null;",
+									"    pm.expect(contract.additionalDetails.officerInChargeId).to.be.not.undefined;",
+									"    pm.expect(contract.additionalDetails.officerInChargeId).not.to.eql(\"\");",
+									"}",
+									");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": {\n            \"id\": \"{{contractId}}\",\n            \"contractNumber\": \"WO/2022-23/000033\",\n            \"tenantId\": \"pg.citya\",\n            \"wfStatus\": \"string\",\n            \"executingAuthority\": \"{{executingAuthority}}\",\n            \"contractType\": \"{{contractType}}\",\n            \"totalContractedamount\": 0,\n            \"securityDeposit\": 0,\n            \"agreementDate\": 0,\n            \"defectLiabilityPeriod\": 0,\n            \"orgId\": \"string\",\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"completionPeriod\":5,\n            \"status\": \"ACTIVE\",\n            \"lineItems\": [\n                {\n                    \"id\": \"{{id}}\",\n                    \"estimateId\": \"{{estimateId}}\",\n                    \"estimateLineItemId\": \"{{estimateLineItemId}}\",\n                    \"tenantId\": \"pg.citya\",\n                    \"unitRate\": 0.0,\n                    \"noOfunit\": 0.0,\n                    \"status\": \"ACTIVE\",\n                    \"amountBreakups\": [\n                        {\n                            \"id\": \"{{amountBreakupsId}}\",\n                            \"estimateAmountBreakupId\": \"{{estimateAmountBreakupId}}\",\n                            \"amount\": 89657.0,\n                            \"status\": \"ACTIVE\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"auditDetails\": {\n                        \"createdBy\": \"{{createdBy}}\",\n                        \"lastModifiedBy\": \"{{createdBy}}\",\n                        \"createdTime\": 1677302742491,\n                        \"lastModifiedTime\": 1677302742491\n                    },\n                    \"additionalDetails\": null\n                }\n            ],\n            \"documents\": [\n                {\n                    \"contractId\": \"{{contractId}}\",\n                    \"id\": \"{{documentsId}}\",\n                    \"documentType\": \"Terms And Conditions\",\n                    \"fileStore\": \"string\",\n                    \"documentUid\": \"string\",\n                    \"status\": \"ACTIVE\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"auditDetails\": {\n                \"createdBy\": \"{{createdBy}}\",\n                \"lastModifiedBy\": \"{{createdBy}}\",\n                \"createdTime\": 1677302742491,\n                \"lastModifiedTime\": 1677302742491\n            },\n            \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    },\n\n    \"workflow\": {\n        \"action\": \"string\",\n        \"comment\": \"string\",\n        \"assignees\": [\n        \"string\"\n        ]\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8024/contract-service/contract/v1/_update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8024",
+							"path": [
+								"contract-service",
+								"contract",
+								"v1",
+								"_update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update - Contract - Validation error - RequestInfo not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Bad request\",()=>{",
+									"    pm.expect(pm.response.to.have.status(s))",
+									"});",
+									"",
+									"pm.test(\"Correct error with message and code received\",()=>{",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"REQUEST_INFO\");",
+									"    pm.expect(message).to.eql(\"Request info is mandatory\")",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contract\": {\n            \"id\": \"{{contractId}}\",\n            \"contractNumber\": \"WO/2022-23/000033\",\n            \"tenantId\": \"pg.citya\",\n            \"wfStatus\": \"string\",\n            \"executingAuthority\": \"{{executingAuthority}}\",\n            \"contractType\": \"{{contractType}}\",\n            \"totalContractedamount\": 0,\n            \"securityDeposit\": 0,\n            \"agreementDate\": 0,\n            \"defectLiabilityPeriod\": 0,\n            \"orgId\": \"string\",\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"completionPeriod\":5,\n            \"status\": \"ACTIVE\",\n            \"lineItems\": [\n                {\n                    \"id\": \"{{id}}\",\n                    \"estimateId\": \"{{estimateId}}\",\n                    \"estimateLineItemId\": \"{{estimateLineItemId}}\",\n                    \"tenantId\": \"pg.citya\",\n                    \"unitRate\": 0.0,\n                    \"noOfunit\": 0.0,\n                    \"status\": \"ACTIVE\",\n                    \"amountBreakups\": [\n                        {\n                            \"id\": \"{{amountBreakupsId}}\",\n                            \"estimateAmountBreakupId\": \"{{estimateAmountBreakupId}}\",\n                            \"amount\": 89657.0,\n                            \"status\": \"ACTIVE\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"auditDetails\": {\n                        \"createdBy\": \"{{createdBy}}\",\n                        \"lastModifiedBy\": \"{{createdBy}}\",\n                        \"createdTime\": 1677302742491,\n                        \"lastModifiedTime\": 1677302742491\n                    },\n                    \"additionalDetails\": null\n                }\n            ],\n            \"documents\": [\n                {\n                    \"contractId\": \"{{contractId}}\",\n                    \"id\": \"{{documentsId}}\",\n                    \"documentType\": \"Terms And Conditions\",\n                    \"fileStore\": \"string\",\n                    \"documentUid\": \"string\",\n                    \"status\": \"ACTIVE\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"auditDetails\": {\n                \"createdBy\": \"{{createdBy}}\",\n                \"lastModifiedBy\": \"{{createdBy}}\",\n                \"createdTime\": 1677302742491,\n                \"lastModifiedTime\": 1677302742491\n            },\n            \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    },\n\n    \"workflow\": {\n        \"action\": \"string\",\n        \"comment\": \"string\",\n        \"assignees\": [\n        \"string\"\n        ]\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update - Contract - Validation error - TenantId not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Bad request\",()=>{",
+									"    pm.expect(pm.response.to.have.status(s))",
+									"});",
+									"",
+									"pm.test(\"Correct error with message and code received\",()=>{",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"NotNull.contractRequest.contract.tenantId\");",
+									"    pm.expect(message).to.eql(\"must not be null\")",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"contract\": {\n            \"id\": \"{{contractId}}\",\n            \"contractNumber\": \"WO/2022-23/000033\",\n            \"wfStatus\": \"string\",\n            \"executingAuthority\": \"{{executingAuthority}}\",\n            \"contractType\": \"{{contractType}}\",\n            \"totalContractedamount\": 0,\n            \"securityDeposit\": 0,\n            \"agreementDate\": 0,\n            \"defectLiabilityPeriod\": 0,\n            \"orgId\": \"string\",\n            \"startDate\": 0,\n            \"endDate\": 0,\n            \"completionPeriod\":5,\n            \"status\": \"ACTIVE\",\n            \"lineItems\": [\n                {\n                    \"id\": \"{{id}}\",\n                    \"estimateId\": \"{{estimateId}}\",\n                    \"estimateLineItemId\": \"{{estimateLineItemId}}\",\n                    \"tenantId\": \"pg.citya\",\n                    \"unitRate\": 0.0,\n                    \"noOfunit\": 0.0,\n                    \"status\": \"ACTIVE\",\n                    \"amountBreakups\": [\n                        {\n                            \"id\": \"{{amountBreakupsId}}\",\n                            \"estimateAmountBreakupId\": \"{{estimateAmountBreakupId}}\",\n                            \"amount\": 89657.0,\n                            \"status\": \"ACTIVE\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"auditDetails\": {\n                        \"createdBy\": \"{{createdBy}}\",\n                        \"lastModifiedBy\": \"{{createdBy}}\",\n                        \"createdTime\": 1677302742491,\n                        \"lastModifiedTime\": 1677302742491\n                    },\n                    \"additionalDetails\": null\n                }\n            ],\n            \"documents\": [\n                {\n                    \"contractId\": \"{{contractId}}\",\n                    \"id\": \"{{documentsId}}\",\n                    \"documentType\": \"Terms And Conditions\",\n                    \"fileStore\": \"string\",\n                    \"documentUid\": \"string\",\n                    \"status\": \"ACTIVE\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"auditDetails\": {\n                \"createdBy\": \"{{createdBy}}\",\n                \"lastModifiedBy\": \"{{createdBy}}\",\n                \"createdTime\": 1677302742491,\n                \"lastModifiedTime\": 1677302742491\n            },\n            \"additionalDetails\": {\"officerInChargeId\":\"officer-in-charge\"}\n    },\n\n    \"workflow\": {\n        \"action\": \"string\",\n        \"comment\": \"string\",\n        \"assignees\": [\n        \"string\"\n        ]\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update - Contract - Validation error - Contract not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Bad request\",()=>{",
+									"    pm.expect(pm.response.to.have.status(s))",
+									"});",
+									"",
+									"pm.test(\"Correct error with message and code received\",()=>{",
+									"    var res = pm.response.json();",
+									"    var code = res.Errors[0].code;",
+									"    var message = res.Errors[0].message;",
+									"    pm.expect(code).to.eql(\"CONTRACT\");",
+									"    pm.expect(message).to.eql(\"Contract is mandatory\")",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Contract\",\n        \"userInfo\": {\n            \"id\": 1,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"\",\n            \"name\": \"\",\n            \"mobileNumber\": \"\",\n            \"emailId\": \"\",\n            \"type\": \"\",\n            \"roles\": [\n                {\n                    \"code\": \"JUNIOR_ENGINEER\",\n                    \"name\": \"Govt Junior Eng\",\n                    \"description\": \"Govt Junior Eng\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n\n\n    \"workflow\": {\n        \"action\": \"string\",\n        \"comment\": \"string\",\n        \"assignees\": [\n        \"string\"\n        ]\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/contract/v1/_update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"contract",
+								"v1",
+								"_update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Contract Request Success",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body matches string\", function () {",
+									"    var res = pm.response.json();",
+									"    pm.expect(res.estimates[0].tenantId).to.eql(pm.collectionVariables.get(\"tenantId\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"57eaabbd-e4a3-4431-895c-252a15ed99e5\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://works-dev.digit.org/estimate-service/estimate/v1/_search?tenantId=pg.citya",
+							"protocol": "https",
+							"host": [
+								"works-dev",
+								"digit",
+								"org"
+							],
+							"path": [
+								"estimate-service",
+								"estimate",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "tenantId",
+									"value": "pg.citya"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"if (pm.environment.get(\"base_url\").includes(\"localhost\")) {",
+					"",
+					"    var tenantId = \"pg.citya\";",
+					"    var id = 1;",
+					"    var uuid = \"11b0e02b-0145-4de2-bc42-c97b96264807\";",
+					"",
+					"    var roles = [",
+					"                {",
+					"                    \"code\": \"JUNIOR_ENGINEER\",",
+					"                    \"name\": \"Govt Junior Eng\",",
+					"                    \"description\": \"Govt Junior Eng\"",
+					"                }",
+					"            ];",
+					"",
+					"    var userInfo = {",
+					"        \"id\": id,",
+					"        \"uuid\": uuid,",
+					"        \"userName\": \"\",",
+					"        \"name\": \"\",",
+					"        \"mobileNumber\": \"\",",
+					"        \"emailId\": \"\",",
+					"        \"type\": \"\",",
+					"        \"roles\": roles,",
+					"        \"active\": true,",
+					"        \"tenantId\": \"pg.citya\"",
+					"    };",
+					"",
+					"    pm.request.body.raw = pm.request.body.raw.replace('\"{{authToken}}\"', '\"\", \\n \"userInfo\":  ' + JSON.stringify(userInfo));",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "tenantId",
+			"value": "pg.citya",
+			"type": "default"
+		},
+		{
+			"key": "lineItemsId",
+			"value": ""
+		},
+		{
+			"key": "estimateId",
+			"value": ""
+		},
+		{
+			"key": "contractId",
+			"value": ""
+		},
+		{
+			"key": "estimateLineItemId",
+			"value": ""
+		},
+		{
+			"key": "amountBreakupsId",
+			"value": ""
+		},
+		{
+			"key": "estimateAmountBreakupId",
+			"value": ""
+		},
+		{
+			"key": "createdBy",
+			"value": ""
+		},
+		{
+			"key": "createdTime",
+			"value": ""
+		},
+		{
+			"key": "documentsId",
+			"value": ""
+		},
+		{
+			"key": "completionPeriod",
+			"value": ""
+		},
+		{
+			"key": "executingAuthority",
+			"value": ""
+		},
+		{
+			"key": "contractType",
+			"value": ""
+		}
+	]
+}

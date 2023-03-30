@@ -45,6 +45,13 @@ const Urls = {
     download_pdf:"/egov-pdf/download/WORKSESTIMATE/estimatepdf",
     createProject : "/pms/project/v1/_create",
     searchProject : "/pms/project/v1/_search",
+    updateProject : "/pms/project/v1/_update",
+  },
+
+  contracts : {
+    createWO : "/contract-service/contract/v1/_create",
+    search: "/contract-service/contract/v1/_search",
+    update: "/contract-service/contract/v1/_update"
   },
 
   fsm: {
@@ -224,6 +231,17 @@ const Urls = {
   bills:{
     cancelBill:"/billing-service/bill/v2/_cancelbill"
   },
+
+  organisation : {
+    search : "/org-services/organisation/v1/_search"
+  },
+  
+  bankaccount : {
+    create: "/bankaccount-service/bankaccount/v1/_create",
+    search: "/bankaccount-service/bankaccount/v1/_search",
+    update: "/bankaccount-service/bankaccount/v1/_update"
+  },
+
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
 };

@@ -311,11 +311,12 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
       }
     ]
     let colsToReturn = [];
-    if(showFullTableReadOnly || editable) {
-      colsToReturn = [...colsReadOnly, ...colsOthers]
-    } else {
-      colsToReturn = [...colsReadOnly]
-    }
+    // if(showFullTableReadOnly || editable) {
+    //   colsToReturn = [...colsReadOnly, ...colsOthers]
+    // } else {
+    //   colsToReturn = [...colsReadOnly]
+    // }
+    colsToReturn = [...colsReadOnly, ...colsOthers]
     return colsToReturn
   }, [state, editable, showFullTableReadOnly]);
 
@@ -345,7 +346,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
             if(cellInfo?.row?.original?.type === "total") {
               tableProp["data-last-row-cell"] = "last-row";
             }
-            if (cellInfo.value === "ES_COMMON_TOTAL_AMOUNT") {
+            if (cellInfo.value === "RT_TOTAL") {
               tableProp["colSpan"] = 4;
             }
             if(cellInfo.value === "DNR") {

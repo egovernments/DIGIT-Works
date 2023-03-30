@@ -63,14 +63,17 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
                     .translate(i18.login.otpVerification)),
                 const SizedBox(height: 10),
                 SubLabelText(localizationText),
-                DigitOTPField(
-                  numberOfFields: 6,
-                  onChanged: (value) {
-                    otpController.text = value;
-                    setState(() {
-                      next = value.length == 6;
-                    });
-                  },
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: DigitOTPField(
+                    numberOfFields: 6,
+                    onChanged: (value) {
+                      otpController.text = value;
+                      setState(() {
+                        next = value.length == 6;
+                      });
+                    },
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -93,20 +96,23 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                DigitElevatedButton(
-                  onPressed: next
-                      ? () {
-                          context.read<AuthBloc>().add(
-                                AuthLoginEvent(
-                                  userId: widget.mobileNumber,
-                                  password: otpController.text,
-                                ),
-                              );
-                        }
-                      : null,
-                  child: Center(
-                    child: Text(AppLocalizations.of(context)
-                        .translate(i18.common.next)),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: DigitElevatedButton(
+                    onPressed: next
+                        ? () {
+                            context.read<AuthBloc>().add(
+                                  AuthLoginEvent(
+                                    userId: widget.mobileNumber,
+                                    password: otpController.text,
+                                  ),
+                                );
+                          }
+                        : null,
+                    child: Center(
+                      child: Text(AppLocalizations.of(context)
+                          .translate(i18.common.next)),
+                    ),
                   ),
                 ),
                 BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
@@ -124,6 +130,10 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
               ],
             ),
           ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: PoweredByDigit(),
+          )
         ]),
       ),
     );

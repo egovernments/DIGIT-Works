@@ -1,5 +1,5 @@
 import React,{ Fragment,useState,useEffect } from 'react'
-import { Loader,Header,StatusTable,Card,Row,HorizontalNav,ViewDetailsCard} from '@egovernments/digit-ui-react-components';
+import { Loader,Header,StatusTable,Card,Row,HorizontalNav,ViewDetailsCard, Toast} from '@egovernments/digit-ui-react-components';
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from '../../../../templates/ApplicationDetails';
 
@@ -7,9 +7,9 @@ const ViewEstimate = (props) => {
     
     const { t } = useTranslation()
     const { tenantId, estimateNumber } = Digit.Hooks.useQueryParams();
-    
     const [cardState,setCardState] = useState({})
     const [activeLink, setActiveLink] = useState("Estimate_Details");
+    const [toast, setToast] = useState({show : false, label : "", error : false});
     const configNavItems = [
         {
             "name": "Project_Details",
@@ -27,7 +27,7 @@ const ViewEstimate = (props) => {
     const ViewProject = Digit.ComponentRegistryService.getComponent("ViewProject");
 
     //fetching estimate data
-    const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
+    const { isLoading: isEstimateLoading,data:estimate, isError : isEstimateError } = Digit.Hooks.estimates.useEstimateSearch({
         tenantId,
         filters: { estimateNumber }
     })
@@ -47,7 +47,15 @@ const ViewEstimate = (props) => {
         }
     })
 
+    useEffect(()=>{
+        if(isEstimateError || (!isEstimateLoading && !estimate)) {
+            setToast({show : true, label : t("COMMON_ESTIMATE_NOT_FOUND"), error : true});
+        }
+    },[isEstimateLoading, isEstimateError, estimate])
 
+    const handleToastClose = () => {
+        setToast({show : false, label : "", error : false});
+    }
     
     useEffect(() => {
       //here set cardstate when estimate and project is available
@@ -70,19 +78,22 @@ const ViewEstimate = (props) => {
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
                 <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("ESTIMATE_VIEW_ESTIMATE")}</Header>
             </div>
-            <ViewDetailsCard cardState={cardState} t={t}/>
-            <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
-                {
-                    (activeLink === "Project_Details") && (
-                        <ViewProject fromUrl={false} tenantId={tenantId} projectNumber={project?.projectNumber} />
-                    )
-                }
-                {
-                    (activeLink === "Estimate_Details") && (
-                        <ViewEstimate />
-                    )
-                }
-            </HorizontalNav>
+            {(project || estimate) && <ViewDetailsCard cardState={cardState} t={t}/>}
+            {
+                estimate && <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
+                    {
+                        (activeLink === "Project_Details") && (
+                            <ViewProject fromUrl={false} tenantId={tenantId} projectNumber={project?.projectNumber} />
+                        )
+                    }
+                    {
+                        (activeLink === "Estimate_Details") && (
+                            <ViewEstimate editApplicationNumber={project?.projectNumber}/>
+                        )
+                    }
+                </HorizontalNav>
+            }
+            {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
         </div>
     )
 }

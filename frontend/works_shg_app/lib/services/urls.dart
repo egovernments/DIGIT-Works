@@ -5,12 +5,14 @@ class Urls {
   static AttendanceRegisterServices attendanceRegisterServices =
       const AttendanceRegisterServices();
   static CommonServices commonServices = const CommonServices();
+  static WorkServices workServices = const WorkServices();
 }
 
 class CommonServices {
   const CommonServices();
   String get workflow => 'egov-workflow-v2/egov-wf/process/_search';
   String get fileUpload => 'filestore/v1/files';
+  String get fileFetch => 'filestore/v1/files/url';
 }
 
 class InitServices {
@@ -30,6 +32,12 @@ class UserServices {
   String get sendOtp => 'user-otp/v1/_send';
 }
 
+class WorkServices {
+  const WorkServices();
+  String get myWorks => 'contract-service/contract/v1/_search';
+  String get updateWorkOrder => 'contract-service/contract/v1/_update';
+}
+
 class MusterRollServices {
   const MusterRollServices();
   String get searchMusterRolls => 'muster-roll/v1/_search';
@@ -46,4 +54,5 @@ class AttendanceRegisterServices {
   String get createAttendanceLog => 'attendance/log/v1/_create';
   String get updateAttendanceLog => 'attendance/log/v1/_update';
   String get deEnrollAttendee => 'attendance/attendee/v1/_delete';
+  String get individualSearch => 'individual/v1/_search';
 }

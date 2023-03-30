@@ -53,8 +53,10 @@ const ApplicationDetails = (props) => {
     noBoxShadow,
     sectionHeadStyle,
     showActionBar = true,
-    setshowEditTitle = () => {}
+    setshowEditTitle = () => {},
+    customClass
   } = props;
+  
   
   useEffect(() => {
     if (showToast) {
@@ -172,6 +174,7 @@ const ApplicationDetails = (props) => {
   }
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
+    
     const performedAction = data?.workflow?.action
     setIsEnableLoader(true);
     if (mutate) {
@@ -183,6 +186,7 @@ const ApplicationDetails = (props) => {
           setTimeout(closeToast, 5000);
         },
         onSuccess: (data, variables) => {
+          
           setIsEnableLoader(false);
           //just history.push to the response component from here and show relevant details
           if(data?.letterOfIndents?.[0]){
@@ -245,44 +249,38 @@ const ApplicationDetails = (props) => {
             }
             history.push(`/${window.contextPath}/employee/works/response`, state)
           }
-          if (isOBPS?.bpa) {
-            data.selectedAction = selectedAction;
-            history.replace(`/${window?.contextPath}/employee/obps/response`, { data: data });
-          }
-          if (isOBPS?.isStakeholder) {
-            data.selectedAction = selectedAction;
-            history.push(`/${window?.contextPath}/employee/obps/stakeholder-response`, { data: data });
-          }
-          if (isOBPS?.isNoc) {
-            history.push(`/${window?.contextPath}/employee/noc/response`, { data: data });
-          }
-          if (data?.Amendments?.length > 0 ){
-            //RAIN-6981 instead just show a toast here with appropriate message
-          //show toast here and return 
-            //history.push("/${window?.contextPath}/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
-            
-            if(variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")){
-              setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS")})
-            } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")){
-              setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_RE_SUBMIT_UPDATE_SUCCESS") })
-            } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")){
-              setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_APPROVE_UPDATE_SUCCESS") })
-            }
-            else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")){
-              setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
-            }            
-            return
-          }
           if(data?.musterRolls?.[0]) {
             const musterRoll = data?.musterRolls?.[0]
             const response = getAttendanceResponseHeaderAndMessage(performedAction)
             const state = {
+              performedAction,
               header: response?.header,
-              message: response?.message,
+              message: `${response?.message}`,
               info: t("ATM_MUSTER_ROLL_WEEK"),
               id: `${musterRoll.musterRollNumber} | ${format(new Date(musterRoll.startDate), "dd/MM/yyyy")} - ${format(new Date(musterRoll.endDate), "dd/MM/yyyy")}`,
             }
-            history.push(`/${window.contextPath}/employee/attendencemgmt/response?musterRollNumber=${musterRoll.musterRollNumber}`, state)
+            if(performedAction==="APPROVE"){
+              
+              // const individualEntriesResponse = data?.musterRolls?.[0]?.individualEntries
+              
+              // individualEntriesResponse?.forEach(row=>{
+              //   row.additionalDetails = { ...row.additionalDetails, accountType: "SAVINGS", accountHolderName: row?.additionalDetails?.userName, bankDetails: "880182873839-SBIN0001237", skillCode: row.additionalDetails?.skillValue ? row.additionalDetails?.skillValue:"UNSKILLED.MALE_MULIA" }
+              // })
+
+              //here call the create bill directly without using useQuery it will return a pending promise
+              // we don't need data from this response we just need to make sure bill is getting created for now
+              Digit.Hooks.bills.useBillCreate({
+                body: {
+                  "musterRolls": data?.musterRolls, "count": 1
+                }
+              })
+              
+              history.push(`/${window.contextPath}/employee/attendencemgmt/response?musterRollNumber=${musterRoll.musterRollNumber}`, state)
+           
+          }
+            else {
+              history.push(`/${window.contextPath}/employee/attendencemgmt/response?musterRollNumber=${musterRoll.musterRollNumber}`, state)
+            }
           }
           setShowToast({ key: "success", action: selectedAction });
           clearDataDetails && setTimeout(clearDataDetails, 3000);
@@ -290,7 +288,7 @@ const ApplicationDetails = (props) => {
           queryClient.clear();
           queryClient.refetchQueries("APPLICATION_SEARCH");
           //push false status when reject
-          
+          //here make a dummy api Call and in response page show some static billNo
         },
       });
     }
@@ -324,6 +322,7 @@ const ApplicationDetails = (props) => {
             applicationNo={props.applicationNo}
             tenantId={props.tenantId}
             businessService={businessService}
+            customClass={customClass}
           />
           {showModal ? (
             <ActionModal
