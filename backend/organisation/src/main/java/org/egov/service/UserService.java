@@ -280,7 +280,7 @@ public class UserService {
 
             if (!CollectionUtils.isEmpty(userDetailResponse.getUser())) {
                 newUser.setId(userDetailResponse.getUser().get(0).getId());
-                uri = uri.append(config.getUserContextPath()).append(contactDetails.getId()).append(config.getUserUpdateEndpoint());
+                uri = uri.append(config.getUserContextPath()).append(config.getUserUpdateEndpoint());
                 UserRequest userRequest = new UserRequest(newUser);
                 userDetailResponse = userCall(new CreateUserRequest(requestInfo, userRequest), uri);
                 setContactFields(contactDetails, userDetailResponse, requestInfo);
