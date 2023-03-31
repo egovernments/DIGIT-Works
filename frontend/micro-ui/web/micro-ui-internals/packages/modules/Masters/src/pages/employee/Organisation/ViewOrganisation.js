@@ -11,7 +11,7 @@ const ViewOrganisation = () => {
 
   //const { organizationId, tenantId } = Digit.Hooks.useQueryParams()
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const organizationId = 'ORG-000005'
+  const organizationId = 'ORG-000018'
   const [activeLink, setActiveLink] = useState("Location_Details");
 
   const configNavItems = [

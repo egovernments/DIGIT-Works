@@ -5,11 +5,15 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   if(data?.organisations?.length === 0) throw new Error('No data found');
     
   const organisation = data.organisations[0]
+  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
   console.log('organisation', organisation);
 
   const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "ORG", referenceId: [organisation?.id] } }
   const bankDetails = await BankAccountService.search(bankDetailPayload, {});
   const bankAccounts = bankDetails?.bankAccounts?.[0]?.bankAccountDetails
+
+  const PAN = organisation?.identifiers?.find(item => item?.type === 'PAN')
+  const GSTIN = organisation?.identifiers?.find(item => item?.type === 'GSTIN')
 
   const orgDetails = [
     {
@@ -26,10 +30,10 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     {
       title: 'MASTERS_FUNCTIONAL_DETAILS',
       values: [
-        { title: "MASTERS_ORGANISATION_TYPE", value: organisation?.functions?.[0]?.type || "Community Based Organization" || t("NA")},
-        { title: "MASTERS_ORGANISATION_SUB_TYPE", value: organisation?.functions?.[0]?.type || "Mission Shakti Group" || t("NA")},
-        { title: "ES_COMMON_CATEGORY", value: organisation?.functions?.[0]?.category || t("NA")},
-        { title: "MASTERS_CLASS_RANK", value: organisation?.functions?.[0]?.class  || t("NA")},
+        { title: "MASTERS_ORGANISATION_TYPE", value: organisation?.functions?.[0]?.type ? t(`COMMON_MASTERS_ORG_${organisation?.functions?.[0]?.type?.split('.')?.[0]}`) : t("NA")},
+        { title: "MASTERS_ORGANISATION_SUB_TYPE", value: organisation?.functions?.[0]?.type ? t(`COMMON_MASTERS_SUBORG_${organisation?.functions?.[0]?.type?.split('.')?.[1]}`) : t("NA")},
+        { title: "ES_COMMON_CATEGORY", value: organisation?.functions?.[0]?.category ? t(`COMMON_MASTERS_FUNCATEGORY_${organisation?.functions?.[0]?.category?.split('.')?.[1]}`): t("NA")},
+        { title: "MASTERS_CLASS_RANK", value: organisation?.functions?.[0]?.class ? t(`COMMON_MASTERS_CLASS_${organisation?.functions?.[0]?.class}`) : t("NA")},
         { title: "ES_COMMON_VALID_FROM", value: Digit.DateUtils.ConvertTimestampToDate(organisation?.functions?.[0]?.validFrom, 'dd/MM/yyyy') || t("NA")},
         { title: "ES_COMMON_VALID_TO", value: Digit.DateUtils.ConvertTimestampToDate(organisation?.functions?.[0]?.validTo, 'dd/MM/yyyy') || t("NA")}
       ]
@@ -41,8 +45,8 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     asSectionHeader: true,
     values: [
         { title: "CORE_COMMON_PROFILE_CITY", value: organisation?.orgAddress?.[0]?.city ? Digit.Utils.locale.getCityLocale(organisation?.orgAddress?.[0]?.city) : t("NA")},
-        { title: "COMMON_WARD", value: "Ward 1" || t("NA")},
-        { title: "COMMON_LOCALITY", value: "Locality A" || t("NA")},
+        { title: "COMMON_WARD", value: organisation?.orgAddress?.[0]?.boundaryCode ? `${headerLocale}_ADMIN_${organisation?.orgAddress?.[0]?.boundaryCode}` : t("NA")},
+        { title: "COMMON_LOCALITY", value: organisation?.additionalDetails?.locality ? `${headerLocale}_ADMIN_${organisation?.additionalDetails?.locality?.code}` : t("NA")},
         { title: "ES_COMMON_STREET", value: organisation?.orgAddress?.[0]?.street || t("NA")},
         { title: "ES_COMMON_DOOR_NO", value: organisation?.orgAddress?.[0]?.doorNo || t("NA")},
     ]
@@ -53,8 +57,8 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     asSectionHeader: true,
     values: [
         { title: "CORE_COMMON_NAME", value: organisation?.contactDetails?.[0]?.contactName || t("NA")},
-        { title: "CORE_COMMON_PROFILE_MOBILE_NUMBER", value:  organisation?.contactDetails?.[0]?.contactMobileNumber || t("NA")},
-        { title: "CORE_COMMON_PROFILE_EMAIL", value:  organisation?.contactDetails?.[0]?.contactEmail || t("NA")}
+        { title: "CORE_COMMON_PROFILE_MOBILE_NUMBER", value: organisation?.contactDetails?.[0]?.contactMobileNumber || t("NA")},
+        { title: "CORE_COMMON_PROFILE_EMAIL", value: organisation?.contactDetails?.[0]?.contactEmail || t("NA")}
     ]
   }
 
@@ -70,8 +74,8 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
       { title: "ES_COMMON_BRANCH", value: item?.bankBranchIdentifier?.additionalDetails?.ifsccode || t("NA")},
       { title: "MASTERS_EFFECTIVE_FROM", value: Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.createdTime, 'dd/MM/yyyy') || t("NA")},
       { title: "MASTERS_EFFECTIVE_TO", value: item?.isActive && item?.isPrimary ? t("NA") : Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy')},
-      { title: "COMMON_MASTERS_TAXIDENTIFIER_PAN", value: '123'},
-      { title: "COMMON_MASTERS_TAXIDENTIFIER_GSTIN", value: '123'}
+      { title: "COMMON_MASTERS_TAXIDENTIFIER_PAN", value: PAN ? PAN?.value : t("NA") },
+      { title: "COMMON_MASTERS_TAXIDENTIFIER_GSTIN", value: GSTIN ? GSTIN?.value : t("NA")}
     ]
     financialDetails.push(bankDetails)
   })
