@@ -1,18 +1,13 @@
 package org.egov.works.enrichment;
 
-<<<<<<< HEAD
+
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-=======
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import digit.models.coremodels.AuditDetails;
-import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
->>>>>>> origin/develop
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.util.*;
 import org.egov.works.web.models.*;

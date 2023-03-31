@@ -125,8 +125,6 @@ public class ContractServiceConfiguration {
     @Value("${contract.document.id.verification.required}")
     private String documentIdVerificationRequired;
 
-    @Value("${contract.org.id.verification.required}")
-    private String orgIdVerificationRequired;
 
     //SMS notification
     @Value("${notification.sms.enabled}")

@@ -1,38 +1,24 @@
 package org.egov.works.validator;
 
-<<<<<<< HEAD
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-=======
->>>>>>> origin/develop
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
-<<<<<<< HEAD
 import org.egov.works.repository.LineItemsRepository;
 import org.egov.works.service.ContractService;
 import org.egov.works.util.EstimateServiceUtil;
 import org.egov.works.util.HRMSUtils;
 import org.egov.works.util.MDMSDataParser;
-=======
 import org.egov.works.repository.ContractRepository;
-import org.egov.works.repository.LineItemsRepository;
-import org.egov.works.util.EstimateServiceUtil;
-import org.egov.works.util.HRMSUtils;
 import org.egov.works.util.CommonUtil;
->>>>>>> origin/develop
 import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-<<<<<<< HEAD
-import java.io.IOException;
-=======
->>>>>>> origin/develop
 import java.util.*;
 import java.util.stream.Collectors;
 
