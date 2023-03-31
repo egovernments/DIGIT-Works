@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -48,16 +49,15 @@ public class OrganisationFunctionQueryBuilder {
 
     private static final String COUNT_WRAPPER = "SELECT COUNT(*) FROM ({INTERNAL_QUERY}) as count";
 
-    public String getOrganisationSearchQuery(OrgSearchRequest orgSearchRequest, List<Object> preparedStmtList, Boolean isCountQuery) {
+    public String getOrganisationSearchQuery(OrgSearchRequest orgSearchRequest, Set<String> orgIdsFromIdentifierAndBoundarySearch, List<Object> preparedStmtList, Boolean isCountQuery) {
         String query = isCountQuery ? ORGANISATIONS_COUNT_QUERY : FETCH_ORGANISATION_FUNCTION_QUERY;
         StringBuilder queryBuilder = new StringBuilder(query);
         OrgSearchCriteria searchCriteria = orgSearchRequest.getSearchCriteria();
 
-        List<String> ids = searchCriteria.getId();
-        if (ids != null && !ids.isEmpty()) {
+        if (orgIdsFromIdentifierAndBoundarySearch != null && !orgIdsFromIdentifierAndBoundarySearch.isEmpty()) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" org.id IN (").append(createQuery(ids)).append(")");
-            addToPreparedStatement(preparedStmtList, ids);
+            queryBuilder.append(" org.id IN (").append(createQuery(orgIdsFromIdentifierAndBoundarySearch)).append(")");
+            addToPreparedStatement(preparedStmtList, orgIdsFromIdentifierAndBoundarySearch);
         }
 
         if (StringUtils.isNotBlank(searchCriteria.getTenantId())) {
@@ -74,7 +74,7 @@ public class OrganisationFunctionQueryBuilder {
 
         if (StringUtils.isNotBlank(searchCriteria.getApplicationNumber())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" org.applicationNumber=? ");
+            queryBuilder.append(" org.application_number=? ");
             preparedStmtList.add(searchCriteria.getApplicationNumber());
         }
 
@@ -103,7 +103,7 @@ public class OrganisationFunctionQueryBuilder {
         }
 
 
-        if (!searchCriteria.getIncludeDeleted()) {
+        if (searchCriteria.getIncludeDeleted() == null || !searchCriteria.getIncludeDeleted()) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" org.is_active=true ");
         }
@@ -146,7 +146,7 @@ public class OrganisationFunctionQueryBuilder {
                 preparedStmtList.add(searchCriteria.getFunctions().getWfStatus());
             }
 
-            if (!searchCriteria.getIncludeDeleted()) {
+            if (searchCriteria.getIncludeDeleted() == null || !searchCriteria.getIncludeDeleted()) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
                 queryBuilder.append(" orgFunction.is_active=true ");
             }
@@ -174,7 +174,7 @@ public class OrganisationFunctionQueryBuilder {
         });
     }
 
-    private String createQuery(Collection<String> ids) {
+    private String  createQuery(Collection<String> ids) {
         StringBuilder builder = new StringBuilder();
         int length = ids.size();
         for (int i = 0; i < length; i++) {
@@ -230,9 +230,9 @@ public class OrganisationFunctionQueryBuilder {
         return finalQuery;
     }
 
-    public String getSearchCountQueryString(OrgSearchRequest orgSearchRequest, List<Object> preparedStmtList) {
+    public String getSearchCountQueryString(OrgSearchRequest orgSearchRequest, Set<String> orgIdsFromIdentifierAndBoundarySearch, List<Object> preparedStmtList) {
         log.info("OrganisationSearchQueryBuilder::getSearchCountQueryString");
-        String query = getOrganisationSearchQuery(orgSearchRequest, preparedStmtList, true);
+        String query = getOrganisationSearchQuery(orgSearchRequest, orgIdsFromIdentifierAndBoundarySearch, preparedStmtList, true);
         if (query != null)
             return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
         else
