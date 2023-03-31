@@ -86,7 +86,7 @@ export const UICustomizations = {
         data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
       }
 
-      delete data.body.inbox.moduleSearchCriteria.ward;
+      
 
       //cloning locality and workflow states to format them
       // let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
@@ -96,6 +96,14 @@ export const UICustomizations = {
       if(selectedOrg) {
          data.body.inbox.moduleSearchCriteria.orgId = selectedOrg?.[0]?.applicationNumber;
       }
+
+      
+      let selectedWard =  _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : null);
+      delete data.body.inbox.moduleSearchCriteria.ward;
+      if(selectedWard) {
+         data.body.inbox.moduleSearchCriteria.ward = selectedWard?.[0]?.code;
+      }
+
       let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
       // delete data.body.inbox.moduleSearchCriteria.locality;
       delete data.body.inbox.moduleSearchCriteria.state;
@@ -151,12 +159,18 @@ export const UICustomizations = {
       if (column.label === "ATM_NO_OF_INDIVIDUALS") {
         return <div>{value?.length}</div>;
       }
+      if(column.label === "ATM_AMOUNT_IN_RS"){
+        return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA")}</span>;
+      }
       if (column.label === "ATM_SLA") {
         return parseInt(value) > 0 ? (
           <span className="sla-cell-success">{t(value) || ""}</span>
         ) : (
           <span className="sla-cell-error">{t(value) || ""}</span>
         );
+      }
+      if (column.label === "COMMON_WORKFLOW_STATES") {
+        return <span>{t(`WF_MUSTOR_${value}`)}</span>
       }
     },
     populateReqCriteria: () => {
