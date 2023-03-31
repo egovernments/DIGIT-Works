@@ -245,7 +245,7 @@ public class UserService {
     private void setContactFields(ContactDetails contactDetails, UserDetailResponse userDetailResponse, RequestInfo requestInfo) {
         log.info("UserService::setContactFields");
         contactDetails.setId(userDetailResponse.getUser().get(0).getUuid());
-        contactDetails.setContactName((userDetailResponse.getUser().get(0).getUserName()));
+        contactDetails.setContactName((userDetailResponse.getUser().get(0).getName()));
         contactDetails.setCreatedBy(requestInfo.getUserInfo().getUuid());
         contactDetails.setCreatedDate(System.currentTimeMillis());
         contactDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
