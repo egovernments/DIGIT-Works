@@ -125,11 +125,11 @@ const CreateWorkOrder = () => {
         [{ "name": "Overheads" }]
     );
 
-    const createOfficerInChargeObject = () => {
+    const createOfficerInChargeObject = (assigneeOptions) => {
         return assigneeOptions?.Employees?.filter(employees=>employees?.isActive).map((employee=>( { code : employee?.code, name : employee?.user?.name, data : employee} )))
     }
 
-    const createNameOfCBOObject = () => {
+    const createNameOfCBOObject = (organisationOptions) => {
         return organisationOptions?.organisations?.map(organisationOption => ( {code : organisationOption?.id, name : organisationOption?.name, applicationNumber : organisationOption?.applicationNumber } ))
     }
 
@@ -154,11 +154,11 @@ const CreateWorkOrder = () => {
 
     useEffect(()=>{
         if((estimate && project && !isLoadingHrmsSearch && !isOrgSearchLoading && !isOverHeadsMasterDataLoading && !isContractLoading)) {
-            updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData});
+            updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions});
 
             setDocuments(createDocumentObject(estimate?.additionalDetails?.documents));
-            setOfficerInCharge(createOfficerInChargeObject());
-            setNameOfCBO(createNameOfCBOObject());
+            setOfficerInCharge(createOfficerInChargeObject(assigneeOptions));
+            setNameOfCBO(createNameOfCBOObject(organisationOptions));
 
             setIsFormReady(true);
         }
@@ -168,7 +168,7 @@ const CreateWorkOrder = () => {
     return (
         <React.Fragment>
             {
-                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={configs} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}} isModify={isModify}></CreateWorkOrderForm>
+                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={configs} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}} isModify={isModify} contractID={contract?.id} lineItemID={contract?.lineItems?.[0]?.id}></CreateWorkOrderForm>
             }
         </React.Fragment>
     )

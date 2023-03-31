@@ -132,6 +132,7 @@ import useUpdateCustom from "./useUpdateCustom";
 
 import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
 import useCreateWO from "./works/useCreateWO";
+
 import useSearchOrg from "./works/useSearchOrg";
 
 
@@ -139,6 +140,7 @@ import useViewBill from "./bills/useViewBill";
 import useContractSearch from "./contracts/useContractSearch";
 import useBillCreate from "./bills/useBillCreate";
 import useUpdateProject from "./works/useUpdateProject";
+import useUpdateWO from "./works/useUpdateWO";
 
 const works = {
   useViewEstimateDetails,
@@ -169,6 +171,7 @@ const contracts = {
   useViewContractDetails,
   useViewContractDetailsClosureScreen,
   useCreateWO,
+  useUpdateWO,
   useContractSearch
 };
 

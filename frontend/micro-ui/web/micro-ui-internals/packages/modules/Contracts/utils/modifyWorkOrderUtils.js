@@ -1,14 +1,13 @@
 //This handler creates a FormData for Docs defaultValues
 //This will add 'id' for all the docs, as they are coming from response
 //These Ids will be used when user will modify or delete a doc of certain criteria
-export const handleModifyProjectFiles = (uploadedDocs) => {
+export const handleModifyWOFiles = (uploadedDocs) => {
   
   //form data inout name mapping with file category Name
   let fileKeyMappings = [
-    {key : "noSubProject_doc_feasibility_analysis", value : "Feasiblity Analysis"},
-    {key : "noSubProject_doc_finalized_worklist", value : "Finalized Worklist"},
-    {key : "noSubProject_doc_others", value : "Other"},
-    {key : "noSubProject_doc_project_proposal", value : "Project Proposal"},
+    {key : "doc_boq", value : "BOQ"},
+    {key : "doc_terms_and_conditions", value : "Terms And Conditions"},
+    {key : "doc_others", value : "Other"},
   ]
 
   let documentObject = {};
@@ -17,7 +16,7 @@ export const handleModifyProjectFiles = (uploadedDocs) => {
 
     if(currentDoc?.fileStore && currentDoc?.status !== "INACTIVE") {
       if(fileKeyMapping?.value === "Other") {
-        documentObject["noSubProject_doc_others_name"] = currentDoc?.additionalDetails?.otherCategoryName;
+        documentObject["doc_others_name"] = currentDoc?.additionalDetails?.otherCategoryName;
       }
       documentObject[fileKeyMapping?.key] = [
         [currentDoc?.additionalDetails?.fileName, {file : { name : currentDoc?.additionalDetails?.fileName, id : currentDoc?.id}, fileStoreId : { fileStoreId : currentDoc?.fileStore}}]
@@ -27,7 +26,7 @@ export const handleModifyProjectFiles = (uploadedDocs) => {
   return documentObject;
 }
 
-export const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData}) => {
+export const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions}) => {
   if(!isModify) {
       //clear defaultValues from 'config' ( this case can come when user navigates from Create Screen to Modify Screen )
       //these are the req default Values for Create WO
@@ -47,14 +46,22 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
       }else{
         contract = {};
       }
+      
+      let organisations = createNameOfCBOObject(organisationOptions);
+      let assignees = createOfficerInChargeObject(assigneeOptions);
 
       configs.defaultValues.basicDetails_projectID = project?.projectNumber ? project?.projectNumber  : "",
       configs.defaultValues.basicDetails_dateOfProposal = project?.additionalDetails?.dateOfProposal ? Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal) : "",
       configs.defaultValues.basicDetails_projectName = project?.name ? project?.name  : "";
       configs.defaultValues.basicDetails_projectDesc = project?.description ? project?.description  : "";
       configs.defaultValues.workOrderAmountRs = isModify ? contract?.totalContractedAmount  : handleWorkOrderAmount({estimate, overHeadMasterData});
+      configs.defaultValues.nameOfCBO =  isModify ? (organisations?.filter(org=>org?.code === contract?.orgId))?.[0] : "";
+      configs.defaultValues.nameOfOfficerInCharge = isModify ? (assignees?.filter(assignee=>assignee?.code === contract?.additionalDetails?.officerInChargeId))?.[0] : "";
+      configs.defaultValues.roleOfCBO = isModify ? {code : contract?.executingAuthority, name : `COMMON_MASTERS_${contract?.executingAuthority}`} : "";
+      configs.defaultValues.projectCompletionPeriodInDays = isModify ? contract?.completionPeriod : "";
+      configs.defaultValues.documents = isModify ? handleModifyWOFiles(contract?.documents) : "";
+      configs.defaultValues.WOTermsAndConditions = isModify ? [...contract?.additionalDetails?.termsAndConditions] : "";
 
-   
       setSessionFormData({...sessionFormData, ...configs?.defaultValues});
     }
 }

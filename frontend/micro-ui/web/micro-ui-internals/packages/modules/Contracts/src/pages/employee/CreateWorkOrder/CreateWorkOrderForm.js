@@ -17,7 +17,7 @@ const navConfig =  [
     }
 ];
 
-const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData, isModify}) => {
+const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData, isModify, contractID, lineItemID}) => {
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
@@ -74,6 +74,8 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     [preProcessData?.documents, preProcessData?.officerInCharge, preProcessData?.nameOfCBO]);
 
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+        console.log("formData", formData);
+        console.log("session", sessionFormData);
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
@@ -94,6 +96,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     }
 
     const { mutate: CreateWOMutation } = Digit.Hooks.contracts.useCreateWO();
+    const { mutate: UpdateWOMutation } = Digit.Hooks.contracts.useUpdateWO();
 
     //remove Toast after 3s
     useEffect(()=>{
@@ -121,9 +124,29 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         setShowModal(true);
     }
 
-    const onModalSubmit = async (modalData) => {
-        const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData});
-        
+    const handleResponseForUpdate = async(payload) => {
+        await UpdateWOMutation(payload, {
+            onError: async (error, variables) => {
+                if(error?.response?.data?.Errors?.[0]?.code === "INVALID_ESTIMATELINEITEMID") {
+                    setToast(()=>({show : true, label : t("ESTIMATE_ALREADY_ASSOCIATED_TO_OTHER_CONTRACT"), error : true}));
+                }else {
+                    setToast(()=>({show : true, label : t(error?.response?.data?.Errors?.[0]?.code), error : true}));
+                }
+            },
+            onSuccess: async (responseData, variables) => {
+                if(responseData?.ResponseInfo?.Errors) {
+                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                    }else if(responseData?.ResponseInfo?.status){
+                        sendDataToResponsePage(responseData?.contracts?.[0]?.contractNumber, responseData, true);
+                        clearSessionFormData();
+                    }else{
+                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                    }
+            },
+        });
+    }
+
+    const handleResponseForCreateWO = async(payload) => {
         await CreateWOMutation(payload, {
             onError: async (error, variables) => {
                 if(error?.response?.data?.Errors?.[0]?.code === "INVALID_ESTIMATELINEITEMID") {
@@ -143,6 +166,20 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                     }
             },
         });
+    }
+
+    const modifyParams = {
+        contractID,
+        lineItemID
+    }
+
+    const onModalSubmit = async (modalData) => {
+        const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams});
+        if(isModify) {
+            handleResponseForUpdate(payload);
+        }else {
+            handleResponseForCreateWO(payload);
+        }
     }
 
     const sendDataToResponsePage = (contractNumber, responseData, isSuccess) => {
