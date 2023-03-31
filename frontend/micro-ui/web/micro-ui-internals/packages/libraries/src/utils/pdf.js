@@ -1,4 +1,5 @@
 import { Fonts } from "./fonts";
+import { CustomService } from "../services/elements/CustomService";
 
 const pdfMake = require("pdfmake/build/pdfmake.js");
 // const pdfFonts = require("pdfmake/build/vfs_fonts.js");
