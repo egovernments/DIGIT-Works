@@ -5,14 +5,19 @@ import MastersCard from "./components/MastersCard";
 import ProjectCard from "./components/ProjectCard";
 import { default as EmployeeApp } from "./pages/employee";
 import SearchMasters from "./pages/employee/Master/SearchMasters";
-import CreateOrganization from "./pages/employee/Master/CreateOrganization";
-import RegisterWageSeeker from "./pages/employee/registerWageSeeker/index";
-import SearchOrganisation from "./pages/employee/SearchOrganisation";
-import SearchWageSeeker from "./pages/employee/SearchWageSeeker";
+import CreateMasters from "./pages/employee/Master/CreateMasters";
 import SearchMastersApplication from "./components/SearchMasters";
+
+import RegisterWageSeeker from "./pages/employee/WageSeeker/RegisterWageSeeker";
+import SearchWageSeeker from "./pages/employee/WageSeeker/SearchWageSeeker";
+import ViewWageSeeker from "./pages/employee/WageSeeker/ViewWageSeeker";
+import ModifyWageSeeker from "./pages/employee/WageSeeker/ModifyWageSeeker";
+
+import CreateOrganisation from  "./pages/employee/Organisation/CreateOrganization/index";
+import SearchOrganisation from "./pages/employee/Organisation/SearchOrganisation";
 import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
-import ViewWageSeeker from "./pages/employee/ViewWageSeeker";
-import ModifyWageSeeker from "./pages/employee/ModifyWageSeeker";
+
+import TransferCodeTable from "./components/TransferCodeTable";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
 
@@ -39,14 +44,18 @@ const componentsToRegister = {
   MasterCard:MastersCard ,
   ProjectsCard:ProjectCard,
   SearchMasters,
-  CreateOrganization,
-  RegisterWageSeeker,
+  CreateMasters,
   SearchMastersApplication,
+  
+  RegisterWageSeeker,
   SearchWageSeeker,
-  ViewOrganisation,
-  SearchOrganisation,
   ViewWageSeeker,
-  ModifyWageSeeker
+  ModifyWageSeeker,
+
+  CreateOrganisation,
+  SearchOrganisation,
+  ViewOrganisation,
+  TransferCodeTable
 };
 
 export const initMastersComponents = () => {

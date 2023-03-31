@@ -42,7 +42,7 @@ export const WorksService = {
             // params:{},
             auth:true,
 
-        }),
+        }), 
     approvedEstimateSearch:({ tenantId, filters })=>
          Request({
             //update URL for Approved Estimate Search
@@ -107,7 +107,18 @@ export const WorksService = {
             method: "POST",
             params: {},
             auth: true,
-        }),
+    }),
+    updateProject: (details) =>
+        Request({
+            url: Urls?.works?.updateProject,
+            data: details,
+            useCache: false,
+            setTimeParam: false,
+            userService: true,
+            method: "POST",
+            params: {},
+            auth: true,
+    }),
     searchProject:(tenantId, details, filters)=>
         Request({
            url: Urls.works.searchProject,
@@ -140,5 +151,28 @@ export const WorksService = {
             method: "POST",
             params: {},
             auth: true,
+        }),
+    contractSearch: ({ tenantId, filters }) => {
+        
+       return  Request({
+            url: Urls.contracts.search,
+            useCache: false,
+            data:filters,
+            method: "POST",
+            auth: true,
+            userService: false,
+            params: { tenantId },
         })
+    },
+    createBill: (body) => {
+        return Request({
+            url: "/expensebilling/demand/v1/_create",
+            useCache: false,
+            data: body,
+            method: "POST",
+            auth: true,
+            userService: false,
+            params: {  },
+        })
+    },
 }

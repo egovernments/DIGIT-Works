@@ -53,29 +53,11 @@ const ApplicationDetails = (props) => {
     noBoxShadow,
     sectionHeadStyle,
     showActionBar = true,
-    setshowEditTitle = () => {}
+    setshowEditTitle = () => {},
+    customClass
   } = props;
   
-  const [billingCallData,setBillingCallData] = useState(null)
   
-  const reqCriteria = {
-    url: "/expensebilling/demand/v1/_create",
-    params:{},
-    body: { "musterRolls": billingCallData?.mustorObject,"count":1},
-    config: {
-      enabled: billingCallData ? true : false,
-    },
-  }
-
-  const { isLoading:isBillLoading, data:billData, revalidate, isFetching:isBillFetching } = Digit.Hooks.useCustomAPIHook(reqCriteria);
-
-  useEffect(() => {
-    if (billData?.BillDemands?.[0]?.billNumber ){
-      history.push(`/${window.contextPath}/employee/attendencemgmt/response?musterRollNumber=${billingCallData?.mustorObject?.musterRolls?.[0]?.musterRollNumber}`, {...billingCallData?.responseScreenState,billNo:"BS/122-3123-13"})
-    }
-  }, [billData])
-    
-
   useEffect(() => {
     if (showToast) {
       workflowDetails.revalidate();
@@ -279,16 +261,22 @@ const ApplicationDetails = (props) => {
             }
             if(performedAction==="APPROVE"){
               
-              const individualEntriesResponse = data?.musterRolls?.[0]?.individualEntries
+              // const individualEntriesResponse = data?.musterRolls?.[0]?.individualEntries
               
-              individualEntriesResponse?.forEach(row=>{
-                row.additionalDetails = { ...row.additionalDetails, accountType: "SAVINGS", accountHolderName: row?.additionalDetails?.userName, bankDetails: "880182873839-SBIN0001237", skillCode: row.additionalDetails?.skillValue ? row.additionalDetails?.skillValue:"UNSKILLED.MALE_MULIA" }
-              })
+              // individualEntriesResponse?.forEach(row=>{
+              //   row.additionalDetails = { ...row.additionalDetails, accountType: "SAVINGS", accountHolderName: row?.additionalDetails?.userName, bankDetails: "880182873839-SBIN0001237", skillCode: row.additionalDetails?.skillValue ? row.additionalDetails?.skillValue:"UNSKILLED.MALE_MULIA" }
+              // })
 
-            setBillingCallData({
-              mustorObject: data?.musterRolls,
-              responseScreenState: state
-            })
+              //here call the create bill directly without using useQuery it will return a pending promise
+              // we don't need data from this response we just need to make sure bill is getting created for now
+              Digit.Hooks.bills.useBillCreate({
+                body: {
+                  "musterRolls": data?.musterRolls, "count": 1
+                }
+              })
+              
+              history.push(`/${window.contextPath}/employee/attendencemgmt/response?musterRollNumber=${musterRoll.musterRollNumber}`, state)
+           
           }
             else {
               history.push(`/${window.contextPath}/employee/attendencemgmt/response?musterRollNumber=${musterRoll.musterRollNumber}`, state)
@@ -334,6 +322,7 @@ const ApplicationDetails = (props) => {
             applicationNo={props.applicationNo}
             tenantId={props.tenantId}
             businessService={businessService}
+            customClass={customClass}
           />
           {showModal ? (
             <ActionModal

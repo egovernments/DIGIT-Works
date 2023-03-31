@@ -54,7 +54,7 @@ const getAttendanceTableData = (data, skills, t) => {
     //Add row to show Total data
     let totalRow = {}
     totalRow.type = "total"
-    totalRow.sno = "ES_COMMON_TOTAL_AMOUNT"
+    totalRow.sno = "RT_TOTAL"
     totalRow.registerId = "DNR"
     totalRow.nameOfIndividual = "DNR"
     totalRow.guardianName = "DNR"
@@ -73,7 +73,7 @@ const getAttendanceTableData = (data, skills, t) => {
 }
 
 const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills) => {
-  if(data.musterRolls.length === 0) return;
+  if(data?.musterRolls?.length === 0) throw new Error('No data found');
   
   const musterRoll = data.musterRolls[0]
   const attendanceTableData = getAttendanceTableData(musterRoll, skills, t)

@@ -77,7 +77,7 @@ const inboxConfigMukta = () => {
                             disable: false,
                             populators: {
                                 name: "projectType",
-                                optionsKey: "code",
+                                optionsKey: "name",
                                 mdmsConfig: {
                                     masterName: "ProjectType",
                                     moduleName: "works",

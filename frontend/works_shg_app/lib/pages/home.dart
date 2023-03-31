@@ -70,15 +70,6 @@ class HomePage extends StatelessWidget {
                           ),
                           ButtonLink(
                               AppLocalizations.of(context)
-                                  .translate(i18.home.manageWageSeekers), () {
-                            context.read<AttendanceProjectsSearchBloc>().add(
-                                  const SearchAttendanceProjectsEvent(),
-                                );
-                            context.router
-                                .push(const ManageAttendanceRegisterRoute());
-                          }),
-                          ButtonLink(
-                              AppLocalizations.of(context)
                                   .translate(i18.home.trackAttendance), () {
                             context.read<AttendanceProjectsSearchBloc>().add(
                                   const SearchAttendanceProjectsEvent(),

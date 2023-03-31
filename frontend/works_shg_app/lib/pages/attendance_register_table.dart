@@ -31,13 +31,8 @@ import '../widgets/loaders.dart';
 class AttendanceRegisterTablePage extends StatefulWidget {
   final String registerId;
   final String tenantId;
-  final List<Map<String, dynamic>> projectDetails;
-  final AttendanceRegister? attendanceRegister;
-  const AttendanceRegisterTablePage(
-      @PathParam('registerId') this.registerId,
+  const AttendanceRegisterTablePage(@PathParam('registerId') this.registerId,
       @PathParam('tenantId') this.tenantId,
-      this.projectDetails,
-      this.attendanceRegister,
       {Key? key})
       : super(key: key);
 
@@ -55,11 +50,14 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   List<Map<String, dynamic>> addToTableList = [];
   List<Map<String, dynamic>> attendeeTableList = [];
   List<TableDataModel> userTableList = [];
+  List<Map<String, dynamic>> registerDetails = [];
+  String registerId = '';
   List<Map<String, dynamic>> createAttendeePayLoadList = [];
   List<Map<String, dynamic>> deleteAttendeePayLoadList = [];
   bool searchUser = false;
   List<Map<String, dynamic>> existingAttendeeList = [];
   List<TableDataRow> tableData = [];
+  int registerStartDate = DateTime.now().millisecondsSinceEpoch;
 
   @override
   void initState() {
@@ -79,8 +77,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
     deleteAttendeePayLoadList.clear();
     searchUser = false;
     context.read<AttendanceIndividualProjectSearchBloc>().add(
-          SearchIndividualAttendanceProjectEvent(
-              id: widget.registerId ?? '',
+          SearchIndividualAttendanceRegisterEvent(
+              registerNumber: widget.registerId ?? '',
               tenantId: widget.tenantId.toString()),
         );
     await Future.delayed(const Duration(seconds: 1));
@@ -126,7 +124,52 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                   backLabel:
                       AppLocalizations.of(context).translate(i18.common.back),
                 ),
-                WorkDetailsCard(widget.projectDetails),
+                BlocListener<AttendanceIndividualProjectSearchBloc,
+                    AttendanceIndividualProjectSearchState>(
+                  listener: (context, registerState) {
+                    registerState.maybeWhen(
+                        loading: () => Loaders.circularLoader(context),
+                        initial: () {
+                          existingAttendeeList.clear();
+                        },
+                        loaded: (AttendanceRegistersModel?
+                            individualAttendanceRegisterModel) {
+                          registerId = individualAttendanceRegisterModel!
+                              .attendanceRegister!.first.id
+                              .toString();
+                          registerDetails = individualAttendanceRegisterModel
+                              .attendanceRegister!
+                              .map((e) => {
+                                    i18.workOrder.workOrderNo: e
+                                            .attendanceRegisterAdditionalDetails
+                                            ?.contractId ??
+                                        'NA',
+                                    i18.attendanceMgmt.registerId:
+                                        e.registerNumber,
+                                    i18.attendanceMgmt.projectId: e
+                                            .attendanceRegisterAdditionalDetails
+                                            ?.projectId ??
+                                        'NA',
+                                    i18.attendanceMgmt.projectDesc: e
+                                            .attendanceRegisterAdditionalDetails
+                                            ?.projectName ??
+                                        'NA'
+                                  })
+                              .toList();
+                        },
+                        orElse: () => false);
+                  },
+                  child: BlocBuilder<AttendanceIndividualProjectSearchBloc,
+                          AttendanceIndividualProjectSearchState>(
+                      builder: (context, registerState) {
+                    return registerState.maybeWhen(
+                        orElse: () => Container(),
+                        loading: () => Loaders.circularLoader(context),
+                        loaded: (AttendanceRegistersModel?
+                                individualAttendanceRegisterModel) =>
+                            WorkDetailsCard(registerDetails));
+                  }),
+                ),
               ])),
               SliverToBoxAdapter(
                   child: Column(
@@ -172,25 +215,12 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                       null &&
                                   individualAttendanceRegisterModel!
                                       .attendanceRegister!.isNotEmpty) {
-                                individualAttendanceRegisterModel!
-                                    .attendanceRegister!
-                                    .map((e) => {
-                                          i18.workOrder.workOrderNo:
-                                              e.attendanceRegisterAdditionalDetails
-                                                      ?.contractId ??
-                                                  'NA',
-                                          i18.attendanceMgmt.registerId:
-                                              e.registerNumber,
-                                          i18.attendanceMgmt.projectId:
-                                              e.attendanceRegisterAdditionalDetails
-                                                      ?.projectId ??
-                                                  'NA',
-                                          i18.attendanceMgmt.projectDesc:
-                                              e.attendanceRegisterAdditionalDetails
-                                                      ?.projectName ??
-                                                  'NA'
-                                        })
-                                    .toList();
+                                registerStartDate =
+                                    individualAttendanceRegisterModel
+                                            .attendanceRegister!
+                                            .first
+                                            .startDate ??
+                                        DateTime.now().millisecondsSinceEpoch;
                                 if (individualAttendanceRegisterModel
                                             .attendanceRegister!
                                             .first
@@ -352,11 +382,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                         'SUCCESS');
                                                     context.router.popAndPush(
                                                         AttendanceRegisterTableRoute(
-                                                            projectDetails: widget
-                                                                .projectDetails,
-                                                            attendanceRegister:
-                                                                widget
-                                                                    .attendanceRegister,
                                                             registerId: widget
                                                                 .registerId
                                                                 .toString(),
@@ -374,11 +399,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                         'ERROR');
                                                     context.router.popAndPush(
                                                         AttendanceRegisterTableRoute(
-                                                            projectDetails: widget
-                                                                .projectDetails,
-                                                            attendanceRegister:
-                                                                widget
-                                                                    .attendanceRegister,
                                                             registerId: widget
                                                                 .registerId
                                                                 .toString(),
@@ -406,14 +426,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
                                                       Future.delayed(
                                                           const Duration(
-                                                              seconds: 3));
+                                                              seconds: 1));
                                                       context.router.popAndPush(
                                                           AttendanceRegisterTableRoute(
-                                                              projectDetails: widget
-                                                                  .projectDetails,
-                                                              attendanceRegister:
-                                                                  widget
-                                                                      .attendanceRegister,
                                                               registerId: widget
                                                                   .registerId
                                                                   .toString(),
@@ -431,11 +446,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                           'ERROR');
                                                       context.router.popAndPush(
                                                           AttendanceRegisterTableRoute(
-                                                              projectDetails: widget
-                                                                  .projectDetails,
-                                                              attendanceRegister:
-                                                                  widget
-                                                                      .attendanceRegister,
                                                               registerId: widget
                                                                   .registerId
                                                                   .toString(),
@@ -576,8 +586,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                     .isEmpty
             ? addToTableList
                 .map((e) => {
-                      "registerId": widget.registerId?.toString(),
+                      "registerId": registerId?.toString(),
                       "individualId": e["uuid"],
+                      "enrollmentDate": registerStartDate,
                       "tenantId": e["tenantId"],
                       "additionalDetails": {
                         "individualName": e["name"],
@@ -690,7 +701,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           addToTableList.removeWhere((e) => e['uuid'] == uuid);
           userTableList.removeWhere((e) => e.uuid == uuid);
           deleteAttendeePayLoadList.add({
-            "registerId": widget.registerId.toString(),
+            "registerId": registerId.toString(),
             "individualId": uuid.toString(),
             "enrollmentDate": null,
             "denrollmentDate": DateTime.now()
@@ -711,7 +722,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           userTableList.removeWhere((e) => e.uuid == uuid);
           if (existingAttendeeList.where((e) => e["uuid"] == uuid).isNotEmpty) {
             deleteAttendeePayLoadList.add({
-              "registerId": widget.registerId.toString(),
+              "registerId": registerId.toString(),
               "individualId": uuid.toString(),
               "enrollmentDate": null,
               "denrollmentDate": DateTime.now()

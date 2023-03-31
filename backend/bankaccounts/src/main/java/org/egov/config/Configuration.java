@@ -103,4 +103,19 @@ public class Configuration {
 
     @Value("${bank.account.search.max.limit}")
     private Integer maxLimit;
+
+
+    //Individual
+    @Value("${egov.individual.host}")
+    private String individualHost;
+
+    @Value("${egov.individual.search.endpoint}")
+    private String individualSearchEndPoint;
+
+    //Organisation
+    @Value("${egov.organisation.host}")
+    private String organisationHost;
+
+    @Value("${egov.organisation.search.endpoint}")
+    private String organisationSearchEndPoint;
 }

@@ -34,6 +34,12 @@ class KeyValue {
   KeyValue(this.label, this.key);
 }
 
+class FilesAttached {
+  String name;
+  String fileStoreId;
+  FilesAttached(this.name, this.fileStoreId);
+}
+
 class DaysInRange {
   bool monday;
   bool tuesday;
@@ -86,4 +92,11 @@ class SkillCategory {
   final String code;
 
   SkillCategory({required this.code});
+}
+
+class SelectSkill {
+  final String code;
+  final String label;
+
+  SelectSkill(this.code, this.label);
 }
