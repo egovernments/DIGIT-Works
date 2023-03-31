@@ -79,38 +79,57 @@ class DateFormats {
     DateTime start = DateTime.fromMillisecondsSinceEpoch(selectedStartDate);
     DateTime end = DateTime.fromMillisecondsSinceEpoch(selectedEndDate);
     DaysInRange daysInRange = DaysInRange();
+    int registerStartTime =
+        registerStartDate - (registerStartDate % (24 * 60 * 60 * 1000));
+
+    ///Issue with register Start Date, Need to check
+    ///
+    int registerEndTime = DateTime(
+            DateTime.fromMillisecondsSinceEpoch(registerEndDate).year,
+            DateTime.fromMillisecondsSinceEpoch(registerEndDate).month,
+            DateTime.fromMillisecondsSinceEpoch(registerEndDate).day + 1)
+        .subtract(const Duration(milliseconds: 1))
+        .millisecondsSinceEpoch;
 
     while (start.isBefore(end) || start.isAtSameMomentAs(end)) {
-      DateTime currentDay = DateTime(start.year, start.month, start.day);
+      DateTime currentDay =
+          DateTime(start.year, start.month, start.day, 5, 30, 0);
       int currentDayTimestamp = currentDay.millisecondsSinceEpoch;
       switch (start.weekday) {
         case 1:
-          daysInRange.monday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+          daysInRange.monday = currentDayTimestamp >= registerStartTime &&
+              currentDayTimestamp <= registerEndTime &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 2:
           daysInRange.tuesday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndTime &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 3:
           daysInRange.wednesday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndTime &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 4:
           daysInRange.thursday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndTime &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 5:
           daysInRange.friday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndTime &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 6:
           daysInRange.saturday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndTime &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 7:
           daysInRange.sunday = currentDayTimestamp >= registerStartDate &&
-              currentDayTimestamp <= registerEndDate;
+              currentDayTimestamp <= registerEndTime &&
+              currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
       }
       start = start.add(const Duration(days: 1));

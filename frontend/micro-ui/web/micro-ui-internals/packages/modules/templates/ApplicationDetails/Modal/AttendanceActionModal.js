@@ -25,16 +25,16 @@ const CloseBtn = (props) => {
 
 const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode,applicationDetails,workflowDetails, saveAttendanceState}) => {
   const [config, setConfig] = useState({});
-
+  const [modalSubmit,setModalSubmit] = useState(false)
   const userUuid = Digit.UserService.getUser()?.info.uuid;
   const { isLoading, data:employeeData } = Digit.Hooks.hrms.useHRMSSearch(
     { uuids : userUuid }, tenantId
   );
 
   const empData =  employeeData?.Employees[0]
-  const empDepartment = empData?.assignments?.[0].department
-  const empDesignation = empData?.assignments?.[0].designation
-  const empName = empData?.user?.name
+  const empDepartment = empData?.assignments?.[0]?.department ? t(`COMMON_MASTERS_DEPARTMENT_${empData?.assignments?.[0]?.department}`) : t('NA')
+  const empDesignation = empData?.assignments?.[0]?.designation ? t(`COMMON_MASTERS_DESIGNATION_${empData?.assignments?.[0]?.designation}`) : t('NA')
+  const empName = empData?.user?.name || t('NA')
 
   useEffect(() => {
     const selectedAction = action?.action
@@ -73,12 +73,14 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
   }, [employeeData]);
 
   function onSubmit (data) {
+    
     submitBasedOnAction(action, data?.comments)
   }
 
   const submitBasedOnAction = (action, comments) => {
-    let musterRoll = { tenantId, id: applicationDetails?.applicationDetails?.[0]?.applicationData?.id}
-    let workflow = { action: action?.action, comments: (comments || `${action?.action} done`), assignees: [] }
+    //passing complete muster object with updated additionalDetails
+    let musterRoll = updateMusterObject(applicationDetails)
+    let workflow = { action: action?.action, comment: (comments || `${action?.action} done`), assignees: [] }
 
     const selectedAction = action?.action
     switch(selectedAction) {
@@ -96,6 +98,19 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     submitAction(dataTobeSubmitted)
   }
 
+  const updateMusterObject = (data) => {
+    let musterRoll = data?.applicationDetails?.[0]?.applicationData
+    musterRoll = { ...musterRoll, 
+                    additionalDetails: { 
+                      projectName: 'Building Walls', assignee: 'John Doe', amount: 5000, billType: 'Work Order', projectId : 'PR/2022-23/03/001111', ...musterRoll.additionalDetails }
+                  }
+    return musterRoll
+  }
+
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    setModalSubmit(formData?.acceptTerms)
+  }
+
   const cardStyle = () => {
     if(config.label.heading === "Processing Details") {
       return {
@@ -108,12 +123,14 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
   return action && config?.form ? (
     <Modal
       headerBarMain={<Heading label={t(config.label.heading)} className="header-left-margin" />}
+      headerBarMainStyle={{marginLeft:"15px"}}
       headerBarEnd={<CloseBtn onClick={closeModal} />}
       actionCancelLabel={t(config.label.cancel)}
       actionCancelOnSubmit={closeModal}
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={() => {}}
       formId="modal-action"
+      isDisabled = { action?.action === 'APPROVE' ? !modalSubmit : false }
     >
       <FormComposer
         config={config.form}
@@ -123,6 +140,8 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
         onSubmit={onSubmit}
         formId="modal-action"
         cardStyle = {cardStyle()}
+        onFormValueChange={onFormValueChange}
+        
       />
     </Modal>
   ) : (

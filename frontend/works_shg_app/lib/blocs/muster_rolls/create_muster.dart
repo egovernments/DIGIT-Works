@@ -41,13 +41,16 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
                 "orgName": event.orgName,
                 "contractId": event.contractId,
                 "attendanceRegisterNo": event.registerNo,
-                "attendanceRegisterName": event.registerName
-              }
+                "attendanceRegisterName": event.registerName,
+                "projectName": event.projectName ?? "",
+                "amount": event.amount ?? 14500
+              },
+              "individualEntries": event.skillsList ?? []
             },
             "workflow": {"action": "SUBMIT", "comments": "Submit muster roll"}
           });
       if (musterRollsModel != null) {
-        emit(const MusterCreateState.loaded());
+        emit(MusterCreateState.loaded(musterRollsModel));
       } else {
         emit(const MusterCreateState.error());
       }
@@ -72,21 +75,17 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
             "musterRoll": {
               "tenantId": event.tenantId,
               "id": event.id,
-              "additionalDetails": {
-                "orgName": event.orgName,
-                "contractId": event.contractId,
-                "attendanceRegisterNo": event.registerNo,
-                "attendanceRegisterName": event.registerName
-              }
+              "additionalDetails": {"computeAttendance": "true"},
+              "individualEntries": event.skillsList ?? []
             },
             "workflow": {
               "action": "RESUBMIT",
               "comments": "Resubmit muster roll",
-              "assignees": [GlobalVariables.uuid]
+              "assignees": []
             }
           });
       if (musterRollsModel != null) {
-        emit(const MusterCreateState.loaded());
+        emit(MusterCreateState.loaded(musterRollsModel));
       } else {
         emit(const MusterCreateState.error());
       }
@@ -98,23 +97,25 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
 
 @freezed
 class MusterCreateEvent with _$MusterCreateEvent {
-  const factory MusterCreateEvent.create({
-    required String tenantId,
-    required String registerId,
-    required String contractId,
-    required String orgName,
-    required String registerNo,
-    required String registerName,
-    required int startDate,
-  }) = CreateMusterEvent;
-  const factory MusterCreateEvent.update({
-    required String tenantId,
-    required String id,
-    required String orgName,
-    required String contractId,
-    required String registerNo,
-    required String registerName,
-  }) = UpdateMusterEvent;
+  const factory MusterCreateEvent.create(
+      {required String tenantId,
+      required String registerId,
+      required String contractId,
+      required String orgName,
+      required String registerNo,
+      required String registerName,
+      required int startDate,
+      String? projectName,
+      int? amount,
+      List<Map<String, dynamic>>? skillsList}) = CreateMusterEvent;
+  const factory MusterCreateEvent.update(
+      {required String tenantId,
+      required String id,
+      required String orgName,
+      required String contractId,
+      required String registerNo,
+      required String registerName,
+      List<Map<String, dynamic>>? skillsList}) = UpdateMusterEvent;
 }
 
 @freezed
@@ -122,6 +123,7 @@ class MusterCreateState with _$MusterCreateState {
   const MusterCreateState._();
   const factory MusterCreateState.initial() = _Initial;
   const factory MusterCreateState.loading() = _Loading;
-  const factory MusterCreateState.loaded() = _Loaded;
+  const factory MusterCreateState.loaded(MusterRollsModel? musterRollsModel) =
+      _Loaded;
   const factory MusterCreateState.error() = _Error;
 }

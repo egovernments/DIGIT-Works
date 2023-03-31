@@ -1,10 +1,12 @@
-import { Card,StatusTable,Row,Header,HorizontalNav,ActionBar,SubmitBar,WorkflowModal,FormComposer,Loader } from '@egovernments/digit-ui-react-components'
+import { Card, StatusTable, Row, Header, HorizontalNav, ActionBar, SubmitBar, WorkflowModal, FormComposer, Loader, Toast, ViewDetailsCard } from '@egovernments/digit-ui-react-components'
 import React,{Fragment,useEffect,useState} from 'react'
 import { useTranslation } from 'react-i18next'
 import getModalConfig from './config'
 import { createEstimateConfig } from './createEstimateConfig'
 import { createEstimatePayload } from './createEstimatePayload'
-import { useHistory } from "react-router-dom";
+import { useHistory,useLocation } from "react-router-dom";
+import { editEstimateUtil } from './editEstimateUtil'
+
 
 const configNavItems = [
     {
@@ -17,9 +19,26 @@ const configNavItems = [
     },
 ]
 const CreateEstimate = ({ EstimateSession }) => {
+    const tenant = Digit.ULBService.getStateId();
     const { t } = useTranslation()
-
-    const { tenantId, projectNumber } = Digit.Hooks.useQueryParams();
+    const [showToast, setShowToast] = useState(null)
+    const { tenantId, projectNumber,isEdit,estimateNumber } = Digit.Hooks.useQueryParams();
+    // const [ isFormReady,setIsFormReady ] = useState(isEdit ? false : true) 
+    const [ isFormReady,setIsFormReady ] = useState(true) 
+    
+    // const { state } = useLocation()
+    //if estimateNumber is there and isEdit is true then search estimate
+    //fetching estimate data
+     const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
+        tenantId,
+        filters: { estimateNumber },
+        config:{
+            enabled: isEdit && estimateNumber ? true : false
+        }
+    })
+    
+    
+    
     const searchParams = {
         Projects: [
             {
@@ -36,94 +55,153 @@ const CreateEstimate = ({ EstimateSession }) => {
     }
 
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
-    const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetailsInEstimate(t, tenantId, searchParams, filters, headerLocale);
+    const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
+
     const cardState = {
+
         "title": " ",
         "asSectionHeader": true,
         values: [
+            {
+                "title": "WORKS_ESTIMATE_TYPE",
+                "value": "Original Estimate"
+            },
+            {
+                "title": "WORKS_PROJECT_ID",
+                "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID
+            },
             {
                 "title": "WORKS_DATE_PROPOSAL",
                 "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate
             },
             {
-                "title": "WORKS_PROJECT_NAME_AST",
+                "title": "WORKS_PROJECT_NAME",
                 "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName
             },
             {
-                "title": "EVENTS_DESCRIPTION",
+                "title": "PROJECTS_DESCRIPTION",
                 "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc
-            },
-            {
-                "title": "WORKS_HAS_SUB_PROJECT_LABEL",
-                "value": t(projectData?.projectDetails?.searchedProject?.basicDetails?.projectHasSubProject)
             },
         ]
     }
+
+    if(isEdit) {
+        cardState.values = [{
+                "title": "WORKS_ESTIMATE_ID",
+                "value": estimateNumber
+            },...cardState?.values]
+    }
     
+   
     const history = useHistory()
 
     const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
 
+    //for creating estimates
     const { mutate: EstimateMutation } = Digit.Hooks.works.useCreateEstimateNew("WORKS");
+
+    //for updating estimate
+    const {mutate: EstimateUpdateMutation} = Digit.Hooks.works.useApplicationActionsEstimate();
 
 
     const [showModal, setShowModal] = useState(false);
 
-    const rolesForThisAction = "EST_CHECKER" //hardcoded for now
+    const rolesForThisAction = "ESTIMATE_VERIFIER" //hardcoded for now
     const [config, setConfig] = useState({});
     const [approvers, setApprovers] = useState([]);
     const [selectedApprover, setSelectedApprover] = useState({});
 
-    const [department, setDepartment] = useState([]);
-    const [selectedDept, setSelectedDept] = useState({})
+    // const [department, setDepartment] = useState([]);
+    // const [selectedDept, setSelectedDept] = useState({})
 
-    const [designation, setDesignation] = useState([]);
-    const [selectedDesignation, setSelectedDesignation] = useState({})
+    // const [designation, setDesignation] = useState([]);
+    // const [selectedDesignation, setSelectedDesignation] = useState({})
 
     const [inputFormData,setInputFormData] = useState(sessionFormData)
 
+
+    //getting uom and overheads masters from mdms
+    let { isLoading: isUomLoading, data: uom } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        "common-masters",
+        [
+            {
+                "name": "uom"
+            }
+        ],
+        {
+            select:(data)=> {
+                return data?.["common-masters"]?.uom
+            }
+        }
+    );
+
+    let { isLoading: isOverheadsLoading, data: overheads } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        "works",
+        [
+            {
+                "name": "Overheads"
+            }
+        ],
+        {
+            select:(data)=> {
+                return data?.["works"]?.Overheads
+            }
+        }
+    );
+
+    const initialDefaultValues = editEstimateUtil(estimate,uom,overheads)
+
+    // const estimateFormConfig = createEstimateConfig()
+    const moduleName = Digit.Utils.getConfigModuleName()
+    let { isLoading: isConfigLoading, data: estimateFormConfig } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        moduleName,
+        [
+            {
+                "name": "CreateEstimateConfig"
+            }
+        ],
+        {
+            select:(data)=> {
+                return data?.[moduleName]?.CreateEstimateConfig?.[0]
+            }
+        }
+    );
+    // estimateFormConfig = createEstimateConfig()
     const onFormSubmit = async (_data) => {
         
+        //added this totalEst amount logic here because setValues in pageComponents don't work
+        //after setting the value, in consequent renders value changes to undefined
+        //check TotalEstAmount.js
+            let totalNonSor = _data?.nonSORTablev1?.reduce((acc, row) => {
+                let amountNonSor = parseFloat(row?.estimatedAmount)
+                amountNonSor = amountNonSor ? amountNonSor : 0
+                return amountNonSor + parseFloat(acc)
+            }, 0)
+            totalNonSor = totalNonSor ? totalNonSor : 0
+            let totalOverHeads = _data?.overheadDetails?.reduce((acc, row) => {
+                let amountOverheads = parseFloat(row?.amount)
+                amountOverheads = amountOverheads ? amountOverheads : 0
+                return amountOverheads + parseFloat(acc)
+            }, 0)
+            totalOverHeads = totalOverHeads ? totalOverHeads : 0
+            _data.totalEstimateAmount =  totalNonSor + totalOverHeads
+
+        let totalLabourAndMaterial = parseInt(_data.analysis.labour) + parseInt(_data.analysis.material)
+        //here check totalEst amount should be less than material+labour
+        
+        if (_data.totalEstimateAmount < totalLabourAndMaterial )   {
+            setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" })
+            return
+        } 
+            
+
         setInputFormData((prevState) => _data)
         //first do whatever processing you want on form data then pass it over to modal's onSubmit function
         
         setShowModal(true);
-        //      use below code for create contract API CALL
-
-        //     await contractMutation(payload, {
-        //         onError: (error, variables) => {
-        //             setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-        //             setTimeout(() => {
-        //             setShowToast(false);
-        //             }, 5000);
-        //         },
-        //         onSuccess: async (responseData, variables) => {
-        //             history.push("/works-ui/employee/works/response",{
-        //                 header:"Work Order Created Successfully and sent for Approval",
-        //                 id:"WO/ENG/0001/07/2021-22",
-        //                 info:t("WORKS_ORDER_ID"),
-        //                 message:`Work order with Work Order ID {workID} created successfully.`,
-        //                 links:[
-        //                     {
-        //                         name:t("WORKS_CREATE_CONTRACT"),
-        //                         redirectUrl:"/works-ui/employee/works/create-contract",
-        //                         code:"",
-        //                         svg:"CreateEstimateIcon",
-        //                         isVisible:true,
-        //                         type:"add"
-        //                     },
-        //                     {
-        //                         name:t("WORKS_GOTO_CONTRACT_INBOX"),
-        //                         redirectUrl:"/works-ui/employee/works/create-contract",
-        //                         code:"",
-        //                         svg:"RefreshIcon",
-        //                         isVisible:true,
-        //                         type:"add"
-        //                     }
-        //                 ]
-        //             })
-        //         }
-        //     })
     };
     const onModalSubmit = async (_data) => {
         
@@ -131,18 +209,56 @@ const CreateEstimate = ({ EstimateSession }) => {
             ..._data,
             ...inputFormData,
             selectedApprover,
-            selectedDept,
-            selectedDesignation
+            // selectedDept,
+            // selectedDesignation
         }
         // setSessionFormData(completeFormData)
         
 
-        const payload = createEstimatePayload(completeFormData, projectData)
+        const payload = createEstimatePayload(completeFormData, projectData,isEdit,estimate)
         setShowModal(false);
+
+        //make a util for updateEstimatePayload since there are some deviations 
         
+        if(isEdit && estimateNumber){
+            
+            await EstimateUpdateMutation(payload, {
+            onError: async (error, variables) => {
+                
+                setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+                setTimeout(() => {
+                    setShowToast(false);
+                }, 5000);
+            },
+            onSuccess: async (responseData, variables) => {
+                
+                clearSessionFormData();
+                const state = {
+                    header: t("WORKS_ESTIMATE_RESPONSE_UPDATED_HEADER"),
+                    id: responseData?.estimates[0]?.estimateNumber,
+                    info: t("ESTIMATE_ESTIMATE_NO"),
+                    // message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
+                    links: [
+                        {
+                            name: t("WORKS_GOTO_ESTIMATE_INBOX"),
+                            redirectUrl: `/${window.contextPath}/employee/estimate/inbox`,
+                            code: "",
+                            svg: "GotoInboxIcon",
+                            isVisible: true,
+                            type: "inbox",
+                        }
+                    ],
+                }
+                
+                history.push(`/${window?.contextPath}/employee/estimate/response`, state);
+                
+            },
+        });
+        }
         
 
-        await EstimateMutation(payload, {
+        else{
+            await EstimateMutation(payload, {
             onError: async (error, variables) => {
                 setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
                 setTimeout(() => {
@@ -154,62 +270,55 @@ const CreateEstimate = ({ EstimateSession }) => {
                 const state = {
                     header: t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
                     id: responseData?.estimates[0]?.estimateNumber,
-                    info: t("WORKS_ESTIMATE_ID"),
-                    message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
+                    info: t("ESTIMATE_ESTIMATE_NO"),
+                    // message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
                     links: [
                         {
                             name: t("WORKS_GOTO_ESTIMATE_INBOX"),
-                            redirectUrl: `/${window.contextPath}/employee/works/inbox`,
+                            redirectUrl: `/${window.contextPath}/employee/estimate/inbox`,
                             code: "",
                             svg: "GotoInboxIcon",
                             isVisible: true,
                             type: "inbox",
-                        },
-                        {
-                            name: t("WORKS_CREATE_ESTIMATE"),
-                            redirectUrl: `/${window.contextPath}/employee/estimate/create-estimate`,
-                            code: "",
-                            svg: "CreateEstimateIcon",
-                            isVisible: true,
-                            type: "add",
-                        },
+                        }
                     ],
                 }
-                history.push(`/${window.contextPath}/employee/works/response`, state);
+                
+                history.push(`/${window?.contextPath}/employee/estimate/response`, state);
+                
             },
         });
+        }
     }
 
-    const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(
-        Digit.ULBService.getCurrentTenantId(),
-        "common-masters",
-        [
-            {
-                "name": "Designation"
-            },
-            {
-                "name": "Department"
-            }
-        ]
-    );
+    // const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(
+    //     Digit.ULBService.getCurrentTenantId(),
+    //     "common-masters",
+    //     [
+    //         {
+    //             "name": "Designation"
+    //         },
+    //         {
+    //             "name": "Department"
+    //         }
+    //     ]
+    // );
 
-    mdmsData?.["common-masters"]?.Designation?.map(designation => {
-        designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
-    })
+    // mdmsData?.["common-masters"]?.Designation?.map(designation => {
+    //     designation.i18nKey = `ES_COMMON_DESIGNATION_${designation?.name}`
+    // })
 
-    mdmsData?.["common-masters"]?.Department?.map(department => {
-        department.i18nKey = `ES_COMMON_${department?.code}`
-    })
-    useEffect(() => {
-
-        //setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
-        //setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees : [])
-        setDepartment(mdmsData?.["common-masters"]?.Department)
-        setDesignation(mdmsData?.["common-masters"]?.Designation)
-    }, [mdmsData]);
+    // mdmsData?.["common-masters"]?.Department?.map(department => {
+    //     department.i18nKey = `ES_COMMON_${department?.code}`
+    // })
+    // useEffect(() => {
+    //     setDepartment(mdmsData?.["common-masters"]?.Department)
+    //     setDesignation(mdmsData?.["common-masters"]?.Designation)
+    // }, [mdmsData]);
 
 
-    const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept || selectedDesignation) });
+    // const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept || selectedDesignation) });
+    const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
 
 
     employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
@@ -225,20 +334,22 @@ const CreateEstimate = ({ EstimateSession }) => {
                 approvers,
                 selectedApprover,
                 setSelectedApprover,
-                designation,
-                selectedDesignation,
-                setSelectedDesignation,
-                department,
-                selectedDept,
-                setSelectedDept,
-                approverLoading
+                approverLoading,
+                // designation,
+                // selectedDesignation,
+                // setSelectedDesignation,
+                // department,
+                // selectedDept,
+                // setSelectedDept,
             })
         )
 
-    }, [approvers, designation, department])
+    }, [approvers])
 
-    const estimateFormConfig = createEstimateConfig(t)
-
+    
+    if(isConfigLoading || isEstimateLoading || isUomLoading || isOverheadsLoading){
+        return <Loader />
+    }
   return (
     <Fragment>
           {showModal && <WorkflowModal
@@ -249,19 +360,20 @@ const CreateEstimate = ({ EstimateSession }) => {
               setSessionFormData={setSessionFormData}
           />
           }
-        <Header styles={{ marginLeft: "14px" }}>{t("ACTION_TEST_CREATE_ESTIMATE")}</Header>
+        <Header styles={{ marginLeft: "14px" }}>{isEdit ? t("ACTION_TEST_EDIT_ESTIMATE") :t("ACTION_TEST_CREATE_ESTIMATE")}</Header>
         {/* Will fetch projectId from url params and do a search for project to show the below data in card while integrating with the API  */}
         {isLoading ?<Loader />:<Card styles={{ marginLeft: "14px" }}>
             <StatusTable>
                 {cardState.values.map((value)=>{
                     return (
-                        <Row key={t(value.title)} label={t(value.title)} text={value.value} />
+                        <Row key={t(value.title)} label={`${t(value.title)}:`} text={value.value} />
                     )
                 })}
             </StatusTable>
         </Card>}
-        <FormComposer
-            label={"ACTION_TEST_CREATE_ESTIMATE"}
+        {/* {isLoading? <Loader/>: <ViewDetailsCard cardState={cardState} t={t} />} */}
+        {isFormReady ? <FormComposer
+            label={isEdit ? "ACTION_TEST_EDIT_ESTIMATE" :"ACTION_TEST_CREATE_ESTIMATE"}
             config={estimateFormConfig?.form.map((config) => {
                 return {
                     ...config,
@@ -272,18 +384,30 @@ const CreateEstimate = ({ EstimateSession }) => {
             submitInForm={false}
             fieldStyle={{ marginRight: 0 }}
             inline={false}
-            className="card-no-margin"
-            defaultValues={estimateFormConfig?.defaultValues}
+            // className="card-no-margin"
+            defaultValues={(isEdit && estimateNumber) ? initialDefaultValues : {}}
+            // defaultValues = {tempDefault}
             showWrapperContainers={false}
             isDescriptionBold={false}
             noBreakLine={true}
             showMultipleCardsWithoutNavs={false}
-            showMultipleCardsInNavs={true}
+            showMultipleCardsInNavs={false}
             horizontalNavConfig={configNavItems}
-            showNavs={true}  
-        />
-
-
+            showFormInNav={true}  
+            showNavs={true}
+            sectionHeadStyle={{marginTop:"2rem"}}  
+        />:null}
+          {showToast && (
+              <Toast
+                  error={showToast.error}
+                  warning={showToast.warning}
+                  label={t(showToast.label)}
+                  onClose={() => {
+                      setShowToast(null);
+                  }}
+                  isDleteBtn={true}
+              />
+          )}
     </Fragment>
   )
 }

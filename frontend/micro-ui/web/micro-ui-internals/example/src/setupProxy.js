@@ -64,12 +64,20 @@ module.exports = function (app) {
     "/inbox/v1/dss/_search",
     "/loi-service",
     "/estimate-service",
+    "/contract-service",
     "/loi-service",
     "/works-inbox-service/v2/_search",
     "/egov-pdf/download/WORKSESTIMATE/estimatepdf",
     "/muster-roll",
     "/pms/project",
-    "/inbox/v2/_search"
+    "/inbox/v2/_search",
+    "/individual",
+    "/org-services",
+    "/wms/contract/_search",
+    "/org-services/organisation/v1/_search",
+    "/expensebilling",
+    "/bankaccount-service",
+    "/wms/estimate/_search"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

@@ -20,7 +20,6 @@ import static org.egov.works.util.ContractServiceConstants.*;
 @Component
 @Slf4j
 public class MDMSUtils {
-
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
@@ -32,22 +31,9 @@ public class MDMSUtils {
         Object result = serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
         return result;
     }
-
-    public Object fetchMDMSForEnrichment(RequestInfo requestInfo, String tenantId) {
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSEnrichmentRequest(requestInfo, tenantId);
-        Object result = serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
-        return result;
-    }
-
-    private MdmsCriteriaReq getMDMSEnrichmentRequest(RequestInfo requestInfo, String tenantId) {
-        ModuleDetail worksModuleDetail =  getRequestDataForWorksModuleEnrichment();
-        List<ModuleDetail> moduleDetails = new LinkedList<>();
-        moduleDetails.add(worksModuleDetail);
-        return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
-    }
     private MdmsCriteriaReq getMDMSValidationRequest(RequestInfo requestInfo, String tenantId) {
-        ModuleDetail tenantModuleDetail = getRequestDataForTenantModule();
-        ModuleDetail worksModuleDetail =  getRequestDataForWorksModuleValidate();
+        ModuleDetail tenantModuleDetail = getTenantModuleDetail();
+        ModuleDetail worksModuleDetail =  getWorksModuleDetailValidate();
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(tenantModuleDetail);
@@ -64,7 +50,7 @@ public class MDMSUtils {
         return mdmsCriteriaReq;
     }
 
-    private ModuleDetail getRequestDataForWorksModuleValidate() {
+    private ModuleDetail getWorksModuleDetailValidate() {
         List<MasterDetail> masterDetails = new ArrayList<>();
 
         //MasterDetail documentTypeMasterDetail = getMasterDetail(MASTER_DOCUMENT_TYPE, COMMON_ACTIVE_WITH_NAME_FILTER);
@@ -81,7 +67,7 @@ public class MDMSUtils {
                 .moduleName(MDMS_WORKS_MODULE_NAME).build();
         return worksModuleDetail;
     }
-    private ModuleDetail getRequestDataForTenantModule() {
+    private ModuleDetail getTenantModuleDetail() {
         List<MasterDetail> masterDetails = new ArrayList<>();
         MasterDetail masterDetail = getMasterDetailForSubModule(MASTER_TENANTS,TENANT_FILTER_CODE);
         masterDetails.add(masterDetail);
@@ -90,10 +76,26 @@ public class MDMSUtils {
         return tenantModuleDetail;
     }
 
-    private ModuleDetail getRequestDataForWorksModuleEnrichment() {
+    public Object fetchMDMSForEnrichment(RequestInfo requestInfo, String tenantId,String contractTypeCode) {
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSEnrichmentRequest(requestInfo, tenantId,contractTypeCode);
+        Object result = serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
+        return result;
+    }
+    private MdmsCriteriaReq getMDMSEnrichmentRequest(RequestInfo requestInfo, String tenantId,String contractTypeCode) {
+        ModuleDetail worksModuleDetail =  getRequestDataForWorksModuleEnrichment(contractTypeCode);
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(worksModuleDetail);
+        return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
+    }
+    private ModuleDetail getRequestDataForWorksModuleEnrichment(String contractTypeCode) {
         List<MasterDetail> masterDetails = new ArrayList<>();
-        MasterDetail executingAuthorityMasterDetail = getMasterDetailForSubModule(MASTER_OVER_HEADS, COMMON_ACTIVE_WITH_WORK_ORDER_VALUE);
-        masterDetails.add(executingAuthorityMasterDetail);
+        MasterDetail overHeadsMasterDetail = getMasterDetailForSubModule(MASTER_OVER_HEADS, COMMON_ACTIVE_WITH_WORK_ORDER_VALUE);
+
+        String filter = REGISTER_ACTIVE_CODE_CONSTANT + contractTypeCode + CREATE_REGISTER_CONSTANT;
+        MasterDetail contractTypeMasterDetail = getMasterDetailForSubModule(MASTER_CONTRACT_TYPE, filter);
+
+        masterDetails.add(overHeadsMasterDetail);
+        masterDetails.add(contractTypeMasterDetail);
         ModuleDetail worksModuleDetail = ModuleDetail.builder().masterDetails(masterDetails)
                 .moduleName(MDMS_WORKS_MODULE_NAME).build();
         return worksModuleDetail;

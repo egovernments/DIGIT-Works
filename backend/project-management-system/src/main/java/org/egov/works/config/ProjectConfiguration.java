@@ -45,5 +45,9 @@ public class ProjectConfiguration {
     //Document ID verification
     @Value("${project.document.id.verification.required}")
     private String documentIdVerificationRequired;
+    @Value(("${project.mdms.module}"))
+    private String mdmsModule;
+    @Value(("${egov.location.hierarchy.type}"))
+    private String locationHierarchyType;
 
 }

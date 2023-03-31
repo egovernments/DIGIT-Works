@@ -41,6 +41,16 @@ class _$AppRouter extends RootStackRouter {
         child: const LoginPage(),
       );
     },
+    OTPVerificationRoute.name: (routeData) {
+      final args = routeData.argsAs<OTPVerificationRouteArgs>();
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: OTPVerificationPage(
+          key: args.key,
+          mobileNumber: args.mobileNumber,
+        ),
+      );
+    },
     HomeRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
@@ -48,14 +58,17 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     AttendanceRegisterTableRoute.name: (routeData) {
-      final args = routeData.argsAs<AttendanceRegisterTableRouteArgs>();
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<AttendanceRegisterTableRouteArgs>(
+          orElse: () => AttendanceRegisterTableRouteArgs(
+                registerId: pathParams.getString('registerId'),
+                tenantId: pathParams.getString('tenantId'),
+              ));
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: AttendanceRegisterTablePage(
           args.registerId,
           args.tenantId,
-          args.projectDetails,
-          args.attendanceRegister,
           key: args.key,
         ),
       );
@@ -115,6 +128,22 @@ class _$AppRouter extends RootStackRouter {
         child: const RegisterIndividualPage(),
       );
     },
+    ViewWorkDetailsRoute.name: (routeData) {
+      final queryParams = routeData.queryParams;
+      final args = routeData.argsAs<ViewWorkDetailsRouteArgs>(
+          orElse: () => ViewWorkDetailsRouteArgs(
+                  contractNumber: queryParams.optString(
+                'contractNumber',
+                'contractNumber',
+              )));
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: ViewWorkDetailsPage(
+          key: args.key,
+          contractNumber: args.contractNumber,
+        ),
+      );
+    },
   };
 
   @override
@@ -138,6 +167,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               LoginRoute.name,
               path: 'login',
+              parent: UnauthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              OTPVerificationRoute.name,
+              path: 'otp',
               parent: UnauthenticatedRouteWrapper.name,
             ),
           ],
@@ -189,6 +223,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               RegisterIndividualRoute.name,
               path: 'register-individual',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              ViewWorkDetailsRoute.name,
+              path: 'view-work-order',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -247,6 +286,40 @@ class LoginRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [OTPVerificationPage]
+class OTPVerificationRoute extends PageRouteInfo<OTPVerificationRouteArgs> {
+  OTPVerificationRoute({
+    Key? key,
+    required String mobileNumber,
+  }) : super(
+          OTPVerificationRoute.name,
+          path: 'otp',
+          args: OTPVerificationRouteArgs(
+            key: key,
+            mobileNumber: mobileNumber,
+          ),
+        );
+
+  static const String name = 'OTPVerificationRoute';
+}
+
+class OTPVerificationRouteArgs {
+  const OTPVerificationRouteArgs({
+    this.key,
+    required this.mobileNumber,
+  });
+
+  final Key? key;
+
+  final String mobileNumber;
+
+  @override
+  String toString() {
+    return 'OTPVerificationRouteArgs{key: $key, mobileNumber: $mobileNumber}';
+  }
+}
+
+/// generated route for
 /// [HomePage]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute()
@@ -265,8 +338,6 @@ class AttendanceRegisterTableRoute
   AttendanceRegisterTableRoute({
     required String registerId,
     required String tenantId,
-    required List<Map<String, dynamic>> projectDetails,
-    required AttendanceRegister? attendanceRegister,
     Key? key,
   }) : super(
           AttendanceRegisterTableRoute.name,
@@ -274,8 +345,6 @@ class AttendanceRegisterTableRoute
           args: AttendanceRegisterTableRouteArgs(
             registerId: registerId,
             tenantId: tenantId,
-            projectDetails: projectDetails,
-            attendanceRegister: attendanceRegister,
             key: key,
           ),
           rawPathParams: {
@@ -291,8 +360,6 @@ class AttendanceRegisterTableRouteArgs {
   const AttendanceRegisterTableRouteArgs({
     required this.registerId,
     required this.tenantId,
-    required this.projectDetails,
-    required this.attendanceRegister,
     this.key,
   });
 
@@ -300,15 +367,11 @@ class AttendanceRegisterTableRouteArgs {
 
   final String tenantId;
 
-  final List<Map<String, dynamic>> projectDetails;
-
-  final AttendanceRegister? attendanceRegister;
-
   final Key? key;
 
   @override
   String toString() {
-    return 'AttendanceRegisterTableRouteArgs{registerId: $registerId, tenantId: $tenantId, projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
+    return 'AttendanceRegisterTableRouteArgs{registerId: $registerId, tenantId: $tenantId, key: $key}';
   }
 }
 
@@ -471,4 +534,39 @@ class RegisterIndividualRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'RegisterIndividualRoute';
+}
+
+/// generated route for
+/// [ViewWorkDetailsPage]
+class ViewWorkDetailsRoute extends PageRouteInfo<ViewWorkDetailsRouteArgs> {
+  ViewWorkDetailsRoute({
+    Key? key,
+    String? contractNumber = 'contractNumber',
+  }) : super(
+          ViewWorkDetailsRoute.name,
+          path: 'view-work-order',
+          args: ViewWorkDetailsRouteArgs(
+            key: key,
+            contractNumber: contractNumber,
+          ),
+          rawQueryParams: {'contractNumber': contractNumber},
+        );
+
+  static const String name = 'ViewWorkDetailsRoute';
+}
+
+class ViewWorkDetailsRouteArgs {
+  const ViewWorkDetailsRouteArgs({
+    this.key,
+    this.contractNumber = 'contractNumber',
+  });
+
+  final Key? key;
+
+  final String? contractNumber;
+
+  @override
+  String toString() {
+    return 'ViewWorkDetailsRouteArgs{key: $key, contractNumber: $contractNumber}';
+  }
 }

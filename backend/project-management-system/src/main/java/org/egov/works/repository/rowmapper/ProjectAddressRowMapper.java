@@ -62,7 +62,8 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
         String address_pinCode = rs.getString("address_pinCode");
         String address_buildingName = rs.getString("address_buildingName");
         String address_street = rs.getString("address_street");
-        String address_locality = rs.getString("address_locality");
+        String address_boundaryType = rs.getString("address_boundaryType");
+        String address_boundary = rs.getString("address_boundary");
         String address_createdBy = rs.getString("address_createdBy");
         String address_lastModifiedBy = rs.getString("address_lastModifiedBy");
         Long address_createdTime = rs.getLong("address_createdTime");
@@ -87,7 +88,8 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
                 .pincode(address_pinCode)
                 .buildingName(address_buildingName)
                 .street(address_street)
-                .locality(address_locality)
+                .boundaryType(address_boundaryType)
+                .boundary(address_boundary)
                 .auditDetails(addresstAuditDetails)
                 .build();
 
@@ -109,6 +111,7 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
         Long project_endDate = rs.getLong("project_endDate");
         Boolean project_isTaskEnabled = rs.getBoolean("project_isTaskEnabled");
         String project_projectHierarchy = rs.getString("project_projectHierarchy");
+        String project_natureOfWork = rs.getString("project_natureOfWork");
         String project_parent = rs.getString("project_parent");
         JsonNode project_additionalDetails = getAdditionalDetail("project_additionalDetails", rs);
         Boolean project_isDeleted = rs.getBoolean("project_isDeleted");
@@ -137,6 +140,7 @@ public class ProjectAddressRowMapper implements ResultSetExtractor<List<Project>
                 .isTaskEnabled(project_isTaskEnabled)
                 .parent(project_parent)
                 .projectHierarchy(project_projectHierarchy)
+                .natureOfWork(project_natureOfWork)
                 .additionalDetails(project_additionalDetails)
                 .isDeleted(project_isDeleted)
                 .rowVersion(project_rowVersion)

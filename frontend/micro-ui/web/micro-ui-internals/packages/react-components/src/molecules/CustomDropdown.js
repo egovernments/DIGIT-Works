@@ -71,7 +71,7 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
     {
       select: (data) => {
         const optionsData = _.get(data, `${config?.mdmsConfig?.moduleName}.${config?.mdmsConfig?.masterName}`, []);
-        return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${config?.mdmsConfig?.localePrefix}_${opt.code}` }));
+        return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${config?.mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
       },
       enabled: config?.mdmsConfig ? true : false,
     }
@@ -89,7 +89,7 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
           {type === "radio" ? (
             <RadioButtons
               inputRef={inputRef}
-              style={{ display: "flex", justifyContent: "flex-start", gap: "3rem" }}
+              style={{ display: "flex", justifyContent: "flex-start", gap: "3rem",...config.styles }}
               options={data || config?.options || []}
               key={config.name}
               optionsKey={config?.optionsKey}
@@ -103,11 +103,12 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
               t={t}
               errorStyle={errorStyle}
               additionalWrapperClass={additionalWrapperClass}
+              innerStyles={config?.innerStyles}
             />
           ) : (
             <Dropdown
               inputRef={inputRef}
-              style={{ display: "flex", justifyContent: "space-between" }}
+              style={{ display: "flex", justifyContent: "space-between", ...config.styles }}
               option={data || config?.options || []}
               key={config.name}
               optionKey={config?.optionsKey}

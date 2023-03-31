@@ -54,6 +54,7 @@ public class Address {
     @JsonProperty("detail")
     private String detail = null;
 
-
+    @JsonProperty("locality")
+    private String locality = null;
 }
 

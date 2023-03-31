@@ -38,7 +38,10 @@ class AttendeesTrackList with _$AttendeesTrackList {
   const factory AttendeesTrackList({
     String? name,
     String? aadhaar,
+    String? individualGaurdianName,
     String? individualId,
+    String? id,
+    String? skill,
     String? monEntryId,
     String? monExitId,
     @Default(-1) double? monIndex,

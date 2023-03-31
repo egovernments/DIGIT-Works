@@ -1,7 +1,14 @@
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/services/local_storage.dart';
 
+import '../data/repositories/core_repo/core_repository.dart';
+import '../models/file_store/file_store_model.dart';
 import 'global_variables.dart';
 
 class CommonMethods {
@@ -11,6 +18,44 @@ class CommonMethods {
     } else {
       await storage.delete(key: GlobalVariables.selectedLocale().toString());
     }
+  }
+
+  static String getExtension(String url) {
+    return url.substring(0, url.indexOf('?')).split('/').last;
+  }
+
+  void onTapOfAttachment(
+      FileStoreModel store, String tenantId, BuildContext context) async {
+    var random = Random();
+    List<FileStoreModel>? file = await CoreRepository()
+        .fetchFiles([store.fileStoreId.toString()], 'pg.citya');
+    print(file);
+    var fileName = CommonMethods.getExtension(file!.first.url.toString());
+    CoreRepository().fileDownload(file!.first.url.toString(),
+        '${random.nextInt(200)}${random.nextInt(100)}$fileName');
+  }
+
+  MediaType getMediaType(String? path) {
+    if (path == null) return MediaType('', '');
+    String? mimeStr = lookupMimeType(path);
+    var fileType = mimeStr?.split('/');
+    if (fileType != null && fileType.isNotEmpty) {
+      return MediaType(fileType.first, fileType.last);
+    } else {
+      return MediaType('', '');
+    }
+  }
+
+  static Future<bool> isValidFileSize(int fileLength) async {
+    var flag = true;
+    if (fileLength > 5000000) {
+      flag = false;
+    }
+    return flag;
+  }
+
+  static String getRandomName() {
+    return '${GlobalVariables.userRequestModel!['id']}${Random().nextInt(3)}';
   }
 
   static DateTime firstDayOfWeek(DateTime date) {

@@ -3,82 +3,110 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
+import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
 import '../blocs/localization/app_localization.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
-import '../router/app_router.dart';
 import '../utils/date_formats.dart';
-import '../utils/notifiers.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart';
 
-class ViewMusterRollsPage extends StatelessWidget {
+class ViewMusterRollsPage extends StatefulWidget {
   const ViewMusterRollsPage({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ViewMusterRollsPage();
+  }
+}
+
+class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
+  List<Map<String, dynamic>> musterList = [];
+  List<MusterRoll> musters = [];
 
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
         ))),
-        body: SingleChildScrollView(child:
-            BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
-                builder: (context, state) {
-          return state.maybeWhen(
-              loading: () => Loaders.circularLoader(context),
-              error: (String? error) {
-                context.router.push(const HomeRoute());
-                return Notifiers.getToastMessage(
-                    context, t.translate(error.toString()), 'ERROR');
-              },
-              loaded: (MusterRollsModel? musterRollsModel) {
-                final List<Map<String, dynamic>> musterList = musterRollsModel!
-                    .musterRoll!
-                    .map((e) => {
-                          i18.attendanceMgmt.nameOfWork: e
-                                  .musterAdditionalDetails
-                                  ?.attendanceRegisterName ??
-                              'NA',
-                          i18.attendanceMgmt.winCode:
-                              e.musterAdditionalDetails?.attendanceRegisterNo ??
-                                  'NA',
-                          i18.attendanceMgmt.musterRollId: e.musterRollNumber,
-                          i18.common.dates:
-                              '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                          i18.common.status: e.status
-                        })
-                    .toList();
-                return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Back(
-                        backLabel: AppLocalizations.of(context)
-                            .translate(i18.common.back),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          '${t.translate(i18.home.musterRoll)}(${musterRollsModel!.musterRoll!.length})',
-                          style: Theme.of(context).textTheme.displayMedium,
-                          textAlign: TextAlign.left,
+        body: SingleChildScrollView(
+            child: BlocListener<MusterRollSearchBloc, MusterRollSearchState>(
+          listener: (context, state) {
+            state.maybeWhen(
+                loading: () => Loaders.circularLoader(context),
+                loaded: (MusterRollsModel? musterRoll) {
+                  if (musterRoll?.musterRoll != null) {
+                    musters = List<MusterRoll>.from(musterRoll!.musterRoll!);
+                    musters.sort((a, b) =>
+                        b.musterAuditDetails!.lastModifiedTime!.compareTo(
+                            a.musterAuditDetails!.lastModifiedTime!.toInt()));
+                    musterList = musters
+                        .map((e) => {
+                              i18.attendanceMgmt.musterRollId:
+                                  e.musterRollNumber,
+                              i18.workOrder.workOrderNo:
+                                  e.musterAdditionalDetails?.contractId ?? 'NA',
+                              i18.attendanceMgmt.projectId:
+                                  e.musterAdditionalDetails?.projectId ?? 'NA',
+                              i18.attendanceMgmt.projectDesc:
+                                  e.musterAdditionalDetails?.projectName ??
+                                      'NA',
+                              i18.attendanceMgmt.musterRollPeriod:
+                                  '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
+                              i18.common.status: e.musterRollStatus
+                            })
+                        .toList();
+                  }
+                },
+                orElse: () => Container());
+          },
+          child: BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
+              builder: (context, state) {
+            return state.maybeWhen(
+                loading: () => Loaders.circularLoader(context),
+                loaded: (MusterRollsModel? musterRollsModel) {
+                  return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Back(
+                          backLabel: AppLocalizations.of(context)
+                              .translate(i18.common.back),
                         ),
-                      ),
-                      musterList.isEmpty
-                          ? Text(t
-                              .translate(i18.attendanceMgmt.noMusterRollsFound))
-                          : WorkDetailsCard(
-                              musterList,
-                              isSHGInbox: true,
-                              musterRollsModel: musterRollsModel,
-                            )
-                    ]);
-              },
-              orElse: () => Container());
-        })));
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            '${t.translate(i18.attendanceMgmt.musterRolls)}(${musterList.length})',
+                            style: Theme.of(context).textTheme.displayMedium,
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        musterList.isEmpty
+                            ? EmptyImage(
+                                align: Alignment.center,
+                                label: t.translate(
+                                  i18.attendanceMgmt.noMusterRollsFound,
+                                ))
+                            : WorkDetailsCard(
+                                musterList,
+                                isSHGInbox: true,
+                                musterRollsModel: musters,
+                                elevatedButtonLabel:
+                                    t.translate(i18.common.viewDetails),
+                              )
+                      ]);
+                },
+                orElse: () => Container());
+          }),
+        )));
   }
 }

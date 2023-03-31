@@ -4,11 +4,20 @@ import { useRouteMatch } from "react-router-dom";
 import MastersCard from "./components/MastersCard";
 import ProjectCard from "./components/ProjectCard";
 import { default as EmployeeApp } from "./pages/employee";
-import SearchOrganization from "./pages/employee/Master/SearchOrganization";
-import CreateOrganization from "./pages/employee/Master/CreateOrganization";
-import RegisterWageSeeker from "./pages/employee/registerWageSeeker/index";
-import SearchOrganisationApplication from "./components/SearchOrganisation";
+import SearchMasters from "./pages/employee/Master/SearchMasters";
+import CreateMasters from "./pages/employee/Master/CreateMasters";
+import SearchMastersApplication from "./components/SearchMasters";
+
+import RegisterWageSeeker from "./pages/employee/WageSeeker/RegisterWageSeeker";
+import SearchWageSeeker from "./pages/employee/WageSeeker/SearchWageSeeker";
+import ViewWageSeeker from "./pages/employee/WageSeeker/ViewWageSeeker";
+import ModifyWageSeeker from "./pages/employee/WageSeeker/ModifyWageSeeker";
+
+import CreateOrganisation from  "./pages/employee/Organisation/CreateOrganization/index";
+import SearchOrganisation from "./pages/employee/Organisation/SearchOrganisation";
 import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
+
+import TransferCodeTable from "./components/TransferCodeTable";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
 
@@ -34,11 +43,19 @@ const componentsToRegister = {
   MastersModule,
   MasterCard:MastersCard ,
   ProjectsCard:ProjectCard,
-  SearchOrganization,
-  CreateOrganization,
+  SearchMasters,
+  CreateMasters,
+  SearchMastersApplication,
+  
   RegisterWageSeeker,
-  SearchOrganisationApplication,
-  ViewOrganisation
+  SearchWageSeeker,
+  ViewWageSeeker,
+  ModifyWageSeeker,
+
+  CreateOrganisation,
+  SearchOrganisation,
+  ViewOrganisation,
+  TransferCodeTable
 };
 
 export const initMastersComponents = () => {

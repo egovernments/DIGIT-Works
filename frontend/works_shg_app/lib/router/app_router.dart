@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:works_shg_app/pages/register_individual.dart';
+import 'package:works_shg_app/pages/wage_seeker_registration/register_individual.dart';
 
 import '../models/attendance/attendance_registry_model.dart';
 import '../pages/attendance_register_table.dart';
@@ -9,12 +9,14 @@ import '../pages/home.dart';
 import '../pages/language_selection_page.dart';
 import '../pages/login.dart';
 import '../pages/manage_attendance_register.dart';
+import '../pages/otp_verification.dart';
 import '../pages/shg_inbox.dart';
 import '../pages/trackAttendance/track-attendance_inbox.dart';
 import '../pages/track_attendance.dart';
 import '../pages/unauthenticated.dart';
 import '../pages/view_muster_rolls.dart';
-import '../pages/work_order.dart';
+import '../pages/work_order/view_work_details.dart';
+import '../pages/work_order/work_order.dart';
 
 export 'package:auto_route/auto_route.dart';
 
@@ -33,6 +35,7 @@ part 'app_router.gr.dart';
           initial: true,
         ),
         AutoRoute(page: LoginPage, path: 'login'),
+        AutoRoute(page: OTPVerificationPage, path: 'otp')
       ],
     ),
     AutoRoute(
@@ -53,7 +56,8 @@ part 'app_router.gr.dart';
             page: TrackAttendanceInboxPage, path: 'track-attendance-inbox'),
         AutoRoute(
             page: TrackAttendancePage, path: 'track-attendance/:id/:tenantId'),
-        AutoRoute(page: RegisterIndividualPage, path: 'register-individual')
+        AutoRoute(page: RegisterIndividualPage, path: 'register-individual'),
+        AutoRoute(page: ViewWorkDetailsPage, path: 'view-work-order')
       ],
     ),
   ],

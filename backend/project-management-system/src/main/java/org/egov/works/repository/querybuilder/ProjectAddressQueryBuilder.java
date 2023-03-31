@@ -21,11 +21,11 @@ public class ProjectAddressQueryBuilder {
 
     private static final String FETCH_PROJECT_ADDRESS_QUERY = "SELECT prj.id as projectId, prj.tenant_id as project_tenantId, prj.project_number as project_projectNumber, prj.name as project_name, prj.project_type as project_projectType, prj.project_subtype as project_projectSubtype, " +
             " prj.department as project_department, prj.description as project_description, prj.reference_id as project_referenceId, prj.start_date as project_startDate, prj.end_date as project_endDate, " +
-            "prj.is_task_enabled as project_isTaskEnabled, prj.parent as project_parent, prj.project_hierarchy as project_projectHierarchy, prj.additional_details as project_additionalDetails, prj.is_deleted as project_isDeleted, prj.row_version as project_rowVersion, " +
+            "prj.is_task_enabled as project_isTaskEnabled, prj.parent as project_parent, prj.project_hierarchy as project_projectHierarchy, prj.nature_of_work as project_natureOfWork, prj.additional_details as project_additionalDetails, prj.is_deleted as project_isDeleted, prj.row_version as project_rowVersion, " +
             " prj.created_by as project_createdBy, prj.last_modified_by as project_lastModifiedBy, prj.created_time as project_createdTime, prj.last_modified_time as project_lastModifiedTime, " +
             "addr.id as addressId, addr.tenant_id as address_tenantId, addr.project_id as address_projectId, addr.door_no as address_doorNo, addr.latitude as address_latitude, addr.longitude as address_longitude, addr.location_accuracy as address_locationAccuracy, " +
             " addr.type as address_type, addr.address_line1 as address_addressLine1, addr.address_line2 as address_addressLine2, addr.landmark as address_landmark, addr.city as address_city, addr.pin_code as address_pinCode, " +
-            " addr.building_name as address_buildingName, addr.street as address_street, addr.locality as address_locality, addr.created_by as address_createdBy, addr.last_modified_by as address_lastModifiedBy, addr.created_time as address_createdTime, addr.last_modified_time as address_lastModifiedTime " +
+            " addr.building_name as address_buildingName, addr.street as address_street, addr.boundary_type as address_boundaryType, addr.boundary as address_boundary, addr.created_by as address_createdBy, addr.last_modified_by as address_lastModifiedBy, addr.created_time as address_createdTime, addr.last_modified_time as address_lastModifiedTime " +
             " " +
             "from eg_pms_project prj " +
             "left join eg_pms_address addr " +
@@ -37,10 +37,12 @@ public class ProjectAddressQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
-    private static final String PROJECTS_COUNT_QUERY = "SELECT COUNT(*) FROM eg_pms_project prj ";
+    private static final String PROJECTS_COUNT_QUERY = "SELECT COUNT(*) FROM eg_pms_project prj " +
+            "left join eg_pms_address addr " +
+            "on prj.id = addr.project_id ";
 
     /* Constructs project search query based on conditions */
-    public String getProjectSearchQuery(List<Project> projects, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStmtList, boolean isCountQuery) {
+    public String getProjectSearchQuery(List<Project> projects, Integer limit, Integer offset, String tenantId, Long lastChangedSince, Boolean includeDeleted, Long createdFrom, Long createdTo, List<Object> preparedStmtList, boolean isCountQuery) {
         //This uses a ternary operator to choose between PROJECTS_COUNT_QUERY or FETCH_PROJECT_ADDRESS_QUERY based on the value of isCountQuery.
         String query = isCountQuery ? PROJECTS_COUNT_QUERY : FETCH_PROJECT_ADDRESS_QUERY;
         StringBuilder queryBuilder = new StringBuilder(query);
@@ -76,14 +78,20 @@ public class ProjectAddressQueryBuilder {
 
             if (StringUtils.isNotBlank(project.getName())) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" prj.name =? ");
-                preparedStmtList.add(project.getName());
+                queryBuilder.append(" prj.name LIKE ? ");
+                preparedStmtList.add('%' + project.getName() + '%');
             }
 
             if (StringUtils.isNotBlank(project.getProjectType())) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
                 queryBuilder.append(" prj.project_type=? ");
                 preparedStmtList.add(project.getProjectType());
+            }
+
+            if (project.getAddress() != null && StringUtils.isNotBlank(project.getAddress().getBoundary())) {
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" addr.boundary=? ");
+                preparedStmtList.add(project.getAddress().getBoundary());
             }
 
             if (StringUtils.isNotBlank(project.getProjectSubType())) {
@@ -108,6 +116,18 @@ public class ProjectAddressQueryBuilder {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
                 queryBuilder.append(" ( prj.last_modified_time >= ? )");
                 preparedStmtList.add(lastChangedSince);
+            }
+
+            if (createdFrom != null && createdFrom != 0) {
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.created_time >= ? ");
+                preparedStmtList.add(createdFrom);
+            }
+
+            if (createdTo != null && createdTo != 0) {
+                addClauseIfRequired(preparedStmtList, queryBuilder);
+                queryBuilder.append(" prj.created_time <= ? ");
+                preparedStmtList.add(createdTo);
             }
 
             //Add clause if includeDeleted is true in request parameter
@@ -219,8 +239,8 @@ public class ProjectAddressQueryBuilder {
     }
     
     /* Returns query to get total projects count based on project search params */
-    public String getSearchCountQueryString(List<Project> projects, String tenantId, Long lastChangedSince, Boolean includeDeleted, List<Object> preparedStatement) {
-        String query = getProjectSearchQuery(projects, config.getMaxLimit(), config.getDefaultOffset(), tenantId, lastChangedSince, includeDeleted, preparedStatement, true);
+    public String getSearchCountQueryString(List<Project> projects, String tenantId, Long lastChangedSince, Boolean includeDeleted, Long createdFrom, Long createdTo, List<Object> preparedStatement) {
+        String query = getProjectSearchQuery(projects, config.getMaxLimit(), config.getDefaultOffset(), tenantId, lastChangedSince, includeDeleted, createdFrom, createdTo, preparedStatement, true);
         return query;
     }
 

@@ -13,8 +13,15 @@ class Login {
   String get loginPhoneNumber => 'LOGIN_PHONE_NO';
   String get loginPassword => 'CORE_LOGIN_PASSWORD';
   String get forgotPassword => 'CORE_COMMON_FORGOT_PASSWORD';
-  String get invalidCredentials => 'INVALID_CREDENTIALS';
+  String get invalidOTP => 'LOGIN_INVALID_OTP';
   String get contactAdministrator => 'CONTACT_ADMINISTRATOR_FOR_PASSWORD';
+  String get otpVerification => 'OTP_VERIFICATION';
+  String get enterOTPSent => 'ENTER_OTP_SENT_TO';
+  String get resendOTP => 'CS_RESEND_OTP';
+  String get resendOTPInSec => 'RESEND_OTP_IN_SEC';
+  String get enteredMobileNotRegistered =>
+      'ENTERED_MOBILE_NO_NOT_REGISTERED_AS_CBO';
+  String get pleaseEnterMobile => 'ENTER_REGISTERED_MOBILE';
 }
 
 class Common {
@@ -39,6 +46,7 @@ class Common {
   String get language => 'CS_HOME_HEADER_LANGUAGE';
   String get decline => 'CORE_BUTTON_DECLINE';
   String get accept => 'CORE_BUTTON_ACCEPT';
+  String get termsAndConditions => 'COMMON_TERMS_&_CONDITIONS';
   String get confirm => 'CORE_BUTTON_CONFIRM';
   String get back => 'CORE_BUTTON_BACK';
   String get sendForApproval => 'SEND_FOR_APPROVAL';
@@ -47,8 +55,22 @@ class Common {
   String get dates => 'CORE_COMMON_DATES';
   String get status => 'CORE_COMMON_STATUS';
   String get aadhaarNumber => 'CORE_COMMON_AADHAAR';
+  String get relationship => 'CORE_COMMON_RELATIONSHIP';
+  String get socialCategory => 'COMMON_SOCIAL_CATEGORY';
+  String get dateOfBirth => 'CORE_DOB';
+  String get locationDetails => 'COMMON_LOCATION_DETAILS';
+  String get pinCode => 'CORE_COMMON_PINCODE';
+  String get financialDetails => 'COMMON_FINANCIAL_DETAILS';
+  String get city => 'CORE_COMMON_CITY';
+  String get ward => 'CORE_COMMON_WARD';
+  String get locality => 'CORE_COMMON_LOCALITY';
+  String get location => 'ES_COMMON_LOCATION';
+  String get streetName => 'CORE_STREET_NAME';
+  String get doorNo => 'CORE_DOOR_NO';
   String get bankAccountNumber => 'CORE_COMMON_BANK_ACCOUNT_NO';
   String get searchByNameAadhaar => 'CORE_SEARCH_BY_NAME_AADHAAR';
+  String get searchByName => 'CORE_SEARCH_BY_NAME';
+  String get searchByMobileNumber => 'CORE_SEARCH_BY_MOBILE';
   String get mon => 'CORE_MON';
   String get tue => 'CORE_TUE';
   String get wed => 'CORE_WED';
@@ -56,23 +78,54 @@ class Common {
   String get fri => 'CORE_FRI';
   String get sat => 'CORE_SAT';
   String get sun => 'CORE_SUN';
+  String get total => 'TOTAL';
   String get attachments => 'CS_COMMON_ATTACHMENTS';
   String get apply => 'ES_COMMON_APPLY';
   String get cancel => 'CS_ACTION_CANCEL';
   String get startDate => 'EVENTS_START_DATE_LABEL';
   String get endDate => 'EVENTS_END_DATE_LABEL';
   String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
+  String get selectAnOption => 'ES_SELECT_AN_OPTION';
+  String get selectSkill => 'ATM_SELECT_SKILL';
+  String get viewDetails => 'ACTION_VIEW_DETAILS';
+  String get action => 'CS_COMMON_ACTION';
+  String get next => 'CS_COMMON_NEXT';
+  String get fileSize => 'FILE_SIZE';
+  String get chooseFile => 'CHOOSE_FILE';
+  String get noFileUploaded => 'NO_FILE_UPLOADED';
+  String get camera => 'CAMERA';
+  String get fileManager => 'FILE_MANAGER';
+  String get chooseAnAction => 'CHOOSE_AN_ACTION';
+  String get fatherName => 'FATHER_NAME';
+  String get guardianName => 'COMMON_GUARDIAN_NAME';
+  String get accountHolderName => 'ACCOUNT_HOLDER_NAME';
+  String get accountNo => 'CORE_COMMON_ACCOUNT_NO';
+  String get reEnterAccountNo => 'COMMON_RE_ENTER_ACCOUNT_NO';
+  String get accountType => 'CORE_COMMON_ACCOUNT_TYPE';
+  String get ifscCode => 'COMMON_IFSC_CODE';
+  String get bankHint => 'HINT_BANK_DETAILS';
+  String get photoGraph => 'COMMON_PHOTOGRAPH';
+  String get inProgress => 'IN_PROGRESS_LABEL';
+  String get completed => 'COMPLETED_LABEL';
+  String get info => 'ES_COMMON_INFO';
+  String get workOrderInfo => 'WORK_ORDER_INFO';
+  String get days => 'COMMON_DAYS';
 }
 
 class Home {
   const Home();
   String get registerIndividual => 'REGISTER_INDIVIDUAL';
+  String get registerWageSeeker => 'REGISTER_WAGE_SEEKER';
+  String get mukta => 'MUKTA';
+  String get myWorks => 'MY_WORKS';
   String get manageWageSeekers => 'MANAGE_WAGE_SEEKERS';
   String get workOrder => 'ACTION_TEST_VIEW_WORK_ORDER';
   String get worksMgmt => 'WORKS_MGMT';
   String get attendanceMgmt => 'ACTION_TEST_ATTENDENCEMGMT';
   String get musterRoll => 'ACTION_TEST_MUSTER_ROLL';
   String get trackAttendance => 'TRACK_ATTENDENCE';
+  String get inbox => 'ES_COMMON_INBOX';
+  String get musterRolls => 'WORKS_MUSTERROLLS';
 }
 
 class WorkOrder {
@@ -80,13 +133,34 @@ class WorkOrder {
   String get warningMsg => 'WRNG_MSG_WORKORDER';
   String get projects => 'WORKS_PROJECT';
   String get contractID => 'WORKS_CONTRACT_ID';
+  String get workOrderNo => 'WORKS_ORDER_NO';
+  String get nameOfCBO => 'COMMON_NAME_OF_CBO';
+  String get roleOfCBO => 'WORKS_ROLE_CBO';
+  String get completionPeriod => 'WORKS_COMPLETION_PERIOD';
   String get contractIssueDate => 'WORKS_CONTRACT_ISSUE_DATE';
   String get contractAmount => 'WORKS_CONTRACT_AMOUNT';
+  String get dueDate => 'WORKS_DUE_DATE';
+  String get noWorkOrderAssigned => 'NO_WORK_ORDERS_ASSIGNED';
+  String get workOrderAcceptSuccess => 'WORK_ORDER_ACCEPTED_SUCCESS';
+  String get workOrderDeclineSuccess => 'WORK_ORDER_DECLINE_SUCCESS';
+  String get workOrderDetails => 'WORK_ORDER_DETAILS';
+  String get contractDetails => 'WORK_ORDER_CONTRACT_DETAILS';
+  String get timeLineDetails => 'WORK_ORDER_TIMELINE_DETAILS';
+  String get relevantDocuments => 'WORK_RELEVANT_DOCUMENTS';
 }
 
 class AttendanceMgmt {
   const AttendanceMgmt();
   String get registerId => 'REGISTER_ID';
+  String get attendanceRegisters => 'ATTENDANCE_REGISTERS';
+  String get cboRole => 'CBO_ROLE';
+  String get officeInCharge => 'OFFICER_IN_CHARGE';
+  String get projectId => 'WORKS_PROJECT_ID';
+  String get projectType => 'WORKS_PROJECT_TYPE';
+  String get projectDesc => 'WORKS_PROJECT_DESCRIPTION';
+  String get projectName => 'ES_COMMON_PROJECT_NAME';
+  String get musterRolls => 'ATM_MUSTER_ROLLS';
+  String get musterRollPeriod => 'MUSTER_ROLL_PERIOD';
   String get enrollWageSeeker => 'WORKS_ENROLL_WAGE_SEEKER';
   String get updateAttendance => 'UPDATE_ATTENDANCE';
   String get nameOfWork => 'WORKS_NAME_OF_WORK';
@@ -107,6 +181,7 @@ class AttendanceMgmt {
   String get musterCreateFailed => 'MUSTER_CREATE_FAILED';
   String get musterSentForApproval => 'MUSTER_SENT_FOR_APPROVAL_SUCCESS';
   String get applicationInWorkFlow => 'MUSTER_ROLL_IN_WORKFLOW_STATE';
+  String get notModifyApprovedApplication => 'CANNOT_MODIFY_APPROVED_MUSTER';
   String get unableToCheckWorkflowStatus => 'MUSTER_ROLL_WORKFLOW_CHECK_FAIL';
   String get resubmitMusterRoll => 'RESUBMIT_MUSTER_ROLL';
   String get attendeeCreateFailed => 'ATTENDEE_CREATE_FAILED';
@@ -114,4 +189,9 @@ class AttendanceMgmt {
   String get attendeeDeEnrollFailed => 'ATTENDEE_DE_ENROLL_FAILED';
   String get attendeeDeEnrollSuccess => 'ATTENDEE_DE_ENROLL_SUCCESS';
   String get noMusterRollsFound => 'NO_MUSTER_ROLLS_FOUND';
+  String get noRegistersFound => 'NO_REGISTERS_FOUND';
+  String get skill => 'ATM_SKILLS';
+  String get skillDetails => 'ATM_SKILLS_DETAILS';
+  String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
+  String get individualDetails => 'ATM_INDIVIDUAL_DETAILS';
 }

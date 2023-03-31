@@ -22,9 +22,10 @@ public class EstimateQueryBuilder {
 
 
     private static final String FETCH_ESTIMATE_QUERY = "SELECT est.*," +
-            "estDetail.*,estAmtDetail.*,estAdd.*, est.id as estId, est.last_modified_time as estLastModifiedTime, estDetail.id AS estDetailId, " +
+            "estDetail.*,estAmtDetail.*,estAdd.*, est.id as estId,estDetail.description as estDetailDescription,est.last_modified_time as estLastModifiedTime, estDetail.id AS estDetailId, " +
             "estDetail.additional_details AS estDetailAdditional,estAmtDetail.additional_details AS estAmtDetailAdditional," +
-            "estAdd.id AS estAddId,estAmtDetail.id AS estAmtDetailId,estDetail.estimate_id AS estDetailEstId " +
+            "estAdd.id AS estAddId,estAmtDetail.id AS estAmtDetailId,estDetail.estimate_id AS estDetailEstId," +
+            "estDetail.is_active AS estDetailActive,estAmtDetail.is_active AS estAmtDetailActive "+
             "FROM eg_wms_estimate AS est " +
             "LEFT JOIN " +
             "eg_wms_estimate_detail AS estDetail " +
@@ -114,6 +115,16 @@ public class EstimateQueryBuilder {
             queryBuilder.append(" est.project_id=? ");
             preparedStmtList.add(searchCriteria.getProjectId());
         }
+
+        //added the default as active line item and amount detail
+        addClauseIfRequired(preparedStmtList, queryBuilder);
+        queryBuilder.append(" estDetail.is_active=? ");
+        preparedStmtList.add(Boolean.TRUE);
+
+        addClauseIfRequired(preparedStmtList, queryBuilder);
+        queryBuilder.append(" estAmtDetail.is_active=? ");
+        preparedStmtList.add(Boolean.TRUE);
+
 
         if (searchCriteria.getFromProposalDate() != null) {
             addClauseIfRequired(preparedStmtList, queryBuilder);

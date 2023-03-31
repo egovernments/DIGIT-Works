@@ -104,12 +104,13 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                 .sorId(rs.getString("sor_id"))
                 .category(rs.getString("category"))
                 .name(rs.getString("name"))
-                .description(rs.getString("description"))
+                .description(rs.getString("estDetailDescription"))
                 .unitRate(rs.getDouble("unit_rate"))
                 .noOfunit(rs.getDouble("no_of_unit"))
                 //.totalAmount(rs.getDouble("total_amount"))
                 .uomValue(rs.getDouble("uom_value"))
                 .uom(rs.getString("uom"))
+                .isActive(rs.getBoolean("estDetailActive"))
                 .build();
 
         JsonNode additionalDetails = getAdditionalDetail("estDetailAdditional", rs);
@@ -129,6 +130,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                 .amount(rs.getDouble("amount"))
                 //.category(rs.getString("category"))
                 .type(rs.getString("type"))
+                .isActive(rs.getBoolean("estAmtDetailActive"))
                 .build();
 
         JsonNode amtAdditionalDetails = getAdditionalDetail("estAmtDetailAdditional", rs);

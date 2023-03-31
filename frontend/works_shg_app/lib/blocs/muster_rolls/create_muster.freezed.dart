@@ -21,6 +21,8 @@ mixin _$MusterCreateEvent {
   String get orgName => throw _privateConstructorUsedError;
   String get registerNo => throw _privateConstructorUsedError;
   String get registerName => throw _privateConstructorUsedError;
+  List<Map<String, dynamic>>? get skillsList =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(
@@ -30,10 +32,19 @@ mixin _$MusterCreateEvent {
             String orgName,
             String registerNo,
             String registerName,
-            int startDate)
+            int startDate,
+            String? projectName,
+            int? amount,
+            List<Map<String, dynamic>>? skillsList)
         create,
-    required TResult Function(String tenantId, String id, String orgName,
-            String contractId, String registerNo, String registerName)
+    required TResult Function(
+            String tenantId,
+            String id,
+            String orgName,
+            String contractId,
+            String registerNo,
+            String registerName,
+            List<Map<String, dynamic>>? skillsList)
         update,
   }) =>
       throw _privateConstructorUsedError;
@@ -46,10 +57,19 @@ mixin _$MusterCreateEvent {
             String orgName,
             String registerNo,
             String registerName,
-            int startDate)?
+            int startDate,
+            String? projectName,
+            int? amount,
+            List<Map<String, dynamic>>? skillsList)?
         create,
-    TResult? Function(String tenantId, String id, String orgName,
-            String contractId, String registerNo, String registerName)?
+    TResult? Function(
+            String tenantId,
+            String id,
+            String orgName,
+            String contractId,
+            String registerNo,
+            String registerName,
+            List<Map<String, dynamic>>? skillsList)?
         update,
   }) =>
       throw _privateConstructorUsedError;
@@ -62,10 +82,19 @@ mixin _$MusterCreateEvent {
             String orgName,
             String registerNo,
             String registerName,
-            int startDate)?
+            int startDate,
+            String? projectName,
+            int? amount,
+            List<Map<String, dynamic>>? skillsList)?
         create,
-    TResult Function(String tenantId, String id, String orgName,
-            String contractId, String registerNo, String registerName)?
+    TResult Function(
+            String tenantId,
+            String id,
+            String orgName,
+            String contractId,
+            String registerNo,
+            String registerName,
+            List<Map<String, dynamic>>? skillsList)?
         update,
     required TResult orElse(),
   }) =>
@@ -106,7 +135,8 @@ abstract class $MusterCreateEventCopyWith<$Res> {
       String contractId,
       String orgName,
       String registerNo,
-      String registerName});
+      String registerName,
+      List<Map<String, dynamic>>? skillsList});
 }
 
 /// @nodoc
@@ -127,6 +157,7 @@ class _$MusterCreateEventCopyWithImpl<$Res, $Val extends MusterCreateEvent>
     Object? orgName = null,
     Object? registerNo = null,
     Object? registerName = null,
+    Object? skillsList = freezed,
   }) {
     return _then(_value.copyWith(
       tenantId: null == tenantId
@@ -149,6 +180,10 @@ class _$MusterCreateEventCopyWithImpl<$Res, $Val extends MusterCreateEvent>
           ? _value.registerName
           : registerName // ignore: cast_nullable_to_non_nullable
               as String,
+      skillsList: freezed == skillsList
+          ? _value.skillsList
+          : skillsList // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>?,
     ) as $Val);
   }
 }
@@ -168,7 +203,10 @@ abstract class _$$CreateMusterEventCopyWith<$Res>
       String orgName,
       String registerNo,
       String registerName,
-      int startDate});
+      int startDate,
+      String? projectName,
+      int? amount,
+      List<Map<String, dynamic>>? skillsList});
 }
 
 /// @nodoc
@@ -189,6 +227,9 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
     Object? registerNo = null,
     Object? registerName = null,
     Object? startDate = null,
+    Object? projectName = freezed,
+    Object? amount = freezed,
+    Object? skillsList = freezed,
   }) {
     return _then(_$CreateMusterEvent(
       tenantId: null == tenantId
@@ -219,6 +260,18 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
               as int,
+      projectName: freezed == projectName
+          ? _value.projectName
+          : projectName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      amount: freezed == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      skillsList: freezed == skillsList
+          ? _value._skillsList
+          : skillsList // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>?,
     ));
   }
 }
@@ -233,7 +286,11 @@ class _$CreateMusterEvent implements CreateMusterEvent {
       required this.orgName,
       required this.registerNo,
       required this.registerName,
-      required this.startDate});
+      required this.startDate,
+      this.projectName,
+      this.amount,
+      final List<Map<String, dynamic>>? skillsList})
+      : _skillsList = skillsList;
 
   @override
   final String tenantId;
@@ -249,10 +306,22 @@ class _$CreateMusterEvent implements CreateMusterEvent {
   final String registerName;
   @override
   final int startDate;
+  @override
+  final String? projectName;
+  @override
+  final int? amount;
+  final List<Map<String, dynamic>>? _skillsList;
+  @override
+  List<Map<String, dynamic>>? get skillsList {
+    final value = _skillsList;
+    if (value == null) return null;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, contractId: $contractId, orgName: $orgName, registerNo: $registerNo, registerName: $registerName, startDate: $startDate)';
+    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, contractId: $contractId, orgName: $orgName, registerNo: $registerNo, registerName: $registerName, startDate: $startDate, projectName: $projectName, amount: $amount, skillsList: $skillsList)';
   }
 
   @override
@@ -272,12 +341,27 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             (identical(other.registerName, registerName) ||
                 other.registerName == registerName) &&
             (identical(other.startDate, startDate) ||
-                other.startDate == startDate));
+                other.startDate == startDate) &&
+            (identical(other.projectName, projectName) ||
+                other.projectName == projectName) &&
+            (identical(other.amount, amount) || other.amount == amount) &&
+            const DeepCollectionEquality()
+                .equals(other._skillsList, _skillsList));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, tenantId, registerId, contractId,
-      orgName, registerNo, registerName, startDate);
+  int get hashCode => Object.hash(
+      runtimeType,
+      tenantId,
+      registerId,
+      contractId,
+      orgName,
+      registerNo,
+      registerName,
+      startDate,
+      projectName,
+      amount,
+      const DeepCollectionEquality().hash(_skillsList));
 
   @JsonKey(ignore: true)
   @override
@@ -295,14 +379,23 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String orgName,
             String registerNo,
             String registerName,
-            int startDate)
+            int startDate,
+            String? projectName,
+            int? amount,
+            List<Map<String, dynamic>>? skillsList)
         create,
-    required TResult Function(String tenantId, String id, String orgName,
-            String contractId, String registerNo, String registerName)
+    required TResult Function(
+            String tenantId,
+            String id,
+            String orgName,
+            String contractId,
+            String registerNo,
+            String registerName,
+            List<Map<String, dynamic>>? skillsList)
         update,
   }) {
     return create(tenantId, registerId, contractId, orgName, registerNo,
-        registerName, startDate);
+        registerName, startDate, projectName, amount, skillsList);
   }
 
   @override
@@ -315,14 +408,23 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String orgName,
             String registerNo,
             String registerName,
-            int startDate)?
+            int startDate,
+            String? projectName,
+            int? amount,
+            List<Map<String, dynamic>>? skillsList)?
         create,
-    TResult? Function(String tenantId, String id, String orgName,
-            String contractId, String registerNo, String registerName)?
+    TResult? Function(
+            String tenantId,
+            String id,
+            String orgName,
+            String contractId,
+            String registerNo,
+            String registerName,
+            List<Map<String, dynamic>>? skillsList)?
         update,
   }) {
     return create?.call(tenantId, registerId, contractId, orgName, registerNo,
-        registerName, startDate);
+        registerName, startDate, projectName, amount, skillsList);
   }
 
   @override
@@ -335,16 +437,25 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String orgName,
             String registerNo,
             String registerName,
-            int startDate)?
+            int startDate,
+            String? projectName,
+            int? amount,
+            List<Map<String, dynamic>>? skillsList)?
         create,
-    TResult Function(String tenantId, String id, String orgName,
-            String contractId, String registerNo, String registerName)?
+    TResult Function(
+            String tenantId,
+            String id,
+            String orgName,
+            String contractId,
+            String registerNo,
+            String registerName,
+            List<Map<String, dynamic>>? skillsList)?
         update,
     required TResult orElse(),
   }) {
     if (create != null) {
       return create(tenantId, registerId, contractId, orgName, registerNo,
-          registerName, startDate);
+          registerName, startDate, projectName, amount, skillsList);
     }
     return orElse();
   }
@@ -389,7 +500,10 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
       required final String orgName,
       required final String registerNo,
       required final String registerName,
-      required final int startDate}) = _$CreateMusterEvent;
+      required final int startDate,
+      final String? projectName,
+      final int? amount,
+      final List<Map<String, dynamic>>? skillsList}) = _$CreateMusterEvent;
 
   @override
   String get tenantId;
@@ -403,6 +517,10 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
   @override
   String get registerName;
   int get startDate;
+  String? get projectName;
+  int? get amount;
+  @override
+  List<Map<String, dynamic>>? get skillsList;
   @override
   @JsonKey(ignore: true)
   _$$CreateMusterEventCopyWith<_$CreateMusterEvent> get copyWith =>
@@ -423,7 +541,8 @@ abstract class _$$UpdateMusterEventCopyWith<$Res>
       String orgName,
       String contractId,
       String registerNo,
-      String registerName});
+      String registerName,
+      List<Map<String, dynamic>>? skillsList});
 }
 
 /// @nodoc
@@ -443,6 +562,7 @@ class __$$UpdateMusterEventCopyWithImpl<$Res>
     Object? contractId = null,
     Object? registerNo = null,
     Object? registerName = null,
+    Object? skillsList = freezed,
   }) {
     return _then(_$UpdateMusterEvent(
       tenantId: null == tenantId
@@ -469,6 +589,10 @@ class __$$UpdateMusterEventCopyWithImpl<$Res>
           ? _value.registerName
           : registerName // ignore: cast_nullable_to_non_nullable
               as String,
+      skillsList: freezed == skillsList
+          ? _value._skillsList
+          : skillsList // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>?,
     ));
   }
 }
@@ -482,7 +606,9 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
       required this.orgName,
       required this.contractId,
       required this.registerNo,
-      required this.registerName});
+      required this.registerName,
+      final List<Map<String, dynamic>>? skillsList})
+      : _skillsList = skillsList;
 
   @override
   final String tenantId;
@@ -496,10 +622,18 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
   final String registerNo;
   @override
   final String registerName;
+  final List<Map<String, dynamic>>? _skillsList;
+  @override
+  List<Map<String, dynamic>>? get skillsList {
+    final value = _skillsList;
+    if (value == null) return null;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'MusterCreateEvent.update(tenantId: $tenantId, id: $id, orgName: $orgName, contractId: $contractId, registerNo: $registerNo, registerName: $registerName)';
+    return 'MusterCreateEvent.update(tenantId: $tenantId, id: $id, orgName: $orgName, contractId: $contractId, registerNo: $registerNo, registerName: $registerName, skillsList: $skillsList)';
   }
 
   @override
@@ -516,12 +650,21 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             (identical(other.registerNo, registerNo) ||
                 other.registerNo == registerNo) &&
             (identical(other.registerName, registerName) ||
-                other.registerName == registerName));
+                other.registerName == registerName) &&
+            const DeepCollectionEquality()
+                .equals(other._skillsList, _skillsList));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, tenantId, id, orgName, contractId, registerNo, registerName);
+      runtimeType,
+      tenantId,
+      id,
+      orgName,
+      contractId,
+      registerNo,
+      registerName,
+      const DeepCollectionEquality().hash(_skillsList));
 
   @JsonKey(ignore: true)
   @override
@@ -539,13 +682,23 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String orgName,
             String registerNo,
             String registerName,
-            int startDate)
+            int startDate,
+            String? projectName,
+            int? amount,
+            List<Map<String, dynamic>>? skillsList)
         create,
-    required TResult Function(String tenantId, String id, String orgName,
-            String contractId, String registerNo, String registerName)
+    required TResult Function(
+            String tenantId,
+            String id,
+            String orgName,
+            String contractId,
+            String registerNo,
+            String registerName,
+            List<Map<String, dynamic>>? skillsList)
         update,
   }) {
-    return update(tenantId, id, orgName, contractId, registerNo, registerName);
+    return update(tenantId, id, orgName, contractId, registerNo, registerName,
+        skillsList);
   }
 
   @override
@@ -558,14 +711,23 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String orgName,
             String registerNo,
             String registerName,
-            int startDate)?
+            int startDate,
+            String? projectName,
+            int? amount,
+            List<Map<String, dynamic>>? skillsList)?
         create,
-    TResult? Function(String tenantId, String id, String orgName,
-            String contractId, String registerNo, String registerName)?
+    TResult? Function(
+            String tenantId,
+            String id,
+            String orgName,
+            String contractId,
+            String registerNo,
+            String registerName,
+            List<Map<String, dynamic>>? skillsList)?
         update,
   }) {
-    return update?.call(
-        tenantId, id, orgName, contractId, registerNo, registerName);
+    return update?.call(tenantId, id, orgName, contractId, registerNo,
+        registerName, skillsList);
   }
 
   @override
@@ -578,16 +740,25 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String orgName,
             String registerNo,
             String registerName,
-            int startDate)?
+            int startDate,
+            String? projectName,
+            int? amount,
+            List<Map<String, dynamic>>? skillsList)?
         create,
-    TResult Function(String tenantId, String id, String orgName,
-            String contractId, String registerNo, String registerName)?
+    TResult Function(
+            String tenantId,
+            String id,
+            String orgName,
+            String contractId,
+            String registerNo,
+            String registerName,
+            List<Map<String, dynamic>>? skillsList)?
         update,
     required TResult orElse(),
   }) {
     if (update != null) {
-      return update(
-          tenantId, id, orgName, contractId, registerNo, registerName);
+      return update(tenantId, id, orgName, contractId, registerNo, registerName,
+          skillsList);
     }
     return orElse();
   }
@@ -631,7 +802,8 @@ abstract class UpdateMusterEvent implements MusterCreateEvent {
       required final String orgName,
       required final String contractId,
       required final String registerNo,
-      required final String registerName}) = _$UpdateMusterEvent;
+      required final String registerName,
+      final List<Map<String, dynamic>>? skillsList}) = _$UpdateMusterEvent;
 
   @override
   String get tenantId;
@@ -645,6 +817,8 @@ abstract class UpdateMusterEvent implements MusterCreateEvent {
   @override
   String get registerName;
   @override
+  List<Map<String, dynamic>>? get skillsList;
+  @override
   @JsonKey(ignore: true)
   _$$UpdateMusterEventCopyWith<_$UpdateMusterEvent> get copyWith =>
       throw _privateConstructorUsedError;
@@ -656,7 +830,7 @@ mixin _$MusterCreateState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
     required TResult Function() error,
   }) =>
       throw _privateConstructorUsedError;
@@ -664,7 +838,7 @@ mixin _$MusterCreateState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult? Function()? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -672,7 +846,7 @@ mixin _$MusterCreateState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) =>
@@ -761,7 +935,7 @@ class _$_Initial extends _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
     required TResult Function() error,
   }) {
     return initial();
@@ -772,7 +946,7 @@ class _$_Initial extends _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult? Function()? error,
   }) {
     return initial?.call();
@@ -783,7 +957,7 @@ class _$_Initial extends _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {
@@ -875,7 +1049,7 @@ class _$_Loading extends _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
     required TResult Function() error,
   }) {
     return loading();
@@ -886,7 +1060,7 @@ class _$_Loading extends _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult? Function()? error,
   }) {
     return loading?.call();
@@ -897,7 +1071,7 @@ class _$_Loading extends _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {
@@ -954,6 +1128,10 @@ abstract class _Loading extends MusterCreateState {
 abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
+  @useResult
+  $Res call({MusterRollsModel? musterRollsModel});
+
+  $MusterRollsModelCopyWith<$Res>? get musterRollsModel;
 }
 
 /// @nodoc
@@ -962,36 +1140,73 @@ class __$$_LoadedCopyWithImpl<$Res>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? musterRollsModel = freezed,
+  }) {
+    return _then(_$_Loaded(
+      freezed == musterRollsModel
+          ? _value.musterRollsModel
+          : musterRollsModel // ignore: cast_nullable_to_non_nullable
+              as MusterRollsModel?,
+    ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $MusterRollsModelCopyWith<$Res>? get musterRollsModel {
+    if (_value.musterRollsModel == null) {
+      return null;
+    }
+
+    return $MusterRollsModelCopyWith<$Res>(_value.musterRollsModel!, (value) {
+      return _then(_value.copyWith(musterRollsModel: value));
+    });
+  }
 }
 
 /// @nodoc
 
 class _$_Loaded extends _Loaded {
-  const _$_Loaded() : super._();
+  const _$_Loaded(this.musterRollsModel) : super._();
+
+  @override
+  final MusterRollsModel? musterRollsModel;
 
   @override
   String toString() {
-    return 'MusterCreateState.loaded()';
+    return 'MusterCreateState.loaded(musterRollsModel: $musterRollsModel)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loaded);
+        (other.runtimeType == runtimeType &&
+            other is _$_Loaded &&
+            (identical(other.musterRollsModel, musterRollsModel) ||
+                other.musterRollsModel == musterRollsModel));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, musterRollsModel);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
     required TResult Function() error,
   }) {
-    return loaded();
+    return loaded(musterRollsModel);
   }
 
   @override
@@ -999,10 +1214,10 @@ class _$_Loaded extends _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult? Function()? error,
   }) {
-    return loaded?.call();
+    return loaded?.call(musterRollsModel);
   }
 
   @override
@@ -1010,12 +1225,12 @@ class _$_Loaded extends _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded();
+      return loaded(musterRollsModel);
     }
     return orElse();
   }
@@ -1059,8 +1274,13 @@ class _$_Loaded extends _Loaded {
 }
 
 abstract class _Loaded extends MusterCreateState {
-  const factory _Loaded() = _$_Loaded;
+  const factory _Loaded(final MusterRollsModel? musterRollsModel) = _$_Loaded;
   const _Loaded._() : super._();
+
+  MusterRollsModel? get musterRollsModel;
+  @JsonKey(ignore: true)
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1101,7 +1321,7 @@ class _$_Error extends _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
     required TResult Function() error,
   }) {
     return error();
@@ -1112,7 +1332,7 @@ class _$_Error extends _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult? Function()? error,
   }) {
     return error?.call();
@@ -1123,7 +1343,7 @@ class _$_Error extends _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {

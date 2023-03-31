@@ -2,6 +2,7 @@ package org.egov.works.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.*;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -19,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@Slf4j
 public class WorkflowService {
 
     @Autowired
@@ -35,19 +37,22 @@ public class WorkflowService {
      *
      */
     public String updateWorkflowStatus(ContractRequest contractRequest) {
+        Contract contract = contractRequest.getContract();
+        log.info("Update work flow status. ContractId ["+contract.getId()+"]");
         ProcessInstance processInstance = getProcessInstanceForContract(contractRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(contractRequest.getRequestInfo(), Collections.singletonList(processInstance));
-        ProcessInstance processInstanceResponse = callWorkFlow(workflowRequest);
+        ProcessInstance processInstanceResponse = callWorkFlow(workflowRequest,contract.getId());
         //contract workflow Status
-        contractRequest.getContract().setWfStatus(processInstanceResponse.getState().getApplicationStatus());
+        contract.setWfStatus(processInstanceResponse.getState().getApplicationStatus());
         // Fetch currentProcessInstance from workflow process search for inbox config
-        contractRequest.getContract().setProcessInstance(processInstanceResponse);
+        contract.setProcessInstance(processInstanceResponse);
+        log.info("Work flow status updated. ContractId ["+contract.getId()+"]");
         return processInstanceResponse.getState().getApplicationStatus();
     }
 
     private ProcessInstance getProcessInstanceForContract(ContractRequest request) {
-
         Contract contract = request.getContract();
+        log.info("Get process instance for contract. ContractId ["+contract.getId()+"]");
         Workflow workflow = request.getWorkflow();
 
         ProcessInstance processInstance = new ProcessInstance();
@@ -71,6 +76,7 @@ public class WorkflowService {
             processInstance.setAssignes(users);
         }
 
+        log.info("Process instance created for contract. ContractId ["+contract.getId()+"]");
         return processInstance;
     }
 
@@ -81,8 +87,8 @@ public class WorkflowService {
      * <p>
      * and return wf-response to sets the resultant status
      */
-    private ProcessInstance callWorkFlow(ProcessInstanceRequest workflowReq) {
-
+    private ProcessInstance callWorkFlow(ProcessInstanceRequest workflowReq, String id) {
+        log.info("Call workflow service for contractId ["+id+"]");
         ProcessInstanceResponse response = null;
         StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost().concat(serviceConfiguration.getWfTransitionPath()));
         Object optional = repository.fetchResult(url, workflowReq);
@@ -107,7 +113,7 @@ public class WorkflowService {
         }
 
         if (CollectionUtils.isEmpty(response.getBusinessServices()))
-            throw new CustomException("BUSINESSSERVICE_DOESN'T_EXIST", "The businessService : " + serviceConfiguration.getContractWFBusinessService() + " doesn't exist");
+            throw new CustomException("BUSINESSSERVICE_DOES_NOT_EXIST", "The businessService : " + serviceConfiguration.getContractWFBusinessService() + " doesn't exist");
 
         return response.getBusinessServices().get(0);
     }
@@ -149,7 +155,7 @@ public class WorkflowService {
         }
 
         if (CollectionUtils.isEmpty(response.getProcessInstances()))
-            throw new CustomException("PROCESSINSTANCE_DOESN'T_EXIST", "The businessId : " + businessId + " doesn't exist");
+            throw new CustomException("PROCESSINSTANCE_DOES_NOT_EXIST", "The businessId : " + businessId + " doesn't exist");
 
         return response.getProcessInstances().get(0);
     }

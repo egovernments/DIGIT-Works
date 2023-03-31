@@ -35,4 +35,18 @@ class AuthRepository {
       // Assuming there will be an errorMessage property in the JSON object
     }
   }
+
+  Future sendOTP({
+    Map<String, String>? queryParameters,
+    dynamic body,
+    required String url,
+  }) async {
+    try {
+      await _client.post(url,
+          queryParameters: queryParameters, data: body ?? {});
+    } on DioError catch (ex) {
+      // Assuming there will be an errorMessage property in the JSON object
+      rethrow;
+    }
+  }
 }

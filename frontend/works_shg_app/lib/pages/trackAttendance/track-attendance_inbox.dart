@@ -10,6 +10,8 @@ import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 import '../../widgets/Back.dart';
 import '../../widgets/SideBar.dart';
+import '../../widgets/atoms/app_bar_logo.dart';
+import '../../widgets/atoms/empty_image.dart';
 import '../../widgets/drawer_wrapper.dart';
 import '../../widgets/loaders.dart';
 
@@ -19,7 +21,10 @@ class TrackAttendanceInboxPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
@@ -33,21 +38,25 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                 final attendanceRegisters = List<AttendanceRegister>.from(
                     attendanceRegistersModel!.attendanceRegister!);
 
-                attendanceRegisters.sort((a, b) => b
-                    .registerAuditDetails!.createdTime!
-                    .compareTo(a.registerAuditDetails!.createdTime!.toInt()));
+                attendanceRegisters.sort((a, b) =>
+                    b.registerAuditDetails!.lastModifiedTime!.compareTo(
+                        a.registerAuditDetails!.lastModifiedTime!.toInt()));
                 final List<Map<String, dynamic>> projectList =
                     attendanceRegisters
                         .map((e) => {
-                              i18.attendanceMgmt.nameOfWork: e.name,
-                              i18.attendanceMgmt.winCode: e
+                              i18.workOrder.workOrderNo: e
                                       .attendanceRegisterAdditionalDetails
                                       ?.contractId ??
                                   'NA',
                               i18.attendanceMgmt.registerId: e.registerNumber,
-                              i18.common.startDate: DateFormats.timeStampToDate(
-                                  e.startDate,
-                                  format: "dd/MM/yyyy"),
+                              i18.attendanceMgmt.projectId: e
+                                      .attendanceRegisterAdditionalDetails
+                                      ?.projectId ??
+                                  'NA',
+                              i18.attendanceMgmt.projectDesc: e
+                                      .attendanceRegisterAdditionalDetails
+                                      ?.projectName ??
+                                  'NA',
                               i18.attendanceMgmt.individualsCount:
                                   e.attendeesEntries != null
                                       ? e.attendeesEntries
@@ -58,10 +67,12 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                                           .toList()
                                           .length
                                       : 0,
+                              i18.common.startDate: DateFormats.timeStampToDate(
+                                  e.startDate,
+                                  format: "dd/MM/yyyy"),
                               i18.common.endDate: DateFormats.timeStampToDate(
                                   e.endDate,
                                   format: "dd/MM/yyyy"),
-                              i18.common.status: e.status
                             })
                         .toList();
 
@@ -75,14 +86,17 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          '${AppLocalizations.of(context).translate(i18.workOrder.projects)}(${attendanceRegistersModel!.attendanceRegister!.length})',
+                          '${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceRegisters)}(${attendanceRegistersModel!.attendanceRegister!.length})',
                           style: Theme.of(context).textTheme.displayMedium,
                           textAlign: TextAlign.left,
                         ),
                       ),
                       projectList.isEmpty
-                          ? Text(AppLocalizations.of(context)
-                              .translate(i18.attendanceMgmt.noProjectsFound))
+                          ? EmptyImage(
+                              align: Alignment.center,
+                              label: AppLocalizations.of(context).translate(
+                                i18.attendanceMgmt.noRegistersFound,
+                              ))
                           : WorkDetailsCard(
                               projectList,
                               isTrackAttendance: true,

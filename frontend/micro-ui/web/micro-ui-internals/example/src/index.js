@@ -3,10 +3,11 @@ import ReactDOM from "react-dom";
 
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 // import { PGRReducers } from "@egovernments/digit-ui-module-pgr";
+// import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 
 // import { initPGRComponents } from "@egovernments/digit-ui-module-pgr";
-import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
-import { initWorksComponents } from "@egovernments/digit-ui-module-works";
+// import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
+// import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
 import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
@@ -35,8 +36,8 @@ const enabledModules = [
   "Masters",
   "Estimate",
   "Project",
-  "Mukta"
-
+  "Mukta",
+  "DSS"
   // "Engagement"
 ];
 
@@ -74,9 +75,10 @@ const initDigitUI = () => {
   });
 
   // initPGRComponents();
+  // initDSSComponents();
   initEstimateComponents();
-  initEngagementComponents();
-  initWorksComponents();
+  // initEngagementComponents();
+  // initWorksComponents();
   initAttendenceMgmtComponents();
   initHRMSComponents();
   initContractsComponents();
