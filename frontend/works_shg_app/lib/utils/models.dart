@@ -34,6 +34,12 @@ class KeyValue {
   KeyValue(this.label, this.key);
 }
 
+class FilesAttached {
+  String name;
+  String fileStoreId;
+  FilesAttached(this.name, this.fileStoreId);
+}
+
 class DaysInRange {
   bool monday;
   bool tuesday;

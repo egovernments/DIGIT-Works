@@ -9,9 +9,9 @@ const ViewWageSeeker = () => {
   const history = useHistory()
   const [showDataError, setShowDataError] = useState(null)
 
-  const tenantId = Digit.ULBService.getCurrentTenantId()
-  const {individualId } = Digit.Hooks.useQueryParams()
-  
+  // const tenantId = Digit.ULBService.getCurrentTenantId()
+  const {individualId,tenantId } = Digit.Hooks.useQueryParams()
+
   const payload = {
     Individual: {
       individualId

@@ -4,7 +4,8 @@ import { Controller } from 'react-hook-form';
 import _ from "lodash"
 
 const NonSORTable = ({control,watch,...props}) => {
-  const [totalAmount, setTotalAmount] = useState(100)
+  const [totalAmount, setTotalAmount] = useState(0)
+  
   const formFieldName = "nonSORTablev1" // this will be the key under which the data for this table will be present on onFormSubmit
   const initialState = [
     {
@@ -12,17 +13,41 @@ const NonSORTable = ({control,watch,...props}) => {
       isShow: true,
     },
   ];
-  const [rows, setRows] = useState(initialState);
-
-  const { t, register, errors , setValue, getValues, formData} = props
   
+
+  const { t, register, errors , setValue, getValues, formData,unregister} = props
+ 
+  // const [rows, setRows] = useState(initialState);
+  const [rows, setRows] = useState(
+    formData?.[formFieldName]?.length > 1
+      ? formData?.[formFieldName]
+          ?.map((row, index) => {
+            return row ?
+               {
+                  key: index,
+                  isShow: row?.isActive ? row?.isActive : false,
+                }
+              : undefined;
+          })
+          ?.filter((row) => row)
+      : initialState
+  );
+
   const setTotal = (formData) => {
+    
     const tableData = formData?.[formFieldName]
    
-    const filteredRows = rows?.filter(row=> row?.isShow)
+    const result = tableData?.filter((tableRow, idx) => {
+        let include = false
+        rows?.map((row) => {
+          if (row.isShow && row.key === idx) include = true;
+        });
+        return include;
+      })?.reduce((acc, curr) => acc + parseFloat(curr?.estimatedAmount || 0), 0);
+      
+    
     setTotalAmount((prevState)=> {        
-      return tableData?.filter((row, index) => row)?.filter((row, index) => filteredRows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseFloat(curr?.estimatedAmount || 0) 
-        ,0)
+      return result
     })
 
   }
@@ -92,7 +117,7 @@ const NonSORTable = ({control,watch,...props}) => {
       }
       return e
     })
-
+    setValue(`${formFieldName}.${row.key}.estimatedAmount`,0)
     setRows(prev => updatedState)
   }
   const addRow = () => {
@@ -140,7 +165,11 @@ const NonSORTable = ({control,watch,...props}) => {
   const setAmountField = (e,row) => {
     const quantity = parseInt(watch(`${formFieldName}.${row.key}.estimatedQuantity`))
     const ratePerUnit = parseFloat(watch(`${formFieldName}.${row.key}.rate`))
-    if(!ratePerUnit || !quantity) return 
+    if(!ratePerUnit || !quantity) 
+    {
+      setValue(`${formFieldName}.${row.key}.estimatedAmount`,0)
+      return 
+    }
     const amountToSet = parseFloat(quantity * ratePerUnit).toFixed(1)
     setValue(`${formFieldName}.${row.key}.estimatedAmount`,amountToSet)
   }

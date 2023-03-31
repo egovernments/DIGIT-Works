@@ -926,3 +926,9 @@ input[type="number"] {
   line-height: 19px;
   max-width: 950px;
 }
+
+.field-value-no-border {
+  border: none;
+  color: black !important;
+  padding: 0;
+}

@@ -17,17 +17,41 @@ const OverheadsTable = ({control,watch,...props}) => {
             isShow: true,
         },
     ];
-    const [rows, setRows] = useState(initialState);
+    
 
     const { t, register, errors, setValue, getValues, formData } = props
+
+    // const [rows, setRows] = useState(initialState);
+
+   const [rows, setRows] = useState(
+    formData?.[formFieldName]?.length > 1
+      ? formData?.[formFieldName]
+          ?.map((row, index) => {
+            return row ?
+                {
+                  key: index,
+                  isShow: row?.isActive ? row?.isActive : false,
+                }
+              : undefined;
+          })
+          ?.filter((row) => row)
+      : initialState
+  );
 
     const setTotal = (formData) => {
         const tableData = formData?.[formFieldName]
 
-        const filteredRows = rows.filter(row=>row?.isShow)
+
+        const result = tableData?.filter((tableRow, idx) => {
+        let include = false
+        rows?.map((row) => {
+          if (row.isShow && row.key === idx) include = true;
+        });
+        return include;
+      })?.reduce((acc, curr) => acc + parseFloat(curr?.amount || 0), 0);
+
         setTotalAmount((prevState) => {
-            return tableData?.filter((row, index) => row)?.filter((row, index) => filteredRows?.[index]?.isShow)?.reduce((acc, curr) => acc + parseFloat(curr?.amount || 0) 
-                , 0)
+            return result
         })
 
     }
@@ -48,6 +72,7 @@ const OverheadsTable = ({control,watch,...props}) => {
         formData?.[formFieldName]?.map((row,index)=> {
             if(row?.amount){
                 //find corresponding row from rows
+                
                 const correspondingRow = rows?.filter(r=>r.key === index)?.[0]
                 handleDropdownChange(row?.name, undefined, correspondingRow,undefined)
             }
@@ -107,6 +132,8 @@ const OverheadsTable = ({control,watch,...props}) => {
             return e
         })
 
+        setValue(`${formFieldName}.${row.key}.amount`,0)
+
         setRows(prev => updatedState)
     }
     const addRow = () => {
@@ -159,7 +186,7 @@ const OverheadsTable = ({control,watch,...props}) => {
         //1-> if autoCalculated field is true, populate the percentage/lumpsum(type field) , amount field and disable both of them
         //2-> if autocal is false,then let user enter the percentage/lumpsum(type field), amount field
 
-        if (e.isAutoCalculated) {
+        if (e?.isAutoCalculated) {
             if(e.type==="percentage"){
                 //set the percentage field
                 //set the amount field
@@ -173,6 +200,9 @@ const OverheadsTable = ({control,watch,...props}) => {
                 setValue(`overheadDetails.${row.key}.percentage`, `${t("WORKS_LUMPSUM")}`)
                 setValue(`overheadDetails.${row.key}.amount`, e.value)
             }
+        }
+        else if(!e){
+            return 
         }
         else {
             setValue(`overheadDetails.${row.key}.percentage`, `${t("WORKS_LUMPSUM")}`)

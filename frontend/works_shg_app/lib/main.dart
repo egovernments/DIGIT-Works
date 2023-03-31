@@ -38,6 +38,7 @@ import 'blocs/muster_rolls/get_muster_workflow.dart';
 import 'blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'blocs/user/user_search.dart';
 import 'blocs/work_orders/accept_work_order.dart';
+import 'blocs/work_orders/search_individual_work.dart';
 import 'blocs/work_orders/search_my_works.dart';
 import 'data/remote_client.dart';
 import 'data/repositories/remote/localization.dart';
@@ -122,6 +123,7 @@ class MainApplication extends StatelessWidget {
         BlocProvider(create: (context) => SearchMyWorksBloc()),
         BlocProvider(create: (context) => AcceptWorkOrderBloc()),
         BlocProvider(create: (context) => DeclineWorkOrderBloc()),
+        BlocProvider(create: (context) => SearchIndividualWorkBloc()),
         BlocProvider(
             create: (context) =>
                 IndividualSearchBloc(const IndividualSearchState.initial())),

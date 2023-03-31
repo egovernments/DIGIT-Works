@@ -88,7 +88,7 @@ const ViewEstimate = (props) => {
                     }
                     {
                         (activeLink === "Estimate_Details") && (
-                            <ViewEstimate />
+                            <ViewEstimate editApplicationNumber={project?.projectNumber}/>
                         )
                     }
                 </HorizontalNav>

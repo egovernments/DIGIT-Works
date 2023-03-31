@@ -1,7 +1,7 @@
 import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav, Menu, Toast } from '@egovernments/digit-ui-react-components'
 import React, { Fragment,useEffect,useRef,useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import ProjectDetailsNavDetails from './ProjectDetailsNavDetails'
 
 const ProjectDetails = () => {
@@ -17,6 +17,9 @@ const ProjectDetails = () => {
     const [showActions, setShowActions] = useState(false);
     const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
     const [hideActionBar, setHideActionBar] = useState(true);
+    const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
+    const [sessionFormData, clearSessionFormData] = projectSession;
+    const location = useLocation();
     const [actionsMenu, setActionsMenu] = useState([ 
         {
             name : "MODIFY_PROJECT"
@@ -73,10 +76,14 @@ const ProjectDetails = () => {
             history.push(`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&estimateNumber=${estimates?.[0]?.estimateNumber}`);
         }
         if(option?.name === "MODIFY_PROJECT"){
-            if((estimates?.length !==0 && estimates?.[0]?.wfStatus !== "") && ( estimates?.length !==0 && estimates?.[0]?.wfStatus !== "REJECTED")) {
+            if(estimates?.length !==0 && estimates?.[0]?.wfStatus !== "" &&  estimates?.[0]?.wfStatus !== "REJECTED") {
                 setToast({show : true, label : t("COMMON_CANNOT_MODIFY_PROJECT_EST_CREATED"), error : true});
             }else {
-                history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
+                // history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
+                history.push({
+                    pathname : `/${window.contextPath}/employee/project/create-project`,
+                    search : `?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`,
+                })
             }
         }
     }
@@ -103,16 +110,25 @@ const ProjectDetails = () => {
                     setActionsMenu([
                         {
                             name : "CREATE_ESTIMATE"
+                        },
+                        {
+                            name : "MODIFY_PROJECT"
                         }
                     ])
                 }else {
-                    setHideActionBar(true);
-                    setActionsMenu([])
+                    setActionsMenu([
+                        {
+                            name : "MODIFY_PROJECT"
+                        }
+                    ])
                 }
             }else{
                 setActionsMenu([
                     {
                         name : "VIEW_ESTIMATE"
+                    },
+                    {
+                        name : "MODIFY_PROJECT"
                     }
                 ])
             }
@@ -139,6 +155,13 @@ const ProjectDetails = () => {
         let filterdNavConfig = navConfigs.filter((config)=>config.active === true);
         setNavTypeConfig(filterdNavConfig);
     },[data]);
+
+    //remove session form data if user navigates away from the project create screen
+    useEffect(()=>{
+        if (!window.location.href.includes("create-project") && sessionFormData && Object.keys(sessionFormData) != 0) {
+            clearSessionFormData();
+        }
+    },[location]);
 
     return (
         <div className={"employee-main-application-details"}>
