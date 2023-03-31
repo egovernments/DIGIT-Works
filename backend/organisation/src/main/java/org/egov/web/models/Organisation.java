@@ -2,7 +2,6 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
-import org.egov.web.models.Document;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,8 +45,8 @@ public class Organisation {
     @JsonProperty("applicationNumber")
     private String applicationNumber = null;//idgen formatted number from start of the org creation request
 
+    //Decided on 14th March : As of now, orgnumber will be generated from start of create org registry
     @JsonProperty("orgNumber")
-    @Size(min = 1, max = 64)
     private String orgNumber = null;//idgen formatted number once workflow is 'APPROVED'
 
     @JsonProperty("applicationStatus")
@@ -62,21 +61,21 @@ public class Organisation {
 
     @JsonProperty("orgAddress")
     @Valid
-    private List<Address> orgAddress = null;
+    private List<Address> orgAddress = null;//no
 
     @JsonProperty("contactDetails")
     @Valid
-    private List<ContactDetails> contactDetails = null;
+    private List<ContactDetails> contactDetails = null;//no, as of now,it'll be only one
 
     @JsonProperty("identifiers")
     @Valid
     @Size(min = 1)
-    private List<Identifier> identifiers = null;
+    private List<Identifier> identifiers = null;//upsert
 
     @JsonProperty("functions")
     @Valid
     @Size(min = 1)
-    private List<Function> functions = null;
+    private List<Function> functions = null;//upsert
 
     @JsonProperty("jurisdiction")
     private List<Jurisdiction> jurisdiction = null;
@@ -86,7 +85,7 @@ public class Organisation {
 
     @JsonProperty("documents")
     @Valid
-    private List<Document> documents = null;
+    private List<Document> documents = null;//upsert
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;

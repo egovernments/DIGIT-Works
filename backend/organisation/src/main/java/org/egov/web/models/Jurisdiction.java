@@ -20,7 +20,6 @@ import javax.validation.Valid;
 public class Jurisdiction {
 
     @JsonProperty("id")
-    @Valid
     private String id = null;
 
     @JsonProperty("orgId")
