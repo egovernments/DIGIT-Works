@@ -122,9 +122,6 @@ public class ContractServiceConfiguration {
     private String orgIdVerificationRequired;
 
     //SMS notification
-   /* @Value("${egov.user.event.notification.enabled}")
-    private Boolean isUserEventsNotificationEnabled;*/
-
     @Value("${notification.sms.enabled}")
     private Boolean isSMSEnabled;
 
@@ -144,15 +141,6 @@ public class ContractServiceConfiguration {
     @Value("${egov.localization.statelevel}")
     private Boolean isLocalizationStateLevel;
 
-/*    @Value("${egov.usr.events.create.topic}")
-    private String saveUserEventsTopic;*/
-
-/*    @Value("${egov.url.shortner.host}")
-    private String urlShortnerHost;
-
-    @Value("${egov.url.shortner.endpoint}")
-    private String urlShortnerEndpoint;*/
-
     //URL shortner
     @Value("${egov.url.shortner.host}")
     private String urlShortnerHost;
@@ -166,6 +154,16 @@ public class ContractServiceConfiguration {
 
     @Value("${works.cbo.url.endpoint}")
     private String cboUrlEndpoint;
+
+    //Organisation
+    @Value("${works.organisation.host}")
+    private String organisationHost;
+
+    @Value("${works.organisation.context.path}")
+    private String organisationContextPath;
+
+    @Value("${works.organisation.endpoint}")
+    private String organisationEndpoint;
 
 
     @PostConstruct

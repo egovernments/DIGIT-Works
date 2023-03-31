@@ -17,10 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -51,6 +48,9 @@ public class NotificationService {
 
     @Autowired
     private LocationServiceUtil locationServiceUtil;
+
+    @Autowired
+    private OrganisationServiceUtil organisationServiceUtil;
 
 
     /**
@@ -119,13 +119,7 @@ public class NotificationService {
     }
 
     private void pushNotificationToCBOForApproveAction(ContractRequest request) {
-        RequestInfo requestInfo = request.getRequestInfo();
         Contract contract = request.getContract();
-        String tenantId = contract.getTenantId();
-
-        //TODO Get UUID and user details (cboName, contractPersonName, phoneNumber) of CBO implementation -- needs to hit CBO service instead
-        String CBOMemberUuid = request.getContract().getAuditDetails().getCreatedBy();
-
         String message = getMessage(request, true);
 
         if (StringUtils.isEmpty(message)) {
@@ -133,12 +127,22 @@ public class NotificationService {
             return;
         }
 
-        //get project number, location, userDetails -- needs to be changed for CBO-org message
-        Map<String, String> smsDetails = getDetailsForSMS(request, CBOMemberUuid);
+        //get org-details: orgName, contactPersonNames, mobileNumbers
+        Map<String, List<String>> orgDetails = getOrgDetailsForCBOAdmin(request);
 
-        message = buildMessageForApproveAction_WO_CBO(contract, smsDetails, message);
-        SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        for (int i = 0; i < orgDetails.get("contactPersonNames").size(); i++) {
+            Map<String,String> smsDetails=new HashMap<>();
+
+            smsDetails.put("orgName",orgDetails.get("orgName").get(0));
+            smsDetails.put("projectName",orgDetails.get("projectName").get(0));
+            smsDetails.put("personName",orgDetails.get("contactPersonNames").get(i));
+            smsDetails.put("mobileNumber",orgDetails.get("mobileNumbers").get(i));
+
+
+            message = buildMessageForApproveAction_WO_CBO(contract, smsDetails, message);
+            SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
+            producer.push(config.getSmsNotifTopic(), smsRequest);
+        }
     }
 
     private Map<String, String> getDetailsForSMS(ContractRequest request, String uuid) {
@@ -164,12 +168,35 @@ public class NotificationService {
         String boundaryCode = projectDetails.get("boundary");
         Map<String, String> locationName = locationServiceUtil.getLocationName(tenantId, requestInfo, boundaryCode);
 
+        //get org name
+        Map<String, List<String>> orgDetails = organisationServiceUtil.getOrganisationInfo(request);
+
+        smsDetails.put("orgName",orgDetails.get("orgName").get(0));
         smsDetails.putAll(userDetailsForSMS);
         smsDetails.putAll(projectDetails);
         smsDetails.putAll(locationName);
 
         return smsDetails;
     }
+
+    private Map<String, List<String>> getOrgDetailsForCBOAdmin(ContractRequest request) {
+
+        RequestInfo requestInfo = request.getRequestInfo();
+        Contract contract = request.getContract();
+        String tenantId = contract.getTenantId();
+
+        // fetch project details - project name and location
+        List<LineItems> lineItems = request.getContract().getLineItems();
+        Map<String, List<LineItems>> lineItemsMap = lineItems.stream().collect(Collectors.groupingBy(LineItems::getEstimateId));
+        List<Estimate> estimates = estimateServiceUtil.fetchActiveEstimates(requestInfo, tenantId, lineItemsMap.keySet());
+        Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
+
+        Map<String,List<String>> orgDetails=organisationServiceUtil.getOrganisationInfo(request);
+        orgDetails.put("projectName", Collections.singletonList(projectDetails.get("projectName")));
+
+        return orgDetails;
+    }
+
 
     private String getMessage(ContractRequest request, boolean isCBORole) {
         //RETHINK-- NEED TO SEND TWO MESSAGES
@@ -231,8 +258,8 @@ public class NotificationService {
         calendar.setTimeInMillis(dueDate);
         String date = formatter.format(calendar.getTime());
 
-        message = message.replace("{contactPersonName}", "CBO-contactPersonName-placeholder")
-                .replace("{organisationName}", "CBO-organisationName-placeholder")
+        message = message.replace("{contactPersonName}", userDetailsForSMS.get("personName"))
+                .replace("{organisationName}", userDetailsForSMS.get("orgName"))
                 .replace("{IA/IP}", contract.getExecutingAuthority())
                 .replace("{PROJECT_NAME}", userDetailsForSMS.get("projectName"))
                 .replace("{CONTRACT_NUMBER}", contract.getContractNumber())
@@ -245,7 +272,7 @@ public class NotificationService {
         message = message.replace("{CONTRACT_NUMBER}", contract.getContractNumber())
                 .replace("{PROJECT_NAME}", userDetailsForSMS.get("projectName"))
                 .replace("{LOCATION}", userDetailsForSMS.get("locationName"))
-                .replace("{organisationName}", "organisationName-PLACEHOLDER");
+                .replace("{organisationName}", userDetailsForSMS.get("orgName"));
         return message;
     }
 

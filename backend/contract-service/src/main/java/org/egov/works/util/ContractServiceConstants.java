@@ -62,5 +62,13 @@ public class ContractServiceConstants {
     //Location Service Constants
     public static final String LOCATION_BOUNDARY_NAME_CODE ="$.*.*.boundary.*.name";
 
+    //Organisation Constants
+
+    public static final String ORGANISATION_NAME_CODE ="$.organisations.*.name";
+    public static final String ORGANISATION_PERSON_CODE ="$.organisations.*.contactDetails.*.contactName";
+    public static final String ORGANISATION_MOBILE_NUMBER_CODE ="$.organisations.*.contactDetails.*.contactMobileNumber";
+
+
+
 
 }
