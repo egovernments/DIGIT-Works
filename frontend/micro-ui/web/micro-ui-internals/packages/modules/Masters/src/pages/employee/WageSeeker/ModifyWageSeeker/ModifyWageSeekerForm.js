@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
 import { FormComposer } from '@egovernments/digit-ui-react-components';
-import { getWageSeekerUpdatePayload, getBankAccountUpdatePayload } from '../../../../utils';
+import { getWageSeekerUpdatePayload, getBankAccountUpdatePayload, getWageSeekerSkillDeletePayload } from '../../../../utils';
 
 const navConfig =  [{
     name:"Wage_Seeker_Details",
@@ -29,6 +29,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
 
     const { mutate: CreateWageSeekerMutation } = Digit.Hooks.wageSeeker.useCreateWageSeeker();
     const { mutate: CreateBankAccountMutation } = Digit.Hooks.bankAccount.useCreateBankAccount();
+    const { mutate: DeleteWageSeeker } = Digit.Hooks.wageSeeker.useDeleteWageSeeker();
 
     //Skill data
     const {isLoading: skillDataFetching, data: skillData } = Digit.Hooks.useCustomMDMS(
@@ -150,13 +151,25 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     }
 
     const handleResponseForUpdate = async (wageSeekerPayload, bankAccountPayload) => {
-        //individualDetailsUpdated , financeDetailsUpdated
         if(individualDetailsUpdated && !financeDetailsUpdated) {
             await UpdateWageSeekerMutation(wageSeekerPayload, {
-                onError: async (error) => sendDataToResponsePage(individualId, false, 'Wage Seeker Modification Failed!', true),
+                onError: async (error) => sendDataToResponsePage(individualId, false, 'MASTERS_WAGE_SEEKER_MODIFICATION_FAIL', true),
                 onSuccess: async (responseData) => {
-                    sendDataToResponsePage(individualId, true, 'Wage Seeker modified Successfully', true)
-                    clearSessionFormData()
+                    //check if skills.skillsTobeRemoved has records, then call delete API
+                    if(wageSeekerPayload?.Individual?.skillsTobeRemoved?.length > 0) {
+                        const wageSeekerSkillDeletePayload = getWageSeekerSkillDeletePayload({wageSeekerDataFromAPI: responseData, tenantId, skillsTobeRemoved: wageSeekerPayload?.Individual?.skillsTobeRemoved});
+                        await DeleteWageSeeker(wageSeekerSkillDeletePayload, {
+                            onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
+                            onSuccess: async (responseData) => {
+                                sendDataToResponsePage(individualId, true, 'MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS', true)
+                                clearSessionFormData()
+                            }
+                        })
+                    }
+                    else {
+                        sendDataToResponsePage(individualId, true, 'MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS', true)
+                        clearSessionFormData()
+                    }
                 }
               });
         } else if(!individualDetailsUpdated && financeDetailsUpdated) {
@@ -171,14 +184,29 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
             await UpdateWageSeekerMutation(wageSeekerPayload, {
                 onError: async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
                 onSuccess: async (responseData) => {
-                    //Update bank account details if wage seeker update success
-                    await UpdateBankAccountMutation(bankAccountPayload, {
-                        onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
-                        onSuccess: async (responseData) => {
-                            sendDataToResponsePage(individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
-                            clearSessionFormData()
-                        }
-                    })
+                    if(wageSeekerPayload?.Individual?.skillsTobeRemoved?.length > 0) {
+                        const wageSeekerSkillDeletePayload = getWageSeekerSkillDeletePayload({wageSeekerDataFromAPI: responseData, tenantId, skillsTobeRemoved: wageSeekerPayload?.Individual?.skillsTobeRemoved});
+                        await DeleteWageSeeker(wageSeekerSkillDeletePayload, {
+                            onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
+                            onSuccess: async (responseData) => {
+                                await UpdateBankAccountMutation(bankAccountPayload, {
+                                    onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
+                                    onSuccess: async (responseData) => {
+                                        sendDataToResponsePage(individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
+                                        clearSessionFormData()
+                                    }
+                                })
+                            }
+                        })
+                    } else {
+                        await UpdateBankAccountMutation(bankAccountPayload, {
+                            onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
+                            onSuccess: async (responseData) => {
+                                sendDataToResponsePage(individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
+                                clearSessionFormData()
+                            }
+                        })
+                    }
                 },
             });
         }  

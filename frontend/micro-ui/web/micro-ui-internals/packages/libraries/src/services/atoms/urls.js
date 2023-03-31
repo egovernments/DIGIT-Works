@@ -221,7 +221,8 @@ const Urls = {
   wageseeker: {
     create: "/individual/v1/_create",
     search: "/individual/v1/_search",
-    update: "/individual/v1/_update"
+    update: "/individual/v1/_update",
+    delete: "/individual/v1/_delete"
   },
 
   noc: {

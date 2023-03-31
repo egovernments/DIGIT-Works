@@ -31,5 +31,15 @@ export const WageSeekerService = {
         auth: true,
         userService: true,
         data: data
+      }),
+
+    delete: (data) => 
+      Request({
+        url: Urls.wageseeker.delete,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        data: data
       })
 };

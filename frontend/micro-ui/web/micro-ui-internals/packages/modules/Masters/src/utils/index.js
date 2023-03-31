@@ -54,6 +54,24 @@ export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sess
     setIsFormReady(true)
 }
 
+const getSkillsToUpdate = (formData, wageSeekerDataFromAPI) => {
+    let updatedSkills = formData?.skillDetails_skill
+    //added code field in existing skills to find difference
+    let existingSkills = wageSeekerDataFromAPI?.individual?.skills?.map(item => ({ ...item, code : `${item?.level}.${item?.type}`}))
+
+    let set1 = new Set(updatedSkills.map(({ code }) => code))
+    let set2 = new Set(existingSkills.map(({ code }) => code))
+    let extraSkillsTobeAdded = updatedSkills.filter(({ code }) => !set2.has(code))
+    let extraSkillsTobeRemoved = existingSkills.filter(({ code }) => !set1.has(code))
+
+    let skillsTobeAdded = extraSkillsTobeAdded?.map(item => ({ level: item?.code?.split('.')?.[0], type: item?.code?.split('.')?.[1]}))
+    let skillsTobeRemoved = extraSkillsTobeRemoved?.map(item => ({ ...item, isDeleted: true }))
+    return {
+        skillsTobeAdded: [...existingSkills, ...skillsTobeAdded],
+        skillsTobeRemoved
+    }
+}
+
 export const getWageSeekerUpdatePayload = ({formData, wageSeekerDataFromAPI, tenantId, isModify}) => {
     let Individual = {}
 
@@ -120,10 +138,28 @@ export const getWageSeekerUpdatePayload = ({formData, wageSeekerDataFromAPI, ten
                 code: formData?.locDetails_ward?.code
             }
         }]
-        Individual.skills = [] //to update
+       
+        const { skillsTobeAdded, skillsTobeRemoved } = getSkillsToUpdate(formData, wageSeekerDataFromAPI)
+        Individual.skills = skillsTobeAdded?.length > 0 ? skillsTobeAdded : []
+        if(skillsTobeRemoved?.length > 0) {
+            Individual.skillsTobeRemoved = skillsTobeRemoved
+        }
         Individual.rowVersion = wageSeekerDataFromAPI?.individual?.rowVersion
     }
-    
+
+    return {
+        Individual
+    }
+}
+
+export const getWageSeekerSkillDeletePayload = ({wageSeekerDataFromAPI, tenantId, skillsTobeRemoved}) => {
+    let Individual = {}
+    console.log('wageSeekerDataFromAPI', wageSeekerDataFromAPI);
+    Individual.id = wageSeekerDataFromAPI?.Individual?.id
+    Individual.tenantId = tenantId
+    Individual.name = wageSeekerDataFromAPI?.Individual?.name
+    Individual.rowVersion = parseInt(wageSeekerDataFromAPI?.Individual?.rowVersion)
+    Individual.skills = skillsTobeRemoved
     return {
         Individual
     }

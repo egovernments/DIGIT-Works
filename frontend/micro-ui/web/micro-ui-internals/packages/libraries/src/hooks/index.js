@@ -134,6 +134,7 @@ import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
 import useWageSeekerDetails from "./wageSeeker/useWageSeekerDetails";
 import useUpdateWageSeeker from "./wageSeeker/useUpdateWageSeeker";
 import useCreateWageSeeker from "./wageSeeker/useCreateWageSeeker";
+import useDeleteWageSeeker from "./wageSeeker/useDeleteWageSeeker";
 
 import useCreateWO from "./works/useCreateWO";
 import useSearchOrg from "./works/useSearchOrg";
@@ -275,7 +276,8 @@ const wageSeeker = {
   useViewWageSeeker,
   useWageSeekerDetails,
   useUpdateWageSeeker,
-  useCreateWageSeeker
+  useCreateWageSeeker,
+  useDeleteWageSeeker
 }
 
 const bankAccount = {

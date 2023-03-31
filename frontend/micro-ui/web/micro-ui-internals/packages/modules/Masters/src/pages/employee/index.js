@@ -38,6 +38,18 @@ const MastersBreadCrumb = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
+      path: `/${window.contextPath}/employee/masters/search-wageseeker`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("ACTION_TEST_MASTERS_SEARCH_WAGESEEKER")}` : t("ACTION_TEST_MASTERS_SEARCH_WAGESEEKER"),
+      show: location.pathname.includes("/masters/search-wageseeker") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/masters/modify-wageseeker`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_MODIFY_WAGESEEKER")}` : `${t("MASTERS_MODIFY_WAGESEEKER")}`,
+      show: location.pathname.includes("/masters/modify-wageseeker") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
       path: `/${window.contextPath}/employee/masters/view-wageseeker`,
       content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_VIEW_WAGESEEKER")}` : `${t("MASTERS_VIEW_WAGESEEKER")}`,
       show: location.pathname.includes("/masters/view-wageseeker") ? true : false,
