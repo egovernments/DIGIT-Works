@@ -119,7 +119,6 @@ public class OrganisationRepository {
     /* Get organisations list based on search request */
     private List<Organisation> getOrganisationsBasedOnSearchCriteria(OrgSearchRequest orgSearchRequest, Set<String> orgIdsFromIdentifierAndBoundarySearch) {
         List<Object> preparedStmtList = new ArrayList<>();
-        //Set<String> ids =
         String query = organisationFunctionQueryBuilder.getOrganisationSearchQuery(orgSearchRequest, orgIdsFromIdentifierAndBoundarySearch, preparedStmtList, false);
         List<Organisation> organisations = jdbcTemplate.query(query, organisationFunctionRowMapper, preparedStmtList.toArray());
 
@@ -129,6 +128,10 @@ public class OrganisationRepository {
 
     private void getOrgIdsForSearch(OrgSearchRequest orgSearchRequest, Set<String> orgIdsFromIdentifierSearch,Set<String> orgIdsFromBoundarySearch, Set<String> orgIdsFromIdentifierAndBoundarySearch) {
         if (orgIdsFromIdentifierSearch != null && !orgIdsFromIdentifierSearch.isEmpty()) {
+            if (orgIdsFromBoundarySearch.isEmpty() &&
+                    StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getBoundaryCode())) {
+                return;
+            }
             orgIdsFromIdentifierAndBoundarySearch.addAll(orgIdsFromIdentifierSearch);
             if (orgIdsFromBoundarySearch != null && !orgIdsFromBoundarySearch.isEmpty()) {
                 orgIdsFromIdentifierAndBoundarySearch.retainAll(orgIdsFromBoundarySearch);
@@ -137,6 +140,11 @@ public class OrganisationRepository {
                 orgIdsFromIdentifierAndBoundarySearch.retainAll(orgSearchRequest.getSearchCriteria().getId());
             }
         } else if (orgIdsFromBoundarySearch != null && !orgIdsFromBoundarySearch.isEmpty()) {
+            if (orgIdsFromIdentifierAndBoundarySearch.isEmpty() &&
+                    (StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierType())
+                            || StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierValue()))) {
+                return;
+            }
             orgIdsFromIdentifierAndBoundarySearch.addAll(orgIdsFromBoundarySearch);
             if (orgSearchRequest.getSearchCriteria().getId() != null && !orgSearchRequest.getSearchCriteria().getId().isEmpty()) {
                 orgIdsFromIdentifierAndBoundarySearch.retainAll(orgSearchRequest.getSearchCriteria().getId());
@@ -147,6 +155,9 @@ public class OrganisationRepository {
                             || StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierValue())
                             || StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getBoundaryCode()))) {
                 return;
+            }
+            if (orgSearchRequest.getSearchCriteria().getId() == null) {
+                orgSearchRequest.getSearchCriteria().setId(new ArrayList<>());
             }
             orgIdsFromIdentifierAndBoundarySearch.addAll(orgSearchRequest.getSearchCriteria().getId());
         }
