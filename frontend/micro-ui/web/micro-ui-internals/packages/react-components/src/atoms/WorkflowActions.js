@@ -9,7 +9,6 @@ import Toast from "./Toast";
 import { useHistory } from "react-router-dom";
 const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber }) => {
   const history = useHistory()
-  
   const { estimateNumber } = Digit.Hooks.useQueryParams();
   applicationNo = applicationNo ? applicationNo : estimateNumber 
 
@@ -87,7 +86,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
     }
 
     if(bsContract === businessService && action?.action === "EDIT"){
-      history.push(`/${window?.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&workOrderNumber=${applicationDetails?.contractNumber}`);
+      history.push(`/${window?.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&workOrderNumber=${applicationNo}`);
       return 
   }
 

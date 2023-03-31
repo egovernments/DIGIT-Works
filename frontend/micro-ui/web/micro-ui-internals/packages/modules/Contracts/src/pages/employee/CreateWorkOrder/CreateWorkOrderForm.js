@@ -17,7 +17,7 @@ const navConfig =  [
     }
 ];
 
-const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData}) => {
+const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData, isModify}) => {
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
@@ -64,6 +64,10 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
             {
                 key : 'nameOfCBO',
                 value : [preProcessData?.nameOfCBO]
+            },
+            {
+                key : 'basicDetails_workOrdernumber',
+                value : [!isModify ? "none" : "flex"]
             },
           ]
         }),
@@ -162,11 +166,11 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                     config={createWOModalConfig}
                 />
             }
-            <Header styles={{fontSize: "32px"}}>{t("ACTION_TEST_CREATE_WO")}</Header>
+            <Header styles={{fontSize: "32px"}}>{isModify ? t("COMMON_MODIFY_WO") : t("ACTION_TEST_CREATE_WO")}</Header>
                 {
                     createWorkOrderConfig && (
                     <FormComposer
-                        label={"ACTION_TEST_CREATE_WO"}
+                        label={isModify ? "COMMON_MODIFY_WO" : "ACTION_TEST_CREATE_WO"}
                         config={createWorkOrderConfig?.form?.map((config) => {
                         return {
                             ...config,

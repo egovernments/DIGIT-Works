@@ -11,6 +11,8 @@ const ViewContractDetails = () => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts")
     const [toast, setToast] = useState({show : false, label : "", error : false});
+    const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {});
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
 
     const payload = {
         tenantId : queryStrings?.tenantId || tenantId,
@@ -50,6 +52,12 @@ const ViewContractDetails = () => {
             enabled: !!(data?.applicationData?.additionalDetails?.projectId) 
         }
     })
+
+    useEffect(() => {
+        if (!window.location.href.includes("create-contract") && sessionFormData && Object.keys(sessionFormData) != 0) {
+          clearSessionFormData();
+        }
+    }, [location]);
 
     useEffect(()=>{
         if(isContractError || (!isContractLoading && data?.isNoDataFound)) {
@@ -98,7 +106,7 @@ const ViewContractDetails = () => {
                     <WorkflowActions
                         forcedActionPrefix={"WF_CONTRACT_ACTION"}
                         businessService={businessService}
-                        applicationNo={payload?.contractNumber}
+                        applicationNo={queryStrings?.workOrderNumber}
                         tenantId={tenantId}
                         applicationDetails={data?.applicationData}
                         url={Digit.Utils.Urls.contracts.update}

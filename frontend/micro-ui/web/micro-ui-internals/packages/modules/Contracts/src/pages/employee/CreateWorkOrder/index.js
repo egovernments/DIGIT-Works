@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import CreateWorkOrderForm from "./CreateWorkOrderForm";
-// import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA.json";
+import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA.json";
 import { useTranslation } from "react-i18next";
 import { Loader } from "@egovernments/digit-ui-react-components";
+import { updateDefaultValues } from "../../../../utils/modifyWorkOrderUtils";
 
 const CreateWorkOrder = () => {
     const {t} = useTranslation();
@@ -18,20 +19,22 @@ const CreateWorkOrder = () => {
     const [nameOfCBO, setNameOfCBO] = useState([]);
     const [isFormReady, setIsFormReady] = useState(false);
 
-    const { isLoading : isConfigLoading, data : createWorkOrderConfigMUKTA} = Digit.Hooks.useCustomMDMS( //change to data
-    stateTenant,
-    Digit.Utils.getConfigModuleName(),
-    [
-        {
-            "name": "CreateWorkOrderConfig"
-        }
-    ],
-    {
-      select: (data) => {
-          return data?.[Digit.Utils.getConfigModuleName()]?.CreateWorkOrderConfig[0];
-      },
-    }
-    );
+    // const { isLoading : isConfigLoading, data : createWorkOrderConfigMUKTA} = Digit.Hooks.useCustomMDMS( //change to data
+    // stateTenant,
+    // Digit.Utils.getConfigModuleName(),
+    // [
+    //     {
+    //         "name": "CreateWorkOrderConfig"
+    //     }
+    // ],
+    // {
+    //   select: (data) => {
+    //       return data?.[Digit.Utils.getConfigModuleName()]?.CreateWorkOrderConfig[0];
+    //   },
+    // }
+    // );
+
+    const configs = createWorkOrderConfigMUKTA?.CreateWorkOrderConfig[0];
 
     //fetching contract data -- modify
     const { isLoading: isContractLoading,data:contract } = Digit.Hooks.contracts.useContractSearch({
@@ -41,6 +44,13 @@ const CreateWorkOrder = () => {
             enabled: isModify 
         }
     })
+
+    useEffect(()=>{
+        //if session WO# is diff from queryString WO#, reset sessionFormData
+        if(sessionFormData?.basicDetails_workOrdernumber !== queryStrings?.workOrderNumber) {
+            clearSessionFormData();
+        }
+    },[])
 
     useEffect(()=>{
         if(!isContractLoading && isModify) {
@@ -73,14 +83,7 @@ const CreateWorkOrder = () => {
         }
     })
 
-    const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {
-        basicDetails_projectID : "",
-        basicDetails_dateOfProposal : "",
-        basicDetails_projectName : "",
-        basicDetails_projectDesc : "",
-        cboID : "",
-        designationOfOfficerInCharge : "",
-    });
+    const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
 
     const createDocumentObject = (documents) => {
@@ -130,7 +133,7 @@ const CreateWorkOrder = () => {
         return organisationOptions?.organisations?.map(organisationOption => ( {code : organisationOption?.id, name : organisationOption?.name, applicationNumber : organisationOption?.applicationNumber } ))
     }
 
-    const handleWorkOrderAmount = (estimate, overHeadMasterData) => {
+    const handleWorkOrderAmount = ({estimate, overHeadMasterData}) => {
         overHeadMasterData = overHeadMasterData?.works?.Overheads;
         let totalAmount = estimate?.additionalDetails?.totalEstimatedAmount;
 
@@ -150,31 +153,22 @@ const CreateWorkOrder = () => {
     }
 
     useEffect(()=>{
-        if((!isEstimateLoading && !isProjectLoading && !isLoadingHrmsSearch && !isOrgSearchLoading && !isOverHeadsMasterDataLoading)) {
-            console.log(estimate,project, sessionFormData, createWorkOrderConfigMUKTA);
-            //set default values
-            let defaultValues = {
-                basicDetails_projectID :  project?.projectNumber,
-                basicDetails_dateOfProposal : Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal),
-                basicDetails_projectName : project?.name,
-                basicDetails_projectDesc : project?.description,
-                workOrderAmountRs : handleWorkOrderAmount(estimate, overHeadMasterData)
-            };
+        if((estimate && project && !isLoadingHrmsSearch && !isOrgSearchLoading && !isOverHeadsMasterDataLoading && !isContractLoading)) {
+            updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData});
 
-            //set document object
             setDocuments(createDocumentObject(estimate?.additionalDetails?.documents));
             setOfficerInCharge(createOfficerInChargeObject());
             setNameOfCBO(createNameOfCBOObject());
-            setSessionFormData({...sessionFormData, ...defaultValues});
+
             setIsFormReady(true);
         }
-    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading, isOverHeadsMasterDataLoading]);
+    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading, isOverHeadsMasterDataLoading, isContractLoading, estimate]);
 
-    if(isConfigLoading) return <Loader></Loader>
+    // if(isConfigLoading) return <Loader></Loader>
     return (
         <React.Fragment>
             {
-                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={createWorkOrderConfigMUKTA} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}}></CreateWorkOrderForm>
+                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={configs} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}} isModify={isModify}></CreateWorkOrderForm>
             }
         </React.Fragment>
     )
