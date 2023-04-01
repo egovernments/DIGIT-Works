@@ -1040,7 +1040,7 @@ export const downloadEgovPDF = async (
   queryParams={},
   fileName="application.pdf"
 ) => {
-  const response =await CustomService.getResponse({ url:`/egov-pdf/download/${pdfRoute}`, params:queryParams, useCache:false,setTimeParam:false })
+  const response =await CustomService.getResponse({ url:`/egov-pdf/download/${pdfRoute}`, params:queryParams, useCache:false,setTimeParam:false ,userDownload:true})
   const responseStatus = parseInt(response.status, 10);
   if (responseStatus === 201 || responseStatus === 200) {
     downloadPdf(new Blob([response.data], { type: "application/pdf" }), fileName);
