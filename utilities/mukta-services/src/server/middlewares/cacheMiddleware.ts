@@ -1,12 +1,12 @@
 import  { errorResponder, sendResponse, appCache } from "../utils/index";
 import { NextFunction, Request,Response } from "express";
 
+const cacheEnabled=false;
+
 const cacheMiddleware= (req:Request, res:Response, next:NextFunction) => {
-  try {
-    console.log(req,'req');
-    
+  try {    
     const cacheData = appCache.get(req.originalUrl);
-    if (cacheData) {
+    if (cacheData && cacheEnabled) {
       sendResponse(res, cacheData, req, 304);
     } else {
       next();

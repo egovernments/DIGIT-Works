@@ -1,6 +1,4 @@
-/**
- * 
- * import express from "express";
+ import express from "express";
 import  logger from "morgan";
 import config from "./config";
 import { cacheMiddleware, requestMiddleware } from "./middlewares";
@@ -41,9 +39,11 @@ app.use(errorResponder);
 app.use(invalidPathHandler);
 
 export default app;
-**/
 
 
+/**
+ * 
+ *
 import express from 'express';
 import * as bodyParser from 'body-parser';
 import config from './config';
@@ -78,3 +78,5 @@ class App {
 }
  
 export default App;
+
+**/

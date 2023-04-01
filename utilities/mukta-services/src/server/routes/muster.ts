@@ -14,6 +14,7 @@ muster.post(
     var tenantId = req.query.tenantId;
     var musterRollNumber = req.query.musterRollNumber;
     var requestinfo = req.body;
+
     var resProperty;
     if (requestinfo == undefined || Object.keys(requestinfo).length == 0) {
       throwError(`Requestinfo can not be null`, "REQUEST_INFO_NOT_NULL", 400);
@@ -26,18 +27,22 @@ muster.post(
       );
     }
     try {
+
       resProperty = await search_muster(
         musterRollNumber,
         tenantId,
         requestinfo
       );
       var musterRolls = resProperty.musterRolls;
+      
       if (musterRolls && musterRolls.length > 0) {
         var musterObj = musterRolls[0] || {};
         var individualIds = musterObj.individualEntries.map(
           (ind:any) => ind.individualId
         );
+        // musterObj.individualEntries=musterObj.individualEntries.map(ind=>ind)
         var paymentresponse;
+
         paymentresponse = await search_individual(
           individualIds,
           tenantId,
@@ -66,7 +71,7 @@ muster.post(
     } catch (ex) {
         console.log(ex,'ex');
         
-      throwError("sas", "sa", "sa");
+      throwError("Internal server error", "sa", "sa");
     }
   })
 );
