@@ -211,6 +211,12 @@ export const UICustomizations = {
       const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.toProposalDate);
       if(toProposalDate) data.body.inbox.moduleSearchCriteria.toProposalDate = toProposalDate
       
+      const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus
+      delete data?.body?.inbox?.moduleSearchCriteria?.status
+      if(status){
+        data.body.inbox.moduleSearchCriteria.status = status
+      }
+
       const projectType = data?.body?.inbox?.moduleSearchCriteria?.typeOfWork?.code;
       delete data.body.inbox.moduleSearchCriteria.typeOfWork
       if(projectType) data.body.inbox.moduleSearchCriteria.typeOfWork = projectType
@@ -262,6 +268,30 @@ export const UICustomizations = {
         }
         return <p>{"NA"}</p>;
       }
+    },
+    populateReqCriteria: () => {
+      
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices:"mukta-estimate" },
+        body: {
+         
+        },
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+              return {
+                "i18nKey":`WF_ESTIMATE_STATUS_${state?.applicationStatus}`,
+                "wfStatus":state?.applicationStatus
+              }
+            })
+            return states  
+          },
+        },
+      };
     },
   },
   SearchProjectConfig: {
@@ -378,6 +408,93 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
       }
+    },
+  },
+  SearchAttendanceConfig: {
+    preProcess: (data) => {
+      
+      //get data to set in api
+      const startDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.startDate,"daystart");
+      if(startDate) data.body.inbox.moduleSearchCriteria.startDate = startDate
+      const endDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.endDate);
+      if(endDate) data.body.inbox.moduleSearchCriteria.endDate = endDate
+      
+      const projectType = data?.body?.inbox?.moduleSearchCriteria?.projectType?.code;
+      delete data.body.inbox.moduleSearchCriteria.projectType
+      if(projectType) data.body.inbox.moduleSearchCriteria.projectType = projectType
+
+      const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code
+      delete data.body.inbox.moduleSearchCriteria.ward
+      if(ward) data.body.inbox.moduleSearchCriteria.ward = ward
+    
+      
+      const status = data?.body?.inbox?.moduleSearchCriteria?.musterRollStatus?.[0]?.wfStatus
+      delete data?.body?.inbox?.moduleSearchCriteria?.musterRollStatus
+      if(status){
+        data.body.inbox.moduleSearchCriteria.musterRollStatus = status
+      }
+
+      //set tenantId 
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+      return data;
+    },
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      if (column.label === "ES_COMMON_MUSTER_ROLL_ID") {
+        return (
+          <span className="link">
+            <Link
+              to={`/${
+                window.contextPath
+              }/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
+            >
+              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if(column.label === "ES_COMMON_LOCATION"){
+        return value ? (
+          <span style={{ whiteSpace: "nowrap" }}>
+            <p>{`${value?.locality ? value?.locality + ", " : ""}${value?.ward ? value?.ward + ", " : ""}${t(Digit.Utils.locale.getCityLocale(row?.businessObject?.tenantId))}`}</p>
+          </span>
+        ) : (
+          t("ES_COMMON_NA")
+        );
+      }
+
+      if (column.label === "COMMON_WORKFLOW_STATES") {
+        return <span>{t(`WF_MUSTOR_${value}`)}</span>
+      }
+
+      if(column.label === "MUSTER_WAGE_AMOUNT") {
+         return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA")}</span>;
+      }
+      
+    },
+    populateReqCriteria: () => {
+      
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices:"muster-roll-approval" },
+        body: {
+         
+        },
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+              return {
+                "i18nKey":`WF_MUSTOR_${state?.applicationStatus}`,
+                "wfStatus":state?.applicationStatus
+              }
+            })
+            return states  
+          },
+        },
+      };
     },
   },
   ContractsInboxConfig: {
