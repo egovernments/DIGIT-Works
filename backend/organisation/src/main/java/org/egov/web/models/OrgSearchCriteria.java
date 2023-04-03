@@ -35,8 +35,26 @@ public class OrgSearchCriteria {
     @JsonProperty("name")
     private String name = null;
 
+    @JsonProperty("applicationNumber")
+    private String applicationNumber = null;
+
+    @JsonProperty("orgNumber")
+    private String orgNumber = null;
+
+    @JsonProperty("applicationStatus")
+    private String applicationStatus = null;
+
     @JsonProperty("functions")
     private Function functions = null;
+
+    @JsonProperty("createdFrom")
+    private Long createdFrom = null;
+
+    @JsonProperty("createdTo")
+    private Long createdTo = null;
+
+    @JsonProperty("boundaryCode")
+    private String boundaryCode = null;
 
     @JsonProperty("identifierType")
     private String identifierType = null;
