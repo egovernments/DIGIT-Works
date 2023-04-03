@@ -2,6 +2,7 @@ package org.egov.digit.expense.web.models;
 
 import javax.validation.constraints.DecimalMax;
 
+import org.egov.digit.expense.web.models.enums.Order;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,26 +24,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Pagination   {
-        @JsonProperty("limit")
+public class Pagination {
+	
+	@JsonProperty("limit")
+	@DecimalMax("100")
+	@Default
+	private Double limit = 10d;
 
-         @DecimalMax("100")         private Double limit = 10d;
+	@JsonProperty("offSet")
+	@Default
+	private Double offSet = 0d;
 
-        @JsonProperty("offSet")
+	@JsonProperty("totalCount")
+	private Double totalCount;
 
-                private Double offSet = 0d;
+	@JsonProperty("sortBy")
+	private String sortBy;
 
-        @JsonProperty("totalCount")
-
-                private Double totalCount = null;
-
-        @JsonProperty("sortBy")
-
-                private String sortBy = null;
-
-        @JsonProperty("order")
-
-                private Order order = null;
-
+	@JsonProperty("order")
+	private Order order;
 
 }

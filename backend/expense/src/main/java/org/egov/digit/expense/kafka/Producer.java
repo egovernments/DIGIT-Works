@@ -1,6 +1,5 @@
 package org.egov.digit.expense.kafka;
 
-import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Service;
 // NOTE: If tracer is disabled change CustomKafkaTemplate to KafkaTemplate in autowiring
 
 @Service
-@Slf4j
 public class Producer {
 
     @Autowired

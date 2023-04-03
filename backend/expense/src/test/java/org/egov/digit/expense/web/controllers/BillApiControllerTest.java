@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 */
 @Ignore
 @RunWith(SpringRunner.class)
-@WebMvcTest(BillApiController.class)
+@WebMvcTest(BillController.class)
 @Import(TestConfiguration.class)
 public class BillApiControllerTest {
 

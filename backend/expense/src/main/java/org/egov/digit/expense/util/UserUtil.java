@@ -1,19 +1,24 @@
 package org.egov.digit.expense.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import org.egov.digit.expense.config.Configuration;
-import digit.models.coremodels.user.Role;
-import digit.models.coremodels.user.User;
-import digit.models.coremodels.user.enums.UserType;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
-import digit.models.coremodels.UserDetailResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import digit.models.coremodels.UserDetailResponse;
+import digit.models.coremodels.user.Role;
+import digit.models.coremodels.user.User;
+import digit.models.coremodels.user.enums.UserType;
 
 @Component
 public class UserUtil {
@@ -37,11 +42,12 @@ public class UserUtil {
     /**
      * Returns UserDetailResponse by calling user service with given uri and object
      * @param userRequest Request object for user service
-     * @param uri The address of the endpoint
+     * @param uri The address of the end point
      * @return Response from user service as parsed as userDetailResponse
      */
 
     public UserDetailResponse userCall(Object userRequest, StringBuilder uri) {
+    	
         String dobFormat = null;
         if(uri.toString().contains(configs.getUserSearchEndpoint())  || uri.toString().contains(configs.getUserUpdateEndpoint()))
             dobFormat="yyyy-MM-dd";
@@ -90,7 +96,7 @@ public class UserUtil {
      */
     private Long dateTolong(String date,String format){
         SimpleDateFormat f = new SimpleDateFormat(format);
-        Date d = null;
+        Date d;
         try {
             d = f.parse(date);
         } catch (ParseException e) {
@@ -100,8 +106,8 @@ public class UserUtil {
     }
 
     /**
-     * enriches the userInfo with statelevel tenantId and other fields
-     * The function creates user with username as mobile number.
+     * enriches the userInfo with state-level tenantId and other fields
+     * The function creates user with user-name as mobile number.
      * @param mobileNumber
      * @param tenantId
      * @param userInfo

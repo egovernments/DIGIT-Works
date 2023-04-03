@@ -1,18 +1,19 @@
 package org.egov.digit.expense.web.models;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * BillCriteria
@@ -23,43 +24,40 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillCriteria   {
-        @JsonProperty("tenantId")
-          @NotNull
+public class BillCriteria {
+	
+	@JsonProperty("tenantId")
+	@NotNull
+	@Size(min = 2, max = 64)
+	private String tenantId;
 
-        @Size(min=2,max=64)         private String tenantId = null;
+	@JsonProperty("ids")
+	private List<String> ids;
 
-        @JsonProperty("ids")
+	@JsonProperty("businessService")
+	@Size(min = 2, max = 64)
+	private String businessService;
 
-                private List<String> ids = null;
+	@JsonProperty("referenceId")
+	private List<String> referenceId;
 
-        @JsonProperty("businessService")
+	@JsonProperty("isActive")
+	private Boolean isActive;
 
-        @Size(min=2,max=64)         private String businessService = null;
+	public BillCriteria addIdsItem(String idsItem) {
+		if (this.ids == null) {
+			this.ids = new ArrayList<>();
+		}
+		this.ids.add(idsItem);
+		return this;
+	}
 
-        @JsonProperty("referenceId")
-
-                private List<String> referenceId = null;
-
-        @JsonProperty("isActive")
-
-                private Boolean isActive = null;
-
-
-        public BillCriteria addIdsItem(String idsItem) {
-            if (this.ids == null) {
-            this.ids = new ArrayList<>();
-            }
-        this.ids.add(idsItem);
-        return this;
-        }
-
-        public BillCriteria addReferenceIdItem(String referenceIdItem) {
-            if (this.referenceId == null) {
-            this.referenceId = new ArrayList<>();
-            }
-        this.referenceId.add(referenceIdItem);
-        return this;
-        }
+	public BillCriteria addReferenceIdItem(String referenceIdItem) {
+		if (this.referenceId == null) {
+			this.referenceId = new ArrayList<>();
+		}
+		this.referenceId.add(referenceIdItem);
+		return this;
+	}
 
 }
