@@ -92,6 +92,11 @@ const ProjectDetails = () => {
       setToast({show : false, label : "", error : false});
     }
 
+    const HandleDownloadPdf = () => {
+        const projectId=searchParams?.Projects?.[0]?.projectNumber;
+        Digit.Utils.downloadEgovPDF('project/project-details',{projectId,tenantId:searchParams?.Projects?.[0]?.tenantId},`project-${projectId}.pdf`)
+    }
+
     const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
 
     //fetch estimate details
@@ -167,6 +172,11 @@ const ProjectDetails = () => {
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
                 <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_PROJECT_DETAILS")}</Header>
+            <MultiLink
+              onHeadClick={() => HandleDownloadPdf()}
+              downloadBtnClassName={"employee-download-btn-className"}
+              label={t("CS_COMMON_DOWNLOAD")}
+            />
             </div>
 
             {/* <Card className={"employeeCard-override"} >

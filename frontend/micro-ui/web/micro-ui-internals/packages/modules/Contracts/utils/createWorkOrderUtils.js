@@ -132,9 +132,7 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
         workflow : {
             "action": modifyParams?.updateAction ? modifyParams?.updateAction : "CREATE",
             "comment": modalData?.comments,
-            "assignees": [
-                selectedApprover?.user?.uuid
-            ]
+            "assignees": selectedApprover?.user?.uuid ? [selectedApprover?.user?.uuid] : []
         }
     }
 }
