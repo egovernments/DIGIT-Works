@@ -1,17 +1,16 @@
 package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import digit.models.coremodels.user.Role;
 import digit.models.coremodels.user.enums.UserType;
-import org.apache.commons.lang3.StringUtils;
-import org.egov.common.contract.response.ResponseInfo;
-import org.egov.web.models.*;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import digit.models.coremodels.user.Role;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.OrganisationConstant;
+import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -57,7 +56,7 @@ public class UserService {
         for (ContactDetails contactDetails : contactDetailsList) {
 
             User newUser = User.builder().build();
-            addUserDefaultFields(stateLevelTenantId, role, newUser, contactDetails,true);
+            addUserDefaultFields(stateLevelTenantId, role, newUser, contactDetails, true);
             UserDetailResponse userDetailResponse = userExists(contactDetails, stateLevelTenantId, requestInfo, Boolean.TRUE);
             List<UserRequest> existingUsersFromService = userDetailResponse.getUser();
 
@@ -104,7 +103,7 @@ public class UserService {
      * @param user
      * @param contactDetails
      */
-    private void addUserDefaultFields(String tenantId, Role role, User user, ContactDetails contactDetails,boolean isCreate) {
+    private void addUserDefaultFields(String tenantId, Role role, User user, ContactDetails contactDetails, boolean isCreate) {
         log.info("UserService::addUserDefaultFields");
         user.setMobileNumber(contactDetails.getContactMobileNumber());
         user.setEmailId(contactDetails.getContactEmail());
@@ -114,7 +113,7 @@ public class UserService {
         user.setRoles(Collections.singleton(role));
         user.setActive(Boolean.TRUE);
         user.setUsername(contactDetails.getContactMobileNumber());
-        if(!isCreate){
+        if (!isCreate) {
             user.setUuid(contactDetails.getId());
         }
 
@@ -128,8 +127,11 @@ public class UserService {
         contactDetails.setLastModifiedBy(null);
     }
 
+    /**
+     * this is will be hardcoded from code level as we have fix CITIZEN role
+     * @return
+     */
     private Role getCitizenRole() {
-
         return Role.builder()
                 .code(OrganisationConstant.ORG_CITIZEN_ROLE_CODE)
                 .name(OrganisationConstant.ORG_CITIZEN_ROLE_NAME)
@@ -180,7 +182,7 @@ public class UserService {
                 UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
                 return userDetailResponse;
             } else {
-                return new UserDetailResponse(ResponseInfo.builder().build(),new ArrayList<>());
+                return new UserDetailResponse(ResponseInfo.builder().build(), new ArrayList<>());
             }
         }
         // Which Exception to throw?
@@ -244,13 +246,15 @@ public class UserService {
      */
     private void setContactFields(ContactDetails contactDetails, UserDetailResponse userDetailResponse, RequestInfo requestInfo) {
         log.info("UserService::setContactFields");
-        contactDetails.setId(userDetailResponse.getUser().get(0).getUuid());
-        contactDetails.setContactName((userDetailResponse.getUser().get(0).getUserName()));
-        contactDetails.setCreatedBy(requestInfo.getUserInfo().getUuid());
-        contactDetails.setCreatedDate(System.currentTimeMillis());
-        contactDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
-        contactDetails.setLastModifiedDate(System.currentTimeMillis());
-        //contactDetails.setActive(userDetailResponse.getUser().get(0).getActive());
+        if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
+            contactDetails.setId(userDetailResponse.getUser().get(0).getUuid());
+            contactDetails.setContactName((userDetailResponse.getUser().get(0).getName()));
+            contactDetails.setCreatedBy(requestInfo.getUserInfo().getUuid());
+            contactDetails.setCreatedDate(System.currentTimeMillis());
+            contactDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+            contactDetails.setLastModifiedDate(System.currentTimeMillis());
+            //contactDetails.setActive(userDetailResponse.getUser().get(0).getActive());
+        }
     }
 
 
@@ -276,7 +280,7 @@ public class UserService {
         contactDetailsList.forEach(contactDetails -> {
 
             User newUser = User.builder().build();
-            addUserDefaultFields(stateLevelTenantId, role, newUser, contactDetails,false);
+            addUserDefaultFields(stateLevelTenantId, role, newUser, contactDetails, false);
 
             UserDetailResponse userDetailResponse = userExists(contactDetails, stateLevelTenantId, requestInfo, Boolean.FALSE);
 

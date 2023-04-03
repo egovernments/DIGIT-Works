@@ -11,7 +11,6 @@ import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -48,15 +47,7 @@ public class BoundaryUtil {
             List<String> boundaries = entry.getValue();
 
             log.info("Validating boundary for boundary type " + boundaryType + " with hierarchyType " + hierarchyTypeCode);
-            StringBuilder uri = new StringBuilder(config.getLocationHost());
-            uri.append(config.getLocationContextPath()).append(config.getLocationEndpoint());
-            uri.append("?").append("tenantId=").append(tenantId);
-
-            if (hierarchyTypeCode != null)
-                uri.append("&").append("hierarchyTypeCode=").append(hierarchyTypeCode);
-
-            uri.append("&").append("boundaryType=").append(boundaryType).append("&").append("codes=")
-                    .append(StringUtils.join(boundaries, ','));
+            StringBuilder uri = getUri(tenantId, hierarchyTypeCode, boundaryType, boundaries);
 
             Optional<Object> response = Optional.ofNullable(serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
 
@@ -84,6 +75,19 @@ public class BoundaryUtil {
             log.info("The boundaries " + StringUtils.join(boundaries, ',') + " validated for boundary type " + boundaryType + " with tenantId " + tenantId);
         }
 
+    }
+
+    private StringBuilder getUri(String tenantId, String hierarchyTypeCode, String boundaryType, List<String> boundaries) {
+        StringBuilder uri = new StringBuilder(config.getLocationHost());
+        uri.append(config.getLocationContextPath()).append(config.getLocationEndpoint());
+        uri.append("?").append("tenantId=").append(tenantId);
+
+        if (hierarchyTypeCode != null)
+            uri.append("&").append("hierarchyTypeCode=").append(hierarchyTypeCode);
+
+        uri.append("&").append("boundaryType=").append(boundaryType).append("&").append("codes=")
+                .append(StringUtils.join(boundaries, ','));
+        return uri;
     }
 
 }
