@@ -9,9 +9,8 @@ const ViewOrganisation = () => {
   const history = useHistory()
   const [showDataError, setShowDataError] = useState(null)
 
-  //const { organizationId, tenantId } = Digit.Hooks.useQueryParams()
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const organizationId = 'ORG-000018'
+  const { organizationId, tenantId } = Digit.Hooks.useQueryParams()
+
   const [activeLink, setActiveLink] = useState("Location_Details");
 
   const configNavItems = [
@@ -38,7 +37,6 @@ const ViewOrganisation = () => {
   }
 
   const {isLoading, data: organisation, isError, isSuccess, error} = Digit.Hooks.organisation.useViewOrganisation({ tenantId, data: payload })
-  console.log('org data', organisation);
 
   useEffect(() => {
     if(isError) {
