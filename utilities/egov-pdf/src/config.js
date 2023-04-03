@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = "https://works-dev.digit.org";
+HOST = process.env.EGOV_HOST;
 
 if (!HOST) {
   console.log("You need to set the HOST variable");
