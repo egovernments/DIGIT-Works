@@ -41,7 +41,8 @@ const CreateWorkOrder = () => {
         tenantId,
         filters: { contractNumber, tenantId },
         config:{
-            enabled: isModify 
+            enabled: isModify,
+            cacheTime : 0
         }
     })
 
@@ -168,7 +169,7 @@ const CreateWorkOrder = () => {
     return (
         <React.Fragment>
             {
-                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={configs} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}} isModify={isModify} contractID={contract?.id} lineItemID={contract?.lineItems?.[0]?.id}></CreateWorkOrderForm>
+                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={configs} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}} isModify={isModify} contractID={contract?.id} contractNumber={contract?.contractNumber} lineItems={contract?.lineItems} contractAuditDetails={contract?.auditDetails}></CreateWorkOrderForm>
             }
         </React.Fragment>
     )

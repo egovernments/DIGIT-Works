@@ -17,7 +17,7 @@ const navConfig =  [
     }
 ];
 
-const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData, isModify, contractID, lineItemID}) => {
+const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData, isModify, contractID, lineItems, contractAuditDetails, contractNumber}) => {
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
@@ -127,17 +127,13 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     const handleResponseForUpdate = async(payload) => {
         await UpdateWOMutation(payload, {
             onError: async (error, variables) => {
-                if(error?.response?.data?.Errors?.[0]?.code === "INVALID_ESTIMATELINEITEMID") {
-                    setToast(()=>({show : true, label : t("ESTIMATE_ALREADY_ASSOCIATED_TO_OTHER_CONTRACT"), error : true}));
-                }else {
-                    setToast(()=>({show : true, label : t(error?.response?.data?.Errors?.[0]?.code), error : true}));
-                }
+                sendDataToResponsePage(contractNumber, false, "CONTRACT_MODIFICATION_FAILURE", true);
             },
             onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
                         setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
                     }else if(responseData?.ResponseInfo?.status){
-                        sendDataToResponsePage(responseData?.contracts?.[0]?.contractNumber, responseData, true);
+                        sendDataToResponsePage(contractNumber, true, "CONTRACTS_MODIFIED", true);
                         clearSessionFormData();
                     }else{
                         setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
@@ -149,17 +145,13 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     const handleResponseForCreateWO = async(payload) => {
         await CreateWOMutation(payload, {
             onError: async (error, variables) => {
-                if(error?.response?.data?.Errors?.[0]?.code === "INVALID_ESTIMATELINEITEMID") {
-                    setToast(()=>({show : true, label : t("ESTIMATE_ALREADY_ASSOCIATED_TO_OTHER_CONTRACT"), error : true}));
-                }else {
-                    setToast(()=>({show : true, label : t(error?.response?.data?.Errors?.[0]?.code), error : true}));
-                }
+                sendDataToResponsePage(contractNumber, false, "CONTRACT_MODIFICATION_FAILURE", true);
             },
             onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
                         setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
                     }else if(responseData?.ResponseInfo?.status){
-                        sendDataToResponsePage(responseData?.contracts?.[0]?.contractNumber, responseData, true);
+                        sendDataToResponsePage(contractNumber, true, "CONTRACTS_MODIFIED", true);
                         clearSessionFormData();
                     }else{
                         setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
@@ -170,7 +162,11 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
 
     const modifyParams = {
         contractID,
-        lineItemID
+        contractNumber,
+        lineItems,
+        contractAuditDetails,
+        updateAction : "EDIT",
+        updateWfStatus : "SENT_BACK"
     }
 
     const onModalSubmit = async (modalData) => {
@@ -182,16 +178,16 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         }
     }
 
-    const sendDataToResponsePage = (contractNumber, responseData, isSuccess) => {
-        let queryString = "";
-        if(responseData) {
-          queryString = contractNumber;
-        }
+    const sendDataToResponsePage = (contractNumber, isSuccess, message, showID) => {
         history.push({
           pathname: `/${window?.contextPath}/employee/contracts/create-contract-response`,
-          search: `?contractNumber=${queryString}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
+          search: `?contractNumber=${contractNumber}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
+          state : {
+            message : message,
+            showID : showID
+          }
         }); 
-    }
+      }
 
     return (
         <React.Fragment>

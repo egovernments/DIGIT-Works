@@ -75,6 +75,7 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
     return {
         contract : {
             "id" : modifyParams?.contractID,
+            "contractNumber" : modifyParams?.contractNumber,
             "tenantId": tenantId,
             "wfStatus": "string",
             "executingAuthority": inputFormdata?.roleOfCBO?.code,
@@ -90,12 +91,13 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
             "completionPeriod": inputFormdata?.projectCompletionPeriodInDays,
             "lineItems": [
                 {
-                    "id" : modifyParams?.lineItemID,
+                    "id" : modifyParams?.lineItems?.[0]?.id,
                     "estimateId": estimate?.id,
                     "tenantId": tenantId,
                     "status" : "ACTIVE",
                     "additionalDetails": {
-                    }
+                    },
+                    "auditDetails" : modifyParams?.lineItems?.[0]?.auditDetails
                 }
             ],
             "documents": createDocumentsPayload({
@@ -106,6 +108,8 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
                 inputFormdata?.documents?.doc_others_name,
                 createWorkOrderConfig
             ),
+            "auditDetails" : modifyParams?.contractAuditDetails,
+            "processInstance" : null,
             "additionalDetails": {
                 "officerInChargeId": inputFormdata?.nameOfOfficerInCharge?.code,
                 "projectType": project?.projectType,
@@ -126,7 +130,7 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
             }
         },
         workflow : {
-            "action": "CREATE",
+            "action": modifyParams?.updateAction ? modifyParams?.updateAction : "CREATE",
             "comment": modalData?.comments,
             "assignees": [
                 selectedApprover?.user?.uuid
