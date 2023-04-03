@@ -70,7 +70,7 @@ function ApplicationDetailsContent({
   const { t } = useTranslation();
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
   
-  const attendanceData = applicationDetails?.applicationDetails[0]?.additionalDetails?.table?.weekTable?.tableData
+  const attendanceData = applicationDetails?.applicationDetails?.[0]?.additionalDetails?.table?.weekTable?.tableData
   const [state, dispatch] = useReducer(reducer, attendanceData);
 
   const handleDateRangeChange = useCallback((data) => {

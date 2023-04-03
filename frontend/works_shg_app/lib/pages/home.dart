@@ -11,10 +11,12 @@ import 'package:works_shg_app/widgets/atoms/app_bar_logo.dart';
 import '../blocs/attendance/search_projects/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/search_muster_roll.dart';
+import '../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
 import '../utils/constants.dart';
+import '../utils/models/file_picker_data.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/drawer_wrapper.dart';
-import '../widgets/loaders.dart';
+import '../widgets/loaders.dart' as shg_loader;
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -87,16 +89,22 @@ class HomePage extends StatelessWidget {
                           }),
                           ButtonLink(
                               AppLocalizations.of(context)
-                                  .translate(i18.home.registerWageSeeker),
-                              () => context.router
-                                  .push(const RegisterIndividualRoute())),
+                                  .translate(i18.home.registerWageSeeker), () {
+                            context.read<WageSeekerBloc>().add(
+                                  const WageSeekerClearEvent(),
+                                );
+                            FilePickerData.imageFile = null;
+                            FilePickerData.bytes = null;
+                            context.router
+                                .push(const RegisterIndividualRoute());
+                          }),
                         ],
                       ),
                     ),
                   )
                 ],
               ))
-          : Loaders.circularLoader(context);
+          : shg_loader.Loaders.circularLoader(context);
     });
   }
 }
