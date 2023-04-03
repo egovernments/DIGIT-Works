@@ -155,7 +155,7 @@ const SearchMastersApplication = ({tenantId, onSubmit, data, resultOk, isLoading
     ],[]);
     
     const handleCreateNewOrg = () => {
-      history.push(`/${window.contextPath}/employee/masters/create-organization`);
+      history.push(`/${window.contextPath}/employee/masters/create-masters`);
     }
 
   return (

@@ -133,7 +133,7 @@ export const UICustomizations = {
         combinedResponse,
       };
     },
-    additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
@@ -162,7 +162,7 @@ export const UICustomizations = {
       if (key === "WORKS_PROJECT_NAME") {
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${columnConfig?.maxlength}ch` }}>
+            <span class="textoverflow" style={{ "--max-width": `${column?.maxlength}ch` }}>
               {String(t(value))}
             </span>
             {/* check condtion - if length greater than 20 */}
@@ -228,7 +228,7 @@ export const UICustomizations = {
         }
       }
     },
-    additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "ATM_MUSTER_ROLL_ID") {
         return (
           <span className="link">
@@ -275,7 +275,7 @@ export const UICustomizations = {
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromProposalDate, toProposalDate, department };
       return data;
     },
-    additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
@@ -318,7 +318,7 @@ export const UICustomizations = {
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus, status };
       return data;
     },
-    additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "ATM_MUSTER_ROLL_NUMBER") {
         return (
           <span className="link">
@@ -392,7 +392,7 @@ export const UICustomizations = {
         combinedResponse,
       };
     },
-    additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "WORKS_PRJ_SUB_ID") {
         return (
           <span className="link">
@@ -437,7 +437,7 @@ export const UICustomizations = {
       // data.body.Individual = { ...data.body.Individual, tenantId: Digit.ULBService.getCurrentTenantId() };
       return data;
     },
-    additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
@@ -496,7 +496,7 @@ export const UICustomizations = {
       data.body.SearchCriteria = { ...data.body.SearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() };
       return data;
     },
-    additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
@@ -570,7 +570,7 @@ export const UICustomizations = {
       });
       return link;
     },
-    additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "WORKS_BILL_NUMBER") {
         return (
           <span className="link">
@@ -611,7 +611,7 @@ export const UICustomizations = {
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus };
       return data;
     },
-    additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "WORKS_BILL_NUMBER") {
         return (
           <span className="link">

@@ -8,7 +8,7 @@ const Inbox = () => {
     const { t } = useTranslation();
     const location = useLocation()
     
-    const configs = inboxConfig();
+    // const configs = inboxConfig();
     const [pageConfig, setPageConfig] = useState(null)
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
@@ -21,8 +21,8 @@ const Inbox = () => {
         ]
     );
    
-    //const configs = data?.[Digit.Utils.getConfigModuleName()]?.InboxMusterConfig?.[0]
-
+    const configs = data?.[Digit.Utils.getConfigModuleName()]?.InboxMusterConfig?.[0]
+   
     const updatedConfig = useMemo(
         () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, pageConfig,"sections.search.uiConfig.fields",{}),
         [data,pageConfig]);

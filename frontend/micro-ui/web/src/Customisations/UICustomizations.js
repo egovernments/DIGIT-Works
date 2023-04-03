@@ -269,7 +269,7 @@ export const UICustomizations = {
             combinedResponse,
           };
         },
-        additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+        additionalCustomizations: (row, key, column, value, t, searchResult) => {
           if (key === "WORKS_PRJ_SUB_ID") {
             return (
               <span className="link">
@@ -325,7 +325,7 @@ export const UICustomizations = {
           });
           return link;
         },
-        additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+        additionalCustomizations: (row, key, column, value, t, searchResult) => {
           if (key === "WORKS_BILL_NUMBER") {
             return (
               <span className="link">
@@ -366,7 +366,7 @@ export const UICustomizations = {
           data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus };
           return data;
         },
-        additionalCustomizations: (row, key, columnConfig, value, t, searchResult) => {
+        additionalCustomizations: (row, key, column, value, t, searchResult) => {
           if (key === "WORKS_BILL_NUMBER") {
             return (
               <span className="link">

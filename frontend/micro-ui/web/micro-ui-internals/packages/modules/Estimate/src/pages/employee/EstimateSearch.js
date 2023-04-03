@@ -16,12 +16,12 @@ const EstimateSearch = () => {
         configModuleName,
         [
             {
-                "name": "SearchEstimateConfigFuzzy"
+                "name": "SearchEstimateWMSConfig"
             }
         ]
     );
 
-    const configs = data?.[configModuleName].SearchEstimateConfigFuzzy?.[0]
+    const configs = data?.[configModuleName].SearchEstimateWMSConfig?.[0]
 
     if (isLoading) return <Loader />
     return (
