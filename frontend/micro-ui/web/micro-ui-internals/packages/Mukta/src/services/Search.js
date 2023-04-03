@@ -50,7 +50,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             ],
           };
 
-        const documentDetails = {
+        let documentDetails = {
             title: "",
             asSectionHeader: true,
             additionalDetails: {
@@ -72,7 +72,14 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 ]
             }
         }
-        console.log(documentDetails);
+
+        //filter any empty object
+        documentDetails.additionalDetails.documents[0].values =documentDetails?.additionalDetails?.documents?.[0]?.values?.filter(value=>{
+            if(value?.title){
+                return value;
+            }
+        });
+
         // if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
             basicDetails = {
                 projectID : currentProject?.projectNumber,

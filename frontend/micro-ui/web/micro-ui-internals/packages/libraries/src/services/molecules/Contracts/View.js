@@ -30,7 +30,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
         ]
     }
     const allDocuments = combine(contract?.documents, contract?.additionalDetails?.estimateDocs);
-    const documentDetails = {
+    let documentDetails = {
         title: "",
         asSectionHeader: true,
         additionalDetails: {
@@ -60,7 +60,14 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
             ]
         }
     }
-    console.log(documentDetails);
+
+    //filter any empty object
+    documentDetails.additionalDetails.documents[0].values =documentDetails?.additionalDetails?.documents?.[0]?.values?.filter(value=>{
+        if(value?.title){
+            return value;
+        }
+    });
+
     const applicationDetails = { applicationDetails: [contractDetails, documentDetails] };    
 
   return {

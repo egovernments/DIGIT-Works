@@ -2,7 +2,6 @@
 //This will add 'id' for all the docs, as they are coming from response
 //These Ids will be used when user will modify or delete a doc of certain criteria
 export const handleModifyWOFiles = (uploadedDocs) => {
-  console.log("uploaded docs before", uploadedDocs);
   //form data inout name mapping with file category Name
   let fileKeyMappings = [
     {key : "doc_boq", value : "BOQ"},
@@ -13,7 +12,6 @@ export const handleModifyWOFiles = (uploadedDocs) => {
 
   //keep only active docs -- at a time there would be only fileKeyMappings.length no of files
   uploadedDocs = uploadedDocs?.filter(uploadedDoc=>uploadedDoc?.status !== "INACTIVE");
-  console.log("uploadedDocs after", uploadedDocs);
   fileKeyMappings?.map((fileKeyMapping)=>{
     let currentDoc = uploadedDocs?.filter((doc)=>doc?.documentType === fileKeyMapping?.value)[0];
 
@@ -26,7 +24,6 @@ export const handleModifyWOFiles = (uploadedDocs) => {
       ] 
     }
   });
-  console.log(documentObject);
   return documentObject;
 }
 
@@ -52,7 +49,6 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
       }
       
       let organisations = createNameOfCBOObject(organisationOptions);
-      console.log(organisations, contract, (organisations?.filter(org=>org?.code === contract?.additionalDetails?.cboCode))?.[0]);
       let assignees = createOfficerInChargeObject(assigneeOptions);
 
       configs.defaultValues.basicDetails_projectID = project?.projectNumber ? project?.projectNumber  : "",
@@ -66,7 +62,6 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
       configs.defaultValues.projectCompletionPeriodInDays = isModify ? contract?.completionPeriod : "";
       configs.defaultValues.documents = isModify ? handleModifyWOFiles(contract?.documents) : "";
       configs.defaultValues.WOTermsAndConditions = isModify ? [...contract?.additionalDetails?.termsAndConditions] : "";
-      console.log("COntract DOcs", handleModifyWOFiles(contract?.documents));
       setSessionFormData({...sessionFormData, ...configs?.defaultValues});
     }
 }
