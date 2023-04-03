@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, AppContainer, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import Response from "../../components/Response";
 import SearchAttendance from "./SearchAttendance";
-
+import SearchAttendancePlainSearch from "./SearchAttendencePlainSearch";
 const AttendanceBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
   const loc = useLocation();
@@ -64,6 +64,7 @@ const App = ({ path }) => {
         />
         <PrivateRoute path={`${path}/response`} component={Response} />
         <PrivateRoute path={`${path}/search-attendance`} component={SearchAttendance} />
+        <PrivateRoute path={`${path}/search-attendance-plain`} component={SearchAttendancePlainSearch} />
       </AppContainer>
     </Switch>
   );

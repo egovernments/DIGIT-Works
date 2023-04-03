@@ -1,21 +1,17 @@
-const searchConfigMuktaFuzzy = () => {
+const searchConfig = () => {
   return {
-    label: "WORKS_SEARCH_ESTIMATES",
+    label: "ATM_SEARCH_ATTENDANCE",
     type: "search",
     apiDetails: {
-      serviceName: "/wms/estimate/_search",
+      serviceName: "/muster-roll/v1/_search",
       requestParam: {},
-      requestBody: {
-        inbox: {
-          moduleSearchCriteria: {},
-        },
-      },
+      requestBody: {},
       minParametersForSearchForm: 1,
       masterName: "commonUiConfig",
-      moduleName: "SearchEstimateConfig",
-      tableFormJsonPath: "requestBody.inbox",
-      filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
-      searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+      moduleName: "SearchAttendanceConfig",
+      tableFormJsonPath: "requestParam",
+      filterFormJsonPath: "requestParam",
+      searchFormJsonPath: "requestParam",
     },
     sections: {
       search: {
@@ -24,15 +20,15 @@ const searchConfigMuktaFuzzy = () => {
           primaryLabel: "ES_COMMON_SEARCH",
           secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
           minReqFields: 1,
-          showFormInstruction: "ESTIMATE_SEARCH_HINT",
+          showFormInstruction: "MUSTER_SEARCH_HINT",
           defaultValues: {
             ward: "",
-            typeOfWork: "",
-            projectName: "",
-            estimateId: "",
-            status: "",
-            fromProposalDate: "",
-            toProposalDate: "",
+            projectType: "",
+            attendanceRegisterName: "",
+            musterRollNumber: "",
+            musterRollStatus: "",
+            startDate: "",
+            endDate: "",
           },
           fields: [
             {
@@ -41,6 +37,9 @@ const searchConfigMuktaFuzzy = () => {
               isMandatory: false,
               disable: false,
               populators: {
+                optionsCustomStyle: {
+                  top: "2.3rem",
+                },
                 name: "ward",
                 type: "ward",
                 optionsKey: "i18nKey",
@@ -55,7 +54,7 @@ const searchConfigMuktaFuzzy = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                name: "typeOfWork",
+                name: "projectType",
                 optionsKey: "name",
                 optionsCustomStyle: {
                   top: "2.3rem",
@@ -76,7 +75,7 @@ const searchConfigMuktaFuzzy = () => {
                 convertStringToRegEx: ["populators.validation.pattern"],
               },
               populators: {
-                name: "projectName",
+                name: "attendanceRegisterName",
                 error: "PROJECT_PATTERN_ERR_MSG",
                 validation: {
                   pattern: '^[^\\$"<>?\\\\~`!@$%^()+={}\\[\\]*:;“”‘’]{1,50}$',
@@ -85,15 +84,18 @@ const searchConfigMuktaFuzzy = () => {
               },
             },
             {
-              label: "ESTIMATE_ESTIMATE_NO",
+              label: "ATM_MUSTER_ROLL_ID",
               type: "text",
               isMandatory: false,
               disable: false,
+              preProcess: {
+                convertStringToRegEx: ["populators.validation.pattern"],
+              },
               populators: {
-                name: "estimateId",
-                error: "ESTIMATE_PATTERN_ERR_MSG",
+                name: "musterRollNumber",
+                error: "PROJECT_PATTERN_ERR_MSG",
                 validation: {
-                  pattern: "ES\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
+                  pattern: "MR\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
                   minlength: 2,
                 },
               },
@@ -107,30 +109,30 @@ const searchConfigMuktaFuzzy = () => {
                 optionsCustomStyle: {
                   top: "2.3rem",
                 },
-                name: "status",
+                name: "musterRollStatus",
                 optionsKey: "i18nKey",
                 allowMultiSelect: false,
                 masterName: "commonUiConfig",
-                moduleName: "SearchEstimateConfig",
+                moduleName: "SearchAttendanceConfig",
                 customfn: "populateReqCriteria",
               },
             },
             {
-              label: "WORKS_COMMON_FROM_DATE_LABEL",
+              label: "CREATED_FROM_DATE",
               type: "date",
               isMandatory: false,
               disable: false,
               populators: {
-                name: "fromProposalDate",
+                name: "startDate",
               },
             },
             {
-              label: "WORKS_COMMON_TO_DATE_LABEL",
+              label: "CREATED_TO_DATE",
               type: "date",
               isMandatory: false,
               disable: false,
               populators: {
-                name: "toProposalDate",
+                name: "endDate",
               },
             },
           ],
@@ -150,31 +152,32 @@ const searchConfigMuktaFuzzy = () => {
         uiConfig: {
           columns: [
             {
-              label: "ESTIMATE_ESTIMATE_NO",
-              jsonPath: "businessObject.estimateNumber",
+              label: "ES_COMMON_MUSTER_ROLL_ID",
+              jsonPath: "businessObject.musterRollNumber",
               additionalCustomization: true,
             },
             {
               label: "ES_COMMON_PROJECT_NAME",
-              jsonPath: "businessObject.project.name",
-            },
-            {
-              label: "ES_COMMON_LOCATION",
-              jsonPath: "businessObject.additionalDetails.location",
+              jsonPath: "businessObject.additionalDetails.attendanceRegisterName",
               additionalCustomization: true,
             },
             {
-              label: "ESTIMATE_PREPARED_BY",
-              jsonPath: "businessObject.additionalDetails.creator",
+              label: "ES_COMMON_LOCATION",
+              jsonPath: "businessObject.additionalDetails",
+              additionalCustomization: true,
             },
             {
-              label: "CORE_COMMON_STATUS",
+              label: "COMMON_NAME_OF_CBO",
+              jsonPath: "businessObject.additionalDetails.orgName",
+            },
+            {
+              label: "COMMON_WORKFLOW_STATES",
               jsonPath: "ProcessInstance.state.state",
               additionalCustomization: true,
             },
             {
-              label: "WORKS_ESTIMATED_AMOUNT",
-              jsonPath: "businessObject.additionalDetails.totalEstimatedAmount",
+              label: "MUSTER_WAGE_AMOUNT",
+              jsonPath: "businessObject.additionalDetails.amount",
               additionalCustomization: true,
             },
           ],
@@ -190,4 +193,4 @@ const searchConfigMuktaFuzzy = () => {
   };
 };
 
-export default searchConfigMuktaFuzzy;
+export default searchConfig;
