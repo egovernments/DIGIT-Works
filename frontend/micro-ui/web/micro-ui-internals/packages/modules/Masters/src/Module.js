@@ -11,13 +11,14 @@ import SearchMastersApplication from "./components/SearchMasters";
 import RegisterWageSeeker from "./pages/employee/WageSeeker/RegisterWageSeeker";
 import SearchWageSeeker from "./pages/employee/WageSeeker/SearchWageSeeker";
 import ViewWageSeeker from "./pages/employee/WageSeeker/ViewWageSeeker";
-import ModifyWageSeeker from "./pages/employee/WageSeeker/ModifyWageSeeker";
+import ModifyWageSeeker from "./pages/employee/WageSeeker/ModifyWageSeeker/index";
 
 import CreateOrganisation from  "./pages/employee/Organisation/CreateOrganization/index";
 import SearchOrganisation from "./pages/employee/Organisation/SearchOrganisation";
 import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
 
 import TransferCodeTable from "./components/TransferCodeTable";
+import MastersResponse from "./components/MastersResponse";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
 
@@ -55,7 +56,8 @@ const componentsToRegister = {
   CreateOrganisation,
   SearchOrganisation,
   ViewOrganisation,
-  TransferCodeTable
+  TransferCodeTable,
+  MastersResponse
 };
 
 export const initMastersComponents = () => {

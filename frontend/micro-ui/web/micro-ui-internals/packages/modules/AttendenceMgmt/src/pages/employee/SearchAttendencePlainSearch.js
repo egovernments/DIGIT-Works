@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
-import searchConfig from "../../config/searchConfig";
+import searchConfig from "../../config/searchConfigPlainSearch";
 
-const SearchAttendance = () => {
+const SearchAttendancePlainSearch = () => {
   const { t } = useTranslation();
 
   // const configs = searchConfig();
@@ -12,11 +12,11 @@ const SearchAttendance = () => {
 
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, configModuleName, [
     {
-      name: "SearchAttendanceWMSConfig",
+      name: "SearchAttendanceConfig",
     },
   ]);
 
-  const configs = data?.[configModuleName].SearchAttendanceWMSConfig?.[0];
+  const configs = data?.[configModuleName].SearchAttendanceConfig?.[0];
 
   const updatedConfig = useMemo(() => Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.search.uiConfig.fields", {}), [
     configs,
@@ -35,4 +35,4 @@ const SearchAttendance = () => {
   );
 };
 
-export default SearchAttendance;
+export default SearchAttendancePlainSearch;

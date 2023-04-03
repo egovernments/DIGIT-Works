@@ -5,7 +5,7 @@ import searchConfig from "../../configs/searchConfig";
 import searchConfigMukta from "../../configs/searchConfigMukta";
 import searchConfigMuktaFuzzy from "../../configs/SearchConficMuktaFuzzy";
 
-const EstimateSearch = () => {
+const EstimateSearchPlain = () => {
     const { t } = useTranslation();
 
     // const configs = searchConfigMuktaFuzzy();
@@ -16,12 +16,12 @@ const EstimateSearch = () => {
         configModuleName,
         [
             {
-                "name": "SearchEstimateWMSConfig"
+                "name": "SearchEstimateConfig"
             }
         ]
     );
 
-    const configs = data?.[configModuleName].SearchEstimateWMSConfig?.[0]
+    const configs = data?.[configModuleName].SearchEstimateConfig?.[0]
 
     if (isLoading) return <Loader />
     return (
@@ -34,4 +34,4 @@ const EstimateSearch = () => {
     )
 }
 
-export default EstimateSearch;
+export default EstimateSearchPlain;

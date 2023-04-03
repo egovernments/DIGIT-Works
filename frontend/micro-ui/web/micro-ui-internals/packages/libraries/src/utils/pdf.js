@@ -1023,6 +1023,11 @@ export const downloadPDFFromLink = async (link, openIn = "_blank") => {
   }
 };
 
+export const getDocumentName = (documentLink = "", index = 0) => {
+  let documentName = decodeURIComponent(documentLink.split("?")[0].split("/").pop().slice(13)) || `Document - ${index + 1}`;
+  return documentName;
+}
+
 /**
  * Custom util to Download any PDF from egov-pdf
  *
@@ -1040,7 +1045,7 @@ export const downloadEgovPDF = async (
   queryParams={},
   fileName="application.pdf"
 ) => {
-  const response =await CustomService.getResponse({ url:`/egov-pdf/download/${pdfRoute}`, params:queryParams, useCache:false,setTimeParam:false })
+  const response =await CustomService.getResponse({ url:`/egov-pdf/download/${pdfRoute}`, params:queryParams, useCache:false,setTimeParam:false ,userDownload:true})
   const responseStatus = parseInt(response.status, 10);
   if (responseStatus === 201 || responseStatus === 200) {
     downloadPdf(new Blob([response.data], { type: "application/pdf" }), fileName);

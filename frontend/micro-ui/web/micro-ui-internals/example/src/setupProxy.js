@@ -77,7 +77,8 @@ module.exports = function (app) {
     "/org-services/organisation/v1/_search",
     "/expensebilling",
     "/bankaccount-service",
-    "/wms/estimate/_search"
+    "/wms",
+    "/wms/estimate/_search",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };
