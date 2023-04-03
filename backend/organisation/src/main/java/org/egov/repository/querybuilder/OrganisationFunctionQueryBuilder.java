@@ -72,6 +72,37 @@ public class OrganisationFunctionQueryBuilder {
             preparedStmtList.add(searchCriteria.getName());
         }
 
+        if (StringUtils.isNotBlank(searchCriteria.getApplicationNumber())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" org.applicationNumber=? ");
+            preparedStmtList.add(searchCriteria.getApplicationNumber());
+        }
+
+        if (StringUtils.isNotBlank(searchCriteria.getOrgNumber())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" org.org_number=? ");
+            preparedStmtList.add(searchCriteria.getOrgNumber());
+        }
+
+        if (StringUtils.isNotBlank(searchCriteria.getApplicationStatus())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" org.application_status=? ");
+            preparedStmtList.add(searchCriteria.getApplicationStatus());
+        }
+
+        if (searchCriteria.getCreatedFrom() != null && searchCriteria.getCreatedFrom() != 0) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" org.created_time >= ? ");
+            preparedStmtList.add(searchCriteria.getCreatedFrom());
+        }
+
+        if (searchCriteria.getCreatedTo() != null && searchCriteria.getCreatedTo() != 0) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" org.created_time <= ? ");
+            preparedStmtList.add(searchCriteria.getCreatedTo());
+        }
+
+
         if (!searchCriteria.getIncludeDeleted()) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" org.is_active=true ");
