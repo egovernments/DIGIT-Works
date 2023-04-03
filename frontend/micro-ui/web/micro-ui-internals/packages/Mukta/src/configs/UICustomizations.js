@@ -463,6 +463,22 @@ export const UICustomizations = {
         );
       }
 
+      if (column.label === "ES_COMMON_PROJECT_NAME") {
+        
+        return (
+          <div class="tooltip">
+            <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+              {String(t(value))}
+            </span>
+            {/* check condtion - if length greater than 20 */}
+            <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+              {row?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
+            </span>
+          </div>
+        );
+      }
+
+
       if (column.label === "COMMON_WORKFLOW_STATES") {
         return <span>{t(`WF_MUSTOR_${value}`)}</span>
       }

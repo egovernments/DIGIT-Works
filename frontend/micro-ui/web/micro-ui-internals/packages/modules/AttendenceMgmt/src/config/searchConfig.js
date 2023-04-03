@@ -167,7 +167,8 @@ const searchConfig = () => {
           },
           {
             "label": "ES_COMMON_PROJECT_NAME",
-            "jsonPath": "businessObject.additionalDetails.attendanceRegisterName"
+            "jsonPath": "businessObject.additionalDetails.attendanceRegisterName",
+            "additionalCustomization": true
           },
           {
             "label": "ES_COMMON_LOCATION",
