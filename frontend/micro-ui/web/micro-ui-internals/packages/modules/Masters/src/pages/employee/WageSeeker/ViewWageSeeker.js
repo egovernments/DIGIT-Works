@@ -21,7 +21,7 @@ const ViewWageSeeker = () => {
     offset: 0, limit: 100
   }
   
-  const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.wageSeeker.useViewWageSeeker({tenantId, data: payload, searchParams})
+  const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.wageSeeker.useViewWageSeeker({tenantId, data: payload, searchParams, config: { cacheTime:0 }})
 
   useEffect(() => {
     if(isError) {

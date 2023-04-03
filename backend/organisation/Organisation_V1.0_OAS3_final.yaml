@@ -211,13 +211,10 @@ components:
             $ref: '#/components/schemas/Function'
           minItems: 1
         jurisdiction:
+          description: jurisdiction code
           type: array
           items:
-            type: string
-            minLength: 2
-            maxLength: 64
-          minLength: 2
-          maxLength: 64
+            $ref: '#/components/schemas/Jurisdiction'
         isActive:
           type: boolean
         documents:
@@ -225,8 +222,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Document'
-        additionalFields:
-          $ref: '#/components/schemas/additionalFields'
+        additionalDetails:
+          description: Json object to capture any extra information which is not accommodated by model
+          type: object
         auditDetails:
           type: object
           allOf:
@@ -251,6 +249,20 @@ components:
           type: string
           minLength: 2
           maxLength: 64
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+    Jurisdiction:
+      title: Jurisdiction
+      description: Object to capture Jurisdictions for an organisation
+      type: object
+      properties:
+        code:
+          description: Jurisdiction code
+          type: string
+        id:
+          description: Jurisdiction id
+          type: string
         additionalDetails:
           description: Any additional details that need to be captured
           type: object
@@ -319,8 +331,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Document'
-        additionalFields:
-          $ref: '#/components/schemas/additionalFields'
+        additionalDetails:
+          description: Json object to capture any extra information which is not accommodated by model
+          type: object
         auditDetails:
           type: object
           allOf:
@@ -383,11 +396,27 @@ components:
           type: string
           minLength: 2
           maxLength: 1000
+        name:
+          type: string
+        applicationNumber:
+          type: string
+        orgNumber:
+          type: string
+        applicationStatus:
+          type: string
         functions:
           type: object
           allOf:
             - $ref: '#/components/schemas/Function'
             - description: Represents the functions of an organisation
+        createdFrom:
+          type: number
+          format: double
+        createdTo:
+          type: number
+          format: double
+        boundaryCode:
+          type: string
         identifierType:
           type: string
         identifierValue:
@@ -429,24 +458,6 @@ components:
           allOf:
             - $ref: '#/components/schemas/Pagination'
             - description: Pagination details
-    additionalFields:
-      title: additionalFields
-      type: object
-      properties:
-        schema:
-          example: HOUSEHOLD
-          type: string
-          minLength: 2
-          maxLength: 64
-        version:
-          example: 2
-          type: integer
-          minimum: 1
-          format: int32
-        fields:
-          type: array
-          items:
-            $ref: '#/components/schemas/Field'
     Address:
       title: Address
       description: Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case.
@@ -499,8 +510,12 @@ components:
           type: string
           minLength: 2
           maxLength: 64
-        locality:
-          $ref: '#/components/schemas/Boundary'
+        boundaryType:
+          description: The boundary type in which the property is located. This refers to the "label" field in boundary-data MDMS eg. Ward, Locality etc.
+          type: string
+        boundaryCode:
+          description: This refers to the boundary code. It can be found in boundary-data MDMS.
+          type: string
         geoLocation:
           $ref: '#/components/schemas/GeoLocation'
       required:
@@ -617,23 +632,6 @@ components:
             $ref: '#/components/schemas/Error'
       required:
         - ResponseHeader
-    Field:
-      title: Field
-      type: object
-      properties:
-        key:
-          example: height
-          type: string
-          minLength: 2
-          maxLength: 64
-        value:
-          example: '180'
-          type: string
-          minLength: 2
-          maxLength: 10000
-      required:
-        - key
-        - value
     GeoLocation:
       title: GeoLocation
       type: object

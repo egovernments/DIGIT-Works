@@ -71,14 +71,13 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
                 "estimateNumber" : estimate?.estimateNumber,
                 "officerInChargeDesgn" : inputFormdata?.designationOfOfficerInCharge,
                 "officerInChargeName" : inputFormdata?.nameOfOfficerInCharge,
+                "projectDesc" : project?.description
             }
         },
         workflow : {
             "action": "CREATE",
             "comment": modalData?.comments,
-            "assignees": [
-                selectedApprover?.user?.uuid
-            ]
+            "assignees": selectedApprover?.user?.uuid ? [selectedApprover?.user?.uuid] : []
         }
     }
 }

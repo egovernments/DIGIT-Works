@@ -57,8 +57,7 @@ public class Function {
     private Double validTo = null;
 
     @JsonProperty("applicationStatus")
-    @Size(min = 2, max = 64)
-    private String applicationStatus = null;
+    private ApplicationStatus applicationStatus = null;
 
     @JsonProperty("wfStatus")
     private String wfStatus = null;
@@ -68,7 +67,7 @@ public class Function {
 
     @JsonProperty("documents")
     @Valid
-    private List<Document> documents = null;
+    private List<Document> documents = null;//upsert
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
