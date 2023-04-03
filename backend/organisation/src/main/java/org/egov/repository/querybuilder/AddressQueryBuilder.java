@@ -1,6 +1,7 @@
 package org.egov.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -31,6 +32,25 @@ public class AddressQueryBuilder {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" addr.org_id IN (").append(createQuery(organisationIds)).append(")");
             addToPreparedStatement(preparedStmtList, organisationIds);
+        }
+
+        return queryBuilder.toString();
+    }
+
+    public String getAddressSearchQueryBasedOnCriteria(String boundaryCode, String tenantId, List<Object> preparedStmtList) {
+        StringBuilder queryBuilder = null;
+        queryBuilder = new StringBuilder(FETCH_ADDRESS_QUERY);
+
+        if (StringUtils.isNotBlank(tenantId)) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" addr.tenant_id=? ");
+            preparedStmtList.add(tenantId);
+        }
+
+        if (StringUtils.isNotBlank(boundaryCode)) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" addr.boundary_code=? ");
+            preparedStmtList.add(boundaryCode);
         }
 
         return queryBuilder.toString();
