@@ -260,6 +260,8 @@ public class OrganisationRepository {
     private void addJurisdictionsToOrganisation(Organisation organisation, List<Jurisdiction> jurisdictions) {
         organisation.setJurisdiction(new ArrayList<>());
         for (Jurisdiction jurisdiction: jurisdictions) {
+            // Add jurisdiction from list of jurisdictions to organisation based on orgId.
+            // Check if orgId in jurisdiction is equal to orgId in organisation and if organisation jurisdictions does not contain the jurisdiction to be added
             if (jurisdiction.getOrgId().equals(organisation.getId()) && organisation.getJurisdiction().stream().noneMatch(i -> i.getId().equals(jurisdiction.getId()))) {
                 organisation.getJurisdiction().add(jurisdiction);
             }
