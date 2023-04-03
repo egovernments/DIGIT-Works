@@ -139,8 +139,8 @@ public class NotificationService {
             smsDetails.put("mobileNumber",orgDetails.get("mobileNumbers").get(i));
 
 
-            message = buildMessageForApproveAction_WO_CBO(contract, smsDetails, message);
-            SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
+            String customizedMessage = buildMessageForApproveAction_WO_CBO(contract, smsDetails, message);
+            SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
             producer.push(config.getSmsNotifTopic(), smsRequest);
         }
     }
