@@ -1,17 +1,25 @@
-const searchConfigMukta = () => {
+const searchConfigMuktaFuzzy = () => {
     return  {
             "label": "WORKS_SEARCH_ESTIMATES",
             "type": "search",
             "apiDetails": {
-                "serviceName": "/estimate-service/estimate/v1/_search",
-                "requestParam": {},
-                "requestBody": {},
+                "serviceName": "/wms/estimate/_search",
+                "requestParam": {
+
+                },
+                "requestBody": {
+                  "inbox":{
+                      "moduleSearchCriteria":{
+
+                      }
+                  }
+                },
                 "minParametersForSearchForm": 1,
                 "masterName": "commonUiConfig",
                 "moduleName": "SearchEstimateConfig",
-                "tableFormJsonPath": "requestParam",
-                "filterFormJsonPath": "requestParam",
-                "searchFormJsonPath": "requestParam"
+                "tableFormJsonPath": "requestBody.inbox",
+                "filterFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+                "searchFormJsonPath": "requestBody.inbox.moduleSearchCriteria"
             },
             "sections": {
                 "search": {
@@ -23,10 +31,10 @@ const searchConfigMukta = () => {
                         "showFormInstruction": "ESTIMATE_SEARCH_HINT",
                         "defaultValues": {
                             "ward": "",
-                            "projectType": "",
+                            "typeOfWork": "",
                             "projectName": "",
-                            "estimateNumber": "",
-                            "wfStatus": "",
+                            "estimateId": "",
+                            "status": "",
                             "fromProposalDate": "",
                             "toProposalDate": ""
                         },
@@ -51,7 +59,7 @@ const searchConfigMukta = () => {
                                 "isMandatory": false,
                                 "disable": false,
                                 "populators": {
-                                    "name": "projectType",
+                                    "name": "typeOfWork",
                                     "optionsKey": "name",
                                     "optionsCustomStyle": {
                                         "top": "2.3rem"
@@ -88,7 +96,7 @@ const searchConfigMukta = () => {
                                 "isMandatory": false,
                                 "disable": false,
                                 "populators": {
-                                    "name": "estimateNumber",
+                                    "name": "estimateId",
                                     "error": "ESTIMATE_PATTERN_ERR_MSG",
                                     "validation": {
                                         "pattern": "ES\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
@@ -102,7 +110,7 @@ const searchConfigMukta = () => {
                                 "isMandatory": false,
                                 "disable": false,
                                 "populators": {
-                                    "name": "wfStatus"
+                                    "name": "status"
                                 }
                             },
                             {
@@ -141,34 +149,36 @@ const searchConfigMukta = () => {
                         "columns": [
                             {
                                 "label": "ESTIMATE_ESTIMATE_NO",
-                                "jsonPath": "estimateNumber",
+                                "jsonPath": "businessObject.estimateNumber",
                                 "additionalCustomization": true
                             },
                             {
                                 "label": "ES_COMMON_PROJECT_NAME",
-                                "jsonPath": "name"
+                                "jsonPath": "businessObject.project.name"
                             },
                             {
                                 "label": "ES_COMMON_LOCATION",
+                                "jsonPath": "businessObject.additionalDetails.location",
                                 "additionalCustomization": true
                             },
                             {
                                 "label": "ESTIMATE_PREPARED_BY",
-                                "jsonPath": "additionalDetails.creator"
+                                "jsonPath": "businessObject.additionalDetails.creator"
                             },
                             {
                                 "label": "CORE_COMMON_STATUS",
-                                "jsonPath": "wfStatus"
+                                "jsonPath": "ProcessInstance.state.state",
+                                "additionalCustomization": true
                             },
                             {
                                 "label": "WORKS_ESTIMATED_AMOUNT",
-                                "jsonPath": "estimateDetails",
-                                "additionalCustomization": true
+                                "jsonPath": "businessObject.additionalDetails.totalEstimatedAmount",
+                                "additionalCustomization":true
                             }
                         ],
                         "enableGlobalSearch": false,
                         "enableColumnSort": true,
-                        "resultsJsonPath": "estimates"
+                        "resultsJsonPath": "items"
                     },
                     "children": {},
                     "show": true
@@ -178,4 +188,4 @@ const searchConfigMukta = () => {
         }
 }
 
-export default searchConfigMukta;
+export default searchConfigMuktaFuzzy;

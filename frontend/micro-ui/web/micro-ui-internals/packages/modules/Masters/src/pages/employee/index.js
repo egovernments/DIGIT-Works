@@ -38,6 +38,18 @@ const MastersBreadCrumb = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
+      path: `/${window.contextPath}/employee/masters/search-wageseeker`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("ACTION_TEST_MASTERS_SEARCH_WAGESEEKER")}` : t("ACTION_TEST_MASTERS_SEARCH_WAGESEEKER"),
+      show: location.pathname.includes("/masters/search-wageseeker") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/masters/modify-wageseeker`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_MODIFY_WAGESEEKER")}` : `${t("MASTERS_MODIFY_WAGESEEKER")}`,
+      show: location.pathname.includes("/masters/modify-wageseeker") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
       path: `/${window.contextPath}/employee/masters/view-wageseeker`,
       content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_VIEW_WAGESEEKER")}` : `${t("MASTERS_VIEW_WAGESEEKER")}`,
       show: location.pathname.includes("/masters/view-wageseeker") ? true : false,
@@ -52,6 +64,9 @@ const App = ({ path }) => {
   const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
   const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
 
+  const wageSeekerSession = Digit.Hooks.useSessionStorage("WAGE_SEEKER_CREATE", {});
+  const [wsSesionFormData, setWsSessionFormData, clearWsSessionFormData] = wageSeekerSession;
+
   const SearchMasters = Digit?.ComponentRegistryService?.getComponent("SearchMasters");
   const CreateMasters = Digit?.ComponentRegistryService?.getComponent("CreateMasters");
   const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWageSeeker");
@@ -61,10 +76,16 @@ const App = ({ path }) => {
   const ViewWageSeeker = Digit?.ComponentRegistryService?.getComponent("ViewWageSeeker");
   const ModifyWageSeeker = Digit?.ComponentRegistryService?.getComponent("ModifyWageSeeker");
   const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganisation");
+
+  const MastersResponse = Digit?.ComponentRegistryService?.getComponent("MastersResponse");
+
   useEffect(() => {
     return () => {
       if (!window.location.href.includes("create-organization") && Object.keys(sessionFormData) != 0) {
         clearSessionFormData();
+      }
+      if (!window.location.href.includes("modify-wageseeker") && wsSesionFormData && Object.keys(wsSesionFormData) != 0) {
+        clearWsSessionFormData();
       }
     };
   }, [location]);
@@ -88,6 +109,8 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/create-wageseeker`} component={RegisterWageSeekerComponent} />
         <PrivateRoute path={`${path}/view-wageseeker`} component={()=> <ViewWageSeeker parentRoute={path}/>} />
         <PrivateRoute path={`${path}/modify-wageseeker`} component={()=> <ModifyWageSeeker parentRoute={path}/>} />
+
+        <PrivateRoute path={`${path}/response`} component={() => <MastersResponse parentRoute={path}/>} />
       </AppContainer>
     </Switch>
   );
