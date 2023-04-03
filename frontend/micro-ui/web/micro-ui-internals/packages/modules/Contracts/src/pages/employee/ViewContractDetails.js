@@ -18,7 +18,7 @@ const ViewContractDetails = () => {
         tenantId : queryStrings?.tenantId || tenantId,
         contractNumber : queryStrings?.workOrderNumber
     }
-    const [cardState,setCardState] = useState({})
+    const [cardState,setCardState] = useState([])
     const [activeLink, setActiveLink] = useState("Work_Order");
     const configNavItems = [
         {
@@ -77,13 +77,18 @@ const ViewContractDetails = () => {
 
     useEffect(() => {
         //here set cardstate when contract and project is available
-          setCardState({
-              "WORKS_ORDER_ID": payload?.contractNumber,
-              "WORKS_PROJECT_ID": project?.projectNumber,            
-              "ES_COMMON_PROPOSAL_DATE": Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal),
-              "ES_COMMON_PROJECT_NAME": project?.name,
-              "PROJECTS_DESCRIPTION": project?.description
-          }) 
+        setCardState([
+            {
+                title: '',
+                values: [
+                  { title: "WORKS_ORDER_ID", value: payload?.contractNumber },
+                  { title: "WORKS_PROJECT_ID", value: project?.projectNumber, },
+                  { title: "ES_COMMON_PROPOSAL_DATE", value: Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal) },
+                  { title: "ES_COMMON_PROJECT_NAME", value: project?.name },
+                  { title: "PROJECTS_DESCRIPTION", value: project?.description }
+                ]
+              }
+        ]) 
       }, [project])
 
 

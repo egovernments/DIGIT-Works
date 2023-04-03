@@ -140,13 +140,13 @@ import useCreateWO from "./works/useCreateWO";
 
 import useSearchOrg from "./works/useSearchOrg";
 
-
 import useViewBill from "./bills/useViewBill";
 import useContractSearch from "./contracts/useContractSearch";
 import useBillCreate from "./bills/useBillCreate";
 import useUpdateProject from "./works/useUpdateProject";
 import useUpdateWO from "./works/useUpdateWO";
 
+import useViewOrganisation from "./organisation/useViewOrganisation";
 import useUpdateBankAccount from "./bankAccount/useUpdateBankAccount";
 import useCreateBankAccount from "./bankAccount/useCreateBankAccount";
 
@@ -184,7 +184,8 @@ const contracts = {
 };
 
 const organisation = {
-  useSearchOrg
+  useSearchOrg,
+  useViewOrganisation
 }
 
 const estimates = {

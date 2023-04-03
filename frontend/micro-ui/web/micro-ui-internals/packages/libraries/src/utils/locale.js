@@ -41,7 +41,7 @@ export const convertDotValues = (value = "") => {
 export const convertToLocale = (value = "", key = "") => {
   let convertedValue = convertDotValues(value)?.toUpperCase();
   if (convertedValue == "NA") {
-    return "COMMON_NA";
+    return "ES_COMMON_NA";
   }
   return `${key}_${convertedValue}`;
 };
@@ -49,7 +49,7 @@ export const convertToLocale = (value = "", key = "") => {
 export const getMohallaLocale = (value = "", tenantId = "") => {
   let convertedValue = convertDotValues(tenantId);
   if (convertedValue == "NA" || !checkForNotNull(value)) {
-    return "COMMON_NA";
+    return "ES_COMMON_NA";
   }
   convertedValue = convertedValue.toUpperCase();
   return convertToLocale(value, `${convertedValue}_ADMIN`);
@@ -58,7 +58,7 @@ export const getMohallaLocale = (value = "", tenantId = "") => {
 export const getCityLocale = (value = "") => {
   let convertedValue = convertDotValues(value);
   if (convertedValue == "NA" || !checkForNotNull(value)) {
-    return "COMMON_NA";
+    return "ES_COMMON_NA";
   }
   convertedValue = convertedValue.toUpperCase();
   return convertToLocale(convertedValue, `TENANT_TENANTS`);

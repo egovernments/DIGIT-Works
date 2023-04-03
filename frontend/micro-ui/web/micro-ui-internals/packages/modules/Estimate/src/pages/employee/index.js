@@ -5,6 +5,7 @@ import { Switch, useLocation } from "react-router-dom";
 
 import CreateEstimate from "./Estimates/CreateEstimate/CreateEstimate";
 import EstimateSearch from "./EstimateSearch";
+import EstimateSearchPlain from "./EstimateSearchPlain";
 import EstimateInbox from "./EstimateInbox";
 import ViewEstimate from "./ViewEstimate";
 import EstimateResponse from "./Estimates/CreateEstimate/EstimateResponse";
@@ -106,6 +107,7 @@ const App = ({ path }) => {
                     </div>
                     <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{ path }} EstimateSession={EstimateSession} />} />
                     <PrivateRoute path={`${path}/search-estimate`} component={() => <EstimateSearch {...{ path }} />} />
+                    <PrivateRoute path={`${path}/search-estimate-plain`} component={() => <EstimateSearchPlain {...{ path }} />} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <EstimateInbox {...{ path }} />} />
                     <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewEstimate {...{ path }} />} />
                     <PrivateRoute path={`${path}/response`} component={() => <EstimateResponse {...{ path }} />} />
