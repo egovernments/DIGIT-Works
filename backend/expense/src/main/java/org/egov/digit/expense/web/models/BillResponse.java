@@ -1,21 +1,18 @@
 package org.egov.digit.expense.web.models;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
-import org.egov.digit.expense.web.models.Bill;
-import org.egov.digit.expense.web.models.Pagination;
-import org.egov.digit.expense.web.models.ResponseInfo;
-import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * BillResponse
@@ -26,28 +23,26 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillResponse   {
-        @JsonProperty("responseInfo")
+public class BillResponse {
 
-          @Valid
-                private ResponseInfo responseInfo = null;
+	@JsonProperty("responseInfo")
+	@Valid
+	private ResponseInfo responseInfo;
 
-        @JsonProperty("bill")
-          @Valid
-                private List<Bill> bill = null;
+	@JsonProperty("bill")
+	@Valid
+	private List<Bill> bill;
 
-        @JsonProperty("pagination")
+	@JsonProperty("pagination")
+	@Valid
+	private Pagination pagination;
 
-          @Valid
-                private Pagination pagination = null;
-
-
-        public BillResponse addBillItem(Bill billItem) {
-            if (this.bill == null) {
-            this.bill = new ArrayList<>();
-            }
-        this.bill.add(billItem);
-        return this;
-        }
+	public BillResponse addBillItem(Bill billItem) {
+		if (this.bill == null) {
+			this.bill = new ArrayList<>();
+		}
+		this.bill.add(billItem);
+		return this;
+	}
 
 }

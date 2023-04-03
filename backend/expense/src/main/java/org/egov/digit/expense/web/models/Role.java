@@ -1,19 +1,22 @@
 package org.egov.digit.expense.web.models;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * minimal representation of the Roles in the system to be carried along in UserInfo with RequestInfo meta data. Actual authorization service to extend this to have more role related attributes 
+ * minimal representation of the Roles in the system to be carried along in
+ * UserInfo with RequestInfo meta data. Actual authorization service to extend
+ * this to have more role related attributes
  */
 @Schema(description = "minimal representation of the Roles in the system to be carried along in UserInfo with RequestInfo meta data. Actual authorization service to extend this to have more role related attributes ")
 @Validated
@@ -22,23 +25,20 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Role   {
-        @JsonProperty("tenantId")
-          @NotNull
+public class Role {
+	
+	@JsonProperty("tenantId")
+	@NotNull
+	private String tenantId;
 
-                private String tenantId = null;
+	@JsonProperty("id")
+	private String id;
 
-        @JsonProperty("id")
+	@JsonProperty("name")
+	@Size(max = 64)
+	private String name;
 
-                private String id = null;
-
-        @JsonProperty("name")
-
-        @Size(max=64)         private String name = null;
-
-        @JsonProperty("description")
-
-                private String description = null;
-
+	@JsonProperty("description")
+	private String description;
 
 }

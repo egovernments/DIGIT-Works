@@ -1,23 +1,22 @@
 package org.egov.digit.expense.web.models;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.egov.digit.expense.web.models.AuditDetails;
-import org.egov.digit.expense.web.models.BillDetail;
-import org.egov.digit.expense.web.models.Party;
-import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * A Object which holds the info about the expense details
@@ -29,88 +28,77 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Bill   {
-        @JsonProperty("id")
+public class Bill {
+	@JsonProperty("id")
+	@Valid
+	private UUID id;
 
-          @Valid
-                private UUID id = null;
+	@JsonProperty("tenantId")
+	@NotNull
+	@Size(min = 2, max = 64)
+	private String tenantId;
 
-        @JsonProperty("tenantId")
-          @NotNull
+	@JsonProperty("billDate")
+	@Valid
+	private BigDecimal billDate;
 
-        @Size(min=2,max=64)         private String tenantId = null;
+	@JsonProperty("dueDate")
+	@Valid
+	private BigDecimal dueDate;
 
-        @JsonProperty("billDate")
+	@JsonProperty("netPayableAmount")
+	@Valid
+	private BigDecimal netPayableAmount;
 
-          @Valid
-                private BigDecimal billDate = null;
+	@JsonProperty("netPaidAmount")
+	@Valid
+	private BigDecimal netPaidAmount;
 
-        @JsonProperty("dueDate")
+	@JsonProperty("businessService")
+	@NotNull
+	@Size(min = 2, max = 64)
+	private String businessService;
 
-          @Valid
-                private BigDecimal dueDate = null;
+	@JsonProperty("referenceId")
+	@Size(min = 2, max = 64)
+	private String referenceId;
 
-        @JsonProperty("netPayableAmount")
+	@JsonProperty("fromPeriod")
+	@Valid
+	private BigDecimal fromPeriod;
 
-          @Valid
-                private BigDecimal netPayableAmount = null;
+	@JsonProperty("toPeriod")
+	@Valid
+	private BigDecimal toPeriod;
+	
+	@JsonProperty("paymentStatus")
+	@Size(min = 2, max = 64)
+	private String paymentStatus;
 
-        @JsonProperty("netPaidAmount")
+	@JsonProperty("wfStatus")
+	@Size(min = 2, max = 64)
+	private String wfStatus;
 
-          @Valid
-                private BigDecimal netPaidAmount = null;
+	@JsonProperty("payer")
+	@NotNull
+	@Valid
+	private Party payer;
 
-        @JsonProperty("businessService")
-          @NotNull
+	@JsonProperty("billDetails")
+	@NotNull
+	@Valid
+	private List<BillDetail> billDetails;
 
-        @Size(min=2,max=64)         private String businessService = null;
+	@JsonProperty("additionalFields")
+	private Object additionalFields;
 
-        @JsonProperty("referenceId")
+	@JsonProperty("auditDetails")
+	@Valid
+	private AuditDetails auditDetails;
 
-        @Size(min=2,max=64)         private String referenceId = null;
-
-        @JsonProperty("fromPeriod")
-
-          @Valid
-                private BigDecimal fromPeriod = null;
-
-        @JsonProperty("toPeriod")
-
-          @Valid
-                private BigDecimal toPeriod = null;
-
-        @JsonProperty("paymentStatus")
-
-        @Size(min=2,max=64)         private String paymentStatus = null;
-
-        @JsonProperty("wfStatus")
-
-        @Size(min=2,max=64)         private String wfStatus = null;
-
-        @JsonProperty("payer")
-          @NotNull
-
-          @Valid
-                private Party payer = null;
-
-        @JsonProperty("billDetails")
-          @NotNull
-          @Valid
-                private List<BillDetail> billDetails = new ArrayList<>();
-
-        @JsonProperty("additionalFields")
-
-                private Object additionalFields = null;
-
-        @JsonProperty("auditDetails")
-
-          @Valid
-                private AuditDetails auditDetails = null;
-
-
-        public Bill addBillDetailsItem(BillDetail billDetailsItem) {
-        this.billDetails.add(billDetailsItem);
-        return this;
-        }
+	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
+		this.billDetails.add(billDetailsItem);
+		return this;
+	}
 
 }

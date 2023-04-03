@@ -41,7 +41,7 @@ public class WorkflowUtil {
         StringBuilder url = getSearchURLWithParams(tenantId, businessServiceCode);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object result = repository.fetchResult(url, requestInfoWrapper);
-        BusinessServiceResponse response = null;
+        BusinessServiceResponse response;
         try {
             response = mapper.convertValue(result, BusinessServiceResponse.class);
         } catch (IllegalArgumentException e) {
@@ -163,7 +163,8 @@ public class WorkflowUtil {
     * @return
     */
     private State callWorkFlow(ProcessInstanceRequest workflowReq) {
-        ProcessInstanceResponse response = null;
+    	
+        ProcessInstanceResponse response;
         StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
         Object optional = repository.fetchResult(url, workflowReq);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
