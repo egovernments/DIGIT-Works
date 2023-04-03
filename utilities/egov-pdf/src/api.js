@@ -35,6 +35,29 @@ var data= {"Projects": [{
   });
 }
 
+async function search_estimateDetails(tenantId, requestinfo, estimateNumber) {
+  var params = {
+    tenantId: tenantId,
+    estimateNumber: estimateNumber,
+    limit:1,
+    _offset: 0,
+    get offset() {
+      return this._offset;
+    },
+    set offset(value) {
+      this._offset = value;
+    },
+  };
+
+  var searchEndpoint = config.paths.estimate_search;
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.estimates, searchEndpoint),
+    data: Object.assign(requestinfo),
+    params,
+  });
+}
+
 async function search_user(uuid, tenantId, requestinfo) {
   return await axios({
     method: "post",
@@ -237,5 +260,6 @@ module.exports = {
   search_mdms,
   search_user,
   search_workflow,
-  search_projectDetails
+  search_projectDetails,
+  search_estimateDetails
 };
