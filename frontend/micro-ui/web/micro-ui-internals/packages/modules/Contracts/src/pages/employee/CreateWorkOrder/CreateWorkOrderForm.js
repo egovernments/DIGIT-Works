@@ -145,13 +145,13 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     const handleResponseForCreateWO = async(payload) => {
         await CreateWOMutation(payload, {
             onError: async (error, variables) => {
-                sendDataToResponsePage(contractNumber, false, "CONTRACT_MODIFICATION_FAILURE", true);
+                sendDataToResponsePage("", false, "CONTRACTS_WO_FAILED", false);
             },
             onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
                         setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
                     }else if(responseData?.ResponseInfo?.status){
-                        sendDataToResponsePage(contractNumber, true, "CONTRACTS_MODIFIED", true);
+                        sendDataToResponsePage(responseData?.contracts?.[0]?.contractNumber, true, "CONTRACTS_WO_CREATED_FORWARDED", true);
                         clearSessionFormData();
                     }else{
                         setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
@@ -165,8 +165,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         contractNumber,
         lineItems,
         contractAuditDetails,
-        updateAction : "EDIT",
-        updateWfStatus : "SENT_BACK"
+        updateAction : isModify ? "EDIT" : "",
     }
 
     const onModalSubmit = async (modalData) => {
