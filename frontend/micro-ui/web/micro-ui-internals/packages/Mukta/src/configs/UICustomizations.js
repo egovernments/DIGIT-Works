@@ -190,12 +190,24 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
-      const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromProposalDate,"daystart");
-      const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toProposalDate);
-      const projectType = data?.params?.projectType?.code;
-      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromProposalDate, toProposalDate, projectType };
-      //deleting ward data since this is a static field for now
-      delete data?.params?.ward;
+      
+      //get data to set in api
+      const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.fromProposalDate,"daystart");
+      if(fromProposalDate) data.body.inbox.moduleSearchCriteria.fromProposalDate = fromProposalDate
+      const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.toProposalDate);
+      if(toProposalDate) data.body.inbox.moduleSearchCriteria.toProposalDate = toProposalDate
+      
+      const projectType = data?.body?.inbox?.moduleSearchCriteria?.typeOfWork?.code;
+      delete data.body.inbox.moduleSearchCriteria.typeOfWork
+      if(projectType) data.body.inbox.moduleSearchCriteria.typeOfWork = projectType
+
+      const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code
+      delete data.body.inbox.moduleSearchCriteria.ward
+      if(ward) data.body.inbox.moduleSearchCriteria.ward = ward
+    
+      //set tenantId 
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
       return data;
     },
     additionalCustomizations: (row, column, columnConfig, value, t, searchResult, headerLocale) => {
@@ -220,11 +232,14 @@ export const UICustomizations = {
         );
       }
       if (column.label === "WORKS_ESTIMATED_AMOUNT") {
-        const amt = row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0);
-        return amt ? Digit.Utils.dss.formatterWithoutRound(amt, "number") : t("ES_COMMON_NA");
+        // const amt = row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0);
+        return value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA");
+      }
+      if(column.label === "CORE_COMMON_STATUS"){
+        return t(`WF_ESTIMATE_STATUS_${value}`)
       }
       if (column.label === "ES_COMMON_LOCATION") {
-        const location = searchResult?.[0].additionalDetails?.location;
+        const location = value;
         if (location) {
           let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
           let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";

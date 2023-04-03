@@ -23,22 +23,22 @@ const createDocumentsPayload = (documents, otherDocFileName) => {
     return documents_payload_list;
 }
 
-export const createWorkOrderUtils = ({tenantId, estimate, project, data}) => {
+export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata, selectedApprover, modalData}) => {
     return {
         contract : {
             "tenantId": tenantId,
             "wfStatus": "string",
-            "executingAuthority": data?.roleOfCBO?.code,
+            "executingAuthority": inputFormdata?.roleOfCBO?.code,
             "contractType": "CON-01",
-            "totalContractedAmount": data?.workOrderAmountRs,
+            "totalContractedAmount": inputFormdata?.workOrderAmountRs,
             "securityDeposit": 0,
             "agreementDate": 0,
             "defectLiabilityPeriod": 0, 
-            "orgId": data?.nameOfCBO?.code,
+            "orgId": inputFormdata?.nameOfCBO?.code,
             "startDate": 0,
             "endDate": 0,
             "status" : "ACTIVE",
-            "completionPeriod": data?.projectCompletionPeriodInDays,
+            "completionPeriod": inputFormdata?.projectCompletionPeriodInDays,
             "lineItems": [
                 {
                     "estimateId": estimate?.id,
@@ -49,35 +49,34 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, data}) => {
                 }
             ],
             "documents": createDocumentsPayload({
-                doc_boq : data?.documents?.doc_boq,
-                doc_others : data?.documents?.doc_others,
-                doc_terms_and_conditions : data?.documents?.doc_terms_and_conditions
+                doc_boq : inputFormdata?.documents?.doc_boq,
+                doc_others : inputFormdata?.documents?.doc_others,
+                doc_terms_and_conditions : inputFormdata?.documents?.doc_terms_and_conditions
             },
-                data?.documents?.doc_others_name
+                inputFormdata?.documents?.doc_others_name
             ),
             "additionalDetails": {
-                "officerInChargeId": data?.nameOfOfficerInCharge?.code,
+                "officerInChargeId": inputFormdata?.nameOfOfficerInCharge?.code,
                 "projectType": project?.projectType,
                 "ward": project?.address?.boundary,
                 "projectName": project?.name,
-                "orgName": data?.nameOfCBO?.name,
+                "orgName": inputFormdata?.nameOfCBO?.name,
                 "projectId": project?.projectNumber,
                 "estimateDocs" : estimate?.additionalDetails?.documents,
-                "cboName" : data?.nameOfCBO?.name,
-                "cboCode" : data?.nameOfCBO?.code,
+                "cboName" : inputFormdata?.nameOfCBO?.name,
+                "cboCode" : inputFormdata?.nameOfCBO?.code,
                 "totalEstimatedAmount" : estimate?.additionalDetails?.totalEstimatedAmount,
-                "termsAndConditions" : data?.WOTermsAndConditions,
+                "termsAndConditions" : inputFormdata?.WOTermsAndConditions,
                 "locality" : project?.additionalDetails?.locality?.code,
                 "estimateNumber" : estimate?.estimateNumber,
-                "officerInChargeDesgn" : data?.designationOfOfficerInCharge,
-                "officerInChargeName" : data?.nameOfOfficerInCharge,
+                "officerInChargeDesgn" : inputFormdata?.designationOfOfficerInCharge,
+                "officerInChargeName" : inputFormdata?.nameOfOfficerInCharge,
             }
         },
         workflow : {
             "action": "CREATE",
-            "comment": "",
-            "assignees": [
-            ]
+            "comment": modalData?.comments,
+            "assignees": selectedApprover?.user?.uuid ? [selectedApprover?.user?.uuid] : []
         }
     }
 }
