@@ -3,6 +3,13 @@ const getValidDateObject = (dateString) => {
     return new Date(+year, +month - 1, +day)
 }
 
+export const getTomorrowsDate = () => {
+    let today = new Date()
+    let tomorrow = new Date()
+    tomorrow.setDate(today.getDate() + 1)
+    return tomorrow.toISOString().split("T")[0]
+}
+
 export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady }) => {
 
     const individual = wageSeekerData?.individual
@@ -38,8 +45,8 @@ export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sess
         configs.defaultValues.skillDetails_skill = skills
     
         configs.defaultValues.locDetails_city = ULBOptions[0]
-        configs.defaultValues.locDetails_ward = individual?.address?.[0]?.ward ? { code: individual?.address?.[0]?.ward?.code, name: individual?.address?.[0]?.ward?.code, i18nKey: `${headerLocale}_ADMIN_${individual?.address?.[0]?.ward?.code}`} : ""
-        configs.defaultValues.locDetails_locality = individual?.address?.[0]?.locality ? { code: individual?.address?.[0]?.locality?.code, name: individual?.address?.[0]?.locality?.code, i18nKey: `${headerLocale}_ADMIN_${individual?.address?.[0]?.locality?.code}`} : ""
+        configs.defaultValues.locDetails_ward = individual?.address?.[0]?.ward ? { code: individual?.address?.[0]?.ward?.code, name: individual?.address?.[0]?.ward?.code, i18nKey: Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.ward?.code, tenantId)} : ""
+        configs.defaultValues.locDetails_locality = individual?.address?.[0]?.locality ? { code: individual?.address?.[0]?.locality?.code, name: individual?.address?.[0]?.locality?.code, i18nKey: Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.locality?.code, tenantId)} : ""
         configs.defaultValues.locDetails_streetName = individual?.address?.[0]?.street ? individual?.address?.[0]?.street : ""
         configs.defaultValues.locDetails_houseName = individual?.address?.[0]?.doorNo ? individual?.address?.[0]?.doorNo : ""
     
@@ -206,3 +213,50 @@ export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, te
         bankAccounts
     }
 }   
+
+export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, orgData, tenantId, ULBOptions, setIsFormReady }) => {
+
+    console.log('organisation@@', {configs, orgData});
+    console.log('sessionFormData@@', sessionFormData);
+    const organisation = orgData?.organisation
+    const bankAccountDetails = orgData?.bankDetails?.[0]?.bankAccountDetails?.[0]
+    
+    const funDetails = organisation?.functions?.[0]
+
+    if(!sessionFormData?.locDetails_city) {
+        if(isModify) {
+            configs.defaultValues.basicDetails_orgId = organisation?.orgNumber ? organisation?.orgNumber : ""
+        }
+
+        configs.defaultValues.basicDetails_orgName = organisation?.name ? organisation?.name : ""
+        configs.defaultValues.basicDetails_regDept = organisation?.additionalDetails?.registeredByDept ? organisation?.additionalDetails?.registeredByDept : ""
+        configs.defaultValues.basicDetails_regDeptNo = organisation?.additionalDetails?.deptRegistrationNum ? organisation?.additionalDetails?.deptRegistrationNum : ""
+        configs.defaultValues.basicDetails_dateOfIncorporation = organisation?.dateOfIncorporation ? Digit.DateUtils.ConvertTimestampToDate(organisation?.dateOfIncorporation, 'yyyy-MM-dd') : ""
+        
+        configs.defaultValues.funDetails_orgType = funDetails?.type ? { code: funDetails?.type?.split('.')?.[0] , name: `COMMON_MASTERS_ORG_${funDetails?.type?.split('.')?.[0]}`} : ""
+        configs.defaultValues.funDetails_orgSubType = funDetails?.type ? { code: funDetails?.type?.split('.')?.[1] , name: `COMMON_MASTERS_SUBORG_${funDetails?.type?.split('.')?.[1]}`} : ""
+        configs.defaultValues.funDetails_category = funDetails?.category ? { code: funDetails?.category?.split('.')?.[1] , name: `COMMON_MASTERS_FUNCATEGORY_${funDetails?.category?.split('.')?.[1]}`} : ""
+        configs.defaultValues.funDetails_classRank = funDetails?.class ? { code:funDetails?.class , name: `COMMON_MASTERS_CLASS_${funDetails?.class}`} : ""
+        configs.defaultValues.funDetails_validFrom = funDetails?.validFrom ? Digit.DateUtils.ConvertTimestampToDate(funDetails?.validFrom, 'yyyy-MM-dd') : ""
+        configs.defaultValues.funDetails_validTo = funDetails?.validTo ? Digit.DateUtils.ConvertTimestampToDate(funDetails?.validTo, 'yyyy-MM-dd') : ""
+
+        configs.defaultValues.locDetails_city = ULBOptions[0]
+        configs.defaultValues.locDetails_ward = organisation?.orgAddress?.[0]?.boundaryCode ? { code: organisation?.orgAddress?.[0]?.boundaryCode, name: organisation?.orgAddress?.[0]?.boundaryCode, i18nKey: Digit.Utils.locale.getMohallaLocale(organisation?.orgAddress?.[0]?.boundaryCode, tenantId)} : ""
+        configs.defaultValues.locDetails_locality = organisation?.additionalDetails?.locality ? { code: organisation?.additionalDetails?.locality?.code, name: organisation?.additionalDetails?.locality?.code, i18nKey: Digit.Utils.locale.getMohallaLocale(organisation?.additionalDetails?.locality?.code, tenantId)} : ""
+        configs.defaultValues.locDetails_streetName = organisation?.orgAddress?.[0]?.street ? organisation?.orgAddress?.[0]?.street : ""
+        configs.defaultValues.locDetails_houseName = organisation?.orgAddress?.[0]?.doorNo ? organisation?.orgAddress?.[0]?.doorNo : ""
+        
+        configs.defaultValues.contactDetails_name = organisation?.contactDetails?.[0]?.contactName ? organisation?.contactDetails?.[0]?.contactName : ""
+        configs.defaultValues.contactDetails_mobile = organisation?.contactDetails?.[0]?.contactMobileNumber ? organisation?.contactDetails?.[0]?.contactMobileNumber : ""
+        configs.defaultValues.contactDetails_email = organisation?.contactDetails?.[0]?.contactEmail ? organisation?.contactDetails?.[0]?.contactEmail : ""
+        
+        configs.defaultValues.financeDetails_accountHolderName = bankAccountDetails?.accountHolderName ? bankAccountDetails?.accountHolderName : ""
+        configs.defaultValues.financeDetails_accountType = bankAccountDetails?.accountType ? { code: bankAccountDetails?.accountType , name: `MASTERS_${bankAccountDetails?.accountType}`, active: true } : ""
+        configs.defaultValues.financeDetails_accountNumber = bankAccountDetails?.accountNumber ? bankAccountDetails?.accountNumber : ""
+        configs.defaultValues.financeDetails_bankName = ''
+        configs.defaultValues.financeDetails_branchName = ''
+       
+        setSessionFormData({...configs?.defaultValues})
+    }
+    setIsFormReady(true)
+}

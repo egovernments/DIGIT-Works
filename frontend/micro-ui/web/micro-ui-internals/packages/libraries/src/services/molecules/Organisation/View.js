@@ -5,7 +5,6 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   if(data?.organisations?.length === 0) throw new Error('No data found');
     
   const organisation = data.organisations[0]
-  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
 
   const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "ORG", referenceId: [organisation?.id] } }
   const bankDetails = await BankAccountService.search(bankDetailPayload, {});
@@ -23,7 +22,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
         { title: "MASTERS_REGISTERED_BY_DEPT", value: organisation?.additionalDetails?.registeredByDept || t("NA")},
         { title: "MASTERS_REGISTRATION_NUMBER", value: organisation?.additionalDetails?.deptRegistrationNum || t("NA")},
         { title: "MASTERS_DATE_OF_INCORPORATION", value: Digit.DateUtils.ConvertTimestampToDate(organisation?.dateOfIncorporation, 'dd/MM/yyyy') || t("NA")},
-        { title: "CORE_COMMON_STATUS", value: organisation?.applicationStatus || t("NA")}
+        { title: "CORE_COMMON_STATUS", value: t(`MASTERS_ORG_STATUS_${organisation?.applicationStatus}`) || t("NA")}
       ]
     },
     {
@@ -94,6 +93,19 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   }
 }
 
+const fetchBankDetails = async (data, tenantId) => {
+  if(data?.organisations?.length === 0) throw new Error('No data found');
+
+  const organisation = data.organisations[0]
+  const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "ORG", referenceId: [organisation?.id] } }
+  const bankDetails = await BankAccountService.search(bankDetailPayload, {});
+  
+  return {
+    organisation,
+    bankDetails: bankDetails?.bankAccounts
+  }
+}
+
 export const View = {
     fetchOrganisationDetails: async (t, tenantId, data) => {
       try {
@@ -103,5 +115,15 @@ export const View = {
           console.log('error', error);
           throw new Error(error?.response?.data?.Errors[0].message);
       }  
+    },
+
+    fetchOrganisationWithBankDetails : async (tenantId, data) => {
+      try {
+        const response = await OrganisationService.search(data);
+        return fetchBankDetails(response, tenantId)
+      } catch (error) {
+        console.log('error', error)
+        throw new Error(error?.response?.data?.Errors?.[0]?.message)
+      }
     }
 }

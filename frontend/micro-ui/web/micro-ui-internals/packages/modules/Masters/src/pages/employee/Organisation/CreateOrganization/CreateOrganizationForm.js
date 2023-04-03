@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { useTranslation } from "react-i18next";
 import { FormComposer, Loader } from '@egovernments/digit-ui-react-components';
+import { getTomorrowsDate } from '../../../../utils';
 
 const navConfig =  [
     {
@@ -17,13 +18,14 @@ const navConfig =  [
     }
 ];
 
-const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, setSessionFormData, clearSessionFormData }) => {
+const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, setSessionFormData, clearSessionFormData, isModify, orgDataFromAPI }) => {
     const {t} = useTranslation();
+
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
 
-    const [selectedWard, setSelectedWard] = useState('')
+    const [selectedWard, setSelectedWard] = useState(sessionFormData?.locDetails_ward?.code || '')
     const [selectedOrg, setSelectedOrg] = useState('')
     
     //location data
@@ -91,21 +93,59 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     const filteredOrgSubTypes = orgData?.orgSubTypes[selectedOrg]
     const filteredOrgFunCategories = orgData?.orgFunCategories[selectedOrg]
 
-    const config = useMemo(
-        () => {
-            const defaultValues = {
-                'locDetails_city': ULBOptions[0],
+     //wage seeker form config
+     const config = useMemo(
+        () => Digit.Utils.preProcessMDMSConfig(t, createOrganizationConfig, {
+          updateDependent : [
+            {
+                key : "basicDetails_dateOfIncorporation",
+                value : [new Date().toISOString().split("T")[0]]
+            },
+            {
+                key : "funDetails_orgType",
+                value : [orgData?.orgTypes]
+            },
+            {
+                key : "funDetails_orgSubType",
+                value : [filteredOrgSubTypes]
+            },
+            {
+                key : "funDetails_category",
+                value : [filteredOrgFunCategories]
+            },
+            {
+                key : "funDetails_validFrom",
+                value : [new Date().toISOString().split("T")[0]]
+            },
+            {
+                key : "funDetails_validTo",
+                value : [getTomorrowsDate()]
+            },
+            {
+                key : 'locDetails_city',
+                value : [ULBOptions]
+            },
+            {
+                key : 'locDetails_ward',
+                value : [wardsAndLocalities?.wards]
+            },
+            {
+                key : 'locDetails_locality',
+                value : [filteredLocalities]
+            },
+            {
+                key : "basicDetails_orgId",
+                value : [!isModify ? "none" : "flex"]
             }
-            const conf = createOrganizationConfig({defaultValues, orgType:orgData, orgSubType:filteredOrgSubTypes, ULBOptions, wards:wardsAndLocalities, localities: filteredLocalities, funCategories: filteredOrgFunCategories})
-            return conf?.CreateOrganisationConfig?.[0]
-        },
-        [wardsAndLocalities, filteredLocalities, ULBOptions, orgData, filteredOrgSubTypes ]);
-
+          ]
+        }),
+        [orgData, filteredOrgSubTypes, filteredOrgFunCategories, wardsAndLocalities, filteredLocalities, ULBOptions]);
     console.log('config', config);
 
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
+            console.log('difference', {difference, formData});
             if(formData.locDetails_ward) {
                 setSelectedWard(formData?.locDetails_ward?.code)
             }
@@ -131,14 +171,14 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     return (
         <React.Fragment>
             <FormComposer
-                label={t("MASTERS_CREATE_ORGANISATION")}
+                label={isModify ? "CORE_COMMON_SAVE" : t("MASTERS_CREATE_ORGANISATION")}
                 config={config?.form}
                 onSubmit={onSubmit}
                 submitInForm={false}
                 fieldStyle={{ marginRight: 0 }}
                 inline={false}
                 className="form-no-margin"
-                defaultValues={config?.defaultValues}
+                defaultValues={sessionFormData}
                 showWrapperContainers={false}
                 isDescriptionBold={false}
                 noBreakLine={true}

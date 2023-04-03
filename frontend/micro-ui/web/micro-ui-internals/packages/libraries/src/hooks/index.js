@@ -145,6 +145,7 @@ import useBillCreate from "./bills/useBillCreate";
 import useUpdateProject from "./works/useUpdateProject";
 
 import useViewOrganisation from "./organisation/useViewOrganisation";
+import useOrganisationDetails from "./organisation/useOrganisationDetails";
 import useUpdateBankAccount from "./bankAccount/useUpdateBankAccount";
 import useCreateBankAccount from "./bankAccount/useCreateBankAccount";
 
@@ -182,7 +183,8 @@ const contracts = {
 
 const organisation = {
   useSearchOrg,
-  useViewOrganisation
+  useViewOrganisation,
+  useOrganisationDetails
 }
 
 const estimates = {
