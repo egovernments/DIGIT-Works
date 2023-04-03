@@ -71,6 +71,7 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
                 "estimateNumber" : estimate?.estimateNumber,
                 "officerInChargeDesgn" : inputFormdata?.designationOfOfficerInCharge,
                 "officerInChargeName" : inputFormdata?.nameOfOfficerInCharge,
+                "projectDesc" : project?.description
             }
         },
         workflow : {
