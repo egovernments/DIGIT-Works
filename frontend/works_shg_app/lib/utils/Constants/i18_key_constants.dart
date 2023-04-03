@@ -4,6 +4,7 @@ Login login = const Login();
 Common common = const Common();
 Home home = const Home();
 WorkOrder workOrder = const WorkOrder();
+WageSeeker wageSeeker = const WageSeeker();
 AttendanceMgmt attendanceMgmt = const AttendanceMgmt();
 
 class Login {
@@ -147,6 +148,36 @@ class WorkOrder {
   String get contractDetails => 'WORK_ORDER_CONTRACT_DETAILS';
   String get timeLineDetails => 'WORK_ORDER_TIMELINE_DETAILS';
   String get relevantDocuments => 'WORK_RELEVANT_DOCUMENTS';
+}
+
+class WageSeeker {
+  const WageSeeker();
+  String get aadhaarRequired => 'AADHAAR_IS_REQUIRED';
+  String get nameRequired => 'NAME_IS_REQUIRED';
+  String get fatherNameRequired => 'FATHER_NAME_IS_REQUIRED';
+  String get dobRequired => 'DOB_IS_REQUIRED';
+  String get relationshipRequired => 'RELATIONSHIP_IS_REQUIRED';
+  String get socialCatRequired => 'SOCIAL_CATEGORY_IS_REQUIRED';
+  String get genderRequired => 'GENDER_IS_REQUIRED';
+  String get mobileRequired => 'MOBILE_NUJMBER_IS_REQUIRED';
+  String get minMobileCharacters => 'MIN_MOBILE_CHARCTERS_REQUIRED';
+  String get minAadhaarCharacters => 'MIN_AADHAAR_CHARCTERS_REQUIRED';
+  String get maxMobileCharacters => 'MAX_MOBILE_CHARCTERS_REQUIRED';
+  String get maxAadhaarCharacters => 'MAX_AADHAAR_CHARCTERS_REQUIRED';
+  String get pinCodeRequired => 'PINCODE_IS_REQUIRED';
+  String get localityRequired => 'LOCALITY_IS_REQUIRED';
+  String get wardRequired => 'WARD_IS_REQUIRED';
+  String get cityRequired => 'CITY_IS_REQUIRED';
+  String get accountHolderNameRequired => 'ACCOUNT_HOLDER_NAME_IS_REQUIRED';
+  String get accountNumberRequired => 'ACCOUNT_NUMBER_IS_REQUIRED';
+  String get reEnterAccountNumber => 'RE_ENTER_ACCOUNT_NUMBER';
+  String get accountTypeRequired => 'ACCOUNT_TYPE_IS_REQUIRED';
+  String get ifscCodeRequired => 'IFSC_CODE_IS_REQUIRED';
+  String get summaryDetails => 'SUMMARY_DETAILS';
+  String get nameOfWageSeeker => 'NAME_OF_WAGE_SEEKER';
+  String get skillCategory => 'WAGE_SEEKER_SKILL_CAT';
+  String get skill => 'WAGE_SEEKER_SKILL';
+  String get createIndSuccess => 'CREATE_INDIVIDUAL_SUCCESS';
 }
 
 class AttendanceMgmt {

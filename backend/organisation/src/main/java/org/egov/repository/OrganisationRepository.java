@@ -68,7 +68,7 @@ public class OrganisationRepository {
         List<Document> documents = getDocumentsBasedOnOrganisationIds(organisationIds, functionIds);
 
         //Fetch jurisdictions based on organisation Ids
-        Map<String, List<String>> jurisdictions = getJurisdictionsBasedOnOrganisationIds(organisationIds);
+        List<Jurisdiction> jurisdictions = getJurisdictionsBasedOnOrganisationIds(organisationIds);
 
         //Fetch identifiers based on organisation Ids
         List<Identifier> identifiers = getIdentifiersBasedOnOrganisationIds(organisationIds);
@@ -127,16 +127,16 @@ public class OrganisationRepository {
     }
 
     /* Get jurisdictions list based on organisation Ids */
-    private Map<String, List<String>> getJurisdictionsBasedOnOrganisationIds(Set<String> organisationIds) {
+    private List<Jurisdiction> getJurisdictionsBasedOnOrganisationIds(Set<String> organisationIds) {
         List<Object> preparedStmtListTarget = new ArrayList<>();
         String queryJurisdictions = jurisdictionQueryBuilder.getJurisdictionSearchQuery(organisationIds, preparedStmtListTarget);
-        Map<String, List<String>> jurisdictions = jdbcTemplate.query(queryJurisdictions, jurisdictionRowMapper, preparedStmtListTarget.toArray());
+        List<Jurisdiction> jurisdictions = jdbcTemplate.query(queryJurisdictions, jurisdictionRowMapper, preparedStmtListTarget.toArray());
         log.info("Fetched jurisdictions based on organisation Ids");
         return jurisdictions;
     }
 
     /* Construct organisation search results based on organisations, addresses, contact details, documents, jurisdictions and identifiers*/
-    private List<Organisation> buildOrganisationSearchResult(List<Organisation> organisations, List<Address> addresses, List<ContactDetails> contactDetails, List<Document> documents, Map<String, List<String>> jurisdictionsMap, List<Identifier> identifiers) {
+    private List<Organisation> buildOrganisationSearchResult(List<Organisation> organisations, List<Address> addresses, List<ContactDetails> contactDetails, List<Document> documents, List<Jurisdiction> jurisdictions, List<Identifier> identifiers) {
         for (Organisation organisation: organisations) {
             log.info("Constructing organisation object for organisation " + organisation.getId());
             if (addresses != null && !addresses.isEmpty()) {
@@ -151,9 +151,9 @@ public class OrganisationRepository {
                 log.info("Adding contactDetails to organisation " + organisation.getId());
                 addContactDetailsToOrganisation(organisation, contactDetails);
             }
-            if (jurisdictionsMap != null && !jurisdictionsMap.isEmpty()) {
+            if (jurisdictions != null && !jurisdictions.isEmpty()) {
                 log.info("Adding jurisdictions to organisation " + organisation.getId());
-                addJurisdictionsToOrganisation(organisation, jurisdictionsMap);
+                addJurisdictionsToOrganisation(organisation, jurisdictions);
             }
             if (identifiers != null && !identifiers.isEmpty()) {
                 log.info("Adding identifiers to organisation " + organisation.getId());
@@ -174,9 +174,13 @@ public class OrganisationRepository {
         }
     }
 
-    private void addJurisdictionsToOrganisation(Organisation organisation, Map<String, List<String>> jurisdictionsMap) {
-        List<String> jurisdictionsForOrg = jurisdictionsMap.get(organisation.getId());
-        organisation.setJurisdiction(jurisdictionsForOrg);
+    private void addJurisdictionsToOrganisation(Organisation organisation, List<Jurisdiction> jurisdictions) {
+        organisation.setJurisdiction(new ArrayList<>());
+        for (Jurisdiction jurisdiction: jurisdictions) {
+            if (jurisdiction.getOrgId().equals(organisation.getId()) && organisation.getJurisdiction().stream().noneMatch(i -> i.getId().equals(jurisdiction.getId()))) {
+                organisation.getJurisdiction().add(jurisdiction);
+            }
+        }
     }
 
     private void addContactDetailsToOrganisation(Organisation organisation, List<ContactDetails> contactDetails) {

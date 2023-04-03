@@ -1,67 +1,86 @@
 import 'package:digit_components/digit_components.dart';
-import 'package:digit_components/widgets/atoms/digit_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:works_shg_app/models/wage_seeker/location_details_model.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
-import 'package:works_shg_app/utils/constants.dart';
 
 import '../../blocs/localization/app_localization.dart';
+import '../../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
+import '../../models/mdms/location_mdms.dart';
+import '../../models/mdms/wage_seeker_mdms.dart';
+import '../../models/wage_seeker/financial_details_model.dart';
+import '../../models/wage_seeker/individual_details_model.dart';
+import '../../models/wage_seeker/skill_details_model.dart';
 
-class LocationDetails extends StatefulWidget {
+class LocationDetailsPage extends StatefulWidget {
   final void Function() onPressed;
-  const LocationDetails({required this.onPressed, super.key});
+  final String? city;
+  final Location? location;
+  final WageSeekerMDMS? wageSeekerMDMS;
+  const LocationDetailsPage(
+      {required this.onPressed,
+      this.city,
+      this.location,
+      this.wageSeekerMDMS,
+      super.key});
 
   @override
   LocationDetailsState createState() => LocationDetailsState();
 }
 
-class LocationDetailsState extends State<LocationDetails> {
-  List<String> _selectedOptions = ['001'];
-  List<MultiSelectItem> skills = [
-    MultiSelectItem('UNSKILLED.MULIA', 'Unskilled Mulia'),
-    MultiSelectItem('UNSKILLED.PLUMBER', 'Unskilled Plumber'),
-    MultiSelectItem('SKILLED.MULIA', 'Skilled Mulia'),
-    MultiSelectItem('SKILLED.MASON', 'Skilled Mason'),
-    MultiSelectItem('SEMISKILLED.WELDER', 'Semiskilled Welder'),
-    MultiSelectItem('SEMISKILLED.ELECTRICIAN', 'Semiskilled Electrician'),
-  ];
-  List<MenuItemModel> city = [
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('pg.cityA'),
-        'pg.cityA'),
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('pg.cityB'),
-        'pg.cityB'),
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('pg.cityC'),
-        'pg.cityC')
-  ];
-  List<MenuItemModel> ward = [
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('locality'),
-        'pg.cityA'),
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('pg.cityB'),
-        'pg.cityB'),
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('pg.cityC'),
-        'pg.cityC')
-  ];
+class LocationDetailsState extends State<LocationDetailsPage> {
+  IndividualDetails? individualDetails = IndividualDetails();
+  LocationDetails locationDetails = LocationDetails();
+  SkillDetails? skillDetails = SkillDetails();
+  FinancialDetails? financialDetails = FinancialDetails();
+  String pinCodeKey = 'pinCode';
+  String cityKey = 'city';
+  String wardKey = 'ward';
+  String localityKey = 'locality';
+  String streetNameKey = 'streetName';
+  String doorNoKey = 'doorNo';
+  List<String> locality = [];
+
+  @override
+  void initState() {
+    super.initState();
+    final registrationState = BlocProvider.of<WageSeekerBloc>(context).state;
+    individualDetails = registrationState.individualDetails;
+    skillDetails = registrationState.skillDetails;
+    if (registrationState.locationDetails != null) {
+      locationDetails = registrationState.locationDetails!;
+      locality = registrationState.locationDetails?.ward != null
+          ? widget.location!.tenantBoundaryList!.first.boundaryList!
+              .where((w) => w.code == registrationState.locationDetails?.ward)
+              .first
+              .localityChildren!
+              .map((e) => e.code.toString())
+              .toList()
+          : [];
+      financialDetails = registrationState.financialDetails;
+    }
+  }
+
   List<MultiSelectItem> selectedSkills = [];
 
   List<String> selectedItems = [];
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
+    List<String> city = widget
+            .wageSeekerMDMS?.tenantMDMS?.cityModule?.first.tenants
+            ?.where((t) => t.code == widget.city)
+            .map((e) => e.code.toString())
+            .toList() ??
+        [];
+    List<String> ward = widget.location!.tenantBoundaryList!.first.boundaryList!
+        .map((e) => e.code.toString())
+        .toList();
     return ReactiveFormBuilder(
-      form: buildForm,
+      form: () => buildForm(locationDetails),
       builder: (context, form, child) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -78,81 +97,101 @@ class LocationDetailsState extends State<LocationDetails> {
                   ),
                   Column(children: [
                     DigitTextFormField(
-                      formControlName: 'pinCode',
-                      label: t.translate(i18.common.pinCode),
-                    ),
-                    DigitDropdown(
+                        formControlName: pinCodeKey,
+                        label: t.translate(i18.common.pinCode),
+                        isRequired: true,
+                        keyboardType: TextInputType.number,
+                        inputFormatter: [
+                          FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                        ],
+                        validationMessages: {
+                          'required': (_) => t.translate(
+                                i18.wageSeeker.mobileRequired,
+                              ),
+                        }),
+                    DigitDropdown<String>(
                       label: t.translate(i18.common.city),
-                      menuItems: city,
-                      formControlName: 'city',
-                      onChanged: (String? value) {},
+                      menuItems:
+                          city.map((e) => t.translate(e).toString()).toList(),
+                      isRequired: true,
+                      formControlName: cityKey,
+                      valueMapper: (value) => value,
+                      initialValue: widget.city,
+                      onChanged: (value) {},
+                      validationMessages: {
+                        'required': (_) => t.translate(
+                              i18.wageSeeker.cityRequired,
+                            ),
+                      },
                     ),
-                    DigitDropdown(
+                    DigitDropdown<String>(
                       label: t.translate(i18.common.ward),
-                      menuItems: city,
-                      formControlName: 'ward',
-                      onChanged: (String? value) {},
+                      menuItems:
+                          ward.map((e) => t.translate(e).toString()).toList(),
+                      formControlName: wardKey,
+                      valueMapper: (value) => value,
+                      validationMessages: {
+                        'required': (_) => t.translate(
+                              i18.wageSeeker.localityRequired,
+                            ),
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          locality = widget
+                              .location!.tenantBoundaryList!.first.boundaryList!
+                              .where((w) => w.code == value)
+                              .first
+                              .localityChildren!
+                              .map((e) => e.code.toString())
+                              .toList();
+                          form.control(localityKey).value = null;
+                        });
+                      },
                     ),
-                    DigitDropdown(
-                      label: t.translate(i18.common.locality),
-                      menuItems: city,
-                      formControlName: 'locality',
-                      onChanged: (String? value) {},
-                    ),
+                    DigitDropdown<String>(
+                        label: t.translate(i18.common.locality),
+                        menuItems: locality
+                            .map((e) => t.translate(e).toString())
+                            .toList(),
+                        formControlName: localityKey,
+                        valueMapper: (value) => value,
+                        onChanged: (value) {},
+                        validationMessages: {
+                          'required': (_) => t.translate(
+                                i18.wageSeeker.localityRequired,
+                              ),
+                        }),
                     DigitTextFormField(
-                      formControlName: 'streetName',
+                      formControlName: streetNameKey,
                       label: t.translate(i18.common.streetName),
                     ),
                     DigitTextFormField(
-                      formControlName: 'doorNo',
+                      formControlName: doorNoKey,
                       label: t.translate(i18.common.doorNo),
                     ),
-                    // SkillsDropdown(),
-                    // MultiSelectCheckboxDropdown(
-                    //     options: const ['001', '002', '003'],
-                    //     selectedOptions: selectedItems,
-                    //     label: 'Select Skill'),
-                    // MultiSelectDialogField(
-                    //   items: skills
-                    //       .map((e) => MultiSelectItem(e, e.label))
-                    //       .toList(),
-                    //   onConfirm: (values) {
-                    //     selectedSkills = values;
-                    //   },
-                    //   buttonIcon: Icon(Icons.search),
-                    //   separateSelectedItems: true,
-                    //   dialogHeight: 300,
-                    //   dialogWidth: 300,
-                    //   searchable: true,
-                    //   decoration: BoxDecoration(
-                    //       shape: BoxShape.rectangle,
-                    //       border: Border.all(width: 2.0),
-                    //       color: DigitColors().white),
-                    //   // unselectedColor: DigitColors().seaShellGray,
-                    //   // checkColor: DigitColors().burningOrange,
-                    //   // selectedColor: DigitColors().burningOrange,
-                    //   listType: MultiSelectListType.LIST,
-                    // ),
-                    // MultiselectDropdown(skills: [
-                    //   Skill(
-                    //       name: 'Unskilled',
-                    //       categories: [SkillCategory(name: 'Mulia')]),
-                    //   Skill(
-                    //       name: 'Skilled',
-                    //       categories: [SkillCategory(name: 'Plumber')])
-                    // ]),
                   ]),
                   const SizedBox(height: 16),
                   DigitCard(
                       child: Center(
                     child: DigitElevatedButton(
                         onPressed: () {
+                          form.markAllAsTouched(updateParent: false);
+                          if (!form.valid) return;
+                          final locationDetails = LocationDetails(
+                              pinCode: form.value[pinCodeKey].toString() ?? '',
+                              city: form.value[cityKey].toString() ?? '',
+                              locality: form.value[localityKey].toString(),
+                              ward: form.value[wardKey].toString(),
+                              streetName: form.value[streetNameKey].toString(),
+                              doorNo: form.value[doorNoKey].toString());
+                          BlocProvider.of<WageSeekerBloc>(context).add(
+                            WageSeekerCreateEvent(
+                                individualDetails: individualDetails,
+                                skillDetails: skillDetails,
+                                locationDetails: locationDetails,
+                                financialDetails: financialDetails),
+                          );
                           widget.onPressed();
-                          if (form.valid) {
-                            print(form.value);
-                          } else {
-                            form.markAllAsTouched();
-                          }
                         },
                         child: Center(
                           child: Text(t.translate(i18.common.next)),
@@ -167,12 +206,19 @@ class LocationDetailsState extends State<LocationDetails> {
     );
   }
 
-  FormGroup buildForm() => fb.group(<String, Object>{
-        'pinCode': FormControl<String>(value: ''),
-        'city': FormControl<String>(value: ''),
-        'ward': FormControl<String>(value: ''),
-        'locality': FormControl<String>(value: ''),
-        'streetName': FormControl<String>(value: ''),
-        'doorNo': FormControl<String>(value: ''),
+  FormGroup buildForm(LocationDetails locationDetails) =>
+      fb.group(<String, Object>{
+        pinCodeKey: FormControl<String>(
+            value: locationDetails.pinCode ?? '',
+            validators: [Validators.required]),
+        cityKey: FormControl<String>(
+            value: locationDetails.city, validators: [Validators.required]),
+        wardKey: FormControl<String>(
+            value: locationDetails.ward, validators: [Validators.required]),
+        localityKey: FormControl<String>(
+            value: locationDetails.locality, validators: [Validators.required]),
+        streetNameKey:
+            FormControl<String>(value: locationDetails.streetName ?? ''),
+        doorNoKey: FormControl<String>(value: locationDetails.doorNo ?? ''),
       });
 }

@@ -189,11 +189,12 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
       isSelected: _selectedIndex == index,
       onPressed: widget.stepTappingDisabled
           ? () {
-              if (widget.steppingEnabled) {
+              if (widget.steppingEnabled && index < widget.activeStep) {
                 setState(() {
                   _selectedIndex = index;
 
-                  if (widget.onStepReached != null) {
+                  if (widget.onStepReached != null &&
+                      index < widget.activeStep) {
                     widget.onStepReached!(_selectedIndex);
                   }
                 });
