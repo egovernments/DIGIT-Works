@@ -51,13 +51,16 @@ public class OrganisationRepository {
     private JdbcTemplate jdbcTemplate;
 
     public List<Organisation> getOrganisations(OrgSearchRequest orgSearchRequest) {
+        //Fetch organisation ids based on identifierType and identifierValue search criteria
         Set<String> orgIdsFromIdentifierSearch = getOrgIdsForIdentifiersBasedOnSearchCriteria(orgSearchRequest);
+        //Fetch organisation ids based on boundaryCode in  search criteria
         Set<String> orgIdsFromBoundarySearch = getOrgIdsForAddressesBasedOnSearchCriteria(orgSearchRequest);
 
-        Set<String> orgIdsFromIdentifierAndBoundarySearch = new HashSet<>();
-        getOrgIdsForSearch(orgSearchRequest, orgIdsFromIdentifierSearch, orgIdsFromBoundarySearch, orgIdsFromIdentifierAndBoundarySearch);
+        Set<String> orgIds = new HashSet<>();
+        getOrgIdsForSearch(orgSearchRequest, orgIdsFromIdentifierSearch, orgIdsFromBoundarySearch, orgIds);
 
-        if (orgIdsFromIdentifierAndBoundarySearch.isEmpty() &&
+        // If OrgIds are empty and request is present in search criteria
+        if (orgIds.isEmpty() &&
                 (StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierType())
                 || StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierValue())
                 || StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getBoundaryCode())
@@ -66,7 +69,7 @@ public class OrganisationRepository {
         }
 
         //Fetch Organisations based on search criteria
-        List<Organisation> organisations = getOrganisationsBasedOnSearchCriteria(orgSearchRequest, orgIdsFromIdentifierAndBoundarySearch);
+        List<Organisation> organisations = getOrganisationsBasedOnSearchCriteria(orgSearchRequest, orgIds);
 
         Set<String> organisationIds = organisations.stream().map(Organisation :: getId).collect(Collectors.toSet());
 
@@ -94,6 +97,7 @@ public class OrganisationRepository {
         return buildOrganisationSearchResult(organisations, addresses, contactDetails, documents, jurisdictions, identifiers);
     }
 
+    /* Fetch organisation ids based on identifierType and identifierValue search criteria */
     private Set<String> getOrgIdsForIdentifiersBasedOnSearchCriteria(OrgSearchRequest orgSearchRequest) {
         if (StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierType()) || StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierValue())) {
             List<Object> preparedStmtListTarget = new ArrayList<>();
@@ -105,6 +109,7 @@ public class OrganisationRepository {
         return Collections.emptySet();
     }
 
+    /* Fetch organisation ids based on boundaryCode search criteria */
     private Set<String> getOrgIdsForAddressesBasedOnSearchCriteria(OrgSearchRequest orgSearchRequest) {
         if (StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getBoundaryCode())) {
             List<Object> preparedStmtListTarget = new ArrayList<>();
@@ -117,50 +122,55 @@ public class OrganisationRepository {
     }
 
     /* Get organisations list based on search request */
-    private List<Organisation> getOrganisationsBasedOnSearchCriteria(OrgSearchRequest orgSearchRequest, Set<String> orgIdsFromIdentifierAndBoundarySearch) {
+    private List<Organisation> getOrganisationsBasedOnSearchCriteria(OrgSearchRequest orgSearchRequest, Set<String> orgIds) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = organisationFunctionQueryBuilder.getOrganisationSearchQuery(orgSearchRequest, orgIdsFromIdentifierAndBoundarySearch, preparedStmtList, false);
+        String query = organisationFunctionQueryBuilder.getOrganisationSearchQuery(orgSearchRequest, orgIds, preparedStmtList, false);
         List<Organisation> organisations = jdbcTemplate.query(query, organisationFunctionRowMapper, preparedStmtList.toArray());
 
         log.info("Fetched organisations list based on given search criteria");
         return organisations;
     }
 
-    private void getOrgIdsForSearch(OrgSearchRequest orgSearchRequest, Set<String> orgIdsFromIdentifierSearch,Set<String> orgIdsFromBoundarySearch, Set<String> orgIdsFromIdentifierAndBoundarySearch) {
-        if (orgIdsFromIdentifierSearch != null && !orgIdsFromIdentifierSearch.isEmpty()) {
-            if (orgIdsFromBoundarySearch.isEmpty() &&
-                    StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getBoundaryCode())) {
-                return;
+    /* Get OrgIds for search result from identifier and boundaryCode search results and orgIds in request */
+    private void getOrgIdsForSearch(OrgSearchRequest orgSearchRequest, Set<String> orgIdsFromIdentifierSearch,Set<String> orgIdsFromBoundarySearch, Set<String> orgIds) {
+        boolean isIdentifierSearchCriteriaPresent = StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierType())
+                || StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierValue());
+        boolean isBoundarySearchCriteriaPresent = StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getBoundaryCode());
+        boolean isOrgIdsSearchCriteriaPresent = orgSearchRequest.getSearchCriteria().getId() != null && !orgSearchRequest.getSearchCriteria().getId().isEmpty();
+        if (orgSearchRequest.getSearchCriteria().getId() == null) {
+            orgSearchRequest.getSearchCriteria().setId(new ArrayList<>());
+        }
+
+        // If identifierType or identifierValue present in request, but the search result is empty, then return empty list
+        if (orgIdsFromIdentifierSearch.isEmpty() && isIdentifierSearchCriteriaPresent) {
+            return;
+        }
+        // If boundaryCode present in request, but the search result is empty, then return empty list
+        if (orgIdsFromBoundarySearch.isEmpty() && isBoundarySearchCriteriaPresent) {
+            return;
+        }
+
+        // Get common orgIds from identifier search result, boundaryCode search result and orgIds in request
+        if (isIdentifierSearchCriteriaPresent) {
+            orgIds.addAll(orgIdsFromIdentifierSearch);
+            if (isBoundarySearchCriteriaPresent) {
+                //Get common orgIds of identifier search result and boundary search result
+                orgIds.retainAll(orgIdsFromBoundarySearch);
             }
-            orgIdsFromIdentifierAndBoundarySearch.addAll(orgIdsFromIdentifierSearch);
-            if (orgIdsFromBoundarySearch != null && !orgIdsFromBoundarySearch.isEmpty()) {
-                orgIdsFromIdentifierAndBoundarySearch.retainAll(orgIdsFromBoundarySearch);
+            //Get common orgIds of identifier search result and orgIds in search request
+            if (isOrgIdsSearchCriteriaPresent) {
+                orgIds.retainAll(orgSearchRequest.getSearchCriteria().getId());
             }
-            if (orgSearchRequest.getSearchCriteria().getId() != null && !orgSearchRequest.getSearchCriteria().getId().isEmpty()) {
-                orgIdsFromIdentifierAndBoundarySearch.retainAll(orgSearchRequest.getSearchCriteria().getId());
-            }
-        } else if (orgIdsFromBoundarySearch != null && !orgIdsFromBoundarySearch.isEmpty()) {
-            if (orgIdsFromIdentifierAndBoundarySearch.isEmpty() &&
-                    (StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierType())
-                            || StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierValue()))) {
-                return;
-            }
-            orgIdsFromIdentifierAndBoundarySearch.addAll(orgIdsFromBoundarySearch);
-            if (orgSearchRequest.getSearchCriteria().getId() != null && !orgSearchRequest.getSearchCriteria().getId().isEmpty()) {
-                orgIdsFromIdentifierAndBoundarySearch.retainAll(orgSearchRequest.getSearchCriteria().getId());
+        } else if (isBoundarySearchCriteriaPresent) {
+            orgIds.addAll(orgIdsFromBoundarySearch);
+            //Get common orgIds of boundary search result and orgIds in search request
+            if (isOrgIdsSearchCriteriaPresent) {
+                orgIds.retainAll(orgSearchRequest.getSearchCriteria().getId());
             }
         } else {
-            if (orgIdsFromIdentifierAndBoundarySearch.isEmpty() &&
-                    (StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierType())
-                            || StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getIdentifierValue())
-                            || StringUtils.isNotBlank(orgSearchRequest.getSearchCriteria().getBoundaryCode()))) {
-                return;
-            }
-            if (orgSearchRequest.getSearchCriteria().getId() == null) {
-                orgSearchRequest.getSearchCriteria().setId(new ArrayList<>());
-            }
-            orgIdsFromIdentifierAndBoundarySearch.addAll(orgSearchRequest.getSearchCriteria().getId());
+            orgIds.addAll(orgSearchRequest.getSearchCriteria().getId());
         }
+
     }
 
     /* Get addresses list based on organisation Ids */

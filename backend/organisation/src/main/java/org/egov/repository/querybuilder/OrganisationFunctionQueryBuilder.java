@@ -49,15 +49,15 @@ public class OrganisationFunctionQueryBuilder {
 
     private static final String COUNT_WRAPPER = "SELECT COUNT(*) FROM ({INTERNAL_QUERY}) as count";
 
-    public String getOrganisationSearchQuery(OrgSearchRequest orgSearchRequest, Set<String> orgIdsFromIdentifierAndBoundarySearch, List<Object> preparedStmtList, Boolean isCountQuery) {
+    public String getOrganisationSearchQuery(OrgSearchRequest orgSearchRequest, Set<String> orgIds, List<Object> preparedStmtList, Boolean isCountQuery) {
         String query = isCountQuery ? ORGANISATIONS_COUNT_QUERY : FETCH_ORGANISATION_FUNCTION_QUERY;
         StringBuilder queryBuilder = new StringBuilder(query);
         OrgSearchCriteria searchCriteria = orgSearchRequest.getSearchCriteria();
 
-        if (orgIdsFromIdentifierAndBoundarySearch != null && !orgIdsFromIdentifierAndBoundarySearch.isEmpty()) {
+        if (orgIds != null && !orgIds.isEmpty()) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" org.id IN (").append(createQuery(orgIdsFromIdentifierAndBoundarySearch)).append(")");
-            addToPreparedStatement(preparedStmtList, orgIdsFromIdentifierAndBoundarySearch);
+            queryBuilder.append(" org.id IN (").append(createQuery(orgIds)).append(")");
+            addToPreparedStatement(preparedStmtList, orgIds);
         }
 
         if (StringUtils.isNotBlank(searchCriteria.getTenantId())) {
