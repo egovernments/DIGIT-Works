@@ -72,7 +72,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 ]
             }
         }
-
+        console.log(documentDetails);
         // if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
             basicDetails = {
                 projectID : currentProject?.projectNumber,

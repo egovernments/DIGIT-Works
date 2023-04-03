@@ -32,9 +32,9 @@ const documentType = {
   //configs - previously uploaded docs -- defaultValues
   //otherDocFileName - filename filled in the text field for files -- Others
   const createDocumentsPayload = (documents, otherDocFileName, configs) => {
+    console.log("DOCS--CREATE", documents);
     let documents_payload_list = [];
     let documentDefaultValue = configs?.defaultValues?.documents;
-   
     //new uploaded docs
     for(let docType of Object.keys(documents)) {
       for(let document of documents[docType]) {
@@ -49,7 +49,7 @@ const documentType = {
       for(let defaultDocKey of Object.keys(documentDefaultValue)) {
         let isExist = false;
         for(let uploadedDocObject of documents_payload_list) {
-          if(defaultDocKey === uploadedDocObject?.key && defaultDocKey !== "others_name") {
+          if(defaultDocKey === uploadedDocObject?.key && defaultDocKey !== "doc_others_name") {
   
             //new file being uploaded, if ID is undefined ( Update Case )
             if(!uploadedDocObject?.id) {
@@ -61,7 +61,7 @@ const documentType = {
           }
         }
         //if previous file does not exist in new formData ( Delete Case ), mark it as InActive
-        if(!isExist && defaultDocKey !== "others_name") {
+        if(!isExist && defaultDocKey !== "doc_others_name") {
           let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
           documents_payload_list.push(payload_modal);
         }
