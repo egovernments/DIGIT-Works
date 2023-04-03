@@ -45,7 +45,6 @@ const componentsToRegister = {
   ProjectsCard:ProjectCard,
   CreateMasters,
   SearchMasters,
-  CreateMasters,
   ViewMasters,
   SearchMastersApplication,
   
