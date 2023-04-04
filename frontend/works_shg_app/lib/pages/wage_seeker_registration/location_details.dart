@@ -97,18 +97,13 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                   ),
                   Column(children: [
                     DigitTextFormField(
-                        formControlName: pinCodeKey,
-                        label: t.translate(i18.common.pinCode),
-                        isRequired: true,
-                        keyboardType: TextInputType.number,
-                        inputFormatter: [
-                          FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-                        ],
-                        validationMessages: {
-                          'required': (_) => t.translate(
-                                i18.wageSeeker.mobileRequired,
-                              ),
-                        }),
+                      formControlName: pinCodeKey,
+                      label: t.translate(i18.common.pinCode),
+                      keyboardType: TextInputType.number,
+                      inputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                      ],
+                    ),
                     DigitDropdown<String>(
                       label: t.translate(i18.common.city),
                       menuItems:
@@ -128,6 +123,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                       label: t.translate(i18.common.ward),
                       menuItems:
                           ward.map((e) => t.translate(e).toString()).toList(),
+                      isRequired: true,
                       formControlName: wardKey,
                       valueMapper: (value) => value,
                       validationMessages: {
@@ -155,6 +151,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                             .toList(),
                         formControlName: localityKey,
                         valueMapper: (value) => value,
+                        isRequired: true,
                         onChanged: (value) {},
                         validationMessages: {
                           'required': (_) => t.translate(
@@ -208,9 +205,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
 
   FormGroup buildForm(LocationDetails locationDetails) =>
       fb.group(<String, Object>{
-        pinCodeKey: FormControl<String>(
-            value: locationDetails.pinCode ?? '',
-            validators: [Validators.required]),
+        pinCodeKey: FormControl<String>(value: locationDetails.pinCode ?? ''),
         cityKey: FormControl<String>(
             value: locationDetails.city, validators: [Validators.required]),
         wardKey: FormControl<String>(

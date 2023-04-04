@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'wage_seeker_mdms.dart';
 
@@ -354,6 +354,7 @@ class _$_WageSeekerWorksMDMS implements _WageSeekerWorksMDMS {
   List<BankAccType>? get bankAccType {
     final value = _bankAccType;
     if (value == null) return null;
+    if (_bankAccType is EqualUnmodifiableListView) return _bankAccType;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -506,6 +507,7 @@ class _$_TenantMDMS implements _TenantMDMS {
   List<CityModule>? get cityModule {
     final value = _cityModule;
     if (value == null) return null;
+    if (_cityModule is EqualUnmodifiableListView) return _cityModule;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -721,6 +723,7 @@ class _$_CityModule implements _CityModule {
   List<TenantList>? get tenants {
     final value = _tenants;
     if (value == null) return null;
+    if (_tenants is EqualUnmodifiableListView) return _tenants;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -1090,6 +1093,7 @@ class _$_WageSeekerCommonMDMS implements _WageSeekerCommonMDMS {
   List<GenderType>? get genderType {
     final value = _genderType;
     if (value == null) return null;
+    if (_genderType is EqualUnmodifiableListView) return _genderType;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -1100,6 +1104,8 @@ class _$_WageSeekerCommonMDMS implements _WageSeekerCommonMDMS {
   List<WageSeekerSkills>? get wageSeekerSkills {
     final value = _wageSeekerSkills;
     if (value == null) return null;
+    if (_wageSeekerSkills is EqualUnmodifiableListView)
+      return _wageSeekerSkills;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -1110,6 +1116,7 @@ class _$_WageSeekerCommonMDMS implements _WageSeekerCommonMDMS {
   List<Relationship>? get relationship {
     final value = _relationship;
     if (value == null) return null;
+    if (_relationship is EqualUnmodifiableListView) return _relationship;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -1120,6 +1127,7 @@ class _$_WageSeekerCommonMDMS implements _WageSeekerCommonMDMS {
   List<SocialCategory>? get socialCategory {
     final value = _socialCategory;
     if (value == null) return null;
+    if (_socialCategory is EqualUnmodifiableListView) return _socialCategory;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
