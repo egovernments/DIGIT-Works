@@ -86,7 +86,7 @@ export const UICustomizations = {
         data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
       }
 
-      delete data.body.inbox.moduleSearchCriteria.ward;
+      
 
       //cloning locality and workflow states to format them
       // let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
@@ -96,6 +96,14 @@ export const UICustomizations = {
       if(selectedOrg) {
          data.body.inbox.moduleSearchCriteria.orgId = selectedOrg?.[0]?.applicationNumber;
       }
+
+      
+      let selectedWard =  _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : null);
+      delete data.body.inbox.moduleSearchCriteria.ward;
+      if(selectedWard) {
+         data.body.inbox.moduleSearchCriteria.ward = selectedWard?.[0]?.code;
+      }
+
       let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
       // delete data.body.inbox.moduleSearchCriteria.locality;
       delete data.body.inbox.moduleSearchCriteria.state;
@@ -151,12 +159,18 @@ export const UICustomizations = {
       if (column.label === "ATM_NO_OF_INDIVIDUALS") {
         return <div>{value?.length}</div>;
       }
+      if(column.label === "ATM_AMOUNT_IN_RS"){
+        return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA")}</span>;
+      }
       if (column.label === "ATM_SLA") {
         return parseInt(value) > 0 ? (
           <span className="sla-cell-success">{t(value) || ""}</span>
         ) : (
           <span className="sla-cell-error">{t(value) || ""}</span>
         );
+      }
+      if (column.label === "COMMON_WORKFLOW_STATES") {
+        return <span>{t(`WF_MUSTOR_${value}`)}</span>
       }
     },
     populateReqCriteria: () => {
@@ -197,6 +211,12 @@ export const UICustomizations = {
       const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.toProposalDate);
       if(toProposalDate) data.body.inbox.moduleSearchCriteria.toProposalDate = toProposalDate
       
+      const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus
+      delete data?.body?.inbox?.moduleSearchCriteria?.status
+      if(status){
+        data.body.inbox.moduleSearchCriteria.status = status
+      }
+
       const projectType = data?.body?.inbox?.moduleSearchCriteria?.typeOfWork?.code;
       delete data.body.inbox.moduleSearchCriteria.typeOfWork
       if(projectType) data.body.inbox.moduleSearchCriteria.typeOfWork = projectType
@@ -248,6 +268,30 @@ export const UICustomizations = {
         }
         return <p>{"NA"}</p>;
       }
+    },
+    populateReqCriteria: () => {
+      
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices:"mukta-estimate" },
+        body: {
+         
+        },
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+              return {
+                "i18nKey":`WF_ESTIMATE_STATUS_${state?.applicationStatus}`,
+                "wfStatus":state?.applicationStatus
+              }
+            })
+            return states  
+          },
+        },
+      };
     },
   },
   SearchProjectConfig: {
@@ -364,6 +408,109 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
       }
+    },
+  },
+  SearchAttendanceConfig: {
+    preProcess: (data) => {
+      
+      //get data to set in api
+      const startDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.startDate,"daystart");
+      if(startDate) data.body.inbox.moduleSearchCriteria.startDate = startDate
+      const endDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.endDate);
+      if(endDate) data.body.inbox.moduleSearchCriteria.endDate = endDate
+      
+      const projectType = data?.body?.inbox?.moduleSearchCriteria?.projectType?.code;
+      delete data.body.inbox.moduleSearchCriteria.projectType
+      if(projectType) data.body.inbox.moduleSearchCriteria.projectType = projectType
+
+      const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code
+      delete data.body.inbox.moduleSearchCriteria.ward
+      if(ward) data.body.inbox.moduleSearchCriteria.ward = ward
+    
+      
+      const status = data?.body?.inbox?.moduleSearchCriteria?.musterRollStatus?.[0]?.wfStatus
+      delete data?.body?.inbox?.moduleSearchCriteria?.musterRollStatus
+      if(status){
+        data.body.inbox.moduleSearchCriteria.musterRollStatus = status
+      }
+
+      //set tenantId 
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+      return data;
+    },
+    additionalCustomizations: (row, column, columnConfig, value, t) => {
+      if (column.label === "ES_COMMON_MUSTER_ROLL_ID") {
+        return (
+          <span className="link">
+            <Link
+              to={`/${
+                window.contextPath
+              }/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
+            >
+              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if(column.label === "ES_COMMON_LOCATION"){
+        return value ? (
+          <span style={{ whiteSpace: "nowrap" }}>
+            <p>{`${value?.locality ? value?.locality + ", " : ""}${value?.ward ? value?.ward + ", " : ""}${t(Digit.Utils.locale.getCityLocale(row?.businessObject?.tenantId))}`}</p>
+          </span>
+        ) : (
+          t("ES_COMMON_NA")
+        );
+      }
+
+      if (column.label === "ES_COMMON_PROJECT_NAME") {
+        
+        return (
+          <div class="tooltip">
+            <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+              {String(t(value))}
+            </span>
+            {/* check condtion - if length greater than 20 */}
+            <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+              {row?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
+            </span>
+          </div>
+        );
+      }
+
+
+      if (column.label === "COMMON_WORKFLOW_STATES") {
+        return <span>{t(`WF_MUSTOR_${value}`)}</span>
+      }
+
+      if(column.label === "MUSTER_WAGE_AMOUNT") {
+         return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA")}</span>;
+      }
+      
+    },
+    populateReqCriteria: () => {
+      
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices:"muster-roll-approval" },
+        body: {
+         
+        },
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+              return {
+                "i18nKey":`WF_MUSTOR_${state?.applicationStatus}`,
+                "wfStatus":state?.applicationStatus
+              }
+            })
+            return states  
+          },
+        },
+      };
     },
   },
   ContractsInboxConfig: {
@@ -588,13 +735,43 @@ export const UICustomizations = {
     },
   },
   SearchOrganisationConfig: {
-    preProcess: (data) => {
-      // const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
-      // const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
-      // data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
-      data.body.SearchCriteria = { ...data.body.SearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() };
-      return data;
-    },
+    preProcess: (data) => {  
+        let requestBody = { ...data.body.SearchCriteria };
+        const pathConfig = {
+          type: "functions.type",
+        };
+        const dateConfig = {
+          createdFrom: "daystart",
+          createdTo: "dayend",
+        };
+        const selectConfig = {
+          boundaryCode: "boundaryCode[0].code",
+          type:"type.code",
+          applicationStatus: "applicationStatus.code",
+        };
+        let SearchCriteria = Object.keys(requestBody)
+          .map((key) => {
+            if (selectConfig[key]) {
+              requestBody[key] = _.get(requestBody, selectConfig[key], null);
+            } else if (typeof requestBody[key] == "object") {
+              requestBody[key] = requestBody[key]?.code;
+            }
+            return key;
+          })
+          .filter((key) => requestBody[key])
+          .reduce((acc, curr) => {
+            if (pathConfig[curr]) {
+              _.set(acc, pathConfig[curr], requestBody[curr]);
+            } else if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
+              _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
+            } else {
+              _.set(acc, curr, requestBody[curr]);
+            }
+            return acc;
+          }, {});
+        data.body.SearchCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
+        return data;
+      },
     additionalCustomizations: (row, column, columnConfig, value, t) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
@@ -603,12 +780,12 @@ export const UICustomizations = {
         case "MASTERS_ORGANISATION_ID":
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/masters/view-organisation?tenantId=${row.tenantId}&orgId=${value}`}>
+              <Link to={`/${window.contextPath}/employee/masters/view-organization?tenantId=${row.tenantId}&orgId=${value}`}>
                 {value ? value : t("ES_COMMON_NA")}
               </Link>
             </span>
           );
-        case "MASTERS_LOCATION":
+        case "MASTERS_ADDRESS":
           return value ? (
             <span style={{ whiteSpace: "nowrap" }}>
               {String(`${t(Digit.Utils.locale.getCityLocale(row?.tenantId))} ${t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId))}`)}
@@ -616,14 +793,14 @@ export const UICustomizations = {
           ) : (
             t("ES_COMMON_NA")
           );
-        case "MASTERS_STATUS":
-          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+        case "CORE_COMMON_STATUS":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_ORG_STATUS_${value}`))}</span> : t("ES_COMMON_NA");
 
         case "MASTERS_ORGANISATION_TYPE":
-          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`COMMON_MASTERS_ORG_${value?.split?.('.')?.[0]}`))}</span> : t("ES_COMMON_NA");
 
         case "MASTERS_ORGANISATION_SUB_TYPE":
-          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`COMMON_MASTERS_SUBORG_${row?.functions?.[0]?.type?.split?.('.')?.[1]}`))}</span> : t("ES_COMMON_NA");
         default:
           return t("ES_COMMON_NA");
       }

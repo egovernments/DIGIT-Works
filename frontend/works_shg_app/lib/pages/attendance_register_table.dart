@@ -26,7 +26,7 @@ import '../widgets/SideBar.dart';
 import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/auto_complete_search_bar.dart';
 import '../widgets/drawer_wrapper.dart';
-import '../widgets/loaders.dart';
+import '../widgets/loaders.dart' as shg_loader;
 
 class AttendanceRegisterTablePage extends StatefulWidget {
   final String registerId;
@@ -128,7 +128,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                     AttendanceIndividualProjectSearchState>(
                   listener: (context, registerState) {
                     registerState.maybeWhen(
-                        loading: () => Loaders.circularLoader(context),
+                        loading: () => shg_loader.Loaders.circularLoader(context),
                         initial: () {
                           existingAttendeeList.clear();
                         },
@@ -164,7 +164,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       builder: (context, registerState) {
                     return registerState.maybeWhen(
                         orElse: () => Container(),
-                        loading: () => Loaders.circularLoader(context),
+                        loading: () => shg_loader.Loaders.circularLoader(context),
                         loaded: (AttendanceRegistersModel?
                                 individualAttendanceRegisterModel) =>
                             WorkDetailsCard(registerDetails));
@@ -204,7 +204,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                         AttendanceIndividualProjectSearchState>(
                       listener: (context, registerState) {
                         registerState.maybeWhen(
-                            loading: () => Loaders.circularLoader(context),
+                            loading: () => shg_loader.Loaders.circularLoader(context),
                             initial: () {
                               existingAttendeeList.clear();
                             },
@@ -279,7 +279,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       child: BlocBuilder<IndividualSearchBloc,
                           IndividualSearchState>(builder: (context, userState) {
                         return userState.maybeWhen(
-                            loading: () => Loaders.circularLoader(context),
+                            loading: () => shg_loader.Loaders.circularLoader(context),
                             initial: () {
                               existingAttendeeList.clear();
                               return const EmptyImage(align: Alignment.center);

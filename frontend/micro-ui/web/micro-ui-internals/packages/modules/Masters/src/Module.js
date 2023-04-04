@@ -4,20 +4,22 @@ import { useRouteMatch } from "react-router-dom";
 import MastersCard from "./components/MastersCard";
 import ProjectCard from "./components/ProjectCard";
 import { default as EmployeeApp } from "./pages/employee";
-import SearchMasters from "./pages/employee/Master/SearchMasters";
 import CreateMasters from "./pages/employee/Master/CreateMasters";
+import SearchMasters from "./pages/employee/Master/SearchMasters";
+import ViewMasters from "./pages/employee/Master/ViewMasters";
 import SearchMastersApplication from "./components/SearchMasters";
 
 import RegisterWageSeeker from "./pages/employee/WageSeeker/RegisterWageSeeker";
 import SearchWageSeeker from "./pages/employee/WageSeeker/SearchWageSeeker";
 import ViewWageSeeker from "./pages/employee/WageSeeker/ViewWageSeeker";
-import ModifyWageSeeker from "./pages/employee/WageSeeker/ModifyWageSeeker";
+import ModifyWageSeeker from "./pages/employee/WageSeeker/ModifyWageSeeker/index";
 
 import CreateOrganisation from  "./pages/employee/Organisation/CreateOrganization/index";
 import SearchOrganisation from "./pages/employee/Organisation/SearchOrganisation";
-import ViewOrganisation from "./pages/employee/Master/ViewOrganisation";
+import ViewOrganisation from "./pages/employee/Organisation/ViewOrganisation";
 
 import TransferCodeTable from "./components/TransferCodeTable";
+import MastersResponse from "./components/MastersResponse";
 
 export const MastersModule = ({ stateCode, userType, tenants }) => {
 
@@ -31,8 +33,6 @@ export const MastersModule = ({ stateCode, userType, tenants }) => {
     language,
   });
 
-
-
   if (isLoading) {
     return <Loader />;
   }
@@ -43,8 +43,9 @@ const componentsToRegister = {
   MastersModule,
   MasterCard:MastersCard ,
   ProjectsCard:ProjectCard,
-  SearchMasters,
   CreateMasters,
+  SearchMasters,
+  ViewMasters,
   SearchMastersApplication,
   
   RegisterWageSeeker,
@@ -55,7 +56,8 @@ const componentsToRegister = {
   CreateOrganisation,
   SearchOrganisation,
   ViewOrganisation,
-  TransferCodeTable
+  TransferCodeTable,
+  MastersResponse
 };
 
 export const initMastersComponents = () => {

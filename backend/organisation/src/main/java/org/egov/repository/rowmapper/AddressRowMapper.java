@@ -2,11 +2,9 @@ package org.egov.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.Address;
 import org.egov.web.models.GeoLocation;
-import org.egov.web.models.Organisation;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -99,7 +97,7 @@ public class AddressRowMapper implements ResultSetExtractor<List<Address>> {
                 .addressId(addressGeoLocation_addressId)
                 .latitude(addressGeoLocation_latitude)
                 .longitude(addressGeoLocation_longitude)
-                .additionDetails(addressGeoLocation_additionalDetails)
+                .additionalDetails(addressGeoLocation_additionalDetails)
                 .build();
 
         return geoLocation;

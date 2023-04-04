@@ -9,6 +9,12 @@ class IndividualListModel with IndividualListModelMappable {
 }
 
 @MappableClass()
+class SingleIndividualModel with SingleIndividualModelMappable {
+  IndividualModel? Individual;
+  SingleIndividualModel({this.Individual});
+}
+
+@MappableClass()
 class IndividualModel with IndividualModelMappable {
   String? id;
   String? individualId;

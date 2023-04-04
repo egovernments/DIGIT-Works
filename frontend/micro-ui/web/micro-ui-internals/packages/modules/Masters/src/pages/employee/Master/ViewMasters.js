@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from "../../../../../templates/ApplicationDetails";
 
-const ViewOrganisation = () => {
+const ViewMasters = () => {
   const { t } = useTranslation();
   const { applicationDetails, applicationData, workflowDetails } = Digit.Hooks.masters.useViewOrg({}); //pass required inputs when backend service is ready.
 
@@ -30,4 +30,4 @@ const ViewOrganisation = () => {
   );
 }
 
-export default ViewOrganisation;
+export default ViewMasters;

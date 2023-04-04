@@ -61,9 +61,9 @@ class CoreRepository {
           respStr = json.decode(await response.stream.bytesToString());
         }
       });
-      if (respStr != null && respStr?['files'] != null) {
+      if (respStr != null) {
         return respStr?['files']
-            .map<FileStoreModel>((e) => FileStoreModelMapper.fromJson(e))
+            .map<FileStoreModel>((e) => FileStoreModelMapper.fromMap(e))
             .toList();
       }
     }
