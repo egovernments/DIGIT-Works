@@ -34,6 +34,21 @@ var data= {"Projects": [{
     params,
   });
 }
+async function search_musterRoll(tenantId, requestinfo, musterRollNumber) {
+  var params = {
+    tenantId: tenantId,
+    musterRollNumber: musterRollNumber
+  };
+
+  var searchEndpoint = config.paths.musterRoll_search;
+
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.musterRoll, searchEndpoint),
+    data: Object.assign(requestinfo),
+    params,
+  });
+}
 
 async function search_estimateDetails(tenantId, requestinfo, estimateNumber) {
   var params = {
@@ -261,5 +276,6 @@ module.exports = {
   search_user,
   search_workflow,
   search_projectDetails,
-  search_estimateDetails
+  search_estimateDetails,
+  search_musterRoll
 };

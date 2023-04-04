@@ -22,8 +22,10 @@ module.exports = {
   pdf: {
     epass_pdf_template: process.env.EPASS_TEMPLATE || "tlcertificate",
     project_details_template:
-    process.env.PROJECT_DETAILS_TEMPLATE || "project-detail" ,
-    estimate_template:process.env.ESTIMATE_TEMPLATE || "estimate"
+      process.env.PROJECT_DETAILS_TEMPLATE || "project-detail",
+    estimate_template: process.env.ESTIMATE_TEMPLATE || "estimate",
+    nominal_muster_roll_template:
+      process.env.NOMINAL_MUSTER_ROLL_TEMPLATE || "nominal-muster-roll"
   },
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,
@@ -37,7 +39,8 @@ module.exports = {
     user: process.env.EGOV_USER_HOST || HOST,
     workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
     projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8081/',
-    estimates: process.env.EGOV_ESTIMATE_HOST || 'http://localhost:8084/'
+    estimates: process.env.EGOV_ESTIMATE_HOST || 'http://localhost:8084/',
+    musterRoll: process.env.EGOV_MUSTER_ROLL_HOST || 'http://localhost:8085',
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -47,6 +50,7 @@ module.exports = {
     download_url: "/download/epass",
     workflow_search: "/egov-workflow-v2/egov-wf/process/_search",
     projectDetails_search:"/pms/project/v1/_search",
-    estimate_search:"/estimate-service/estimate/v1/_search"
+    estimate_search: "/estimate-service/estimate/v1/_search",
+    musterRoll_search: "/muster-roll/v1/_search"
   },
 };
