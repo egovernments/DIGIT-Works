@@ -15,22 +15,28 @@ public class OrganisationRequestTestBuilder {
         this.builder = OrgRequest.builder();
     }
 
-    // public static ProjectRequestTestBuilder builder(){
-    //     return new ProjectRequestTestBuilder();
-    // }
+     public static OrganisationRequestTestBuilder builder(){
+         return new OrganisationRequestTestBuilder();
+     }
 
-    // public ProjectRequest build(){
-    //     return this.builder.build();
-    // }
+     public OrgRequest build(){
+         return this.builder.build();
+     }
 
-    // public ProjectRequestTestBuilder withRequestInfo(){
-    //     this.builder.requestInfo(RequestInfoTestBuilder.builder().withCompleteRequestInfo().build());
-    //     return this;
-    // }
+     public OrganisationRequestTestBuilder withRequestInfo(){
+         this.builder.requestInfo(RequestInfoTestBuilder.builder().withCompleteRequestInfo().build());
+         return this;
+     }
 
-    // public ProjectRequestTestBuilder addGoodProject(){
-    //     projects.add(ProjectTestBuilder.builder().addGoodProject().build());
-    //     this.builder.projects(projects);
-    //     return this;
-    // }
+     public OrganisationRequestTestBuilder addGoodOrganisationForCreate(){
+         organisations.add(OrganisationTestBuilder.builder().addGoodOrganisationWithoutIds().build());
+         this.builder.organisations(organisations);
+         return this;
+     }
+
+    public OrganisationRequestTestBuilder addGoodOrganisationWithIds(){
+        organisations.add(OrganisationTestBuilder.builder().addGoodOrganisation().build());
+        this.builder.organisations(organisations);
+        return this;
+    }
 }
