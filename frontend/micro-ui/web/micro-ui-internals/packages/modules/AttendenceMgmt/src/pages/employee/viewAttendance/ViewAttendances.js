@@ -9,6 +9,7 @@ const ViewAttendance = () => {
   const [showToast, setShowToast] = useState(null);
   const [showEditTitle, setshowEditTitle] = useState(false);
   const [showDataError, setShowDataError] = useState(null)
+  const [modify, setModify] = useState(false);
 
   const closeToast = () => {
       setShowToast(null);
@@ -58,6 +59,8 @@ const ViewAttendance = () => {
           tenantId={tenantId}
           applicationNo={musterRollNumber}
           setshowEditTitle={setshowEditTitle}
+          modify={modify}
+          setModify={setModify}
       />}
       {
         showDataError && <Toast error={true} label={t("COMMON_ERROR_FETCHING_MUSTER_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />

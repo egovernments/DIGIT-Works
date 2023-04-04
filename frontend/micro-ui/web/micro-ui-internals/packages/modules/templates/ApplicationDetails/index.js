@@ -24,7 +24,7 @@ const ApplicationDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [isWarningPop, setWarningPopUp] = useState(false);
-  const [modify, setModify] = useState(false);
+  
   const [saveAttendanceState, setSaveAttendanceState] = useState({ displaySave : false, updatePayload: []})
 
   const {
@@ -54,7 +54,9 @@ const ApplicationDetails = (props) => {
     sectionHeadStyle,
     showActionBar = true,
     setshowEditTitle = () => {},
-    customClass
+    customClass,
+    modify,
+    setModify
   } = props;
   
   
