@@ -40,7 +40,7 @@ module.exports = {
     workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
     projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8081/',
     estimates: process.env.EGOV_ESTIMATE_HOST || 'http://localhost:8084/',
-    musterRoll: process.env.EGOV_PROJECT_HOST || 'http://localhost:8084',
+    musterRoll: process.env.EGOV_MUSTER_ROLL_HOST || 'http://localhost:8085',
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
