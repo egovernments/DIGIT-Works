@@ -60,7 +60,6 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
       allowedFormats?.forEach(allowedFormat=>{
         exceptedFileTypes.push(documentFileTypeMappings[allowedFormat]);
       });
-      console.log(exceptedFileTypes);
       exceptedFileTypes = exceptedFileTypes.join("|");
       return new RegExp(`(.*?)(${exceptedFileTypes})$`)
     }
