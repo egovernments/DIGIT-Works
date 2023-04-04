@@ -11,7 +11,6 @@ import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
 import '../blocs/user/user_search.dart';
-import 'loaders.dart';
 
 class SideBar extends StatefulWidget {
   final String module;

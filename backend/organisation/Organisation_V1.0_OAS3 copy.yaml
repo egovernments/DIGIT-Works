@@ -225,11 +225,11 @@ components:
         auditDetails:
           type: object
           allOf:
-          - $ref: '#/components/schemas/AuditDetails'
-          - description: Collection of audit related fields used by most models
-            readOnly: true
+            - $ref: '#/components/schemas/AuditDetails'
+            - description: Collection of audit related fields used by most models
+              readOnly: true
       required:
-      - tenantId
+        - tenantId
     Identifier:
       title: Identifier
       description: Object to capture tax identifiers for a organisation
@@ -318,9 +318,9 @@ components:
         auditDetails:
           type: object
           allOf:
-          - $ref: '#/components/schemas/AuditDetails'
-          - description: Collection of audit related fields used by most models
-            readOnly: true
+            - $ref: '#/components/schemas/AuditDetails'
+            - description: Collection of audit related fields used by most models
+              readOnly: true
     Pagination:
       type: object
       description: Pagination details
@@ -400,10 +400,24 @@ components:
         tenantId:
           $ref: >-
             https://raw.githubusercontent.com/digit-egov/health-api-specs/main/contracts/common.yaml#/definitions/tenantId
-        type:
+        name:
+          type: string
+        applicationNumber:
+          type: string
+        orgNumber:
+          type: string
+        applicationStatus:
           type: string
         functions:
           $ref: '#/components/schemas/Function'
+        createdFrom:
+          type: number
+          format: double
+        createdTo:
+          type: number
+          format: double
+        boundaryCode:
+          type: string
         identifierType:
           type: string
         identifierValue:

@@ -29,12 +29,12 @@ const searchOrganisationConfig = () => {
           minReqFields: 1,
           defaultValues: {
             boundaryCode: "",
-            applicationNumber: "",
+            orgNumber: "",
             name: "",
             type: "",
             applicationStatus: "",
-            startDate: "",
-            endDate: "",
+            createdFrom: "",
+            createdTo: "",
           },
           fields: [
             {
@@ -58,14 +58,14 @@ const searchOrganisationConfig = () => {
               disable: false,
               populators: {
                 name: "type",
-                optionsKey: "code",
+                optionsKey: "name",
                 optionsCustomStyle: {
                   top: "2.3rem",
                 },
                 mdmsConfig: {
-                  masterName: "OrganisationType",
-                  moduleName: "works",
-                  localePrefix: "MASTERS",
+                  masterName: "OrgType",
+                  moduleName: "common-masters",
+                  localePrefix: "COMMON_MASTERS_ORG",
                 },
               },
             },
@@ -83,9 +83,9 @@ const searchOrganisationConfig = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                name: "applicationNumber",
+                name: "orgNumber",
                 error: `PROJECT_PATTERN_ERR_MSG`,
-                validation: { pattern: /^[a-z0-9\/-@# ]*$/i, minlength: 2 },
+                validation: {  minlength: 2 },
               },
             },
             {
@@ -95,15 +95,24 @@ const searchOrganisationConfig = () => {
               disable: false,
               populators: {
                 name: "applicationStatus",
-                optionsKey: "code",
+                optionsKey: "name",
                 optionsCustomStyle: {
                   top: "2.3rem",
                 },
-                mdmsConfig: {
-                  masterName: "SocialCategory",
-                  moduleName: "common-masters",
-                  localePrefix: "MASTERS",
-                },
+                options: [
+                  {
+                    code:"ACTIVE",
+                    name:"MASTERS_ORG_STATUS_ACTIVE"
+                  },
+                  {
+                    code:"DEBARRED",
+                    name:"MASTERS_ORG_STATUS_DEBARRED"
+                  },  {
+                    code:"INACTIVE",
+                    name:"MASTERS_ORG_STATUS_INACTIVE"
+                  }
+
+                ]
               },
             },
             {
@@ -141,7 +150,7 @@ const searchOrganisationConfig = () => {
           columns: [
             {
               label: "MASTERS_ORGANISATION_ID",
-              jsonPath: "applicationNumber",
+              jsonPath: "orgNumber",
               additionalCustomization: true,
             },
             {
@@ -159,7 +168,7 @@ const searchOrganisationConfig = () => {
               additionalCustomization: true,
             },
             {
-              label: "MASTERS_LOCATION",
+              label: "MASTERS_ADDRESS",
               jsonPath: "orgAddress[0].boundaryCode",
               additionalCustomization: true,
             },

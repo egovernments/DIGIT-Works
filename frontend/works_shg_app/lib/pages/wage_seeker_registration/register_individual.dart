@@ -1,15 +1,22 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/financial_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/individual_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/location_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/skills.dart';
+import 'package:works_shg_app/pages/wage_seeker_registration/summary_details.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/constants.dart';
+import 'package:works_shg_app/utils/notifiers.dart';
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/molecules/digit_stepper.dart';
 
 import '../../blocs/localization/app_localization.dart';
+import '../../blocs/wage_seeker_registration/wage_seeker_location_bloc.dart';
+import '../../blocs/wage_seeker_registration/wage_seeker_mdms_bloc.dart';
+import '../../models/mdms/location_mdms.dart';
+import '../../models/mdms/wage_seeker_mdms.dart';
 import '../../widgets/SideBar.dart';
 import '../../widgets/atoms/app_bar_logo.dart';
 import '../../widgets/drawer_wrapper.dart';
@@ -27,9 +34,24 @@ class RegisterIndividualPage extends StatefulWidget {
 }
 
 class RegisterIndividualPageState extends State<RegisterIndividualPage> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
+    super.initState();
+  }
+
+  afterViewBuild() {
+    context.read<WageSeekerMDMSBloc>().add(
+          const WageSeekerMDMSEvent(),
+        );
+    context.read<WageSeekerLocationBloc>().add(
+          const LocationEventWageSeeker(tenantId: 'pg.citya'),
+        );
+  }
+
   var t = AppLocalizations.of(scaffoldMessengerKey.currentContext!);
   int currentStep = 0;
-  List<int> stepNumbers = [1, 2, 3, 4];
+  List<int> stepNumbers = [1, 2, 3, 4, 5];
   List<String> stepHeaders = [
     AppLocalizations.of(scaffoldMessengerKey.currentContext!)
         .translate(i18.attendanceMgmt.individualDetails),
@@ -38,7 +60,9 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
     AppLocalizations.of(scaffoldMessengerKey.currentContext!)
         .translate(i18.common.locationDetails),
     AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-        .translate(i18.common.financialDetails)
+        .translate(i18.common.financialDetails),
+    AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+        .translate(i18.wageSeeker.summaryDetails)
   ];
 
   void updateCurrentStep() {
@@ -47,6 +71,12 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
         currentStep += 1;
       });
     }
+  }
+
+  void jumpToStep(int index) {
+    setState(() {
+      currentStep = index;
+    });
   }
 
   @override
@@ -88,32 +118,62 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
                     });
                   },
                 ),
-                getFormConfig()
+                BlocBuilder<WageSeekerMDMSBloc, WageSeekerMDMSState>(
+                    builder: (context, mdmsState) {
+                  return mdmsState.maybeWhen(
+                      orElse: () => Container(),
+                      loading: () => Loaders.circularLoader(context),
+                      loaded: (WageSeekerMDMS? wageSeekerMDMS) {
+                        return BlocBuilder<WageSeekerLocationBloc,
+                                WageSeekerLocationState>(
+                            builder: (context, locationState) {
+                          return locationState.maybeWhen(
+                              orElse: () => Container(),
+                              loaded: (Location? location) {
+                                return getFormConfig(wageSeekerMDMS, location);
+                              });
+                        });
+                      },
+                      error: (String? error) => Notifiers.getToastMessage(
+                          context, error.toString(), 'ERROR'));
+                })
               ]),
         ));
   }
 
-  Widget getFormConfig() {
+  Widget getFormConfig(WageSeekerMDMS? wageSeekerMDMS, Location? location) {
     switch (currentStep) {
       case 0:
-        return IndividualDetails(
+        return IndividualDetailsPage(
           onPressed: updateCurrentStep,
+          wageSeekerMDMS: wageSeekerMDMS,
         );
       case 1:
-        return SkillDetails(
+        return SkillDetailsPage(
           onPressed: updateCurrentStep,
+          wageSeekerMDMS: wageSeekerMDMS,
         );
       case 2:
-        return LocationDetails(
+        return LocationDetailsPage(
           onPressed: updateCurrentStep,
+          city: 'pg.citya',
+          location: location,
+          wageSeekerMDMS: wageSeekerMDMS,
         );
       case 3:
-        return FinancialDetails(
+        return FinancialDetailsPage(
           onPressed: updateCurrentStep,
+          wageSeekerMDMS: wageSeekerMDMS,
+        );
+      case 4:
+        return SummaryDetailsPage(
+          onPressed: jumpToStep,
+          wageSeekerMDMS: wageSeekerMDMS,
         );
       default:
-        return IndividualDetails(
+        return IndividualDetailsPage(
           onPressed: updateCurrentStep,
+          wageSeekerMDMS: wageSeekerMDMS,
         );
     }
   }
