@@ -42,6 +42,9 @@ public class Function {
     @Size(min = 2, max = 64)
     private String type = null;
 
+    @JsonProperty("organisationType")
+    private String organisationType = null;
+
     @JsonProperty("category")
     @Size(min = 2, max = 64)
     private String category = null;

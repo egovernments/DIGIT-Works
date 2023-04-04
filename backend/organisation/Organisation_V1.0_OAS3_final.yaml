@@ -404,6 +404,9 @@ components:
           type: string
         applicationStatus:
           type: string
+        contactMobileNumber:
+          description: Represents Contact Mobile Number
+          type: string
         functions:
           type: object
           allOf:
