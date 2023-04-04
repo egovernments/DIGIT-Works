@@ -34,7 +34,6 @@ const inboxConfigMukta = () => {
                     "defaultValues": {
                         "estimateNumber": "",
                         "projectId": "",
-                        "department": "",
                         "projectType": ""
                     },
                     "fields": [
