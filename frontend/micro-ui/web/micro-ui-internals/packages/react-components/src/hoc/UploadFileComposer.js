@@ -8,28 +8,26 @@ import Header from '../atoms/Header'
 import { Loader } from '../atoms/Loader'
 import MultiUploadWrapper from '../molecules/MultiUploadWrapper'
 import TextInput from '../atoms/TextInput'
-import DocumentConfigSample from "./DocumentConfigSample.json";
 
 const UploadFileComposer = ({module, config, Controller, control, register, formData, errors, localePrefix, customClass, customErrorMsg}) => {
   const { t } = useTranslation()
   
   //fetch mdms config based on module name
   const tenant = Digit.ULBService.getStateId();
-  // const { isLoading, data } = Digit.Hooks.useCustomMDMS(
-  //     tenant,
-  //     "works",
-  //     [
-  //         {
-  //             "name": "DocumentConfig",
-  //             "filter": `[?(@.module=='${module}')]`
-  //         }
-  //     ]
-  // );
+  const { isLoading, data } = Digit.Hooks.useCustomMDMS(
+      tenant,
+      "works",
+      [
+          {
+              "name": "DocumentConfig",
+              "filter": `[?(@.module=='${module}')]`
+          }
+      ]
+  );
 
 
 
-  // const docConfig = data?.works?.DocumentConfig?.[0]
-  const docConfig = DocumentConfigSample?.DocumentConfig?.[0];
+  const docConfig = data?.works?.DocumentConfig?.[0]
 
   let documentFileTypeMappings = {
     docx : "vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -44,7 +42,6 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
   }
   
   const getRegex = (allowedFormats) => {
-    console.log(allowedFormats);
     // console.log(allowedFormats);
     // if(allowedFormats?.length) {
     //   const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
@@ -65,7 +62,6 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
       });
       console.log(exceptedFileTypes);
       exceptedFileTypes = exceptedFileTypes.join("|");
-      // console.log(new RegExp(`(.*?)(${exceptedFileTypes})$`));
       return new RegExp(`(.*?)(${exceptedFileTypes})$`)
     }
     return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
