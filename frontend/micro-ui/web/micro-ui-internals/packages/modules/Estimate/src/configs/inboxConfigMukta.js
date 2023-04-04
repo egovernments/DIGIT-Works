@@ -173,7 +173,7 @@ const inboxConfigMukta = () => {
                     ],
                     "label": "MUKTA",
                     "logoIcon": {
-                        "component": "PropertyHouse",
+                        "component": "MuktaIcon",
                         "customClass": "inbox-search-icon--projects"
                     }
                 },
