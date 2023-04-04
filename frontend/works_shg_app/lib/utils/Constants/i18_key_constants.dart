@@ -32,6 +32,7 @@ class Common {
   String get continueToLogin => 'CONTINUE_TO_LOGIN';
   String get mobileNumber => 'CORE_COMMON_MOBILE_NUMBER';
   String get logOut => 'CORE_COMMON_LOGOUT';
+  String get orgProfile => 'ORG_PROFILE';
   String get oK => 'CORE_CHANGE_TENANT_OK';
   String get email => 'CORE_COMMON_EMAIL';
   String get save => 'CORE_COMMON_SAVE';
@@ -159,7 +160,7 @@ class WageSeeker {
   String get relationshipRequired => 'RELATIONSHIP_IS_REQUIRED';
   String get socialCatRequired => 'SOCIAL_CATEGORY_IS_REQUIRED';
   String get genderRequired => 'GENDER_IS_REQUIRED';
-  String get mobileRequired => 'MOBILE_NUJMBER_IS_REQUIRED';
+  String get mobileRequired => 'MOBILE_NUMBER_IS_REQUIRED';
   String get minMobileCharacters => 'MIN_MOBILE_CHARCTERS_REQUIRED';
   String get minAadhaarCharacters => 'MIN_AADHAAR_CHARCTERS_REQUIRED';
   String get maxMobileCharacters => 'MAX_MOBILE_CHARCTERS_REQUIRED';
