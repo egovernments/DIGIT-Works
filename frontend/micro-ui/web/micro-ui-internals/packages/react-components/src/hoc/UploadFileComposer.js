@@ -8,35 +8,66 @@ import Header from '../atoms/Header'
 import { Loader } from '../atoms/Loader'
 import MultiUploadWrapper from '../molecules/MultiUploadWrapper'
 import TextInput from '../atoms/TextInput'
+import DocumentConfigSample from "./DocumentConfigSample.json";
 
 const UploadFileComposer = ({module, config, Controller, control, register, formData, errors, localePrefix, customClass, customErrorMsg}) => {
   const { t } = useTranslation()
   
   //fetch mdms config based on module name
   const tenant = Digit.ULBService.getStateId();
-  const { isLoading, data } = Digit.Hooks.useCustomMDMS(
-      tenant,
-      "works",
-      [
-          {
-              "name": "DocumentConfig",
-              "filter": `[?(@.module=='${module}')]`
-          }
-      ]
-  );
+  // const { isLoading, data } = Digit.Hooks.useCustomMDMS(
+  //     tenant,
+  //     "works",
+  //     [
+  //         {
+  //             "name": "DocumentConfig",
+  //             "filter": `[?(@.module=='${module}')]`
+  //         }
+  //     ]
+  // );
 
-  const docConfig = data?.works?.DocumentConfig?.[0]
+
+
+  // const docConfig = data?.works?.DocumentConfig?.[0]
+  const docConfig = DocumentConfigSample?.DocumentConfig?.[0];
+
+  let documentFileTypeMappings = {
+    docx : "vnd.openxmlformats-officedocument.wordprocessingml.document",
+    doc : "msword",
+    png : "png",
+    pdf : "pdf",
+    jpeg : "jpeg",
+    jpg : "jpeg",
+    xls : "vnd.ms-excel", 
+    xlsx : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    csv : "csv"
+  }
   
   const getRegex = (allowedFormats) => {
+    console.log(allowedFormats);
+    // console.log(allowedFormats);
+    // if(allowedFormats?.length) {
+    //   const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
+    //   const stringified = JSON.stringify(obj);
+    //   console.log(new RegExp(JSON.parse(stringified).expression.slice(1, -1)));
+    //   return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
+    // } else if(docConfig?.allowedFileTypes?.length) {
+    //   const obj = { "expression" : `/(.*?)(${docConfig?.allowedFileTypes?.join('|')})$/`}
+    //   const stringified = JSON.stringify(obj);
+    //   console.log(new RegExp(JSON.parse(stringified).expression.slice(1, -1)))
+    //   return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
+    // } 
+    // return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
     if(allowedFormats?.length) {
-      const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
-      const stringified = JSON.stringify(obj);
-      return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
-    } else if(docConfig?.allowedFileTypes?.length) {
-      const obj = { "expression" : `/(.*?)(${docConfig?.allowedFileTypes?.join('|')})$/`}
-      const stringified = JSON.stringify(obj);
-      return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
-    } 
+      let exceptedFileTypes = [];
+      allowedFormats?.forEach(allowedFormat=>{
+        exceptedFileTypes.push(documentFileTypeMappings[allowedFormat]);
+      });
+      console.log(exceptedFileTypes);
+      exceptedFileTypes = exceptedFileTypes.join("|");
+      // console.log(new RegExp(`(.*?)(${exceptedFileTypes})$`));
+      return new RegExp(`(.*?)(${exceptedFileTypes})$`)
+    }
     return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
   }
 
