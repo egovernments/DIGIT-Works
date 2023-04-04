@@ -120,7 +120,11 @@ public class OrganisationFunctionQueryBuilder {
             // This search matches with only organisation type which is the first part of the '.' separated value
             if (StringUtils.isNotBlank(searchCriteria.getFunctions().getOrganisationType())) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" LEFT(orgFunction.type, POSITION('.' in orgFunction.type)-1) = ?");
+                //This query checks first part of the type field in db
+                queryBuilder.append(" LEFT(orgFunction.type, POSITION('.' in orgFunction.type)-1) = ? ");
+                //If the type doesn't have '.' i.e. the organisation doesn't have subtype
+                queryBuilder.append(" OR orgFunction.type = ?  ");
+                preparedStmtList.add(searchCriteria.getFunctions().getOrganisationType());
                 preparedStmtList.add(searchCriteria.getFunctions().getOrganisationType());
             }
 
