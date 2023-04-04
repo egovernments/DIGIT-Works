@@ -23,14 +23,31 @@ async function search_projectDetails(tenantId, requestinfo, projectId) {
   };
 
   var searchEndpoint = config.paths.projectDetails_search;
-var data= {"Projects": [{
-  "tenantId":tenantId, 
-  "projectNumber": projectId
-  }]}
+  var data = {
+    "Projects": [{
+      "tenantId": tenantId,
+      "projectNumber": projectId
+    }]
+  }
   return await axios({
     method: "post",
     url: url.resolve(config.host.projectDetails, searchEndpoint),
     data: Object.assign(requestinfo, data),
+    params,
+  });
+}
+async function search_musterRoll(tenantId, requestinfo, musterRollNumber) {
+  var params = {
+    tenantId: tenantId,
+    musterRollNumber: musterRollNumber
+  };
+
+  var searchEndpoint = config.paths.musterRoll_search;
+
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.musterRoll, searchEndpoint),
+    data: Object.assign(requestinfo),
     params,
   });
 }
@@ -237,5 +254,6 @@ module.exports = {
   search_mdms,
   search_user,
   search_workflow,
-  search_projectDetails
+  search_projectDetails,
+  search_musterRoll
 };

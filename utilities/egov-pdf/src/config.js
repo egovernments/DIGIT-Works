@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = process.env.EGOV_HOST;
+HOST = 8080;
 
 if (!HOST) {
   console.log("You need to set the HOST variable");
@@ -22,7 +22,9 @@ module.exports = {
   pdf: {
     epass_pdf_template: process.env.EPASS_TEMPLATE || "tlcertificate",
     project_details_template:
-    process.env.PROJECT_DETAILS_TEMPLATE || "project-detail" 
+      process.env.PROJECT_DETAILS_TEMPLATE || "project-detail",
+    nominal_muster_roll_template:
+      process.env.NOMINAL_MUSTER_ROLL_TEMPLATE || "nominal-muster-roll"
   },
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,
@@ -35,7 +37,8 @@ module.exports = {
     pdf: process.env.EGOV_PDF_HOST || 'http://localhost:8082',
     user: process.env.EGOV_USER_HOST || HOST,
     workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
-    projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8081/'
+    projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8081',
+    musterRoll: process.env.EGOV_PROJECT_HOST || 'http://localhost:8084',
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -44,6 +47,7 @@ module.exports = {
     mdms_search: "/egov-mdms-service/v1/_search",
     download_url: "/download/epass",
     workflow_search: "/egov-workflow-v2/egov-wf/process/_search",
-    projectDetails_search:"/pms/project/v1/_search"
+    projectDetails_search: "/pms/project/v1/_search",
+    musterRoll_search: "/muster-roll/v1/_search",
   },
 };

@@ -12,6 +12,7 @@ Egov-pdf service work in between pdf-service and client requesting pdfs. Earlier
 - User-service
 - Workflow-service
 - Project-service
+- MusterRoll-service
 
 
 ### Swagger API Contract
@@ -25,6 +26,7 @@ Egov-pdf service is new service being added which can work in between existing p
 For any new pdf requirement one new endpoint with validations and logic for getting data for pdf has to be added in the code. With separate endpoint for each pdf we can define access rules per pdf basis. Currently egov-pdf service has endpoint for following pdfs used in our system:-
 
 - ProjectDetail pdf
+- NominalMusterRoll pdf
 
 
 #### Configurations
@@ -51,6 +53,7 @@ Currently below endpoints are in use for ‘CITIZEN' and 'EMPLOYEE’ roles
 | Endpoint | module | query parameter | Restrict Citizen to own records |
 | -------- | ------ | --------------- | ------------------------------- |
 |`/egov-pdf/download/project/project-details` | project | `projectId, tenantId` | false |
+|`/egov-pdf/download/musterRoll/muster-roll` | musterRoll | `musterRollNumber, tenantId` | false |
 
 
 ### Kafka Consumers
