@@ -22,7 +22,11 @@ export const UICustomizations = {
         data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
       }
 
+      
+      let ward = _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : []);
       delete data.body.inbox.moduleSearchCriteria.ward;
+      ward = ward?.map((row) => row?.code);
+      if (ward.length > 0) data.body.inbox.moduleSearchCriteria.ward = ward;
 
       //cloning locality and workflow states to format them
       let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
@@ -109,22 +113,27 @@ export const UICustomizations = {
       }
 
       
-      let selectedWard =  _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : null);
-      delete data.body.inbox.moduleSearchCriteria.ward;
-      if(selectedWard) {
-         data.body.inbox.moduleSearchCriteria.ward = selectedWard?.[0]?.code;
-      }
+      // let selectedWard =  _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : null);
+      // delete data.body.inbox.moduleSearchCriteria.ward;
+      // if(selectedWard) {
+      //    data.body.inbox.moduleSearchCriteria.ward = selectedWard?.[0]?.code;
+      // }
 
       let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
+      let ward = _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : []);
       // delete data.body.inbox.moduleSearchCriteria.locality;
       delete data.body.inbox.moduleSearchCriteria.state;
+      delete data.body.inbox.moduleSearchCriteria.ward;
+
       // locality = locality?.map((row) => row?.code);
       states = Object.keys(states)?.filter((key) => states[key]);
-
+      ward = ward?.map((row) => row?.code);
+      
+      
       // //adding formatted data to these keys
       // if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
-      if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
-
+      if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;  
+      if (ward.length > 0) data.body.inbox.moduleSearchCriteria.ward = ward;
       const projectType = _.clone(data.body.inbox.moduleSearchCriteria.projectType ? data.body.inbox.moduleSearchCriteria.projectType : {});
       if (projectType?.code) data.body.inbox.moduleSearchCriteria.projectType = projectType.code;
 
@@ -514,7 +523,7 @@ export const UICustomizations = {
       }
 
 
-      if (key === "COMMON_WORKFLOW_STATES") {
+      if (key === "CORE_COMMON_STATUS") {
         return <span>{t(`WF_MUSTOR_${value}`)}</span>
       }
 
