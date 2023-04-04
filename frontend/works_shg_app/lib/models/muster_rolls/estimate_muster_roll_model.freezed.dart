@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'estimate_muster_roll_model.dart';
 
@@ -133,6 +133,7 @@ class _$_EstimateMusterRollsModel implements _EstimateMusterRollsModel {
   List<EstimateMusterRoll>? get musterRoll {
     final value = _musterRoll;
     if (value == null) return null;
+    if (_musterRoll is EqualUnmodifiableListView) return _musterRoll;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -497,6 +498,8 @@ class _$_EstimateMusterRoll implements _EstimateMusterRoll {
   List<EstimateIndividualEntries>? get individualEntries {
     final value = _individualEntries;
     if (value == null) return null;
+    if (_individualEntries is EqualUnmodifiableListView)
+      return _individualEntries;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -824,6 +827,8 @@ class _$_EstimateIndividualEntries implements _EstimateIndividualEntries {
   List<AttendanceEntries>? get attendanceEntries {
     final value = _attendanceEntries;
     if (value == null) return null;
+    if (_attendanceEntries is EqualUnmodifiableListView)
+      return _attendanceEntries;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -1146,6 +1151,7 @@ class _$_EstimateMusterIndividualAdditionalDetails
   List<String>? get skillCode {
     final value = _skillCode;
     if (value == null) return null;
+    if (_skillCode is EqualUnmodifiableListView) return _skillCode;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }

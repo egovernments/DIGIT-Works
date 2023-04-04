@@ -73,6 +73,9 @@ _$_AttendanceRegisterAdditionalDetails
           projectId: json['projectId'] as String?,
           projectName: json['projectName'] as String?,
           projectType: json['projectType'] as String?,
+          projectDesc: json['projectDesc'] as String?,
+          locality: json['locality'] as String?,
+          ward: json['ward'] as String?,
           amount: json['amount'] as int?,
         );
 
@@ -86,6 +89,9 @@ Map<String, dynamic> _$$_AttendanceRegisterAdditionalDetailsToJson(
       'projectId': instance.projectId,
       'projectName': instance.projectName,
       'projectType': instance.projectType,
+      'projectDesc': instance.projectDesc,
+      'locality': instance.locality,
+      'ward': instance.ward,
       'amount': instance.amount,
     };
 
