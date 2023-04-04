@@ -26,6 +26,7 @@ const searchConfig = () => {
         "secondaryLabel": "ES_COMMON_CLEAR_SEARCH",
         "minReqFields": 1,
         "showFormInstruction": "MUSTER_SEARCH_HINT",
+        "formClassName":"custom-both-clear-search",
         "defaultValues": {
           "ward": "",
           "projectType": "",
@@ -102,7 +103,7 @@ const searchConfig = () => {
             },
             "populators": {
               "name": "musterRollNumber",
-              "error": "PROJECT_PATTERN_ERR_MSG",
+              "error": "COMMON_PATTERN_ERR_MSG_MUSTER_ID",
               "validation": {
                 "pattern": "MR\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
                 "minlength": 2
@@ -180,7 +181,7 @@ const searchConfig = () => {
             "jsonPath": "businessObject.additionalDetails.orgName"
           },
           {
-            "label": "COMMON_WORKFLOW_STATES",
+            "label": "CORE_COMMON_STATUS",
             "jsonPath": "ProcessInstance.state.state",
             "additionalCustomization": true
           },
