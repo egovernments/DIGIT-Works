@@ -21,6 +21,7 @@ const ProjectDetails = () => {
     const [sessionFormData, clearSessionFormData] = projectSession;
     const location = useLocation();
     let isProjectModifier = false;
+    let isEstimateViewerAndCreator = false;
     const [actionsMenu, setActionsMenu] = useState([ 
         {
             name : "MODIFY_PROJECT"
@@ -109,8 +110,13 @@ const ProjectDetails = () => {
     },[loggedInUserRoles]);
 
     useEffect(()=>{
+        const estimateViewerAndCreatorRole = ["SUPERUSER", "ESTIMATE_CREATOR", "ESTIMATE_VERIFIER", "TECHNICAL_SANCTIONER", "ESTIMATE_APPROVER", "ESTIMATE_VIEWER"];
+        isEstimateViewerAndCreator = estimateViewerAndCreatorRole?.some(role=>loggedInUserRoles?.includes(role));
+    },[loggedInUserRoles]);
+
+    useEffect(()=>{
         let isUserEstimateCreator = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
-        if(isEstimateSearchError) {
+        if(isEstimateSearchError && isEstimateViewerAndCreator) {
             setToast({show : true, label : t("COMMON_ERROR_FETCHING_ESTIMATE_DETAILS"), error : true});
             setActionsMenu([]);
             setHideActionBar(true);

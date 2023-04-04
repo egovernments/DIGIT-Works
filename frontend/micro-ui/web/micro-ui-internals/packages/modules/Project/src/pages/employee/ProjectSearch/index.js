@@ -33,7 +33,7 @@ const ProjectSearch = () => {
         }
       ]
     }
-    ),[]);
+    ),[data]);
 
     //remove session form data if user navigates away from the project create screen
     useEffect(()=>{
