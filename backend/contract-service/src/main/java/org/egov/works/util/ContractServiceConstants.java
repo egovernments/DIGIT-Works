@@ -4,7 +4,8 @@ public class ContractServiceConstants {
     public static final String MASTER_TENANTS = "tenants";
     public static final String MDMS_TENANT_MODULE_NAME = "tenant";
     public static final String MDMS_WORKS_MODULE_NAME = "works";
-
+    public static final String MDMS_WORKS_LOCALITY = "locality";
+    public static final String MDMS_WORKS_PROJECT_DESC = "projectDesc";
     public static final String OFFICER_IN_CHARGE_ID_CONSTANT = "officerInChargeId";
     public static final String MASTER_CONTRACT_TYPE = "ContractType";
     public static final String MASTER_CBO_ROLES = "CBORoles";
