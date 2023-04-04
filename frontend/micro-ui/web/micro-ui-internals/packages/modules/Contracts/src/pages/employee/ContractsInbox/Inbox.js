@@ -30,6 +30,8 @@ const Inbox = () => {
 
   }, [location])
 
+
+
   if (isLoading || !pageConfig) return <Loader />
   return (
     <React.Fragment>

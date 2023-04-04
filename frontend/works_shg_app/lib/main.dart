@@ -17,6 +17,7 @@ import 'package:works_shg_app/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
 import 'package:works_shg_app/blocs/work_orders/decline_work_order.dart';
 import 'package:works_shg_app/data/repositories/attendance_mdms.dart';
+import 'package:works_shg_app/data/repositories/common_repository/common_repository.dart';
 import 'package:works_shg_app/router/app_navigator_observer.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/constants.dart';
@@ -37,6 +38,11 @@ import 'blocs/muster_rolls/from_to_date_search_muster_roll.dart';
 import 'blocs/muster_rolls/get_muster_workflow.dart';
 import 'blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'blocs/user/user_search.dart';
+import 'blocs/wage_seeker_registration/wage_seeker_bank_create.dart';
+import 'blocs/wage_seeker_registration/wage_seeker_create_bloc.dart';
+import 'blocs/wage_seeker_registration/wage_seeker_location_bloc.dart';
+import 'blocs/wage_seeker_registration/wage_seeker_mdms_bloc.dart';
+import 'blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
 import 'blocs/work_orders/accept_work_order.dart';
 import 'blocs/work_orders/search_individual_work.dart';
 import 'blocs/work_orders/search_my_works.dart';
@@ -124,6 +130,15 @@ class MainApplication extends StatelessWidget {
         BlocProvider(create: (context) => AcceptWorkOrderBloc()),
         BlocProvider(create: (context) => DeclineWorkOrderBloc()),
         BlocProvider(create: (context) => SearchIndividualWorkBloc()),
+        BlocProvider(create: (context) => WageSeekerBloc()),
+        BlocProvider(create: (context) => WageSeekerLocationBloc()),
+        BlocProvider(create: (context) => WageSeekerCreateBloc()),
+        BlocProvider(create: (context) => WageSeekerBankCreateBloc()),
+        BlocProvider(
+            create: (context) => WageSeekerMDMSBloc(
+                const WageSeekerMDMSState.initial(),
+                MdmsRepository(client.init()),
+                CommonRepository(client.init()))),
         BlocProvider(
             create: (context) =>
                 IndividualSearchBloc(const IndividualSearchState.initial())),

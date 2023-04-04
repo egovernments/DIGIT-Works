@@ -113,6 +113,108 @@ class _IndividualListModelCopyWithImpl<$R, $Out extends IndividualListModel>
       $then(IndividualListModel(Individual: or(Individual, $value.Individual)));
 }
 
+class SingleIndividualModelMapper extends MapperBase<SingleIndividualModel> {
+  static MapperContainer container = MapperContainer(
+    mappers: {SingleIndividualModelMapper()},
+  )..linkAll({IndividualModelMapper.container});
+
+  @override
+  SingleIndividualModelMapperElement createElement(MapperContainer container) {
+    return SingleIndividualModelMapperElement._(this, container);
+  }
+
+  @override
+  String get id => 'SingleIndividualModel';
+
+  static final fromMap = container.fromMap<SingleIndividualModel>;
+  static final fromJson = container.fromJson<SingleIndividualModel>;
+}
+
+class SingleIndividualModelMapperElement
+    extends MapperElementBase<SingleIndividualModel> {
+  SingleIndividualModelMapperElement._(super.mapper, super.container);
+
+  @override
+  Function get decoder => decode;
+  SingleIndividualModel decode(dynamic v) =>
+      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
+  SingleIndividualModel fromMap(Map<String, dynamic> map) =>
+      SingleIndividualModel(Individual: container.$getOpt(map, 'Individual'));
+
+  @override
+  Function get encoder => encode;
+  dynamic encode(SingleIndividualModel v) => toMap(v);
+  Map<String, dynamic> toMap(SingleIndividualModel s) =>
+      {'Individual': container.$enc(s.Individual, 'Individual')};
+
+  @override
+  String stringify(SingleIndividualModel self) =>
+      'SingleIndividualModel(Individual: ${container.asString(self.Individual)})';
+  @override
+  int hash(SingleIndividualModel self) => container.hash(self.Individual);
+  @override
+  bool equals(SingleIndividualModel self, SingleIndividualModel other) =>
+      container.isEqual(self.Individual, other.Individual);
+}
+
+mixin SingleIndividualModelMappable {
+  String toJson() => SingleIndividualModelMapper.container
+      .toJson(this as SingleIndividualModel);
+  Map<String, dynamic> toMap() => SingleIndividualModelMapper.container
+      .toMap(this as SingleIndividualModel);
+  SingleIndividualModelCopyWith<SingleIndividualModel, SingleIndividualModel,
+          SingleIndividualModel>
+      get copyWith => _SingleIndividualModelCopyWithImpl(
+          this as SingleIndividualModel, $identity, $identity);
+  @override
+  String toString() => SingleIndividualModelMapper.container.asString(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (runtimeType == other.runtimeType &&
+          SingleIndividualModelMapper.container.isEqual(this, other));
+  @override
+  int get hashCode => SingleIndividualModelMapper.container.hash(this);
+}
+
+extension SingleIndividualModelValueCopy<$R, $Out extends SingleIndividualModel>
+    on ObjectCopyWith<$R, SingleIndividualModel, $Out> {
+  SingleIndividualModelCopyWith<$R, SingleIndividualModel, $Out>
+      get asSingleIndividualModel =>
+          base.as((v, t, t2) => _SingleIndividualModelCopyWithImpl(v, t, t2));
+}
+
+typedef SingleIndividualModelCopyWithBound = SingleIndividualModel;
+
+abstract class SingleIndividualModelCopyWith<$R,
+        $In extends SingleIndividualModel, $Out extends SingleIndividualModel>
+    implements ObjectCopyWith<$R, $In, $Out> {
+  SingleIndividualModelCopyWith<$R2, $In, $Out2>
+      chain<$R2, $Out2 extends SingleIndividualModel>(
+          Then<SingleIndividualModel, $Out2> t, Then<$Out2, $R2> t2);
+  IndividualModelCopyWith<$R, IndividualModel, IndividualModel>? get Individual;
+  $R call({IndividualModel? Individual});
+}
+
+class _SingleIndividualModelCopyWithImpl<$R, $Out extends SingleIndividualModel>
+    extends CopyWithBase<$R, SingleIndividualModel, $Out>
+    implements SingleIndividualModelCopyWith<$R, SingleIndividualModel, $Out> {
+  _SingleIndividualModelCopyWithImpl(super.value, super.then, super.then2);
+  @override
+  SingleIndividualModelCopyWith<$R2, SingleIndividualModel, $Out2>
+      chain<$R2, $Out2 extends SingleIndividualModel>(
+              Then<SingleIndividualModel, $Out2> t, Then<$Out2, $R2> t2) =>
+          _SingleIndividualModelCopyWithImpl($value, t, t2);
+
+  @override
+  IndividualModelCopyWith<$R, IndividualModel, IndividualModel>?
+      get Individual => $value.Individual?.copyWith
+          .chain($identity, (v) => call(Individual: v));
+  @override
+  $R call({Object? Individual = $none}) => $then(
+      SingleIndividualModel(Individual: or(Individual, $value.Individual)));
+}
+
 class IndividualModelMapper extends MapperBase<IndividualModel> {
   static MapperContainer container = MapperContainer(
     mappers: {IndividualModelMapper()},

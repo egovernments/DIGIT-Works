@@ -23,7 +23,6 @@ const EstimateInbox = () => {
         ]);
         
     // let configs = data?.[moduleName]?.EstimateInboxConfig?.[0]
- 
 
     const updatedConfig = useMemo(
         () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, pageConfig,"sections.search.uiConfig.fields",{}),
@@ -34,6 +33,7 @@ const EstimateInbox = () => {
         setPageConfig(_.cloneDeep(data?.[moduleName]?.EstimateInboxConfig?.[0]))
         
     }, [data,location])
+
     
     
     if(isLoading || !pageConfig) return <Loader />
@@ -41,8 +41,7 @@ const EstimateInbox = () => {
         <React.Fragment>
             <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
             <div className="inbox-search-wrapper">
-                {/* <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer> */}
-                <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer>
+              <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer>
             </div>
         </React.Fragment>
     )

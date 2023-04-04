@@ -58,7 +58,7 @@ class DigitSearchDropdown<T> extends StatelessWidget {
             ),
             itemBuilder: (context, item) {
               return Padding(
-                padding: const EdgeInsets.all(DigitTheme.kPadding * 2),
+                padding: const EdgeInsets.all(kPadding * 2),
                 child: Text(
                   valueMapper(item),
                   style: Theme.of(context).textTheme.bodyLarge,

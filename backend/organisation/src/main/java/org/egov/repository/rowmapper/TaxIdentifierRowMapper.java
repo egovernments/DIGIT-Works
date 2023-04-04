@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class TaxIdentifierRowMapper  implements ResultSetExtractor<List<Identifier>> {
+public class TaxIdentifierRowMapper implements ResultSetExtractor<List<Identifier>> {
 
     @Autowired
     private ObjectMapper mapper;
