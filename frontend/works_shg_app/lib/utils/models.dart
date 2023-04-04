@@ -75,13 +75,13 @@ class DateRange {
   final int endDate;
   DateRange(this.range, this.startDate, this.endDate);
 }
-
-class MenuItemModel {
-  final String name;
-  final String code;
-
-  MenuItemModel({this.name = 'SKill 1', this.code = ' SKILL1'});
-}
+//
+// class MenuItemModel {
+//   final String name;
+//   final String code;
+//
+//   MenuItemModel({this.name = 'SKill 1', this.code = ''});
+// }
 
 class Skill {
   final String code;

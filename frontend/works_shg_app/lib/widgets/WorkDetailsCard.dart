@@ -145,28 +145,32 @@ class WorkDetailsCard extends StatelessWidget {
                 ButtonGroup(
                   outlinedButtonLabel,
                   elevatedButtonLabel,
-                  outLinedCallBack: () => DigitDialog.show(
-                    context,
-                    title: AppLocalizations.of(context)
-                        .translate(i18.common.warning),
-                    content: AppLocalizations.of(context)
-                        .translate(i18.workOrder.warningMsg),
-                    primaryActionLabel: AppLocalizations.of(context)
-                        .translate(i18.common.confirm),
-                    primaryAction: () {
-                      context.read<DeclineWorkOrderBloc>().add(
-                            WorkOrderDeclineEvent(
-                                contractsModel: payload,
-                                action: 'DECLINE',
-                                comments: 'DECLINE contract'),
-                          );
-                      Navigator.of(context, rootNavigator: true).pop();
-                    },
-                    secondaryActionLabel:
-                        AppLocalizations.of(context).translate(i18.common.back),
-                    secondaryAction: () =>
-                        Navigator.of(context, rootNavigator: true).pop(),
-                  ),
+                  outLinedCallBack: () => DigitDialog.show(context,
+                      options: DigitDialogOptions(
+                          title: AppLocalizations.of(context)
+                              .translate(i18.common.warning),
+                          content: AppLocalizations.of(context)
+                              .translate(i18.workOrder.warningMsg),
+                          primaryAction: DigitDialogActions(
+                            label: AppLocalizations.of(context)
+                                .translate(i18.common.confirm),
+                            action: (BuildContext context) {
+                              context.read<DeclineWorkOrderBloc>().add(
+                                    WorkOrderDeclineEvent(
+                                        contractsModel: payload,
+                                        action: 'DECLINE',
+                                        comments: 'DECLINE contract'),
+                                  );
+                              Navigator.of(context, rootNavigator: true).pop();
+                            },
+                          ),
+                          secondaryAction: DigitDialogActions(
+                            label: AppLocalizations.of(context)
+                                .translate(i18.common.back),
+                            action: (BuildContext context) =>
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop(),
+                          ))),
                   elevatedCallBack: () {
                     context.read<AcceptWorkOrderBloc>().add(
                           WorkOrderAcceptEvent(
@@ -201,7 +205,7 @@ class WorkDetailsCard extends StatelessWidget {
                     registerId: payload!['additionalDetails']
                             ['attendanceRegisterNumber']
                         .toString(),
-                    tenantId: payload!['tenantId'].toString()));
+                    tenantId: payload['tenantId'].toString()));
               },
               child: Center(
                 child: Text(
