@@ -92,7 +92,7 @@ export const createOrganizationConfigMUKTA = {
                 ]
             },
             {
-                head: "Functional Details",
+                head: "MASTERS_FUNCTIONAL_DETAILS",
                 subHead: "",
                 body: [
                     {
@@ -338,7 +338,7 @@ export const createOrganizationConfigMUKTA = {
                         populators: {
                             name: "contactDetails_email",
                             error: "EMAIL_VALIDATION",
-                            validation: {pattern: "", minlength : 2}
+                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2}                           
                         }
                     }
                 ]
@@ -400,7 +400,7 @@ export const createOrganizationConfigMUKTA = {
                         type: "component",
                         component: "TransferCodeTable",
                         withoutLabel: true,
-                        key: "transferCodes",
+                        key: "transferCodes"
                     }, 
                     {
                         label: "MASTERS_BANK_NAME",
@@ -422,7 +422,7 @@ export const createOrganizationConfigMUKTA = {
                         type: "component",
                         component: "TransferCodeTable",
                         withoutLabel: true,
-                        key: "taxIdentifier",
+                        key: "taxIdentifier"
                     }
                 ]
             }

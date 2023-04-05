@@ -39,12 +39,12 @@ const CreateOrganisation = () => {
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
-    const { organizationId } = Digit.Hooks.useQueryParams()
-    const isModify = organizationId ? true : false;
+    const { orgId } = Digit.Hooks.useQueryParams()
+    const isModify = orgId ? true : false;
 
     //Call Search Wage Seeker
     const payload = {
-        SearchCriteria: { orgNumber: organizationId }
+        SearchCriteria: { orgNumber: orgId }
     }
     const {isLoading: orgDataFetching, data: orgData, isError, isSuccess, error} = Digit.Hooks.organisation.useOrganisationDetails({tenantId, data: payload, config:{
         enabled: isModify,
