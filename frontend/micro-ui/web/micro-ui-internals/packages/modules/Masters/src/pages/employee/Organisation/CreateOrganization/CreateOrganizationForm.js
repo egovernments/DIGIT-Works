@@ -142,7 +142,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         [orgData, filteredOrgSubTypes, filteredOrgFunCategories, wardsAndLocalities, filteredLocalities, ULBOptions]);
     console.log('config', config);
 
-    const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    const onFormValueChange = async (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
             console.log('difference', {difference, formData});
@@ -158,6 +158,16 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             if (difference?.funDetails_orgType) {
                 setValue("funDetails_orgSubType", '');
                 setValue("funDetails_category", '');
+            }
+            if(formData?.transferCodes?.['transferCodes.1.name']?.code == 'IFSC' && formData?.transferCodes?.['transferCodes.1.value']) {
+                if(formData?.transferCodes['transferCodes.1.value'].length > 10) {
+                    const res = await window.fetch(`https://ifsc.razorpay.com/${formData?.transferCodes['transferCodes.1.value']}`);
+                    if (res.ok) {
+                        const { BANK, BRANCH } = await res.json();
+                        setValue('financeDetails_bankName', `${BANK}`)
+                        setValue('financeDetails_branchName', `${BRANCH}`)
+                    }
+                }
             }
             setSessionFormData({ ...sessionFormData, ...formData });
           }
