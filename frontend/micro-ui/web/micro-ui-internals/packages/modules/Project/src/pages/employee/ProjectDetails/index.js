@@ -105,12 +105,12 @@ const ProjectDetails = () => {
     const { data : estimates, isError : isEstimateSearchError } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
 
     useEffect(()=>{
-        const projectModifierRoles = ["SUPERUSER", "ORG_ADMIN", "JUNIOR_ENGINEER", "MUNICIPAL_ENGINEER", "PROJECT_CREATOR"];
+        const projectModifierRoles = ["PROJECT_CREATOR"];
         isProjectModifier = projectModifierRoles?.some(role=>loggedInUserRoles?.includes(role));
     },[loggedInUserRoles]);
 
     useEffect(()=>{
-        const estimateViewerAndCreatorRole = ["SUPERUSER", "ESTIMATE_CREATOR", "ESTIMATE_VERIFIER", "TECHNICAL_SANCTIONER", "ESTIMATE_APPROVER", "ESTIMATE_VIEWER"];
+        const estimateViewerAndCreatorRole = ["ESTIMATE_CREATOR", "ESTIMATE_VERIFIER", "TECHNICAL_SANCTIONER", "ESTIMATE_APPROVER", "ESTIMATE_VIEWER"];
         isEstimateViewerAndCreator = estimateViewerAndCreatorRole?.some(role=>loggedInUserRoles?.includes(role));
     },[loggedInUserRoles]);
 
