@@ -380,6 +380,14 @@ export const UICustomizations = {
         combinedResponse,
       };
     },
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if (createdTo !== "" && createdFrom === "")
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
