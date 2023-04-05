@@ -118,6 +118,7 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
   String? locality;
   double? totalEstimatedAmount;
   List<EstimateDocs>? estimateDocs;
+  List<Description?>? termsAndConditions;
   int? completionPeriod;
   ContractAdditionalDetails(
       {this.officerInChargeId,
@@ -133,7 +134,14 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
       this.estimateDocs,
       this.estimateNumber,
       this.totalEstimatedAmount,
-      this.completionPeriod});
+      this.completionPeriod,
+      this.termsAndConditions});
+}
+
+@MappableClass()
+class Description with DescriptionMappable {
+  String? description;
+  Description({this.description});
 }
 
 @MappableClass()

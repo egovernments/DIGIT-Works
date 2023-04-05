@@ -42,6 +42,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
   List<Map<String, dynamic>> workFlowDetails = [];
   List<FileStoreModel>? fileStoreList;
   List<FileStoreModel> attachedFiles = [];
+  List<String> termsNCond = [];
 
   @override
   void initState() {
@@ -105,7 +106,12 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                           context, error.toString(), 'ERROR'),
                       loaded: (ContractsModel? contracts) {
                         if (contracts?.contracts != null) {
-                          workOrderList = contracts!.contracts!
+                          termsNCond = contracts!.contracts!.first
+                              .additionalDetails!.termsAndConditions!
+                              .where((w) => w != null)
+                              .map((e) => e!.description.toString())
+                              .toList();
+                          workOrderList = contracts.contracts!
                               .map((e) => {
                                     'cardDetails': {
                                       i18.workOrder.workOrderNo:
@@ -274,7 +280,55 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                   child: ButtonLink(
                                                     t.translate(i18.common
                                                         .termsAndConditions),
-                                                    null,
+                                                    () => DigitDialog.show(
+                                                        context,
+                                                        options:
+                                                            DigitDialogOptions(
+                                                                title: Text(t.translate(i18.common.termsAndConditions),
+                                                                    style: Theme.of(context)
+                                                                        .textTheme
+                                                                        .displayMedium),
+                                                                content: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    for (var i =
+                                                                            0;
+                                                                        i < termsNCond.length;
+                                                                        i++)
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment.centerLeft,
+                                                                        child:
+                                                                            Text(
+                                                                          '${i + 1}. ${termsNCond[i]}',
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontSize:
+                                                                                16,
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                          ),
+                                                                          textAlign:
+                                                                              TextAlign.start,
+                                                                        ),
+                                                                      )
+                                                                  ],
+                                                                ),
+                                                                titlePadding:
+                                                                    const EdgeInsets.all(
+                                                                        8.0),
+                                                                contentPadding:
+                                                                    const EdgeInsets.all(
+                                                                        8.0),
+                                                                barrierDismissible:
+                                                                    true,
+                                                                primaryAction: DigitDialogActions(
+                                                                    label: t.translate(
+                                                                        i18.common.close),
+                                                                    action: (context) => Navigator.of(context, rootNavigator: true).pop()),
+                                                            isScrollable: true)),
                                                     align: Alignment.centerLeft,
                                                   ),
                                                 ),
@@ -328,42 +382,35 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                               t.translate(i18
                                                                   .common
                                                                   .decline),
-                                                              () => DigitDialog
-                                                                  .show(
-                                                                context,
-                                                                options: DigitDialogOptions(
-                                                                    title: AppLocalizations.of(
-                                                                        context)
-                                                                        .translate(i18
-                                                                        .common
-                                                                        .warning),
-                                                                  content: AppLocalizations.of(
-                                                                      context)
-                                                                      .translate(i18
-                                                                      .workOrder
-                                                                      .warningMsg),
-                                                                  primaryAction: DigitDialogActions(
-                                                                    label: AppLocalizations.of(context).translate(i18.common.confirm),
-                                                                    action: (BuildContext context) {
-                                                                      context.read<DeclineWorkOrderBloc>().add(
-                                                                        WorkOrderDeclineEvent(
-                                                                            contractsModel: workOrderList.first[
-                                                                            'payload'],
+                                                              () => DigitDialog.show(
+                                                                  context,
+                                                                  options:
+                                                                      DigitDialogOptions(
+                                                                          title: AppLocalizations.of(context).translate(i18
+                                                                              .common
+                                                                              .warning),
+                                                                          content: AppLocalizations.of(context).translate(i18
+                                                                              .workOrder
+                                                                              .warningMsg),
+                                                                          primaryAction:
+                                                                              DigitDialogActions(
+                                                                            label:
+                                                                                AppLocalizations.of(context).translate(i18.common.confirm),
                                                                             action:
-                                                                            'DECLINE',
-                                                                            comments:
-                                                                            'DECLINE contract'),
-                                                                      );
-                                                                      Navigator.of(context, rootNavigator: true).pop();
-                                                                    },
-                                                                  ),
-                                                                  secondaryAction: DigitDialogActions(
-                                                                    label: AppLocalizations.of(context).translate(i18.common.back),
-                                                                    action: (BuildContext context) =>
-                                                                        Navigator.of(context, rootNavigator: true).pop(),
-                                                                  )
-                                                                )
-                                                              ),
+                                                                                (BuildContext context) {
+                                                                              context.read<DeclineWorkOrderBloc>().add(
+                                                                                    WorkOrderDeclineEvent(contractsModel: workOrderList.first['payload'], action: 'DECLINE', comments: 'DECLINE contract'),
+                                                                                  );
+                                                                              Navigator.of(context, rootNavigator: true).pop();
+                                                                            },
+                                                                          ),
+                                                                          secondaryAction:
+                                                                              DigitDialogActions(
+                                                                            label:
+                                                                                AppLocalizations.of(context).translate(i18.common.back),
+                                                                            action: (BuildContext context) =>
+                                                                                Navigator.of(context, rootNavigator: true).pop(),
+                                                                          ))),
                                                               align: Alignment
                                                                   .center,
                                                             ),

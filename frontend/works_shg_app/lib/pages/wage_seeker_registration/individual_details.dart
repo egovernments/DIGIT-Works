@@ -122,6 +122,9 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       formControlName: nameKey,
                       isRequired: true,
                       label: t.translate(i18.common.nameLabel),
+                      inputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp("[A-Za-z ]"))
+                      ],
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.nameRequired,
@@ -132,6 +135,9 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       formControlName: fatherNameKey,
                       isRequired: true,
                       label: t.translate(i18.common.guardianName),
+                      inputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp("[A-Za-z ]"))
+                      ],
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.fatherNameRequired,
@@ -190,14 +196,8 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       menuItems: socialCategory
                           .map((e) => t.translate(e).toString())
                           .toList(),
-                      isRequired: true,
                       formControlName: socialCategoryKey,
                       valueMapper: (value) => value,
-                      validationMessages: {
-                        'required': (_) => t.translate(
-                              i18.wageSeeker.socialCatRequired,
-                            ),
-                      },
                       onChanged: (value) {},
                     ),
                     DigitTextFormField(
@@ -301,8 +301,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
             FormControl<String>(value: null, validators: [Validators.required]),
         dobKey: FormControl<DateTime>(
             value: null, validators: [Validators.required]),
-        socialCategoryKey:
-            FormControl<String>(value: null, validators: [Validators.required]),
+        socialCategoryKey: FormControl<String>(value: null),
         mobileKey: FormControl<String>(value: '', validators: [
           Validators.required,
           Validators.minLength(10),

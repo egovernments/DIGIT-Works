@@ -115,10 +115,15 @@ class _SideBar extends State<SideBar> {
           onPressed: () {},
         ),
         DigitIconTile(
+            title:
+                AppLocalizations.of(context).translate(i18.common.orgProfile),
+            icon: Icons.perm_contact_cal_sharp,
+            onPressed: () {}),
+        DigitIconTile(
             title: AppLocalizations.of(context).translate(i18.common.logOut),
             icon: Icons.logout,
             onPressed: () {
-              context.read<AuthBloc>().add(AuthLogoutEvent());
+              context.read<AuthBloc>().add(const AuthLogoutEvent());
             }),
       ],
     );

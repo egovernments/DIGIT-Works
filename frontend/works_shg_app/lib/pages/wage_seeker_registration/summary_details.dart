@@ -155,7 +155,8 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                     children: [
                       Text(
                         t.translate(i18.common.photoGraph),
-                        style: Theme.of(context).textTheme.displayMedium,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w700),
                         textAlign: TextAlign.left,
                       ),
                       const SizedBox(
@@ -177,7 +178,8 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                         children: [
                           Text(
                             t.translate(i18.common.photoGraph),
-                            style: Theme.of(context).textTheme.displayMedium,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w700),
                             textAlign: TextAlign.left,
                           ),
                           const SizedBox(

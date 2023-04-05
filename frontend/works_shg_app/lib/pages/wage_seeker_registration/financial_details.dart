@@ -195,7 +195,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                           widget.onPressed();
                         },
                         child: Center(
-                          child: Text(t.translate(i18.common.submit)),
+                          child: Text(t.translate(i18.common.next)),
                         )),
                   ))
                 ],
