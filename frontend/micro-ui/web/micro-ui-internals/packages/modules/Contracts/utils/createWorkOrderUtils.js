@@ -32,7 +32,6 @@ const documentType = {
   //configs - previously uploaded docs -- defaultValues
   //otherDocFileName - filename filled in the text field for files -- Others
   const createDocumentsPayload = (documents, otherDocFileName, configs) => {
-    console.log("DOCS--CREATE", documents);
     let documents_payload_list = [];
     let documentDefaultValue = configs?.defaultValues?.documents;
     //new uploaded docs

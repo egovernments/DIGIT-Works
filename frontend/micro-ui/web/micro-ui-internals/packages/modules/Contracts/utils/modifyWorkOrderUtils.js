@@ -27,7 +27,20 @@ export const handleModifyWOFiles = (uploadedDocs) => {
   return documentObject;
 }
 
-export const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions}) => {
+const handleRoleOfCBO = ({calculatedWOAmount, roleOfCBO}) => {
+  let roles = roleOfCBO?.works?.CBORoles;
+  let limitAmount = roles?.[0]?.amount;
+
+  if(calculatedWOAmount < limitAmount) {
+    //IA
+    return roles?.filter(role=>role?.code === "IA")[0];
+  }else {
+    //IP
+    return roles?.filter(role=>role?.code === "IP")[0];
+  }
+}
+
+export const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions, roleOfCBO}) => {
   if(!isModify) {
       //clear defaultValues from 'config' ( this case can come when user navigates from Create Screen to Modify Screen )
       //these are the req default Values for Create WO
@@ -54,14 +67,21 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
       configs.defaultValues.basicDetails_projectID = project?.projectNumber ? project?.projectNumber  : "",
       configs.defaultValues.basicDetails_dateOfProposal = project?.additionalDetails?.dateOfProposal ? Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal) : "",
       configs.defaultValues.basicDetails_projectName = project?.name ? project?.name  : "";
-      configs.defaultValues.basicDetails_projectDesc = project?.description ? project?.description  : "";
-      configs.defaultValues.workOrderAmountRs = isModify ? contract?.totalContractedAmount  : handleWorkOrderAmount({estimate, overHeadMasterData});
+      configs.defaultValues.basicDetails_projectDesc = project?.description ? project?.description  : "";    
+      
+      let calculatedWOAmount = handleWorkOrderAmount({estimate, overHeadMasterData})
+
+      configs.defaultValues.workOrderAmountRs = isModify ? contract?.totalContractedAmount : calculatedWOAmount;
       configs.defaultValues.nameOfCBO =  isModify ? (organisations?.filter(org=>org?.code === contract?.additionalDetails?.cboCode))?.[0] : "";
       configs.defaultValues.nameOfOfficerInCharge = isModify ? (assignees?.filter(assignee=>assignee?.code === contract?.additionalDetails?.officerInChargeId))?.[0] : "";
-      configs.defaultValues.roleOfCBO = isModify ? {code : contract?.executingAuthority, name : `COMMON_MASTERS_${contract?.executingAuthority}`} : "";
+
+      let roleOfCBO_basedOnWOAmount = handleRoleOfCBO({calculatedWOAmount, roleOfCBO});
+
+      configs.defaultValues.roleOfCBO = isModify ? {code : contract?.executingAuthority, name : `COMMON_MASTERS_${contract?.executingAuthority}`} : roleOfCBO_basedOnWOAmount;
       configs.defaultValues.projectCompletionPeriodInDays = isModify ? contract?.completionPeriod : "";
       configs.defaultValues.documents = isModify ? handleModifyWOFiles(contract?.documents) : "";
       configs.defaultValues.WOTermsAndConditions = isModify ? [...contract?.additionalDetails?.termsAndConditions] : "";
       setSessionFormData({...sessionFormData, ...configs?.defaultValues});
     }
 }
+

@@ -129,6 +129,11 @@
                   "type": "radioordropdown",
                   "label": "COMMON_ROLE_OF_CBO",
                   "disable": false,
+                  "preProcess": {
+                    "updateDependent": [
+                      "disable", "populators.options"
+                    ]
+                  },
                   "populators": {
                     "name": "roleOfCBO",
                     "optionsKey": "name",
@@ -137,11 +142,7 @@
                     "optionsCustomStyle": {
                       "top": "2.5rem"
                     },
-                    "mdmsConfig": {
-                      "masterName": "CBORoles",
-                      "moduleName": "works",
-                      "localePrefix": "COMMON_MASTERS"
-                    }
+                    "options" : []
                   }
                 },
                 {

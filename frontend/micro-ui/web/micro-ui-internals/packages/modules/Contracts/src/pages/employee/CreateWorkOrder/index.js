@@ -127,6 +127,13 @@ const CreateWorkOrder = () => {
         [{ "name": "Overheads" }]
     );
 
+     //Contract Roles Search
+     const { isLoading : isRoleOfCBOLoading, data : roleOfCBO } = Digit.Hooks.useCustomMDMS(
+        Digit.ULBService.getStateId(),
+        "works",
+        [{ "name": "CBORoles" }]
+    );
+
     const createOfficerInChargeObject = (assigneeOptions) => {
         return assigneeOptions?.Employees?.filter(employees=>employees?.isActive).map((employee=>( { code : employee?.code, name : employee?.user?.name, data : employee} )))
     }
@@ -155,8 +162,8 @@ const CreateWorkOrder = () => {
     }
 
     useEffect(()=>{
-        if((estimate && project && !isLoadingHrmsSearch && !isOrgSearchLoading && !isOverHeadsMasterDataLoading && !isContractLoading)) {
-            updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions});
+        if((estimate && project && !isLoadingHrmsSearch && !isOrgSearchLoading && !isOverHeadsMasterDataLoading && !isContractLoading && !isRoleOfCBOLoading)) {
+            updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions, roleOfCBO});
 
             setDocuments(createDocumentObject(estimate?.additionalDetails?.documents));
             setOfficerInCharge(createOfficerInChargeObject(assigneeOptions));
@@ -164,13 +171,13 @@ const CreateWorkOrder = () => {
 
             setIsFormReady(true);
         }
-    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading, isOverHeadsMasterDataLoading, isContractLoading, estimate]);
+    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading, isOverHeadsMasterDataLoading, isContractLoading, estimate, isRoleOfCBOLoading]);
 
     // if(isConfigLoading) return <Loader></Loader>
     return (
         <React.Fragment>
             {
-                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={configs} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}} isModify={isModify} contractID={contract?.id} contractNumber={contract?.contractNumber} lineItems={contract?.lineItems} contractAuditDetails={contract?.auditDetails}></CreateWorkOrderForm>
+                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={configs} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}} isModify={isModify} contractID={contract?.id} contractNumber={contract?.contractNumber} lineItems={contract?.lineItems} contractAuditDetails={contract?.auditDetails} roleOfCBOOptions={roleOfCBO?.works?.CBORoles}></CreateWorkOrderForm>
             }
         </React.Fragment>
     )

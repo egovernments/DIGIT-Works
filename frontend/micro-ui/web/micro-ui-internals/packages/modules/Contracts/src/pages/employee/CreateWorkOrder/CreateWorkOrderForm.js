@@ -17,7 +17,7 @@ const navConfig =  [
     }
 ];
 
-const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData, isModify, contractID, lineItems, contractAuditDetails, contractNumber}) => {
+const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData, isModify, contractID, lineItems, contractAuditDetails, contractNumber, roleOfCBOOptions}) => {
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
@@ -50,6 +50,10 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         return data?.assignments?.filter(assignment=>assignment?.isCurrentAssignment)?.[0]?.designation;
     }
 
+    const shouldRoleOfCBODisable = (selectedRoleOfCBO, roleOfCBOOptions) => {
+        return roleOfCBOOptions?.filter(roleOfCBOOption=>roleOfCBOOption?.code === selectedRoleOfCBO?.code)[0]?.disable;
+    }
+
     createWorkOrderConfig = useMemo(
         () => Digit.Utils.preProcessMDMSConfig(t, createWorkOrderConfig, {
           updateDependent : [
@@ -68,6 +72,10 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
             {
                 key : 'basicDetails_workOrdernumber',
                 value : [!isModify ? "none" : "flex"]
+            },
+            {
+                key : 'roleOfCBO',
+                value : [shouldRoleOfCBODisable(createWorkOrderConfig?.defaultValues?.roleOfCBO, roleOfCBOOptions), roleOfCBOOptions] //TODO:
             },
           ]
         }),
