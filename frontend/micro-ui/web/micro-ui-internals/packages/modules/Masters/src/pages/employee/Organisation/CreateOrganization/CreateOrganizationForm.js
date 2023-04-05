@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { useTranslation } from "react-i18next";
-import { FormComposer } from '@egovernments/digit-ui-react-components';
+import { FormComposer, Loader } from '@egovernments/digit-ui-react-components';
 
 const navConfig =  [
     {
@@ -31,7 +31,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
 
-    const { isLoading, data : wardsAndLocalities } = Digit.Hooks.useLocation(
+    const { isLoading: locationDataFetching, data : wardsAndLocalities } = Digit.Hooks.useLocation(
       tenantId, 'Ward',
       {
           select: (data) => {
@@ -54,27 +54,40 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         "common-masters",
         [ { "name": "OrgType" }, { name: "OrgFunctionCategory" }],
         {
-          select: (data) => {
-            let orgTypes = []
-            let orgSubTypes = {}
-            let orgFunCategories = {}
-            data?.["common-masters"]?.OrgType?.forEach(item => {
-              if(!item?.active) return
-              orgSubTypes[item?.code] = item?.subType.map(item => ({ ...item, code: item?.code, name: `COMMON_MASTERS_SUBORG_${item?.code}` }))
-              orgTypes.push({...item, code: item?.code, name: `COMMON_MASTERS_ORG_${item?.code}`})
-            })
-            data?.["common-masters"]?.OrgFunctionCategory?.forEach(item => {
-                if(!item?.active) return
-                orgFunCategories[item?.code] = item?.subType.map(item => ({ ...item, code: item?.code, name: `COMMON_MASTERS_FUNCATEGORY_${item?.code}` }))
-              })
-            return {
-                orgTypes,
-                orgSubTypes,
-                orgFunCategories
+            select: (data) => {
+                let orgTypes = []
+                let orgSubTypes = {}
+                let orgFunCategories = {}
+                data?.["common-masters"]?.OrgType?.forEach(item => {
+                    if(!item?.active) return
+                    const orgType = item?.code?.split('.')?.[0]
+                    const orgSubType = item?.code?.split('.')?.[1]
+                    if(!orgTypes.includes(orgType)) orgTypes.push(orgType)
+                    if(orgSubTypes[orgType]) {
+                        orgSubTypes[orgType].push({code: orgSubType, name: `COMMON_MASTERS_SUBORG_${orgSubType}`})
+                    } else {
+                        orgSubTypes[orgType] = [{code: orgSubType, name: `COMMON_MASTERS_SUBORG_${orgSubType}`}]
+                    }
+                })
+                data?.["common-masters"]?.OrgFunctionCategory?.forEach(item => {
+                    if(!item?.active) return
+                    const orgType = item?.code?.split('.')?.[0]
+                    const orgFunCategory = item?.code?.split('.')?.[1]
+                    if(orgFunCategories[orgType]) {
+                        orgFunCategories[orgType].push({code: orgFunCategory, name: `COMMON_MASTERS_FUNCATEGORY_${orgFunCategory}`})
+                    } else {
+                        orgFunCategories[orgType] = [{code: orgFunCategory, name: `COMMON_MASTERS_FUNCATEGORY_${orgFunCategory}`}]
+                    }
+                })
+                orgTypes = orgTypes.map(item => ({code: item, name: `COMMON_MASTERS_ORG_${item}`}))
+                return {
+                    orgTypes,
+                    orgSubTypes,
+                    orgFunCategories
+                }
             }
-          },
         }
-      );
+    );
     const filteredOrgSubTypes = orgData?.orgSubTypes[selectedOrg]
     const filteredOrgFunCategories = orgData?.orgFunCategories[selectedOrg]
 
@@ -88,7 +101,8 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         },
         [wardsAndLocalities, filteredLocalities, ULBOptions, orgData, filteredOrgSubTypes ]);
 
-   
+    console.log('config', config);
+
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
@@ -113,6 +127,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         console.log('FORM Data', data);
     }   
 
+    if(locationDataFetching || orgDataFetching) return <Loader/>
     return (
         <React.Fragment>
             <FormComposer

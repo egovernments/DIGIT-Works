@@ -35,7 +35,7 @@ import '../widgets/SideBar.dart';
 import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/table_dropdown.dart';
 import '../widgets/drawer_wrapper.dart';
-import '../widgets/loaders.dart';
+import '../widgets/loaders.dart' as shg_loader;
 
 class SHGInboxPage extends StatefulWidget {
   final String tenantId;
@@ -122,7 +122,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
             builder: (context, skillsState) {
           return skillsState.maybeWhen(
               orElse: () => Container(),
-              loading: () => Loaders.circularLoader(context),
+              loading: () => shg_loader.Loaders.circularLoader(context),
               error: (String? error) => Notifiers.getToastMessage(
                   context,
                   AppLocalizations.of(context).translate(error.toString()),
@@ -142,7 +142,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     builder: (context, mdmsState) {
                   return mdmsState.maybeWhen(
                       orElse: () => Container(),
-                      loading: () => Loaders.circularLoader(context),
+                      loading: () => shg_loader.Loaders.circularLoader(context),
                       loaded: (AttendanceHoursList? attendanceHoursList) {
                         entryExitList = attendanceHoursList!.attendanceHours
                             ?.where((obj) => obj.active == true)
@@ -154,7 +154,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                             builder: (context, state) {
                           return state.maybeWhen(
                               orElse: () => Container(),
-                              loading: () => Loaders.circularLoader(context),
+                              loading: () => shg_loader.Loaders.circularLoader(context),
                               loaded: (MusterRollsModel?
                                   individualMusterRollModel) {
                                 musterId = individualMusterRollModel!
@@ -264,7 +264,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                         .maybeWhen(
                                                             orElse: () =>
                                                                 Container(),
-                                                            loading: () => Loaders
+                                                            loading: () => shg_loader.Loaders
                                                                 .circularLoader(
                                                                     context),
                                                             loaded: (EstimateMusterRollsModel?
@@ -554,7 +554,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                 listener:
                                                     (context, workflowState) {
                                                   workflowState.maybeWhen(
-                                                      loading: () => Loaders
+                                                      loading: () => shg_loader.Loaders
                                                           .circularLoader(
                                                               context),
                                                       error: () {

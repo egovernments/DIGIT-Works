@@ -21,14 +21,14 @@ const ProjectSearchAndInboxComponent = () => {
     const configs = data?.[Digit.Utils.getConfigModuleName()]?.InboxProjectConfig?.[0]
 
     if(isLoading) return <Loader />
-    return (
-        <React.Fragment>
-            <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}</Header>
-            <div className="inbox-search-wrapper">
+      return (
+           <React.Fragment>
+              <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}</Header>
+              <div className="inbox-search-wrapper">
                 <InboxSearchComposer configs={configs}></InboxSearchComposer>
-            </div>
-        </React.Fragment>
-    )
+              </div>
+          </React.Fragment>
+      );
 }
 
 export default ProjectSearchAndInboxComponent;

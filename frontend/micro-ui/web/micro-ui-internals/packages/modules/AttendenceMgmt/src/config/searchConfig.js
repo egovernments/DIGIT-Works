@@ -1,155 +1,206 @@
-const musterRollStatus = [
-    {
-        name: 'Submitted',
-        code: 'SUBMITTED',
-        i18nKey: 'SUBMITTED'
-    },
-    {
-        name: 'Approved',
-        code: 'APPROVED',
-        i18nKey: 'APPROVED'
-    },
-    {
-        name: 'Rejected',
-        code: 'REJECTED',
-        i18nKey: 'REJECTED'
-    },
-    {
-        name: 'Verified',
-        code: 'VERIFIED',
-        i18nKey: 'VERIFIED'
-    }
-]
 
 const searchConfig = () => {
-    return {
-        label : "ATM_SEARCH_ATTENDANCE",
-        type: 'search',
-        apiDetails: {
-            serviceName: "/muster-roll/v1/_search",
-            requestParam: {},
-            requestBody: {},
-            minParametersForSearchForm:1,
-            masterName:"commonUiConfig",
-            moduleName:"SearchAttendanceConfig",
-            tableFormJsonPath:"requestParam",
-            filterFormJsonPath:"rrequestParam",
-            searchFormJsonPath:"requestParam",
+    return  {
+  "label": "ATM_SEARCH_ATTENDANCE",
+  "type": "search",
+  "apiDetails": {
+    "serviceName": "/wms/muster/_search",
+    "requestParam": {},
+    "requestBody": {
+      "inbox": {
+        "moduleSearchCriteria": {}
+      }
+    },
+    "minParametersForSearchForm": 1,
+    "masterName": "commonUiConfig",
+    "moduleName": "SearchAttendanceConfig",
+    "tableFormJsonPath": "requestBody.inbox",
+    "filterFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+    "searchFormJsonPath": "requestBody.inbox.moduleSearchCriteria"
+  },
+  "sections": {
+    "search": {
+      "uiConfig": {
+        "headerStyle": null,
+        "primaryLabel": "ES_COMMON_SEARCH",
+        "secondaryLabel": "ES_COMMON_CLEAR_SEARCH",
+        "minReqFields": 1,
+        "showFormInstruction": "MUSTER_SEARCH_HINT",
+        "formClassName":"custom-both-clear-search",
+        "defaultValues": {
+          "ward": "",
+          "projectType": "",
+          "attendanceRegisterName": "",
+          "musterRollNumber": "",
+          "musterRollStatus": "",
+          "startDate": "",
+          "endDate": ""
         },
-        sections : {
-            search : {
-                uiConfig : {
-                    headerStyle : null,
-                    primaryLabel: 'ES_COMMON_SEARCH',
-                    secondaryLabel: 'ES_COMMON_CLEAR_SEARCH',
-                    minReqFields: 0,
-                    defaultValues : {
-                        musterRollNumber: "",
-                        registerId: "",
-                        status: "",
-                        musterRollStatus: "",
-                        fromDate: "",
-                        toDate: ""
-                    },
-                    fields : [
-                        {
-                            label:"ATM_MUSTER_ROLL_NUMBER",
-                            type: "text",
-                            isMandatory: false,
-                            disable: false,
-                            populators: { 
-                                name: "musterRollNumber",
-                                error: `Enter valid muster roll number`,
-                                validation: { pattern: /^[a-z0-9\/-]*$/i, minlength : 2 }
-                            }
-                        },
-                        {
-                            label: "ATM_REGISTER_ID",
-                            type: "text",
-                            isMandatory: false,
-                            disable: false,
-                            populators: { 
-                                name: "registerId",
-                                error: `Enter valid register id`,
-                                validation: { pattern: /^[a-z0-9\/-]*$/i, minlength : 2 }
-                            }
-                        },
-                        {
-                            label: "ES_COMMON_STATUS",
-                            type: "dropdown",
-                            isMandatory: false,
-                            disable: false,
-                            populators: {
-                                name: "musterRollStatus",
-                                optionsKey: "i18nKey",
-                                options: musterRollStatus,
-                                optionsCustomStyle : {
-                                    top : "2.3rem"
-                                }
-                            },
-                        },
-                        {
-                            label: "CREATED_FROM_DATE",
-                            type: "date",
-                            isMandatory: false,
-                            disable: false,
-                            populators: { 
-                                name: "fromDate",
-                            }
-                        },
-                        {
-                            label: "CREATED_TO_DATE",
-                            type: "date",
-                            isMandatory: false,
-                            disable: false,
-                            populators: { 
-                                name: "toDate",
-                                error: 'DATE_VALIDATION_MSG',
-                            }
-                        }
-                    ]
-                },
-                label : "",
-                children : {},
-                show : true
-            },
-            searchResult: {
-                label: "",
-                uiConfig: {
-                    columns: [
-                        {
-                            label: "ATM_MUSTER_ROLL_NUMBER",
-                            jsonPath: "musterRollNumber",
-                            additionalCustomization:true
-                        },
-                        {
-                            label: "ATM_NAME_OF_WORK",
-                            jsonPath: "additionalDetails.attendanceRegisterName"
-                        },
-                        {
-                            label: "ATM_IMPLEMENTING_AGENCY",
-                            jsonPath: "additionalDetails.orgName"
-                        },
-                        {
-                            label: "ATM_NO_OF_INDIVIDUALS",
-                            jsonPath: "individualEntries",
-                            additionalCustomization:true
-                        },
-                        {
-                            label: "ES_COMMON_STATUS",
-                            jsonPath: "musterRollStatus",
-                        }
-                    ],
-                    enableGlobalSearch: false,
-                    enableColumnSort: true,
-                    resultsJsonPath: "musterRolls",
-                },
-                children: {},
-                show: true 
+        "fields": [
+          {
+            "label": "COMMON_WARD",
+            "type": "locationdropdown",
+            "isMandatory": false,
+            "disable": false,
+            "populators": {
+              "optionsCustomStyle": {
+                "top": "2.3rem"
+              },
+              "name": "ward",
+              "type": "ward",
+              "optionsKey": "i18nKey",
+              "defaultText": "COMMON_SELECT_WARD",
+              "selectedText": "COMMON_SELECTED",
+              "allowMultiSelect": false
             }
-        },
-        additionalSections : {}
+          },
+          {
+            "label": "WORKS_PROJECT_TYPE",
+            "type": "dropdown",
+            "isMandatory": false,
+            "disable": false,
+            "populators": {
+              "name": "projectType",
+              "optionsKey": "name",
+              "optionsCustomStyle": {
+                "top": "2.3rem"
+              },
+              "mdmsConfig": {
+                "masterName": "ProjectType",
+                "moduleName": "works",
+                "localePrefix": "COMMON_MASTERS"
+              }
+            }
+          },
+          {
+            "label": "ES_COMMON_PROJECT_NAME",
+            "type": "text",
+            "isMandatory": false,
+            "disable": false,
+            "preProcess": {
+              "convertStringToRegEx": [
+                "populators.validation.pattern"
+              ]
+            },
+            "populators": {
+              "name": "attendanceRegisterName",
+              "error": "PROJECT_PATTERN_ERR_MSG",
+              "validation": {
+                "pattern": "^[^\\$\"<>?\\\\~`!@$%^()+={}\\[\\]*:;“”‘’]{1,50}$",
+                "minlength": 2
+              }
+            }
+          },
+          {
+            "label": "ATM_MUSTER_ROLL_ID",
+            "type": "text",
+            "isMandatory": false,
+            "disable": false,
+            "preProcess": {
+              "convertStringToRegEx": [
+                "populators.validation.pattern"
+              ]
+            },
+            "populators": {
+              "name": "musterRollNumber",
+              "error": "COMMON_PATTERN_ERR_MSG_MUSTER_ID",
+              "validation": {
+                "pattern": "MR\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
+                "minlength": 2
+              }
+            }
+          },
+          {
+            "label": "CORE_COMMON_STATUS",
+            "type": "apidropdown",
+            "isMandatory": false,
+            "disable": false,
+            "populators": {
+              "optionsCustomStyle": {
+                "top": "2.3rem"
+              },
+              "name": "musterRollStatus",
+              "optionsKey": "i18nKey",
+              "allowMultiSelect": false,
+              "masterName": "commonUiConfig",
+              "moduleName": "SearchAttendanceConfig",
+              "customfn": "populateReqCriteria"
+            }
+          },
+          {
+            "label": "CREATED_FROM_DATE",
+            "type": "date",
+            "isMandatory": false,
+            "disable": false,
+            "populators": {
+              "name": "startDate"
+            }
+          },
+          {
+            "label": "CREATED_TO_DATE",
+            "type": "date",
+            "isMandatory": false,
+            "disable": false,
+            "populators": {
+              "name": "endDate"
+            }
+          }
+        ]
+      },
+      "label": "",
+      "children": {},
+      "show": true
+    },
+    "searchResult": {
+      "label": "",
+      "estimateNumber": "",
+      "projectId": "",
+      "department": "",
+      "estimateStatus": "",
+      "fromProposalDate": "",
+      "toProposalDate": "",
+      "uiConfig": {
+        "columns": [
+          {
+            "label": "ES_COMMON_MUSTER_ROLL_ID",
+            "jsonPath": "businessObject.musterRollNumber",
+            "additionalCustomization": true
+          },
+          {
+            "label": "ES_COMMON_PROJECT_NAME",
+            "jsonPath": "businessObject.additionalDetails.attendanceRegisterName",
+            "additionalCustomization": true
+          },
+          {
+            "label": "ES_COMMON_LOCATION",
+            "jsonPath": "businessObject.additionalDetails",
+            "additionalCustomization": true
+          },
+          {
+            "label": "COMMON_NAME_OF_CBO",
+            "jsonPath": "businessObject.additionalDetails.orgName"
+          },
+          {
+            "label": "CORE_COMMON_STATUS",
+            "jsonPath": "ProcessInstance.state.state",
+            "additionalCustomization": true
+          },
+          {
+            "label": "MUSTER_WAGE_AMOUNT",
+            "jsonPath": "businessObject.additionalDetails.amount",
+            "additionalCustomization": true
+          }
+        ],
+        "enableGlobalSearch": false,
+        "enableColumnSort": true,
+        "resultsJsonPath": "items"
+      },
+      "children": {},
+      "show": true
     }
+  },
+  "additionalSections": {}
+}
 }
 
 export default searchConfig;

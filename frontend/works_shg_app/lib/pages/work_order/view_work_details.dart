@@ -7,7 +7,6 @@ import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 import 'package:works_shg_app/widgets/atoms/info_card.dart';
-import 'package:works_shg_app/widgets/loaders.dart';
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/work_orders/accept_work_order.dart';
@@ -23,6 +22,7 @@ import '../../widgets/SideBar.dart';
 import '../../widgets/atoms/app_bar_logo.dart';
 import '../../widgets/atoms/attachments.dart';
 import '../../widgets/drawer_wrapper.dart';
+import '../../widgets/loaders.dart' as shg_loader;
 
 class ViewWorkDetailsPage extends StatefulWidget {
   final String? contractNumber;
@@ -42,6 +42,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
   List<Map<String, dynamic>> workFlowDetails = [];
   List<FileStoreModel>? fileStoreList;
   List<FileStoreModel> attachedFiles = [];
+  List<String> termsNCond = [];
 
   @override
   void initState() {
@@ -100,12 +101,17 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                   state.maybeWhen(
                       orElse: () => false,
                       initial: () => false,
-                      loading: () => Loaders.circularLoader(context),
+                      loading: () => shg_loader.Loaders.circularLoader(context),
                       error: (String? error) => Notifiers.getToastMessage(
                           context, error.toString(), 'ERROR'),
                       loaded: (ContractsModel? contracts) {
                         if (contracts?.contracts != null) {
-                          workOrderList = contracts!.contracts!
+                          termsNCond = contracts!.contracts!.first
+                              .additionalDetails!.termsAndConditions!
+                              .where((w) => w != null)
+                              .map((e) => e!.description.toString())
+                              .toList();
+                          workOrderList = contracts.contracts!
                               .map((e) => {
                                     'cardDetails': {
                                       i18.workOrder.workOrderNo:
@@ -186,7 +192,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                 builder: (context, searchState) {
                   return searchState.maybeWhen(
                       orElse: () => Container(),
-                      loading: () => Loaders.circularLoader(context),
+                      loading: () => shg_loader.Loaders.circularLoader(context),
                       initial: () => Container(),
                       loaded: (ContractsModel? contractsModel) {
                         final contracts = contractsModel?.contracts;
@@ -274,7 +280,55 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                   child: ButtonLink(
                                                     t.translate(i18.common
                                                         .termsAndConditions),
-                                                    null,
+                                                    () => DigitDialog.show(
+                                                        context,
+                                                        options:
+                                                            DigitDialogOptions(
+                                                                title: Text(t.translate(i18.common.termsAndConditions),
+                                                                    style: Theme.of(context)
+                                                                        .textTheme
+                                                                        .displayMedium),
+                                                                content: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    for (var i =
+                                                                            0;
+                                                                        i < termsNCond.length;
+                                                                        i++)
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment.centerLeft,
+                                                                        child:
+                                                                            Text(
+                                                                          '${i + 1}. ${termsNCond[i]}',
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontSize:
+                                                                                16,
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                          ),
+                                                                          textAlign:
+                                                                              TextAlign.start,
+                                                                        ),
+                                                                      )
+                                                                  ],
+                                                                ),
+                                                                titlePadding:
+                                                                    const EdgeInsets.all(
+                                                                        8.0),
+                                                                contentPadding:
+                                                                    const EdgeInsets.all(
+                                                                        8.0),
+                                                                barrierDismissible:
+                                                                    true,
+                                                                primaryAction: DigitDialogActions(
+                                                                    label: t.translate(
+                                                                        i18.common.close),
+                                                                    action: (context) => Navigator.of(context, rootNavigator: true).pop()),
+                                                            isScrollable: true)),
                                                     align: Alignment.centerLeft,
                                                   ),
                                                 ),
@@ -328,56 +382,35 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                               t.translate(i18
                                                                   .common
                                                                   .decline),
-                                                              () => DigitDialog
-                                                                  .show(
-                                                                context,
-                                                                title: AppLocalizations.of(
-                                                                        context)
-                                                                    .translate(i18
-                                                                        .common
-                                                                        .warning),
-                                                                content: AppLocalizations.of(
-                                                                        context)
-                                                                    .translate(i18
-                                                                        .workOrder
-                                                                        .warningMsg),
-                                                                primaryActionLabel: AppLocalizations.of(
-                                                                        context)
-                                                                    .translate(i18
-                                                                        .common
-                                                                        .confirm),
-                                                                primaryAction:
-                                                                    () {
-                                                                  context
-                                                                      .read<
-                                                                          DeclineWorkOrderBloc>()
-                                                                      .add(
-                                                                        WorkOrderDeclineEvent(
-                                                                            contractsModel: workOrderList.first[
-                                                                                'payload'],
+                                                              () => DigitDialog.show(
+                                                                  context,
+                                                                  options:
+                                                                      DigitDialogOptions(
+                                                                          title: AppLocalizations.of(context).translate(i18
+                                                                              .common
+                                                                              .warning),
+                                                                          content: AppLocalizations.of(context).translate(i18
+                                                                              .workOrder
+                                                                              .warningMsg),
+                                                                          primaryAction:
+                                                                              DigitDialogActions(
+                                                                            label:
+                                                                                AppLocalizations.of(context).translate(i18.common.confirm),
                                                                             action:
-                                                                                'DECLINE',
-                                                                            comments:
-                                                                                'DECLINE contract'),
-                                                                      );
-                                                                  Navigator.of(
-                                                                          context,
-                                                                          rootNavigator:
-                                                                              true)
-                                                                      .pop();
-                                                                },
-                                                                secondaryActionLabel: AppLocalizations.of(
-                                                                        context)
-                                                                    .translate(i18
-                                                                        .common
-                                                                        .back),
-                                                                secondaryAction: () =>
-                                                                    Navigator.of(
-                                                                            context,
-                                                                            rootNavigator:
-                                                                                true)
-                                                                        .pop(),
-                                                              ),
+                                                                                (BuildContext context) {
+                                                                              context.read<DeclineWorkOrderBloc>().add(
+                                                                                    WorkOrderDeclineEvent(contractsModel: workOrderList.first['payload'], action: 'DECLINE', comments: 'DECLINE contract'),
+                                                                                  );
+                                                                              Navigator.of(context, rootNavigator: true).pop();
+                                                                            },
+                                                                          ),
+                                                                          secondaryAction:
+                                                                              DigitDialogActions(
+                                                                            label:
+                                                                                AppLocalizations.of(context).translate(i18.common.back),
+                                                                            action: (BuildContext context) =>
+                                                                                Navigator.of(context, rootNavigator: true).pop(),
+                                                                          ))),
                                                               align: Alignment
                                                                   .center,
                                                             ),
@@ -469,7 +502,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                 listener: (context, state) {
                   state.maybeWhen(
                       initial: () => Container(),
-                      loading: () => Loaders.circularLoader(context),
+                      loading: () => shg_loader.Loaders.circularLoader(context),
                       error: (String? error) {
                         Notifiers.getToastMessage(
                             context, error.toString(), 'ERROR');
