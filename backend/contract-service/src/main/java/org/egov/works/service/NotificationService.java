@@ -248,7 +248,7 @@ public class NotificationService {
 
     public String buildMessageForApproveAction_WO_CBO(Contract contract, Map<String, String> userDetailsForSMS, String message) {
 
-        long dueDate = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(7);
+        long dueDate = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(new Integer(config.getContractDueDatePeriod()));
 
         StringBuilder CBOUrl= new StringBuilder(config.getCboUrlHost()).append(config.getCboUrlEndpoint());
         String shortendURL = getShortnerURL(CBOUrl.toString());
