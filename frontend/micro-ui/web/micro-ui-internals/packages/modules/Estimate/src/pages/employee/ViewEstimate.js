@@ -1,5 +1,5 @@
 import React,{ Fragment,useState,useEffect } from 'react'
-import { Loader,Header,StatusTable,Card,Row,HorizontalNav,ViewDetailsCard, Toast} from '@egovernments/digit-ui-react-components';
+import { Loader,Header, MultiLink, StatusTable,Card,Row,HorizontalNav,ViewDetailsCard, Toast} from '@egovernments/digit-ui-react-components';
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from '../../../../templates/ApplicationDetails';
 
@@ -47,6 +47,11 @@ const ViewEstimate = (props) => {
         }
     })
 
+    const HandleDownloadPdf = () => {
+        Digit.Utils.downloadEgovPDF('estimate/estimates',{estimateNumber,tenantId},`estimate-${estimateNumber}.pdf`)
+    }
+
+
     useEffect(()=>{
         if(isEstimateError || (!isEstimateLoading && !estimate)) {
             setToast({show : true, label : t("COMMON_ESTIMATE_NOT_FOUND"), error : true});
@@ -82,6 +87,11 @@ const ViewEstimate = (props) => {
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
                 <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("ESTIMATE_VIEW_ESTIMATE")}</Header>
+                <MultiLink
+                   onHeadClick={() => HandleDownloadPdf()}
+                   downloadBtnClassName={"employee-download-btn-className"}
+                   label={t("CS_COMMON_DOWNLOAD")}
+                />
             </div>
             {(project || estimate) && <ViewDetailsCard cardState={cardState} t={t}/>}
             {
