@@ -68,8 +68,8 @@ public class OrganisationFunctionQueryBuilder {
 
         if (StringUtils.isNotBlank(searchCriteria.getName())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" org.name=? ");
-            preparedStmtList.add(searchCriteria.getName());
+            queryBuilder.append(" org.name LIKE ? ");
+            preparedStmtList.add('%' + searchCriteria.getName() + '%');
         }
 
         if (StringUtils.isNotBlank(searchCriteria.getApplicationNumber())) {
@@ -110,9 +110,15 @@ public class OrganisationFunctionQueryBuilder {
 
         if (searchCriteria.getFunctions() != null) {
 
+            // This search matches with only organisation type which is the first part of the '.' separated value as well as
+            // exact value in database. i.e. OrgType along with organisation subtype which is '.' separated value
             if (StringUtils.isNotBlank(searchCriteria.getFunctions().getType())) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" orgFunction.type=? ");
+                //This query checks first part of the type field in db
+                queryBuilder.append("( LEFT(orgFunction.type, POSITION('.' in orgFunction.type)-1) = ? ");
+                //If the type doesn't have '.' i.e. the organisation doesn't have subtype
+                queryBuilder.append(" OR orgFunction.type = ?  )");
+                preparedStmtList.add(searchCriteria.getFunctions().getType());
                 preparedStmtList.add(searchCriteria.getFunctions().getType());
             }
 
