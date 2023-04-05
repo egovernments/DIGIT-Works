@@ -72,7 +72,7 @@ const ViewEstimate = (props) => {
                 ]
               }
         ])
-    }, [project])
+    }, [project, estimate])
     
     
 
