@@ -22,9 +22,6 @@ import static org.egov.works.util.ContractServiceConstants.*;
 @Component
 @Slf4j
 public class AttendanceUtils {
-
-    private static final String WORKS_SERVICE_CODE_CONSTANT = "WORKS-CONTRACT";
-
     @Autowired
     private ObjectMapper mapper;
 
@@ -72,8 +69,8 @@ public class AttendanceUtils {
                     .endDate(endDate)
                     .status(Status.ACTIVE)
                     .name(projectName)
-                    .referenceId(contract.getId())
-                    .serviceCode(WORKS_SERVICE_CODE_CONSTANT)
+                    .referenceId(contract.getContractNumber())
+                    .serviceCode(configs.getServiceCode())
                     .additionalDetails(mapper.readValue(registerAdditionalDetails.toString(), Object.class))
                     .build();
         } catch (JsonProcessingException e) {
