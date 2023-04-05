@@ -110,22 +110,16 @@ public class OrganisationFunctionQueryBuilder {
 
         if (searchCriteria.getFunctions() != null) {
 
-            // This search matches with exact value in database. i.e. OrgType along with organisation subtype which is '.' separated value
+            // This search matches with only organisation type which is the first part of the '.' separated value as well as
+            // exact value in database. i.e. OrgType along with organisation subtype which is '.' separated value
             if (StringUtils.isNotBlank(searchCriteria.getFunctions().getType())) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" orgFunction.type=? ");
-                preparedStmtList.add(searchCriteria.getFunctions().getType());
-            }
-
-            // This search matches with only organisation type which is the first part of the '.' separated value
-            if (StringUtils.isNotBlank(searchCriteria.getFunctions().getOrganisationType())) {
-                addClauseIfRequired(preparedStmtList, queryBuilder);
                 //This query checks first part of the type field in db
-                queryBuilder.append(" LEFT(orgFunction.type, POSITION('.' in orgFunction.type)-1) = ? ");
+                queryBuilder.append("( LEFT(orgFunction.type, POSITION('.' in orgFunction.type)-1) = ? ");
                 //If the type doesn't have '.' i.e. the organisation doesn't have subtype
-                queryBuilder.append(" OR orgFunction.type = ?  ");
-                preparedStmtList.add(searchCriteria.getFunctions().getOrganisationType());
-                preparedStmtList.add(searchCriteria.getFunctions().getOrganisationType());
+                queryBuilder.append(" OR orgFunction.type = ?  )");
+                preparedStmtList.add(searchCriteria.getFunctions().getType());
+                preparedStmtList.add(searchCriteria.getFunctions().getType());
             }
 
             if (StringUtils.isNotBlank(searchCriteria.getFunctions().getCategory())) {
