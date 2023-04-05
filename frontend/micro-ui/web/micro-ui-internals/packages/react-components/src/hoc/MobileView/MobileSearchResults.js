@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import NoResultsFound from "../../atoms/NoResultsFound";
 import { Loader } from "../../atoms/Loader";
 import _ from "lodash";
+import Table from '../../atoms/Table';
+
 
 const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig }) => {
     const {apiDetails} = fullConfig
@@ -30,6 +32,14 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
     //         searchResult = combinedResponse
     //     } 
     // }
+
+    const columns = [
+      {
+        Header: "",
+        accessor: "_searchResults",
+        id : "_searchResults"
+      }
+    ]
     
     const propsMobileInboxCards = useMemo(() => {
       if (isLoading) {
@@ -45,16 +55,13 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
             }
           return {mapping, details, additionalCustomization};
       })
+      console.log("carddata", cardData);
       return cardData;
     }, [data]);
 
-  function RenderResult() {
-    if (searchResult?.length === 0) {
-       return ( <NoResultsFound/> );
-    } 
-    return <div>
-      {propsMobileInboxCards.map((row) => {
-        return <Link to={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.MobileDetailsOnClick(row.mapping, tenantId)}>
+    const rows = propsMobileInboxCards.map((row) => {
+      return {
+        _searchResults : <Link to={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.MobileDetailsOnClick(row.mapping, tenantId)}>
         <div className="details-container">
           {Object.keys(row.mapping).map(key => {
             let toRender;
@@ -82,7 +89,28 @@ const MobileSearchResults = ({ config, data, isLoading, isFetching,fullConfig })
               return toRender
             })}
         </div></Link>
-      })}
+      }
+    })
+
+  function RenderResult() {
+    if (searchResult?.length === 0) {
+       return ( <NoResultsFound/> );
+    } 
+    return <div>
+       <Table 
+          className="table-fixed-first-column-wage-seekers wage-seekers-table" 
+          t={t}
+          manualPagination={false}
+          data={rows}
+          totalRecords={propsMobileInboxCards?.length}
+          columns={columns}
+          isPaginationRequired={true}
+          getCellProps={(cellInfo) => {
+            return {
+              style: {width : "100vw"},
+            };
+          }}
+        />
      </div>
     }
 
