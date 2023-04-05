@@ -22,7 +22,11 @@ export const UICustomizations = {
         data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
       }
 
+      
+      let ward = _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : []);
       delete data.body.inbox.moduleSearchCriteria.ward;
+      ward = ward?.map((row) => row?.code);
+      if (ward.length > 0) data.body.inbox.moduleSearchCriteria.ward = ward;
 
       //cloning locality and workflow states to format them
       let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
@@ -109,22 +113,27 @@ export const UICustomizations = {
       }
 
       
-      let selectedWard =  _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : null);
-      delete data.body.inbox.moduleSearchCriteria.ward;
-      if(selectedWard) {
-         data.body.inbox.moduleSearchCriteria.ward = selectedWard?.[0]?.code;
-      }
+      // let selectedWard =  _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : null);
+      // delete data.body.inbox.moduleSearchCriteria.ward;
+      // if(selectedWard) {
+      //    data.body.inbox.moduleSearchCriteria.ward = selectedWard?.[0]?.code;
+      // }
 
       let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
+      let ward = _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : []);
       // delete data.body.inbox.moduleSearchCriteria.locality;
       delete data.body.inbox.moduleSearchCriteria.state;
+      delete data.body.inbox.moduleSearchCriteria.ward;
+
       // locality = locality?.map((row) => row?.code);
       states = Object.keys(states)?.filter((key) => states[key]);
-
+      ward = ward?.map((row) => row?.code);
+      
+      
       // //adding formatted data to these keys
       // if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
-      if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
-
+      if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;  
+      if (ward.length > 0) data.body.inbox.moduleSearchCriteria.ward = ward;
       const projectType = _.clone(data.body.inbox.moduleSearchCriteria.projectType ? data.body.inbox.moduleSearchCriteria.projectType : {});
       if (projectType?.code) data.body.inbox.moduleSearchCriteria.projectType = projectType.code;
 
@@ -371,6 +380,14 @@ export const UICustomizations = {
         combinedResponse,
       };
     },
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if (createdTo !== "" && createdFrom === "")
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
@@ -514,7 +531,7 @@ export const UICustomizations = {
       }
 
 
-      if (key === "COMMON_WORKFLOW_STATES") {
+      if (key === "CORE_COMMON_STATUS") {
         return <span>{t(`WF_MUSTOR_${value}`)}</span>
       }
 
@@ -801,13 +818,44 @@ export const UICustomizations = {
     },
   },
   SearchOrganisationConfig: {
-    preProcess: (data) => {
-      // const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
-      // const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
-      // data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
-      data.body.SearchCriteria = { ...data.body.SearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() };
-      return data;
-    },
+    preProcess: (data) => {  
+        let requestBody = { ...data.body.SearchCriteria };
+        const pathConfig = {
+          type: "functions.type",
+        };
+        const dateConfig = {
+          createdFrom: "daystart",
+          createdTo: "dayend",
+        };
+        const selectConfig = {
+          boundaryCode: "boundaryCode[0].code",
+          type:"type.code",
+          applicationStatus: "applicationStatus.code",
+        };
+        let SearchCriteria = Object.keys(requestBody)
+          .map((key) => {
+            if (selectConfig[key]) {
+              requestBody[key] = _.get(requestBody, selectConfig[key], null);
+            } else if (typeof requestBody[key] == "object") {
+              requestBody[key] = requestBody[key]?.code;
+            }
+            return key;
+          })
+          .filter((key) => requestBody[key])
+          .reduce((acc, curr) => {
+            if (pathConfig[curr]) {
+              _.set(acc, pathConfig[curr], requestBody[curr]);
+            } else if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
+              _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
+            } else {
+              _.set(acc, curr, requestBody[curr]);
+            }
+            return acc;
+          }, {});
+        data.body.SearchCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
+        return data;
+      },
+      
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
@@ -821,7 +869,7 @@ export const UICustomizations = {
               </Link>
             </span>
           );
-        case "MASTERS_LOCATION":
+        case "MASTERS_ADDRESS":
           return value ? (
             <span style={{ whiteSpace: "break-spaces" }}>
               {String(`${t(Digit.Utils.locale.getCityLocale(row?.tenantId))} ${t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId))}`)}
@@ -830,13 +878,13 @@ export const UICustomizations = {
             t("ES_COMMON_NA")
           );
         case "CORE_COMMON_STATUS":
-          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_ORG_STATUS_${value}`))}</span> : t("ES_COMMON_NA");
 
         case "MASTERS_ORGANISATION_TYPE":
-          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`COMMON_MASTERS_ORG_${value?.split?.('.')?.[0]}`))}</span> : t("ES_COMMON_NA");
 
         case "MASTERS_ORGANISATION_SUB_TYPE":
-          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`COMMON_MASTERS_SUBORG_${row?.functions?.[0]?.type?.split?.('.')?.[1]}`))}</span> : t("ES_COMMON_NA");
         default:
           return t("ES_COMMON_NA");
       }
