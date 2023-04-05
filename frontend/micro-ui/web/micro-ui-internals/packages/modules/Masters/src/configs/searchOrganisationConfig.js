@@ -23,7 +23,7 @@ const searchOrganisationConfig = () => {
       search: {
         uiConfig: {
           headerStyle: null,
-          formClassName:"custom-both-clear-search",
+          formClassName: "custom-both-clear-search",
           primaryLabel: "ES_COMMON_SEARCH",
           secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
           minReqFields: 1,
@@ -38,19 +38,19 @@ const searchOrganisationConfig = () => {
           },
           fields: [
             {
-              "label": "COMMON_WARD",
-              "type": "locationdropdown",
-              "isMandatory": false,
-              "disable": false,
-              "populators": {
-                  "name": "boundaryCode",
-                  "type": "ward",
-                "optionsKey": "i18nKey",
-                  "defaultText": "COMMON_SELECT_WARD",
-                  "selectedText": "COMMON_SELECTED",
-                  "allowMultiSelect": false
-              }
-          },
+              label: "COMMON_WARD",
+              type: "locationdropdown",
+              isMandatory: false,
+              disable: false,
+              populators: {
+                name: "boundaryCode",
+                type: "ward",
+                optionsKey: "i18nKey",
+                defaultText: "COMMON_SELECT_WARD",
+                selectedText: "COMMON_SELECTED",
+                allowMultiSelect: false,
+              },
+            },
             {
               label: "MASTERS_ORGANISATION_TYPE",
               type: "dropdown",
@@ -65,7 +65,10 @@ const searchOrganisationConfig = () => {
                 mdmsConfig: {
                   masterName: "OrgType",
                   moduleName: "common-masters",
+                  filter: "[?(@.active==true)].parent",
                   localePrefix: "COMMON_MASTERS_ORG",
+                  select:
+                    "(data)=>{ return Array.isArray(data['common-masters'].OrgType) && Digit.Utils.getUnique(data['common-masters'].OrgType).map(ele=>({code:ele,name:'COMMON_MASTERS_ORG_'+ele}))}",
                 },
               },
             },
@@ -85,7 +88,7 @@ const searchOrganisationConfig = () => {
               populators: {
                 name: "orgNumber",
                 error: `PROJECT_PATTERN_ERR_MSG`,
-                validation: {  minlength: 2 },
+                validation: { minlength: 2 },
               },
             },
             {
@@ -101,18 +104,18 @@ const searchOrganisationConfig = () => {
                 },
                 options: [
                   {
-                    code:"ACTIVE",
-                    name:"MASTERS_ORG_STATUS_ACTIVE"
+                    code: "ACTIVE",
+                    name: "MASTERS_ORG_STATUS_ACTIVE",
                   },
                   {
-                    code:"DEBARRED",
-                    name:"MASTERS_ORG_STATUS_DEBARRED"
-                  },  {
-                    code:"INACTIVE",
-                    name:"MASTERS_ORG_STATUS_INACTIVE"
-                  }
-
-                ]
+                    code: "DEBARRED",
+                    name: "MASTERS_ORG_STATUS_DEBARRED",
+                  },
+                  {
+                    code: "INACTIVE",
+                    name: "MASTERS_ORG_STATUS_INACTIVE",
+                  },
+                ],
               },
             },
             {
