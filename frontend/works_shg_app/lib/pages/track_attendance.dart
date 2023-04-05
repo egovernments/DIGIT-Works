@@ -39,7 +39,7 @@ import '../widgets/SideBar.dart';
 import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/table_dropdown.dart';
 import '../widgets/drawer_wrapper.dart';
-import '../widgets/loaders.dart';
+import '../widgets/loaders.dart' as shg_loader;
 
 class TrackAttendancePage extends StatefulWidget {
   final String id;
@@ -141,7 +141,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
         body:BlocBuilder<SkillsBloc, SkillsBlocState>(
               builder: (context, skillsState) {
                 return skillsState.maybeWhen(orElse: () => Container(),
-                    loading: () => Loaders.circularLoader(context),
+                    loading: () => shg_loader.Loaders.circularLoader(context),
                     error: (String? error) => Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(error.toString()), 'ERROR'),
                     loaded: (SkillsList? skillsList) {
                   skillList = skillsList!.wageSeekerSkills?.where((obj) => obj.active == true).map((e) => Skill(code: e.code,)).toList() ?? [];
@@ -158,7 +158,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                       return BlocBuilder<AttendanceIndividualProjectSearchBloc,
                           AttendanceIndividualProjectSearchState>(builder: (context, state) {
                             return state.maybeWhen(
-                                loading: () => Loaders.circularLoader(context),
+                                loading: () => shg_loader.Loaders.circularLoader(context),
                                 error: (String? error) => Notifiers.getToastMessage(context, error.toString(), 'ERROR') ,
                                 loaded: (AttendanceRegistersModel? individualAttendanceRegisterModel) {
                                   registerId = individualAttendanceRegisterModel!.attendanceRegister!.first.id;
@@ -236,7 +236,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                       ? BlocListener<MusterRollFromToDateSearchBloc, MusterRollFromToDateSearchState>(
                                                           listener: (context, musterSearch) {
                                                             musterSearch.maybeWhen(orElse: () => Container(),
-                                                            loading: () => Loaders.circularLoader(context),
+                                                            loading: () => shg_loader.Loaders.circularLoader(context),
                                                             loaded: (MusterRollsModel? musterRollsSearch) {
                                                               if(musterRollsSearch!.musterRoll!.isNotEmpty){
                                                                 existingSkills = musterRollsSearch.musterRoll!.first.individualEntries!.map((e) =>
@@ -254,7 +254,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                           child:  BlocBuilder<MusterRollEstimateBloc, MusterRollEstimateState>(
                                                           builder: (context, musterState) {
                                                              return musterState.maybeWhen(orElse: () => Container(),
-                                                              loading: () => Loaders.circularLoader(context),
+                                                              loading: () => shg_loader.Loaders.circularLoader(context),
                                                               loaded: (EstimateMusterRollsModel? musterRollsModel) {
                                                                 List<AttendeesTrackList> attendeeList = individualAttendanceRegisterModel.attendanceRegister!.first.attendeesEntries!.where((e) => e.denrollmentDate == null || !(e.denrollmentDate! <= individualAttendanceRegisterModel.attendanceRegister!.first.endDate!.toInt())).toList().map((e) =>
                                                                     AttendeesTrackList(name: e.additionalDetails?.individualName, aadhaar: e.additionalDetails?.identifierId, individualId: e.individualId,
@@ -368,7 +368,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                   builder: (context, musterSearchState) {
                                                                                     return musterSearchState.maybeWhen(
                                                                                         orElse: () => Container(),
-                                                                                        loading: () => Loaders.circularLoader(context),
+                                                                                        loading: () => shg_loader.Loaders.circularLoader(context),
                                                                                         loaded: (MusterRollsModel? musterRollsSearch) {
                                                                                           if (musterRollsSearch?.musterRoll != null &&
                                                                                               musterRollsSearch!.musterRoll!.isNotEmpty) {
@@ -566,6 +566,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                   registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA',
                                                                                                                   registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
                                                                                                                   projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '',
+                                                                                                                  projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '',
+                                                                                                                  locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '',
+                                                                                                                  ward: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.ward ?? '',
                                                                                                                   amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500,
                                                                                                                   skillsList: skillsPayLoad));
                                                                                                             }} : null,
@@ -618,7 +621,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                 orElse: () =>Container());
                           });
                       },
-                        loading: () => Loaders.circularLoader(context) );
+                        loading: () => shg_loader.Loaders.circularLoader(context) );
                   });
                 });
               }));

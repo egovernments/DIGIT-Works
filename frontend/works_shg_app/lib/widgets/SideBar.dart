@@ -11,7 +11,6 @@ import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
 import '../blocs/user/user_search.dart';
-import 'loaders.dart';
 
 class SideBar extends StatefulWidget {
   final String module;
@@ -116,10 +115,15 @@ class _SideBar extends State<SideBar> {
           onPressed: () {},
         ),
         DigitIconTile(
+            title:
+                AppLocalizations.of(context).translate(i18.common.orgProfile),
+            icon: Icons.perm_contact_cal_sharp,
+            onPressed: () {}),
+        DigitIconTile(
             title: AppLocalizations.of(context).translate(i18.common.logOut),
             icon: Icons.logout,
             onPressed: () {
-              context.read<AuthBloc>().add(AuthLogoutEvent());
+              context.read<AuthBloc>().add(const AuthLogoutEvent());
             }),
       ],
     );
