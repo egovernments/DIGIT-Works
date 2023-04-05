@@ -46,8 +46,14 @@ class WageSeekerCreateBloc
                   "tenantId": event.locationDetails?.city,
                   "pincode": event.locationDetails?.pinCode,
                   "city": event.locationDetails?.city,
-                  "street": event.locationDetails?.streetName ?? '',
-                  "doorNo": event.locationDetails?.doorNo ?? '',
+                  "street": event.locationDetails?.streetName != null &&
+                          event.locationDetails?.streetName != ""
+                      ? event.locationDetails?.streetName
+                      : null,
+                  "doorNo": event.locationDetails?.doorNo != null &&
+                          event.locationDetails?.doorNo != ""
+                      ? event.locationDetails?.doorNo
+                      : null,
                   "type": "PERMANENT",
                   "locality": {"code": event.locationDetails?.locality},
                   "ward": {"code": event.locationDetails?.ward}

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { useTranslation } from "react-i18next";
-import { Header, Toast } from "@egovernments/digit-ui-react-components";
+import { Header, Toast, MultiLink } from "@egovernments/digit-ui-react-components";
 import ApplicationDetails from "../../../../../templates/ApplicationDetails";
 
 const ViewAttendance = () => {
@@ -30,6 +30,10 @@ const ViewAttendance = () => {
 
   const { mutate } = Digit.Hooks.attendance.useUpdateAttendance();
 
+  const HandleDownloadPdf = () => {
+    Digit.Utils.downloadEgovPDF('musterRoll/muster-roll',{musterRollNumber,tenantId},`muster-roll-${musterRollNumber}.pdf`)
+  }
+
   useEffect(() => {
     if(isError) {
       setShowDataError(true)
@@ -38,7 +42,14 @@ const ViewAttendance = () => {
  
   return (
     <React.Fragment>
-      <Header>{showEditTitle ? t('ATM_EDIT_ATTENDENCE') : t("ATM_VIEW_ATTENDENCE")}</Header>
+      <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+        <Header>{showEditTitle ? t('ATM_EDIT_ATTENDENCE') : t("ATM_VIEW_ATTENDENCE")}</Header>
+        <MultiLink
+         onHeadClick={() => HandleDownloadPdf()}
+         downloadBtnClassName={"employee-download-btn-className"}
+         label={t("CS_COMMON_DOWNLOAD")}
+        />
+      </div>
       {
         showDataError === null && <ApplicationDetails
           applicationDetails={data?.applicationDetails}

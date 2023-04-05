@@ -132,7 +132,8 @@ const searchConfig = () => {
                         },
                         {
                             label: "WORKS_PROJECT_NAME",
-                            jsonPath: "name"
+                            jsonPath: "name",
+                            additionalCustomization:true
                         },
                         {
                             label: "PROJECT_OWNING_DEPT",

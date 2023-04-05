@@ -13,7 +13,8 @@ import AttendenceInboxSearch from "./components/inbox/InboxSearch";
 import ViewAttendance from "./pages/employee/viewAttendance/ViewAttendances";
 
 export const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
-  const moduleCode = ["AttendenceMgmt","common-masters"];
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const moduleCode = ["AttendenceMgmt","common-masters",tenantId];
   const { path, url } = useRouteMatch();
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({
