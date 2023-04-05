@@ -26,7 +26,7 @@
     "@egovernments/digit-ui-module-estimate": "0.0.10",
     "@egovernments/digit-ui-module-expenditure": "0.0.19",
     "@egovernments/digit-ui-module-masters": "0.0.19",
-    "@egovernments/digit-ui-module-project": "0.0.16",
+    "@egovernments/digit-ui-module-project": "0.0.17",
     "@egovernments/digit-ui-customisation-mukta": "0.0.1",
     "babel-loader": "8.1.0",
     "react": "17.0.2",

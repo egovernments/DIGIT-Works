@@ -133,7 +133,7 @@ const ProjectDetails = () => {
                     setHideActionBar(true);
                     setActionsMenu([])
                 }
-            }else{
+            }else if(isEstimateViewerAndCreator){
                 setHideActionBar(false);
                 setActionsMenu([
                     {
