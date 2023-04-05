@@ -8,15 +8,19 @@ const SearchOrganisation = () => {
   const { t } = useTranslation();
   const history = useHistory()
 
-  const configs = searchOrganisationConfig();
+  // const configs = searchOrganisationConfig();
+  const configModuleName = Digit.Utils.getConfigModuleName()
   const tenant = Digit.ULBService.getStateId();
-  const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, "commonUiConfig", [
+  const { isLoading, data } = Digit.Hooks.useCustomMDMS(
+      tenant,
+      configModuleName,
+   [
     {
       name: "SearchOrganisationConfig",
     },
   ]);
 
-  // const configs = data?.commonUiConfig?.SearchProjectConfig?.[0]
+  const configs = data?.[configModuleName]?.SearchOrganisationConfig?.[0]
 
   if (isLoading) return <Loader />;
   return (

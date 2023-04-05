@@ -7,14 +7,19 @@ import { useHistory } from "react-router-dom";
 const SearchWageSeeker = () => {
   const { t } = useTranslation();
   const history = useHistory()
-  const configs = searchWageSeekerConfig();
+ 
+  const configModuleName = Digit.Utils.getConfigModuleName()
   const tenant = Digit.ULBService.getStateId();
-  const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, "commonUiConfig", [
+  const { isLoading, data } = Digit.Hooks.useCustomMDMS(
+      tenant,
+      configModuleName,
+   [
     {
-      name: "SearchProjectConfig",
+      name: "SearchIndividualConfig",
     },
   ]);
 
+  const configs = data?.[configModuleName]?.SearchIndividualConfig?.[0]
   // const configs = data?.commonUiConfig?.SearchProjectConfig?.[0]
 
   if (isLoading) return <Loader />;
