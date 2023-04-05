@@ -62,6 +62,12 @@ const CreateOrganisation = () => {
     const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
 
     useEffect(() => {
+        if(sessionFormData?.basicDetails_orgId !== orgId) {
+          clearSessionFormData();
+        }
+    },[])
+
+    useEffect(() => {
         if(configs && !orgDataFetching) {
             updateOrganisationFormDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, orgData, tenantId, ULBOptions, setIsFormReady})
         }
@@ -79,7 +85,7 @@ const CreateOrganisation = () => {
                         setSessionFormData={setSessionFormData} 
                         clearSessionFormData={clearSessionFormData}
                         isModify={isModify}
-                        orgDataFromAPI={{}}
+                        orgDataFromAPI={orgData}
                         >  
                     </CreateOrganizationForm>
                 )

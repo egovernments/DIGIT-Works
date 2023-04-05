@@ -1,7 +1,7 @@
 import { useMutation } from "react-query"
 import { WageSeekerService } from "../../services/elements/WageSeeker"
 
-export const useDeleteWageSeeker = () => {
+const useDeleteWageSeeker = () => {
     return useMutation(data => WageSeekerService.delete(data))
 }
 

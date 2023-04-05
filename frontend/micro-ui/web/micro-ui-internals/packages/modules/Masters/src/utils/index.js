@@ -171,7 +171,7 @@ export const getWageSeekerSkillDeletePayload = ({wageSeekerDataFromAPI, tenantId
     }
 }
 
-export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, tenantId, isModify, referenceId}) => {
+export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, tenantId, isModify, referenceId, isWageSeeker}) => {
     let bankAccounts = []
 
     //create new object for bank account details
@@ -182,7 +182,7 @@ export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, te
     bankAccountsData.accountType = formData?.financeDetails_accountType?.code
     bankAccountsData.bankBranchIdentifier = {
         type: "IFSC",
-        code: formData?.financeDetails_ifsc,
+        code: isWageSeeker? formData?.financeDetails_ifsc : formData?.transferCodes?.['transferCodes.1.value'],
         additionalDetails: {
             ifsccode: formData?.financeDetails_branchName
         }
@@ -202,7 +202,7 @@ export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, te
     } else {
         let bankObj = {}
         bankObj.tenantId = tenantId
-        bankObj.serviceCode = "IND"
+        bankObj.serviceCode = isWageSeeker ? "IND" : "ORG"
         bankObj.referenceId = referenceId
         bankObj.bankAccountDetails = []
         bankAccounts.push(bankObj)
@@ -259,4 +259,52 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
         setSessionFormData({...configs?.defaultValues})
     }
     setIsFormReady(true)
+}
+
+export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) => {
+
+    console.log('formData', formData);
+    let organisation = {}
+    let organisations = []
+    organisation.tenantId = tenantId
+    organisation.name = formData?.basicDetails_orgName
+    organisation.applicationStatus = 'ACTIVE'
+    organisation.dateOfIncorporation = Digit.Utils.pt.convertDateToEpoch(formData?.basicDetails_dateOfIncorporation)
+    organisation.orgAddress = [{
+        tenantId: tenantId,
+        doorNo: formData?.locDetails_houseName,
+        city: formData?.locDetails_city?.code,
+        boundaryType: 'Ward',
+        boundaryCode: formData?.locDetails_ward?.code,
+        street: formData?.locDetails_streetName,
+        geoLocation: {}
+    }]
+    organisation.additionalDetails = {
+        locality: formData?.locDetails_locality,
+        registeredByDept: formData?.basicDetails_regDept,
+        deptRegistrationNum: formData?.basicDetails_regDeptNo
+    }
+    organisation.contactDetails = [{
+        contactName: formData?.contactDetails_name, 
+        contactMobileNumber: formData?.contactDetails_mobile,
+        contactEmail: formData?.contactDetails_email
+    }]
+    organisation.functions = [{
+        type: `${formData?.funDetails_orgType?.code}.${formData?.funDetails_orgSubType?.code}`,
+        category: `${formData?.funDetails_orgType?.code}.${formData?.funDetails_category?.code}`,
+        class: formData?.funDetails_classRank?.code,
+        validFrom: Digit.Utils.pt.convertDateToEpoch(formData?.funDetails_validFrom),
+        validTo: Digit.Utils.pt.convertDateToEpoch(formData?.funDetails_validTo)
+    }]
+    organisation.identifiers = [
+        {
+            type: 'PAN',
+            value: 'QWE12345TY'
+        }
+    ]
+    organisations.push(organisation)
+
+    return {
+        organisations
+    }
 }

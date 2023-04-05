@@ -1,7 +1,8 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { useTranslation } from "react-i18next";
+import { useHistory } from 'react-router-dom';
 import { FormComposer, Loader } from '@egovernments/digit-ui-react-components';
-import { getTomorrowsDate } from '../../../../utils';
+import { getTomorrowsDate, getBankAccountUpdatePayload, getOrgPayload } from '../../../../utils';
 
 const navConfig =  [
     {
@@ -20,6 +21,7 @@ const navConfig =  [
 
 const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, setSessionFormData, clearSessionFormData, isModify, orgDataFromAPI }) => {
     const {t} = useTranslation();
+    const history = useHistory()
 
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -27,7 +29,13 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
 
     const [selectedWard, setSelectedWard] = useState(sessionFormData?.locDetails_ward?.code || '')
     const [selectedOrg, setSelectedOrg] = useState('')
-    
+
+    const { mutate: CreateOrganisationMutation } = Digit.Hooks.organisation.useCreateOrganisation();
+    const { mutate: UpdateOrganisationMutation } = Digit.Hooks.organisation.useUpdateOrganisation();
+
+    const { mutate: CreateBankAccountMutation } = Digit.Hooks.bankAccount.useCreateBankAccount();
+    const { mutate: UpdateBankAccountMutation } = Digit.Hooks.bankAccount.useUpdateBankAccount();
+
     //location data
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
     let ULBOptions = []
@@ -159,9 +167,9 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 setValue("funDetails_orgSubType", '');
                 setValue("funDetails_category", '');
             }
-            if(formData?.transferCodes?.['transferCodes.1.name']?.code == 'IFSC' && formData?.transferCodes?.['transferCodes.1.value']) {
-                if(formData?.transferCodes['transferCodes.1.value'].length > 10) {
-                    const res = await window.fetch(`https://ifsc.razorpay.com/${formData?.transferCodes['transferCodes.1.value']}`);
+            if(formData?.transferCodes?.['transferCodes.1.name']?.code == 'IFSC' && difference?.transferCodes?.['transferCodes.1.value']) {
+                if(difference?.transferCodes['transferCodes.1.value'].length > 10) {
+                    const res = await window.fetch(`https://ifsc.razorpay.com/${difference?.transferCodes['transferCodes.1.value']}`);
                     if (res.ok) {
                         const { BANK, BRANCH } = await res.json();
                         setValue('financeDetails_bankName', `${BANK}`)
@@ -173,8 +181,48 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
           }
     }
 
+    const sendDataToResponsePage = (orgId, isSuccess, message, showId, otherMessage = "") => {
+        history.push({
+            pathname: `/${window?.contextPath}/employee/masters/response`,
+            search: orgId ? `?tenantId=${tenantId}&orgId=${orgId}` : '',
+            state : {
+                message,
+                showId,
+                isSuccess,
+                isWageSeeker: false,
+                otherMessage
+            }
+        }); 
+    }
+
+    const handleResponseForUpdate = async (orgPayload, data) => {}
+
+    const handleResponseForCreate = async (orgPayload, data) => {
+        await CreateOrganisationMutation(orgPayload, {
+            onError: async (error) => sendDataToResponsePage('', false, "MASTERS_ORG_CREATION_FAIL", false),
+            onSuccess: async (responseData) => {
+                //Update bank account details if wage seeker update success
+                const bankAccountPayload = getBankAccountUpdatePayload({formData: data, wageSeekerDataFromAPI: '', tenantId, isModify, referenceId: responseData?.organisations?.[0].id});
+                await CreateBankAccountMutation(bankAccountPayload, {
+                    onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_ORG_CREATION_FAIL", false),
+                    onSuccess: async (bankResponseData) => {
+                        sendDataToResponsePage(responseData?.organisations?.[0].orgNumber, true, "MASTERS_ORG_CREATION_SUCCESS", true, "MASTERS_ORG_CREATION_SUCCESS_MESSAGE")
+                        clearSessionFormData()
+                    }
+                })
+            },
+        });
+    }
+
     const onSubmit = (data) => {
         console.log('FORM Data', data);
+        const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
+        if(isModify) {
+            const bankAccountPayload = {} //getBankAccountUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify, referenceId: ''});
+            //handleResponseForUpdate(orgPayload, bankAccountPayload);
+        }else {
+            handleResponseForCreate(orgPayload, data);
+        }
     }   
 
     if(locationDataFetching || orgDataFetching) return <Loader/>
