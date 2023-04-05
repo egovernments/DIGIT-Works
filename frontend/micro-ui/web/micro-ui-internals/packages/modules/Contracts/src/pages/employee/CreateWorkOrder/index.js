@@ -109,7 +109,9 @@ const CreateWorkOrder = () => {
     const searchOrgPayload = {
         "SearchCriteria": {
             "tenantId": "pg.citya",
-            "type" : "CBO"
+            "functions" : {
+                "type" : "CBO"
+            }
         }
     }
 

@@ -132,7 +132,7 @@ export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
                 "wfStatus": "CREATED",
                 "name": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
                 "description": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc,
-                "executingDepartment": "DEPT_11",//hardcoded since we are not capturing it anymore and it is required at BE side
+                "executingDepartment": "ADM",//hardcoded since we are not capturing it anymore and it is required at BE side
                 // "executingDepartment": filteredFormData?.selectedDept?.code,
                 // "projectId":"7c941228-6149-4adc-bdb9-8b77f6c3757d",//static for now
                 "address": {
@@ -178,7 +178,7 @@ export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
                 "wfStatus": "CREATED",
                 "name": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
                 "description": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc,
-                "executingDepartment": "DEPT_11",//hardcoded since we are not capturing it anymore and it is required at BE side
+                "executingDepartment": "ADM",//hardcoded since we are not capturing it anymore and it is required at BE side
                 // "executingDepartment": filteredFormData?.selectedDept?.code,
                 // "projectId":"7c941228-6149-4adc-bdb9-8b77f6c3757d",//static for now
                 "address": {
