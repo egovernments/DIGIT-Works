@@ -52,6 +52,12 @@ public class MusterRoll {
     @Valid
     private List<IndividualEntry> individualEntries = null;
 
+    @JsonProperty("referenceId")
+    private String referenceId = null;
+
+    @JsonProperty("serviceCode")
+    private String serviceCode = null;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
