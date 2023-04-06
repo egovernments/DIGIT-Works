@@ -72,7 +72,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   };
 
   const onActionSelect = (action) => {
-    
+    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts");
     const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
     const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendencemgmt")
     setDisplayMenu(false)
@@ -85,6 +85,10 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         return 
     }
 
+    if(bsContract === businessService && action?.action === "EDIT"){
+      history.push(`/${window?.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&workOrderNumber=${applicationNo}`);
+      return 
+  }
     if(bsAttendance === businessService && action?.action === "EDIT"){
         editCallback()
         return 

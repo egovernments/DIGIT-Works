@@ -215,6 +215,9 @@ export const UICustomizations = {
         body: {
           SearchCriteria: {
             tenantId: tenantId,
+            functions : {
+              type : "CBO"
+            }
           },
         },
         config: {
