@@ -21,7 +21,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
         asSectionHeader: false,
         values: [
             { title: "COMMON_NAME_OF_CBO", value: contract?.additionalDetails?.orgName || t("NA")},
-            { title: "WORKS_ORGN_ID", value: contract?.orgId || t("NA")},
+            { title: "WORKS_ORGN_ID", value: contract?.additionalDetails?.cboApplicationNumber || t("NA")},
             { title: "COMMON_ROLE_OF_CBO", value: contract?.executingAuthority ? t(`COMMON_MASTERS_${contract?.executingAuthority}`) : "NA"},
             { title: "COMMON_DESGN_OF_OFFICER_IN_CHARGE",  value : contract?.additionalDetails?.officerInChargeDesgn || "NA"},
             { title: "COMMON_NAME_OF_OFFICER_IN_CHARGE",value: contract?.additionalDetails?.officerInChargeName?.name || "NA"},
@@ -30,7 +30,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
         ]
     }
     const allDocuments = combine(contract?.documents, contract?.additionalDetails?.estimateDocs);
-    const documentDetails = {
+    let documentDetails = {
         title: "",
         asSectionHeader: true,
         additionalDetails: {
@@ -38,25 +38,38 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
                 title: "WORKS_RELEVANT_DOCUMENTS",
                 BS : 'Works',
                 values: allDocuments?.map((document) => {
-                    if(document?.fileStoreId != null){
+                   if(document?.status !== "INACTIVE") {
+                    if(document?.fileStoreId){
+                            //ESTIMATE FILES
+                            return {
+                                title: document?.fileType,
+                                documentType: document?.fileName,
+                                documentUid: document?.documentUid,
+                                fileStoreId: document?.fileStoreId,
+                            };
+                        }
+                        //WO FILES
                         return {
-                            title: document?.fileType,
-                            documentType: document?.fileName,
-                            documentUid: document?.documentUid,
-                            fileStoreId: document?.fileStoreId,
-                        };
-                    }
-                        return {
-                            title: document?.documentType,
+                            title: document?.documentType === "Others" ? document?.additionalDetails?.otherCategoryName : document?.documentType,
                             documentType: document?.documentType,
-                            documentUid: document?.documentUid,
+                            documentUid: document?.fileStore,
                             fileStoreId: document?.fileStore,
                         };
+                   }
+                   return {};
                 }),
             },
             ]
         }
     }
+
+    //filter any empty object
+    documentDetails.additionalDetails.documents[0].values =documentDetails?.additionalDetails?.documents?.[0]?.values?.filter(value=>{
+        if(value?.title){
+            return value;
+        }
+    });
+
     const applicationDetails = { applicationDetails: [contractDetails, documentDetails] };    
 
   return {

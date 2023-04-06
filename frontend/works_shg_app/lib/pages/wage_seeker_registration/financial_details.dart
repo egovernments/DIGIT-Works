@@ -18,7 +18,6 @@ import '../../models/wage_seeker/financial_details_model.dart';
 import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/location_details_model.dart';
 import '../../models/wage_seeker/skill_details_model.dart';
-import '../../utils/models.dart';
 import '../../widgets/atoms/radio_button_list.dart';
 
 class FinancialDetailsPage extends StatefulWidget {
@@ -44,6 +43,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
   String accountNoKey = 'accountNo';
   String reAccountNoKey = 'reAccountNo';
   String ifscCodeKey = 'ifscCode';
+  String accountTypeKey = 'accountType';
 
   @override
   void initState() {
@@ -62,9 +62,9 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
-    List<KeyValue> accountTypeList = widget
+    List<String> accountTypeList = widget
         .wageSeekerMDMS!.worksMDMS!.bankAccType!
-        .map((e) => KeyValue(t.translate(e.code), e.code))
+        .map((e) => e.code)
         .toList();
     return ReactiveFormBuilder(
       form: () => buildForm(financialDetails ?? FinancialDetails()),
@@ -103,6 +103,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                       formControlName: accountNoKey,
                       label: t.translate(i18.common.accountNo),
                       isRequired: true,
+                      obscureText: true,
                       keyboardType: TextInputType.number,
                       inputFormatter: [
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
@@ -130,18 +131,21 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                     ),
                     StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
-                      return DigitRadioButtonList(
-                          context,
-                          t.translate(i18.common.accountType),
-                          accountType,
-                          '',
-                          '',
-                          true,
-                          accountTypeList, (value) {
-                        setState(() {
-                          accountType = value;
-                        });
-                      });
+                      return DigitRadioButtonList<String>(
+                        context,
+                        labelText: t.translate(i18.common.gender),
+                        formControlName: accountTypeKey,
+                        options: accountTypeList
+                            .map((e) => t.translate(e).toString())
+                            .toList(),
+                        isRequired: true,
+                        valueMapper: (value) => value,
+                        onValueChange: (value) {
+                          setState(() {
+                            accountType = value;
+                          });
+                        },
+                      );
                     }),
                     DigitTextFormField(
                         formControlName: ifscCodeKey,
@@ -214,6 +218,8 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
         accountNoKey: FormControl<String>(
             value: finance.accountNumber, validators: [Validators.required]),
         reAccountNoKey: FormControl<String>(value: finance.reAccountNumber),
+        accountTypeKey: FormControl<String>(
+            value: finance.accountType, validators: [Validators.required]),
         ifscCodeKey: FormControl<String>(
             value: finance.ifscCode, validators: [Validators.required]),
       }, [

@@ -133,6 +133,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
                 clearErrors={clearErrors}
                 labelStyle={{fontSize: "16px"}}
                 apiDetails={apiDetails}
+                data={data}
               />  
               <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
                 { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }

@@ -127,9 +127,12 @@ export const WorkflowService = {
       const currentState = businessServiceResponse?.find((state) => state.uuid === processInstances[0]?.state.uuid);
       
       // if current state is editable then we manually append an edit action
-      // if (currentState && currentState?.isStateUpdatable) {
-      //  nextActions.push({ action: "EDIT", state: currentState });
-      // }
+      //(doing only for muster)
+      //beacuse in other module edit action is defined in workflow
+      
+      if (currentState && currentState?.isStateUpdatable && moduleCode==="muster-roll-approval" ) {
+       nextActions.push({ action: "EDIT", state: currentState });
+      }
       // Check when to add Edit action(In Estimate only when send back to originator action is taken)
 
       const getStateForUUID = (uuid) => businessServiceResponse?.find((state) => state.uuid === uuid);
@@ -145,9 +148,9 @@ export const WorkflowService = {
             }, []);
             return { ...actionResultantState, assigneeRoles: assignees, action: ac.action, roles: ac.roles };
           });
-          // if (state?.isStateUpdatable) {
-          //   _nextActions.push({ action: "EDIT", ...state, roles: state?.actions?.[0]?.roles })
-          // }
+          if (state?.isStateUpdatable && moduleCode==="muster-roll-approval") {
+            _nextActions.push({ action: "EDIT", ...state, roles: state?.actions?.[0]?.roles })
+          }
           //CHECK WHEN EDIT ACTION TO BE SHOWN
           return { ...state, nextActions: _nextActions, roles: state?.action, roles: state?.actions?.reduce((acc, el) => [...acc, ...el.roles], []) };
         })?.[0];

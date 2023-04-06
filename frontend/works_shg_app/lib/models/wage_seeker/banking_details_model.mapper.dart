@@ -146,7 +146,8 @@ class BankAccountDetailsMapperElement
       id: container.$getOpt(map, 'id'),
       tenantId: container.$getOpt(map, 'tenantId'),
       referenceId: container.$getOpt(map, 'referenceId'),
-      serviceCode: container.$getOpt(map, 'serviceCode'));
+      serviceCode: container.$getOpt(map, 'serviceCode'),
+      indID: container.$getOpt(map, 'indID'));
 
   @override
   Function get encoder => encode;
@@ -155,24 +156,27 @@ class BankAccountDetailsMapperElement
         'id': container.$enc(b.id, 'id'),
         'tenantId': container.$enc(b.tenantId, 'tenantId'),
         'referenceId': container.$enc(b.referenceId, 'referenceId'),
-        'serviceCode': container.$enc(b.serviceCode, 'serviceCode')
+        'serviceCode': container.$enc(b.serviceCode, 'serviceCode'),
+        'indID': container.$enc(b.indID, 'indID')
       };
 
   @override
   String stringify(BankAccountDetails self) =>
-      'BankAccountDetails(serviceCode: ${container.asString(self.serviceCode)}, tenantId: ${container.asString(self.tenantId)}, referenceId: ${container.asString(self.referenceId)}, id: ${container.asString(self.id)})';
+      'BankAccountDetails(serviceCode: ${container.asString(self.serviceCode)}, tenantId: ${container.asString(self.tenantId)}, referenceId: ${container.asString(self.referenceId)}, id: ${container.asString(self.id)}, indID: ${container.asString(self.indID)})';
   @override
   int hash(BankAccountDetails self) =>
       container.hash(self.serviceCode) ^
       container.hash(self.tenantId) ^
       container.hash(self.referenceId) ^
-      container.hash(self.id);
+      container.hash(self.id) ^
+      container.hash(self.indID);
   @override
   bool equals(BankAccountDetails self, BankAccountDetails other) =>
       container.isEqual(self.serviceCode, other.serviceCode) &&
       container.isEqual(self.tenantId, other.tenantId) &&
       container.isEqual(self.referenceId, other.referenceId) &&
-      container.isEqual(self.id, other.id);
+      container.isEqual(self.id, other.id) &&
+      container.isEqual(self.indID, other.indID);
 }
 
 mixin BankAccountDetailsMappable {
@@ -210,7 +214,11 @@ abstract class BankAccountDetailsCopyWith<$R, $In extends BankAccountDetails,
       chain<$R2, $Out2 extends BankAccountDetails>(
           Then<BankAccountDetails, $Out2> t, Then<$Out2, $R2> t2);
   $R call(
-      {String? id, String? tenantId, String? referenceId, String? serviceCode});
+      {String? id,
+      String? tenantId,
+      String? referenceId,
+      String? serviceCode,
+      String? indID});
 }
 
 class _BankAccountDetailsCopyWithImpl<$R, $Out extends BankAccountDetails>
@@ -228,10 +236,12 @@ class _BankAccountDetailsCopyWithImpl<$R, $Out extends BankAccountDetails>
           {Object? id = $none,
           Object? tenantId = $none,
           Object? referenceId = $none,
-          Object? serviceCode = $none}) =>
+          Object? serviceCode = $none,
+          Object? indID = $none}) =>
       $then(BankAccountDetails(
           id: or(id, $value.id),
           tenantId: or(tenantId, $value.tenantId),
           referenceId: or(referenceId, $value.referenceId),
-          serviceCode: or(serviceCode, $value.serviceCode)));
+          serviceCode: or(serviceCode, $value.serviceCode),
+          indID: or(indID, $value.indID)));
 }

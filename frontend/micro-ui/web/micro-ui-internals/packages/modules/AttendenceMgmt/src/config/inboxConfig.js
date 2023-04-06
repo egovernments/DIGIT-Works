@@ -210,7 +210,7 @@ const inboxConfig = () => {
               key: "estimatedAmount",
             },
             {
-              label: "ATM_SLA",
+              label: "COMMON_SLA_DAYS",
               jsonPath: "businessObject.serviceSla",
               additionalCustomization: true,
             },

@@ -193,6 +193,9 @@ export const UICustomizations = {
       if (key === "COMMON_WORKFLOW_STATES") {
         return <span>{t(`WF_MUSTOR_${value}`)}</span>
       }
+
+      //added this in case we change the key and not updated here , it'll throw that nothing was returned from cell error if that case is not handled here. To prevent that error putting this default
+      return <span>{t(`CASE_NOT_HANDLED`)}</span>
     },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
@@ -212,6 +215,9 @@ export const UICustomizations = {
         body: {
           SearchCriteria: {
             tenantId: tenantId,
+            functions : {
+              type : "CBO"
+            }
           },
         },
         config: {

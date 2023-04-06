@@ -10,6 +10,7 @@ const configEstimateModal = (
     moduleCode
 ) => {
     const {action:actionString} = action
+    
     const configMap = {
         "mukta-estimate": {
             "default":{
@@ -168,6 +169,50 @@ const configEstimateModal = (
                     show: true
                 }
             },
+        },
+        "muster-roll-approval":{
+            "default":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "APPROVE": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+                acceptTerms: {
+                    isMandatory:true,
+                    show:true
+                }
+            },
+            "REJECT": {
+                comments: {
+                    isMandatory: true,
+                    show: true,
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+            }
         }
     }
 //field can have (comments,assignee,upload)
@@ -203,9 +248,22 @@ const configEstimateModal = (
             {
                 body: [
                     {
+                        label: " ",
+                        type: "checkbox",
+                        disable: false,
+                        isMandatory:false,
+                        populators: {
+                            name: "acceptTerms",
+                            title: "MUSTOR_APPROVAL_CHECKBOX",
+                            isMandatory: false,
+                            labelStyles: {marginLeft:"40px"},
+                            customLabelMarkup: true,
+                            hideInForm: !fetchIsShow("acceptTerms")
+                        }
+                    },
+                    {
                         label: t("WF_MODAL_APPROVER"),
                         type: "dropdown",
-                        // isMandatory: true,
                         isMandatory: fetchIsMandatory("assignee"),
                         disable: false,
                         key:"assignees",
@@ -213,7 +271,6 @@ const configEstimateModal = (
                             name: "assignee",
                             optionsKey: "nameOfEmp",
                             options: approvers,
-                            // hideInForm:approvers ? false : true
                             hideInForm: !fetchIsShow("assignee")
                         },
                     },

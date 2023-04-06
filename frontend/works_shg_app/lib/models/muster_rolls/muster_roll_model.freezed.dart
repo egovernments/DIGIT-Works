@@ -203,6 +203,8 @@ mixin _$MusterRoll {
   String? get registerId => throw _privateConstructorUsedError;
   String? get status => throw _privateConstructorUsedError;
   String? get musterRollStatus => throw _privateConstructorUsedError;
+  String? get serviceCode => throw _privateConstructorUsedError;
+  String? get referenceId => throw _privateConstructorUsedError;
   int? get startDate => throw _privateConstructorUsedError;
   int? get endDate => throw _privateConstructorUsedError;
   @JsonKey(name: 'individualEntries')
@@ -233,6 +235,8 @@ abstract class $MusterRollCopyWith<$Res> {
       String? registerId,
       String? status,
       String? musterRollStatus,
+      String? serviceCode,
+      String? referenceId,
       int? startDate,
       int? endDate,
       @JsonKey(name: 'individualEntries')
@@ -265,6 +269,8 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
     Object? registerId = freezed,
     Object? status = freezed,
     Object? musterRollStatus = freezed,
+    Object? serviceCode = freezed,
+    Object? referenceId = freezed,
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? individualEntries = freezed,
@@ -295,6 +301,14 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
       musterRollStatus: freezed == musterRollStatus
           ? _value.musterRollStatus
           : musterRollStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
+      serviceCode: freezed == serviceCode
+          ? _value.serviceCode
+          : serviceCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      referenceId: freezed == referenceId
+          ? _value.referenceId
+          : referenceId // ignore: cast_nullable_to_non_nullable
               as String?,
       startDate: freezed == startDate
           ? _value.startDate
@@ -360,6 +374,8 @@ abstract class _$$_MusterRollCopyWith<$Res>
       String? registerId,
       String? status,
       String? musterRollStatus,
+      String? serviceCode,
+      String? referenceId,
       int? startDate,
       int? endDate,
       @JsonKey(name: 'individualEntries')
@@ -392,6 +408,8 @@ class __$$_MusterRollCopyWithImpl<$Res>
     Object? registerId = freezed,
     Object? status = freezed,
     Object? musterRollStatus = freezed,
+    Object? serviceCode = freezed,
+    Object? referenceId = freezed,
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? individualEntries = freezed,
@@ -422,6 +440,14 @@ class __$$_MusterRollCopyWithImpl<$Res>
       musterRollStatus: freezed == musterRollStatus
           ? _value.musterRollStatus
           : musterRollStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
+      serviceCode: freezed == serviceCode
+          ? _value.serviceCode
+          : serviceCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      referenceId: freezed == referenceId
+          ? _value.referenceId
+          : referenceId // ignore: cast_nullable_to_non_nullable
               as String?,
       startDate: freezed == startDate
           ? _value.startDate
@@ -457,6 +483,8 @@ class _$_MusterRoll implements _MusterRoll {
       this.registerId,
       this.status,
       this.musterRollStatus,
+      this.serviceCode,
+      this.referenceId,
       this.startDate,
       this.endDate,
       @JsonKey(name: 'individualEntries')
@@ -483,6 +511,10 @@ class _$_MusterRoll implements _MusterRoll {
   @override
   final String? musterRollStatus;
   @override
+  final String? serviceCode;
+  @override
+  final String? referenceId;
+  @override
   final int? startDate;
   @override
   final int? endDate;
@@ -507,7 +539,7 @@ class _$_MusterRoll implements _MusterRoll {
 
   @override
   String toString() {
-    return 'MusterRoll(id: $id, tenantId: $tenantId, musterRollNumber: $musterRollNumber, registerId: $registerId, status: $status, musterRollStatus: $musterRollStatus, startDate: $startDate, endDate: $endDate, individualEntries: $individualEntries, musterAdditionalDetails: $musterAdditionalDetails, musterAuditDetails: $musterAuditDetails)';
+    return 'MusterRoll(id: $id, tenantId: $tenantId, musterRollNumber: $musterRollNumber, registerId: $registerId, status: $status, musterRollStatus: $musterRollStatus, serviceCode: $serviceCode, referenceId: $referenceId, startDate: $startDate, endDate: $endDate, individualEntries: $individualEntries, musterAdditionalDetails: $musterAdditionalDetails, musterAuditDetails: $musterAuditDetails)';
   }
 
   @override
@@ -525,6 +557,10 @@ class _$_MusterRoll implements _MusterRoll {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.musterRollStatus, musterRollStatus) ||
                 other.musterRollStatus == musterRollStatus) &&
+            (identical(other.serviceCode, serviceCode) ||
+                other.serviceCode == serviceCode) &&
+            (identical(other.referenceId, referenceId) ||
+                other.referenceId == referenceId) &&
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate) &&
             (identical(other.endDate, endDate) || other.endDate == endDate) &&
@@ -547,6 +583,8 @@ class _$_MusterRoll implements _MusterRoll {
       registerId,
       status,
       musterRollStatus,
+      serviceCode,
+      referenceId,
       startDate,
       endDate,
       const DeepCollectionEquality().hash(_individualEntries),
@@ -575,6 +613,8 @@ abstract class _MusterRoll implements MusterRoll {
       final String? registerId,
       final String? status,
       final String? musterRollStatus,
+      final String? serviceCode,
+      final String? referenceId,
       final int? startDate,
       final int? endDate,
       @JsonKey(name: 'individualEntries')
@@ -599,6 +639,10 @@ abstract class _MusterRoll implements MusterRoll {
   String? get status;
   @override
   String? get musterRollStatus;
+  @override
+  String? get serviceCode;
+  @override
+  String? get referenceId;
   @override
   int? get startDate;
   @override

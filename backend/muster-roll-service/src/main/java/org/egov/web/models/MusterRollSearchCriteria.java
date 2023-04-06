@@ -37,6 +37,12 @@ public class MusterRollSearchCriteria {
     @JsonProperty("musterRollStatus")
     private String musterRollStatus;
 
+    @JsonProperty("referenceId")
+    private String referenceId = null;
+
+    @JsonProperty("serviceCode")
+    private String serviceCode = null;
+
     @JsonProperty("limit")
     private Integer limit;
 
