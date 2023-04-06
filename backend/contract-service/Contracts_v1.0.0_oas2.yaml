@@ -264,8 +264,13 @@ definitions:
           type: string
       orgIds:
         type: array
-        description: Search by orgnization ids
+        description: Search by organization ids
         format: uuid
+        items:
+          type: string
+      wfStatus:
+        type: array
+        description: Search by workflow status
         items:
           type: string
       fromDate:

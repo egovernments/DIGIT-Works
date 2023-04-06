@@ -78,6 +78,13 @@ public class ContractQueryBuilder {
             preparedStmtList.add(criteria.getStatus());
         }
 
+        List<String> wfStatus = criteria.getWfStatus();
+        if (wfStatus != null && !wfStatus.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.wf_status IN (").append(createQuery(wfStatus)).append(")");
+            addToPreparedStatement(preparedStmtList, wfStatus);
+        }
+
         List<String> orgIds = criteria.getOrgIds();
         if (orgIds != null && !orgIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
