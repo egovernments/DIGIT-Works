@@ -103,6 +103,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                       formControlName: accountNoKey,
                       label: t.translate(i18.common.accountNo),
                       isRequired: true,
+                      obscureText: true,
                       keyboardType: TextInputType.number,
                       inputFormatter: [
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
@@ -222,6 +223,6 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
         ifscCodeKey: FormControl<String>(
             value: finance.ifscCode, validators: [Validators.required]),
       }, [
-        Validators.mustMatch(accountNoKey, reAccountNoKey, markAsDirty: false)
+        Validators.mustMatch(accountNoKey, reAccountNoKey)
       ]);
 }
