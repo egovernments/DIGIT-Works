@@ -168,8 +168,8 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 setValue("funDetails_category", '');
             }
             if(formData?.transferCodes?.['transferCodes.1.name']?.code == 'IFSC' && difference?.transferCodes?.['transferCodes.1.value']) {
-                if(difference?.transferCodes['transferCodes.1.value'].length > 10) {
-                    const res = await window.fetch(`https://ifsc.razorpay.com/${difference?.transferCodes['transferCodes.1.value']}`);
+                if(formData?.transferCodes['transferCodes.1.value'].length > 10) {
+                    const res = await window.fetch(`https://ifsc.razorpay.com/${formData?.transferCodes['transferCodes.1.value']}`);
                     if (res.ok) {
                         const { BANK, BRANCH } = await res.json();
                         setValue('financeDetails_bankName', `${BANK}`)

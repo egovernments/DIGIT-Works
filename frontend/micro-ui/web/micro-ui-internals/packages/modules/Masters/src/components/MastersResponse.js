@@ -9,7 +9,7 @@ const MastersResponse = () => {
     const { state } = useLocation()
     const queryParams = Digit.Hooks.useQueryParams()
 
-    const navigate = (page) =>{
+    const navigate = (page) => {
         switch(page){
             case "modify-org" : {
                 history.push(`/${window.contextPath}/employee/masters/create-organization?tenantId=${queryParams?.tenantId}&orgId=${queryParams?.orgId}`);
@@ -38,16 +38,22 @@ const MastersResponse = () => {
             />
             {!state?.isWageSeeker && <CardText>{state?.otherMessage}</CardText>}
 
-            <div style={{display: "flex", justifyContent:"space-between"}}>
-                {/* <LinkLabel style={{ display: "flex" }} onClick={navigate('home-screen')}>
+            <div style={{display: "flex", justifyContent:"space-between", width: "60%"}}>
+                <LinkLabel style={{ display: "flex" }} onClick={() => navigate("home-screen")}>
                     <ArrowLeftWhite  fill="#F47738" style={{marginRight: "8px", marginTop : "3px"}}/>{t("ES_COMMON_GOTO_HOME")}
                 </LinkLabel> 
-                <LinkLabel style={{ display: "flex" }} onClick={()=>navigate('modify-org')}>
-                    <EditIcon style={{marginRight: "8px"}}/>{t("MASTERS_ORGANISATION_MODIFY")}
-                </LinkLabel>  
-                <LinkLabel style={{ display: "flex" }} onClick={()=>navigate('create-org')}>
-                    <AddFileFilled style={{marginRight: "8px", marginTop : "3px"}}/>{t("MASTERS_CREATE_NEW_ORGANISATION")}
-                </LinkLabel> */}
+                {
+                    !state?.isWageSeeker && state?.isSuccess &&(
+                        <React.Fragment>
+                             <LinkLabel style={{ display: "flex" }} onClick={() => navigate("modify-org")}>
+                                <EditIcon style={{marginRight: "8px"}}/>{t("MASTERS_ORGANISATION_MODIFY")}
+                            </LinkLabel>  
+                            <LinkLabel style={{ display: "flex" }} onClick={() => navigate("create-org")}>
+                                <AddFileFilled style={{marginRight: "8px", marginTop : "3px"}}/>{t("MASTERS_CREATE_NEW_ORGANISATION")}
+                            </LinkLabel>
+                        </React.Fragment>
+                    )
+                }
             </div>  
 
             <ActionBar>
