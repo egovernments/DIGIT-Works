@@ -44,6 +44,9 @@ public class OrgSearchCriteria {
     @JsonProperty("applicationStatus")
     private String applicationStatus = null;
 
+    @JsonProperty("contactMobileNumber")
+    private String contactMobileNumber = null;
+
     @JsonProperty("functions")
     private Function functions = null;
 
