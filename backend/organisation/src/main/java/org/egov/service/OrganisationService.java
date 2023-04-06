@@ -36,6 +36,9 @@ public class OrganisationService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private NotificationService notificationService;
+
 
     /**
      *
@@ -48,6 +51,7 @@ public class OrganisationService {
         organisationEnrichmentService.enrichCreateOrgRegistryWithoutWorkFlow(orgRequest);
         userService.createUser(orgRequest);
         producer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
+        notificationService.sendNotification(orgRequest,true);
         return orgRequest;
     }
 
@@ -62,6 +66,7 @@ public class OrganisationService {
         organisationEnrichmentService.enrichUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         userService.updateUser(orgRequest);
         producer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
+        notificationService.sendNotification(orgRequest,false);
         return orgRequest;
     }
 

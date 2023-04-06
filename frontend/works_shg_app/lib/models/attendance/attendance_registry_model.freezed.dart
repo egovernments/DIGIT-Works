@@ -188,6 +188,8 @@ mixin _$AttendanceRegister {
   String? get id => throw _privateConstructorUsedError;
   String? get tenantId => throw _privateConstructorUsedError;
   String? get registerNumber => throw _privateConstructorUsedError;
+  String? get serviceCode => throw _privateConstructorUsedError;
+  String? get referenceId => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   int? get startDate => throw _privateConstructorUsedError;
   int? get endDate => throw _privateConstructorUsedError;
@@ -221,6 +223,8 @@ abstract class $AttendanceRegisterCopyWith<$Res> {
       {String? id,
       String? tenantId,
       String? registerNumber,
+      String? serviceCode,
+      String? referenceId,
       String? name,
       int? startDate,
       int? endDate,
@@ -256,6 +260,8 @@ class _$AttendanceRegisterCopyWithImpl<$Res, $Val extends AttendanceRegister>
     Object? id = freezed,
     Object? tenantId = freezed,
     Object? registerNumber = freezed,
+    Object? serviceCode = freezed,
+    Object? referenceId = freezed,
     Object? name = freezed,
     Object? startDate = freezed,
     Object? endDate = freezed,
@@ -277,6 +283,14 @@ class _$AttendanceRegisterCopyWithImpl<$Res, $Val extends AttendanceRegister>
       registerNumber: freezed == registerNumber
           ? _value.registerNumber
           : registerNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      serviceCode: freezed == serviceCode
+          ? _value.serviceCode
+          : serviceCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      referenceId: freezed == referenceId
+          ? _value.referenceId
+          : referenceId // ignore: cast_nullable_to_non_nullable
               as String?,
       name: freezed == name
           ? _value.name
@@ -355,6 +369,8 @@ abstract class _$$_AttendanceRegisterCopyWith<$Res>
       {String? id,
       String? tenantId,
       String? registerNumber,
+      String? serviceCode,
+      String? referenceId,
       String? name,
       int? startDate,
       int? endDate,
@@ -390,6 +406,8 @@ class __$$_AttendanceRegisterCopyWithImpl<$Res>
     Object? id = freezed,
     Object? tenantId = freezed,
     Object? registerNumber = freezed,
+    Object? serviceCode = freezed,
+    Object? referenceId = freezed,
     Object? name = freezed,
     Object? startDate = freezed,
     Object? endDate = freezed,
@@ -411,6 +429,14 @@ class __$$_AttendanceRegisterCopyWithImpl<$Res>
       registerNumber: freezed == registerNumber
           ? _value.registerNumber
           : registerNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      serviceCode: freezed == serviceCode
+          ? _value.serviceCode
+          : serviceCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      referenceId: freezed == referenceId
+          ? _value.referenceId
+          : referenceId // ignore: cast_nullable_to_non_nullable
               as String?,
       name: freezed == name
           ? _value.name
@@ -456,6 +482,8 @@ class _$_AttendanceRegister implements _AttendanceRegister {
       {this.id,
       this.tenantId,
       this.registerNumber,
+      this.serviceCode,
+      this.referenceId,
       this.name,
       this.startDate,
       this.endDate,
@@ -480,6 +508,10 @@ class _$_AttendanceRegister implements _AttendanceRegister {
   final String? tenantId;
   @override
   final String? registerNumber;
+  @override
+  final String? serviceCode;
+  @override
+  final String? referenceId;
   @override
   final String? name;
   @override
@@ -520,7 +552,7 @@ class _$_AttendanceRegister implements _AttendanceRegister {
 
   @override
   String toString() {
-    return 'AttendanceRegister(id: $id, tenantId: $tenantId, registerNumber: $registerNumber, name: $name, startDate: $startDate, endDate: $endDate, status: $status, attendanceRegisterAdditionalDetails: $attendanceRegisterAdditionalDetails, staffEntries: $staffEntries, registerAuditDetails: $registerAuditDetails, attendeesEntries: $attendeesEntries)';
+    return 'AttendanceRegister(id: $id, tenantId: $tenantId, registerNumber: $registerNumber, serviceCode: $serviceCode, referenceId: $referenceId, name: $name, startDate: $startDate, endDate: $endDate, status: $status, attendanceRegisterAdditionalDetails: $attendanceRegisterAdditionalDetails, staffEntries: $staffEntries, registerAuditDetails: $registerAuditDetails, attendeesEntries: $attendeesEntries)';
   }
 
   @override
@@ -533,6 +565,10 @@ class _$_AttendanceRegister implements _AttendanceRegister {
                 other.tenantId == tenantId) &&
             (identical(other.registerNumber, registerNumber) ||
                 other.registerNumber == registerNumber) &&
+            (identical(other.serviceCode, serviceCode) ||
+                other.serviceCode == serviceCode) &&
+            (identical(other.referenceId, referenceId) ||
+                other.referenceId == referenceId) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate) &&
@@ -557,6 +593,8 @@ class _$_AttendanceRegister implements _AttendanceRegister {
       id,
       tenantId,
       registerNumber,
+      serviceCode,
+      referenceId,
       name,
       startDate,
       endDate,
@@ -586,6 +624,8 @@ abstract class _AttendanceRegister implements AttendanceRegister {
           {final String? id,
           final String? tenantId,
           final String? registerNumber,
+          final String? serviceCode,
+          final String? referenceId,
           final String? name,
           final int? startDate,
           final int? endDate,
@@ -610,6 +650,10 @@ abstract class _AttendanceRegister implements AttendanceRegister {
   String? get tenantId;
   @override
   String? get registerNumber;
+  @override
+  String? get serviceCode;
+  @override
+  String? get referenceId;
   @override
   String? get name;
   @override
