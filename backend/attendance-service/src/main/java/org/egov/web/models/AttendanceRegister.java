@@ -34,6 +34,12 @@ public class AttendanceRegister {
     @JsonProperty("name")
     private String name = null;
 
+    @JsonProperty("referenceId")
+    private String referenceId;
+
+    @JsonProperty("serviceCode")
+    private String serviceCode;
+
     @JsonProperty("startDate")
     private BigDecimal startDate = null;
 

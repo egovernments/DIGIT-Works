@@ -5,12 +5,10 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MDMSUtils;
-import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.AttendanceRegisterRequest;
-import org.egov.web.models.AttendanceRegisterSearchCriteria;
-import org.egov.web.models.StaffPermission;
+import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -29,6 +27,9 @@ public class AttendanceServiceValidator {
     @Autowired
     private MDMSUtils mdmsUtils;
 
+    @Autowired
+    private RegisterRepository registerRepository;
+
     /* Validates create Attendance Register request body */
     public void validateCreateAttendanceRegister(AttendanceRegisterRequest request) {
         Map<String, String> errorMap = new HashMap<>();
@@ -38,9 +39,14 @@ public class AttendanceServiceValidator {
         //Verify if RequestInfo and UserInfo is present
         validateRequestInfo(requestInfo, errorMap);
         log.info("Request Info validated for attendance create request");
+
         //Verify if attendance register request and mandatory fields are present
         validateAttendanceRegisterRequest(attendanceRegisters, errorMap);
         log.info("Attendance registers validated for create request");
+
+        //Verify referenceId and ServiceCode are present
+        validateReferenceIdAndServiceCodeParams(attendanceRegisters, errorMap);
+        log.info("Attendance registers referenceId and ServiceCode are validated");
 
         String tenantId = attendanceRegisters.get(0).getTenantId();
         String rootTenantId = tenantId.split("\\.")[0];
@@ -52,6 +58,30 @@ public class AttendanceServiceValidator {
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
+
+        //Verify that active attendance register is not already present for provided tenantId, referenceId and serviceCode
+        validateAttendanceRegisterAgainstDB(attendanceRegisters);
+        log.info("Attendance registers validated against DB");
+    }
+
+    private void validateAttendanceRegisterAgainstDB(List<AttendanceRegister> attendanceRegisters) {
+        for (AttendanceRegister attendanceRegister: attendanceRegisters) {
+             String tenantId = attendanceRegister.getTenantId();
+             String referenceId = attendanceRegister.getReferenceId();
+             String serviceCode = attendanceRegister.getServiceCode();
+
+             AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder()
+                    .tenantId(tenantId)
+                    .status(Status.ACTIVE)
+                    .referenceId(referenceId)
+                    .serviceCode(serviceCode)
+                    .build();
+             List<AttendanceRegister> registers = registerRepository.getRegister(attendanceRegisterSearchCriteria);
+             if(!registers.isEmpty()){
+                 log.error("Attendance register exists for provided referenceId ["+referenceId+"] and serviceCode ["+serviceCode+"]");
+                 throw new CustomException("REGISTER_ALREADY_EXISTS", "Register exists for provided referenceId ["+referenceId+"] and serviceCode ["+serviceCode+"]");
+             }
+        }
     }
 
     /* Validates Update Attendance register request body */
@@ -131,6 +161,20 @@ public class AttendanceServiceValidator {
         }
     }
 
+    private void validateReferenceIdAndServiceCodeParams(List<AttendanceRegister> attendanceRegisters, Map<String, String> errorMap) {
+        for (int i = 0; i < attendanceRegisters.size(); i++) {
+            if (StringUtils.isBlank(attendanceRegisters.get(i).getReferenceId())) {
+                log.error("ReferenceId is mandatory");
+                errorMap.put("REFERENCE_ID", "ReferenceId is mandatory");
+            }
+
+            if (StringUtils.isBlank(attendanceRegisters.get(i).getServiceCode())) {
+                log.error("ServiceCode is mandatory");
+                errorMap.put("SERVICE_CODE", "ServiceCode is mandatory");
+            }
+        }
+    }
+
     /* Validates Attendance register request body for create and update apis */
     private void validateAttendanceRegisterRequest(List<AttendanceRegister> attendanceRegisters, Map<String, String> errorMap) {
         if (attendanceRegisters == null || attendanceRegisters.size() == 0) {
@@ -151,6 +195,7 @@ public class AttendanceServiceValidator {
                 log.error("Name is mandatory");
                 errorMap.put("NAME", "Name is mandatory");
             }
+
             if (attendanceRegisters.get(i).getStartDate() == null ||
                     (attendanceRegisters.get(i).getStartDate() != null && attendanceRegisters.get(i).getStartDate().compareTo(BigDecimal.ZERO) == 0)) {
                 log.error("Start date is mandatory for attendance register " + attendanceRegisters.get(i).getName());
