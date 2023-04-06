@@ -144,10 +144,10 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                   children: [
                     getItemWidget(context,
                         title: t.translate(i18.wageSeeker.skillCategory),
-                        description: item.type.toString()),
+                        description: t.translate(item.level.toString())),
                     getItemWidget(context,
                         title: t.translate(i18.wageSeeker.skill),
-                        description: item.type.toString()),
+                        description: t.translate(item.type.toString())),
                   ],
                 )),
             kIsWeb && FilePickerData.bytes != null
