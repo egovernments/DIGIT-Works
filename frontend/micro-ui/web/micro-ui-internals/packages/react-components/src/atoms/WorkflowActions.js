@@ -7,7 +7,7 @@ import ActionModal from "./Modals";
 import { Loader } from "./Loader";
 import Toast from "./Toast";
 import { useHistory } from "react-router-dom";
-const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber }) => {
+const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber,editCallback }) => {
   const history = useHistory()
   const { estimateNumber } = Digit.Hooks.useQueryParams();
   applicationNo = applicationNo ? applicationNo : estimateNumber 
@@ -55,7 +55,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
  
   setTimeout(() => {
     setShowToast(null);
-  }, 10000);
+  }, 20000);
     
   
   
@@ -72,9 +72,9 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   };
 
   const onActionSelect = (action) => {
-    const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
     const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts");
-
+    const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
+    const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendencemgmt")
     setDisplayMenu(false)
     setSelectedAction(action)
 
@@ -89,6 +89,10 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       history.push(`/${window?.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&workOrderNumber=${applicationNo}`);
       return 
   }
+    if(bsAttendance === businessService && action?.action === "EDIT"){
+        editCallback()
+        return 
+    }
 
     //here we can add cases of toast messages,edit application and more...
     // the default result is setting the modal to show

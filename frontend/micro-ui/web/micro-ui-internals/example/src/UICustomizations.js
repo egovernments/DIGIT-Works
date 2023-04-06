@@ -12,6 +12,12 @@ const businessServiceMap = {
   attendencemgmt: "muster-roll-approval",
 };
 
+const inboxModuleNameMap = {
+  "mukta-estimate": "estimate-service",
+  "contract-approval-mukta": "contract-service",
+  "muster-roll-approval": "muster-roll-service",
+};
+
 export const UICustomizations = {
   businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
@@ -65,6 +71,36 @@ export const UICustomizations = {
         workflow,
       };
     }
+    if (businessService === businessServiceMap.attendencemgmt) {
+      const workflow = {
+        comment: data?.comments,
+        documents: data?.documents?.map((document) => {
+          return {
+            documentType: action?.action + " DOC",
+            fileName: document?.[1]?.file?.name,
+            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: document?.[1]?.fileStoreId?.tenantId,
+          };
+        }),
+        assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+        action: action.action,
+      };
+      //filtering out the data
+      Object.keys(workflow).forEach((key, index) => {
+        if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
+      });
+
+      return {
+        musterRoll: applicationDetails,
+        workflow,
+      };
+    }
+  },
+  enableModalSubmit:(businessService,action,setModalSubmit,data)=>{
+    if(businessService === businessServiceMap.attendencemgmt && action.action==="APPROVE"){
+      setModalSubmit(data?.acceptTerms)
+    }
   },
   enableHrmsSearch: (businessService, action) => {
     if (businessService === businessServiceMap.estimate) {
@@ -72,6 +108,9 @@ export const UICustomizations = {
     }
     if (businessService === businessServiceMap.contracts) {
       return action.action.includes("VERIFY_AND_FORWARD");
+    }
+     if (businessService === businessServiceMap.attendencemgmt) {
+      return action.action.includes("VERIFY");
     }
     return false;
   },
@@ -84,6 +123,17 @@ export const UICustomizations = {
       return businessServiceMap?.attendencemgmt;
     } else {
       return businessServiceMap;
+    }
+  },
+  getInboxModuleName: (moduleCode) => {
+    if (moduleCode?.includes("estimate")) {
+      return inboxModuleNameMap?.estimate;
+    } else if (moduleCode?.includes("contract")) {
+      return inboxModuleNameMap?.contracts;
+    } else if (moduleCode?.includes("attendence")) {
+      return inboxModuleNameMap?.attendencemgmt;
+    } else {
+      return inboxModuleNameMap;
     }
   },
   SearchProjectConfig: {

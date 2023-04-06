@@ -1,4 +1,4 @@
-package org.egov.works.util;
+package org.egov.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -6,19 +6,18 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.config.EstimateServiceConfiguration;
+import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.works.util.ContractServiceConstants.*;
+import static org.egov.util.EstimateServiceConstant.*;
 
 @Component
 @Slf4j
@@ -27,34 +26,13 @@ public class HRMSUtils {
     private ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private ContractServiceConfiguration config;
+    private EstimateServiceConfiguration config;
 
     @Autowired
     private ObjectMapper mapper;
 
     @Autowired
     private RestTemplate restTemplate;
-
-    public List<String> getRoleCodesByEmployeeId(RequestInfo requestInfo, String tenantId, List<String> employeeIds) {
-        StringBuilder url = getHRMSURI(tenantId, employeeIds);
-
-        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-
-        Object res = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
-
-        List<String> roles = null;
-
-        try {
-            roles = JsonPath.read(res, HRMS_USER_ROLES_CODE);
-        } catch (Exception e) {
-            throw new CustomException("PARSING_ERROR", "Failed to parse HRMS response");
-        }
-
-        if (CollectionUtils.isEmpty(roles))
-            throw new CustomException("ROLE_CODE_NOT_FOUND", "For employee: " + employeeIds.toString() + " role code not found");
-
-        return roles;
-    }
 
     public Map<String, String> getEmployeeDetailsByUuid(RequestInfo requestInfo, String tenantId, String uuid) {
         StringBuilder url = getHRMSURIWithUUid(tenantId, uuid);
@@ -66,7 +44,7 @@ public class HRMSUtils {
         Map<String, String> userDetailsForSMS = new HashMap<>();
         List<String> userNames = null;
         List<String> mobileNumbers = null;
-        List<String> designations=null;
+        List<String> designations = null;
 
         try {
             designations = JsonPath.read(res, HRMS_USER_DESIGNATION);
