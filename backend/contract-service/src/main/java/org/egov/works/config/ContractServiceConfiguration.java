@@ -132,8 +132,8 @@ public class ContractServiceConfiguration {
     @Value("${works.contract.search.endpoint}")
     private String contractEndpoint;
 
-    @Value("${contract.document.id.verification.required}")
-    private String documentIdVerificationRequired;
+//    @Value("${contract.document.id.verification.required}")
+//    private String documentIdVerificationRequired;
 
 
     //SMS notification
