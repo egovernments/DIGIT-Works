@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import CreateWorkOrderForm from "./CreateWorkOrderForm";
-import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA.json";
+// import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA.json";
 import { useTranslation } from "react-i18next";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import { updateDefaultValues } from "../../../../utils/modifyWorkOrderUtils";
@@ -19,22 +19,22 @@ const CreateWorkOrder = () => {
     const [nameOfCBO, setNameOfCBO] = useState([]);
     const [isFormReady, setIsFormReady] = useState(false);
 
-    // const { isLoading : isConfigLoading, data : createWorkOrderConfigMUKTA} = Digit.Hooks.useCustomMDMS( //change to data
-    // stateTenant,
-    // Digit.Utils.getConfigModuleName(),
-    // [
-    //     {
-    //         "name": "CreateWorkOrderConfig"
-    //     }
-    // ],
-    // {
-    //   select: (data) => {
-    //       return data?.[Digit.Utils.getConfigModuleName()]?.CreateWorkOrderConfig[0];
-    //   },
-    // }
-    // );
+    const { isLoading : isConfigLoading, data : createWorkOrderConfigMUKTA} = Digit.Hooks.useCustomMDMS( //change to data
+    stateTenant,
+    Digit.Utils.getConfigModuleName(),
+    [
+        {
+            "name": "CreateWorkOrderConfig"
+        }
+    ],
+    {
+      select: (data) => {
+          return data?.[Digit.Utils.getConfigModuleName()]?.CreateWorkOrderConfig[0];
+      },
+    }
+    );
 
-    const configs = createWorkOrderConfigMUKTA?.CreateWorkOrderConfig[0];
+    // const configs = createWorkOrderConfigMUKTA?.CreateWorkOrderConfig[0];
 
     //fetching contract data -- modify
     const { isLoading: isContractLoading,data:contract } = Digit.Hooks.contracts.useContractSearch({
@@ -164,8 +164,8 @@ const CreateWorkOrder = () => {
     }
 
     useEffect(()=>{
-        if((estimate && project && !isLoadingHrmsSearch && !isOrgSearchLoading && !isOverHeadsMasterDataLoading && !isContractLoading && !isRoleOfCBOLoading)) {
-            updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions, roleOfCBO});
+        if((estimate && project && createWorkOrderConfigMUKTA && !isLoadingHrmsSearch && !isOrgSearchLoading && !isOverHeadsMasterDataLoading && !isContractLoading)) {
+            updateDefaultValues({ createWorkOrderConfigMUKTA, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions, roleOfCBO});
 
             setDocuments(createDocumentObject(estimate?.additionalDetails?.documents));
             setOfficerInCharge(createOfficerInChargeObject(assigneeOptions));
@@ -173,13 +173,13 @@ const CreateWorkOrder = () => {
 
             setIsFormReady(true);
         }
-    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading, isOverHeadsMasterDataLoading, isContractLoading, estimate, isRoleOfCBOLoading]);
+    },[isConfigLoading, isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading, isOverHeadsMasterDataLoading, isContractLoading, estimate, isRoleOfCBOLoading]);
 
-    // if(isConfigLoading) return <Loader></Loader>
+    if(isConfigLoading) return <Loader></Loader>
     return (
         <React.Fragment>
             {
-                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={configs} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}} isModify={isModify} contractID={contract?.id} contractNumber={contract?.contractNumber} lineItems={contract?.lineItems} contractAuditDetails={contract?.auditDetails} roleOfCBOOptions={roleOfCBO?.works?.CBORoles}></CreateWorkOrderForm>
+                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={createWorkOrderConfigMUKTA} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}} isModify={isModify} contractID={contract?.id} contractNumber={contract?.contractNumber} lineItems={contract?.lineItems} contractAuditDetails={contract?.auditDetails} roleOfCBOOptions={roleOfCBO?.works?.CBORoles}></CreateWorkOrderForm>
             }
         </React.Fragment>
     )

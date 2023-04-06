@@ -40,15 +40,15 @@ const handleRoleOfCBO = ({calculatedWOAmount, roleOfCBO}) => {
   }
 }
 
-export const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions, roleOfCBO}) => {
+export const updateDefaultValues = ({createWorkOrderConfigMUKTA, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions, roleOfCBO}) => {
   if(!isModify) {
       //clear defaultValues from 'config' ( this case can come when user navigates from Create Screen to Modify Screen )
       //these are the req default Values for Create WO
       let validDefaultValues = ["basicDetails_projectID", "workOrderAmountRs", "basicDetails_dateOfProposal", "basicDetails_projectName", "basicDetails_projectDesc"];
-      configs.defaultValues = Object.keys(configs?.defaultValues)
+      createWorkOrderConfigMUKTA.defaultValues = Object.keys(createWorkOrderConfigMUKTA?.defaultValues)
                             .filter(key=> validDefaultValues.includes(key))
                             .reduce((obj, key) => Object.assign(obj, {
-                              [key] : configs.defaultValues[key]
+                              [key] : createWorkOrderConfigMUKTA.defaultValues[key]
                             }), {});
     }
 
@@ -56,7 +56,7 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
     if(!sessionFormData?.basicDetails_projectID || !sessionFormData.workOrderAmountRs || !sessionFormData.basicDetails_dateOfProposal || !sessionFormData.basicDetails_projectName || !sessionFormData.basicDetails_projectDesc ) {
       if(isModify) {
         //this field is only for Modify flow
-        configs.defaultValues.basicDetails_workOrdernumber = contract?.contractNumber ? contract?.contractNumber  : "";
+        createWorkOrderConfigMUKTA.defaultValues.basicDetails_workOrdernumber = contract?.contractNumber ? contract?.contractNumber  : "";
       }else{
         contract = {};
       }
@@ -64,24 +64,24 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
       let organisations = createNameOfCBOObject(organisationOptions);
       let assignees = createOfficerInChargeObject(assigneeOptions);
 
-      configs.defaultValues.basicDetails_projectID = project?.projectNumber ? project?.projectNumber  : "",
-      configs.defaultValues.basicDetails_dateOfProposal = project?.additionalDetails?.dateOfProposal ? Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal) : "",
-      configs.defaultValues.basicDetails_projectName = project?.name ? project?.name  : "";
-      configs.defaultValues.basicDetails_projectDesc = project?.description ? project?.description  : "";    
+      createWorkOrderConfigMUKTA.defaultValues.basicDetails_projectID = project?.projectNumber ? project?.projectNumber  : "",
+      createWorkOrderConfigMUKTA.defaultValues.basicDetails_dateOfProposal = project?.additionalDetails?.dateOfProposal ? Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal) : "",
+      createWorkOrderConfigMUKTA.defaultValues.basicDetails_projectName = project?.name ? project?.name  : "";
+      createWorkOrderConfigMUKTA.defaultValues.basicDetails_projectDesc = project?.description ? project?.description  : "";    
       
       let calculatedWOAmount = handleWorkOrderAmount({estimate, overHeadMasterData})
 
-      configs.defaultValues.workOrderAmountRs = isModify ? contract?.totalContractedAmount : calculatedWOAmount;
-      configs.defaultValues.nameOfCBO =  isModify ? (organisations?.filter(org=>org?.code === contract?.additionalDetails?.cboCode))?.[0] : "";
-      configs.defaultValues.nameOfOfficerInCharge = isModify ? (assignees?.filter(assignee=>assignee?.code === contract?.additionalDetails?.officerInChargeId))?.[0] : "";
+      createWorkOrderConfigMUKTA.defaultValues.workOrderAmountRs = isModify ? contract?.totalContractedAmount : calculatedWOAmount;
+      createWorkOrderConfigMUKTA.defaultValues.nameOfCBO =  isModify ? (organisations?.filter(org=>org?.code === contract?.additionalDetails?.cboCode))?.[0] : "";
+      createWorkOrderConfigMUKTA.defaultValues.nameOfOfficerInCharge = isModify ? (assignees?.filter(assignee=>assignee?.code === contract?.additionalDetails?.officerInChargeId))?.[0] : "";
 
       let roleOfCBO_basedOnWOAmount = handleRoleOfCBO({calculatedWOAmount, roleOfCBO});
 
-      configs.defaultValues.roleOfCBO = isModify ? {code : contract?.executingAuthority, name : `COMMON_MASTERS_${contract?.executingAuthority}`} : roleOfCBO_basedOnWOAmount;
-      configs.defaultValues.projectCompletionPeriodInDays = isModify ? contract?.completionPeriod : "";
-      configs.defaultValues.documents = isModify ? handleModifyWOFiles(contract?.documents) : "";
-      configs.defaultValues.WOTermsAndConditions = isModify ? [...contract?.additionalDetails?.termsAndConditions] : "";
-      setSessionFormData({...sessionFormData, ...configs?.defaultValues});
+      createWorkOrderConfigMUKTA.defaultValues.roleOfCBO = isModify ? {code : contract?.executingAuthority, name : `COMMON_MASTERS_${contract?.executingAuthority}`} : roleOfCBO_basedOnWOAmount;
+      createWorkOrderConfigMUKTA.defaultValues.projectCompletionPeriodInDays = isModify ? contract?.completionPeriod : "";
+      createWorkOrderConfigMUKTA.defaultValues.documents = isModify ? handleModifyWOFiles(contract?.documents) : "";
+      createWorkOrderConfigMUKTA.defaultValues.WOTermsAndConditions = isModify ? [...contract?.additionalDetails?.termsAndConditions] : "";
+      setSessionFormData({...sessionFormData, ...createWorkOrderConfigMUKTA?.defaultValues});
     }
 }
 
