@@ -6,10 +6,9 @@ import Menu from "./Menu";
 import ActionModal from "./Modals";
 import { Loader } from "./Loader";
 import Toast from "./Toast";
-
-const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails,url }) => {
-  
-   //for testing from url these 2 lines of code are kept here
+import { useHistory } from "react-router-dom";
+const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber,editCallback }) => {
+  const history = useHistory()
   const { estimateNumber } = Digit.Hooks.useQueryParams();
   applicationNo = applicationNo ? applicationNo : estimateNumber 
 
@@ -20,6 +19,8 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   const [selectedAction,setSelectedAction] = useState(null)
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [showToast,setShowToast] = useState(null)
+
+  
 
   const { t } = useTranslation();
   let user = Digit.UserService.getUser();
@@ -50,6 +51,14 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   const closeMenu = () => {
     setDisplayMenu(false);
   }
+  
+ 
+  setTimeout(() => {
+    setShowToast(null);
+  }, 20000);
+    
+  
+  
   Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu);
 
   if (actions?.length > 0) {
@@ -63,9 +72,28 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   };
 
   const onActionSelect = (action) => {
+    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts");
+    const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
+    const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendencemgmt")
     setDisplayMenu(false)
     setSelectedAction(action)
-    
+
+    //here check if actin is edit then do a history.push acc to the businessServ and action
+    //send appropriate states over
+    if(bsEstimate === businessService && action?.action === "RE-SUBMITTED"){
+        history.push(`/${window?.contextPath}/employee/estimate/create-estimate?tenantId=${tenantId}&projectNumber=${editApplicationNumber}&estimateNumber=${applicationDetails?.estimateNumber}&isEdit=true`);
+        return 
+    }
+
+    if(bsContract === businessService && action?.action === "EDIT"){
+      history.push(`/${window?.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&workOrderNumber=${applicationNo}`);
+      return 
+  }
+    if(bsAttendance === businessService && action?.action === "EDIT"){
+        editCallback()
+        return 
+    }
+
     //here we can add cases of toast messages,edit application and more...
     // the default result is setting the modal to show
     setShowModal(true)
@@ -81,20 +109,24 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       onError:(error,variables)=>{
         setIsEnableLoader(false)
         //show error toast acc to selectAction
-        setShowToast({ error: true, label: `WF_UPDATE_ERROR_${selectAction.action}`, isDleteBtn:true })
-        //console.log(selectAction);
+        setShowToast({ error: true, label: `WF_UPDATE_ERROR_${moduleCode.toUpperCase()}_${selectAction.action}`, isDleteBtn:true })
+        
+
+        
         
       },
       onSuccess:(data,variables) => {
         setIsEnableLoader(false)
         //show success toast acc to selectAction
-        setShowToast({ label: `WF_UPDATE_SUCCESS_${selectAction.action}` })
+        setShowToast({ label: `WF_UPDATE_SUCCESS_${moduleCode.toUpperCase()}_${selectAction.action}` })
+        
 
         // to refetch updated workflowData and re-render timeline and actions
         workflowDetails.revalidate()
 
-        //console.log(selectAction);
         
+        //COMMENTING THIS FOR NOW BECAUSE DUE TO THIS TOAST IS NOT SHOWING SINCE THE WHOLE PARENT COMP RE-RENDERS
+        // setStateChanged(`WF_UPDATE_SUCCESS_${selectAction.action}`)
       }
     })
   }
@@ -143,6 +175,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         submitAction={submitAction}
         businessService={businessService}
         applicationDetails={applicationDetails}
+        moduleCode={moduleCode}
       />}
       {showToast && <Toast
         error={showToast?.error}

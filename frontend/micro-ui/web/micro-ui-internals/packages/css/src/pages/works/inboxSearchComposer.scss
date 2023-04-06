@@ -7,7 +7,7 @@
             height: 100%;
             display: grid;
             grid-template-columns: 20% 1fr;
-            gap : 2rem;
+            gap : 1rem;
             &.inbox {
 
             }
@@ -22,6 +22,21 @@
                         display: none;
                     }
                 }
+                .search-wrapper {
+                    .search-field-wrapper.search.custom-both-clear-search{
+                        .search-button-wrapper.search {
+                            grid-column: initial;
+                        }
+                    .search-button-wrapper{
+                        .link-label{
+                            white-space:initial;
+                        }
+                        .submit-bar {
+                            width: 60%;
+                        }
+                    }
+                }
+            }
             }
             .section {
                 min-height: 10rem;
@@ -29,8 +44,10 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                border-radius: 4px;
+                box-shadow: 0 1px 2px 0 rgb(0 0 0 / 16%);
                 &.search-results {
-                    height: 50rem;
+                    min-height: 0;
                 }
                 &.links {
                     height: 100%;

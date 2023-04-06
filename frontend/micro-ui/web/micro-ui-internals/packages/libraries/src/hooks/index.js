@@ -131,6 +131,24 @@ import useViewFinancialDetails from "./project/useViewFinancialDetails";
 import useUpdateCustom from "./useUpdateCustom";
 
 import useViewWageSeeker from "./wageSeeker/useViewWageSeeker";
+import useWageSeekerDetails from "./wageSeeker/useWageSeekerDetails";
+import useUpdateWageSeeker from "./wageSeeker/useUpdateWageSeeker";
+import useCreateWageSeeker from "./wageSeeker/useCreateWageSeeker";
+import useDeleteWageSeeker from "./wageSeeker/useDeleteWageSeeker";
+
+import useCreateWO from "./works/useCreateWO";
+
+import useSearchOrg from "./works/useSearchOrg";
+
+import useViewBill from "./bills/useViewBill";
+import useContractSearch from "./contracts/useContractSearch";
+import useBillCreate from "./bills/useBillCreate";
+import useUpdateProject from "./works/useUpdateProject";
+import useUpdateWO from "./works/useUpdateWO";
+
+import useViewOrganisation from "./organisation/useViewOrganisation";
+import useUpdateBankAccount from "./bankAccount/useUpdateBankAccount";
+import useCreateBankAccount from "./bankAccount/useCreateBankAccount";
 
 const works = {
   useViewEstimateDetails,
@@ -153,13 +171,22 @@ const works = {
   useInbox: useWorksInbox,
   useKickoffInbox,
   useCreateProject,
+  useUpdateProject,
   useUpdateCustom
 };
 
 const contracts = {
   useViewContractDetails,
-  useViewContractDetailsClosureScreen
+  useViewContractDetailsClosureScreen,
+  useCreateWO,
+  useUpdateWO,
+  useContractSearch
 };
+
+const organisation = {
+  useSearchOrg,
+  useViewOrganisation
+}
 
 const estimates = {
   useEstimateSearch,
@@ -236,7 +263,9 @@ const attendance = {
 };
 
 const bills = {
-  useViewBills
+  useViewBills,
+  useViewBill,
+  useBillCreate
 }
 const masters = {
   useViewOrg
@@ -248,7 +277,16 @@ const project = {
 }
 
 const wageSeeker = {
-  useViewWageSeeker
+  useViewWageSeeker,
+  useWageSeekerDetails,
+  useUpdateWageSeeker,
+  useCreateWageSeeker,
+  useDeleteWageSeeker
+}
+
+const bankAccount = {
+  useUpdateBankAccount,
+  useCreateBankAccount
 }
 
 const Hooks = {
@@ -313,7 +351,9 @@ const Hooks = {
   bills,
   masters,
   project,
-  wageSeeker
+  wageSeeker,
+  organisation,
+  bankAccount
 };
 
 export default Hooks;

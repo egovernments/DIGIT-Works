@@ -154,9 +154,13 @@ class _LoginPage extends State<LoginPage> {
     return Scaffold(
         appBar: AppBar(),
         body: LayoutBuilder(builder: (context, constraints) {
-          if (constraints.maxWidth < 760) {
-            return MobileView(getLoginCard(context),
-                GlobalVariables.stateInfoListModel!.bannerUrl.toString());
+          if (constraints.maxWidth < 720) {
+            return MobileView(
+              getLoginCard(context),
+              GlobalVariables.stateInfoListModel!.bannerUrl.toString(),
+              logoBottomPosition: constraints.maxWidth / 3,
+              cardBottomPosition: constraints.maxWidth / 1.5,
+            );
           } else {
             return DesktopView(getLoginCard(context),
                 GlobalVariables.stateInfoListModel!.bannerUrl.toString());

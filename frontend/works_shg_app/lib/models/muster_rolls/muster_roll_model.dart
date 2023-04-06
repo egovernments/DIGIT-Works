@@ -27,6 +27,8 @@ class MusterRoll with _$MusterRoll {
     String? registerId,
     String? status,
     String? musterRollStatus,
+    String? serviceCode,
+    String? referenceId,
     int? startDate,
     int? endDate,
     @JsonKey(name: 'individualEntries')
@@ -66,6 +68,11 @@ class MusterAdditionalDetails with _$MusterAdditionalDetails {
     String? attendanceRegisterName,
     String? attendanceRegisterNo,
     String? orgName,
+    int? amount,
+    String? assignee,
+    String? billType,
+    String? projectId,
+    String? projectName,
     String? contractId,
   }) = _MusterAdditionalDetails;
 
@@ -83,6 +90,9 @@ class MusterIndividualAdditionalDetails
     String? fatherName,
     String? aadharNumber,
     String? bankDetails,
+    String? userId,
+    String? accountHolderName,
+    String? accountType,
     String? skillCode,
     String? skillValue,
   }) = _MusterIndividualAdditionalDetails;

@@ -6,12 +6,13 @@ const configEstimateModal = (
     t,
     action,
     approvers,
-    businessService
+    businessService,
+    moduleCode
 ) => {
     const {action:actionString} = action
-
+    
     const configMap = {
-        "estimate-approval-5": {
+        "mukta-estimate": {
             "default":{
                 comments:{
                     isMandatory:false,
@@ -81,9 +82,137 @@ const configEstimateModal = (
                     isMandatory: false,
                     show: true
                 }
+            }
+        },
+        "contract-approval-mukta": {
+            "default":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
             },
-
-
+            "REJECT": {
+                comments: {
+                    isMandatory: true,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            },
+            "SEND_BACK": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            },
+            "VERIFY_AND_FORWARD": {
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "SEND_BACK_TO_ORIGINATOR": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            },
+            "APPROVE": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                }
+            },
+        },
+        "muster-roll-approval":{
+            "default":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "APPROVE": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+                acceptTerms: {
+                    isMandatory:true,
+                    show:true
+                }
+            },
+            "REJECT": {
+                comments: {
+                    isMandatory: true,
+                    show: true,
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+            }
         }
     }
 //field can have (comments,assignee,upload)
@@ -111,17 +240,30 @@ const configEstimateModal = (
 
     return {
         label: {
-            heading: `WF_MODAL_HEADER_ESTIMATE_${action.action}`,
-            submit: `WF_MODAL_SUBMIT_ESTIMATE_${action.action}`,
+            heading: `WF_MODAL_HEADER_${moduleCode.toUpperCase()}_${action.action}`,
+            submit: `WF_MODAL_SUBMIT_${moduleCode.toUpperCase()}_${action.action}`,
             cancel: "WF_MODAL_CANCEL",
         },
         form: [
             {
                 body: [
                     {
+                        label: " ",
+                        type: "checkbox",
+                        disable: false,
+                        isMandatory:false,
+                        populators: {
+                            name: "acceptTerms",
+                            title: "MUSTOR_APPROVAL_CHECKBOX",
+                            isMandatory: false,
+                            labelStyles: {marginLeft:"40px"},
+                            customLabelMarkup: true,
+                            hideInForm: !fetchIsShow("acceptTerms")
+                        }
+                    },
+                    {
                         label: t("WF_MODAL_APPROVER"),
                         type: "dropdown",
-                        // isMandatory: true,
                         isMandatory: fetchIsMandatory("assignee"),
                         disable: false,
                         key:"assignees",
@@ -129,7 +271,6 @@ const configEstimateModal = (
                             name: "assignee",
                             optionsKey: "nameOfEmp",
                             options: approvers,
-                            // hideInForm:approvers ? false : true
                             hideInForm: !fetchIsShow("assignee")
                         },
                     },

@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'table_model.dart';
 
@@ -22,7 +22,11 @@ TableDataModel _$TableDataModelFromJson(Map<String, dynamic> json) {
 mixin _$TableDataModel {
   String? get name => throw _privateConstructorUsedError;
   String? get aadhaar => throw _privateConstructorUsedError;
+  String? get individualGaurdianName => throw _privateConstructorUsedError;
+  String? get mobileNumber => throw _privateConstructorUsedError;
+  String? get skill => throw _privateConstructorUsedError;
   String? get uuid => throw _privateConstructorUsedError;
+  String? get individualId => throw _privateConstructorUsedError;
   String? get bankNumber => throw _privateConstructorUsedError;
   double? get monIndex => throw _privateConstructorUsedError;
   double? get tueIndex => throw _privateConstructorUsedError;
@@ -46,7 +50,11 @@ abstract class $TableDataModelCopyWith<$Res> {
   $Res call(
       {String? name,
       String? aadhaar,
+      String? individualGaurdianName,
+      String? mobileNumber,
+      String? skill,
       String? uuid,
+      String? individualId,
       String? bankNumber,
       double? monIndex,
       double? tueIndex,
@@ -71,7 +79,11 @@ class _$TableDataModelCopyWithImpl<$Res, $Val extends TableDataModel>
   $Res call({
     Object? name = freezed,
     Object? aadhaar = freezed,
+    Object? individualGaurdianName = freezed,
+    Object? mobileNumber = freezed,
+    Object? skill = freezed,
     Object? uuid = freezed,
+    Object? individualId = freezed,
     Object? bankNumber = freezed,
     Object? monIndex = freezed,
     Object? tueIndex = freezed,
@@ -89,9 +101,25 @@ class _$TableDataModelCopyWithImpl<$Res, $Val extends TableDataModel>
           ? _value.aadhaar
           : aadhaar // ignore: cast_nullable_to_non_nullable
               as String?,
+      individualGaurdianName: freezed == individualGaurdianName
+          ? _value.individualGaurdianName
+          : individualGaurdianName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mobileNumber: freezed == mobileNumber
+          ? _value.mobileNumber
+          : mobileNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      skill: freezed == skill
+          ? _value.skill
+          : skill // ignore: cast_nullable_to_non_nullable
+              as String?,
       uuid: freezed == uuid
           ? _value.uuid
           : uuid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      individualId: freezed == individualId
+          ? _value.individualId
+          : individualId // ignore: cast_nullable_to_non_nullable
               as String?,
       bankNumber: freezed == bankNumber
           ? _value.bankNumber
@@ -136,7 +164,11 @@ abstract class _$$_TableDataModelCopyWith<$Res>
   $Res call(
       {String? name,
       String? aadhaar,
+      String? individualGaurdianName,
+      String? mobileNumber,
+      String? skill,
       String? uuid,
+      String? individualId,
       String? bankNumber,
       double? monIndex,
       double? tueIndex,
@@ -159,7 +191,11 @@ class __$$_TableDataModelCopyWithImpl<$Res>
   $Res call({
     Object? name = freezed,
     Object? aadhaar = freezed,
+    Object? individualGaurdianName = freezed,
+    Object? mobileNumber = freezed,
+    Object? skill = freezed,
     Object? uuid = freezed,
+    Object? individualId = freezed,
     Object? bankNumber = freezed,
     Object? monIndex = freezed,
     Object? tueIndex = freezed,
@@ -177,9 +213,25 @@ class __$$_TableDataModelCopyWithImpl<$Res>
           ? _value.aadhaar
           : aadhaar // ignore: cast_nullable_to_non_nullable
               as String?,
+      individualGaurdianName: freezed == individualGaurdianName
+          ? _value.individualGaurdianName
+          : individualGaurdianName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mobileNumber: freezed == mobileNumber
+          ? _value.mobileNumber
+          : mobileNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      skill: freezed == skill
+          ? _value.skill
+          : skill // ignore: cast_nullable_to_non_nullable
+              as String?,
       uuid: freezed == uuid
           ? _value.uuid
           : uuid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      individualId: freezed == individualId
+          ? _value.individualId
+          : individualId // ignore: cast_nullable_to_non_nullable
               as String?,
       bankNumber: freezed == bankNumber
           ? _value.bankNumber
@@ -219,8 +271,12 @@ class __$$_TableDataModelCopyWithImpl<$Res>
 class _$_TableDataModel implements _TableDataModel {
   const _$_TableDataModel(
       {required this.name,
-      required this.aadhaar,
+      this.aadhaar,
+      this.individualGaurdianName,
+      this.mobileNumber,
+      this.skill,
       this.uuid,
+      this.individualId,
       this.bankNumber,
       this.monIndex,
       this.tueIndex,
@@ -237,7 +293,15 @@ class _$_TableDataModel implements _TableDataModel {
   @override
   final String? aadhaar;
   @override
+  final String? individualGaurdianName;
+  @override
+  final String? mobileNumber;
+  @override
+  final String? skill;
+  @override
   final String? uuid;
+  @override
+  final String? individualId;
   @override
   final String? bankNumber;
   @override
@@ -255,7 +319,7 @@ class _$_TableDataModel implements _TableDataModel {
 
   @override
   String toString() {
-    return 'TableDataModel(name: $name, aadhaar: $aadhaar, uuid: $uuid, bankNumber: $bankNumber, monIndex: $monIndex, tueIndex: $tueIndex, wedIndex: $wedIndex, thursIndex: $thursIndex, friIndex: $friIndex, satIndex: $satIndex)';
+    return 'TableDataModel(name: $name, aadhaar: $aadhaar, individualGaurdianName: $individualGaurdianName, mobileNumber: $mobileNumber, skill: $skill, uuid: $uuid, individualId: $individualId, bankNumber: $bankNumber, monIndex: $monIndex, tueIndex: $tueIndex, wedIndex: $wedIndex, thursIndex: $thursIndex, friIndex: $friIndex, satIndex: $satIndex)';
   }
 
   @override
@@ -265,7 +329,14 @@ class _$_TableDataModel implements _TableDataModel {
             other is _$_TableDataModel &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.aadhaar, aadhaar) || other.aadhaar == aadhaar) &&
+            (identical(other.individualGaurdianName, individualGaurdianName) ||
+                other.individualGaurdianName == individualGaurdianName) &&
+            (identical(other.mobileNumber, mobileNumber) ||
+                other.mobileNumber == mobileNumber) &&
+            (identical(other.skill, skill) || other.skill == skill) &&
             (identical(other.uuid, uuid) || other.uuid == uuid) &&
+            (identical(other.individualId, individualId) ||
+                other.individualId == individualId) &&
             (identical(other.bankNumber, bankNumber) ||
                 other.bankNumber == bankNumber) &&
             (identical(other.monIndex, monIndex) ||
@@ -284,8 +355,22 @@ class _$_TableDataModel implements _TableDataModel {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, name, aadhaar, uuid, bankNumber,
-      monIndex, tueIndex, wedIndex, thursIndex, friIndex, satIndex);
+  int get hashCode => Object.hash(
+      runtimeType,
+      name,
+      aadhaar,
+      individualGaurdianName,
+      mobileNumber,
+      skill,
+      uuid,
+      individualId,
+      bankNumber,
+      monIndex,
+      tueIndex,
+      wedIndex,
+      thursIndex,
+      friIndex,
+      satIndex);
 
   @JsonKey(ignore: true)
   @override
@@ -304,8 +389,12 @@ class _$_TableDataModel implements _TableDataModel {
 abstract class _TableDataModel implements TableDataModel {
   const factory _TableDataModel(
       {required final String? name,
-      required final String? aadhaar,
+      final String? aadhaar,
+      final String? individualGaurdianName,
+      final String? mobileNumber,
+      final String? skill,
       final String? uuid,
+      final String? individualId,
       final String? bankNumber,
       final double? monIndex,
       final double? tueIndex,
@@ -322,7 +411,15 @@ abstract class _TableDataModel implements TableDataModel {
   @override
   String? get aadhaar;
   @override
+  String? get individualGaurdianName;
+  @override
+  String? get mobileNumber;
+  @override
+  String? get skill;
+  @override
   String? get uuid;
+  @override
+  String? get individualId;
   @override
   String? get bankNumber;
   @override

@@ -189,7 +189,18 @@ import {
 
   NoResultsFoundIcon,
   WorksMgmtIcon,
-  BioMetricIcon
+  BioMetricIcon,
+  MuktaHomeIcon,
+  HRIcon,
+  ProjectIcon,
+  EstimateIcon,
+  ContractIcon,
+  AttendanceIcon,
+  WageseekerIcon,
+  OrganisationIcon,
+  HelperIcon,
+  DashboardIcon,
+  ExpenditureIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -207,7 +218,7 @@ import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
 import { FormComposer } from "./hoc/FormComposer";
-
+import RenderFormFields from "./molecules/RenderFormFields";
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
@@ -246,6 +257,9 @@ import HorizontalNav from "./atoms/HorizontalNav";
 import NoResultsFound from "./atoms/NoResultsFound";
 import { ViewImages } from "./atoms/ViewImages";
 import InboxSearchComposer from "./hoc/InboxSearchComposer";
+import MobileSearchResults from "./hoc/MobileView/MobileSearchResults";
+import MobileSearchComponent from "./hoc/MobileView/MobileSearchComponent";
+import ResultsTable from "./hoc/ResultsTable";
 import InboxSearchLinks from "./atoms/InboxSearchLinks";
 import UploadFileComposer from "./hoc/UploadFileComposer";
 import WorkflowTimeline from "./atoms/WorkflowTimeline";
@@ -405,6 +419,7 @@ export {
   CustomDropdown,
   // hoc
   FormComposer,
+  RenderFormFields,
   WorkflowTimeline,
   WorkflowActions,
   ResponseComposer,
@@ -424,6 +439,9 @@ export {
   Details,
   InboxComposer,
   InboxSearchComposer,
+  MobileSearchResults,
+  MobileSearchComponent,
+  ResultsTable,
   InboxSearchLinks,
   UploadFileComposer,
   // Icons
@@ -507,5 +525,16 @@ export {
 
   NoResultsFoundIcon,
   WorksMgmtIcon,
-  BioMetricIcon
+  BioMetricIcon,
+  MuktaHomeIcon,
+  HRIcon,
+  ProjectIcon,
+  EstimateIcon,
+  ContractIcon,
+  AttendanceIcon,
+  WageseekerIcon,
+  OrganisationIcon,
+  HelperIcon,
+  DashboardIcon,
+  ExpenditureIcon
 };

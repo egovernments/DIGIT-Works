@@ -1,13 +1,19 @@
 package org.egov.works.validator;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.repository.ContractRepository;
 import org.egov.works.repository.LineItemsRepository;
-import org.egov.works.util.*;
+import org.egov.works.service.ContractService;
+import org.egov.works.util.EstimateServiceUtil;
+import org.egov.works.util.HRMSUtils;
+import org.egov.works.util.MDMSDataParser;
+import org.egov.works.repository.ContractRepository;
+import org.egov.works.util.CommonUtil;
+import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,6 +42,15 @@ public class ContractServiceValidator {
 
     @Autowired
     private LineItemsRepository lineItemsRepository;
+
+    @Autowired
+    private ContractService contractService;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    private MDMSDataParser mdmsDataParser;
 
     @Autowired
     private ContractRepository contractRepository;

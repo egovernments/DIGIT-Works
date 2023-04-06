@@ -1,0 +1,1010 @@
+{
+	"info": {
+		"_postman_id": "7622ba34-ef1d-4375-aca7-a7f1a538f493",
+		"name": "BankAccount",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5823395"
+	},
+	"item": [
+		{
+			"name": "_create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"bankAccounts\",\r\n        \"ver\": \"v1\",\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"did\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"create bank accounts\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\"\r\n    },\r\n    \"bankAccounts\": [\r\n        {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"serviceCode\": \"ORG\",\r\n            \"referenceId\": \"bf502800-c33d-11ed-afa1-0242ac120007\",\r\n            \"bankAccountDetails\": [\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"accountHolderName\": \"XYZ Holdings\",\r\n                    \"accountNumber\": \"XYZ1230987\",\r\n                    \"accountType\": \"SAVING\",\r\n                    \"isPrimary\": true,\r\n                    \"bankBranchIdentifier\": {\r\n                        \"type\": \"IFSC\",\r\n                        \"code\": \"SBI000007\",\r\n                        \"additionalDetails\": {\r\n                            \"ifsccode\": \"SBI delhi branch ifsc code\"\r\n                        }\r\n                    },\r\n                    \"isActive\": true,\r\n                    \"documents\": [\r\n                        {\r\n                            \"documentType\": \"PDF\",\r\n                            \"fileStore\": \"xfys13445\",\r\n                            \"documentUid\": \"hjdldjwd-d-67000011\",\r\n                            \"additionalDetails\": {\r\n                                \"document\": \"additional details\"\r\n                            }\r\n                        }\r\n                    ],\r\n                    \"additionalFields\": {\r\n                        \"bankAccountDetails\": \"additional details\"\r\n                    }\r\n                }\r\n            ],\r\n            \"additionalFields\": {\r\n                \"bankAccount\": \"additional details\"\r\n            }\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{devHost}}/bankaccount-service/bankaccount/v1/_create",
+					"host": [
+						"{{devHost}}"
+					],
+					"path": [
+						"bankaccount-service",
+						"bankaccount",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "_create",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"requestInfo\": {\r\n        \"apiId\": \"bankAccounts\",\r\n        \"ver\": \"v1\",\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"did\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"create bank accounts\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\"\r\n    },\r\n    \"bankAccounts\": [\r\n        {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"serviceCode\": \"ORG\",\r\n            \"referenceId\": \"bf502800-c33d-11ed-afa1-0242ac120007\",\r\n            \"bankAccountDetails\": [\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"accountHolderName\": \"XYZ Holdings\",\r\n                    \"accountNumber\": \"XYZ1230987\",\r\n                    \"accountType\": \"SAVING\",\r\n                    \"isPrimary\": true,\r\n                    \"bankBranchIdentifier\": {\r\n                        \"type\": \"IFSC\",\r\n                        \"code\": \"SBI000007\",\r\n                        \"additionalDetails\": {\r\n                            \"ifsccode\": \"SBI delhi branch ifsc code\"\r\n                        }\r\n                    },\r\n                    \"isActive\": true,\r\n                    \"documents\": [\r\n                        {\r\n                            \"documentType\": \"PDF\",\r\n                            \"fileStore\": \"xfys13445\",\r\n                            \"documentUid\": \"hjdldjwd-d-67000011\",\r\n                            \"additionalDetails\": {\r\n                                \"document\": \"additional details\"\r\n                            }\r\n                        }\r\n                    ],\r\n                    \"additionalFields\": {\r\n                        \"bankAccountDetails\": \"additional details\"\r\n                    }\r\n                }\r\n            ],\r\n            \"additionalFields\": {\r\n                \"bankAccount\": \"additional details\"\r\n            }\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{devHost}}/bankaccount-service/bankaccount/v1/_create",
+							"host": [
+								"{{devHost}}"
+							],
+							"path": [
+								"bankaccount-service",
+								"bankaccount",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 17 Mar 2023 09:57:26 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=63072000; includeSubdomains; preload"
+						},
+						{
+							"key": "X-Lua-Resty-WAF-ID",
+							"value": "91847ee87efa9f694de2"
+						},
+						{
+							"key": "x-correlation-id",
+							"value": "ab428a07-3e9d-4e17-af3e-8ffda408b237"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, no-store, max-age=0, must-revalidate"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "no-referrer-when-downgrade"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Download-Options",
+							"value": "noopen"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "sameorigin"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"\",\n        \"ver\": \"\",\n        \"ts\": null,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"\",\n        \"status\": \"successful\"\n    },\n    \"bankAccounts\": [\n        {\n            \"id\": \"439d08ba-6446-46da-ac1a-ab3d97668f3f\",\n            \"tenantId\": \"pg.citya\",\n            \"serviceCode\": \"ORG\",\n            \"referenceId\": \"bf502800-c33d-11ed-afa1-0242ac120007\",\n            \"bankAccountDetails\": [\n                {\n                    \"id\": \"69f0c099-2d1e-4be0-9e34-6b8fa472c472\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"XYZ Holdings\",\n                    \"accountNumber\": \"XYZ1230987\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"id\": \"20826fe6-b990-4447-b707-022c07e08bdf\",\n                        \"type\": \"IFSC\",\n                        \"code\": \"SBI000007\",\n                        \"additionalDetails\": {\n                            \"ifsccode\": \"SBI delhi branch ifsc code\"\n                        }\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"0b07fe79-12fe-4f91-abbc-70f0e884b87d\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"xfys13445\",\n                            \"documentUid\": \"hjdldjwd-d-67000011\",\n                            \"additionalDetails\": {\n                                \"document\": \"additional details\"\n                            }\n                        }\n                    ],\n                    \"additionalFields\": {\n                        \"bankAccountDetails\": \"additional details\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"dmgfUUId\",\n                        \"lastModifiedBy\": \"dmgfUUId\",\n                        \"createdTime\": 1679047045929,\n                        \"lastModifiedTime\": 1679047045929\n                    }\n                }\n            ],\n            \"additionalFields\": {\n                \"bankAccount\": \"additional details\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"dmgfUUId\",\n                \"lastModifiedBy\": \"dmgfUUId\",\n                \"createdTime\": 1679047045928,\n                \"lastModifiedTime\": 1679047045928\n            }\n        }\n    ],\n    \"pagination\": null\n}"
+				}
+			]
+		},
+		{
+			"name": "_create_with_valid ORG",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"bankAccounts\",\r\n        \"ver\": \"v1\",\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"did\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"create bank accounts\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\"\r\n    },\r\n    \"bankAccounts\": [\r\n        {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"serviceCode\": \"ORG\",\r\n            \"referenceId\": \"db5efad8-a76c-4239-9e88-97318195beed\",\r\n            \"bankAccountDetails\": [\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"accountHolderName\": \"XYZ Holdings\",\r\n                    \"accountNumber\": \"XYZ1230987\",\r\n                    \"accountType\": \"SAVING\",\r\n                    \"isPrimary\": true,\r\n                    \"bankBranchIdentifier\": {\r\n                        \"type\": \"IFSC\",\r\n                        \"code\": \"SBI000007\",\r\n                        \"additionalDetails\": {\r\n                            \"ifsccode\": \"SBI delhi branch ifsc code\"\r\n                        }\r\n                    },\r\n                    \"isActive\": true,\r\n                    \"documents\": [\r\n                        {\r\n                            \"documentType\": \"PDF\",\r\n                            \"fileStore\": \"xfys13445\",\r\n                            \"documentUid\": \"hjdldjwd-d-67000011\",\r\n                            \"additionalDetails\": {\r\n                                \"document\": \"additional details\"\r\n                            }\r\n                        }\r\n                    ],\r\n                    \"additionalFields\": {\r\n                        \"bankAccountDetails\": \"additional details\"\r\n                    }\r\n                }\r\n            ],\r\n            \"additionalFields\": {\r\n                \"bankAccount\": \"additional details\"\r\n            }\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{devHost}}/bankaccount-service/bankaccount/v1/_create",
+					"host": [
+						"{{devHost}}"
+					],
+					"path": [
+						"bankaccount-service",
+						"bankaccount",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "_create_with_valid ORG",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"bankAccounts\",\r\n        \"ver\": \"v1\",\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"did\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"create bank accounts\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\"\r\n    },\r\n    \"bankAccounts\": [\r\n        {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"serviceCode\": \"ORG\",\r\n            \"referenceId\": \"db5efad8-a76c-4239-9e88-97318195beed\",\r\n            \"bankAccountDetails\": [\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"accountHolderName\": \"XYZ Holdings\",\r\n                    \"accountNumber\": \"XYZ1230987\",\r\n                    \"accountType\": \"SAVING\",\r\n                    \"isPrimary\": true,\r\n                    \"bankBranchIdentifier\": {\r\n                        \"type\": \"IFSC\",\r\n                        \"code\": \"SBI000007\",\r\n                        \"additionalDetails\": {\r\n                            \"ifsccode\": \"SBI delhi branch ifsc code\"\r\n                        }\r\n                    },\r\n                    \"isActive\": true,\r\n                    \"documents\": [\r\n                        {\r\n                            \"documentType\": \"PDF\",\r\n                            \"fileStore\": \"xfys13445\",\r\n                            \"documentUid\": \"hjdldjwd-d-67000011\",\r\n                            \"additionalDetails\": {\r\n                                \"document\": \"additional details\"\r\n                            }\r\n                        }\r\n                    ],\r\n                    \"additionalFields\": {\r\n                        \"bankAccountDetails\": \"additional details\"\r\n                    }\r\n                }\r\n            ],\r\n            \"additionalFields\": {\r\n                \"bankAccount\": \"additional details\"\r\n            }\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{devHost}}/bankaccount-service/bankaccount/v1/_create",
+							"host": [
+								"{{devHost}}"
+							],
+							"path": [
+								"bankaccount-service",
+								"bankaccount",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Mon, 20 Mar 2023 10:30:12 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=63072000; includeSubdomains; preload"
+						},
+						{
+							"key": "X-Lua-Resty-WAF-ID",
+							"value": "c5c00c042ee572e4debd"
+						},
+						{
+							"key": "x-correlation-id",
+							"value": "3714e932-d2ac-4477-8d68-76f8476b7ed6"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, no-store, max-age=0, must-revalidate"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "no-referrer-when-downgrade"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Download-Options",
+							"value": "noopen"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "sameorigin"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"bankAccounts\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"create bank accounts\",\n        \"status\": \"successful\"\n    },\n    \"bankAccounts\": [\n        {\n            \"id\": \"15fb3c4f-bb4a-4f61-8c97-4a4665262506\",\n            \"tenantId\": \"pg.citya\",\n            \"serviceCode\": \"ORG\",\n            \"referenceId\": \"db5efad8-a76c-4239-9e88-97318195beed\",\n            \"bankAccountDetails\": [\n                {\n                    \"id\": \"de969743-91fe-481d-8585-fcc69bda42a7\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"XYZ Holdings\",\n                    \"accountNumber\": \"XYZ1230987\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"id\": \"fc90ea3e-aecb-4374-a07b-eeed6d1b1ec1\",\n                        \"type\": \"IFSC\",\n                        \"code\": \"SBI000007\",\n                        \"additionalDetails\": {\n                            \"ifsccode\": \"SBI delhi branch ifsc code\"\n                        }\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"75f207db-a6db-4d2b-b79d-9ebbc23f238b\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"xfys13445\",\n                            \"documentUid\": \"hjdldjwd-d-67000011\",\n                            \"additionalDetails\": {\n                                \"document\": \"additional details\"\n                            }\n                        }\n                    ],\n                    \"additionalFields\": {\n                        \"bankAccountDetails\": \"additional details\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"79003eb5-de1f-49b9-9376-a8b4cf4d62e2\",\n                        \"lastModifiedBy\": \"79003eb5-de1f-49b9-9376-a8b4cf4d62e2\",\n                        \"createdTime\": 1679308211672,\n                        \"lastModifiedTime\": 1679308211672\n                    }\n                }\n            ],\n            \"additionalFields\": {\n                \"bankAccount\": \"additional details\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"79003eb5-de1f-49b9-9376-a8b4cf4d62e2\",\n                \"lastModifiedBy\": \"79003eb5-de1f-49b9-9376-a8b4cf4d62e2\",\n                \"createdTime\": 1679308211671,\n                \"lastModifiedTime\": 1679308211671\n            }\n        }\n    ],\n    \"pagination\": null\n}"
+				}
+			]
+		},
+		{
+			"name": "_create_with_valid IND",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"bankAccounts\",\r\n        \"ver\": \"v1\",\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"did\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"create bank accounts\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\"\r\n    },\r\n    \"bankAccounts\": [\r\n        {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"serviceCode\": \"IND\",\r\n            \"referenceId\": \"bc83d91d-9541-47aa-9da6-d8041b5ea0e5\",\r\n            \"bankAccountDetails\": [\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"accountHolderName\": \"XYZ Holdings\",\r\n                    \"accountNumber\": \"XYZ1230987\",\r\n                    \"accountType\": \"SAVING\",\r\n                    \"isPrimary\": true,\r\n                    \"bankBranchIdentifier\": {\r\n                        \"type\": \"IFSC\",\r\n                        \"code\": \"SBI000007\",\r\n                        \"additionalDetails\": {\r\n                            \"ifsccode\": \"SBI delhi branch ifsc code\"\r\n                        }\r\n                    },\r\n                    \"isActive\": true,\r\n                    \"documents\": [\r\n                        {\r\n                            \"documentType\": \"PDF\",\r\n                            \"fileStore\": \"xfys13445\",\r\n                            \"documentUid\": \"hjdldjwd-d-67000011\",\r\n                            \"additionalDetails\": {\r\n                                \"document\": \"additional details\"\r\n                            }\r\n                        }\r\n                    ],\r\n                    \"additionalFields\": {\r\n                        \"bankAccountDetails\": \"additional details\"\r\n                    }\r\n                }\r\n            ],\r\n            \"additionalFields\": {\r\n                \"bankAccount\": \"additional details\"\r\n            }\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{devHost}}/bankaccount-service/bankaccount/v1/_create",
+					"host": [
+						"{{devHost}}"
+					],
+					"path": [
+						"bankaccount-service",
+						"bankaccount",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "_create_with_valid IND",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"bankAccounts\",\r\n        \"ver\": \"v1\",\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"did\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"create bank accounts\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\"\r\n    },\r\n    \"bankAccounts\": [\r\n        {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"serviceCode\": \"IND\",\r\n            \"referenceId\": \"bc83d91d-9541-47aa-9da6-d8041b5ea0e5\",\r\n            \"bankAccountDetails\": [\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"accountHolderName\": \"XYZ Holdings\",\r\n                    \"accountNumber\": \"XYZ1230987\",\r\n                    \"accountType\": \"SAVING\",\r\n                    \"isPrimary\": true,\r\n                    \"bankBranchIdentifier\": {\r\n                        \"type\": \"IFSC\",\r\n                        \"code\": \"SBI000007\",\r\n                        \"additionalDetails\": {\r\n                            \"ifsccode\": \"SBI delhi branch ifsc code\"\r\n                        }\r\n                    },\r\n                    \"isActive\": true,\r\n                    \"documents\": [\r\n                        {\r\n                            \"documentType\": \"PDF\",\r\n                            \"fileStore\": \"xfys13445\",\r\n                            \"documentUid\": \"hjdldjwd-d-67000011\",\r\n                            \"additionalDetails\": {\r\n                                \"document\": \"additional details\"\r\n                            }\r\n                        }\r\n                    ],\r\n                    \"additionalFields\": {\r\n                        \"bankAccountDetails\": \"additional details\"\r\n                    }\r\n                }\r\n            ],\r\n            \"additionalFields\": {\r\n                \"bankAccount\": \"additional details\"\r\n            }\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{devHost}}/bankaccount-service/bankaccount/v1/_create",
+							"host": [
+								"{{devHost}}"
+							],
+							"path": [
+								"bankaccount-service",
+								"bankaccount",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Mon, 20 Mar 2023 10:44:59 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=63072000; includeSubdomains; preload"
+						},
+						{
+							"key": "X-Lua-Resty-WAF-ID",
+							"value": "a68a0367bd934f3419ee"
+						},
+						{
+							"key": "x-correlation-id",
+							"value": "74614781-8a0a-42ee-8b8f-f98b05414365"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, no-store, max-age=0, must-revalidate"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "no-referrer-when-downgrade"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Download-Options",
+							"value": "noopen"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "sameorigin"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"bankAccounts\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"create bank accounts\",\n        \"status\": \"successful\"\n    },\n    \"bankAccounts\": [\n        {\n            \"id\": \"9e0fc5c0-ba14-414f-a3ab-6ddd1e74c4c2\",\n            \"tenantId\": \"pg.citya\",\n            \"serviceCode\": \"IND\",\n            \"referenceId\": \"bc83d91d-9541-47aa-9da6-d8041b5ea0e5\",\n            \"bankAccountDetails\": [\n                {\n                    \"id\": \"586beb8e-8b5a-4f8f-a06a-bb022d403ff7\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"XYZ Holdings\",\n                    \"accountNumber\": \"XYZ1230987\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"id\": \"e67b0ab6-a99b-46c7-b2f8-5257c6c224e1\",\n                        \"type\": \"IFSC\",\n                        \"code\": \"SBI000007\",\n                        \"additionalDetails\": {\n                            \"ifsccode\": \"SBI delhi branch ifsc code\"\n                        }\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"054c344a-3761-43a8-bab0-9495e0a95055\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"xfys13445\",\n                            \"documentUid\": \"hjdldjwd-d-67000011\",\n                            \"additionalDetails\": {\n                                \"document\": \"additional details\"\n                            }\n                        }\n                    ],\n                    \"additionalFields\": {\n                        \"bankAccountDetails\": \"additional details\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"79003eb5-de1f-49b9-9376-a8b4cf4d62e2\",\n                        \"lastModifiedBy\": \"79003eb5-de1f-49b9-9376-a8b4cf4d62e2\",\n                        \"createdTime\": 1679309099269,\n                        \"lastModifiedTime\": 1679309099269\n                    }\n                }\n            ],\n            \"additionalFields\": {\n                \"bankAccount\": \"additional details\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"79003eb5-de1f-49b9-9376-a8b4cf4d62e2\",\n                \"lastModifiedBy\": \"79003eb5-de1f-49b9-9376-a8b4cf4d62e2\",\n                \"createdTime\": 1679309099268,\n                \"lastModifiedTime\": 1679309099268\n            }\n        }\n    ],\n    \"pagination\": null\n}"
+				}
+			]
+		},
+		{
+			"name": "_update",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"requestInfo\": {\r\n    \"apiId\": \"string\",\r\n    \"ver\": \"string\",\r\n    \"ts\": 0,\r\n    \"action\": \"string\",\r\n    \"did\": \"string\",\r\n    \"key\": \"string\",\r\n    \"msgId\": \"string\",\r\n    \"requesterId\": \"string\",\r\n    \"authToken\": \"string\"\r\n  },\r\n  \"bankAccounts\": {\r\n    \"tenantId\": \"pb.amritsar\",\r\n    \"serviceCode\": \"ORG, IND or something else\",\r\n    \"referenceId\": \"UUID Organisation or Individual\",\r\n    \"bankAccountDetails\": [\r\n      {\r\n        \"tenantId\": \"pb.amritsar\",\r\n        \"accountHolderName\": \"XYZ Holdings\",\r\n        \"accountNumber\": \"string\",\r\n        \"accountType\": \"Savings or Current or UPI or Wallet\",\r\n        \"isPrimary\": true,\r\n        \"bankBranchIdentifier\": {\r\n          \"type\": \"string\",\r\n          \"code\": \"string\",\r\n          \"additionalDetails\": {}\r\n        },\r\n        \"isActive\": true,\r\n        \"documents\": [\r\n          {\r\n            \"id\": \"string\",\r\n            \"documentType\": \"string\",\r\n            \"fileStore\": \"string\",\r\n            \"documentUid\": \"string\",\r\n            \"additionalDetails\": {}\r\n          }\r\n        ],\r\n        \"additionalFields\": {}\r\n      }\r\n    ],\r\n    \"additionalFields\": {}\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8038/bankaccount-service/bankaccount/v1/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8038",
+					"path": [
+						"bankaccount-service",
+						"bankaccount",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "_search",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"RequestInfo\": {\r\n        \"apiId\": \"bankAccounts\",\r\n        \"ver\": \"v1\",\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"did\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"create bank accounts\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\"\r\n    },\r\n  \"bankAccountDetails\": {\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"accountNumber\": [\r\n      \"acc12309876543\"\r\n    ],\r\n    \"accountHolderName\": \"test-a\"\r\n  },\r\n  \"pagination\": {\r\n    \"limit\": 20,\r\n    \"offSet\": 0,\r\n    \"sortBy\": \"createdTime\",\r\n    \"order\": {}\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{devHost}}/bankaccount-service/bankaccount/v1/_search",
+					"host": [
+						"{{devHost}}"
+					],
+					"path": [
+						"bankaccount-service",
+						"bankaccount",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "_search",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"bankaccounts\",\r\n        \"ver\": \"string\",\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"did\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\"\r\n    },\r\n    \"bankAccountDetails\": {\r\n        \"tenantId\": \"{{tenantId}}\"  \r\n    },\r\n    \"pagination\": {\r\n        \"limit\": 10,\r\n        \"offSet\": 0,\r\n        \"sortBy\": \"createdTime\",\r\n        \"order\": {}\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8030/bankaccount-service/bankaccount/v1/_search",
+							"host": [
+								"localhost"
+							],
+							"port": "8030",
+							"path": [
+								"bankaccount-service",
+								"bankaccount",
+								"v1",
+								"_search"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 16 Mar 2023 07:18:22 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"bankaccounts\",\n        \"ver\": \"string\",\n        \"ts\": 0,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"string\",\n        \"status\": \"successful\"\n    },\n    \"bankAccounts\": [\n        {\n            \"id\": \"7b4cee7c-c33d-11ed-afa1-0242ac120002\",\n            \"tenantId\": \"pg.citya\",\n            \"serviceCode\": \"ORG\",\n            \"referenceId\": \"bf502800-c33d-11ed-afa1-0242ac120002\",\n            \"bankAccountDetails\": [\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120003\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-b\",\n                    \"accountNumber\": \"acc12309876577\",\n                    \"accountType\": \"CHECKING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00125\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120004\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120004\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-c\",\n                    \"accountNumber\": \"acc12309876507\",\n                    \"accountType\": \"CD\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": null,\n                        \"code\": null,\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": null,\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                }\n            ],\n            \"additionalFields\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                \"createdTime\": 1678890896164,\n                \"lastModifiedTime\": 1678890896164\n            }\n        }\n    ],\n    \"pagination\": {\n        \"limit\": 10,\n        \"offSet\": 0,\n        \"totalCount\": 1,\n        \"sortBy\": \"createdTime\",\n        \"order\": null\n    }\n}"
+				},
+				{
+					"name": "_search",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"bankaccounts\",\r\n        \"ver\": \"string\",\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"did\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\"\r\n    },\r\n    \"bankAccountDetails\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"accountNumber\": [\r\n            \"acc12309876543\"\r\n        ],\r\n        \"accountHolderName\": \"XYZ Holdings\"\r\n    },\r\n    \"pagination\": {\r\n        \"limit\": 10,\r\n        \"offSet\": 0,\r\n        \"sortBy\": \"createdTime\",\r\n        \"order\": {}\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8030/bankaccount-service/bankaccount/v1/_search",
+							"host": [
+								"localhost"
+							],
+							"port": "8030",
+							"path": [
+								"bankaccount-service",
+								"bankaccount",
+								"v1",
+								"_search"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 16 Mar 2023 07:25:50 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"bankaccounts\",\n        \"ver\": \"string\",\n        \"ts\": 0,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"string\",\n        \"status\": \"successful\"\n    },\n    \"bankAccounts\": [],\n    \"pagination\": {\n        \"limit\": 10,\n        \"offSet\": 0,\n        \"totalCount\": 0,\n        \"sortBy\": \"createdTime\",\n        \"order\": null\n    }\n}"
+				},
+				{
+					"name": "_search",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"bankaccounts\",\r\n        \"ver\": \"string\",\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"did\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\"\r\n    },\r\n    \"bankAccountDetails\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"accountNumber\": [\r\n            \"acc12309876543\"\r\n        ],\r\n        \"accountHolderName\": \"test-b\"\r\n    },\r\n    \"pagination\": {\r\n        \"limit\": 10,\r\n        \"offSet\": 0,\r\n        \"sortBy\": \"createdTime\",\r\n        \"order\": {}\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8030/bankaccount-service/bankaccount/v1/_search",
+							"host": [
+								"localhost"
+							],
+							"port": "8030",
+							"path": [
+								"bankaccount-service",
+								"bankaccount",
+								"v1",
+								"_search"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 16 Mar 2023 07:26:10 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"bankaccounts\",\n        \"ver\": \"string\",\n        \"ts\": 0,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"string\",\n        \"status\": \"successful\"\n    },\n    \"bankAccounts\": [],\n    \"pagination\": {\n        \"limit\": 10,\n        \"offSet\": 0,\n        \"totalCount\": 0,\n        \"sortBy\": \"createdTime\",\n        \"order\": null\n    }\n}"
+				},
+				{
+					"name": "_search",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"bankaccounts\",\r\n        \"ver\": \"string\",\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"did\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\"\r\n    },\r\n    \"bankAccountDetails\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"accountNumber\": [\r\n            \"acc12309876543\"\r\n        ],\r\n        \"accountHolderName\": \"test-a\"\r\n    },\r\n    \"pagination\": {\r\n        \"limit\": 10,\r\n        \"offSet\": 0,\r\n        \"sortBy\": \"createdTime\",\r\n        \"order\": {}\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8030/bankaccount-service/bankaccount/v1/_search",
+							"host": [
+								"localhost"
+							],
+							"port": "8030",
+							"path": [
+								"bankaccount-service",
+								"bankaccount",
+								"v1",
+								"_search"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 16 Mar 2023 07:26:25 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"bankaccounts\",\n        \"ver\": \"string\",\n        \"ts\": 0,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"string\",\n        \"status\": \"successful\"\n    },\n    \"bankAccounts\": [\n        {\n            \"id\": \"7b4cee7c-c33d-11ed-afa1-0242ac120002\",\n            \"tenantId\": \"pg.citya\",\n            \"serviceCode\": \"ORG\",\n            \"referenceId\": \"bf502800-c33d-11ed-afa1-0242ac120002\",\n            \"bankAccountDetails\": [\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                }\n            ],\n            \"additionalFields\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                \"createdTime\": 1678890896164,\n                \"lastModifiedTime\": 1678890896164\n            }\n        }\n    ],\n    \"pagination\": {\n        \"limit\": 10,\n        \"offSet\": 0,\n        \"totalCount\": 1,\n        \"sortBy\": \"createdTime\",\n        \"order\": null\n    }\n}"
+				},
+				{
+					"name": "_search",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"RequestInfo\": {\r\n    \"apiId\": \"asset-services\",\r\n    \"ver\": null,\r\n    \"ts\": null,\r\n    \"action\": null,\r\n    \"did\": null,\r\n    \"key\": null,\r\n    \"msgId\": \"search with from and to values\",\r\n    \"authToken\": \"{{authToken}}\"\r\n  },\r\n  \"bankAccountDetails\": {\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"accountNumber\": [\r\n      \"acc12309876543\"\r\n    ],\r\n    \"accountHolderName\": \"test-a\"\r\n  },\r\n  \"pagination\": {\r\n    \"limit\": 10,\r\n    \"offSet\": 0,\r\n    \"sortBy\": \"createdTime\",\r\n    \"order\": {}\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{devHost}}/bankaccount-service/bankaccount/v1/_search",
+							"host": [
+								"{{devHost}}"
+							],
+							"path": [
+								"bankaccount-service",
+								"bankaccount",
+								"v1",
+								"_search"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 16 Mar 2023 09:23:47 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=63072000; includeSubdomains; preload"
+						},
+						{
+							"key": "X-Lua-Resty-WAF-ID",
+							"value": "a47f884ee8b3676ae116"
+						},
+						{
+							"key": "x-correlation-id",
+							"value": "a06cfc22-ff41-4f3d-87a0-f5b43f048f3f"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, no-store, max-age=0, must-revalidate"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "no-referrer-when-downgrade"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Download-Options",
+							"value": "noopen"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "sameorigin"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"\",\n        \"ver\": \"\",\n        \"ts\": null,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"\",\n        \"status\": \"successful\"\n    },\n    \"bankAccounts\": [\n        {\n            \"id\": \"7b4cee7c-c33d-11ed-afa1-0242ac120002\",\n            \"tenantId\": \"pg.citya\",\n            \"serviceCode\": \"ORG\",\n            \"referenceId\": \"bf502800-c33d-11ed-afa1-0242ac120002\",\n            \"bankAccountDetails\": [\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                }\n            ],\n            \"additionalFields\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                \"createdTime\": 1678890896164,\n                \"lastModifiedTime\": 1678890896164\n            }\n        }\n    ],\n    \"pagination\": {\n        \"limit\": 10,\n        \"offSet\": 0,\n        \"totalCount\": 1,\n        \"sortBy\": \"createdTime\",\n        \"order\": null\n    }\n}"
+				},
+				{
+					"name": "_search_Dev",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"RequestInfo\": {\r\n    \"apiId\": \"asset-services\",\r\n    \"ver\": null,\r\n    \"ts\": null,\r\n    \"action\": null,\r\n    \"did\": null,\r\n    \"key\": null,\r\n    \"msgId\": \"search with from and to values\",\r\n    \"authToken\": \"{{authToken}}\"\r\n  },\r\n  \"bankAccountDetails\": {\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"accountNumber\": [\r\n      \"acc12309876543\"\r\n    ],\r\n    \"accountHolderName\": \"test-a\"\r\n  },\r\n  \"pagination\": {\r\n    \"limit\": 10,\r\n    \"offSet\": 0,\r\n    \"sortBy\": \"createdTime\",\r\n    \"order\": {}\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{devHost}}/bankaccount-service/bankaccount/v1/_search",
+							"host": [
+								"{{devHost}}"
+							],
+							"path": [
+								"bankaccount-service",
+								"bankaccount",
+								"v1",
+								"_search"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 16 Mar 2023 11:52:32 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=63072000; includeSubdomains; preload"
+						},
+						{
+							"key": "X-Lua-Resty-WAF-ID",
+							"value": "2db75c4bcfedca8d70b6"
+						},
+						{
+							"key": "x-correlation-id",
+							"value": "5f5a27c3-f077-4dd5-9a23-59897e6d216a"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, no-store, max-age=0, must-revalidate"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "no-referrer-when-downgrade"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Download-Options",
+							"value": "noopen"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "sameorigin"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"\",\n        \"ver\": \"\",\n        \"ts\": null,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"\",\n        \"status\": \"successful\"\n    },\n    \"bankAccounts\": [\n        {\n            \"id\": \"7b4cee7c-c33d-11ed-afa1-0242ac120002\",\n            \"tenantId\": \"pg.citya\",\n            \"serviceCode\": \"ORG\",\n            \"referenceId\": \"bf502800-c33d-11ed-afa1-0242ac120002\",\n            \"bankAccountDetails\": [\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                }\n            ],\n            \"additionalFields\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                \"createdTime\": 1678890896164,\n                \"lastModifiedTime\": 1678890896164\n            }\n        }\n    ],\n    \"pagination\": {\n        \"limit\": 10,\n        \"offSet\": 0,\n        \"totalCount\": 1,\n        \"sortBy\": \"createdTime\",\n        \"order\": null\n    }\n}"
+				},
+				{
+					"name": "_search",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"RequestInfo\": {\r\n    \"apiId\": \"asset-services\",\r\n    \"ver\": null,\r\n    \"ts\": null,\r\n    \"action\": null,\r\n    \"did\": null,\r\n    \"key\": null,\r\n    \"msgId\": \"search with from and to values\",\r\n    \"authToken\": \"{{authToken}}\"\r\n  },\r\n  \"bankAccountDetails\": {\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"accountNumber\": [\r\n      \"acc12309876543\"\r\n    ],\r\n    \"accountHolderName\": \"test-a\"\r\n  },\r\n  \"pagination\": {\r\n    \"limit\": 20,\r\n    \"offSet\": 0,\r\n    \"sortBy\": \"createdTime\",\r\n    \"order\": {}\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{devHost}}/bankaccount-service/bankaccount/v1/_search",
+							"host": [
+								"{{devHost}}"
+							],
+							"path": [
+								"bankaccount-service",
+								"bankaccount",
+								"v1",
+								"_search"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 16 Mar 2023 18:18:11 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=63072000; includeSubdomains; preload"
+						},
+						{
+							"key": "X-Lua-Resty-WAF-ID",
+							"value": "90c2632b2303b1e345ea"
+						},
+						{
+							"key": "x-correlation-id",
+							"value": "f19a10d8-9b31-4036-8121-082a31c75d8d"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, no-store, max-age=0, must-revalidate"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "no-referrer-when-downgrade"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Download-Options",
+							"value": "noopen"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "sameorigin"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"\",\n        \"ver\": \"\",\n        \"ts\": null,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"\",\n        \"status\": \"successful\"\n    },\n    \"bankAccounts\": [\n        {\n            \"id\": \"7b4cee7c-c33d-11ed-afa1-0242ac120002\",\n            \"tenantId\": \"pg.citya\",\n            \"serviceCode\": \"ORG\",\n            \"referenceId\": \"bf502800-c33d-11ed-afa1-0242ac120002\",\n            \"bankAccountDetails\": [\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"id\": \"d2ed4550-c33d-11ed-afa1-0242ac120002\",\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"id\": \"d2ed4550-c33d-11ed-afa1-0242ac120002\",\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"id\": \"d2ed4550-c33d-11ed-afa1-0242ac120002\",\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                },\n                {\n                    \"id\": \"c53dd88e-c33d-11ed-afa1-0242ac120002\",\n                    \"tenantId\": \"pg.citya\",\n                    \"accountHolderName\": \"test-a\",\n                    \"accountNumber\": \"acc12309876543\",\n                    \"accountType\": \"SAVING\",\n                    \"isPrimary\": true,\n                    \"bankBranchIdentifier\": {\n                        \"id\": \"d2ed4550-c33d-11ed-afa1-0242ac120002\",\n                        \"type\": \"IFSC\",\n                        \"code\": \"BOA00123\",\n                        \"additionalDetails\": null\n                    },\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120003\",\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        },\n                        {\n                            \"id\": \"cbba0084-c33d-11ed-afa1-0242ac120002\",\n                            \"documentType\": \"PNG\",\n                            \"fileStore\": null,\n                            \"documentUid\": \"1d0f762a-c33f-11ed-afa1-0242ac120002\",\n                            \"additionalDetails\": null\n                        }\n                    ],\n                    \"additionalFields\": null,\n                    \"auditDetails\": {\n                        \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                        \"createdTime\": 1678890896164,\n                        \"lastModifiedTime\": 1678890896164\n                    }\n                }\n            ],\n            \"additionalFields\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                \"lastModifiedBy\": \"fcd58b2b-98b3-412c-8f01-ec86ba4b05c4\",\n                \"createdTime\": 1678890896164,\n                \"lastModifiedTime\": 1678890896164\n            }\n        }\n    ],\n    \"pagination\": {\n        \"limit\": 20,\n        \"offSet\": 0,\n        \"totalCount\": 1,\n        \"sortBy\": \"createdTime\",\n        \"order\": null\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "_search Copy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"requestInfo\": {\r\n    \"apiId\": \"bankaccounts\",\r\n    \"ver\": \"string\",\r\n    \"ts\": 0,\r\n    \"action\": \"string\",\r\n    \"did\": \"string\",\r\n    \"key\": \"string\",\r\n    \"msgId\": \"string\",\r\n    \"requesterId\": \"string\",\r\n    \"authToken\": \"{{authToken}}\"\r\n  },\r\n  \"bankAccountDetails\": {\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"ids\": [\r\n      \"string\"\r\n    ],\r\n    \"serviceCode\": \"ORG\",\r\n    \"referenceId\": [\r\n      \"string\"\r\n    ],\r\n    \"accountHolderName\": \"XYZ Holdings\",\r\n    \"accountNumber\": [\r\n      \"0008765498765\"\r\n    ],\r\n    \"isActive\": true,\r\n    \"isPrimary\": true,\r\n    \"bankBranchIdentifierCode\": {\r\n      \"type\": \"string\",\r\n      \"code\": \"string\",\r\n      \"additionalDetails\": {}\r\n    }\r\n  },\r\n  \"pagination\": {\r\n    \"limit\": 10,\r\n    \"offSet\": 0,\r\n    \"sortBy\": \"string\",\r\n    \"order\": {}\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8038/bankaccount-service/bankaccount/v1/_search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8038",
+					"path": [
+						"bankaccount-service",
+						"bankaccount",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

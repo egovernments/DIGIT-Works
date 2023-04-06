@@ -3,10 +3,7 @@ export const createProjectConfigMUKTA = {
     "moduleName" : "commonUiConfig",
     "CreateProjectConfig" : [
       {
-        "defaultValues" : {
-          basicDetails_dateOfProposal : "",
-          noSubProject_ulb : ""
-        },
+        "defaultValues" : {},
         "metaData" : {
           showNavs : false,
           currentFormCategory : false,
@@ -16,6 +13,24 @@ export const createProjectConfigMUKTA = {
           head: "",
           subHead: "",
           body: [
+              {
+                inline: true,
+                label: "WORKS_PROJECT_ID",
+                isMandatory: false,
+                key: "basicDetails_projectID",
+                type: "text",
+                disable: true,
+                preProcess : {
+                  updateDependent : ["populators.customStyle.display"]
+                },
+                populators: { 
+                  name: "basicDetails_projectID", 
+                  customStyle : {
+                    display : "none",
+                  },
+                  customClass : "field-value-no-border"
+                },
+              },
               {
                   inline: true,
                   label: "ES_COMMON_PROPOSAL_DATE",
@@ -117,19 +132,18 @@ export const createProjectConfigMUKTA = {
                 label: ("PROJECT_ESTIMATED_COST_IN_RS"),
                 isMandatory: false,
                 key: "noSubProject_estimatedCostInRs",
-                type: "number",
+                type: "text",
                 disable: false,
                 preProcess: {
-                  convertStringToRegEx: [
-                    populators.validation.pattern
-                  ]
+                  convertStringToRegEx: ["populators.validation.pattern"]
                 },
                 populators: {
-                    name: noSubProject_estimatedCostInRs,
-                    error: PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST,
+                    name: "noSubProject_estimatedCostInRs",
+                    error: "PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST",
                     validation: {
-                      pattern: /^(?:0|[1-9]\d*)(?:\.(?!.*000)\d+)?$/,
-                      maxlength : 32
+                      pattern: /^(?:0|[0-9][^+-]\d*)(?:\.(?!.*000)\d+)?$/,
+                      maxlength : 12,
+                      step : "0.01"
                     }
                   }
               },
@@ -218,7 +232,7 @@ export const createProjectConfigMUKTA = {
                 isMandatory: false,
                 key: "noSubProject_fund",
                 type: "radioordropdown",
-                label: "WORKS_FUND",
+                label: "WORKS_HEAD_OF_ACCOUNTS",
                 disable: false,
                 populators: {
                   name: "noSubProject_fund",
@@ -234,87 +248,7 @@ export const createProjectConfigMUKTA = {
                     localePrefix: "COMMON_MASTERS_FUND",
                   },
                 },
-              },
-              {
-                isMandatory: false,
-                key: "noSubProject_function",
-                type: "radioordropdown",
-                label: "WORKS_FUNCTION",
-                disable: false,
-                populators: {
-                  name: "noSubProject_function",
-                  optionsKey: "name",
-                  error: ("WORKS_REQUIRED_ERR"),
-                  required: false,
-                  optionsCustomStyle : {
-                    top : "2.5rem"
-                  },
-                  mdmsConfig: {
-                    masterName: "Functions",
-                    moduleName: "finance",
-                    localePrefix: "COMMON_MASTERS_FUN",
-                  },
-                },
-              },
-              {
-                isMandatory: false,
-                key: "noSubProject_budgetHead",
-                type: "radioordropdown",
-                label: "WORKS_BUDGET_HEAD",
-                disable: false,
-                populators: {
-                  name: "noSubProject_budgetHead",
-                  optionsKey: "name",
-                  error: ("WORKS_REQUIRED_ERR"),
-                  required: false,
-                  optionsCustomStyle : {
-                    top : "2.5rem"
-                  },
-                  mdmsConfig: {
-                    masterName: "BudgetHead",
-                    moduleName: "finance",
-                    localePrefix: "COMMON_MASTERS_BUDGET_HEAD",
-                  },
-                },
-              },
-              {
-                isMandatory: false,
-                key: "noSubProject_scheme",
-                type: "radioordropdown",
-                label: "WORKS_SCHEME",
-                disable: false,
-                populators: {
-                  name: "noSubProject_scheme",
-                  optionsKey: "name",
-                  error: ("WORKS_REQUIRED_ERR"),
-                  required: false,
-                  optionsCustomStyle : {
-                    top : "2.5rem"
-                  },
-                  mdmsConfig: {
-                    masterName: "Scheme",
-                    moduleName: "finance",
-                    localePrefix: "COMMON_MASTERS_SCHEME",
-                  },
-                },
-              },
-              {
-                isMandatory: false,
-                key: "noSubProject_subScheme",
-                type: "radioordropdown",
-                label: "WORKS_SUB_SCHEME",
-                disable: false,
-                populators: {
-                  name: "noSubProject_subScheme",
-                  optionsKey: "code",
-                  error: "WORKS_REQUIRED_ERR",
-                  required: false,
-                  optionsCustomStyle : {
-                    top : "2.5rem"
-                  },
-                  options : []
-                },
-              },
+              }
             ]
           },
           {
@@ -325,12 +259,10 @@ export const createProjectConfigMUKTA = {
                     type: "documentUpload",
                     withoutLabel: true,
                     module: "Project",
-                    populators:{
-                        error: "WORKS_REQUIRED_ERR",
-                        name: "noSubProject_docs",
-                        customClass: "",
-                        localePrefix: "PROJECT",
-                    }
+                    error: "WORKS_REQUIRED_ERR",
+                    name: "noSubProject_docs",
+                    customClass: "",
+                    localePrefix: "PROJECT",
                 }
             ]
           }

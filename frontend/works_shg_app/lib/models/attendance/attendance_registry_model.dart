@@ -24,6 +24,8 @@ class AttendanceRegister with _$AttendanceRegister {
     String? id,
     String? tenantId,
     String? registerNumber,
+    String? serviceCode,
+    String? referenceId,
     String? name,
     int? startDate,
     int? endDate,
@@ -47,7 +49,16 @@ class AttendanceRegisterAdditionalDetails
     with _$AttendanceRegisterAdditionalDetails {
   const factory AttendanceRegisterAdditionalDetails(
       {String? contractId,
-      String? orgName}) = _AttendanceRegisterAdditionalDetails;
+      String? orgName,
+      String? officerInCharge,
+      String? executingAuthority,
+      String? projectId,
+      String? projectName,
+      String? projectType,
+      String? projectDesc,
+      String? locality,
+      String? ward,
+      int? amount}) = _AttendanceRegisterAdditionalDetails;
 
   factory AttendanceRegisterAdditionalDetails.fromJson(
     Map<String, dynamic> json,
@@ -91,10 +102,28 @@ class AttendeesEntries with _$AttendeesEntries {
       String? registerId,
       String? individualId,
       int? enrollmentDate,
-      int? denrollmentDate}) = _AttendeesEntries;
+      int? denrollmentDate,
+      @JsonKey(name: 'additionalDetails')
+          AttendeesAdditionalDetails? additionalDetails}) = _AttendeesEntries;
 
   factory AttendeesEntries.fromJson(
     Map<String, dynamic> json,
   ) =>
       _$AttendeesEntriesFromJson(json);
+}
+
+@freezed
+class AttendeesAdditionalDetails with _$AttendeesAdditionalDetails {
+  const factory AttendeesAdditionalDetails({
+    String? individualName,
+    String? individualGaurdianName,
+    String? individualID,
+    String? identifierId,
+    String? bankNumber,
+  }) = _AttendeesAdditionalDetails;
+
+  factory AttendeesAdditionalDetails.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$AttendeesAdditionalDetailsFromJson(json);
 }

@@ -100,7 +100,7 @@ export const StatusTable = (props) => {
     );
   } else {
     return (
-      <div className={employee ? "employee-data-table" : "data-table"} style={props.style}>
+      <div className={employee ? `employee-data-table ${props?.customClass ? props?.customClass : ""}` : "data-table"} style={props.style}>
         {props.children}
       </div>
     );

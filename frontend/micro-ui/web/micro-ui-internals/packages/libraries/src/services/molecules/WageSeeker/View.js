@@ -1,123 +1,38 @@
 import { getThumbnails } from "../../../utils/thumbnail";
+import { BankAccountService } from "../../elements/BankAccount";
 import { WageSeekerService } from "../../elements/WageSeeker";
 
-const dummyData = {
-    "ResponseInfo": {
-      "apiId": "string",
-      "ver": "string",
-      "ts": 0,
-      "resMsgId": "string",
-      "msgId": "string",
-      "status": "SUCCESSFUL"
-    },
-    "Individuals": [
-      {
-        "id": "WS-23-000051",
-        "tenantId": "citya",
-        "clientReferenceId": "string",
-        "userId": "string",
-        "name": {
-          "givenName": "Asha Devi",
-          "familyName": "Asha Devi",
-          "otherNames": "Asha Devi"
-        },
-        "dateOfBirth": "01/12/1993",
-        "gender": "Female",
-        "bloodGroup": "str",
-        "mobileNumber": "string",
-        "altContactNumber": "string",
-        "email": "user@example.com",
-        "address": [
-          {
-            "id": "string",
-            "tenantId": "citya",
-            "doorNo": "101/A",
-            "latitude": 90,
-            "longitude": 180,
-            "locationAccuracy": 10000,
-            "type": "string",
-            "addressLine1": "string",
-            "addressLine2": "string",
-            "landmark": "string",
-            "city": "Jatni",
-            "pincode": "string",
-            "buildingName": "string",
-            "street": "Kanal Road",
-            "locality": {
-              "code": "string",
-              "name": "MG Road",
-              "label": "string",
-              "latitude": "string",
-              "longitude": "string",
-              "children": [
-                "string"
-              ],
-              "materializedPath": "string"
-            }
-          }
-        ],
-        "fatherName": "N Prasad",
-        "husbandName": "N Prasad",
-        "identifiers": [
-          {
-            "identifierType": "SYSTEM_GENERATED",
-            "identifierId": "ABCD-1212"
-          }
-        ],
-        "skills": [
-          {
-            "id": "1",
-            "type": "Man Mulia",
-            "level": "Unskilled",
-            "experience": "string"
-          },
-          {
-            "id": "2",
-            "type": "Man Mulia",
-            "level": "Semi-skilled",
-            "experience": "string"
-          }
-        ],
-        "photo": "859303bc-d889-4775-be36-1f2c23c88301",
-        "additionalFields": {
-          "schema": "HOUSEHOLD",
-          "version": 2,
-          "fields": [
-            {
-              "key": "height",
-              "value": "180"
-            }
-          ]
-        },
-        "isDeleted": true,
-        "rowVersion": 0,
-        "auditDetails": {
-          "createdBy": "string",
-          "lastModifiedBy": "string",
-          "createdTime": 0,
-          "lastModifiedTime": 0
-        }
-      }
-    ]
-}
 const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
-    if(data?.Individuals?.length === 0) return;
+    if(data?.Individual?.length === 0) throw new Error('No data found');
+    
+    const individual = data.Individual[0]
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
 
-    const individual = data.Individuals[0]
-    const thumbnails = await getThumbnails([individual?.photo], tenantId)
+    const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "IND", referenceId: [individual?.id] } }
+    const bankDetails = await BankAccountService.search(bankDetailPayload, {});
+    const bankAccounts = bankDetails?.bankAccounts?.[0]?.bankAccountDetails
+
+    let thumbnails = ''
+    try {
+      thumbnails = individual?.photo && await getThumbnails([individual?.photo], tenantId)
+    } catch (error) {}
+    
+    const socialCategory = individual?.additionalFields?.fields?.find(item => item?.key === "SOCIAL_CATEGORY")
+    const adhaar = individual?.identifiers?.find(item => item?.identifierType === 'AADHAAR')
+
     const headerDetails = {
         title: " ",
         asSectionHeader: true,
         values: [
-            { title: "MASTERS_WAGE_SEEKER_ID", value: individual?.id || t("NA")},
-            { title: "ES_COMMON_AADHAR", value: individual?.aadharNumber || t("NA")},
-            { title: "MASTERS_NAME_OF_WAGE_SEEKER", value: individual?.name?.familyName || t("NA")},
+            { title: "MASTERS_WAGE_SEEKER_ID", value: individual?.individualId || t("NA")},
+            { title: "ES_COMMON_AADHAR", value: adhaar ? adhaar?.identifierId : t("NA")},
+            { title: "MASTERS_NAME_OF_WAGE_SEEKER", value: individual?.name?.givenName || t("NA")},
             { title: "MASTERS_FATHER_HUSBAND_NAME", value: individual?.fatherName || t("NA")},
-            { title: "ES_COMMON_RELATIONSHIP", value: 'Father' || t("NA")},
+            { title: "ES_COMMON_RELATIONSHIP", value: individual?.relationship ? `COMMON_MASTERS_RELATIONSHIP_${individual?.relationship}` : t("NA")},
             { title: "ES_COMMON_BIRTHDATE", value: individual?.dateOfBirth || t("NA")},
-            { title: "CORE_COMMON_PROFILE_GENDER", value: individual?.gender || t("NA")},
+            { title: "CORE_COMMON_PROFILE_GENDER", value: individual?.gender ? `COMMON_MASTERS_GENDER_${individual?.gender}` : t("NA")},
             { title: "CORE_COMMON_PROFILE_MOBILE_NUMBER", value: individual?.mobileNumber || t("NA")},
-            { title: "MASTERS_SOCIAL_CATEGORY", value: individual?.category || t("NA")}
+            { title: "MASTERS_SOCIAL_CATEGORY", value: socialCategory ? `COMMON_MASTERS_SOCIAL_${socialCategory?.value}` : t("NA")}
         ],
         additionalDetails: {
           skills: {
@@ -134,26 +49,31 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
         title: "ES_COMMON_LOCATION_DETAILS",
         asSectionHeader: true,
         values: [
-            { title: "CORE_COMMON_PROFILE_CITY", value: individual?.address?.[0]?.city || t("NA")},
-            { title: "COMMON_WARD", value: individual?.address?.[0]?.ward || t("NA")},
-            { title: "COMMON_LOCALITY", value: individual?.address?.[0]?.locality?.name || t("NA")},
+            { title: "CORE_COMMON_PROFILE_CITY", value: individual?.address?.[0]?.tenantId ? Digit.Utils.locale.getCityLocale(individual?.address?.[0]?.tenantId) : t("NA")},
+            { title: "COMMON_WARD", value: individual?.address?.[0]?.ward?.code ? Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.ward?.code, tenantId) : t("NA")},
+            { title: "COMMON_LOCALITY", value: individual?.address?.[0]?.locality?.code ? Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.locality?.code, tenantId) : t("NA")},
             { title: "ES_COMMON_STREET", value: individual?.address?.[0]?.street || t("NA")},
             { title: "ES_COMMON_DOOR_NO", value: individual?.address?.[0]?.doorNo || t("NA")},
         ]
     }
-    const financialDetails = {
-        title: "WORKS_FINANCIAL_DETAILS",
-        asSectionHeader: true,
-        values: [
-            { title: "ES_COMMON_ACCOUNT_HOLDER_NAME", value: 'Asha Devi' || t("NA")},
-            { title: "MASTERS_ACC_NO", value: '1000023401231' || t("NA")},
-            { title: "MASTERS_IFSC", value: 'SBIN0000123' || t("NA")},
-            { title: "ES_COMMON_BRANCH", value: 'Block 1, Kormangala, Bangalore' || t("NA")},
-            { title: "MASTERS_EFFECTIVE_FROM", value: '01/04/2022' || t("NA")},
-            { title: "MASTERS_EFFECTIVE_TO", value: 'NA' || t("NA")},
-        ]
-    }
-    const applicationDetails = { applicationDetails: [headerDetails, locationDetails, financialDetails] };
+
+    let financialDetails = []
+    bankAccounts?.forEach((item, index) => {
+      let bankDetails = {}
+      bankDetails.title = index === 0 ?  "WORKS_FINANCIAL_DETAILS" : " "
+      bankDetails.asSectionHeader = true
+      bankDetails.values = [
+        { title: "ES_COMMON_ACCOUNT_HOLDER_NAME", value: item?.accountHolderName || t("NA")},
+        { title: "MASTERS_ACC_NO", value: item?.accountNumber || t("NA")},
+        { title: "MASTERS_IFSC", value: item?.bankBranchIdentifier?.code || t("NA")},
+        { title: "ES_COMMON_BRANCH", value: item?.bankBranchIdentifier?.additionalDetails?.ifsccode || t("NA")},
+        { title: "MASTERS_EFFECTIVE_FROM", value: Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.createdTime, 'dd/MM/yyyy') || t("NA")},
+        { title: "MASTERS_EFFECTIVE_TO", value: item?.isActive && item?.isPrimary ? t("NA") : Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy')}
+      ]
+      financialDetails.push(bankDetails)
+    })
+
+    const applicationDetails = { applicationDetails: [headerDetails, locationDetails, ...financialDetails] };
 
   return {
     applicationDetails,
@@ -163,18 +83,37 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   }
 }
 
+const fetchBankDetails = async (data, tenantId) => {
+  if(data?.Individual?.length === 0) throw new Error('No data found');
+
+  const individual = data.Individual[0]
+  const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "IND", referenceId: [individual?.id] } }
+  const bankDetails = await BankAccountService.search(bankDetailPayload, {});
+  
+  return {
+    individual,
+    bankDetails: bankDetails?.bankAccounts
+  }
+}
+
 export const View = {
     fetchWageSeekerDetails: async (t, tenantId, data, searchParams) => {
-        return transformViewDataToApplicationDetails(t, dummyData, tenantId)
-        /*
-          try {
-              const response = await WageSeekerService.search(tenantId, data, searchParams);
-              console.log('response', response);
-              return transformViewDataToApplicationDetails(t, response)
-          } catch (error) {
-              console.log('error', error);
-              throw new Error(error?.response?.data?.Errors[0].message);
-          }
-        */
+      try {
+          const response = await WageSeekerService.search(tenantId, data, searchParams);
+          return transformViewDataToApplicationDetails(t, response, tenantId)
+      } catch (error) {
+          console.log('error', error);
+          throw new Error(error?.response?.data?.Errors[0].message);
+      }  
+    },
+
+    fetchWageSeekerWithBankDetails : async (tenantId, data, searchParams) => {
+      try {
+        const response = await WageSeekerService.search(tenantId, data, searchParams);
+        return fetchBankDetails(response, tenantId)
+      } catch (error) {
+        console.log('error', error)
+        throw new Error(error?.response?.data?.Errors?.[0]?.message)
+      }
     }
 }

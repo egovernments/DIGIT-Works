@@ -25,18 +25,44 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
       ]
   );
 
+
+
   const docConfig = data?.works?.DocumentConfig?.[0]
+
+  let documentFileTypeMappings = {
+    docx : "vnd.openxmlformats-officedocument.wordprocessingml.document",
+    doc : "msword",
+    png : "png",
+    pdf : "pdf",
+    jpeg : "jpeg",
+    jpg : "jpeg",
+    xls : "vnd.ms-excel", 
+    xlsx : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    csv : "csv"
+  }
   
   const getRegex = (allowedFormats) => {
+    // console.log(allowedFormats);
+    // if(allowedFormats?.length) {
+    //   const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
+    //   const stringified = JSON.stringify(obj);
+    //   console.log(new RegExp(JSON.parse(stringified).expression.slice(1, -1)));
+    //   return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
+    // } else if(docConfig?.allowedFileTypes?.length) {
+    //   const obj = { "expression" : `/(.*?)(${docConfig?.allowedFileTypes?.join('|')})$/`}
+    //   const stringified = JSON.stringify(obj);
+    //   console.log(new RegExp(JSON.parse(stringified).expression.slice(1, -1)))
+    //   return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
+    // } 
+    // return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
     if(allowedFormats?.length) {
-      const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
-      const stringified = JSON.stringify(obj);
-      return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
-    } else if(docConfig?.allowedFileTypes?.length) {
-      const obj = { "expression" : `/(.*?)(${docConfig?.allowedFileTypes?.join('|')})$/`}
-      const stringified = JSON.stringify(obj);
-      return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
-    } 
+      let exceptedFileTypes = [];
+      allowedFormats?.forEach(allowedFormat=>{
+        exceptedFileTypes.push(documentFileTypeMappings[allowedFormat]);
+      });
+      exceptedFileTypes = exceptedFileTypes.join("|");
+      return new RegExp(`(.*?)(${exceptedFileTypes})$`)
+    }
     return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
   }
 
@@ -61,7 +87,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
                   item?.showTextInput ? 
                     <TextInput 
                       style={{ "marginBottom": "16px" }} 
-                      name={`${config?.populators?.name}.${item?.name}_name`} 
+                      name={`${config?.name}.${item?.name}_name`} 
                       placeholder={t('ES_COMMON_ENTER_NAME')}
                       inputRef={register({minLength: 2})}/> : 
                     null  
@@ -104,12 +130,12 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
                       return !(item?.isMandatory && value?.length === 0)
                     }}}
                     defaultValue={formData?.[item?.name]}
-                    name={`${config?.populators?.name}.${item?.name}`}
+                    name={`${config?.name}.${item?.name}`}
                     control={control}
                   />
-                   {  errors && errors[`${config?.populators?.name}`]?.[`${item?.name}`] && Object.keys(errors[`${config?.populators?.name}`]?.[`${item?.name}`]).length ? (
+                   {  errors && errors[`${config?.name}`]?.[`${item?.name}`] && Object.keys(errors[`${config?.name}`]?.[`${item?.name}`]).length ? (
                       <CardLabelError style={{ fontSize: "12px"}}>
-                        {t(config?.populators?.error)}
+                        {t(config?.error)}
                       </CardLabelError> ) : null
                     }
                 </div>

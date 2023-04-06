@@ -26,6 +26,8 @@ _$_AttendanceRegister _$$_AttendanceRegisterFromJson(
       id: json['id'] as String?,
       tenantId: json['tenantId'] as String?,
       registerNumber: json['registerNumber'] as String?,
+      serviceCode: json['serviceCode'] as String?,
+      referenceId: json['referenceId'] as String?,
       name: json['name'] as String?,
       startDate: json['startDate'] as int?,
       endDate: json['endDate'] as int?,
@@ -52,6 +54,8 @@ Map<String, dynamic> _$$_AttendanceRegisterToJson(
       'id': instance.id,
       'tenantId': instance.tenantId,
       'registerNumber': instance.registerNumber,
+      'serviceCode': instance.serviceCode,
+      'referenceId': instance.referenceId,
       'name': instance.name,
       'startDate': instance.startDate,
       'endDate': instance.endDate,
@@ -68,6 +72,15 @@ _$_AttendanceRegisterAdditionalDetails
         _$_AttendanceRegisterAdditionalDetails(
           contractId: json['contractId'] as String?,
           orgName: json['orgName'] as String?,
+          officerInCharge: json['officerInCharge'] as String?,
+          executingAuthority: json['executingAuthority'] as String?,
+          projectId: json['projectId'] as String?,
+          projectName: json['projectName'] as String?,
+          projectType: json['projectType'] as String?,
+          projectDesc: json['projectDesc'] as String?,
+          locality: json['locality'] as String?,
+          ward: json['ward'] as String?,
+          amount: json['amount'] as int?,
         );
 
 Map<String, dynamic> _$$_AttendanceRegisterAdditionalDetailsToJson(
@@ -75,6 +88,15 @@ Map<String, dynamic> _$$_AttendanceRegisterAdditionalDetailsToJson(
     <String, dynamic>{
       'contractId': instance.contractId,
       'orgName': instance.orgName,
+      'officerInCharge': instance.officerInCharge,
+      'executingAuthority': instance.executingAuthority,
+      'projectId': instance.projectId,
+      'projectName': instance.projectName,
+      'projectType': instance.projectType,
+      'projectDesc': instance.projectDesc,
+      'locality': instance.locality,
+      'ward': instance.ward,
+      'amount': instance.amount,
     };
 
 _$_RegisterAuditDetails _$$_RegisterAuditDetailsFromJson(
@@ -119,6 +141,10 @@ _$_AttendeesEntries _$$_AttendeesEntriesFromJson(Map<String, dynamic> json) =>
       individualId: json['individualId'] as String?,
       enrollmentDate: json['enrollmentDate'] as int?,
       denrollmentDate: json['denrollmentDate'] as int?,
+      additionalDetails: json['additionalDetails'] == null
+          ? null
+          : AttendeesAdditionalDetails.fromJson(
+              json['additionalDetails'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_AttendeesEntriesToJson(_$_AttendeesEntries instance) =>
@@ -129,4 +155,25 @@ Map<String, dynamic> _$$_AttendeesEntriesToJson(_$_AttendeesEntries instance) =>
       'individualId': instance.individualId,
       'enrollmentDate': instance.enrollmentDate,
       'denrollmentDate': instance.denrollmentDate,
+      'additionalDetails': instance.additionalDetails,
+    };
+
+_$_AttendeesAdditionalDetails _$$_AttendeesAdditionalDetailsFromJson(
+        Map<String, dynamic> json) =>
+    _$_AttendeesAdditionalDetails(
+      individualName: json['individualName'] as String?,
+      individualGaurdianName: json['individualGaurdianName'] as String?,
+      individualID: json['individualID'] as String?,
+      identifierId: json['identifierId'] as String?,
+      bankNumber: json['bankNumber'] as String?,
+    );
+
+Map<String, dynamic> _$$_AttendeesAdditionalDetailsToJson(
+        _$_AttendeesAdditionalDetails instance) =>
+    <String, dynamic>{
+      'individualName': instance.individualName,
+      'individualGaurdianName': instance.individualGaurdianName,
+      'individualID': instance.individualID,
+      'identifierId': instance.identifierId,
+      'bankNumber': instance.bankNumber,
     };

@@ -19,6 +19,7 @@ import '../blocs/muster_rolls/muster_roll_estimate.dart';
 import '../blocs/muster_rolls/search_individual_muster_roll.dart';
 import '../models/attendance/attendee_model.dart';
 import '../models/mdms/attendance_hours.dart';
+import '../models/muster_rolls/estimate_muster_roll_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
 import '../models/muster_rolls/muster_workflow_model.dart';
 import '../models/skills/skills.dart';
@@ -31,9 +32,10 @@ import '../utils/notifiers.dart';
 import '../widgets/ButtonLink.dart';
 import '../widgets/CircularButton.dart';
 import '../widgets/SideBar.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/table_dropdown.dart';
 import '../widgets/drawer_wrapper.dart';
-import '../widgets/loaders.dart';
+import '../widgets/loaders.dart' as shg_loader;
 
 class SHGInboxPage extends StatefulWidget {
   final String tenantId;
@@ -108,7 +110,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         ? 150.0
         : (MediaQuery.of(context).size.width / 7.5);
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: const AppBarLogo(),
+        ),
         drawer: DrawerWrapper(const Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
@@ -117,7 +122,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
             builder: (context, skillsState) {
           return skillsState.maybeWhen(
               orElse: () => Container(),
-              loading: () => Loaders.circularLoader(context),
+              loading: () => shg_loader.Loaders.circularLoader(context),
               error: (String? error) => Notifiers.getToastMessage(
                   context,
                   AppLocalizations.of(context).translate(error.toString()),
@@ -137,7 +142,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                     builder: (context, mdmsState) {
                   return mdmsState.maybeWhen(
                       orElse: () => Container(),
-                      loading: () => Loaders.circularLoader(context),
+                      loading: () => shg_loader.Loaders.circularLoader(context),
                       loaded: (AttendanceHoursList? attendanceHoursList) {
                         entryExitList = attendanceHoursList!.attendanceHours
                             ?.where((obj) => obj.active == true)
@@ -149,7 +154,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                             builder: (context, state) {
                           return state.maybeWhen(
                               orElse: () => Container(),
-                              loading: () => Loaders.circularLoader(context),
+                              loading: () => shg_loader.Loaders.circularLoader(context),
                               loaded: (MusterRollsModel?
                                   individualMusterRollModel) {
                                 musterId = individualMusterRollModel!
@@ -215,7 +220,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                     hintText: AppLocalizations
                                                             .of(context)
                                                         .translate(i18.common
-                                                            .searchByNameAadhaar),
+                                                            .searchByName),
                                                     border:
                                                         const OutlineInputBorder(
                                                       borderRadius:
@@ -259,10 +264,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                         .maybeWhen(
                                                             orElse: () =>
                                                                 Container(),
-                                                            loading: () => Loaders
+                                                            loading: () => shg_loader.Loaders
                                                                 .circularLoader(
                                                                     context),
-                                                            loaded: (MusterRollsModel?
+                                                            loaded: (EstimateMusterRollsModel?
                                                                 viewMusterRollsModel) {
                                                               List<AttendeesTrackList>
                                                                   attendeeList =
@@ -286,6 +291,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 .individualId,
                                                                         individualId: e
                                                                             .individualId,
+                                                                        individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName,
                                                                         id: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? e.id ?? '',
                                                                         skill: individualMusterRollModel.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
                                                                             '',
@@ -542,13 +548,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                             ),
                                             child: SizedBox(
                                               height: 100,
-                                              child: BlocListener<
-                                                  MusterGetWorkflowBloc,
-                                                  MusterGetWorkflowState>(
+                                              child: BlocListener<MusterGetWorkflowBloc, MusterGetWorkflowState>(
                                                 listener:
                                                     (context, workflowState) {
                                                   workflowState.maybeWhen(
-                                                      loading: () => Loaders
+                                                      loading: () => shg_loader.Loaders
                                                           .circularLoader(
                                                               context),
                                                       error: () {
@@ -854,7 +858,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
     if (searchController.text.isNotEmpty) {
       setState(() {
         newList.retainWhere((e) =>
-            e.individualId!.toLowerCase().contains(searchController.text));
+            e.name!.toLowerCase().contains(searchController.text.toLowerCase()));
       });
     } else {
       onSubmit(registerId.toString());
@@ -945,6 +949,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           apiKey: tableDataModel.skill,
           widget: DropDownDialog(
             options: skillDropDown,
+            label: i18.common.selectSkill,
             selectedOption: tableDataModel.skill.toString(),
             onChanged: (val) {
               tableDataModel.skill = val;

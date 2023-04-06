@@ -28,7 +28,7 @@ const LabourAnalysis = ({watch,formState,...props}) => {
       <Card style={{ backgroundColor: "#FAFAFA",marginTop:"2rem" }}>
           <CardSectionHeader style={{ marginTop: "14px",marginBottom:"1rem" }}>{t(`ESTIMATE_LABOUR_ANALYSIS`)}</CardSectionHeader>
           <LabelFieldPair>
-              <CardLabel style={{ fontSize: "16px", fontStyle: "bold", fontWeight: "600",marginBottom:"-10px" }}>{`${t(`ESTIMATE_LABOUR_COST`)}:*`}</CardLabel>
+              <CardLabel style={{ fontSize: "16px", fontStyle: "bold", fontWeight: "600",marginBottom:"-10px" }}>{`${t(`ESTIMATE_LABOUR_COST`)}*`}</CardLabel>
               <div className='field'>
                   <TextInput
                       name={`${formFieldName}.labour`}
@@ -45,7 +45,7 @@ const LabourAnalysis = ({watch,formState,...props}) => {
               </div>
           </LabelFieldPair>
           <LabelFieldPair>
-              <CardLabel style={{ fontSize: "16px", fontStyle: "bold", fontWeight: "600", marginBottom: "-10px" }}>{`${t(`ESTIMATE_MATERIAL_COST`)}:*`}</CardLabel>
+              <CardLabel style={{ fontSize: "16px", fontStyle: "bold", fontWeight: "600", marginBottom: "-10px" }}>{`${t(`ESTIMATE_MATERIAL_COST`)}*`}</CardLabel>
               <div className='field'>
                   <TextInput
                       name={`${formFieldName}.material`}

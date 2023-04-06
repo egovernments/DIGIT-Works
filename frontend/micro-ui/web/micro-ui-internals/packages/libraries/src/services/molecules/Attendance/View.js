@@ -34,10 +34,10 @@ const getAttendanceTableData = (data, skills, t) => {
       let tableRow = {}
       tableRow.id = item.id
       tableRow.sno = index + 1
-      tableRow.registerId = t("NA") || data?.registerId 
-      tableRow.actualWorkingDays = item?.actualTotalAttendance
-      tableRow.nameOfIndividual = item?.additionalDetails?.userName || "Piyush HarjitPal"
-      tableRow.guardianName = item?.additionalDetails?.fatherName  || "Harijitpal"
+      tableRow.registerId = item?.additionalDetails?.userId || t("NA")
+      tableRow.actualWorkingDays = item?.actualTotalAttendance || 0
+      tableRow.nameOfIndividual = item?.additionalDetails?.userName || t("NA")
+      tableRow.guardianName = item?.additionalDetails?.fatherName  || t("NA")
       tableRow.skill = skills[item?.additionalDetails?.skillCode]?.name || t("NA")
       tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount * item?.actualTotalAttendance || 0
       tableRow.modifiedAmount = (item?.modifiedTotalAttendance ? (skills[item?.additionalDetails?.skillCode]?.amount * item?.modifiedTotalAttendance) : tableRow?.amount) || 0
@@ -48,13 +48,14 @@ const getAttendanceTableData = (data, skills, t) => {
       }
       tableRow.aadharNumber = item?.additionalDetails?.aadharNumber || t("NA")
       tableRow.attendence = getWeekAttendance(item?.attendanceEntries)
+      tableRow.perDayWage = skills[item?.additionalDetails?.skillCode]?.amount
       tableData[item.id] = tableRow
     });
 
     //Add row to show Total data
     let totalRow = {}
     totalRow.type = "total"
-    totalRow.sno = "ES_COMMON_TOTAL_AMOUNT"
+    totalRow.sno = "RT_TOTAL"
     totalRow.registerId = "DNR"
     totalRow.nameOfIndividual = "DNR"
     totalRow.guardianName = "DNR"
@@ -72,22 +73,23 @@ const getAttendanceTableData = (data, skills, t) => {
   return tableData
 }
 
-const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills) => {
-  if(data.musterRolls.length === 0) return;
+const transformViewDataToApplicationDetails = (t, data, skills) => {
+  if(data?.musterRolls?.length === 0) throw new Error('No data found');
   
   const musterRoll = data.musterRolls[0]
   const attendanceTableData = getAttendanceTableData(musterRoll, skills, t)
+  
+  const totalAmount = Object.keys(attendanceTableData).reduce((acc,key) => {
+    if(key !== 'total'){
+    return attendanceTableData[key].modifiedAmount + acc
+    }
+    else {
+    return 0 + acc
+    }
+  },0)
   const weekDates = getWeekDates(musterRoll)
   const registrationDetails = {
-    title: "ATM_REGISTRATION_DETAILS",
     applicationData: musterRoll,
-    asSectionHeader: true,
-    values: [
-      { title: "ES_COMMON_ORG_NAME", value: musterRoll?.additionalDetails?.orgName || t("NA") },
-      { title: "ATM_REGISTER_ID", value: musterRoll?.additionalDetails?.attendanceRegisterNo || t("NA")},
-      { title: "ATM_REGISTER_NAME", value: musterRoll?.additionalDetails?.attendanceRegisterName || t("NA") },
-      { title: "ATM_ATTENDENCE_FOR_WEEK", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("NA") },
-    ],
     additionalDetails: {
       table: {
         weekTable: {
@@ -103,9 +105,7 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills)
 
   return {
     applicationDetails,
-    applicationData: musterRoll,
-    processInstancesDetails: workflowDetails?.ProcessInstances,
-    workflowDetails
+    applicationData: {totalAmount,...musterRoll},
   }
 };
 
@@ -124,9 +124,10 @@ const getWageSeekerSkills = async () => {
 export const fetchAttendanceDetails = async (t, tenantId, searchParams) => {
   try {
     const response = await AttendanceService.search(tenantId, searchParams);
-    const workflowDetails = await workflowDataDetails(tenantId, searchParams.musterRollNumber);
+    // const workflowDetails = await workflowDataDetails(tenantId, searchParams.musterRollNumber);
     const skills = await getWageSeekerSkills()
-    return transformViewDataToApplicationDetails(t, response, workflowDetails, skills)
+    
+    return transformViewDataToApplicationDetails(t, response, skills)
   } catch (error) {
       console.log('error', error);
       throw new Error(error?.response?.data?.Errors[0].message);

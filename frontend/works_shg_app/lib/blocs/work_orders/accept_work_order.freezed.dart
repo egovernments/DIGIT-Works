@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'accept_work_order.dart';
 
@@ -16,15 +16,12 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AcceptWorkOrderEvent {
-  Map<dynamic, dynamic>? get contractsModel =>
-      throw _privateConstructorUsedError;
-  String get action => throw _privateConstructorUsedError;
-  String get comments => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(Map<dynamic, dynamic>? contractsModel,
             String action, String comments)
         search,
+    required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -32,6 +29,7 @@ mixin _$AcceptWorkOrderEvent {
     TResult? Function(Map<dynamic, dynamic>? contractsModel, String action,
             String comments)?
         search,
+    TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -39,28 +37,28 @@ mixin _$AcceptWorkOrderEvent {
     TResult Function(Map<dynamic, dynamic>? contractsModel, String action,
             String comments)?
         search,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(WorkOrderAcceptEvent value) search,
+    required TResult Function(WorkOrderDisposeEvent value) dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(WorkOrderAcceptEvent value)? search,
+    TResult? Function(WorkOrderDisposeEvent value)? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(WorkOrderAcceptEvent value)? search,
+    TResult Function(WorkOrderDisposeEvent value)? dispose,
     required TResult orElse(),
   }) =>
-      throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $AcceptWorkOrderEventCopyWith<AcceptWorkOrderEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -69,9 +67,6 @@ abstract class $AcceptWorkOrderEventCopyWith<$Res> {
   factory $AcceptWorkOrderEventCopyWith(AcceptWorkOrderEvent value,
           $Res Function(AcceptWorkOrderEvent) then) =
       _$AcceptWorkOrderEventCopyWithImpl<$Res, AcceptWorkOrderEvent>;
-  @useResult
-  $Res call(
-      {Map<dynamic, dynamic>? contractsModel, String action, String comments});
 }
 
 /// @nodoc
@@ -84,38 +79,13 @@ class _$AcceptWorkOrderEventCopyWithImpl<$Res,
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? contractsModel = freezed,
-    Object? action = null,
-    Object? comments = null,
-  }) {
-    return _then(_value.copyWith(
-      contractsModel: freezed == contractsModel
-          ? _value.contractsModel
-          : contractsModel // ignore: cast_nullable_to_non_nullable
-              as Map<dynamic, dynamic>?,
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
-          ? _value.comments
-          : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
 }
 
 /// @nodoc
-abstract class _$$WorkOrderAcceptEventCopyWith<$Res>
-    implements $AcceptWorkOrderEventCopyWith<$Res> {
+abstract class _$$WorkOrderAcceptEventCopyWith<$Res> {
   factory _$$WorkOrderAcceptEventCopyWith(_$WorkOrderAcceptEvent value,
           $Res Function(_$WorkOrderAcceptEvent) then) =
       __$$WorkOrderAcceptEventCopyWithImpl<$Res>;
-  @override
   @useResult
   $Res call(
       {Map<dynamic, dynamic>? contractsModel, String action, String comments});
@@ -169,6 +139,7 @@ class _$WorkOrderAcceptEvent
   Map<dynamic, dynamic>? get contractsModel {
     final value = _contractsModel;
     if (value == null) return null;
+    if (_contractsModel is EqualUnmodifiableMapView) return _contractsModel;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(value);
   }
@@ -223,6 +194,7 @@ class _$WorkOrderAcceptEvent
     required TResult Function(Map<dynamic, dynamic>? contractsModel,
             String action, String comments)
         search,
+    required TResult Function() dispose,
   }) {
     return search(contractsModel, action, comments);
   }
@@ -233,6 +205,7 @@ class _$WorkOrderAcceptEvent
     TResult? Function(Map<dynamic, dynamic>? contractsModel, String action,
             String comments)?
         search,
+    TResult? Function()? dispose,
   }) {
     return search?.call(contractsModel, action, comments);
   }
@@ -243,6 +216,7 @@ class _$WorkOrderAcceptEvent
     TResult Function(Map<dynamic, dynamic>? contractsModel, String action,
             String comments)?
         search,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -255,6 +229,7 @@ class _$WorkOrderAcceptEvent
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(WorkOrderAcceptEvent value) search,
+    required TResult Function(WorkOrderDisposeEvent value) dispose,
   }) {
     return search(this);
   }
@@ -263,6 +238,7 @@ class _$WorkOrderAcceptEvent
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(WorkOrderAcceptEvent value)? search,
+    TResult? Function(WorkOrderDisposeEvent value)? dispose,
   }) {
     return search?.call(this);
   }
@@ -271,6 +247,7 @@ class _$WorkOrderAcceptEvent
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(WorkOrderAcceptEvent value)? search,
+    TResult Function(WorkOrderDisposeEvent value)? dispose,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -286,16 +263,128 @@ abstract class WorkOrderAcceptEvent implements AcceptWorkOrderEvent {
       required final String action,
       final String comments}) = _$WorkOrderAcceptEvent;
 
-  @override
   Map<dynamic, dynamic>? get contractsModel;
-  @override
   String get action;
-  @override
   String get comments;
-  @override
   @JsonKey(ignore: true)
   _$$WorkOrderAcceptEventCopyWith<_$WorkOrderAcceptEvent> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$WorkOrderDisposeEventCopyWith<$Res> {
+  factory _$$WorkOrderDisposeEventCopyWith(_$WorkOrderDisposeEvent value,
+          $Res Function(_$WorkOrderDisposeEvent) then) =
+      __$$WorkOrderDisposeEventCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$WorkOrderDisposeEventCopyWithImpl<$Res>
+    extends _$AcceptWorkOrderEventCopyWithImpl<$Res, _$WorkOrderDisposeEvent>
+    implements _$$WorkOrderDisposeEventCopyWith<$Res> {
+  __$$WorkOrderDisposeEventCopyWithImpl(_$WorkOrderDisposeEvent _value,
+      $Res Function(_$WorkOrderDisposeEvent) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$WorkOrderDisposeEvent
+    with DiagnosticableTreeMixin
+    implements WorkOrderDisposeEvent {
+  const _$WorkOrderDisposeEvent();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AcceptWorkOrderEvent.dispose()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'AcceptWorkOrderEvent.dispose'));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$WorkOrderDisposeEvent);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(Map<dynamic, dynamic>? contractsModel,
+            String action, String comments)
+        search,
+    required TResult Function() dispose,
+  }) {
+    return dispose();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(Map<dynamic, dynamic>? contractsModel, String action,
+            String comments)?
+        search,
+    TResult? Function()? dispose,
+  }) {
+    return dispose?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(Map<dynamic, dynamic>? contractsModel, String action,
+            String comments)?
+        search,
+    TResult Function()? dispose,
+    required TResult orElse(),
+  }) {
+    if (dispose != null) {
+      return dispose();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(WorkOrderAcceptEvent value) search,
+    required TResult Function(WorkOrderDisposeEvent value) dispose,
+  }) {
+    return dispose(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(WorkOrderAcceptEvent value)? search,
+    TResult? Function(WorkOrderDisposeEvent value)? dispose,
+  }) {
+    return dispose?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(WorkOrderAcceptEvent value)? search,
+    TResult Function(WorkOrderDisposeEvent value)? dispose,
+    required TResult orElse(),
+  }) {
+    if (dispose != null) {
+      return dispose(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class WorkOrderDisposeEvent implements AcceptWorkOrderEvent {
+  const factory WorkOrderDisposeEvent() = _$WorkOrderDisposeEvent;
 }
 
 /// @nodoc

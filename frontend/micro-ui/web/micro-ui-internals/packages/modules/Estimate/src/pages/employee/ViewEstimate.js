@@ -1,5 +1,5 @@
 import React,{ Fragment,useState,useEffect } from 'react'
-import { Loader,Header,StatusTable,Card,Row,HorizontalNav,ViewDetailsCard} from '@egovernments/digit-ui-react-components';
+import { Loader,Header, MultiLink, StatusTable,Card,Row,HorizontalNav,ViewDetailsCard, Toast} from '@egovernments/digit-ui-react-components';
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from '../../../../templates/ApplicationDetails';
 
@@ -7,9 +7,9 @@ const ViewEstimate = (props) => {
     
     const { t } = useTranslation()
     const { tenantId, estimateNumber } = Digit.Hooks.useQueryParams();
-    
-    const [cardState,setCardState] = useState({})
+    const [cardState,setCardState] = useState([])
     const [activeLink, setActiveLink] = useState("Estimate_Details");
+    const [toast, setToast] = useState({show : false, label : "", error : false});
     const configNavItems = [
         {
             "name": "Project_Details",
@@ -27,7 +27,7 @@ const ViewEstimate = (props) => {
     const ViewProject = Digit.ComponentRegistryService.getComponent("ViewProject");
 
     //fetching estimate data
-    const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
+    const { isLoading: isEstimateLoading,data:estimate, isError : isEstimateError } = Digit.Hooks.estimates.useEstimateSearch({
         tenantId,
         filters: { estimateNumber }
     })
@@ -47,19 +47,37 @@ const ViewEstimate = (props) => {
         }
     })
 
+    const HandleDownloadPdf = () => {
+        Digit.Utils.downloadEgovPDF('estimate/estimates',{estimateNumber,tenantId},`estimate-${estimateNumber}.pdf`)
+    }
 
+
+    useEffect(()=>{
+        if(isEstimateError || (!isEstimateLoading && !estimate)) {
+            setToast({show : true, label : t("COMMON_ESTIMATE_NOT_FOUND"), error : true});
+        }
+    },[isEstimateLoading, isEstimateError, estimate])
+
+    const handleToastClose = () => {
+        setToast({show : false, label : "", error : false});
+    }
     
     useEffect(() => {
       //here set cardstate when estimate and project is available
-        setCardState({
-            "ESTIMATE_ESTIMATE_NO": estimate?.estimateNumber,
-            "WORKS_ESTIMATE_TYPE": "Original Estimate",
-            "WORKS_PROJECT_ID": project?.projectNumber,
-            "ES_COMMON_PROPOSAL_DATE": Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal),
-            "ES_COMMON_PROJECT_NAME": project?.name,
-            "PROJECTS_DESCRIPTION": project?.description
-        }) 
-    }, [project])
+        setCardState([
+            {
+                title: '',
+                values: [
+                  { title: "ESTIMATE_ESTIMATE_NO", value: estimate?.estimateNumber },
+                  { title: "WORKS_ESTIMATE_TYPE", value: "Original Estimate" },
+                  { title: "WORKS_PROJECT_ID", value: project?.projectNumber },
+                  { title: "ES_COMMON_PROPOSAL_DATE", value: Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal)},
+                  { title: "ES_COMMON_PROJECT_NAME", value: project?.name },
+                  { title: "PROJECTS_DESCRIPTION", value: project?.description }
+                ]
+              }
+        ])
+    }, [project, estimate])
     
     
 
@@ -69,20 +87,28 @@ const ViewEstimate = (props) => {
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
                 <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("ESTIMATE_VIEW_ESTIMATE")}</Header>
+                <MultiLink
+                   onHeadClick={() => HandleDownloadPdf()}
+                   downloadBtnClassName={"employee-download-btn-className"}
+                   label={t("CS_COMMON_DOWNLOAD")}
+                />
             </div>
-            <ViewDetailsCard cardState={cardState} t={t}/>
-            <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
-                {
-                    (activeLink === "Project_Details") && (
-                        <ViewProject fromUrl={false} tenantId={tenantId} projectNumber={project?.projectNumber} />
-                    )
-                }
-                {
-                    (activeLink === "Estimate_Details") && (
-                        <ViewEstimate />
-                    )
-                }
-            </HorizontalNav>
+            {(project || estimate) && <ViewDetailsCard cardState={cardState} t={t}/>}
+            {
+                estimate && <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
+                    {
+                        (activeLink === "Project_Details") && (
+                            <ViewProject fromUrl={false} tenantId={tenantId} projectNumber={project?.projectNumber} />
+                        )
+                    }
+                    {
+                        (activeLink === "Estimate_Details") && (
+                            <ViewEstimate editApplicationNumber={project?.projectNumber}/>
+                        )
+                    }
+                </HorizontalNav>
+            }
+            {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
         </div>
     )
 }

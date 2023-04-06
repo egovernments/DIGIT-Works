@@ -7,13 +7,16 @@ class DropDownDialog extends StatefulWidget {
   final List<String> options;
   final Function(String?) onChanged;
   final bool isDisabled;
+  final String? label;
   String selectedOption;
 
   DropDownDialog(
       {super.key,
       required this.options,
       required this.onChanged,
-      required this.selectedOption, this.isDisabled = false});
+      required this.selectedOption,
+      this.isDisabled = false,
+      this.label});
 
   @override
   State<StatefulWidget> createState() {
@@ -31,9 +34,11 @@ class _DropDownDialogState extends State<DropDownDialog> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           InkWell(
-            onTap: widget.isDisabled ? null : () {
-              _showDialog(context);
-            },
+            onTap: widget.isDisabled
+                ? null
+                : () {
+                    _showDialog(context);
+                  },
             child: Container(
               width: 120,
               height: 40,
@@ -47,7 +52,8 @@ class _DropDownDialogState extends State<DropDownDialog> {
                   SizedBox(
                     width: 80,
                     child: Text(
-                      widget.selectedOption,
+                      AppLocalizations.of(context)
+                          .translate(widget.selectedOption),
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 12),
                     ),
@@ -70,17 +76,22 @@ class _DropDownDialogState extends State<DropDownDialog> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)
-              .translate(i18.common.selectAnOption)),
+          title: Text(
+            AppLocalizations.of(context)
+                .translate(widget.label ?? i18.common.selectAnOption),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+          ),
           content: SizedBox(
-            height: 100,
+            height: 180,
             width: 200,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: widget.options.map((option) {
                   return RadioListTile(
-                    title: Text(option),
+                    title: Text(AppLocalizations.of(context).translate(option),
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w400)),
                     value: option,
                     groupValue: widget.selectedOption,
                     onChanged: (value) {

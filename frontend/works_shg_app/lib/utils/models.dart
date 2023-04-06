@@ -34,6 +34,12 @@ class KeyValue {
   KeyValue(this.label, this.key);
 }
 
+class FilesAttached {
+  String name;
+  String fileStoreId;
+  FilesAttached(this.name, this.fileStoreId);
+}
+
 class DaysInRange {
   bool monday;
   bool tuesday;
@@ -69,13 +75,13 @@ class DateRange {
   final int endDate;
   DateRange(this.range, this.startDate, this.endDate);
 }
-
-class MenuItemModel {
-  final String name;
-  final String code;
-
-  MenuItemModel({this.name = 'SKill 1', this.code = ' SKILL1'});
-}
+//
+// class MenuItemModel {
+//   final String name;
+//   final String code;
+//
+//   MenuItemModel({this.name = 'SKill 1', this.code = ''});
+// }
 
 class Skill {
   final String code;
@@ -86,4 +92,11 @@ class SkillCategory {
   final String code;
 
   SkillCategory({required this.code});
+}
+
+class SelectSkill {
+  final String code;
+  final String label;
+
+  SelectSkill(this.code, this.label);
 }

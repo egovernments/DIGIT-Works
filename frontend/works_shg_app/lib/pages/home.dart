@@ -5,15 +5,18 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:works_shg_app/blocs/localization/localization.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
-import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/widgets/ButtonLink.dart';
+import 'package:works_shg_app/widgets/atoms/app_bar_logo.dart';
 
 import '../blocs/attendance/search_projects/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/search_muster_roll.dart';
+import '../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
+import '../utils/constants.dart';
+import '../utils/models/file_picker_data.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/drawer_wrapper.dart';
-import '../widgets/loaders.dart';
+import '../widgets/loaders.dart' as shg_loader;
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,13 +27,19 @@ class HomePage extends StatelessWidget {
         builder: (context, state) {
       return state.isLocalizationLoadCompleted
           ? Scaffold(
-              appBar: AppBar(),
+              appBar: AppBar(
+                titleSpacing: 0,
+                title: const AppBarLogo(),
+              ),
               drawer: DrawerWrapper(const Drawer(
                   child: SideBar(
                 module: 'rainmaker-common,rainmaker-attendencemgmt',
               ))),
               body: ScrollableContent(
-                footer: const PoweredByDigit(),
+                footer: const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: PoweredByDigit(),
+                ),
                 children: [
                   DigitCard(
                     onPressed: null,
@@ -63,15 +72,6 @@ class HomePage extends StatelessWidget {
                           ),
                           ButtonLink(
                               AppLocalizations.of(context)
-                                  .translate(i18.home.manageWageSeekers), () {
-                            context.read<AttendanceProjectsSearchBloc>().add(
-                                  const SearchAttendanceProjectsEvent(),
-                                );
-                            context.router
-                                .push(const ManageAttendanceRegisterRoute());
-                          }),
-                          ButtonLink(
-                              AppLocalizations.of(context)
                                   .translate(i18.home.trackAttendance), () {
                             context.read<AttendanceProjectsSearchBloc>().add(
                                   const SearchAttendanceProjectsEvent(),
@@ -89,16 +89,22 @@ class HomePage extends StatelessWidget {
                           }),
                           ButtonLink(
                               AppLocalizations.of(context)
-                                  .translate(i18.home.registerWageSeeker),
-                              () => context.router
-                                  .push(const RegisterIndividualRoute())),
+                                  .translate(i18.home.registerWageSeeker), () {
+                            context.read<WageSeekerBloc>().add(
+                                  const WageSeekerClearEvent(),
+                                );
+                            FilePickerData.imageFile = null;
+                            FilePickerData.bytes = null;
+                            context.router
+                                .push(const RegisterIndividualRoute());
+                          }),
                         ],
                       ),
                     ),
                   )
                 ],
               ))
-          : Loaders.circularLoader(context);
+          : shg_loader.Loaders.circularLoader(context);
     });
   }
 }

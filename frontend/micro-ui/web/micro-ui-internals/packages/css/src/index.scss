@@ -102,6 +102,10 @@
   }
 }
 
+.clear-search {
+  margin-right: 1rem;
+}
+
 .clear-search-label {
   color: #f47738;
   cursor: pointer;
@@ -907,4 +911,28 @@ input[type="number"] {
       width: 100%;
     }
   }
+}
+
+.fc-header-texts {
+  height: 32px;
+  color: #000 !important;
+  border: none;
+  display: flex;
+  padding-top: 10px;
+}
+
+.disabled-text-field {
+  color: #000 !important;
+  background-color: #FAFAFA;
+}
+
+.status-table-custom-class {
+  line-height: 19px;
+  max-width: 950px;
+}
+
+.field-value-no-border {
+  border: none;
+  color: black !important;
+  padding: 0;
 }

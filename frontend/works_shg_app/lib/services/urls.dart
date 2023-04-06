@@ -5,13 +5,31 @@ class Urls {
   static AttendanceRegisterServices attendanceRegisterServices =
       const AttendanceRegisterServices();
   static CommonServices commonServices = const CommonServices();
+  static WageSeekerServices wageSeekerServices = const WageSeekerServices();
   static WorkServices workServices = const WorkServices();
+  static ORGServices orgServices = const ORGServices();
 }
 
 class CommonServices {
   const CommonServices();
   String get workflow => 'egov-workflow-v2/egov-wf/process/_search';
   String get fileUpload => 'filestore/v1/files';
+  String get fileFetch => 'filestore/v1/files/url';
+  String get fetchCities => 'egov-location/location/v11/boundarys/_search';
+  String get bankDetails => 'https://ifsc.razorpay.com';
+}
+
+class ORGServices {
+  const ORGServices();
+
+  String get orgSearch => 'org-services/organisation/v1/_search';
+}
+
+class WageSeekerServices {
+  const WageSeekerServices();
+
+  String get individualCreate => 'individual/v1/_create';
+  String get bankCreate => '/bankaccount-service/bankaccount/v1/_create';
 }
 
 class InitServices {
@@ -53,4 +71,5 @@ class AttendanceRegisterServices {
   String get createAttendanceLog => 'attendance/log/v1/_create';
   String get updateAttendanceLog => 'attendance/log/v1/_update';
   String get deEnrollAttendee => 'attendance/attendee/v1/_delete';
+  String get individualSearch => 'individual/v1/_search';
 }

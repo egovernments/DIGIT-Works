@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.util.MDMSUtils;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendeeCreateRequest;
@@ -16,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
 import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
@@ -26,6 +28,9 @@ public class AttendeeServiceValidator {
 
     @Autowired
     private MDMSUtils mdmsUtils;
+
+    @Autowired
+    private IndividualServiceUtil individualServiceUtil;
 
     public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
@@ -66,6 +71,23 @@ public class AttendeeServiceValidator {
         //validate tenantId with MDMS
         log.info("validating tenant id from MDMS and Request info");
         validateMDMSAndRequestInfoForCreateAttendee(attendeeCreateRequest);
+
+        //validate individualId with Individual Service
+        log.info("validating tenant id from MDMS and Request info");
+        validateIndividualId(attendeeCreateRequest);
+    }
+
+    private void validateIndividualId(AttendeeCreateRequest attendeeCreateRequest) {
+        RequestInfo requestInfo=attendeeCreateRequest.getRequestInfo();
+        String tenantId=attendeeCreateRequest.getAttendees().get(0).getTenantId();
+        List<String> individualIds=attendeeCreateRequest.getAttendees().stream().map(attendee->attendee.getIndividualId()).collect(Collectors.toList());
+        List<String> ids= individualServiceUtil.fetchIndividualIds(individualIds,requestInfo,tenantId);
+
+        for(String individualId:individualIds){
+            if(!ids.contains(individualId)){
+                throw new CustomException("INDIVIDUAL_ID_NOT_FOUND","Individual with id: "+individualId+" not found");
+            }
+        }
     }
 
     public void validateTenantIds(AttendeeCreateRequest attendeeCreateRequest, String tenantId) {
@@ -137,6 +159,23 @@ public class AttendeeServiceValidator {
         //validate tenantId with MDMS
         log.info("validating tenant id from MDMS and Request info");
         validateMDMSAndRequestInfoForDeleteAttendee(attendeeDeleteRequest);
+
+        //validate individualId with Individual Service
+        log.info("validating tenant id from MDMS and Request info");
+        validateIndividualId(attendeeDeleteRequest);
+    }
+
+    private void validateIndividualId(AttendeeDeleteRequest attendeeDeleteRequest) {
+        RequestInfo requestInfo=attendeeDeleteRequest.getRequestInfo();
+        String tenantId=attendeeDeleteRequest.getAttendees().get(0).getTenantId();
+        List<String> individualIds=attendeeDeleteRequest.getAttendees().stream().map(attendee->attendee.getIndividualId()).collect(Collectors.toList());
+        List<String> ids= individualServiceUtil.fetchIndividualIds(individualIds,requestInfo,tenantId);
+
+        for(String individualId:individualIds){
+            if(!ids.contains(individualId)){
+                throw new CustomException("INDIVIDUAL_ID_NOT_FOUND","Individual with id: "+individualId+" not found");
+            }
+        }
     }
 
     public void validateTenantIds(AttendeeDeleteRequest attendeeDeleteRequest, String tenantId) {

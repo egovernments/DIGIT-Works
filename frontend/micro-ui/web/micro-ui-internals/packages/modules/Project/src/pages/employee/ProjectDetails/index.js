@@ -1,7 +1,7 @@
 import { Header, MultiLink, Card, StatusTable, Row, CardSubHeader,Loader,SubmitBar,ActionBar, HorizontalNav, Menu, Toast } from '@egovernments/digit-ui-react-components'
 import React, { Fragment,useEffect,useRef,useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import ProjectDetailsNavDetails from './ProjectDetailsNavDetails'
 
 const ProjectDetails = () => {
@@ -16,6 +16,12 @@ const ProjectDetails = () => {
     const menuRef = useRef();
     const [showActions, setShowActions] = useState(false);
     const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
+    const [hideActionBar, setHideActionBar] = useState(true);
+    const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
+    const [sessionFormData, clearSessionFormData] = projectSession;
+    const location = useLocation();
+    let isProjectModifier = false;
+    let isEstimateViewerAndCreator = false;
     const [actionsMenu, setActionsMenu] = useState([ 
         {
             name : "MODIFY_PROJECT"
@@ -72,10 +78,14 @@ const ProjectDetails = () => {
             history.push(`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${searchParams?.Projects?.[0]?.tenantId}&estimateNumber=${estimates?.[0]?.estimateNumber}`);
         }
         if(option?.name === "MODIFY_PROJECT"){
-            if((estimates?.length !==0 && estimates?.[0]?.wfStatus !== "") && ( estimates?.length !==0 && estimates?.[0]?.wfStatus !== "REJECTED")) {
+            if(estimates?.length !==0 && estimates?.[0]?.wfStatus !== "" &&  estimates?.[0]?.wfStatus !== "REJECTED") {
                 setToast({show : true, label : t("COMMON_CANNOT_MODIFY_PROJECT_EST_CREATED"), error : true});
             }else {
-                history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
+                // history.push(`/${window.contextPath}/employee/project/modify-project?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`);
+                history.push({
+                    pathname : `/${window.contextPath}/employee/project/create-project`,
+                    search : `?tenantId=${searchParams?.Projects?.[0]?.tenantId}&projectNumber=${searchParams?.Projects?.[0]?.projectNumber}`,
+                })
             }
         }
     }
@@ -84,31 +94,61 @@ const ProjectDetails = () => {
       setToast({show : false, label : "", error : false});
     }
 
+    const HandleDownloadPdf = () => {
+        const projectId=searchParams?.Projects?.[0]?.projectNumber;
+        Digit.Utils.downloadEgovPDF('project/project-details',{projectId,tenantId:searchParams?.Projects?.[0]?.tenantId},`project-${projectId}.pdf`)
+    }
+
     const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
 
     //fetch estimate details
-    const { data : estimates } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
+    const { data : estimates, isError : isEstimateSearchError } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
+
+    useEffect(()=>{
+        const projectModifierRoles = ["PROJECT_CREATOR"];
+        isProjectModifier = projectModifierRoles?.some(role=>loggedInUserRoles?.includes(role));
+    },[loggedInUserRoles]);
+
+    useEffect(()=>{
+        const estimateViewerAndCreatorRole = ["ESTIMATE_CREATOR", "ESTIMATE_VERIFIER", "TECHNICAL_SANCTIONER", "ESTIMATE_APPROVER", "ESTIMATE_VIEWER"];
+        isEstimateViewerAndCreator = estimateViewerAndCreatorRole?.some(role=>loggedInUserRoles?.includes(role));
+    },[loggedInUserRoles]);
 
     useEffect(()=>{
         let isUserEstimateCreator = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
-        if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED")) {
-            if(isUserEstimateCreator) {
+        if(isEstimateSearchError && isEstimateViewerAndCreator) {
+            setToast({show : true, label : t("COMMON_ERROR_FETCHING_ESTIMATE_DETAILS"), error : true});
+            setActionsMenu([]);
+            setHideActionBar(true);
+        }else {
+            if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED")) {
+                if(isUserEstimateCreator) {
+                    setHideActionBar(false);
+                    setActionsMenu([
+                        {
+                            name : "CREATE_ESTIMATE"
+                        }
+                    ])
+                }else {
+                    setHideActionBar(true);
+                    setActionsMenu([])
+                }
+            }else if(isEstimateViewerAndCreator){
+                setHideActionBar(false);
                 setActionsMenu([
                     {
-                        name : "CREATE_ESTIMATE"
+                        name : "VIEW_ESTIMATE"
                     }
                 ])
-            }else {
-                setActionsMenu([])
             }
-        }else {
-            setActionsMenu([
-                {
-                    name : "VIEW_ESTIMATE"
-                }
-            ])
+            if(isProjectModifier) {
+                setHideActionBar(false);
+                setActionsMenu((prev)=>[...prev, {
+                    name : "MODIFY_PROJECT"
+                }])
+            }
         }
-    },[estimates]);
+    },[estimates, isEstimateSearchError]);
 
      //remove Toast after 3s
      useEffect(()=>{
@@ -131,10 +171,22 @@ const ProjectDetails = () => {
         setNavTypeConfig(filterdNavConfig);
     },[data]);
 
+    //remove session form data if user navigates away from the project create screen
+    useEffect(()=>{
+        if (!window.location.href.includes("create-project") && sessionFormData && Object.keys(sessionFormData) != 0) {
+            clearSessionFormData();
+        }
+    },[location]);
+
     return (
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
                 <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_PROJECT_DETAILS")}</Header>
+            <MultiLink
+              onHeadClick={() => HandleDownloadPdf()}
+              downloadBtnClassName={"employee-download-btn-className"}
+              label={t("CS_COMMON_DOWNLOAD")}
+            />
             </div>
 
             {/* <Card className={"employeeCard-override"} >
@@ -155,7 +207,9 @@ const ProjectDetails = () => {
                 filters={filters}
               />
             </HorizontalNav>
-            <ActionBar>
+            {
+                !hideActionBar &&
+                <ActionBar>
                     {showActions ? 
                         <Menu
                             localeKeyPrefix={`COMMON`}
@@ -163,9 +217,11 @@ const ProjectDetails = () => {
                             optionKey={"name"}
                             t={t}
                             onSelect={handleActionBar}
-                        /> : null}
-                <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)}/>
-        </ActionBar>
+                        /> : null
+                    }
+                    <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)}/>
+                </ActionBar>
+            }
         {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
         </div>
     )

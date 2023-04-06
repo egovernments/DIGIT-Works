@@ -138,7 +138,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
       },
     },
     {
-      Header: () => <p>{t("ATM_NAME_OF_THE_INDIVIDUAL")}</p>,
+      Header: () => <p>{t("WORKS_NAME")}</p>,
       accessor: "nameOfIndividual",
       Cell: ({ value, column, row }) => {
         return String(t(value));
@@ -150,6 +150,13 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
       Cell: ({ value, column, row }) => {
         return String(t(value));
       },
+    },
+    {
+        Header: () => <p>{t("ATM_SKILL")}</p>,
+        accessor: "skill",
+        Cell: ({ value, column, row }) => {
+          return String(t(value));
+        },
     },
     {
       Header: () => (
@@ -258,28 +265,14 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
     }]
     const colsOthers = [
       {
-        Header: () => <p>{t("ATM_SKILL")}</p>,
-        accessor: "skill",
-        Cell: ({ value, column, row }) => {
-          return String(t(value));
-        },
-      },
-      {
-        Header: () => <p>{t("ATM_ACTUAL_WORKING_DAYS")}</p>,
+        Header: () => <p>{t("ATM_DAYS_WORKED")}</p>,
         accessor: "actualWorkingDays",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
-        Header: () => <p>{t("ATM_AMOUNT_IN_RS")}</p>,
-        accessor: "amount",
-        Cell: ({ value, column, row }) => {
-          return Digit.Utils.dss.formatterWithoutRound(value, 'number');
-        },
-      },
-      {
-        Header: () => <p>{t("ATM_MODIFIED_WORKING_DAYS")}</p>,
+        Header: () => <p>{t("ATM_DAYS_MEASURED")}</p>,
         accessor: "modifiedWorkingDays",
         Cell: ({ value, column, row }) => {
           if (row.original.type === "total" || !editable) {
@@ -289,7 +282,21 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
         },
       },
       {
-        Header: () => <p>{t("ATM_MODIFIED_AMOUNT_IN_RS")}</p>,
+        Header: () => <p>{t("ATM_PER_DAY_WAGE")}</p>,
+        accessor: "perDayWage",
+        Cell: ({ value, column, row }) => {
+          return Digit.Utils.dss.formatterWithoutRound(value, 'number');
+        },
+      },
+      // {
+      //   Header: () => <p>{t("ATM_AMOUNT_IN_RS")}</p>,
+      //   accessor: "amount",
+      //   Cell: ({ value, column, row }) => {
+      //     return Digit.Utils.dss.formatterWithoutRound(value, 'number');
+      //   },
+      // },
+      {
+        Header: () => <p>{t("ATM_TOTAL_WAGE")}</p>,
         accessor: "modifiedAmount",
         Cell: ({ value, column, row }) => {
           return Digit.Utils.dss.formatterWithoutRound(value, 'number');
@@ -311,11 +318,12 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
       }
     ]
     let colsToReturn = [];
-    if(showFullTableReadOnly || editable) {
-      colsToReturn = [...colsReadOnly, ...colsOthers]
-    } else {
-      colsToReturn = [...colsReadOnly]
-    }
+    // if(showFullTableReadOnly || editable) {
+    //   colsToReturn = [...colsReadOnly, ...colsOthers]
+    // } else {
+    //   colsToReturn = [...colsReadOnly]
+    // }
+    colsToReturn = [...colsReadOnly, ...colsOthers]
     return colsToReturn
   }, [state, editable, showFullTableReadOnly]);
 
@@ -345,7 +353,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
             if(cellInfo?.row?.original?.type === "total") {
               tableProp["data-last-row-cell"] = "last-row";
             }
-            if (cellInfo.value === "ES_COMMON_TOTAL_AMOUNT") {
+            if (cellInfo.value === "RT_TOTAL") {
               tableProp["colSpan"] = 4;
             }
             if(cellInfo.value === "DNR") {

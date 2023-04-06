@@ -23,17 +23,18 @@ const searchWageSeekerConfig = () => {
       search: {
         uiConfig: {
           headerStyle: null,
+          formClassName:"custom-both-clear-search",
           primaryLabel: "ES_COMMON_SEARCH",
           secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
           minReqFields: 1,
           defaultValues: {
-            boundaryCode: "",
-            id: "",
+            wardCode: "",
+            individualId: "",
             name: "",
-            category: "",
+            socialCategory: "",
             mobileNumber: "",
-            startDate: "",
-            endDate: "",
+            createdFrom: "",
+            createdTo: "",
           },
           fields: [
             {
@@ -44,7 +45,7 @@ const searchWageSeekerConfig = () => {
               "populators": {
                   "name": "wardCode",
                   "type": "ward",
-                  "optionsKey": "name",
+                "optionsKey": "i18nKey",
                   "defaultText": "COMMON_SELECT_WARD",
                   "selectedText": "COMMON_SELECTED",
                   "allowMultiSelect": false
@@ -55,7 +56,7 @@ const searchWageSeekerConfig = () => {
               type: "text",
               isMandatory: false,
               disable: false,
-              populators: { name: "name.givenName", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
+              populators: { name: "name", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
             },
             {
               label: "MASTERS_WAGESEEKER_ID",
@@ -65,7 +66,7 @@ const searchWageSeekerConfig = () => {
               populators: {
                 name: "individualId",
                 error: `PROJECT_PATTERN_ERR_MSG`,
-                validation: { pattern: /^[a-z0-9\/-@# ]*$/i, minlength: 2 },
+                validation: {  minlength: 2 },
               },
             },
             {

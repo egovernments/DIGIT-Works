@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
+import digit.models.coremodels.Document;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -37,6 +38,10 @@ public class Workflow {
     @Valid
     private List<String> assignees = null;
 
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents = null;
+
 
     public Workflow addAssigneesItem(String assigneesItem) {
         if (this.assignees == null) {
@@ -46,5 +51,14 @@ public class Workflow {
         return this;
     }
 
+    public Workflow addDocumentsItem(Document documentsItem) {
+        if (this.documents == null) {
+            this.documents = new ArrayList<>();
+        }
+        if (!this.documents.contains(documentsItem))
+            this.documents.add(documentsItem);
+
+        return this;
+    }
 }
 

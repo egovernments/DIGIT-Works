@@ -12,7 +12,6 @@ import NoResultsFound from '../atoms/NoResultsFound';
 
 
 const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate }) => {
-    
     const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
@@ -51,7 +50,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                     Header: t(column?.label) || t("ES_COMMON_NA"),
                     accessor:column.jsonPath,
                     Cell: ({ value, col, row }) => {
-                        return  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row.original,column,col,value,t, searchResult, headerLocale) 
+                        return  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row.original,column?.label,column, value,t, searchResult);
                     }
                 }
             }
@@ -149,7 +148,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     if(!data) return <></>
     if (searchResult?.length === 0) return <NoResultsFound/>
     return (
-        <div >
+        <div style={{width : "100%"}}>
             {config?.enableGlobalSearch && <div className='card' style={{ "padding": "0px", marginTop: "1rem" }}>
             <TextInput className="searchInput"  onChange={(e) => onSearch(e.target.value)} style={{ border: "none", borderRadius: "200px" }} />
              </div>}

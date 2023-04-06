@@ -52,14 +52,14 @@
               "action": "VERIFY",
               "nextState": "VERIFIED",
               "roles": [
-                "JUNIOR_ENGINEER"
+                "MUSTER_ROLL_VERIFIER"
               ]
             },
             {
               "action": "REJECT",
               "nextState": "REJECTED",
               "roles": [
-                "JUNIOR_ENGINEER"
+                "MUSTER_ROLL_VERIFIER"
               ]
             }
           ]
@@ -77,14 +77,14 @@
               "action": "APPROVE",
               "nextState": "APPROVED",
               "roles": [
-                "MUNICIPAL_ENGINEER"
+                "MUSTER_ROLL_APPROVER"
               ]
             },
             {
               "action": "REJECT",
               "nextState": "REJECTED",
               "roles": [
-                "MUNICIPAL_ENGINEER"
+                "MUSTER_ROLL_APPROVER"
               ]
             }
           ]
@@ -93,6 +93,25 @@
           "sla": null,
           "state": "APPROVED",
           "applicationStatus": "APPROVED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "action": "BILLCREATE",
+              "nextState": "BILLCREATED",
+              "roles": [
+                "BILL_CREATOR",
+                "BILL_VIEWER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "BILLCREATED",
+          "applicationStatus": "BILLCREATED",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": true,

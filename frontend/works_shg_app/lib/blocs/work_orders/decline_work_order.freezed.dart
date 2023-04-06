@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'decline_work_order.dart';
 
@@ -16,15 +16,12 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$DeclineWorkOrderEvent {
-  Map<String, dynamic>? get contractsModel =>
-      throw _privateConstructorUsedError;
-  String get action => throw _privateConstructorUsedError;
-  String get comments => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(Map<String, dynamic>? contractsModel,
             String action, String comments)
         search,
+    required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -32,6 +29,7 @@ mixin _$DeclineWorkOrderEvent {
     TResult? Function(Map<String, dynamic>? contractsModel, String action,
             String comments)?
         search,
+    TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -39,28 +37,28 @@ mixin _$DeclineWorkOrderEvent {
     TResult Function(Map<String, dynamic>? contractsModel, String action,
             String comments)?
         search,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(WorkOrderDeclineEvent value) search,
+    required TResult Function(DisposeDeclineEvent value) dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(WorkOrderDeclineEvent value)? search,
+    TResult? Function(DisposeDeclineEvent value)? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(WorkOrderDeclineEvent value)? search,
+    TResult Function(DisposeDeclineEvent value)? dispose,
     required TResult orElse(),
   }) =>
-      throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $DeclineWorkOrderEventCopyWith<DeclineWorkOrderEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -69,9 +67,6 @@ abstract class $DeclineWorkOrderEventCopyWith<$Res> {
   factory $DeclineWorkOrderEventCopyWith(DeclineWorkOrderEvent value,
           $Res Function(DeclineWorkOrderEvent) then) =
       _$DeclineWorkOrderEventCopyWithImpl<$Res, DeclineWorkOrderEvent>;
-  @useResult
-  $Res call(
-      {Map<String, dynamic>? contractsModel, String action, String comments});
 }
 
 /// @nodoc
@@ -84,38 +79,13 @@ class _$DeclineWorkOrderEventCopyWithImpl<$Res,
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? contractsModel = freezed,
-    Object? action = null,
-    Object? comments = null,
-  }) {
-    return _then(_value.copyWith(
-      contractsModel: freezed == contractsModel
-          ? _value.contractsModel
-          : contractsModel // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as String,
-      comments: null == comments
-          ? _value.comments
-          : comments // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
 }
 
 /// @nodoc
-abstract class _$$WorkOrderDeclineEventCopyWith<$Res>
-    implements $DeclineWorkOrderEventCopyWith<$Res> {
+abstract class _$$WorkOrderDeclineEventCopyWith<$Res> {
   factory _$$WorkOrderDeclineEventCopyWith(_$WorkOrderDeclineEvent value,
           $Res Function(_$WorkOrderDeclineEvent) then) =
       __$$WorkOrderDeclineEventCopyWithImpl<$Res>;
-  @override
   @useResult
   $Res call(
       {Map<String, dynamic>? contractsModel, String action, String comments});
@@ -169,6 +139,7 @@ class _$WorkOrderDeclineEvent
   Map<String, dynamic>? get contractsModel {
     final value = _contractsModel;
     if (value == null) return null;
+    if (_contractsModel is EqualUnmodifiableMapView) return _contractsModel;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(value);
   }
@@ -223,6 +194,7 @@ class _$WorkOrderDeclineEvent
     required TResult Function(Map<String, dynamic>? contractsModel,
             String action, String comments)
         search,
+    required TResult Function() dispose,
   }) {
     return search(contractsModel, action, comments);
   }
@@ -233,6 +205,7 @@ class _$WorkOrderDeclineEvent
     TResult? Function(Map<String, dynamic>? contractsModel, String action,
             String comments)?
         search,
+    TResult? Function()? dispose,
   }) {
     return search?.call(contractsModel, action, comments);
   }
@@ -243,6 +216,7 @@ class _$WorkOrderDeclineEvent
     TResult Function(Map<String, dynamic>? contractsModel, String action,
             String comments)?
         search,
+    TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -255,6 +229,7 @@ class _$WorkOrderDeclineEvent
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(WorkOrderDeclineEvent value) search,
+    required TResult Function(DisposeDeclineEvent value) dispose,
   }) {
     return search(this);
   }
@@ -263,6 +238,7 @@ class _$WorkOrderDeclineEvent
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(WorkOrderDeclineEvent value)? search,
+    TResult? Function(DisposeDeclineEvent value)? dispose,
   }) {
     return search?.call(this);
   }
@@ -271,6 +247,7 @@ class _$WorkOrderDeclineEvent
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(WorkOrderDeclineEvent value)? search,
+    TResult Function(DisposeDeclineEvent value)? dispose,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -286,16 +263,129 @@ abstract class WorkOrderDeclineEvent implements DeclineWorkOrderEvent {
       required final String action,
       final String comments}) = _$WorkOrderDeclineEvent;
 
-  @override
   Map<String, dynamic>? get contractsModel;
-  @override
   String get action;
-  @override
   String get comments;
-  @override
   @JsonKey(ignore: true)
   _$$WorkOrderDeclineEventCopyWith<_$WorkOrderDeclineEvent> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DisposeDeclineEventCopyWith<$Res> {
+  factory _$$DisposeDeclineEventCopyWith(_$DisposeDeclineEvent value,
+          $Res Function(_$DisposeDeclineEvent) then) =
+      __$$DisposeDeclineEventCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$DisposeDeclineEventCopyWithImpl<$Res>
+    extends _$DeclineWorkOrderEventCopyWithImpl<$Res, _$DisposeDeclineEvent>
+    implements _$$DisposeDeclineEventCopyWith<$Res> {
+  __$$DisposeDeclineEventCopyWithImpl(
+      _$DisposeDeclineEvent _value, $Res Function(_$DisposeDeclineEvent) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$DisposeDeclineEvent
+    with DiagnosticableTreeMixin
+    implements DisposeDeclineEvent {
+  const _$DisposeDeclineEvent();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'DeclineWorkOrderEvent.dispose()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(DiagnosticsProperty('type', 'DeclineWorkOrderEvent.dispose'));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$DisposeDeclineEvent);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(Map<String, dynamic>? contractsModel,
+            String action, String comments)
+        search,
+    required TResult Function() dispose,
+  }) {
+    return dispose();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(Map<String, dynamic>? contractsModel, String action,
+            String comments)?
+        search,
+    TResult? Function()? dispose,
+  }) {
+    return dispose?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(Map<String, dynamic>? contractsModel, String action,
+            String comments)?
+        search,
+    TResult Function()? dispose,
+    required TResult orElse(),
+  }) {
+    if (dispose != null) {
+      return dispose();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(WorkOrderDeclineEvent value) search,
+    required TResult Function(DisposeDeclineEvent value) dispose,
+  }) {
+    return dispose(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(WorkOrderDeclineEvent value)? search,
+    TResult? Function(DisposeDeclineEvent value)? dispose,
+  }) {
+    return dispose?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(WorkOrderDeclineEvent value)? search,
+    TResult Function(DisposeDeclineEvent value)? dispose,
+    required TResult orElse(),
+  }) {
+    if (dispose != null) {
+      return dispose(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DisposeDeclineEvent implements DeclineWorkOrderEvent {
+  const factory DisposeDeclineEvent() = _$DisposeDeclineEvent;
 }
 
 /// @nodoc
