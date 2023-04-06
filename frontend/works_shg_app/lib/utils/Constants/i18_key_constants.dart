@@ -84,6 +84,7 @@ class Common {
   String get attachments => 'CS_COMMON_ATTACHMENTS';
   String get apply => 'ES_COMMON_APPLY';
   String get cancel => 'CS_ACTION_CANCEL';
+  String get close => 'CS_ACTION_CLOSE';
   String get startDate => 'EVENTS_START_DATE_LABEL';
   String get endDate => 'EVENTS_END_DATE_LABEL';
   String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
